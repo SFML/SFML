@@ -115,7 +115,7 @@ GlxContext::GlxContext(GlxContext* shared)
     m_display = openDisplay();
 
     // Make sure that extensions are initialized
-    ensureExtensionsInit(m_display, DefaultScreen(m_display));
+    ensureExtensionsInit(m_display.get(), DefaultScreen(m_display.get()));
 
     // Create the rendering surface (window or pbuffer if supported)
     createSurface(shared, {1, 1}, VideoMode::getDesktopMode().bitsPerPixel);
@@ -135,7 +135,7 @@ GlxContext::GlxContext(GlxContext* shared, const ContextSettings& settings, cons
     m_display = openDisplay();
 
     // Make sure that extensions are initialized
-    ensureExtensionsInit(m_display, DefaultScreen(m_display));
+    ensureExtensionsInit(m_display.get(), DefaultScreen(m_display.get()));
 
     // Create the rendering surface from the owner window
     createSurface(owner.getNativeHandle());
@@ -155,7 +155,7 @@ GlxContext::GlxContext(GlxContext* shared, const ContextSettings& settings, cons
     m_display = openDisplay();
 
     // Make sure that extensions are initialized
-    ensureExtensionsInit(m_display, DefaultScreen(m_display));
+    ensureExtensionsInit(m_display.get(), DefaultScreen(m_display.get()));
 
     // Create the rendering surface (window or pbuffer if supported)
     createSurface(shared, size, VideoMode::getDesktopMode().bitsPerPixel);
@@ -175,12 +175,12 @@ GlxContext::~GlxContext()
     if (m_context)
     {
 #if defined(GLX_DEBUGGING)
-        GlxErrorHandler handler(m_display);
+        GlxErrorHandler handler(m_display.get());
 #endif
 
         if (glXGetCurrentContext() == m_context)
-            glXMakeCurrent(m_display, None, nullptr);
-        glXDestroyContext(m_display, m_context);
+            glXMakeCurrent(m_display.get(), None, nullptr);
+        glXDestroyContext(m_display.get(), m_context);
 
 #if defined(GLX_DEBUGGING)
         if (glxErrorOccurred)
@@ -190,18 +190,15 @@ GlxContext::~GlxContext()
 
     if (m_pbuffer)
     {
-        glXDestroyPbuffer(m_display, m_pbuffer);
+        glXDestroyPbuffer(m_display.get(), m_pbuffer);
     }
 
     // Destroy the window if we own it
     if (m_window && m_ownsWindow)
     {
-        XDestroyWindow(m_display, m_window);
-        XFlush(m_display);
+        XDestroyWindow(m_display.get(), m_window);
+        XFlush(m_display.get());
     }
-
-    // Close the connection with the X server
-    closeDisplay(m_display);
 }
 
 
@@ -219,7 +216,7 @@ bool GlxContext::makeCurrent(bool current)
         return false;
 
 #if defined(GLX_DEBUGGING)
-    GlxErrorHandler handler(m_display);
+    GlxErrorHandler handler(m_display.get());
 #endif
 
     bool result = false;
@@ -228,16 +225,16 @@ bool GlxContext::makeCurrent(bool current)
     {
         if (m_pbuffer)
         {
-            result = glXMakeContextCurrent(m_display, m_pbuffer, m_pbuffer, m_context);
+            result = glXMakeContextCurrent(m_display.get(), m_pbuffer, m_pbuffer, m_context);
         }
         else if (m_window)
         {
-            result = glXMakeCurrent(m_display, m_window, m_context);
+            result = glXMakeCurrent(m_display.get(), m_window, m_context);
         }
     }
     else
     {
-        result = glXMakeCurrent(m_display, None, nullptr);
+        result = glXMakeCurrent(m_display.get(), None, nullptr);
     }
 
 #if defined(GLX_DEBUGGING)
@@ -253,13 +250,13 @@ bool GlxContext::makeCurrent(bool current)
 void GlxContext::display()
 {
 #if defined(GLX_DEBUGGING)
-    GlxErrorHandler handler(m_display);
+    GlxErrorHandler handler(m_display.get());
 #endif
 
     if (m_pbuffer)
-        glXSwapBuffers(m_display, m_pbuffer);
+        glXSwapBuffers(m_display.get(), m_pbuffer);
     else if (m_window)
-        glXSwapBuffers(m_display, m_window);
+        glXSwapBuffers(m_display.get(), m_window);
 
 #if defined(GLX_DEBUGGING)
     if (glxErrorOccurred)
@@ -279,7 +276,7 @@ void GlxContext::setVerticalSyncEnabled(bool enabled)
     // which would require us to link in an additional library
     if (SF_GLAD_GLX_EXT_swap_control)
     {
-        glXSwapIntervalEXT(m_display, m_pbuffer ? m_pbuffer : m_window, enabled ? 1 : 0);
+        glXSwapIntervalEXT(m_display.get(), m_pbuffer ? m_pbuffer : m_window, enabled ? 1 : 0);
     }
     else if (SF_GLAD_GLX_MESA_swap_control)
     {
@@ -414,13 +411,13 @@ void GlxContext::updateSettingsFromVisualInfo(XVisualInfo* visualInfo)
     int multiSampling;
     int samples;
     int sRgb;
-    glXGetConfig(m_display, visualInfo, GLX_DEPTH_SIZE, &depth);
-    glXGetConfig(m_display, visualInfo, GLX_STENCIL_SIZE, &stencil);
+    glXGetConfig(m_display.get(), visualInfo, GLX_DEPTH_SIZE, &depth);
+    glXGetConfig(m_display.get(), visualInfo, GLX_STENCIL_SIZE, &stencil);
 
     if (SF_GLAD_GLX_ARB_multisample)
     {
-        glXGetConfig(m_display, visualInfo, GLX_SAMPLE_BUFFERS_ARB, &multiSampling);
-        glXGetConfig(m_display, visualInfo, GLX_SAMPLES_ARB, &samples);
+        glXGetConfig(m_display.get(), visualInfo, GLX_SAMPLE_BUFFERS_ARB, &multiSampling);
+        glXGetConfig(m_display.get(), visualInfo, GLX_SAMPLES_ARB, &samples);
     }
     else
     {
@@ -430,7 +427,7 @@ void GlxContext::updateSettingsFromVisualInfo(XVisualInfo* visualInfo)
 
     if (SF_GLAD_GLX_EXT_framebuffer_sRGB || SF_GLAD_GLX_ARB_framebuffer_sRGB)
     {
-        glXGetConfig(m_display, visualInfo, GLX_FRAMEBUFFER_SRGB_CAPABLE_ARB, &sRgb);
+        glXGetConfig(m_display.get(), visualInfo, GLX_FRAMEBUFFER_SRGB_CAPABLE_ARB, &sRgb);
     }
     else
     {
@@ -449,7 +446,7 @@ void GlxContext::updateSettingsFromWindow()
 {
     // Retrieve the attributes of the target window
     XWindowAttributes windowAttributes;
-    if (XGetWindowAttributes(m_display, m_window, &windowAttributes) == 0)
+    if (XGetWindowAttributes(m_display.get(), m_window, &windowAttributes) == 0)
     {
         err() << "Failed to get the window attributes" << std::endl;
         return;
@@ -457,10 +454,11 @@ void GlxContext::updateSettingsFromWindow()
 
     // Get its visuals
     XVisualInfo tpl;
-    tpl.screen      = DefaultScreen(m_display);
+    tpl.screen      = DefaultScreen(m_display.get());
     tpl.visualid    = XVisualIDFromVisual(windowAttributes.visual);
     int  nbVisuals  = 0;
-    auto visualInfo = X11Ptr<XVisualInfo>(XGetVisualInfo(m_display, VisualIDMask | VisualScreenMask, &tpl, &nbVisuals));
+    auto visualInfo = X11Ptr<XVisualInfo>(
+        XGetVisualInfo(m_display.get(), VisualIDMask | VisualScreenMask, &tpl, &nbVisuals));
 
     if (!visualInfo)
         return;
@@ -473,7 +471,7 @@ void GlxContext::updateSettingsFromWindow()
 void GlxContext::createSurface(GlxContext* shared, const Vector2u& size, unsigned int bitsPerPixel)
 {
     // Choose the visual according to the context settings
-    XVisualInfo visualInfo = selectBestVisual(m_display, bitsPerPixel, m_settings);
+    XVisualInfo visualInfo = selectBestVisual(m_display.get(), bitsPerPixel, m_settings);
 
     // Check if the shared context already exists and pbuffers are supported
     if (shared && SF_GLAD_GLX_SGIX_pbuffer)
@@ -482,7 +480,7 @@ void GlxContext::createSurface(GlxContext* shared, const Vector2u& size, unsigne
         int major = 0;
         int minor = 0;
 
-        glXQueryVersion(m_display, &major, &minor);
+        glXQueryVersion(m_display.get(), &major, &minor);
 
         // Check if glXCreatePbuffer is available (requires GLX 1.3 or greater)
         const bool hasCreatePbuffer = ((major > 1) || (minor >= 3));
@@ -497,11 +495,11 @@ void GlxContext::createSurface(GlxContext* shared, const Vector2u& size, unsigne
             // deemed suitable in selectBestVisual()
             int  nbConfigs = 0;
             auto configs   = X11Ptr<GLXFBConfig[]>(
-                glXChooseFBConfig(m_display, DefaultScreen(m_display), nullptr, &nbConfigs));
+                glXChooseFBConfig(m_display.get(), DefaultScreen(m_display.get()), nullptr, &nbConfigs));
 
             for (std::size_t i = 0; configs && (i < static_cast<std::size_t>(nbConfigs)); ++i)
             {
-                auto visual = X11Ptr<XVisualInfo>(glXGetVisualFromFBConfig(m_display, configs[i]));
+                auto visual = X11Ptr<XVisualInfo>(glXGetVisualFromFBConfig(m_display.get(), configs[i]));
 
                 if (!visual)
                     continue;
@@ -518,7 +516,7 @@ void GlxContext::createSurface(GlxContext* shared, const Vector2u& size, unsigne
                 int attributes[] =
                     {GLX_PBUFFER_WIDTH, static_cast<int>(size.x), GLX_PBUFFER_HEIGHT, static_cast<int>(size.y), 0, 0};
 
-                m_pbuffer = glXCreatePbuffer(m_display, *config, attributes);
+                m_pbuffer = glXCreatePbuffer(m_display.get(), *config, attributes);
 
                 updateSettingsFromVisualInfo(&visualInfo);
 
@@ -528,23 +526,23 @@ void GlxContext::createSurface(GlxContext* shared, const Vector2u& size, unsigne
     }
 
     // If pbuffers are not available we use a hidden window as the off-screen surface to draw to
-    const int screen = DefaultScreen(m_display);
+    const int screen = DefaultScreen(m_display.get());
 
     // Define the window attributes
     XSetWindowAttributes attributes;
-    attributes.colormap = XCreateColormap(m_display, RootWindow(m_display, screen), visualInfo.visual, AllocNone);
+    attributes.colormap = XCreateColormap(m_display.get(), RootWindow(m_display.get(), screen), visualInfo.visual, AllocNone);
 
     // Note: bitsPerPixel is explicitly ignored. Instead, DefaultDepth() is used in order to avoid window creation failure due to
     // a depth not supported by the X window system. On Unix/Linux, the window's pixel format is not directly associated with the
     // rendering surface (unlike on Windows, for example).
-    m_window = XCreateWindow(m_display,
-                             RootWindow(m_display, screen),
+    m_window = XCreateWindow(m_display.get(),
+                             RootWindow(m_display.get(), screen),
                              0,
                              0,
                              size.x,
                              size.y,
                              0,
-                             DefaultDepth(m_display, screen),
+                             DefaultDepth(m_display.get(), screen),
                              InputOutput,
                              visualInfo.visual,
                              CWColormap,
@@ -578,21 +576,22 @@ void GlxContext::createContext(GlxContext* shared)
     {
         unsigned int fbConfigId = 0;
 
-        glXQueryDrawable(m_display, m_pbuffer, GLX_FBCONFIG_ID, &fbConfigId);
+        glXQueryDrawable(m_display.get(), m_pbuffer, GLX_FBCONFIG_ID, &fbConfigId);
 
         int attributes[] = {GLX_FBCONFIG_ID, static_cast<int>(fbConfigId), 0, 0};
 
         int  count    = 0;
-        auto fbconfig = X11Ptr<GLXFBConfig>(glXChooseFBConfig(m_display, DefaultScreen(m_display), attributes, &count));
+        auto fbconfig = X11Ptr<GLXFBConfig>(
+            glXChooseFBConfig(m_display.get(), DefaultScreen(m_display.get()), attributes, &count));
 
         if (count == 1)
-            visualInfo = X11Ptr<XVisualInfo>(glXGetVisualFromFBConfig(m_display, *fbconfig));
+            visualInfo = X11Ptr<XVisualInfo>(glXGetVisualFromFBConfig(m_display.get(), *fbconfig));
     }
     else
     {
         // Retrieve the attributes of the target window
         XWindowAttributes windowAttributes;
-        if (XGetWindowAttributes(m_display, m_window, &windowAttributes) == 0)
+        if (XGetWindowAttributes(m_display.get(), m_window, &windowAttributes) == 0)
         {
             err() << "Failed to get the window attributes" << std::endl;
             return;
@@ -600,10 +599,10 @@ void GlxContext::createContext(GlxContext* shared)
 
         // Get its visuals
         XVisualInfo tpl;
-        tpl.screen    = DefaultScreen(m_display);
+        tpl.screen    = DefaultScreen(m_display.get());
         tpl.visualid  = XVisualIDFromVisual(windowAttributes.visual);
         int nbVisuals = 0;
-        visualInfo = X11Ptr<XVisualInfo>(XGetVisualInfo(m_display, VisualIDMask | VisualScreenMask, &tpl, &nbVisuals));
+        visualInfo = X11Ptr<XVisualInfo>(XGetVisualInfo(m_display.get(), VisualIDMask | VisualScreenMask, &tpl, &nbVisuals));
     }
 
     if (!visualInfo)
@@ -619,7 +618,7 @@ void GlxContext::createContext(GlxContext* shared)
     int major = 0;
     int minor = 0;
 
-    if (!glXQueryVersion(m_display, &major, &minor))
+    if (!glXQueryVersion(m_display.get(), &major, &minor))
         err() << "Failed to query GLX version, limited to legacy context creation" << std::endl;
 
     // Check if glXCreateContextAttribsARB is available (requires GLX 1.3 or greater)
@@ -634,12 +633,13 @@ void GlxContext::createContext(GlxContext* shared)
         // We don't supply attributes to match against, since
         // the visual we are matching against was already
         // deemed suitable in selectBestVisual()
-        int nbConfigs = 0;
-        auto configs = X11Ptr<GLXFBConfig[]>(glXChooseFBConfig(m_display, DefaultScreen(m_display), nullptr, &nbConfigs));
+        int  nbConfigs = 0;
+        auto configs   = X11Ptr<GLXFBConfig[]>(
+            glXChooseFBConfig(m_display.get(), DefaultScreen(m_display.get()), nullptr, &nbConfigs));
 
         for (std::size_t i = 0; configs && (i < static_cast<std::size_t>(nbConfigs)); ++i)
         {
-            auto visual = X11Ptr<XVisualInfo>(glXGetVisualFromFBConfig(m_display, configs[i]));
+            auto visual = X11Ptr<XVisualInfo>(glXGetVisualFromFBConfig(m_display.get(), configs[i]));
 
             if (!visual)
                 continue;
@@ -696,11 +696,11 @@ void GlxContext::createContext(GlxContext* shared)
 
             // RAII GLX error handler (we simply ignore errors here)
             // On an error, glXCreateContextAttribsARB will return 0 anyway
-            const GlxErrorHandler handler(m_display);
+            const GlxErrorHandler handler(m_display.get());
 
             if (toShare)
             {
-                if (!glXMakeCurrent(m_display, None, nullptr))
+                if (!glXMakeCurrent(m_display.get(), None, nullptr))
                 {
                     err() << "Failed to deactivate shared context before sharing" << std::endl;
                     return;
@@ -708,7 +708,7 @@ void GlxContext::createContext(GlxContext* shared)
             }
 
             // Create the context
-            m_context = glXCreateContextAttribsARB(m_display, *config, toShare, true, attributes.data());
+            m_context = glXCreateContextAttribsARB(m_display.get(), *config, toShare, true, attributes.data());
 
             if (!m_context)
             {
@@ -747,12 +747,12 @@ void GlxContext::createContext(GlxContext* shared)
         m_settings.attributeFlags = ContextSettings::Default;
 
 #if defined(GLX_DEBUGGING)
-        GlxErrorHandler handler(m_display);
+        GlxErrorHandler handler(m_display.get());
 #endif
 
         if (toShare)
         {
-            if (!glXMakeCurrent(m_display, None, nullptr))
+            if (!glXMakeCurrent(m_display.get(), None, nullptr))
             {
                 err() << "Failed to deactivate shared context before sharing" << std::endl;
                 return;
@@ -760,7 +760,7 @@ void GlxContext::createContext(GlxContext* shared)
         }
 
         // Create the context, using the target window's visual
-        m_context = glXCreateContext(m_display, visualInfo.get(), toShare, true);
+        m_context = glXCreateContext(m_display.get(), visualInfo.get(), toShare, true);
 
 #if defined(GLX_DEBUGGING)
         if (glxErrorOccurred)

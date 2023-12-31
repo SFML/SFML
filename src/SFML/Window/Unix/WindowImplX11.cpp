@@ -167,7 +167,7 @@ bool ewmhSupported()
     if (!netSupportingWmCheck || !netSupported)
         return false;
 
-    ::Display* display = sf::priv::openDisplay();
+    const auto display = sf::priv::openDisplay();
 
     Atom           actualType;
     int            actualFormat;
@@ -175,8 +175,8 @@ bool ewmhSupported()
     unsigned long  numBytes;
     unsigned char* data;
 
-    int result = XGetWindowProperty(display,
-                                    DefaultRootWindow(display),
+    int result = XGetWindowProperty(display.get(),
+                                    DefaultRootWindow(display.get()),
                                     netSupportingWmCheck,
                                     0,
                                     1,
@@ -193,7 +193,6 @@ bool ewmhSupported()
         if (result == Success)
             XFree(data);
 
-        sf::priv::closeDisplay(display);
         return false;
     }
 
@@ -206,11 +205,10 @@ bool ewmhSupported()
 
     if (!rootWindow)
     {
-        sf::priv::closeDisplay(display);
         return false;
     }
 
-    result = XGetWindowProperty(display,
+    result = XGetWindowProperty(display.get(),
                                 rootWindow,
                                 netSupportingWmCheck,
                                 0,
@@ -228,7 +226,6 @@ bool ewmhSupported()
         if (result == Success)
             XFree(data);
 
-        sf::priv::closeDisplay(display);
         return false;
     }
 
@@ -240,17 +237,11 @@ bool ewmhSupported()
     XFree(data);
 
     if (!childWindow)
-    {
-        sf::priv::closeDisplay(display);
         return false;
-    }
 
     // Conforming window managers should return the same window for both queries
     if (rootWindow != childWindow)
-    {
-        sf::priv::closeDisplay(display);
         return false;
-    }
 
     ewmhSupported = true;
 
@@ -259,17 +250,14 @@ bool ewmhSupported()
     const Atom netWmName = sf::priv::getAtom("_NET_WM_NAME", true);
 
     if (!netWmName)
-    {
-        sf::priv::closeDisplay(display);
         return true;
-    }
 
     Atom utf8StringType = sf::priv::getAtom("UTF8_STRING");
 
     if (!utf8StringType)
         utf8StringType = XA_STRING;
 
-    result = XGetWindowProperty(display,
+    result = XGetWindowProperty(display.get(),
                                 rootWindow,
                                 netWmName,
                                 0,
@@ -294,8 +282,6 @@ bool ewmhSupported()
 
     if (result == Success)
         XFree(data);
-
-    sf::priv::closeDisplay(display);
 
     return true;
 }
@@ -442,7 +428,7 @@ WindowImplX11::WindowImplX11(WindowHandle handle) : m_isExternal(true)
     // Make sure to check for EWMH support before we do anything
     ewmhSupported();
 
-    m_screen = DefaultScreen(m_display);
+    m_screen = DefaultScreen(m_display.get());
 
     // Save the window handle
     m_window = handle;
@@ -453,7 +439,7 @@ WindowImplX11::WindowImplX11(WindowHandle handle) : m_isExternal(true)
         XSetWindowAttributes attributes;
         attributes.event_mask = eventMask;
 
-        XChangeWindowAttributes(m_display, m_window, CWEventMask, &attributes);
+        XChangeWindowAttributes(m_display.get(), m_window, CWEventMask, &attributes);
 
         // Set the WM protocols
         setProtocols();
@@ -477,7 +463,7 @@ m_cursorGrabbed(m_fullscreen)
     // Make sure to check for EWMH support before we do anything
     ewmhSupported();
 
-    m_screen = DefaultScreen(m_display);
+    m_screen = DefaultScreen(m_display.get());
 
     // Compute position and size
     Vector2i windowPosition;
@@ -487,7 +473,7 @@ m_cursorGrabbed(m_fullscreen)
     }
     else
     {
-        const Vector2i displaySize(DisplayWidth(m_display, m_screen), DisplayHeight(m_display, m_screen));
+        const Vector2i displaySize(DisplayWidth(m_display.get(), m_screen), DisplayHeight(m_display.get(), m_screen));
         windowPosition = displaySize - Vector2i(mode.size) / 2;
     }
 
@@ -501,13 +487,13 @@ m_cursorGrabbed(m_fullscreen)
     if (settings.attributeFlags == 0xFFFFFFFF)
     {
         // Choose default visual since the user is going to use their own rendering API
-        visual = DefaultVisual(m_display, m_screen);
-        depth  = DefaultDepth(m_display, m_screen);
+        visual = DefaultVisual(m_display.get(), m_screen);
+        depth  = DefaultDepth(m_display.get(), m_screen);
     }
     else
     {
         // Choose the visual according to the context settings
-        const XVisualInfo visualInfo = ContextType::selectBestVisual(m_display, mode.bitsPerPixel, settings);
+        const XVisualInfo visualInfo = ContextType::selectBestVisual(m_display.get(), mode.bitsPerPixel, settings);
 
         visual = visualInfo.visual;
         depth  = visualInfo.depth;
@@ -515,12 +501,12 @@ m_cursorGrabbed(m_fullscreen)
 
     // Define the window attributes
     XSetWindowAttributes attributes;
-    attributes.colormap          = XCreateColormap(m_display, DefaultRootWindow(m_display), visual, AllocNone);
-    attributes.event_mask        = eventMask;
+    attributes.colormap   = XCreateColormap(m_display.get(), DefaultRootWindow(m_display.get()), visual, AllocNone);
+    attributes.event_mask = eventMask;
     attributes.override_redirect = (m_fullscreen && !ewmhSupported()) ? True : False;
 
-    m_window = XCreateWindow(m_display,
-                             DefaultRootWindow(m_display),
+    m_window = XCreateWindow(m_display.get(),
+                             DefaultRootWindow(m_display.get()),
                              windowPosition.x,
                              windowPosition.y,
                              width,
@@ -545,7 +531,7 @@ m_cursorGrabbed(m_fullscreen)
     XWMHints xHints{};
     xHints.flags         = StateHint;
     xHints.initial_state = NormalState;
-    XSetWMHints(m_display, m_window, &xHints);
+    XSetWMHints(m_display.get(), m_window, &xHints);
 
     // If not in fullscreen, set the window's style (tell the window manager to
     // change our window's decorations and functions according to the requested style)
@@ -606,7 +592,7 @@ m_cursorGrabbed(m_fullscreen)
                 hints.functions |= MWM_FUNC_CLOSE;
             }
 
-            XChangeProperty(m_display,
+            XChangeProperty(m_display.get(),
                             m_window,
                             wmHintsAtom,
                             wmHintsAtom,
@@ -627,7 +613,7 @@ m_cursorGrabbed(m_fullscreen)
         sizeHints.min_height = sizeHints.max_height = static_cast<int>(height);
         sizeHints.x                                 = windowPosition.x;
         sizeHints.y                                 = windowPosition.y;
-        XSetWMNormalHints(m_display, m_window, &sizeHints);
+        XSetWMNormalHints(m_display.get(), m_window, &sizeHints);
     }
 
     // Set the window's WM class (this can be used by window managers)
@@ -649,7 +635,7 @@ m_cursorGrabbed(m_fullscreen)
     std::copy(ansiTitle.begin(), ansiTitle.end(), windowClass.begin());
     hint.res_class = windowClass.data();
 
-    XSetClassHint(m_display, m_window, &hint);
+    XSetClassHint(m_display.get(), m_window, &hint);
 
     // Set the window's name
     setTitle(title);
@@ -664,9 +650,9 @@ m_cursorGrabbed(m_fullscreen)
         // otherwise some windows managers will not remove window decorations
         XSizeHints sizeHints{};
         long       flags = 0;
-        XGetWMNormalHints(m_display, m_window, &sizeHints, &flags);
+        XGetWMNormalHints(m_display.get(), m_window, &sizeHints, &flags);
         sizeHints.flags &= ~(PMinSize | PMaxSize);
-        XSetWMNormalHints(m_display, m_window, &sizeHints);
+        XSetWMNormalHints(m_display.get(), m_window, &sizeHints);
 
         setVideoMode(mode);
         switchToFullscreen();
@@ -684,15 +670,15 @@ WindowImplX11::~WindowImplX11()
 
     // Destroy icon pixmap
     if (m_iconPixmap)
-        XFreePixmap(m_display, m_iconPixmap);
+        XFreePixmap(m_display.get(), m_iconPixmap);
 
     // Destroy icon mask pixmap
     if (m_iconMaskPixmap)
-        XFreePixmap(m_display, m_iconMaskPixmap);
+        XFreePixmap(m_display.get(), m_iconMaskPixmap);
 
     // Destroy the cursor
     if (m_hiddenCursor)
-        XFreeCursor(m_display, m_hiddenCursor);
+        XFreeCursor(m_display.get(), m_hiddenCursor);
 
     // Destroy the input context
     if (m_inputContext)
@@ -701,16 +687,9 @@ WindowImplX11::~WindowImplX11()
     // Destroy the window
     if (m_window && !m_isExternal)
     {
-        XDestroyWindow(m_display, m_window);
-        XFlush(m_display);
+        XDestroyWindow(m_display.get(), m_window);
+        XFlush(m_display.get());
     }
-
-    // Close the input method
-    if (m_inputMethod)
-        closeXim(m_inputMethod);
-
-    // Close the connection with the X server
-    closeDisplay(m_display);
 
     // Remove this window from the global list of windows (required for focus request)
     const std::lock_guard lock(allWindowsMutex);
@@ -733,7 +712,7 @@ void WindowImplX11::processEvents()
     XEvent event;
 
     // Pick out the events that are interesting for this window
-    while (XCheckIfEvent(m_display, &event, &checkEvent, reinterpret_cast<XPointer>(m_window)))
+    while (XCheckIfEvent(m_display.get(), &event, &checkEvent, reinterpret_cast<XPointer>(m_window)))
     {
         // This function implements a workaround to properly discard
         // repeated key events when necessary. The problem is that the
@@ -749,7 +728,7 @@ void WindowImplX11::processEvents()
         while (event.type == KeyRelease)
         {
             XEvent nextEvent;
-            if (XCheckIfEvent(m_display, &nextEvent, checkEvent, reinterpret_cast<XPointer>(m_window)))
+            if (XCheckIfEvent(m_display.get(), &nextEvent, checkEvent, reinterpret_cast<XPointer>(m_window)))
             {
                 if ((nextEvent.type == KeyPress) && (nextEvent.xkey.keycode == event.xkey.keycode) &&
                     (event.xkey.time <= nextEvent.xkey.time) && (nextEvent.xkey.time <= event.xkey.time + 1))
@@ -811,7 +790,7 @@ Vector2i WindowImplX11::getPosition() const
     int      xAbsRelToRoot;
     int      yAbsRelToRoot;
 
-    XTranslateCoordinates(m_display, m_window, DefaultRootWindow(m_display), 0, 0, &xAbsRelToRoot, &yAbsRelToRoot, &child);
+    XTranslateCoordinates(m_display.get(), m_window, DefaultRootWindow(m_display.get()), 0, 0, &xAbsRelToRoot, &yAbsRelToRoot, &child);
 
     // CASE 1: some rare WMs actually put the window exactly where we tell
     // it to, even with decorations and such, which get shifted back.
@@ -825,7 +804,7 @@ Vector2i WindowImplX11::getPosition() const
     long xFrameExtent;
     long yFrameExtent;
 
-    if (getEWMHFrameExtents(m_display, m_window, xFrameExtent, yFrameExtent))
+    if (getEWMHFrameExtents(m_display.get(), m_window, xFrameExtent, yFrameExtent))
     {
         // Get final X/Y coordinates: subtract EWMH frame extents from
         // absolute window position.
@@ -846,12 +825,12 @@ Vector2i WindowImplX11::getPosition() const
     // our window is part of decorations/borders in some way. This
     // seems to hold true for most reasonable WM implementations.
     ::Window ancestor = m_window;
-    ::Window root     = DefaultRootWindow(m_display);
+    ::Window root     = DefaultRootWindow(m_display.get());
 
-    while (getParentWindow(m_display, ancestor) != root)
+    while (getParentWindow(m_display.get(), ancestor) != root)
     {
         // Next window up (parent window).
-        ancestor = getParentWindow(m_display, ancestor);
+        ancestor = getParentWindow(m_display.get(), ancestor);
     }
 
     // Get final X/Y coordinates: take the relative position to
@@ -863,7 +842,7 @@ Vector2i WindowImplX11::getPosition() const
     unsigned int borderWidth;
     unsigned int depth;
 
-    XGetGeometry(m_display, ancestor, &root, &xRelToRoot, &yRelToRoot, &width, &height, &borderWidth, &depth);
+    XGetGeometry(m_display.get(), ancestor, &root, &xRelToRoot, &yRelToRoot, &width, &height, &borderWidth, &depth);
 
     return {xRelToRoot, yRelToRoot};
 }
@@ -872,8 +851,8 @@ Vector2i WindowImplX11::getPosition() const
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setPosition(const Vector2i& position)
 {
-    XMoveWindow(m_display, m_window, position.x, position.y);
-    XFlush(m_display);
+    XMoveWindow(m_display.get(), m_window, position.x, position.y);
+    XFlush(m_display.get());
 }
 
 
@@ -881,7 +860,7 @@ void WindowImplX11::setPosition(const Vector2i& position)
 Vector2u WindowImplX11::getSize() const
 {
     XWindowAttributes attributes;
-    XGetWindowAttributes(m_display, m_window, &attributes);
+    XGetWindowAttributes(m_display.get(), m_window, &attributes);
     return Vector2u(Vector2i(attributes.width, attributes.height));
 }
 
@@ -896,11 +875,11 @@ void WindowImplX11::setSize(const Vector2u& size)
         sizeHints.flags     = PMinSize | PMaxSize;
         sizeHints.min_width = sizeHints.max_width = static_cast<int>(size.x);
         sizeHints.min_height = sizeHints.max_height = static_cast<int>(size.y);
-        XSetWMNormalHints(m_display, m_window, &sizeHints);
+        XSetWMNormalHints(m_display.get(), m_window, &sizeHints);
     }
 
-    XResizeWindow(m_display, m_window, size.x, size.y);
-    XFlush(m_display);
+    XResizeWindow(m_display.get(), m_window, size.x, size.y);
+    XFlush(m_display.get());
 }
 
 
@@ -933,7 +912,7 @@ void WindowImplX11::setTitle(const String& title)
 
     // Set the _NET_WM_NAME atom, which specifies a UTF-8 encoded window title.
     const Atom wmName = getAtom("_NET_WM_NAME", false);
-    XChangeProperty(m_display,
+    XChangeProperty(m_display.get(),
                     m_window,
                     wmName,
                     useUtf8,
@@ -944,7 +923,7 @@ void WindowImplX11::setTitle(const String& title)
 
     // Set the _NET_WM_ICON_NAME atom, which specifies a UTF-8 encoded window title.
     const Atom wmIconName = getAtom("_NET_WM_ICON_NAME", false);
-    XChangeProperty(m_display,
+    XChangeProperty(m_display.get(),
                     m_window,
                     wmIconName,
                     useUtf8,
@@ -955,7 +934,7 @@ void WindowImplX11::setTitle(const String& title)
 
 // Set the non-Unicode title as a fallback for window managers who don't support _NET_WM_NAME.
 #ifdef X_HAVE_UTF8_STRING
-    Xutf8SetWMProperties(m_display,
+    Xutf8SetWMProperties(m_display.get(),
                          m_window,
                          title.toAnsiString().c_str(),
                          title.toAnsiString().c_str(),
@@ -965,7 +944,15 @@ void WindowImplX11::setTitle(const String& title)
                          nullptr,
                          nullptr);
 #else
-    XmbSetWMProperties(m_display, m_window, title.toAnsiString().c_str(), title.toAnsiString().c_str(), nullptr, 0, nullptr, nullptr, nullptr);
+    XmbSetWMProperties(m_display.get(),
+                       m_window,
+                       title.toAnsiString().c_str(),
+                       title.toAnsiString().c_str(),
+                       nullptr,
+                       0,
+                       nullptr,
+                       nullptr,
+                       nullptr);
 #endif
 }
 
@@ -986,10 +973,10 @@ void WindowImplX11::setIcon(const Vector2u& size, const std::uint8_t* pixels)
     }
 
     // Create the icon pixmap
-    Visual* defVisual = DefaultVisual(m_display, m_screen);
-    auto    defDepth  = static_cast<unsigned int>(DefaultDepth(m_display, m_screen));
+    Visual* defVisual = DefaultVisual(m_display.get(), m_screen);
+    auto    defDepth  = static_cast<unsigned int>(DefaultDepth(m_display.get(), m_screen));
     auto    iconImage = X11Ptr<XImage>(
-        XCreateImage(m_display, defVisual, defDepth, ZPixmap, 0, reinterpret_cast<char*>(iconPixels), size.x, size.y, 32, 0));
+        XCreateImage(m_display.get(), defVisual, defDepth, ZPixmap, 0, reinterpret_cast<char*>(iconPixels), size.x, size.y, 32, 0));
     if (!iconImage)
     {
         err() << "Failed to set the window's icon" << std::endl;
@@ -997,16 +984,16 @@ void WindowImplX11::setIcon(const Vector2u& size, const std::uint8_t* pixels)
     }
 
     if (m_iconPixmap)
-        XFreePixmap(m_display, m_iconPixmap);
+        XFreePixmap(m_display.get(), m_iconPixmap);
 
     if (m_iconMaskPixmap)
-        XFreePixmap(m_display, m_iconMaskPixmap);
+        XFreePixmap(m_display.get(), m_iconMaskPixmap);
 
-    m_iconPixmap = XCreatePixmap(m_display, RootWindow(m_display, m_screen), size.x, size.y, defDepth);
+    m_iconPixmap = XCreatePixmap(m_display.get(), RootWindow(m_display.get(), m_screen), size.x, size.y, defDepth);
     XGCValues values;
-    GC        iconGC = XCreateGC(m_display, m_iconPixmap, 0, &values);
-    XPutImage(m_display, m_iconPixmap, iconGC, iconImage.get(), 0, 0, 0, 0, size.x, size.y);
-    XFreeGC(m_display, iconGC);
+    GC        iconGC = XCreateGC(m_display.get(), m_iconPixmap, 0, &values);
+    XPutImage(m_display.get(), m_iconPixmap, iconGC, iconImage.get(), 0, 0, 0, 0, size.x, size.y);
+    XFreeGC(m_display.get(), iconGC);
 
     // Create the mask pixmap (must have 1 bit depth)
     const std::size_t         pitch = (size.x + 7) / 8;
@@ -1025,7 +1012,7 @@ void WindowImplX11::setIcon(const Vector2u& size, const std::uint8_t* pixels)
             }
         }
     }
-    m_iconMaskPixmap = XCreatePixmapFromBitmapData(m_display,
+    m_iconMaskPixmap = XCreatePixmapFromBitmapData(m_display.get(),
                                                    m_window,
                                                    reinterpret_cast<char*>(maskPixels.data()),
                                                    size.x,
@@ -1039,7 +1026,7 @@ void WindowImplX11::setIcon(const Vector2u& size, const std::uint8_t* pixels)
     hints.flags       = IconPixmapHint | IconMaskHint;
     hints.icon_pixmap = m_iconPixmap;
     hints.icon_mask   = m_iconMaskPixmap;
-    XSetWMHints(m_display, m_window, &hints);
+    XSetWMHints(m_display.get(), m_window, &hints);
 
     // ICCCM wants BGRA pixels: swap red and blue channels
     // ICCCM also wants the first 2 unsigned 32-bit values to be width and height
@@ -1060,7 +1047,7 @@ void WindowImplX11::setIcon(const Vector2u& size, const std::uint8_t* pixels)
 
     const Atom netWmIcon = getAtom("_NET_WM_ICON");
 
-    XChangeProperty(m_display,
+    XChangeProperty(m_display.get(),
                     m_window,
                     netWmIcon,
                     XA_CARDINAL,
@@ -1069,7 +1056,7 @@ void WindowImplX11::setIcon(const Vector2u& size, const std::uint8_t* pixels)
                     reinterpret_cast<const unsigned char*>(icccmIconPixels.data()),
                     static_cast<int>(2 + size.x * size.y));
 
-    XFlush(m_display);
+    XFlush(m_display.get());
 }
 
 
@@ -1078,12 +1065,12 @@ void WindowImplX11::setVisible(bool visible)
 {
     if (visible)
     {
-        XMapWindow(m_display, m_window);
+        XMapWindow(m_display.get(), m_window);
 
         if (m_fullscreen)
             switchToFullscreen();
 
-        XFlush(m_display);
+        XFlush(m_display.get());
 
         // Before continuing, make sure the WM has
         // internally marked the window as viewable
@@ -1092,9 +1079,9 @@ void WindowImplX11::setVisible(bool visible)
     }
     else
     {
-        XUnmapWindow(m_display, m_window);
+        XUnmapWindow(m_display.get(), m_window);
 
-        XFlush(m_display);
+        XFlush(m_display.get());
 
         // Before continuing, make sure the WM has
         // internally marked the window as unviewable
@@ -1107,8 +1094,8 @@ void WindowImplX11::setVisible(bool visible)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setMouseCursorVisible(bool visible)
 {
-    XDefineCursor(m_display, m_window, visible ? m_lastCursor : m_hiddenCursor);
-    XFlush(m_display);
+    XDefineCursor(m_display.get(), m_window, visible ? m_lastCursor : m_hiddenCursor);
+    XFlush(m_display.get());
 }
 
 
@@ -1116,8 +1103,8 @@ void WindowImplX11::setMouseCursorVisible(bool visible)
 void WindowImplX11::setMouseCursor(const CursorImpl& cursor)
 {
     m_lastCursor = cursor.m_cursor;
-    XDefineCursor(m_display, m_window, m_lastCursor);
-    XFlush(m_display);
+    XDefineCursor(m_display.get(), m_window, m_lastCursor);
+    XFlush(m_display.get());
 }
 
 
@@ -1135,7 +1122,7 @@ void WindowImplX11::setMouseCursorGrabbed(bool grabbed)
         // Try multiple times to grab the cursor
         for (unsigned int trial = 0; trial < maxTrialsCount; ++trial)
         {
-            const int result = XGrabPointer(m_display, m_window, True, None, GrabModeAsync, GrabModeAsync, m_window, None, CurrentTime);
+            const int result = XGrabPointer(m_display.get(), m_window, True, None, GrabModeAsync, GrabModeAsync, m_window, None, CurrentTime);
 
             if (result == GrabSuccess)
             {
@@ -1153,7 +1140,7 @@ void WindowImplX11::setMouseCursorGrabbed(bool grabbed)
     else
     {
         // Release the cursor from the window and disable cursor grabbing
-        XUngrabPointer(m_display, CurrentTime);
+        XUngrabPointer(m_display.get(), CurrentTime);
         m_cursorGrabbed = false;
     }
 }
@@ -1191,7 +1178,7 @@ void WindowImplX11::requestFocus()
     // Check if window is viewable (not on other desktop, ...)
     // TODO: Check also if minimized
     XWindowAttributes attributes;
-    if (XGetWindowAttributes(m_display, m_window, &attributes) == 0)
+    if (XGetWindowAttributes(m_display.get(), m_window, &attributes) == 0)
     {
         sf::err() << "Failed to check if window is viewable while requesting focus" << std::endl;
         return; // error getting attribute
@@ -1209,13 +1196,13 @@ void WindowImplX11::requestFocus()
     {
         // Otherwise: display urgency hint (flashing application logo)
         // Ensure WM hints exist, allocate if necessary
-        auto hints = X11Ptr<XWMHints>(XGetWMHints(m_display, m_window));
+        auto hints = X11Ptr<XWMHints>(XGetWMHints(m_display.get(), m_window));
         if (hints == nullptr)
             hints.reset(XAllocWMHints());
 
         // Add urgency (notification) flag to hints
         hints->flags |= XUrgencyHint;
-        XSetWMHints(m_display, m_window, hints.get());
+        XSetWMHints(m_display.get(), m_window, hints.get());
     }
 }
 
@@ -1225,7 +1212,7 @@ bool WindowImplX11::hasFocus() const
 {
     ::Window focusedWindow  = 0;
     int      revertToReturn = 0;
-    XGetInputFocus(m_display, &focusedWindow, &revertToReturn);
+    XGetInputFocus(m_display.get(), &focusedWindow, &revertToReturn);
 
     return m_window == focusedWindow;
 }
@@ -1244,7 +1231,7 @@ void WindowImplX11::grabFocus()
     // Only try to grab focus if the window is mapped
     XWindowAttributes attr;
 
-    XGetWindowAttributes(m_display, m_window, &attr);
+    XGetWindowAttributes(m_display.get(), m_window, &attr);
 
     if (attr.map_state == IsUnmapped)
         return;
@@ -1260,22 +1247,22 @@ void WindowImplX11::grabFocus()
         event.xclient.data.l[1]    = static_cast<long>(m_lastInputTime);
         event.xclient.data.l[2]    = 0; // We don't know the currently active window
 
-        const int result = XSendEvent(m_display,
-                                      DefaultRootWindow(m_display),
+        const int result = XSendEvent(m_display.get(),
+                                      DefaultRootWindow(m_display.get()),
                                       False,
                                       SubstructureNotifyMask | SubstructureRedirectMask,
                                       &event);
 
-        XFlush(m_display);
+        XFlush(m_display.get());
 
         if (!result)
             err() << "Setting fullscreen failed, could not send \"_NET_ACTIVE_WINDOW\" event" << std::endl;
     }
     else
     {
-        XRaiseWindow(m_display, m_window);
-        XSetInputFocus(m_display, m_window, RevertToPointerRoot, CurrentTime);
-        XFlush(m_display);
+        XRaiseWindow(m_display.get(), m_window);
+        XSetInputFocus(m_display.get(), m_window, RevertToPointerRoot, CurrentTime);
+        XFlush(m_display.get());
     }
 }
 
@@ -1300,10 +1287,10 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
     }
 
     // Get root window
-    ::Window rootWindow = RootWindow(m_display, m_screen);
+    ::Window rootWindow = RootWindow(m_display.get(), m_screen);
 
     // Get the screen resources
-    auto res = X11Ptr<XRRScreenResources>(XRRGetScreenResources(m_display, rootWindow));
+    auto res = X11Ptr<XRRScreenResources>(XRRGetScreenResources(m_display.get(), rootWindow));
     if (!res)
     {
         err() << "Failed to get the current screen resources for fullscreen mode, switching to window mode" << std::endl;
@@ -1313,7 +1300,7 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
     RROutput output = getOutputPrimary(rootWindow, res.get(), xRandRMajor, xRandRMinor);
 
     // Get output info from output
-    auto outputInfo = X11Ptr<XRROutputInfo>(XRRGetOutputInfo(m_display, res.get(), output));
+    auto outputInfo = X11Ptr<XRROutputInfo>(XRRGetOutputInfo(m_display.get(), res.get(), output));
     if (!outputInfo || outputInfo->connection == RR_Disconnected)
     {
         err() << "Failed to get output info for fullscreen mode, switching to window mode" << std::endl;
@@ -1321,7 +1308,7 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
     }
 
     // Retrieve current RRMode, screen position and rotation
-    auto crtcInfo = X11Ptr<XRRCrtcInfo>(XRRGetCrtcInfo(m_display, res.get(), outputInfo->crtc));
+    auto crtcInfo = X11Ptr<XRRCrtcInfo>(XRRGetCrtcInfo(m_display.get(), res.get(), outputInfo->crtc));
     if (!crtcInfo)
     {
         err() << "Failed to get crtc info for fullscreen mode, switching to window mode" << std::endl;
@@ -1356,7 +1343,7 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
     m_oldRRCrtc    = outputInfo->crtc;
 
     // Switch to fullscreen mode
-    XRRSetCrtcConfig(m_display,
+    XRRSetCrtcConfig(m_display.get(),
                      res.get(),
                      outputInfo->crtc,
                      CurrentTime,
@@ -1385,7 +1372,8 @@ void WindowImplX11::resetVideoMode()
         int xRandRMinor;
         if (checkXRandR(xRandRMajor, xRandRMinor))
         {
-            auto res = X11Ptr<XRRScreenResources>(XRRGetScreenResources(m_display, DefaultRootWindow(m_display)));
+            auto res = X11Ptr<XRRScreenResources>(
+                XRRGetScreenResources(m_display.get(), DefaultRootWindow(m_display.get())));
             if (!res)
             {
                 err() << "Failed to get the current screen resources to reset the video mode" << std::endl;
@@ -1393,7 +1381,7 @@ void WindowImplX11::resetVideoMode()
             }
 
             // Retrieve current screen position and rotation
-            auto crtcInfo = X11Ptr<XRRCrtcInfo>(XRRGetCrtcInfo(m_display, res.get(), m_oldRRCrtc));
+            auto crtcInfo = X11Ptr<XRRCrtcInfo>(XRRGetCrtcInfo(m_display.get(), res.get(), m_oldRRCrtc));
             if (!crtcInfo)
             {
                 err() << "Failed to get crtc info to reset the video mode" << std::endl;
@@ -1405,7 +1393,7 @@ void WindowImplX11::resetVideoMode()
             // if version >= 1.3 get the primary screen else take the first screen
             if ((xRandRMajor == 1 && xRandRMinor >= 3) || xRandRMajor > 1)
             {
-                output = XRRGetOutputPrimary(m_display, DefaultRootWindow(m_display));
+                output = XRRGetOutputPrimary(m_display.get(), DefaultRootWindow(m_display.get()));
 
                 // Check if returned output is valid, otherwise use the first screen
                 if (output == None)
@@ -1416,7 +1404,7 @@ void WindowImplX11::resetVideoMode()
                 output = res->outputs[0];
             }
 
-            XRRSetCrtcConfig(m_display,
+            XRRSetCrtcConfig(m_display.get(),
                              res.get(),
                              m_oldRRCrtc,
                              CurrentTime,
@@ -1449,7 +1437,7 @@ void WindowImplX11::switchToFullscreen()
         {
             constexpr unsigned long bypassCompositor = 1;
 
-            XChangeProperty(m_display,
+            XChangeProperty(m_display.get(),
                             m_window,
                             netWmBypassCompositor,
                             XA_CARDINAL,
@@ -1478,8 +1466,8 @@ void WindowImplX11::switchToFullscreen()
         event.xclient.data.l[2]    = 0; // No second property
         event.xclient.data.l[3]    = 1; // Normal window
 
-        const int result = XSendEvent(m_display,
-                                      DefaultRootWindow(m_display),
+        const int result = XSendEvent(m_display.get(),
+                                      DefaultRootWindow(m_display.get()),
                                       False,
                                       SubstructureNotifyMask | SubstructureRedirectMask,
                                       &event);
@@ -1528,7 +1516,7 @@ void WindowImplX11::setProtocols()
     {
         const long pid = getpid();
 
-        XChangeProperty(m_display,
+        XChangeProperty(m_display.get(),
                         m_window,
                         netWmPid,
                         XA_CARDINAL,
@@ -1542,7 +1530,7 @@ void WindowImplX11::setProtocols()
 
     if (!atoms.empty())
     {
-        XChangeProperty(m_display,
+        XChangeProperty(m_display.get(),
                         m_window,
                         wmProtocols,
                         XA_ATOM,
@@ -1568,7 +1556,7 @@ void WindowImplX11::initialize()
 
     if (m_inputMethod)
     {
-        m_inputContext = XCreateIC(m_inputMethod,
+        m_inputContext = XCreateIC(m_inputMethod.get(),
                                    XNClientWindow,
                                    m_window,
                                    XNFocusWindow,
@@ -1591,7 +1579,7 @@ void WindowImplX11::initialize()
 
     if (wmWindowType && wmWindowTypeNormal)
     {
-        XChangeProperty(m_display,
+        XChangeProperty(m_display.get(),
                         m_window,
                         wmWindowType,
                         XA_ATOM,
@@ -1611,7 +1599,7 @@ void WindowImplX11::initialize()
     createHiddenCursor();
 
     // Flush the commands queue
-    XFlush(m_display);
+    XFlush(m_display.get());
 
     // Add this window to the global list of windows (required for focus request)
     const std::lock_guard lock(allWindowsMutex);
@@ -1628,7 +1616,7 @@ void WindowImplX11::updateLastInputTime(::Time time)
 
         if (netWmUserTime)
         {
-            XChangeProperty(m_display,
+            XChangeProperty(m_display.get(),
                             m_window,
                             netWmUserTime,
                             XA_CARDINAL,
@@ -1647,19 +1635,19 @@ void WindowImplX11::updateLastInputTime(::Time time)
 void WindowImplX11::createHiddenCursor()
 {
     // Create the cursor's pixmap (1x1 pixels)
-    const Pixmap cursorPixmap    = XCreatePixmap(m_display, m_window, 1, 1, 1);
-    GC           graphicsContext = XCreateGC(m_display, cursorPixmap, 0, nullptr);
-    XDrawPoint(m_display, cursorPixmap, graphicsContext, 0, 0);
-    XFreeGC(m_display, graphicsContext);
+    const Pixmap cursorPixmap    = XCreatePixmap(m_display.get(), m_window, 1, 1, 1);
+    GC           graphicsContext = XCreateGC(m_display.get(), cursorPixmap, 0, nullptr);
+    XDrawPoint(m_display.get(), cursorPixmap, graphicsContext, 0, 0);
+    XFreeGC(m_display.get(), graphicsContext);
 
     // Create the cursor, using the pixmap as both the shape and the mask of the cursor
     XColor color;
     color.flags = DoRed | DoGreen | DoBlue;
     color.red = color.blue = color.green = 0;
-    m_hiddenCursor = XCreatePixmapCursor(m_display, cursorPixmap, cursorPixmap, &color, &color, 0, 0);
+    m_hiddenCursor = XCreatePixmapCursor(m_display.get(), cursorPixmap, cursorPixmap, &color, &color, 0, 0);
 
     // We don't need the pixmap any longer, free it
-    XFreePixmap(m_display, cursorPixmap);
+    XFreePixmap(m_display.get(), cursorPixmap);
 }
 
 
@@ -1703,7 +1691,15 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                 // Try multiple times to grab the cursor
                 for (unsigned int trial = 0; trial < maxTrialsCount; ++trial)
                 {
-                    const int result = XGrabPointer(m_display, m_window, True, None, GrabModeAsync, GrabModeAsync, m_window, None, CurrentTime);
+                    const int result = XGrabPointer(m_display.get(),
+                                                    m_window,
+                                                    True,
+                                                    None,
+                                                    GrabModeAsync,
+                                                    GrabModeAsync,
+                                                    m_window,
+                                                    None,
+                                                    CurrentTime);
 
                     if (result == GrabSuccess)
                     {
@@ -1724,12 +1720,12 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             pushEvent(event);
 
             // If the window has been previously marked urgent (notification) as a result of a focus request, undo that
-            auto hints = X11Ptr<XWMHints>(XGetWMHints(m_display, m_window));
+            auto hints = X11Ptr<XWMHints>(XGetWMHints(m_display.get(), m_window));
             if (hints != nullptr)
             {
                 // Remove urgency (notification) flag from hints
                 hints->flags &= ~XUrgencyHint;
-                XSetWMHints(m_display, m_window, hints.get());
+                XSetWMHints(m_display.get(), m_window, hints.get());
             }
 
             break;
@@ -1744,7 +1740,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
 
             // Release cursor
             if (m_cursorGrabbed)
-                XUngrabPointer(m_display, CurrentTime);
+                XUngrabPointer(m_display.get(), CurrentTime);
 
             Event event;
             event.type = Event::LostFocus;
@@ -1796,10 +1792,10 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                              (windowEvent.xclient.data.l[0]) == static_cast<long>(netWmPing))
                     {
                         // Handle the _NET_WM_PING message, send pong back to WM to show that we are responsive
-                        windowEvent.xclient.window = DefaultRootWindow(m_display);
+                        windowEvent.xclient.window = DefaultRootWindow(m_display.get());
 
-                        XSendEvent(m_display,
-                                   DefaultRootWindow(m_display),
+                        XSendEvent(m_display.get(),
+                                   DefaultRootWindow(m_display.get()),
                                    False,
                                    SubstructureNotifyMask | SubstructureRedirectMask,
                                    &windowEvent);
@@ -2099,14 +2095,15 @@ bool WindowImplX11::checkXRandR(int& xRandRMajor, int& xRandRMinor)
 {
     // Check if the XRandR extension is present
     int version;
-    if (!XQueryExtension(m_display, "RANDR", &version, &version, &version))
+    if (!XQueryExtension(m_display.get(), "RANDR", &version, &version, &version))
     {
         err() << "XRandR extension is not supported" << std::endl;
         return false;
     }
 
     // Check XRandR version, 1.2 required
-    if (!XRRQueryVersion(m_display, &xRandRMajor, &xRandRMinor) || xRandRMajor < 1 || (xRandRMajor == 1 && xRandRMinor < 2))
+    if (!XRRQueryVersion(m_display.get(), &xRandRMajor, &xRandRMinor) || xRandRMajor < 1 ||
+        (xRandRMajor == 1 && xRandRMinor < 2))
     {
         err() << "XRandR is too old" << std::endl;
         return false;
@@ -2122,7 +2119,7 @@ RROutput WindowImplX11::getOutputPrimary(::Window& rootWindow, XRRScreenResource
     // if xRandR version >= 1.3 get the primary screen else take the first screen
     if ((xRandRMajor == 1 && xRandRMinor >= 3) || xRandRMajor > 1)
     {
-        const RROutput output = XRRGetOutputPrimary(m_display, rootWindow);
+        const RROutput output = XRRGetOutputPrimary(m_display.get(), rootWindow);
 
         // Check if returned output is valid, otherwise use the first screen
         if (output == None)
@@ -2142,10 +2139,10 @@ Vector2i WindowImplX11::getPrimaryMonitorPosition()
     Vector2i monitorPosition;
 
     // Get root window
-    ::Window rootWindow = RootWindow(m_display, m_screen);
+    ::Window rootWindow = RootWindow(m_display.get(), m_screen);
 
     // Get the screen resources
-    auto res = X11Ptr<XRRScreenResources>(XRRGetScreenResources(m_display, rootWindow));
+    auto res = X11Ptr<XRRScreenResources>(XRRGetScreenResources(m_display.get(), rootWindow));
     if (!res)
     {
         err() << "Failed to get the current screen resources for primary monitor position" << std::endl;
@@ -2161,7 +2158,7 @@ Vector2i WindowImplX11::getPrimaryMonitorPosition()
     const RROutput output = getOutputPrimary(rootWindow, res.get(), xRandRMajor, xRandRMinor);
 
     // Get output info from output
-    auto outputInfo = X11Ptr<XRROutputInfo>(XRRGetOutputInfo(m_display, res.get(), output));
+    auto outputInfo = X11Ptr<XRROutputInfo>(XRRGetOutputInfo(m_display.get(), res.get(), output));
     if (!outputInfo || outputInfo->connection == RR_Disconnected)
     {
         err() << "Failed to get output info for primary monitor position" << std::endl;
@@ -2169,7 +2166,7 @@ Vector2i WindowImplX11::getPrimaryMonitorPosition()
     }
 
     // Retrieve current RRMode, screen position and rotation
-    auto crtcInfo = X11Ptr<XRRCrtcInfo>(XRRGetCrtcInfo(m_display, res.get(), outputInfo->crtc));
+    auto crtcInfo = X11Ptr<XRRCrtcInfo>(XRRGetCrtcInfo(m_display.get(), res.get(), outputInfo->crtc));
     if (!crtcInfo)
     {
         err() << "Failed to get crtc info for primary monitor position" << std::endl;
@@ -2203,7 +2200,7 @@ void WindowImplX11::setWindowSizeConstraints() const
         sizeHints.max_width  = static_cast<int>(maximumSize->x);
         sizeHints.max_height = static_cast<int>(maximumSize->y);
     }
-    XSetWMNormalHints(m_display, m_window, &sizeHints);
+    XSetWMNormalHints(m_display.get(), m_window, &sizeHints);
 }
 
 } // namespace sf::priv

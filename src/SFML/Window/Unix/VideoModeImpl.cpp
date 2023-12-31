@@ -57,18 +57,18 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
     std::vector<VideoMode> modes;
 
     // Open a connection with the X server
-    Display* display = openDisplay();
+    const auto display = openDisplay();
     if (display)
     {
         // Retrieve the default screen number
-        const int screen = DefaultScreen(display);
+        const int screen = DefaultScreen(display.get());
 
         // Check if the XRandR extension is present
         int version;
-        if (XQueryExtension(display, "RANDR", &version, &version, &version))
+        if (XQueryExtension(display.get(), "RANDR", &version, &version, &version))
         {
             // Get the current configuration
-            auto config = X11Ptr<XRRScreenConfiguration>(XRRGetScreenInfo(display, RootWindow(display, screen)));
+            auto config = X11Ptr<XRRScreenConfiguration>(XRRGetScreenInfo(display.get(), RootWindow(display.get(), screen)));
             if (config)
             {
                 // Get the available screen sizes
@@ -78,7 +78,7 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
                 {
                     // Get the list of supported depths
                     int  nbDepths = 0;
-                    auto depths   = X11Ptr<int[]>(XListDepths(display, screen, &nbDepths));
+                    auto depths   = X11Ptr<int[]>(XListDepths(display.get(), screen, &nbDepths));
                     if (depths && (nbDepths > 0))
                     {
                         // Combine depths and sizes to fill the array of supported modes
@@ -117,9 +117,6 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
             // XRandr extension is not supported: we cannot get the video modes
             err() << "Failed to use the XRandR extension while trying to get the supported video modes" << std::endl;
         }
-
-        // Close the connection with the X server
-        closeDisplay(display);
     }
     else
     {
@@ -137,18 +134,18 @@ VideoMode VideoModeImpl::getDesktopMode()
     VideoMode desktopMode;
 
     // Open a connection with the X server
-    Display* display = openDisplay();
+    const auto display = openDisplay();
     if (display)
     {
         // Retrieve the default screen number
-        const int screen = DefaultScreen(display);
+        const int screen = DefaultScreen(display.get());
 
         // Check if the XRandR extension is present
         int version;
-        if (XQueryExtension(display, "RANDR", &version, &version, &version))
+        if (XQueryExtension(display.get(), "RANDR", &version, &version, &version))
         {
             // Get the current configuration
-            auto config = X11Ptr<XRRScreenConfiguration>(XRRGetScreenInfo(display, RootWindow(display, screen)));
+            auto config = X11Ptr<XRRScreenConfiguration>(XRRGetScreenInfo(display.get(), RootWindow(display.get(), screen)));
             if (config)
             {
                 // Get the current video mode
@@ -162,7 +159,7 @@ VideoMode VideoModeImpl::getDesktopMode()
                 {
                     desktopMode = VideoMode({static_cast<unsigned int>(sizes[currentMode].width),
                                              static_cast<unsigned int>(sizes[currentMode].height)},
-                                            static_cast<unsigned int>(DefaultDepth(display, screen)));
+                                            static_cast<unsigned int>(DefaultDepth(display.get(), screen)));
 
                     Rotation modeRotation;
                     XRRConfigRotations(config.get(), &modeRotation);
@@ -183,9 +180,6 @@ VideoMode VideoModeImpl::getDesktopMode()
             // XRandr extension is not supported: we cannot get the video modes
             err() << "Failed to use the XRandR extension while trying to get the desktop video modes" << std::endl;
         }
-
-        // Close the connection with the X server
-        closeDisplay(display);
     }
     else
     {

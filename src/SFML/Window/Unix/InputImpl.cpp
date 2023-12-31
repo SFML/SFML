@@ -85,7 +85,7 @@ void setVirtualKeyboardVisible(bool /*visible*/)
 bool isMouseButtonPressed(Mouse::Button button)
 {
     // Open a connection with the X server
-    Display* display = openDisplay();
+    const auto display = openDisplay();
 
     // we don't care about these but they are required
     ::Window root;
@@ -96,10 +96,7 @@ bool isMouseButtonPressed(Mouse::Button button)
     int      gy;
 
     unsigned int buttons = 0;
-    XQueryPointer(display, DefaultRootWindow(display), &root, &child, &gx, &gy, &wx, &wy, &buttons);
-
-    // Close the connection with the X server
-    closeDisplay(display);
+    XQueryPointer(display.get(), DefaultRootWindow(display.get()), &root, &child, &gx, &gy, &wx, &wy, &buttons);
 
     // Buttons 4 and 5 are the vertical wheel and 6 and 7 the horizontal wheel.
     // There is no mask for buttons 8 and 9, so checking the state of buttons
@@ -122,7 +119,7 @@ bool isMouseButtonPressed(Mouse::Button button)
 Vector2i getMousePosition()
 {
     // Open a connection with the X server
-    Display* display = openDisplay();
+    const auto display = openDisplay();
 
     // we don't care about these but they are required
     ::Window     root;
@@ -133,10 +130,7 @@ Vector2i getMousePosition()
 
     int gx = 0;
     int gy = 0;
-    XQueryPointer(display, DefaultRootWindow(display), &root, &child, &gx, &gy, &x, &y, &buttons);
-
-    // Close the connection with the X server
-    closeDisplay(display);
+    XQueryPointer(display.get(), DefaultRootWindow(display.get()), &root, &child, &gx, &gy, &x, &y, &buttons);
 
     return {gx, gy};
 }
@@ -149,7 +143,7 @@ Vector2i getMousePosition(const WindowBase& relativeTo)
     if (handle)
     {
         // Open a connection with the X server
-        Display* display = openDisplay();
+        const auto display = openDisplay();
 
         // we don't care about these but they are required
         ::Window     root;
@@ -160,10 +154,7 @@ Vector2i getMousePosition(const WindowBase& relativeTo)
 
         int x = 0;
         int y = 0;
-        XQueryPointer(display, handle, &root, &child, &gx, &gy, &x, &y, &buttons);
-
-        // Close the connection with the X server
-        closeDisplay(display);
+        XQueryPointer(display.get(), handle, &root, &child, &gx, &gy, &x, &y, &buttons);
 
         return {x, y};
     }
@@ -178,13 +169,10 @@ Vector2i getMousePosition(const WindowBase& relativeTo)
 void setMousePosition(const Vector2i& position)
 {
     // Open a connection with the X server
-    Display* display = openDisplay();
+    const auto display = openDisplay();
 
-    XWarpPointer(display, None, DefaultRootWindow(display), 0, 0, 0, 0, position.x, position.y);
-    XFlush(display);
-
-    // Close the connection with the X server
-    closeDisplay(display);
+    XWarpPointer(display.get(), None, DefaultRootWindow(display.get()), 0, 0, 0, 0, position.x, position.y);
+    XFlush(display.get());
 }
 
 
@@ -192,17 +180,14 @@ void setMousePosition(const Vector2i& position)
 void setMousePosition(const Vector2i& position, const WindowBase& relativeTo)
 {
     // Open a connection with the X server
-    Display* display = openDisplay();
+    const auto display = openDisplay();
 
     const WindowHandle handle = relativeTo.getNativeHandle();
     if (handle)
     {
-        XWarpPointer(display, None, handle, 0, 0, 0, 0, position.x, position.y);
-        XFlush(display);
+        XWarpPointer(display.get(), None, handle, 0, 0, 0, 0, position.x, position.y);
+        XFlush(display.get());
     }
-
-    // Close the connection with the X server
-    closeDisplay(display);
 }
 
 

@@ -121,8 +121,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    ::Display* m_display;
-    ::Cursor   m_cursor{None};
+    std::shared_ptr<::Display> m_display;
+    ::Cursor                   m_cursor{None};
 };
 
 } // namespace sf::priv
