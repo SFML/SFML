@@ -36,6 +36,7 @@
 #include <unordered_map>
 
 #include <cassert>
+#include <clocale>
 #include <cstdlib>
 
 
@@ -104,11 +105,11 @@ XIM openXim()
         // the IM and properly receiving text
         // First save the previous ones (this might be able to be written more elegantly?)
         const char*       p;
-        const std::string prevLoc((p = setlocale(LC_ALL, nullptr)) ? p : "");
+        const std::string prevLoc((p = std::setlocale(LC_ALL, nullptr)) ? p : "");
         const std::string prevXLoc((p = XSetLocaleModifiers(nullptr)) ? p : "");
 
         // Set the locales from environment
-        setlocale(LC_ALL, "");
+        std::setlocale(LC_ALL, "");
         XSetLocaleModifiers("");
 
         // Create the input context
@@ -116,7 +117,7 @@ XIM openXim()
 
         // Restore the previous locale
         if (prevLoc.length() != 0)
-            setlocale(LC_ALL, prevLoc.c_str());
+            std::setlocale(LC_ALL, prevLoc.c_str());
 
         if (prevXLoc.length() != 0)
             XSetLocaleModifiers(prevXLoc.c_str());
