@@ -198,14 +198,13 @@ bool VulkanImplX11::createVulkanSurface(const VkInstance&            instance,
 
     // Since the surface is basically attached to the window, the connection
     // to the X display will stay open even after we open and close it here
+    const auto                 display           = openDisplay();
     VkXlibSurfaceCreateInfoKHR surfaceCreateInfo = VkXlibSurfaceCreateInfoKHR();
     surfaceCreateInfo.sType                      = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
-    surfaceCreateInfo.dpy                        = openDisplay();
+    surfaceCreateInfo.dpy                        = display.get();
     surfaceCreateInfo.window                     = windowHandle;
 
     const bool result = (vkCreateXlibSurfaceKHR(instance, &surfaceCreateInfo, allocator, &surface) == VK_SUCCESS);
-
-    closeDisplay(surfaceCreateInfo.dpy);
 
     return result;
 }

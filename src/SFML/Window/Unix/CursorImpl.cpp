@@ -60,8 +60,6 @@ CursorImpl::CursorImpl() : m_display(openDisplay())
 CursorImpl::~CursorImpl()
 {
     release();
-
-    closeDisplay(m_display);
 }
 
 
@@ -94,7 +92,7 @@ bool CursorImpl::loadFromPixelsARGB(const std::uint8_t* pixels, Vector2u size, V
     }
 
     // Create the cursor.
-    m_cursor = XcursorImageLoadCursor(m_display, cursorImage.get());
+    m_cursor = XcursorImageLoadCursor(m_display.get(), cursorImage.get());
 
     // We assume everything went fine...
     return true;
@@ -134,13 +132,13 @@ bool CursorImpl::loadFromPixelsMonochrome(const std::uint8_t* pixels, Vector2u s
         }
     }
 
-    const Pixmap maskPixmap = XCreateBitmapFromData(m_display,
-                                                    XDefaultRootWindow(m_display),
+    const Pixmap maskPixmap = XCreateBitmapFromData(m_display.get(),
+                                                    XDefaultRootWindow(m_display.get()),
                                                     reinterpret_cast<char*>(mask.data()),
                                                     size.x,
                                                     size.y);
-    const Pixmap dataPixmap = XCreateBitmapFromData(m_display,
-                                                    XDefaultRootWindow(m_display),
+    const Pixmap dataPixmap = XCreateBitmapFromData(m_display.get(),
+                                                    XDefaultRootWindow(m_display.get()),
                                                     reinterpret_cast<char*>(data.data()),
                                                     size.x,
                                                     size.y);
@@ -156,11 +154,11 @@ bool CursorImpl::loadFromPixelsMonochrome(const std::uint8_t* pixels, Vector2u s
     bg.green = 0x0000;
 
     // Create the monochrome cursor.
-    m_cursor = XCreatePixmapCursor(m_display, dataPixmap, maskPixmap, &fg, &bg, hotspot.x, hotspot.y);
+    m_cursor = XCreatePixmapCursor(m_display.get(), dataPixmap, maskPixmap, &fg, &bg, hotspot.x, hotspot.y);
 
     // Free the resources
-    XFreePixmap(m_display, dataPixmap);
-    XFreePixmap(m_display, maskPixmap);
+    XFreePixmap(m_display.get(), dataPixmap);
+    XFreePixmap(m_display.get(), maskPixmap);
 
     // We assume everything went fine...
     return true;
@@ -200,7 +198,7 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
     }
     // clang-format on
 
-    m_cursor = XCreateFontCursor(m_display, shape);
+    m_cursor = XCreateFontCursor(m_display.get(), shape);
     return true;
 }
 
@@ -208,7 +206,7 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
 ////////////////////////////////////////////////////////////
 bool CursorImpl::isColorCursorSupported()
 {
-    return XcursorSupportsARGB(m_display);
+    return XcursorSupportsARGB(m_display.get());
 }
 
 
@@ -217,7 +215,7 @@ void CursorImpl::release()
 {
     if (m_cursor != None)
     {
-        XFreeCursor(m_display, m_cursor);
+        XFreeCursor(m_display.get(), m_cursor);
         m_cursor = None;
     }
 }

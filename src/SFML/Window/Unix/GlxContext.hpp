@@ -33,6 +33,8 @@
 #include <X11/Xlib.h>
 #include <glad/glx.h>
 
+#include <memory>
+
 
 namespace sf::priv
 {
@@ -173,11 +175,11 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    ::Display* m_display{};    ///< Connection to the X server
-    ::Window   m_window{};     ///< Window to which the context is attached
-    GLXContext m_context{};    ///< OpenGL context
-    GLXPbuffer m_pbuffer{};    ///< GLX pbuffer ID if one was created
-    bool       m_ownsWindow{}; ///< Do we own the window associated to the context?
+    std::shared_ptr<Display> m_display;      ///< Connection to the X server
+    ::Window                 m_window{};     ///< Window to which the context is attached
+    GLXContext               m_context{};    ///< OpenGL context
+    GLXPbuffer               m_pbuffer{};    ///< GLX pbuffer ID if one was created
+    bool                     m_ownsWindow{}; ///< Do we own the window associated to the context?
 };
 
 } // namespace sf::priv

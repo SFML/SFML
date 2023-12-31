@@ -34,6 +34,7 @@
 #include <X11/Xlib.h>
 
 #include <deque>
+#include <memory>
 
 
 namespace sf::priv
@@ -134,16 +135,16 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    ::Window           m_window{};           ///< X identifier defining our window
-    ::Display*         m_display;            ///< Pointer to the display
-    Atom               m_clipboard;          ///< X Atom identifying the CLIPBOARD selection
-    Atom               m_targets;            ///< X Atom identifying TARGETS
-    Atom               m_text;               ///< X Atom identifying TEXT
-    Atom               m_utf8String;         ///< X Atom identifying UTF8_STRING
-    Atom               m_targetProperty;     ///< X Atom identifying our destination window property
-    String             m_clipboardContents;  ///< Our clipboard contents
-    std::deque<XEvent> m_events;             ///< Queue we use to store pending events for this window
-    bool               m_requestResponded{}; ///< Holds whether our selection request has been responded to or not
+    ::Window                   m_window{};          ///< X identifier defining our window
+    std::shared_ptr<::Display> m_display;           ///< Pointer to the display
+    Atom                       m_clipboard;         ///< X Atom identifying the CLIPBOARD selection
+    Atom                       m_targets;           ///< X Atom identifying TARGETS
+    Atom                       m_text;              ///< X Atom identifying TEXT
+    Atom                       m_utf8String;        ///< X Atom identifying UTF8_STRING
+    Atom                       m_targetProperty;    ///< X Atom identifying our destination window property
+    String                     m_clipboardContents; ///< Our clipboard contents
+    std::deque<XEvent>         m_events;            ///< Queue we use to store pending events for this window
+    bool m_requestResponded{}; ///< Holds whether our selection request has been responded to or not
 };
 
 } // namespace sf::priv

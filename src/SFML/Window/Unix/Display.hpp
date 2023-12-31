@@ -31,6 +31,7 @@
 
 #include <X11/Xlib.h>
 
+#include <memory>
 #include <string>
 
 
@@ -39,42 +40,18 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 /// \brief Get the shared Display
 ///
-/// This function increments the reference count of the display,
-/// it must be matched with a call to closeDisplay.
-///
 /// \return Pointer to the shared display
 ///
 ////////////////////////////////////////////////////////////
-Display* openDisplay();
-
-////////////////////////////////////////////////////////////
-/// \brief Release a reference to the shared display
-///
-/// \param display Display to release
-///
-////////////////////////////////////////////////////////////
-void closeDisplay(Display* display);
+std::shared_ptr<Display> openDisplay();
 
 ////////////////////////////////////////////////////////////
 /// \brief Get the shared XIM context for the Display
 ///
-/// This function increments the reference count of the XIM context,
-/// it must be matched with a call to CloseXIM.
-///
-/// It must be called with a display already opened.
-///
 /// \return XIM handle (a pointer) of the context
 ///
 ////////////////////////////////////////////////////////////
-XIM openXim();
-
-////////////////////////////////////////////////////////////
-/// \brief Release a reference to the shared XIM context
-///
-/// \param xim XIM context to release
-///
-////////////////////////////////////////////////////////////
-void closeXim(XIM xim);
+std::shared_ptr<_XIM> openXim();
 
 ////////////////////////////////////////////////////////////
 /// \brief Get the atom with the specified name
