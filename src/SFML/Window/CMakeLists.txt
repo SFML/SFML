@@ -44,10 +44,10 @@ set(SRC
     ${INCROOT}/Window.hpp
     ${SRCROOT}/WindowBase.cpp
     ${INCROOT}/WindowBase.hpp
+    ${INCROOT}/WindowEnums.hpp
     ${INCROOT}/WindowHandle.hpp
     ${SRCROOT}/WindowImpl.cpp
     ${SRCROOT}/WindowImpl.hpp
-    ${INCROOT}/WindowStyle.hpp
 )
 source_group("" FILES ${SRC})
 

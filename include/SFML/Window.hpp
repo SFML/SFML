@@ -40,8 +40,8 @@
 #include <SFML/Window/Touch.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/Window.hpp>
+#include <SFML/Window/WindowEnums.hpp>
 #include <SFML/Window/WindowHandle.hpp>
-#include <SFML/Window/WindowStyle.hpp>
 
 #include <SFML/System.hpp>
 

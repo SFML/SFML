@@ -28,7 +28,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Cursor.hpp>
-#include <SFML/Window/WindowStyle.hpp> // Prevent conflict with macro None from Xlib
+#include <SFML/Window/WindowEnums.hpp> // Prevent conflict with macro None from Xlib
 
 #include <SFML/System/Vector2.hpp>
 

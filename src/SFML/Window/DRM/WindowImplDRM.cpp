@@ -29,7 +29,7 @@
 #include <SFML/Window/DRM/WindowImplDRM.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/InputImpl.hpp>
-#include <SFML/Window/WindowStyle.hpp>
+#include <SFML/Window/WindowEnums.hpp>
 
 #include <SFML/System/Err.hpp>
 
@@ -70,7 +70,11 @@ WindowImplDRM::WindowImplDRM(WindowHandle /*handle*/)
 
 
 ////////////////////////////////////////////////////////////
-WindowImplDRM::WindowImplDRM(VideoMode mode, const String& /*title*/, unsigned long /*style*/, const ContextSettings& /*settings*/) :
+WindowImplDRM::WindowImplDRM(VideoMode mode,
+                             const String& /*title*/,
+                             std::uint32_t /*style*/,
+                             State /*state*/,
+                             const ContextSettings& /*settings*/) :
 m_size(mode.size)
 {
     InputImpl::setTerminalConfig();

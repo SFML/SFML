@@ -30,8 +30,8 @@
 #include <SFML/Window/Export.hpp>
 
 #include <SFML/Window/Vulkan.hpp>
+#include <SFML/Window/WindowEnums.hpp>
 #include <SFML/Window/WindowHandle.hpp>
-#include <SFML/Window/WindowStyle.hpp>
 
 #include <SFML/System/Vector2.hpp>
 
@@ -74,15 +74,30 @@ public:
     /// This constructor creates the window with the size and pixel
     /// depth defined in \a mode. An optional style can be passed to
     /// customize the look and behavior of the window (borders,
-    /// title bar, resizable, closable, ...). If \a style contains
-    /// Style::Fullscreen, then \a mode must be a valid video mode.
+    /// title bar, resizable, closable, ...). An optional state can
+    /// be provided. If \a state is State::Fullscreen, then \a mode
+    /// must be a valid video mode.
     ///
     /// \param mode  Video mode to use (defines the width, height and depth of the rendering area of the window)
     /// \param title Title of the window
     /// \param style %Window style, a bitwise OR combination of sf::Style enumerators
+    /// \param state %Window state
     ///
     ////////////////////////////////////////////////////////////
-    WindowBase(VideoMode mode, const String& title, std::uint32_t style = Style::Default);
+    WindowBase(VideoMode mode, const String& title, std::uint32_t style = Style::Default, State state = State::Windowed);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct a new window
+    ///
+    /// This constructor creates the window with the size and pixel
+    /// depth defined in \a mode.
+    ///
+    /// \param mode  Video mode to use (defines the width, height and depth of the rendering area of the window)
+    /// \param title Title of the window
+    /// \param state %Window state
+    ///
+    ////////////////////////////////////////////////////////////
+    WindowBase(VideoMode mode, const String& title, State state);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the window from an existing control
@@ -116,15 +131,16 @@ public:
     /// \brief Create (or recreate) the window
     ///
     /// If the window was already created, it closes it first.
-    /// If \a style contains Style::Fullscreen, then \a mode
-    /// must be a valid video mode.
+    /// If \a state is State::Fullscreen, then \a mode must be
+    /// a valid video mode.
     ///
     /// \param mode  Video mode to use (defines the width, height and depth of the rendering area of the window)
     /// \param title Title of the window
     /// \param style %Window style, a bitwise OR combination of sf::Style enumerators
+    /// \param state %Window state
     ///
     ////////////////////////////////////////////////////////////
-    virtual void create(VideoMode mode, const String& title, std::uint32_t style = Style::Default);
+    virtual void create(VideoMode mode, const String& title, std::uint32_t style = Style::Default, State state = State::Windowed);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create (or recreate) the window from an existing control
@@ -471,9 +487,10 @@ private:
     ///
     /// \param mode  Video mode to use (defines the width, height and depth of the rendering area of the window)
     /// \param style %Window style, a bitwise OR combination of sf::Style enumerators
+    /// \param state %Window state
     ///
     ////////////////////////////////////////////////////////////
-    void create(VideoMode mode, std::uint32_t& style);
+    void create(VideoMode mode, std::uint32_t& style, State& state);
 
     ////////////////////////////////////////////////////////////
     /// \brief Processes an event before it is sent to the user

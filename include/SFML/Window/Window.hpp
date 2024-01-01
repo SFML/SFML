@@ -68,23 +68,45 @@ public:
     /// This constructor creates the window with the size and pixel
     /// depth defined in \a mode. An optional style can be passed to
     /// customize the look and behavior of the window (borders,
-    /// title bar, resizable, closable, ...). If \a style contains
-    /// Style::Fullscreen, then \a mode must be a valid video mode.
+    /// title bar, resizable, closable, ...). An optional state can
+    /// be provided. If \a state is State::Fullscreen, then \a mode
+    /// must be a valid video mode.
     ///
-    /// The fourth parameter is an optional structure specifying
+    /// The last parameter is an optional structure specifying
     /// advanced OpenGL context settings such as antialiasing,
     /// depth-buffer bits, etc.
     ///
     /// \param mode     Video mode to use (defines the width, height and depth of the rendering area of the window)
     /// \param title    Title of the window
     /// \param style    %Window style, a bitwise OR combination of sf::Style enumerators
+    /// \param state    %Window state
     /// \param settings Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
     Window(VideoMode              mode,
            const String&          title,
            std::uint32_t          style    = Style::Default,
+           State                  state    = State::Windowed,
            const ContextSettings& settings = ContextSettings());
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct a new window
+    ///
+    /// This constructor creates the window with the size and pixel
+    /// depth defined in \a mode. If \a state is State::Fullscreen,
+    /// then \a mode must be a valid video mode.
+    ///
+    /// The last parameter is an optional structure specifying
+    /// advanced OpenGL context settings such as antialiasing,
+    /// depth-buffer bits, etc.
+    ///
+    /// \param mode     Video mode to use (defines the width, height and depth of the rendering area of the window)
+    /// \param title    Title of the window
+    /// \param state    %Window state
+    /// \param settings Additional settings for the underlying OpenGL context
+    ///
+    ////////////////////////////////////////////////////////////
+    Window(VideoMode mode, const String& title, State state, const ContextSettings& settings = ContextSettings());
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the window from an existing control
@@ -114,34 +136,36 @@ public:
     /// \brief Create (or recreate) the window
     ///
     /// If the window was already created, it closes it first.
-    /// If \a style contains Style::Fullscreen, then \a mode
-    /// must be a valid video mode.
+    /// If \a state is State::Fullscreen, then \a mode must be
+    /// a valid video mode.
     ///
     /// \param mode     Video mode to use (defines the width, height and depth of the rendering area of the window)
     /// \param title    Title of the window
     /// \param style    %Window style, a bitwise OR combination of sf::Style enumerators
+    /// \param state    %Window state
     ///
     ////////////////////////////////////////////////////////////
-    void create(VideoMode mode, const String& title, std::uint32_t style = Style::Default) override;
+    void create(VideoMode mode, const String& title, std::uint32_t style = Style::Default, State state = State::Windowed) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create (or recreate) the window
     ///
     /// If the window was already created, it closes it first.
-    /// If \a style contains Style::Fullscreen, then \a mode
-    /// must be a valid video mode.
+    /// If \a state is State::Fullscreen, then \a mode must be
+    /// a valid video mode.
     ///
-    /// The fourth parameter is an optional structure specifying
+    /// The last parameter is an optional structure specifying
     /// advanced OpenGL context settings such as antialiasing,
     /// depth-buffer bits, etc.
     ///
     /// \param mode     Video mode to use (defines the width, height and depth of the rendering area of the window)
     /// \param title    Title of the window
     /// \param style    %Window style, a bitwise OR combination of sf::Style enumerators
+    /// \param state    %Window state
     /// \param settings Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
-    virtual void create(VideoMode mode, const String& title, std::uint32_t style, const ContextSettings& settings);
+    virtual void create(VideoMode mode, const String& title, std::uint32_t style, State state, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create (or recreate) the window from an existing control

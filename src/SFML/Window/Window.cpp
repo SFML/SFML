@@ -44,9 +44,16 @@ Window::Window() = default;
 
 
 ////////////////////////////////////////////////////////////
-Window::Window(VideoMode mode, const String& title, std::uint32_t style, const ContextSettings& settings)
+Window::Window(VideoMode mode, const String& title, std::uint32_t style, State state, const ContextSettings& settings)
 {
-    Window::create(mode, title, style, settings);
+    Window::create(mode, title, style, state, settings);
+}
+
+
+////////////////////////////////////////////////////////////
+Window::Window(VideoMode mode, const String& title, State state, const ContextSettings& settings)
+{
+    Window::create(mode, title, sf::Style::Default, state, settings);
 }
 
 
@@ -65,20 +72,20 @@ Window::~Window()
 
 
 ////////////////////////////////////////////////////////////
-void Window::create(VideoMode mode, const String& title, std::uint32_t style)
+void Window::create(VideoMode mode, const String& title, std::uint32_t style, State state)
 {
-    Window::create(mode, title, style, ContextSettings());
+    Window::create(mode, title, style, state, ContextSettings());
 }
 
 
 ////////////////////////////////////////////////////////////
-void Window::create(VideoMode mode, const String& title, std::uint32_t style, const ContextSettings& settings)
+void Window::create(VideoMode mode, const String& title, std::uint32_t style, State state, const ContextSettings& settings)
 {
     // Delegate to base class for creation logic
-    WindowBase::create(mode, style);
+    WindowBase::create(mode, style, state);
 
     // Recreate the window implementation
-    m_impl = priv::WindowImpl::create(mode, title, style, settings);
+    m_impl = priv::WindowImpl::create(mode, title, style, state, settings);
 
     // Recreate the context
     m_context = priv::GlContext::create(settings, *m_impl, mode.bitsPerPixel);

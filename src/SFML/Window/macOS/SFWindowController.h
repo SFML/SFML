@@ -27,6 +27,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/VideoMode.hpp>
+#include <SFML/Window/WindowEnums.hpp>
 #import <SFML/Window/macOS/WindowImplDelegateProtocol.h>
 
 ////////////////////////////////////////////////////////////
@@ -80,10 +81,11 @@ class WindowImplCocoa;
 ///
 /// \param mode Video mode
 /// \param style Window's style, as described by sf::Style
+/// \param state Window's state
 ///
 /// \return an initialized controller
 ///
 ////////////////////////////////////////////////////////////
-- (id)initWithMode:(const sf::VideoMode&)mode andStyle:(unsigned long)style;
+- (id)initWithMode:(const sf::VideoMode&)mode andStyle:(std::uint32_t)style andState:(sf::State)state;
 
 @end

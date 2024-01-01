@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/WindowStyle.hpp> // Prevent conflict with macro None from Xlib
+#include <SFML/Window/WindowEnums.hpp> // Prevent conflict with macro None from Xlib
 
 #include <X11/Xlib.h>
 
