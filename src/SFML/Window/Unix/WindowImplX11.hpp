@@ -28,8 +28,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Event.hpp>
+#include <SFML/Window/WindowEnums.hpp> // Prevent conflict with macro None from Xlib
 #include <SFML/Window/WindowImpl.hpp>
-#include <SFML/Window/WindowStyle.hpp> // Prevent conflict with macro None from Xlib
 
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrandr.h>
@@ -59,11 +59,12 @@ public:
     ///
     /// \param mode  Video mode to use
     /// \param title Title of the window
-    /// \param style Window style (resizable, fixed, or fullscreen)
+    /// \param style Window style
+    /// \param state Window state
     /// \param settings Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
-    WindowImplX11(VideoMode mode, const String& title, unsigned long style, const ContextSettings& settings);
+    WindowImplX11(VideoMode mode, const String& title, std::uint32_t style, State state, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor

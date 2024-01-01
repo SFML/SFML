@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Android/WindowImplAndroid.hpp>
 #include <SFML/Window/Event.hpp>
-#include <SFML/Window/WindowStyle.hpp>
+#include <SFML/Window/WindowEnums.hpp>
 
 #include <SFML/System/Err.hpp>
 
@@ -59,14 +59,15 @@ WindowImplAndroid::WindowImplAndroid(WindowHandle /* handle */)
 ////////////////////////////////////////////////////////////
 WindowImplAndroid::WindowImplAndroid(VideoMode mode,
                                      const String& /* title */,
-                                     unsigned long style,
+                                     std::uint32_t /* style */,
+                                     State state,
                                      const ContextSettings& /* settings */) :
 m_size(mode.size)
 {
     ActivityStates&       states = getActivity();
     const std::lock_guard lock(states.mutex);
 
-    if (style & Style::Fullscreen)
+    if (state == State::Fullscreen)
         states.fullscreen = true;
 
     WindowImplAndroid::singleInstance = this;

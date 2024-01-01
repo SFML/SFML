@@ -29,6 +29,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Event.hpp>
+#include <SFML/Window/WindowEnums.hpp>
 #include <SFML/Window/WindowImpl.hpp>
 
 #pragma GCC diagnostic push
@@ -80,11 +81,12 @@ public:
     ///
     /// \param mode  Video mode to use
     /// \param title Title of the window
-    /// \param style Window style (resizeable, fixed, or fullscreen)
+    /// \param style Window style
+    /// \param state Window state
     /// \param settings Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
-    WindowImplCocoa(VideoMode mode, const String& title, unsigned long style, const ContextSettings& settings);
+    WindowImplCocoa(VideoMode mode, const String& title, std::uint32_t style, State state, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor

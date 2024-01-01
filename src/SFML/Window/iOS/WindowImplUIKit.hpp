@@ -59,11 +59,12 @@ public:
     ///
     /// \param mode     Video mode to use
     /// \param title    Title of the window
-    /// \param style    Window style (resizable, fixed, or fullscreen)
+    /// \param style    Window style
+    /// \param state    Window state
     /// \param settings Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
-    WindowImplUIKit(VideoMode mode, const String& title, unsigned long style, const ContextSettings& settings);
+    WindowImplUIKit(VideoMode mode, const String& title, std::uint32_t style, State state, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the OS-specific handle of the window

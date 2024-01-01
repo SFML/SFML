@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/WindowStyle.hpp>
+#include <SFML/Window/WindowEnums.hpp>
 #include <SFML/Window/iOS/SFAppDelegate.hpp>
 #include <SFML/Window/iOS/SFView.hpp>
 #include <SFML/Window/iOS/SFViewController.hpp>
@@ -47,12 +47,16 @@ WindowImplUIKit::WindowImplUIKit(WindowHandle /* handle */)
 
 
 ////////////////////////////////////////////////////////////
-WindowImplUIKit::WindowImplUIKit(VideoMode mode, const String& /* title */, unsigned long style, const ContextSettings& /* settings */)
+WindowImplUIKit::WindowImplUIKit(VideoMode mode,
+                                 const String& /* title */,
+                                 std::uint32_t style,
+                                 State         state,
+                                 const ContextSettings& /* settings */)
 {
     m_backingScale = static_cast<float>([SFAppDelegate getInstance].backingScaleFactor);
 
     // Apply the fullscreen flag
-    [UIApplication sharedApplication].statusBarHidden = !(style & Style::Titlebar) || (style & Style::Fullscreen);
+    [UIApplication sharedApplication].statusBarHidden = !(style & Style::Titlebar) || (state == State::Fullscreen);
 
     // Set the orientation according to the requested size
     if (mode.size.x > mode.size.y)

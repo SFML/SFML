@@ -37,6 +37,7 @@
 #include <SFML/Window/SensorImpl.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/Vulkan.hpp>
+#include <SFML/Window/WindowEnums.hpp>
 #include <SFML/Window/WindowHandle.hpp>
 
 #include <SFML/System/EnumArray.hpp>
@@ -66,6 +67,7 @@ public:
     /// \param mode  Video mode to use
     /// \param title Title of the window
     /// \param style Window style
+    /// \param state Window state
     /// \param settings Additional settings for the underlying OpenGL context
     ///
     /// \return Pointer to the created window
@@ -74,6 +76,7 @@ public:
     static std::unique_ptr<WindowImpl> create(VideoMode              mode,
                                               const String&          title,
                                               std::uint32_t          style,
+                                              State                  state,
                                               const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
