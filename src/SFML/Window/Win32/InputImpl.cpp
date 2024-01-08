@@ -512,6 +512,38 @@ UINT sfScanToVirtualKey(sf::Keyboard::Scancode code)
     // clang-format on
 }
 
+std::optional<sf::String> sfScanToConsumerKeyName(sf::Keyboard::Scancode code)
+{
+    // Convert an SFML scancode to a Windows consumer keyboard key name
+    // Reference: https://learn.microsoft.com/en-us/windows/win32/inputdev/about-keyboard-input#keystroke-messages
+    // clang-format off
+    switch (code)
+    {
+        case sf::Keyboard::Scan::MediaNextTrack:     return "Next Track";
+        case sf::Keyboard::Scan::MediaPreviousTrack: return "Previous Track";
+        case sf::Keyboard::Scan::MediaStop:          return "Stop";
+        case sf::Keyboard::Scan::MediaPlayPause:     return "Play/Pause";
+        case sf::Keyboard::Scan::VolumeMute:         return "Mute";
+        case sf::Keyboard::Scan::VolumeUp:           return "Volume Increment";
+        case sf::Keyboard::Scan::VolumeDown:         return "Volume Decrement";
+        case sf::Keyboard::Scan::LaunchMediaSelect:  return "Consumer Control Configuration";
+        case sf::Keyboard::Scan::LaunchMail:         return "Email Reader";
+        case sf::Keyboard::Scan::LaunchApplication2: return "Calculator";
+        case sf::Keyboard::Scan::LaunchApplication1: return "Local Machine Browser";
+        case sf::Keyboard::Scan::Search:             return "Search";
+        case sf::Keyboard::Scan::HomePage:           return "Home";
+        case sf::Keyboard::Scan::Back:               return "Back";
+        case sf::Keyboard::Scan::Forward:            return "Forward";
+        case sf::Keyboard::Scan::Stop:               return "Stop";
+        case sf::Keyboard::Scan::Refresh:            return "Refresh";
+        case sf::Keyboard::Scan::Favorites:          return "Bookmarks";
+
+        // Not a consumer key
+        default: return std::nullopt;
+    }
+    // clang-format on
+}
+
 /// Ensure the mappings are generated from/to Key and Scancode.
 void ensureMappings()
 {
@@ -595,10 +627,22 @@ Keyboard::Scancode delocalize(Keyboard::Key key)
 ////////////////////////////////////////////////////////////
 String getDescription(Keyboard::Scancode code)
 {
-    const WORD winCode = sfScanToWinScanExtended(code);
-    const int  bufSize = 1024;
-    WCHAR      name[bufSize];
-    const int  result = GetKeyNameText(winCode << 16, name, bufSize);
+    // Try to translate the scan code to a consumer key
+    if (const auto consumerKeyName = sfScanToConsumerKeyName(code))
+        return *consumerKeyName;
+
+    WORD      winCode = sfScanToWinScanExtended(code);
+    const int bufSize = 1024;
+    WCHAR     name[bufSize];
+
+    // Remap F13-F23 to values supported by GetKeyNameText
+    if ((winCode >= 0x64) && (winCode <= 0x6E))
+        winCode += 0x18;
+    // Remap F24 to value supported by GetKeyNameText
+    if (winCode == 0x76)
+        winCode = 0x87;
+
+    const int result = GetKeyNameText(winCode << 16, name, bufSize);
     if (result > 0)
     {
         return name;
