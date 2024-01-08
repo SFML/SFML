@@ -97,14 +97,6 @@ public:
     explicit RenderWindow(WindowHandle handle, const ContextSettings& settings = ContextSettings());
 
     ////////////////////////////////////////////////////////////
-    /// \brief Destructor
-    ///
-    /// Closes the window and frees all the resources attached to it.
-    ///
-    ////////////////////////////////////////////////////////////
-    ~RenderWindow() override;
-
-    ////////////////////////////////////////////////////////////
     /// \brief Get the size of the rendering region of the window
     ///
     /// The size doesn't include the titlebar and borders

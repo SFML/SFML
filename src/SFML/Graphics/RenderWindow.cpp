@@ -53,10 +53,6 @@ RenderWindow::RenderWindow(WindowHandle handle, const ContextSettings& settings)
 
 
 ////////////////////////////////////////////////////////////
-RenderWindow::~RenderWindow() = default;
-
-
-////////////////////////////////////////////////////////////
 Vector2u RenderWindow::getSize() const
 {
     return Window::getSize();
