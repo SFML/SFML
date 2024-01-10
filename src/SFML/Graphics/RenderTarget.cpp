@@ -480,38 +480,36 @@ bool RenderTarget::isSrgb() const
 bool RenderTarget::setActive(bool active)
 {
     // Mark this RenderTarget as active or no longer active in the tracking map
+    const std::lock_guard lock(RenderTargetImpl::getMutex());
+
+    const std::uint64_t contextId = Context::getActiveContextId();
+
+    using RenderTargetImpl::getContextRenderTargetMap;
+    auto&      contextRenderTargetMap = getContextRenderTargetMap();
+    const auto it                     = contextRenderTargetMap.find(contextId);
+
+    if (active)
     {
-        const std::lock_guard lock(RenderTargetImpl::getMutex());
-
-        const std::uint64_t contextId = Context::getActiveContextId();
-
-        using RenderTargetImpl::getContextRenderTargetMap;
-        auto&      contextRenderTargetMap = getContextRenderTargetMap();
-        const auto it                     = contextRenderTargetMap.find(contextId);
-
-        if (active)
+        if (it == contextRenderTargetMap.end())
         {
-            if (it == contextRenderTargetMap.end())
-            {
-                contextRenderTargetMap[contextId] = m_id;
+            contextRenderTargetMap[contextId] = m_id;
 
-                m_cache.glStatesSet = false;
-                m_cache.enable      = false;
-            }
-            else if (it->second != m_id)
-            {
-                it->second = m_id;
-
-                m_cache.enable = false;
-            }
+            m_cache.glStatesSet = false;
+            m_cache.enable      = false;
         }
-        else
+        else if (it->second != m_id)
         {
-            if (it != contextRenderTargetMap.end())
-                contextRenderTargetMap.erase(it);
+            it->second = m_id;
 
             m_cache.enable = false;
         }
+    }
+    else
+    {
+        if (it != contextRenderTargetMap.end())
+            contextRenderTargetMap.erase(it);
+
+        m_cache.enable = false;
     }
 
     return true;
