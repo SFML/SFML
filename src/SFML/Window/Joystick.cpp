@@ -79,7 +79,7 @@ Joystick::Identification Joystick::getIdentification(unsigned int joystick)
 ////////////////////////////////////////////////////////////
 void Joystick::update()
 {
-    return priv::JoystickManager::getInstance().update();
+    priv::JoystickManager::getInstance().update();
 }
 
 } // namespace sf

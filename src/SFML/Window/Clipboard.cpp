@@ -43,7 +43,7 @@ String Clipboard::getString()
 ////////////////////////////////////////////////////////////
 void Clipboard::setString(const String& text)
 {
-    return priv::ClipboardImpl::setString(text);
+    priv::ClipboardImpl::setString(text);
 }
 
 } // namespace sf

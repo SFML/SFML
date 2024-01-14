@@ -134,7 +134,7 @@
 ////////////////////////////////////////////////////////
 - (void)setCursor:(NSCursor*)cursor
 {
-    return [m_oglView setCursor:cursor];
+    [m_oglView setCursor:cursor];
 }
 
 
