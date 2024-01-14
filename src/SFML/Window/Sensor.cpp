@@ -41,7 +41,7 @@ bool Sensor::isAvailable(Type sensor)
 ////////////////////////////////////////////////////////////
 void Sensor::setEnabled(Type sensor, bool enabled)
 {
-    return priv::SensorManager::getInstance().setEnabled(sensor, enabled);
+    priv::SensorManager::getInstance().setEnabled(sensor, enabled);
 }
 
 ////////////////////////////////////////////////////////////
