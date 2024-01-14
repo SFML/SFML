@@ -85,7 +85,7 @@ private:
         {
             // Print the contents of the write buffer into the standard error output
             const auto size = static_cast<std::size_t>(pptr() - pbase());
-            fwrite(pbase(), 1, size, stderr);
+            std::fwrite(pbase(), 1, size, stderr);
 
             // Reset the pointer position to the beginning of the write buffer
             setp(pbase(), epptr());
