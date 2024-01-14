@@ -48,8 +48,8 @@
 namespace
 {
 
-const KeyCode nullKeyCode = 0;
-const int     maxKeyCode  = 256;
+constexpr KeyCode nullKeyCode = 0;
+constexpr int     maxKeyCode  = 256;
 sf::priv::EnumArray<sf::Keyboard::Scancode, KeyCode, sf::Keyboard::ScancodeCount> scancodeToKeycode; ///< Mapping of SFML scancode to X11 KeyCode
 std::array<sf::Keyboard::Scancode, maxKeyCode> keycodeToScancode; ///< Mapping of X11 KeyCode to SFML scancode
 

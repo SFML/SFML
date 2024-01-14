@@ -395,7 +395,7 @@ Packet& Packet::operator<<(std::uint8_t data)
 ////////////////////////////////////////////////////////////
 Packet& Packet::operator<<(std::int16_t data)
 {
-    auto toWrite = static_cast<std::int16_t>(htons(static_cast<std::uint16_t>(data)));
+    const auto toWrite = static_cast<std::int16_t>(htons(static_cast<std::uint16_t>(data)));
     append(&toWrite, sizeof(toWrite));
     return *this;
 }
@@ -404,7 +404,7 @@ Packet& Packet::operator<<(std::int16_t data)
 ////////////////////////////////////////////////////////////
 Packet& Packet::operator<<(std::uint16_t data)
 {
-    std::uint16_t toWrite = htons(data);
+    const std::uint16_t toWrite = htons(data);
     append(&toWrite, sizeof(toWrite));
     return *this;
 }
@@ -413,7 +413,7 @@ Packet& Packet::operator<<(std::uint16_t data)
 ////////////////////////////////////////////////////////////
 Packet& Packet::operator<<(std::int32_t data)
 {
-    auto toWrite = static_cast<std::int32_t>(htonl(static_cast<std::uint32_t>(data)));
+    const auto toWrite = static_cast<std::int32_t>(htonl(static_cast<std::uint32_t>(data)));
     append(&toWrite, sizeof(toWrite));
     return *this;
 }
@@ -422,7 +422,7 @@ Packet& Packet::operator<<(std::int32_t data)
 ////////////////////////////////////////////////////////////
 Packet& Packet::operator<<(std::uint32_t data)
 {
-    std::uint32_t toWrite = htonl(data);
+    const std::uint32_t toWrite = htonl(data);
     append(&toWrite, sizeof(toWrite));
     return *this;
 }

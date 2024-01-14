@@ -47,9 +47,9 @@ namespace
 {
 // Low-level send/receive flags (OS-dependent)
 #ifdef SFML_SYSTEM_LINUX
-const int flags = MSG_NOSIGNAL;
+constexpr int flags = MSG_NOSIGNAL;
 #else
-const int flags = 0;
+constexpr int flags = 0;
 #endif
 } // namespace
 

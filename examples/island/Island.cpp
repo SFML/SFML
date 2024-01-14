@@ -24,14 +24,15 @@
 namespace
 {
 // Width and height of the application window
-const sf::Vector2u windowSize(800, 600);
+constexpr sf::Vector2u windowSize(800, 600);
 
 // Resolution of the generated terrain
-const sf::Vector2u resolution(800, 600);
+constexpr sf::Vector2u resolution(800, 600);
 
 // Thread pool parameters
-const unsigned int threadCount = 4;
-const unsigned int blockCount  = 32;
+constexpr unsigned int threadCount  = 4;
+constexpr unsigned int blockCount   = 32;
+constexpr unsigned int rowBlockSize = (resolution.y / blockCount) + 1;
 
 struct WorkItem
 {
@@ -53,7 +54,7 @@ struct Setting
 };
 
 // Terrain noise parameters
-const int perlinOctaves = 3;
+constexpr int perlinOctaves = 3;
 
 float perlinFrequency     = 7.0f;
 float perlinFrequencyBase = 4.0f;
@@ -242,8 +243,8 @@ sf::Vector2f computeNormal(float left, float right, float bottom, float top)
 ////////////////////////////////////////////////////////////
 sf::Vertex computeVertex(sf::Vector2u position)
 {
-    static const auto scalingFactors = sf::Vector2f(windowSize).componentWiseDiv(sf::Vector2f(resolution));
-    sf::Vertex        vertex;
+    static constexpr auto scalingFactors = sf::Vector2f(windowSize).componentWiseDiv(sf::Vector2f(resolution));
+    sf::Vertex            vertex;
     vertex.position  = sf::Vector2f(position).componentWiseMul(scalingFactors);
     vertex.color     = getTerrainColor(getElevation(position), getMoisture(position));
     vertex.texCoords = computeNormal(getElevation(position - sf::Vector2u(1, 0)),
@@ -262,8 +263,7 @@ sf::Vertex computeVertex(sf::Vector2u position)
 ////////////////////////////////////////////////////////////
 void processWorkItem(std::vector<sf::Vertex>& vertices, const WorkItem& workItem)
 {
-    const unsigned int rowBlockSize = (resolution.y / blockCount) + 1;
-    const unsigned int rowStart     = rowBlockSize * workItem.index;
+    const unsigned int rowStart = rowBlockSize * workItem.index;
 
     if (rowStart >= resolution.y)
         return;
@@ -337,8 +337,6 @@ void processWorkItem(std::vector<sf::Vertex>& vertices, const WorkItem& workItem
 ////////////////////////////////////////////////////////////
 void threadFunction()
 {
-    const unsigned int rowBlockSize = (resolution.y / blockCount) + 1;
-
     std::vector<sf::Vertex> vertices(resolution.x * rowBlockSize * 6);
 
     WorkItem workItem = {nullptr, 0};
