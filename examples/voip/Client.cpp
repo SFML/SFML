@@ -14,8 +14,8 @@
 #include <cstdint>
 
 
-const std::uint8_t clientAudioData   = 1;
-const std::uint8_t clientEndOfStream = 2;
+constexpr std::uint8_t clientAudioData   = 1;
+constexpr std::uint8_t clientEndOfStream = 2;
 
 
 ////////////////////////////////////////////////////////////
