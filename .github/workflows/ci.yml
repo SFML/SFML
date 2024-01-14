@@ -100,8 +100,8 @@ jobs:
     - name: Install Android Components
       if: matrix.platform.name == 'Android'
       run: |
-        echo "y" | ${ANDROID_HOME}/tools/bin/sdkmanager --install "build-tools;33.0.2"
-        echo "y" | ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;26.1.10909125"
+        echo "y" | ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --install "build-tools;33.0.2"
+        echo "y" | ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --install "ndk;26.1.10909125"
 
     - name: Install macOS Tools
       if: runner.os == 'macOS'
