@@ -4,6 +4,7 @@ Checks: >
   cppcoreguidelines-*,
   misc-*,
   modernize-*,
+  objc-*,
   performance-*,
   portability-*,
   readability-*,
