@@ -41,9 +41,8 @@
 # Additionally, keep in mind that SFML frameworks are only available as release libraries unlike dylibs which
 # are available for both release and debug modes.
 #
-# If SFML is not installed in a standard path, you can use the SFML_ROOT CMake variable
-# to tell CMake where SFML's config file is located (PREFIX/lib/cmake/SFML for a library-based installation,
-# and PREFIX/SFML.framework/Resources/CMake on macOS for a framework-based installation).
+# If SFML is not installed in a standard path, you can use the SFML_ROOT CMake variable to tell CMake in what directory
+# SFML was installed.
 #
 # Output
 # ------
