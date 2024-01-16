@@ -41,7 +41,7 @@
 # Additionally, keep in mind that SFML frameworks are only available as release libraries unlike dylibs which
 # are available for both release and debug modes.
 #
-# If SFML is not installed in a standard path, you can use the SFML_DIR CMake variable
+# If SFML is not installed in a standard path, you can use the SFML_ROOT CMake variable
 # to tell CMake where SFML's config file is located (PREFIX/lib/cmake/SFML for a library-based installation,
 # and PREFIX/SFML.framework/Resources/CMake on macOS for a framework-based installation).
 #
@@ -109,7 +109,7 @@ list(REMOVE_DUPLICATES SFML_FIND_COMPONENTS)
 if(SFML_STATIC_LIBRARIES)
 	set(SFML_IS_FRAMEWORK_INSTALL "@SFML_BUILD_FRAMEWORKS@")
     if(SFML_IS_FRAMEWORK_INSTALL)
-        message(WARNING "Static frameworks are not supported by SFML. Clear SFML_DIR cache entry, \
+        message(WARNING "Static frameworks are not supported by SFML. Clear SFML_ROOT cache entry, \
 and either change SFML_STATIC_LIBRARIES or CMAKE_FIND_FRAMEWORK before calling find_package(SFML)")
     endif()
     set(config_name "Static")
@@ -134,7 +134,7 @@ if(EXISTS "${targets_config_file}")
             if(TARGET SFML::${component})
                 set(SFML_${UPPER_COMPONENT}_FOUND TRUE)
             elseif(SFML_FIND_REQUIRED_${component})
-                set(FIND_SFML_ERROR "Found SFML but requested component '${component}' is missing in the config defined in ${SFML_DIR}.")
+                set(FIND_SFML_ERROR "Found SFML but requested component '${component}' is missing in the config defined in ${SFML_ROOT}.")
                 set(SFML_FOUND FALSE)
             endif()
         endforeach()
