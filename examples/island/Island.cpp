@@ -413,21 +413,23 @@ sf::Color getSnowcapTerrainColor(float elevation, float moisture)
 ////////////////////////////////////////////////////////////
 sf::Color getTerrainColor(float elevation, float moisture)
 {
-    sf::Color color = elevation < 0.11f ? sf::Color(0, 0, static_cast<std::uint8_t>(elevation / 0.11f * 74.f + 181.0f))
-                      : elevation < 0.14f
-                          ? sf::Color(static_cast<std::uint8_t>(std::pow((elevation - 0.11f) / 0.03f, 0.3f) * 48.f),
-                                      static_cast<std::uint8_t>(std::pow((elevation - 0.11f) / 0.03f, 0.3f) * 48.f),
-                                      255)
-                      : elevation < 0.16f
-                          ? sf::Color(static_cast<std::uint8_t>((elevation - 0.14f) * 128.f / 0.02f + 48.f),
-                                      static_cast<std::uint8_t>((elevation - 0.14f) * 128.f / 0.02f + 48.f),
-                                      static_cast<std::uint8_t>(127.0f + (0.16f - elevation) * 128.f / 0.02f))
-                      : elevation < 0.17f         ? sf::Color(240, 230, 140)
-                      : elevation < 0.4f          ? getLowlandsTerrainColor(moisture)
-                      : elevation < snowcapHeight ? getHighlandsTerrainColor(elevation, moisture)
-                                                  : getSnowcapTerrainColor(elevation, moisture);
-
-    return color;
+    if (elevation < 0.11f)
+        return {0, 0, static_cast<std::uint8_t>(elevation / 0.11f * 74.f + 181.0f)};
+    if (elevation < 0.14f)
+        return {static_cast<std::uint8_t>(std::pow((elevation - 0.11f) / 0.03f, 0.3f) * 48.f),
+                static_cast<std::uint8_t>(std::pow((elevation - 0.11f) / 0.03f, 0.3f) * 48.f),
+                255};
+    if (elevation < 0.16f)
+        return {static_cast<std::uint8_t>((elevation - 0.14f) * 128.f / 0.02f + 48.f),
+                static_cast<std::uint8_t>((elevation - 0.14f) * 128.f / 0.02f + 48.f),
+                static_cast<std::uint8_t>(127.0f + (0.16f - elevation) * 128.f / 0.02f)};
+    if (elevation < 0.17f)
+        return {240, 230, 140};
+    if (elevation < 0.4f)
+        return getLowlandsTerrainColor(moisture);
+    if (elevation < snowcapHeight)
+        return getHighlandsTerrainColor(elevation, moisture);
+    return getSnowcapTerrainColor(elevation, moisture);
 }
 
 
