@@ -52,9 +52,9 @@ String ClipboardImpl::getString()
 ////////////////////////////////////////////////////////////
 void ClipboardImpl::setString(const String& text)
 {
-    const AutoreleasePool           pool;
-    std::basic_string<std::uint8_t> utf8 = text.toUtf8();
-    NSString* const                 data = [[NSString alloc]
+    const AutoreleasePool pool;
+    const auto            utf8 = text.toUtf8();
+    NSString* const       data = [[NSString alloc]
         initWithBytes:utf8.data()
                length:utf8.length()
              encoding:NSUTF8StringEncoding];

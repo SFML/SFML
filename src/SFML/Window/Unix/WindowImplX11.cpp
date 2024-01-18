@@ -906,7 +906,7 @@ void WindowImplX11::setTitle(const String& title)
     // There is however an option to tell the window manager your Unicode title via hints.
 
     // Convert to UTF-8 encoding.
-    const std::basic_string<std::uint8_t> utf8Title = title.toUtf8();
+    const auto utf8Title = title.toUtf8();
 
     const Atom useUtf8 = getAtom("UTF8_STRING", false);
 
