@@ -42,9 +42,8 @@ class Texture;
 /// \brief Define the states used for drawing to a RenderTarget
 ///
 ////////////////////////////////////////////////////////////
-class SFML_GRAPHICS_API RenderStates
+struct SFML_GRAPHICS_API RenderStates
 {
-public:
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
