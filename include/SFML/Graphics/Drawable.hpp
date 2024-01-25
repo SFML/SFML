@@ -33,7 +33,7 @@
 namespace sf
 {
 class RenderTarget;
-class RenderStates;
+struct RenderStates;
 
 ////////////////////////////////////////////////////////////
 /// \brief Abstract base class for objects that can be drawn
