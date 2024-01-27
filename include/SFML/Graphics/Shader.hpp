@@ -59,7 +59,7 @@ public:
     /// \brief Types of shaders
     ///
     ////////////////////////////////////////////////////////////
-    enum Type
+    enum class Type
     {
         Vertex,   //!< %Vertex shader
         Geometry, //!< Geometry shader

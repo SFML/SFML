@@ -33,7 +33,7 @@ public:
         m_sprite.emplace(m_texture);
 
         // Load the shader
-        if (!m_shader.loadFromFile("resources/pixelate.frag", sf::Shader::Fragment))
+        if (!m_shader.loadFromFile("resources/pixelate.frag", sf::Shader::Type::Fragment))
             return false;
         m_shader.setUniform("texture", sf::Shader::CurrentTexture);
 
@@ -209,7 +209,7 @@ public:
         }
 
         // Load the shader
-        if (!m_shader.loadFromFile("resources/edge.frag", sf::Shader::Fragment))
+        if (!m_shader.loadFromFile("resources/edge.frag", sf::Shader::Type::Fragment))
             return false;
         m_shader.setUniform("texture", sf::Shader::CurrentTexture);
 
