@@ -33,17 +33,22 @@ namespace sf
 ////////////////////////////////////////////////////////////
 // Commonly used blending modes
 ////////////////////////////////////////////////////////////
-const BlendMode BlendAlpha(BlendMode::SrcAlpha,
-                           BlendMode::OneMinusSrcAlpha,
-                           BlendMode::Add,
-                           BlendMode::One,
-                           BlendMode::OneMinusSrcAlpha,
-                           BlendMode::Add);
-const BlendMode BlendAdd(BlendMode::SrcAlpha, BlendMode::One, BlendMode::Add, BlendMode::One, BlendMode::One, BlendMode::Add);
-const BlendMode BlendMultiply(BlendMode::DstColor, BlendMode::Zero, BlendMode::Add);
-const BlendMode BlendMin(BlendMode::One, BlendMode::One, BlendMode::Min);
-const BlendMode BlendMax(BlendMode::One, BlendMode::One, BlendMode::Max);
-const BlendMode BlendNone(BlendMode::One, BlendMode::Zero, BlendMode::Add);
+const BlendMode BlendAlpha(BlendMode::Factor::SrcAlpha,
+                           BlendMode::Factor::OneMinusSrcAlpha,
+                           BlendMode::Equation::Add,
+                           BlendMode::Factor::One,
+                           BlendMode::Factor::OneMinusSrcAlpha,
+                           BlendMode::Equation::Add);
+const BlendMode BlendAdd(BlendMode::Factor::SrcAlpha,
+                         BlendMode::Factor::One,
+                         BlendMode::Equation::Add,
+                         BlendMode::Factor::One,
+                         BlendMode::Factor::One,
+                         BlendMode::Equation::Add);
+const BlendMode BlendMultiply(BlendMode::Factor::DstColor, BlendMode::Factor::Zero, BlendMode::Equation::Add);
+const BlendMode BlendMin(BlendMode::Factor::One, BlendMode::Factor::One, BlendMode::Equation::Min);
+const BlendMode BlendMax(BlendMode::Factor::One, BlendMode::Factor::One, BlendMode::Equation::Max);
+const BlendMode BlendNone(BlendMode::Factor::One, BlendMode::Factor::Zero, BlendMode::Equation::Add);
 
 
 ////////////////////////////////////////////////////////////

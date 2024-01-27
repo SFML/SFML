@@ -36,12 +36,12 @@ namespace sf
 // We cannot use the default constructor here, because it accesses BlendAlpha, which is also global (and dynamically
 // initialized). Initialization order of global objects in different translation units is not defined.
 const RenderStates RenderStates::Default(BlendMode(
-    BlendMode::SrcAlpha,
-    BlendMode::OneMinusSrcAlpha,
-    BlendMode::Add,
-    BlendMode::One,
-    BlendMode::OneMinusSrcAlpha,
-    BlendMode::Add));
+    BlendMode::Factor::SrcAlpha,
+    BlendMode::Factor::OneMinusSrcAlpha,
+    BlendMode::Equation::Add,
+    BlendMode::Factor::One,
+    BlendMode::Factor::OneMinusSrcAlpha,
+    BlendMode::Equation::Add));
 
 
 ////////////////////////////////////////////////////////////

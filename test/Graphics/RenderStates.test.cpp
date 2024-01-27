@@ -29,12 +29,12 @@ TEST_CASE("[Graphics] sf::RenderStates")
 
         SECTION("BlendMode constructor")
         {
-            const sf::BlendMode    blendMode(sf::BlendMode::Zero,
-                                          sf::BlendMode::SrcColor,
-                                          sf::BlendMode::ReverseSubtract,
-                                          sf::BlendMode::OneMinusDstAlpha,
-                                          sf::BlendMode::DstAlpha,
-                                          sf::BlendMode::Max);
+            const sf::BlendMode    blendMode(sf::BlendMode::Factor::Zero,
+                                          sf::BlendMode::Factor::SrcColor,
+                                          sf::BlendMode::Equation::ReverseSubtract,
+                                          sf::BlendMode::Factor::OneMinusDstAlpha,
+                                          sf::BlendMode::Factor::DstAlpha,
+                                          sf::BlendMode::Equation::Max);
             const sf::RenderStates renderStates(blendMode);
             CHECK(renderStates.blendMode == blendMode);
             CHECK(renderStates.transform == sf::Transform());
@@ -78,12 +78,12 @@ TEST_CASE("[Graphics] sf::RenderStates")
 
         SECTION("Verbose constructor")
         {
-            const sf::BlendMode    blendMode(sf::BlendMode::One,
-                                          sf::BlendMode::SrcColor,
-                                          sf::BlendMode::ReverseSubtract,
-                                          sf::BlendMode::OneMinusDstAlpha,
-                                          sf::BlendMode::DstAlpha,
-                                          sf::BlendMode::Max);
+            const sf::BlendMode    blendMode(sf::BlendMode::Factor::One,
+                                          sf::BlendMode::Factor::SrcColor,
+                                          sf::BlendMode::Equation::ReverseSubtract,
+                                          sf::BlendMode::Factor::OneMinusDstAlpha,
+                                          sf::BlendMode::Factor::DstAlpha,
+                                          sf::BlendMode::Equation::Max);
             const sf::Transform    transform(10, 2, 3, 4, 50, 40, 30, 20, 10);
             const sf::RenderStates renderStates(blendMode, transform, sf::CoordinateType::Normalized, nullptr, nullptr);
             CHECK(renderStates.blendMode == blendMode);
