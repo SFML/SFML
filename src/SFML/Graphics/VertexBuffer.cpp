@@ -47,9 +47,9 @@ GLenum usageToGlEnum(sf::VertexBuffer::Usage usage)
 {
     switch (usage)
     {
-        case sf::VertexBuffer::Static:
+        case sf::VertexBuffer::Usage::Static:
             return GLEXT_GL_STATIC_DRAW;
-        case sf::VertexBuffer::Dynamic:
+        case sf::VertexBuffer::Usage::Dynamic:
             return GLEXT_GL_DYNAMIC_DRAW;
         default:
             return GLEXT_GL_STREAM_DRAW;
