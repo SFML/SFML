@@ -281,9 +281,9 @@ bool Shader::loadFromFile(const std::filesystem::path& filename, Type type)
     }
 
     // Compile the shader program
-    if (type == Vertex)
+    if (type == Type::Vertex)
         return compile(shader.data(), nullptr, nullptr);
-    else if (type == Geometry)
+    else if (type == Type::Geometry)
         return compile(nullptr, shader.data(), nullptr);
     else
         return compile(nullptr, nullptr, shader.data());
@@ -353,9 +353,9 @@ bool Shader::loadFromFile(const std::filesystem::path& vertexShaderFilename,
 bool Shader::loadFromMemory(const std::string& shader, Type type)
 {
     // Compile the shader program
-    if (type == Vertex)
+    if (type == Type::Vertex)
         return compile(shader.c_str(), nullptr, nullptr);
-    else if (type == Geometry)
+    else if (type == Type::Geometry)
         return compile(nullptr, shader.c_str(), nullptr);
     else
         return compile(nullptr, nullptr, shader.c_str());
@@ -390,9 +390,9 @@ bool Shader::loadFromStream(InputStream& stream, Type type)
     }
 
     // Compile the shader program
-    if (type == Vertex)
+    if (type == Type::Vertex)
         return compile(shader.data(), nullptr, nullptr);
-    else if (type == Geometry)
+    else if (type == Type::Geometry)
         return compile(nullptr, shader.data(), nullptr);
     else
         return compile(nullptr, nullptr, shader.data());
