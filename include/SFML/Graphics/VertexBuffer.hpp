@@ -245,7 +245,7 @@ public:
     /// This function defines how the vertices must be interpreted
     /// when it's time to draw them.
     ///
-    /// The default primitive type is sf::Points.
+    /// The default primitive type is sf::PrimitiveType::Points.
     ///
     /// \param type Type of primitive
     ///
@@ -401,7 +401,7 @@ SFML_GRAPHICS_API void swap(VertexBuffer& left, VertexBuffer& right) noexcept;
 /// \code
 /// sf::Vertex vertices[15];
 /// ...
-/// sf::VertexBuffer triangles(sf::Triangles);
+/// sf::VertexBuffer triangles(sf::PrimitiveType::Triangles);
 /// triangles.create(15);
 /// triangles.update(vertices);
 /// ...

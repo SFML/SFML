@@ -135,7 +135,7 @@ public:
 /// };
 ///
 /// // draw it
-/// window.draw(vertices, 6, sf::Triangles);
+/// window.draw(vertices, 6, sf::PrimitiveType::Triangles);
 /// \endcode
 ///
 /// Note: although texture coordinates are supposed to be an integer
