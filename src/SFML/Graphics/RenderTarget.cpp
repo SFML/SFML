@@ -91,45 +91,45 @@ std::uint32_t factorToGlConstant(sf::BlendMode::Factor blendFactor)
     // clang-format off
     switch (blendFactor)
     {
-        case sf::BlendMode::Zero:             return GL_ZERO;
-        case sf::BlendMode::One:              return GL_ONE;
-        case sf::BlendMode::SrcColor:         return GL_SRC_COLOR;
-        case sf::BlendMode::OneMinusSrcColor: return GL_ONE_MINUS_SRC_COLOR;
-        case sf::BlendMode::DstColor:         return GL_DST_COLOR;
-        case sf::BlendMode::OneMinusDstColor: return GL_ONE_MINUS_DST_COLOR;
-        case sf::BlendMode::SrcAlpha:         return GL_SRC_ALPHA;
-        case sf::BlendMode::OneMinusSrcAlpha: return GL_ONE_MINUS_SRC_ALPHA;
-        case sf::BlendMode::DstAlpha:         return GL_DST_ALPHA;
-        case sf::BlendMode::OneMinusDstAlpha: return GL_ONE_MINUS_DST_ALPHA;
+        case sf::BlendMode::Factor::Zero:             return GL_ZERO;
+        case sf::BlendMode::Factor::One:              return GL_ONE;
+        case sf::BlendMode::Factor::SrcColor:         return GL_SRC_COLOR;
+        case sf::BlendMode::Factor::OneMinusSrcColor: return GL_ONE_MINUS_SRC_COLOR;
+        case sf::BlendMode::Factor::DstColor:         return GL_DST_COLOR;
+        case sf::BlendMode::Factor::OneMinusDstColor: return GL_ONE_MINUS_DST_COLOR;
+        case sf::BlendMode::Factor::SrcAlpha:         return GL_SRC_ALPHA;
+        case sf::BlendMode::Factor::OneMinusSrcAlpha: return GL_ONE_MINUS_SRC_ALPHA;
+        case sf::BlendMode::Factor::DstAlpha:         return GL_DST_ALPHA;
+        case sf::BlendMode::Factor::OneMinusDstAlpha: return GL_ONE_MINUS_DST_ALPHA;
     }
     // clang-format on
 
-    sf::err() << "Invalid value for sf::BlendMode::Factor! Fallback to sf::BlendMode::Zero." << std::endl;
+    sf::err() << "Invalid value for sf::BlendMode::Factor! Fallback to sf::BlendMode::Factor::Zero." << std::endl;
     assert(false);
     return GL_ZERO;
 }
 
 
-// Convert an sf::BlendMode::BlendEquation constant to the corresponding OpenGL constant.
+// Convert an sf::BlendMode::Equation constant to the corresponding OpenGL constant.
 std::uint32_t equationToGlConstant(sf::BlendMode::Equation blendEquation)
 {
     switch (blendEquation)
     {
-        case sf::BlendMode::Add:
+        case sf::BlendMode::Equation::Add:
             return GLEXT_GL_FUNC_ADD;
-        case sf::BlendMode::Subtract:
+        case sf::BlendMode::Equation::Subtract:
             if (GLEXT_blend_subtract)
                 return GLEXT_GL_FUNC_SUBTRACT;
             break;
-        case sf::BlendMode::ReverseSubtract:
+        case sf::BlendMode::Equation::ReverseSubtract:
             if (GLEXT_blend_subtract)
                 return GLEXT_GL_FUNC_REVERSE_SUBTRACT;
             break;
-        case sf::BlendMode::Min:
+        case sf::BlendMode::Equation::Min:
             if (GLEXT_blend_minmax)
                 return GLEXT_GL_MIN;
             break;
-        case sf::BlendMode::Max:
+        case sf::BlendMode::Equation::Max:
             if (GLEXT_blend_minmax)
                 return GLEXT_GL_MAX;
             break;
@@ -139,7 +139,7 @@ std::uint32_t equationToGlConstant(sf::BlendMode::Equation blendEquation)
     if (!warned)
     {
         sf::err() << "OpenGL extension EXT_blend_minmax or EXT_blend_subtract unavailable" << '\n'
-                  << "Some blending equations will fallback to sf::BlendMode::Add" << '\n'
+                  << "Some blending equations will fallback to sf::BlendMode::Equation::Add" << '\n'
                   << "Ensure that hardware acceleration is enabled if available" << std::endl;
 
         warned = true;
@@ -641,7 +641,7 @@ void RenderTarget::applyBlendMode(const BlendMode& mode)
             glCheck(GLEXT_glBlendEquation(equationToGlConstant(mode.colorEquation)));
         }
     }
-    else if ((mode.colorEquation != BlendMode::Add) || (mode.alphaEquation != BlendMode::Add))
+    else if ((mode.colorEquation != BlendMode::Equation::Add) || (mode.alphaEquation != BlendMode::Equation::Add))
     {
         static bool warned = false;
 

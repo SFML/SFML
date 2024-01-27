@@ -11,9 +11,10 @@ namespace sf
 {
 std::ostream& operator<<(std::ostream& os, const BlendMode& blendMode)
 {
-    return os << "( " << blendMode.colorSrcFactor << ", " << blendMode.colorDstFactor << ", " << blendMode.colorEquation
-              << ", " << blendMode.alphaSrcFactor << ", " << blendMode.alphaDstFactor << ", " << blendMode.alphaEquation
-              << " )";
+    return os << "( " << static_cast<int>(blendMode.colorSrcFactor) << ", "
+              << static_cast<int>(blendMode.colorDstFactor) << ", " << static_cast<int>(blendMode.colorEquation) << ", "
+              << static_cast<int>(blendMode.alphaSrcFactor) << ", " << static_cast<int>(blendMode.alphaDstFactor)
+              << ", " << static_cast<int>(blendMode.alphaEquation) << " )";
 }
 
 std::ostream& operator<<(std::ostream& os, const Color& color)

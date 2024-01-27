@@ -45,7 +45,7 @@ struct SFML_GRAPHICS_API BlendMode
     /// The factors are mapped directly to their OpenGL equivalents,
     /// specified by glBlendFunc() or glBlendFuncSeparate().
     ////////////////////////////////////////////////////////
-    enum Factor
+    enum class Factor
     {
         Zero,             //!< (0, 0, 0, 0)
         One,              //!< (1, 1, 1, 1)
@@ -65,7 +65,7 @@ struct SFML_GRAPHICS_API BlendMode
     /// The equations are mapped directly to their OpenGL equivalents,
     /// specified by glBlendEquation() or glBlendEquationSeparate().
     ////////////////////////////////////////////////////////
-    enum Equation
+    enum class Equation
     {
         Add,             //!< Pixel = Src * SrcFactor + Dst * DstFactor
         Subtract,        //!< Pixel = Src * SrcFactor - Dst * DstFactor
@@ -93,7 +93,7 @@ struct SFML_GRAPHICS_API BlendMode
     /// \param blendEquation     Specifies how to combine the source and destination colors and alpha.
     ///
     ////////////////////////////////////////////////////////////
-    BlendMode(Factor sourceFactor, Factor destinationFactor, Equation blendEquation = Add);
+    BlendMode(Factor sourceFactor, Factor destinationFactor, Equation blendEquation = Equation::Add);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the blend mode given the factors and equation.
@@ -116,12 +116,12 @@ struct SFML_GRAPHICS_API BlendMode
     ////////////////////////////////////////////////////////////
     // Member Data
     ////////////////////////////////////////////////////////////
-    Factor   colorSrcFactor{BlendMode::SrcAlpha};         //!< Source blending factor for the color channels
-    Factor   colorDstFactor{BlendMode::OneMinusSrcAlpha}; //!< Destination blending factor for the color channels
-    Equation colorEquation{BlendMode::Add};               //!< Blending equation for the color channels
-    Factor   alphaSrcFactor{BlendMode::One};              //!< Source blending factor for the alpha channel
-    Factor   alphaDstFactor{BlendMode::OneMinusSrcAlpha}; //!< Destination blending factor for the alpha channel
-    Equation alphaEquation{BlendMode::Add};               //!< Blending equation for the alpha channel
+    Factor colorSrcFactor{BlendMode::Factor::SrcAlpha};         //!< Source blending factor for the color channels
+    Factor colorDstFactor{BlendMode::Factor::OneMinusSrcAlpha}; //!< Destination blending factor for the color channels
+    Equation colorEquation{BlendMode::Equation::Add};           //!< Blending equation for the color channels
+    Factor   alphaSrcFactor{BlendMode::Factor::One};            //!< Source blending factor for the alpha channel
+    Factor   alphaDstFactor{BlendMode::Factor::OneMinusSrcAlpha}; //!< Destination blending factor for the alpha channel
+    Equation alphaEquation{BlendMode::Equation::Add};             //!< Blending equation for the alpha channel
 };
 
 ////////////////////////////////////////////////////////////
