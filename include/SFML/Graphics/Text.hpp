@@ -73,7 +73,7 @@ public:
     /// \brief Enumeration of the text alignment options
     ///
     ////////////////////////////////////////////////////////////
-    enum LineAlignment
+    enum class LineAlignment
     {
         Left,   //!< Align lines to the left
         Center, //!< Align lines centrally
@@ -481,7 +481,7 @@ private:
     Color                 m_fillColor{Color::White};                   //!< Text fill color
     Color                 m_outlineColor{Color::Black};                //!< Text outline color
     float                 m_outlineThickness{0.f};                     //!< Thickness of the text's outline
-    LineAlignment         m_lineAlignment{Left};                       //!< Line alignment for a multi-line text
+    LineAlignment         m_lineAlignment{LineAlignment::Left};        //!< Line alignment for a multi-line text
     mutable VertexArray   m_vertices{PrimitiveType::Triangles};        //!< Vertex array containing the fill geometry
     mutable VertexArray   m_outlineVertices{PrimitiveType::Triangles}; //!< Vertex array containing the outline geometry
     mutable FloatRect     m_bounds;               //!< Bounding rectangle of the text (in local coordinates)

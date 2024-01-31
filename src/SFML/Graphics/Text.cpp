@@ -299,12 +299,11 @@ Vector2f Text::findCharacterPos(std::size_t index) const
     const auto [whitespaceWidth, letterSpacing, lineSpacing] = getSpacing();
 
     // Compute the position
+    assert(!m_lineOffsets.empty());
     Vector2f position(m_lineOffsets[0], 0.f); // There will always be at least one line
     char32_t prevChar = 0;
-    for (std::size_t i = 0; i < index; ++i)
+    for (const auto curChar : m_string)
     {
-        const auto curChar = m_string[i];
-
         // Apply the kerning offset
         position.x += m_font->getKerning(prevChar, curChar, m_characterSize, isBold);
         prevChar = curChar;
@@ -406,6 +405,7 @@ void Text::ensureGeometryUpdate() const
 
     // Precompute the variables needed by the algorithm
     const auto [whitespaceWidth, letterSpacing, lineSpacing] = getSpacing();
+    assert(!m_lineOffsets.empty());
     float x = m_lineOffsets[0]; // there will always be at least one line
     auto  y = static_cast<float>(m_characterSize);
 
@@ -596,13 +596,13 @@ void Text::updateLineOffsets() const
     {
         switch (m_lineAlignment)
         {
-            case Right:
+            case LineAlignment::Right:
                 m_lineOffsets[i] = maxWidth - m_lineOffsets[i];
                 break;
-            case Center:
+            case LineAlignment::Center:
                 m_lineOffsets[i] = (maxWidth - m_lineOffsets[i]) / 2.f;
                 break;
-            case Left:
+            case LineAlignment::Left:
                 m_lineOffsets[i] = 0.f;
                 break;
         }
