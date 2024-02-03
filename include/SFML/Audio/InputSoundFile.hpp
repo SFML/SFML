@@ -35,6 +35,7 @@
 #include <memory>
 
 #include <cstddef>
+#include <cstdint>
 
 
 namespace sf

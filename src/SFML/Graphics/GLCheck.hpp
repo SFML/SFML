@@ -29,8 +29,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 
-#include <SFML/Graphics/GLExtensions.hpp>
-
 #include <filesystem>
 #include <string_view>
 

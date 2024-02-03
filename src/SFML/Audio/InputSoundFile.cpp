@@ -58,7 +58,7 @@ InputSoundFile::StreamDeleter::StreamDeleter(const std::default_delete<T>&)
 void InputSoundFile::StreamDeleter::operator()(InputStream* ptr) const
 {
     if (owned)
-        std::default_delete<InputStream>{}(ptr);
+        delete ptr;
 }
 
 
