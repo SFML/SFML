@@ -30,15 +30,13 @@
 
 #include <SFML/System/Err.hpp>
 
-#include <algorithm>
 #include <fstream>
-#include <iterator>
 #include <ostream>
 #include <sstream>
 #include <utility>
 
-#include <cctype>
-#include <cstdio>
+#include <cstddef>
+#include <cstdint>
 
 
 namespace sf
@@ -357,11 +355,7 @@ Ftp::Response Ftp::upload(const std::filesystem::path& localFile,
 Ftp::Response Ftp::sendCommand(const std::string& command, const std::string& parameter)
 {
     // Build the command string
-    std::string commandStr;
-    if (!parameter.empty())
-        commandStr = command + " " + parameter + "\r\n";
-    else
-        commandStr = command + "\r\n";
+    const std::string commandStr = parameter.empty() ? command + "\r\n" : command + " " + parameter + "\r\n";
 
     // Send it to the server
     if (m_commandSocket.send(commandStr.c_str(), commandStr.length()) != Socket::Status::Done)

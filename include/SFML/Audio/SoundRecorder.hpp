@@ -37,6 +37,9 @@
 #include <thread>
 #include <vector>
 
+#include <cstddef>
+#include <cstdint>
+
 
 namespace sf
 {

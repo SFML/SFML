@@ -36,7 +36,8 @@
 #include <mutex>
 #include <thread>
 
-#include <cstdlib>
+#include <cstddef>
+#include <cstdint>
 
 
 namespace sf
