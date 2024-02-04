@@ -209,10 +209,13 @@ private:
 /// \code
 /// // Create a socket to listen to new connections
 /// sf::TcpListener listener;
-/// listener.listen(55001);
+/// if (listener.listen(55001) != sf::Socket::Status::Done)
+/// {
+///     // Handle error...
+/// }
 ///
 /// // Create a list to store the future clients
-/// std::list<std::unique_ptr<sf::TcpSocket>> clients;
+/// std::vector<sf::TcpSocket> clients;
 ///
 /// // Create a selector
 /// sf::SocketSelector selector;
@@ -230,20 +233,19 @@ private:
 ///         if (selector.isReady(listener))
 ///         {
 ///             // The listener is ready: there is a pending connection
-///             auto client = std::make_unique<sf::TcpSocket>();
-///             if (listener.accept(*client) == sf::Socket::Status::Done)
+///             sf::TcpSocket client;
+///             if (listener.accept(client) == sf::Socket::Status::Done)
 ///             {
 ///                 // Add the new client to the selector so that we will
 ///                 // be notified when he sends something
-///                 selector.add(*client);
+///                 selector.add(client);
 ///
 ///                 // Add the new client to the clients list
 ///                 clients.push_back(std::move(client));
 ///             }
 ///             else
 ///             {
-///                 // Error, we won't get a new connection, delete the socket
-///                 client.reset();
+///                 // Handle error...
 ///             }
 ///         }
 ///         else
