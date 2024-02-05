@@ -46,18 +46,12 @@ std::unique_ptr<SoundFileWriter> createWriter()
 }
 } // namespace priv
 
+
 ////////////////////////////////////////////////////////////
 template <typename T>
 void SoundFileFactory::registerReader()
 {
-    // Make sure the same class won't be registered twice
-    unregisterReader<T>();
-
-    // Create a new factory with the functions provided by the class
-    const ReaderFactory factory{&T::check, &priv::createReader<T>};
-
-    // Add it
-    s_readers.push_back(factory);
+    getReaderFactoryMap()[&priv::createReader<T>] = &T::check;
 }
 
 
@@ -65,26 +59,23 @@ void SoundFileFactory::registerReader()
 template <typename T>
 void SoundFileFactory::unregisterReader()
 {
-    // Remove the instance(s) of the reader from the array of factories
-    s_readers.erase(std::remove_if(s_readers.begin(),
-                                   s_readers.end(),
-                                   [](const ReaderFactory& readerFactory)
-                                   { return readerFactory.create == &priv::createReader<T>; }),
-                    s_readers.end());
+    getReaderFactoryMap().erase(&priv::createReader<T>);
 }
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+bool SoundFileFactory::isReaderRegistered()
+{
+    return getReaderFactoryMap().count(&priv::createReader<T>) == 1;
+}
+
 
 ////////////////////////////////////////////////////////////
 template <typename T>
 void SoundFileFactory::registerWriter()
 {
-    // Make sure the same class won't be registered twice
-    unregisterWriter<T>();
-
-    // Create a new factory with the functions provided by the class
-    const WriterFactory factory{&T::check, &priv::createWriter<T>};
-
-    // Add it
-    s_writers.push_back(factory);
+    getWriterFactoryMap()[&priv::createWriter<T>] = &T::check;
 }
 
 
@@ -92,12 +83,15 @@ void SoundFileFactory::registerWriter()
 template <typename T>
 void SoundFileFactory::unregisterWriter()
 {
-    // Remove the instance(s) of the writer from the array of factories
-    s_writers.erase(std::remove_if(s_writers.begin(),
-                                   s_writers.end(),
-                                   [](const WriterFactory& writerFactory)
-                                   { return writerFactory.create == &priv::createWriter<T>; }),
-                    s_writers.end());
+    getWriterFactoryMap().erase(&priv::createWriter<T>);
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+bool SoundFileFactory::isWriterRegistered()
+{
+    return getWriterFactoryMap().count(&priv::createWriter<T>) == 1;
 }
 
 } // namespace sf

@@ -5,10 +5,59 @@
 #include <SFML/Audio/SoundFileWriter.hpp>
 
 #include <SFML/System/FileInputStream.hpp>
+#include <SFML/System/InputStream.hpp>
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <filesystem>
+#include <optional>
 #include <type_traits>
+
+#include <cstdint>
+
+namespace
+{
+
+struct NoopSoundFileReader : sf::SoundFileReader
+{
+    static bool check(sf::InputStream&)
+    {
+        return false;
+    }
+
+    std::optional<Info> open(sf::InputStream&) override
+    {
+        return {};
+    }
+
+    void seek(std::uint64_t) override
+    {
+    }
+
+    std::uint64_t read(std::int16_t*, std::uint64_t) override
+    {
+        return 0;
+    }
+};
+
+struct NoopSoundFileWriter : sf::SoundFileWriter
+{
+    static bool check(const std::filesystem::path&)
+    {
+        return false;
+    }
+
+    bool open(const std::filesystem::path&, unsigned int, unsigned int) override
+    {
+        return false;
+    }
+
+    void write(const std::int16_t*, std::uint64_t) override
+    {
+    }
+};
+
+} // namespace
 
 TEST_CASE("[Audio] sf::SoundFileFactory")
 {
@@ -18,6 +67,28 @@ TEST_CASE("[Audio] sf::SoundFileFactory")
         STATIC_CHECK(std::is_copy_assignable_v<sf::SoundFileFactory>);
         STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::SoundFileFactory>);
         STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::SoundFileFactory>);
+    }
+
+    SECTION("isReaderRegistered()")
+    {
+        CHECK(!sf::SoundFileFactory::isReaderRegistered<NoopSoundFileReader>());
+
+        sf::SoundFileFactory::registerReader<NoopSoundFileReader>();
+        CHECK(sf::SoundFileFactory::isReaderRegistered<NoopSoundFileReader>());
+
+        sf::SoundFileFactory::unregisterReader<NoopSoundFileReader>();
+        CHECK(!sf::SoundFileFactory::isReaderRegistered<NoopSoundFileReader>());
+    }
+
+    SECTION("isWriterRegistered()")
+    {
+        CHECK(!sf::SoundFileFactory::isWriterRegistered<NoopSoundFileWriter>());
+
+        sf::SoundFileFactory::registerWriter<NoopSoundFileWriter>();
+        CHECK(sf::SoundFileFactory::isWriterRegistered<NoopSoundFileWriter>());
+
+        sf::SoundFileFactory::unregisterWriter<NoopSoundFileWriter>();
+        CHECK(!sf::SoundFileFactory::isWriterRegistered<NoopSoundFileWriter>());
     }
 
     SECTION("createReaderFromFilename()")
