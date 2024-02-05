@@ -4,7 +4,6 @@
 #include <SFML/Audio.hpp>
 
 #include <iostream>
-#include <string>
 
 
 ////////////////////////////////////////////////////////////
@@ -22,7 +21,7 @@ void playSound()
     std::cout << "killdeer.wav:" << '\n'
               << " " << buffer.getDuration().asSeconds() << " seconds" << '\n'
               << " " << buffer.getSampleRate() << " samples / sec" << '\n'
-              << " " << buffer.getChannelCount() << " channels" << std::endl;
+              << " " << buffer.getChannelCount() << " channels" << '\n';
 
     // Create a sound instance and play it
     sf::Sound sound(buffer);
@@ -35,10 +34,10 @@ void playSound()
         sf::sleep(sf::milliseconds(100));
 
         // Display the playing position
-        std::cout << "\rPlaying... " << sound.getPlayingOffset().asSeconds() << " sec        ";
-        std::cout << std::flush;
+        std::cout << "\rPlaying... " << sound.getPlayingOffset().asSeconds() << " sec        " << std::flush;
     }
-    std::cout << std::endl << std::endl;
+
+    std::cout << '\n' << std::endl;
 }
 
 
@@ -57,7 +56,7 @@ void playMusic(const std::filesystem::path& filename)
     std::cout << filename << ":" << '\n'
               << " " << music.getDuration().asSeconds() << " seconds" << '\n'
               << " " << music.getSampleRate() << " samples / sec" << '\n'
-              << " " << music.getChannelCount() << " channels" << std::endl;
+              << " " << music.getChannelCount() << " channels" << '\n';
 
     // Play it
     music.play();
@@ -69,9 +68,9 @@ void playMusic(const std::filesystem::path& filename)
         sf::sleep(sf::milliseconds(100));
 
         // Display the playing position
-        std::cout << "\rPlaying... " << music.getPlayingOffset().asSeconds() << " sec        ";
-        std::cout << std::flush;
+        std::cout << "\rPlaying... " << music.getPlayingOffset().asSeconds() << " sec        " << std::flush;
     }
+
     std::cout << '\n' << std::endl;
 }
 
