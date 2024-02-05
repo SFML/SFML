@@ -29,8 +29,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Export.hpp>
 
-#include <cassert>
-
 
 namespace sf
 {
@@ -471,10 +469,9 @@ namespace Literals
 [[nodiscard]] constexpr Angle operator""_rad(unsigned long long int angle);
 
 } // namespace Literals
+} // namespace sf
 
 #include <SFML/System/Angle.inl>
-
-} // namespace sf
 
 
 ////////////////////////////////////////////////////////////

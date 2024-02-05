@@ -97,9 +97,9 @@ public:
     Vector2f texCoords;           //!< Coordinates of the texture's pixel to map to the vertex
 };
 
-#include <SFML/Graphics/Vertex.inl>
-
 } // namespace sf
+
+#include <SFML/Graphics/Vertex.inl>
 
 
 ////////////////////////////////////////////////////////////

@@ -73,8 +73,8 @@ TEST_CASE("[Graphics] sf::Font", runDisplayTests())
         SECTION("Invalid data and size")
         {
             CHECK(!font.loadFromMemory(nullptr, 1));
-            const std::byte byte{0xCD};
-            CHECK(!font.loadFromMemory(&byte, 0));
+            const std::byte testByte{0xCD};
+            CHECK(!font.loadFromMemory(&testByte, 0));
         }
 
         SECTION("Successful load")

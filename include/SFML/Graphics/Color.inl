@@ -22,7 +22,14 @@
 //
 ////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <SFML/Graphics/Color.hpp> // NOLINT(misc-header-include-cycle)
 
+
+namespace sf
+{
 ////////////////////////////////////////////////////////////
 constexpr Color::Color() = default;
 
@@ -149,3 +156,5 @@ inline constexpr Color Color::Yellow(255, 255, 0);
 inline constexpr Color Color::Magenta(255, 0, 255);
 inline constexpr Color Color::Cyan(0, 255, 255);
 inline constexpr Color Color::Transparent(0, 0, 0, 0);
+
+} // namespace sf

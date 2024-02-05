@@ -173,13 +173,13 @@ template <typename T>
 template <typename T>
 [[nodiscard]] constexpr bool operator!=(const Rect<T>& left, const Rect<T>& right);
 
-#include <SFML/Graphics/Rect.inl>
-
 // Create type aliases for the most common types
 using IntRect   = Rect<int>;
 using FloatRect = Rect<float>;
 
 } // namespace sf
+
+#include <SFML/Graphics/Rect.inl>
 
 
 ////////////////////////////////////////////////////////////

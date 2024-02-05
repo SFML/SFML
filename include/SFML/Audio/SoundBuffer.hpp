@@ -34,9 +34,10 @@
 #include <SFML/System/Time.hpp>
 
 #include <filesystem>
-#include <string>
 #include <unordered_set>
 #include <vector>
+
+#include <cstdint>
 
 
 namespace sf

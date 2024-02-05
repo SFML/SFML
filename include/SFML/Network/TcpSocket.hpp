@@ -34,6 +34,7 @@
 #include <SFML/System/Time.hpp>
 
 #include <optional>
+#include <vector>
 
 #include <cstddef>
 

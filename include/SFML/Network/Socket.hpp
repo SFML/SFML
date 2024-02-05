@@ -31,8 +31,6 @@
 
 #include <SFML/Network/SocketHandle.hpp>
 
-#include <vector>
-
 
 namespace sf
 {
