@@ -30,9 +30,7 @@
 #include <SFML/System/Export.hpp>
 
 #include <chrono>
-#include <ratio>
 
-#include <cassert>
 #include <cstdint>
 
 
@@ -450,9 +448,9 @@ constexpr Time& operator/=(Time& left, std::int64_t right);
 ////////////////////////////////////////////////////////////
 constexpr Time& operator%=(Time& left, Time right);
 
-#include <SFML/System/Time.inl>
-
 } // namespace sf
+
+#include <SFML/System/Time.inl>
 
 
 ////////////////////////////////////////////////////////////

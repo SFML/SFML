@@ -26,7 +26,6 @@
 
 #include <SFML/System/Export.hpp>
 
-#include <cassert>
 
 namespace sf
 {
@@ -309,13 +308,13 @@ template <typename T>
 template <typename T>
 [[nodiscard]] constexpr bool operator!=(const Vector3<T>& left, const Vector3<T>& right);
 
-#include <SFML/System/Vector3.inl>
-
 // Define the most common types
 using Vector3i = Vector3<int>;
 using Vector3f = Vector3<float>;
 
 } // namespace sf
+
+#include <SFML/System/Vector3.inl>
 
 
 ////////////////////////////////////////////////////////////

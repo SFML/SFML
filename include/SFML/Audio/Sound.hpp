@@ -31,8 +31,6 @@
 
 #include <SFML/Audio/SoundSource.hpp>
 
-#include <cstdlib>
-
 
 namespace sf
 {

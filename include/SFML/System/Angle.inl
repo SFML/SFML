@@ -22,6 +22,16 @@
 //
 ////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <SFML/System/Angle.hpp> // NOLINT(misc-header-include-cycle)
+
+#include <cassert>
+
+
+namespace sf
+{
 namespace priv
 {
 constexpr float pi = 3.141592654f;
@@ -267,3 +277,5 @@ constexpr Angle operator""_rad(unsigned long long angle)
 // Note: the 'inline' keyword here is technically not required, but VS2019 fails
 // to compile with a bogus "multiple definition" error if not explicitly used.
 inline constexpr Angle Angle::Zero;
+
+} // namespace sf

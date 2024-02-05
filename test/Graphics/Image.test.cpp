@@ -155,8 +155,8 @@ TEST_CASE("[Graphics] sf::Image")
 
         SECTION("Invalid size")
         {
-            const std::byte byte{0xAB};
-            CHECK(!image.loadFromMemory(&byte, 0));
+            const std::byte testByte{0xAB};
+            CHECK(!image.loadFromMemory(&testByte, 0));
         }
 
         SECTION("Failed load")

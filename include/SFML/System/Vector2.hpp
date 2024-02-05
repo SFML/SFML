@@ -28,8 +28,6 @@
 
 #include <SFML/System/Angle.hpp>
 
-#include <cassert>
-
 
 namespace sf
 {
@@ -398,9 +396,9 @@ template <typename T>
 template <typename T>
 [[nodiscard]] constexpr bool operator!=(const Vector2<T>& left, const Vector2<T>& right);
 
-#include <SFML/System/Vector2.inl>
-
 } // namespace sf
+
+#include <SFML/System/Vector2.inl>
 
 
 ////////////////////////////////////////////////////////////

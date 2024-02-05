@@ -47,8 +47,6 @@ struct Matrix;
 template <typename T>
 struct Vector4;
 
-#include <SFML/Graphics/Glsl.inl>
-
 } // namespace priv
 
 
@@ -194,6 +192,8 @@ using Mat4  = priv::Matrix<4, 4>;
 
 } // namespace Glsl
 } // namespace sf
+
+#include <SFML/Graphics/Glsl.inl>
 
 
 ////////////////////////////////////////////////////////////

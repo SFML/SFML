@@ -731,14 +731,14 @@ public:
     static Out encodeWide(std::uint32_t codepoint, Out output, wchar_t replacement = 0);
 };
 
-#include <SFML/System/Utf.inl>
-
 // Make type aliases to get rid of the template syntax
 using Utf8  = Utf<8>;
 using Utf16 = Utf<16>;
 using Utf32 = Utf<32>;
 
 } // namespace sf
+
+#include <SFML/System/Utf.inl>
 
 
 ////////////////////////////////////////////////////////////

@@ -22,7 +22,16 @@
 //
 ////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <SFML/System/Vector2.hpp> // NOLINT(misc-header-include-cycle)
 
+#include <cassert>
+
+
+namespace sf
+{
 ////////////////////////////////////////////////////////////
 template <typename T>
 constexpr Vector2<T>::Vector2() = default;
@@ -219,3 +228,5 @@ const Vector2<T> Vector2<T>::UnitX(static_cast<T>(1), static_cast<T>(0));
 
 template <typename T>
 const Vector2<T> Vector2<T>::UnitY(static_cast<T>(0), static_cast<T>(1));
+
+} // namespace sf

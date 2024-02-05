@@ -22,7 +22,16 @@
 //
 ////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <SFML/System/Vector3.hpp> // NOLINT(misc-header-include-cycle)
 
+#include <cassert>
+
+
+namespace sf
+{
 ////////////////////////////////////////////////////////////
 template <typename T>
 constexpr Vector3<T>::Vector3() = default;
@@ -208,3 +217,5 @@ constexpr bool operator!=(const Vector3<T>& left, const Vector3<T>& right)
 {
     return (left.x != right.x) || (left.y != right.y) || (left.z != right.z);
 }
+
+} // namespace sf
