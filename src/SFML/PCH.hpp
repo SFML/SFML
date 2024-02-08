@@ -45,6 +45,7 @@
 #include <SFML/System/Vector2.hpp>
 
 #include <algorithm>
+#include <array>
 #include <chrono>
 #include <filesystem>
 #include <iostream>
@@ -62,3 +63,16 @@
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
+
+
+////////////////////////////////////////////////////////////
+// Precompiled Headers (Test Suite Only)
+////////////////////////////////////////////////////////////
+
+#ifdef SFML_BUILD_TEST_SUITE
+
+#include <catch2/catch_test_macros.hpp>
+
+#include <map>
+
+#endif

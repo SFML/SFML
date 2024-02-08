@@ -211,6 +211,12 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake")
 
+if(SFML_BUILD_TEST_SUITE)
+    # this definition is used in the PCH file to speed up compilation of tests
+    # `add_definitions` must be called before `add_subdirectory`
+    add_definitions(-DSFML_BUILD_TEST_SUITE)
+endif()
+
 # add the subdirectories
 add_subdirectory(src/SFML)
 
