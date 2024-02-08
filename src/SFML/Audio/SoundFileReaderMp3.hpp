@@ -48,7 +48,9 @@
 
 #include <SFML/Audio/SoundFileReader.hpp>
 
-#include <vector>
+#include <optional>
+
+#include <cstdint>
 
 
 namespace sf::priv

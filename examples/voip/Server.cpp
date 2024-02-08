@@ -6,9 +6,11 @@
 #include <SFML/Network.hpp>
 
 #include <iostream>
-#include <iterator>
 #include <mutex>
+#include <optional>
+#include <vector>
 
+#include <cstdint>
 #include <cstring>
 
 

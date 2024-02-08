@@ -28,12 +28,12 @@
 #include <SFML/Audio/SoundFileReaderOgg.hpp>
 
 #include <SFML/System/Err.hpp>
-#include <SFML/System/MemoryInputStream.hpp>
+#include <SFML/System/InputStream.hpp>
 
 #include <ostream>
 
 #include <cassert>
-#include <cctype>
+#include <cstdio>
 
 
 namespace

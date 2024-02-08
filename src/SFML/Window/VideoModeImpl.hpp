@@ -29,6 +29,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/VideoMode.hpp>
 
+#include <vector>
+
 
 namespace sf::priv
 {

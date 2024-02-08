@@ -33,13 +33,15 @@
 #include <SFML/System/String.hpp>
 #include <SFML/System/Utf.hpp>
 
-#include <cstring>
 // dbt.h is lowercase here, as a cross-compile on linux with mingw-w64
 // expects lowercase, and a native compile on windows, whether via msvc
 // or mingw-w64 addresses files in a case insensitive manner.
 #include <dbt.h>
 #include <ostream>
 #include <vector>
+
+#include <cstddef>
+#include <cstring>
 
 // MinGW lacks the definition of some Win32 constants
 #ifndef XBUTTON1

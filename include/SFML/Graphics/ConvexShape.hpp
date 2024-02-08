@@ -33,6 +33,8 @@
 
 #include <vector>
 
+#include <cstddef>
+
 
 namespace sf
 {

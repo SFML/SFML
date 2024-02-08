@@ -13,9 +13,11 @@
 #include <array>
 #include <iostream>
 #include <limits>
+#include <string_view>
 #include <vector>
 
 #include <cmath>
+#include <cstdint>
 #include <cstring>
 
 

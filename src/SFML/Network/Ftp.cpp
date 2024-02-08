@@ -30,11 +30,13 @@
 
 #include <SFML/System/Err.hpp>
 
+#include <algorithm>
 #include <fstream>
 #include <ostream>
 #include <sstream>
 #include <utility>
 
+#include <cctype>
 #include <cstddef>
 #include <cstdint>
 
@@ -532,7 +534,7 @@ Ftp::Response Ftp::DataChannel::open(Ftp::TransferMode mode)
             for (unsigned char& datum : data)
             {
                 // Extract the current number
-                while (isdigit(str[index]))
+                while (std::isdigit(str[index]))
                 {
                     datum = static_cast<std::uint8_t>(
                         static_cast<std::uint8_t>(datum * 10) + static_cast<std::uint8_t>(str[index] - '0'));

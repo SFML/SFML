@@ -35,7 +35,6 @@
 #include <random>
 
 #include <cassert>
-#include <cctype>
 
 
 namespace sf::priv

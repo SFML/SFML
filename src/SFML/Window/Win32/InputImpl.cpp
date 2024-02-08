@@ -32,6 +32,9 @@
 #include <SFML/System/String.hpp>
 #include <SFML/System/Win32/WindowsHeader.hpp>
 
+#include <optional>
+
+
 namespace
 {
 sf::priv::EnumArray<sf::Keyboard::Key, sf::Keyboard::Scancode, sf::Keyboard::KeyCount> keyToScancodeMapping; ///< Mapping from Key to Scancode

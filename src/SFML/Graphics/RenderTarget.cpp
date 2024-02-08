@@ -31,7 +31,6 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/Graphics/VertexBuffer.hpp>
 
 #include <SFML/Window/Context.hpp>
@@ -39,7 +38,6 @@
 #include <SFML/System/Err.hpp>
 
 #include <algorithm>
-#include <iostream>
 #include <mutex>
 #include <ostream>
 #include <unordered_map>

@@ -33,8 +33,10 @@
 #include <SFML/Audio/SoundStream.hpp>
 
 #include <filesystem>
+#include <mutex>
 #include <vector>
 
+#include <cstddef>
 #include <cstdint>
 
 

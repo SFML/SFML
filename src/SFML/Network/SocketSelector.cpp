@@ -31,7 +31,6 @@
 
 #include <SFML/System/Err.hpp>
 
-#include <algorithm>
 #include <memory>
 #include <ostream>
 #include <utility>
@@ -120,7 +119,8 @@ void SocketSelector::add(Socket& socket)
         }
 
         // SocketHandle is an int in POSIX
-        m_impl->maxSocket = std::max(m_impl->maxSocket, handle);
+        if (m_impl->maxSocket < handle)
+            m_impl->maxSocket = handle;
 
 #endif
 

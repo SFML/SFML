@@ -5,9 +5,8 @@
 
 #pragma once
 
-#include <WindowUtil.hpp>
+#include <SystemUtil.hpp>
 #include <iosfwd>
-#include <limits>
 
 namespace sf
 {

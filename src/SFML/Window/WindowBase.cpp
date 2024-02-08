@@ -26,7 +26,13 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/ContextSettings.hpp>
+#include <SFML/Window/Cursor.hpp>
+#include <SFML/Window/Event.hpp>
+#include <SFML/Window/VideoMode.hpp>
+#include <SFML/Window/Vulkan.hpp>
 #include <SFML/Window/WindowBase.hpp>
+#include <SFML/Window/WindowEnums.hpp>
+#include <SFML/Window/WindowHandle.hpp>
 #include <SFML/Window/WindowImpl.hpp>
 
 #include <SFML/System/Err.hpp>
@@ -34,6 +40,7 @@
 #include <algorithm>
 #include <limits>
 #include <ostream>
+#include <vector>
 
 #include <cassert>
 

@@ -31,6 +31,9 @@
 
 #include <algorithm>
 
+#include <cassert>
+#include <cstddef>
+
 namespace
 {
 // Compute the normal of a segment

@@ -29,6 +29,8 @@
 
 #include <array>
 
+#include <cstddef>
+
 
 namespace sf
 {

@@ -40,8 +40,10 @@
 #include <stb_image_write.h>
 
 #include <algorithm>
+#include <iomanip>
 #include <memory>
 #include <ostream>
+#include <string>
 
 #include <cassert>
 #include <cstring>

@@ -34,6 +34,8 @@
 #include <memory>
 #include <ostream>
 
+#include <cassert>
+
 
 namespace sf
 {
