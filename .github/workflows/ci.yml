@@ -51,8 +51,16 @@ jobs:
         - { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug -DSFML_ENABLE_COVERAGE=TRUE }
 
         include:
+        - platform: { name: Windows VS2022 x64, os: windows-2022 }
+          config: { name: Static with PCH (MSVC), flags: -DSFML_USE_MESA3D=TRUE -GNinja -DBUILD_SHARED_LIBS=FALSE -DSFML_ENABLE_PCH=1 }
+        - platform: { name: Linux GCC, os: ubuntu-22.04 }
+          config: { name: Static with PCH (GCC), flags: -DSFML_RUN_DISPLAY_TESTS=ON -GNinja -DCMAKE_CXX_COMPILER=g++ -DBUILD_SHARED_LIBS=FALSE -DSFML_ENABLE_PCH=1 }
+        - platform: { name: Linux Clang, os: ubuntu-22.04 }
+          config: { name: Static with PCH (Clang), flags: -DSFML_RUN_DISPLAY_TESTS=ON -GNinja -DCMAKE_CXX_COMPILER=clang++ -DBUILD_SHARED_LIBS=FALSE -DSFML_ENABLE_PCH=1 }
         - platform: { name: Windows MinGW, os: windows-2022 }
           config: { name: Static Standard Libraries, flags: -GNinja -DSFML_USE_MESA3D=TRUE -DCMAKE_CXX_COMPILER=g++ -DSFML_USE_STATIC_STD_LIBS=TRUE }
+        - platform: { name: Windows MinGW, os: windows-2022 }
+          config: { name: Static with PCH (GCC), flags: -GNinja -DSFML_USE_MESA3D=TRUE -DCMAKE_CXX_COMPILER=g++ -DBUILD_SHARED_LIBS=FALSE -DSFML_ENABLE_PCH=1 }
         - platform: { name: macOS, os: macos-12 }
           config: { name: Frameworks, flags: -GNinja -DSFML_BUILD_FRAMEWORKS=TRUE -DBUILD_SHARED_LIBS=TRUE }
         - platform: { name: Android, os: ubuntu-22.04 }
@@ -69,6 +77,7 @@ jobs:
           type: { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug }
         - platform: { name: macOS , os: macos-12 }
           config: { name: System Deps, flags: -GNinja -DBUILD_SHARED_LIBS=TRUE -DSFML_USE_SYSTEM_DEPS=TRUE }
+
 
     steps:
     - name: Checkout Code
