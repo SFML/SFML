@@ -31,11 +31,9 @@
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/Utils.hpp>
 
-#include <algorithm>
 #include <ostream>
 
 #include <cassert>
-#include <cctype>
 #include <cstddef>
 #include <cstring>
 

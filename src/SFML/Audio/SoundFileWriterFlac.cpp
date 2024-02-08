@@ -33,9 +33,6 @@
 #include <algorithm>
 #include <ostream>
 
-#include <cassert>
-#include <cctype>
-
 
 namespace sf::priv
 {

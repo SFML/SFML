@@ -33,7 +33,6 @@
 #include <ostream>
 
 #include <cerrno>
-#include <cstring>
 
 
 namespace sf::priv

@@ -37,6 +37,7 @@
 
 #include <algorithm>
 #include <ostream>
+#include <utility>
 
 
 namespace sf

@@ -34,7 +34,7 @@
 #include <SFML/System/InputStream.hpp>
 
 #include <cstddef>
-#include <cstdlib>
+#include <cstdint>
 
 
 namespace sf

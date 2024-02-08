@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 
 #include <array>
+#include <filesystem>
 #include <iostream>
 
 #include <cstdlib>

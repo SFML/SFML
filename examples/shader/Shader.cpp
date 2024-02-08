@@ -3,9 +3,17 @@
 ////////////////////////////////////////////////////////////
 #include "Effect.hpp"
 
-#include <array>
-#include <random>
+#include <SFML/Graphics.hpp>
 
+#include <array>
+#include <optional>
+#include <random>
+#include <string>
+#include <vector>
+
+#include <cmath>
+#include <cstdint>
+#include <cstdlib>
 
 namespace
 {

@@ -11,6 +11,7 @@
 #include <vector>
 
 #include <cstddef>
+#include <cwchar>
 
 #define CHECK_PACKET_STREAM_OPERATORS(expected)              \
     do                                                       \

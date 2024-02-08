@@ -39,16 +39,21 @@
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/Graphics/View.hpp>
 
+#include <SFML/System/Vector2.hpp>
+
 #include <array>
 
 #include <cstddef>
+#include <cstdint>
 
 
 namespace sf
 {
 class Drawable;
-class VertexBuffer;
+class Shader;
+class Texture;
 class Transform;
+class VertexBuffer;
 
 ////////////////////////////////////////////////////////////
 /// \brief Base class for all render targets (window, texture, ...)

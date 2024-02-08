@@ -32,6 +32,12 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
 
+
+namespace sf
+{
+class WindowBase;
+}
+
 namespace sf::priv::InputImpl
 {
 ////////////////////////////////////////////////////////////

@@ -2,6 +2,8 @@
 #include <SFML/Window/VideoMode.hpp>
 
 #include <ostream>
+#include <string>
+
 
 std::string runDisplayTests()
 {

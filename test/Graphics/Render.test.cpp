@@ -6,6 +6,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <GraphicsUtil.hpp>
+#include <WindowUtil.hpp>
 
 TEST_CASE("[Graphics] Render Tests", runDisplayTests())
 {

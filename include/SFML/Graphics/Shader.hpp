@@ -33,20 +33,17 @@
 
 #include <SFML/Window/GlResource.hpp>
 
-#include <SFML/System/Vector2.hpp>
-#include <SFML/System/Vector3.hpp>
-
 #include <filesystem>
 #include <string>
 #include <unordered_map>
 
+#include <cstddef>
+
 
 namespace sf
 {
-class Color;
 class InputStream;
 class Texture;
-class Transform;
 
 ////////////////////////////////////////////////////////////
 /// \brief Shader class (vertex, geometry and fragment)

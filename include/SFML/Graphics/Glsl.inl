@@ -25,8 +25,18 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Graphics/Export.hpp>
+
 #include <SFML/Graphics/Glsl.hpp> // NOLINT(misc-header-include-cycle)
 
+#include <cstddef>
+
+
+namespace sf
+{
+class Color;
+class Transform;
+} // namespace sf
 
 namespace sf::priv
 {

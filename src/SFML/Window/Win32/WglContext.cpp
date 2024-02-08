@@ -25,15 +25,19 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/ContextSettings.hpp>
+#include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/Win32/WglContext.hpp>
 #include <SFML/Window/WindowImpl.hpp>
 
 #include <SFML/System/Err.hpp>
+#include <SFML/System/String.hpp>
 
 #include <mutex>
-#include <ostream>
 #include <sstream>
 #include <vector>
+
+#include <cassert>
 
 // We check for this definition in order to avoid multiple definitions of GLAD
 // entities during unity builds of SFML.

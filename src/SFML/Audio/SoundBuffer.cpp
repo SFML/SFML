@@ -36,8 +36,8 @@
 #include <SFML/System/Time.hpp>
 
 #include <exception>
-#include <memory>
 #include <ostream>
+#include <utility>
 
 #if defined(__APPLE__)
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"

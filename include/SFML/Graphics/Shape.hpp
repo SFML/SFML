@@ -29,16 +29,23 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
 
+#include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/PrimitiveType.hpp>
+#include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/Transformable.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
 
 #include <SFML/System/Vector2.hpp>
 
+#include <cstddef>
+
 
 namespace sf
 {
 class Texture;
+class RenderTarget;
 
 ////////////////////////////////////////////////////////////
 /// \brief Base class for textured shapes with outline

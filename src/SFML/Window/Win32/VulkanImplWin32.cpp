@@ -29,8 +29,10 @@
 
 #include <SFML/System/Win32/WindowsHeader.hpp>
 
-#include <map>
 #include <string_view>
+
+#include <cstdint>
+
 #define VK_USE_PLATFORM_WIN32_KHR
 #define VK_NO_PROTOTYPES
 #include <vulkan.h>

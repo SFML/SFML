@@ -31,8 +31,16 @@
 
 #include <FLAC/stream_decoder.h>
 #include <memory>
+#include <optional>
 #include <vector>
 
+#include <cstdint>
+
+
+namespace sf
+{
+class InputStream;
+}
 
 namespace sf::priv
 {

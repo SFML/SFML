@@ -5,7 +5,12 @@
 
 #include <SFML/Audio.hpp>
 
+#include <filesystem>
 #include <random>
+#include <string>
+
+#include <cmath>
+#include <cstdlib>
 
 #ifdef SFML_SYSTEM_IOS
 #include <SFML/Main.hpp>

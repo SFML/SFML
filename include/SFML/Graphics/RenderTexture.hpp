@@ -34,6 +34,8 @@
 
 #include <SFML/Window/ContextSettings.hpp>
 
+#include <SFML/System/Vector2.hpp>
+
 #include <memory>
 
 
