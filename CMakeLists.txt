@@ -211,17 +211,14 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake")
 
-# option to enable precompiled headers
-sfml_set_option(SFML_ENABLE_PCH FALSE BOOL "TRUE to enable precompiled headers for SFML builds -- only supported on Windows/Linux")
-
-if(SFML_ENABLE_PCH AND SFML_OS_MACOS)
-    message(FATAL_ERROR "Precompiled headers are currently not supported in macOS builds")
-endif()
-
 if(SFML_ENABLE_PCH AND BUILD_SHARED_LIBS)
     # required to make the PCH consistent between all targets
     # must appear before subdirectories are addded to take effect
     add_definitions(-DSFML_SYSTEM_EXPORTS)
+
+    if(MSVC)
+        add_definitions(-D_WINDLL)
+    endif()
 endif()
 
 # add the subdirectories
@@ -255,6 +252,13 @@ if(SFML_INSTALL_PKGCONFIG_FILES)
         install(FILES "${CMAKE_CURRENT_BINARY_DIR}/tools/pkg-config/sfml-${sfml_module}.pc"
             DESTINATION "${SFML_PKGCONFIG_INSTALL_PREFIX}")
     endforeach()
+endif()
+
+# option to enable precompiled headers
+sfml_set_option(SFML_ENABLE_PCH FALSE BOOL "TRUE to enable precompiled headers for SFML builds -- only supported on Windows/Linux and for static library builds")
+
+if(SFML_ENABLE_PCH AND SFML_OS_MACOS)
+    message(FATAL_ERROR "Precompiled headers are currently not supported in macOS builds")
 endif()
 
 # setup the install rules
