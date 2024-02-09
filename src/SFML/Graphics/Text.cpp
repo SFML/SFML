@@ -52,15 +52,12 @@ void addLine(sf::VertexArray& vertices,
     const float top    = std::floor(lineTop + offset - (thickness / 2) + 0.5f);
     const float bottom = top + std::floor(thickness + 0.5f);
 
-    vertices.append(sf::Vertex(sf::Vector2f(-outlineThickness, top - outlineThickness), color, sf::Vector2f(1, 1)));
-    vertices.append(
-        sf::Vertex(sf::Vector2f(lineLength + outlineThickness, top - outlineThickness), color, sf::Vector2f(1, 1)));
-    vertices.append(sf::Vertex(sf::Vector2f(-outlineThickness, bottom + outlineThickness), color, sf::Vector2f(1, 1)));
-    vertices.append(sf::Vertex(sf::Vector2f(-outlineThickness, bottom + outlineThickness), color, sf::Vector2f(1, 1)));
-    vertices.append(
-        sf::Vertex(sf::Vector2f(lineLength + outlineThickness, top - outlineThickness), color, sf::Vector2f(1, 1)));
-    vertices.append(
-        sf::Vertex(sf::Vector2f(lineLength + outlineThickness, bottom + outlineThickness), color, sf::Vector2f(1, 1)));
+    vertices.append({{-outlineThickness, top - outlineThickness}, color, {1.0f, 1.0f}});
+    vertices.append({{lineLength + outlineThickness, top - outlineThickness}, color, {1.0f, 1.0f}});
+    vertices.append({{-outlineThickness, bottom + outlineThickness}, color, {1.0f, 1.0f}});
+    vertices.append({{-outlineThickness, bottom + outlineThickness}, color, {1.0f, 1.0f}});
+    vertices.append({{lineLength + outlineThickness, top - outlineThickness}, color, {1.0f, 1.0f}});
+    vertices.append({{lineLength + outlineThickness, bottom + outlineThickness}, color, {1.0f, 1.0f}});
 }
 
 // Add a glyph quad to the vertex array
@@ -78,19 +75,12 @@ void addGlyphQuad(sf::VertexArray& vertices, sf::Vector2f position, const sf::Co
     const float u2 = static_cast<float>(glyph.textureRect.left + glyph.textureRect.width) + padding;
     const float v2 = static_cast<float>(glyph.textureRect.top + glyph.textureRect.height) + padding;
 
-    vertices.append(
-        sf::Vertex(sf::Vector2f(position.x + left - italicShear * top, position.y + top), color, sf::Vector2f(u1, v1)));
-    vertices.append(
-        sf::Vertex(sf::Vector2f(position.x + right - italicShear * top, position.y + top), color, sf::Vector2f(u2, v1)));
-    vertices.append(
-        sf::Vertex(sf::Vector2f(position.x + left - italicShear * bottom, position.y + bottom), color, sf::Vector2f(u1, v2)));
-    vertices.append(
-        sf::Vertex(sf::Vector2f(position.x + left - italicShear * bottom, position.y + bottom), color, sf::Vector2f(u1, v2)));
-    vertices.append(
-        sf::Vertex(sf::Vector2f(position.x + right - italicShear * top, position.y + top), color, sf::Vector2f(u2, v1)));
-    vertices.append(sf::Vertex(sf::Vector2f(position.x + right - italicShear * bottom, position.y + bottom),
-                               color,
-                               sf::Vector2f(u2, v2)));
+    vertices.append({{position.x + left - italicShear * top, position.y + top}, color, {u1, v1}});
+    vertices.append({{position.x + right - italicShear * top, position.y + top}, color, {u2, v1}});
+    vertices.append({{position.x + left - italicShear * bottom, position.y + bottom}, color, {u1, v2}});
+    vertices.append({{position.x + left - italicShear * bottom, position.y + bottom}, color, {u1, v2}});
+    vertices.append({{position.x + right - italicShear * top, position.y + top}, color, {u2, v1}});
+    vertices.append({{position.x + right - italicShear * bottom, position.y + bottom}, color, {u2, v2}});
 }
 } // namespace
 

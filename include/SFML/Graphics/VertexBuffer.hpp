@@ -41,7 +41,7 @@
 namespace sf
 {
 class RenderTarget;
-class Vertex;
+struct Vertex;
 
 ////////////////////////////////////////////////////////////
 /// \brief Vertex buffer storage for one or more 2D primitives
