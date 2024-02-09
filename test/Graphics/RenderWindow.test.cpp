@@ -11,6 +11,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <GraphicsUtil.hpp>
+#include <WindowUtil.hpp>
 #include <type_traits>
 
 TEST_CASE("[Graphics] sf::RenderWindow", runDisplayTests())

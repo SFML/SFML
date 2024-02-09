@@ -33,6 +33,7 @@
 
 #include <cassert>
 #include <cstring>
+#include <cwchar>
 
 
 namespace sf

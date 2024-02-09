@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFileFactory.hpp> // NOLINT(misc-header-include-cycle)
 
-#include <algorithm>
+#include <memory>
 
 
 namespace sf

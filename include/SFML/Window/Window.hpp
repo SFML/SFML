@@ -30,11 +30,15 @@
 #include <SFML/Window/ContextSettings.hpp>
 #include <SFML/Window/GlResource.hpp>
 #include <SFML/Window/WindowBase.hpp>
+#include <SFML/Window/WindowEnums.hpp>
+#include <SFML/Window/WindowHandle.hpp>
 
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Time.hpp>
 
 #include <memory>
+
+#include <cstdint>
 
 
 namespace sf
@@ -43,8 +47,6 @@ namespace priv
 {
 class GlContext;
 }
-
-struct Event;
 
 ////////////////////////////////////////////////////////////
 /// \brief Window that serves as a target for OpenGL rendering

@@ -31,13 +31,15 @@
 
 #include <SFML/Window/GlResource.hpp>
 
+#include <SFML/System/Vector2.hpp>
+
 #include <memory>
 
 
 namespace sf
 {
 class Context;
-
+struct ContextSettings;
 
 namespace priv
 {

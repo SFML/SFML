@@ -32,6 +32,8 @@
 #include <filesystem>
 #include <string>
 
+#include <cstddef>
+
 
 namespace sf
 {

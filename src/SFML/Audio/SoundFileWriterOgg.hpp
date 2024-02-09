@@ -34,6 +34,8 @@
 #include <filesystem>
 #include <fstream>
 
+#include <cstdint>
+
 
 namespace sf::priv
 {

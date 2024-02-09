@@ -31,8 +31,6 @@
 
 #include <vector>
 
-#include <cstdint>
-
 
 using VkInstance = struct VkInstance_T*;
 
@@ -42,6 +40,9 @@ using VkInstance = struct VkInstance_T*;
 using VkSurfaceKHR = struct VkSurfaceKHR_T*;
 
 #else
+
+#include <cstdint>
+
 
 using VkSurfaceKHR = std::uint64_t;
 

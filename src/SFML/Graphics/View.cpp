@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/View.hpp>
 
+#include <cassert>
 #include <cmath>
 
 

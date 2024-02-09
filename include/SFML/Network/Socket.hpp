@@ -34,8 +34,6 @@
 
 namespace sf
 {
-class SocketSelector;
-
 ////////////////////////////////////////////////////////////
 /// \brief Base class for all the socket types
 ///

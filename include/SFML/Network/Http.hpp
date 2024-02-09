@@ -34,6 +34,7 @@
 
 #include <SFML/System/Time.hpp>
 
+#include <iosfwd>
 #include <map>
 #include <optional>
 #include <string>

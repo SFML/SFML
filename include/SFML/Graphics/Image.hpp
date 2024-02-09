@@ -32,10 +32,15 @@
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Rect.hpp>
 
+#include <SFML/System/Vector2.hpp>
+
 #include <filesystem>
 #include <optional>
 #include <string_view>
 #include <vector>
+
+#include <cstddef>
+#include <cstdint>
 
 
 namespace sf

@@ -30,9 +30,12 @@
 #include <SFML/System/Err.hpp>
 #include <SFML/System/InputStream.hpp>
 
+#include <algorithm>
 #include <ostream>
 
 #include <cassert>
+#include <cstddef>
+#include <cstdint>
 
 
 namespace

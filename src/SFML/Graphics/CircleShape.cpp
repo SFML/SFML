@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/CircleShape.hpp>
 
-#include <cmath>
+#include <SFML/System/Angle.hpp>
 
 
 namespace sf

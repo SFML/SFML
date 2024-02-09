@@ -39,8 +39,6 @@
 namespace sf
 {
 class String;
-class TcpSocket;
-class UdpSocket;
 
 ////////////////////////////////////////////////////////////
 /// \brief Utility class to build blocks of data to transfer

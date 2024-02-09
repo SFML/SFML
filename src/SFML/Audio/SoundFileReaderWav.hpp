@@ -29,6 +29,15 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFileReader.hpp>
 
+#include <optional>
+
+#include <cstdint>
+
+
+namespace sf
+{
+class InputStream;
+}
 
 namespace sf::priv
 {

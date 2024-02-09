@@ -1,4 +1,5 @@
 #include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/Texture.hpp>
 
 // Other 1st party headers
 #include <SFML/System/FileInputStream.hpp>
@@ -6,6 +7,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <GraphicsUtil.hpp>
+#include <WindowUtil.hpp>
 #include <fstream>
 #include <type_traits>
 

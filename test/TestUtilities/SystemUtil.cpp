@@ -5,7 +5,6 @@
 #include <SFML/System/Vector3.hpp>
 
 #include <catch2/catch_approx.hpp>
-#include <catch2/catch_test_macros.hpp>
 
 #include <SystemUtil.hpp>
 #include <iomanip>

@@ -34,6 +34,8 @@
 #include <utility>
 
 #include <cmath>
+#include <cstddef>
+#include <cstdint>
 
 
 namespace

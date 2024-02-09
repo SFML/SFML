@@ -27,8 +27,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RectangleShape.hpp>
 
-#include <cmath>
-
 
 namespace sf
 {

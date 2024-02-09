@@ -27,8 +27,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderStates.hpp>
 
-#include <cstddef>
-
 
 namespace sf
 {

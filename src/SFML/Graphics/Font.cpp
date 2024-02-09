@@ -26,8 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Font.hpp>
-#include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/Graphics/Image.hpp>
+#include <SFML/Graphics/Texture.hpp>
 #ifdef SFML_SYSTEM_ANDROID
 #include <SFML/System/Android/ResourceStream.hpp>
 #endif
@@ -41,11 +41,11 @@
 #include FT_OUTLINE_H
 #include FT_BITMAP_H
 #include FT_STROKER_H
+
 #include <ostream>
-#include <type_traits>
+#include <utility>
 
 #include <cmath>
-#include <cstdlib>
 #include <cstring>
 
 
@@ -759,8 +759,7 @@ bool Font::setCurrentSize(unsigned int characterSize) const
             // fail if the requested size is not available
             if (!FT_IS_SCALABLE(face))
             {
-                err() << "Failed to set bitmap font size to " << characterSize << std::endl;
-                err() << "Available sizes are: ";
+                err() << "Failed to set bitmap font size to " << characterSize << '\n' << "Available sizes are: ";
                 for (int i = 0; i < face->num_fixed_sizes; ++i)
                 {
                     const long size = (face->available_sizes[i].y_ppem + 32) >> 6;
