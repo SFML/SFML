@@ -41,9 +41,9 @@ TEST_CASE("[Graphics] sf::VertexArray")
             CHECK(vertexArray.getBounds() == sf::FloatRect({0, 0}, {0, 0}));
             for (std::size_t i = 0; i < vertexArray.getVertexCount(); ++i)
             {
-                CHECK(vertexArray[i].position == sf::Vertex().position);
-                CHECK(vertexArray[i].color == sf::Vertex().color);
-                CHECK(vertexArray[i].texCoords == sf::Vertex().texCoords);
+                CHECK(vertexArray[i].position == sf::Vertex{}.position);
+                CHECK(vertexArray[i].color == sf::Vertex{}.color);
+                CHECK(vertexArray[i].texCoords == sf::Vertex{}.texCoords);
             }
         }
     }
@@ -55,9 +55,9 @@ TEST_CASE("[Graphics] sf::VertexArray")
         CHECK(vertexArray.getVertexCount() == 42);
         for (std::size_t i = 0; i < vertexArray.getVertexCount(); ++i)
         {
-            CHECK(vertexArray[i].position == sf::Vertex().position);
-            CHECK(vertexArray[i].color == sf::Vertex().color);
-            CHECK(vertexArray[i].texCoords == sf::Vertex().texCoords);
+            CHECK(vertexArray[i].position == sf::Vertex{}.position);
+            CHECK(vertexArray[i].color == sf::Vertex{}.color);
+            CHECK(vertexArray[i].texCoords == sf::Vertex{}.texCoords);
         }
     }
 
@@ -72,7 +72,7 @@ TEST_CASE("[Graphics] sf::VertexArray")
     SECTION("Append to array")
     {
         sf::VertexArray  vertexArray;
-        const sf::Vertex vertex({1, 2}, {3, 4, 5, 6}, {7, 8});
+        const sf::Vertex vertex{{1.0f, 2.0f}, {3, 4, 5, 6}, {7.0f, 8.0f}};
         vertexArray.append(vertex);
         CHECK(vertexArray.getVertexCount() == 1);
         CHECK(vertexArray[0].position == vertex.position);
@@ -84,7 +84,7 @@ TEST_CASE("[Graphics] sf::VertexArray")
     {
         sf::VertexArray vertexArray;
         vertexArray.resize(10);
-        const sf::Vertex otherVertex({2, 3}, {4, 5, 6, 7}, {8, 9});
+        const sf::Vertex otherVertex{{2.0f, 3.0f}, {4, 5, 6, 7}, {8.0f, 9.0f}};
         vertexArray[9] = otherVertex;
         CHECK(vertexArray[9].position == otherVertex.position);
         CHECK(vertexArray[9].color == otherVertex.color);
@@ -101,14 +101,14 @@ TEST_CASE("[Graphics] sf::VertexArray")
     SECTION("Get bounds")
     {
         sf::VertexArray vertexArray;
-        vertexArray.append(sf::Vertex({1, 1}));
-        vertexArray.append(sf::Vertex({2, 2}));
+        vertexArray.append({{1, 1}});
+        vertexArray.append({{2, 2}});
         CHECK(vertexArray.getBounds() == sf::FloatRect({1, 1}, {1, 1}));
-        vertexArray[0] = sf::Vertex({0, 0});
+        vertexArray[0] = {{0, 0}};
         CHECK(vertexArray.getBounds() == sf::FloatRect({0, 0}, {2, 2}));
-        vertexArray[0] = sf::Vertex({5, 5});
+        vertexArray[0] = {{5, 5}};
         CHECK(vertexArray.getBounds() == sf::FloatRect({2, 2}, {3, 3}));
-        vertexArray.append(sf::Vertex({10, 10}));
+        vertexArray.append({{10, 10}});
         CHECK(vertexArray.getBounds() == sf::FloatRect({2, 2}, {8, 8}));
     }
 }

@@ -151,7 +151,7 @@ public:
             const auto r = static_cast<std::uint8_t>(colorDistribution(rng));
             const auto g = static_cast<std::uint8_t>(colorDistribution(rng));
             const auto b = static_cast<std::uint8_t>(colorDistribution(rng));
-            m_points.append(sf::Vertex(sf::Vector2f(x, y), sf::Color(r, g, b)));
+            m_points.append({{x, y}, {r, g, b}});
         }
 
         // Load the shader
