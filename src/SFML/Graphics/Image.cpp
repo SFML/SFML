@@ -490,8 +490,10 @@ void Image::createMaskFromColor(const Color& color, std::uint8_t alpha)
 ////////////////////////////////////////////////////////////
 void Image::setPixel(const Vector2u& coords, const Color& color)
 {
-    const auto index = (coords.x + coords.y * m_size.x) * 4;
-    assert(index < m_pixels.size() && "Image::setPixel() cannot access out of bounds pixel");
+    assert(coords.x < m_size.x && "Image::setPixel() x coordinate is out of bounds");
+    assert(coords.y < m_size.y && "Image::setPixel() y coordinate is out of bounds");
+
+    const auto    index = (coords.x + coords.y * m_size.x) * 4;
     std::uint8_t* pixel = &m_pixels[index];
     *pixel++            = color.r;
     *pixel++            = color.g;
@@ -503,8 +505,10 @@ void Image::setPixel(const Vector2u& coords, const Color& color)
 ////////////////////////////////////////////////////////////
 Color Image::getPixel(const Vector2u& coords) const
 {
-    const auto index = (coords.x + coords.y * m_size.x) * 4;
-    assert(index < m_pixels.size() && "Image::getPixel() cannot access out of bounds pixel");
+    assert(coords.x < m_size.x && "Image::getPixel() x coordinate is out of bounds");
+    assert(coords.y < m_size.y && "Image::getPixel() y coordinate is out of bounds");
+
+    const auto          index = (coords.x + coords.y * m_size.x) * 4;
     const std::uint8_t* pixel = &m_pixels[index];
     return {pixel[0], pixel[1], pixel[2], pixel[3]};
 }
