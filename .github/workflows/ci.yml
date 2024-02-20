@@ -123,7 +123,7 @@ jobs:
     # In addition to installing a known working version of CCache, this action also takes care of saving and restoring the cache for us
     # Additionally it outputs information at the end of each job that helps us to verify if the cache is working properly
     - name: Setup CCache
-      uses: hendrikmuhs/ccache-action@v1.2.10
+      uses: hendrikmuhs/ccache-action@v1.2.12
       with:
         verbose: 2
         key: ${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}
@@ -131,13 +131,13 @@ jobs:
     - name: Cache OpenCppCoverage
       if: matrix.type.name == 'Debug' && runner.os == 'Windows'
       id: opencppcoverage-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: C:\Program Files\OpenCppCoverage
         key: opencppcoverage
 
     - name: Install OpenCppCoverage
-      uses: nick-fields/retry@v2
+      uses: nick-fields/retry@v3
       if: matrix.type.name == 'Debug' && runner.os == 'Windows' && steps.opencppcoverage-cache.outputs.cache-hit != 'true'
       with:
         max_attempts: 10
@@ -147,7 +147,7 @@ jobs:
     - name: Cache MinGW
       if: matrix.platform.name == 'Windows MinGW'
       id: mingw-cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: "C:\\Program Files\\mingw64"
         key: winlibs-x86_64-posix-seh-gcc-12.2.0-llvm-16.0.0-mingw-w64msvcrt-10.0.0-r5
@@ -220,7 +220,7 @@ jobs:
 
     - name: Upload Coverage Report to Codecov
       if: matrix.type.name == 'Debug' && github.repository == 'SFML/SFML' # Disable upload in forks
-      uses: nick-fields/retry@v2
+      uses: nick-fields/retry@v3
       with:
         timeout_seconds: 30
         max_attempts: 10
