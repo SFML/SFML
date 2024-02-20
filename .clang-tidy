@@ -18,7 +18,6 @@ Checks: >
   -bugprone-narrowing-conversions,
   -bugprone-signed-char-misuse,
   -bugprone-string-integer-assignment,
-  -bugprone-suspicious-include,
   -bugprone-switch-missing-default-case,
   -bugprone-unchecked-optional-access,
   -clang-analyzer-nullability.NullablePassedToNonnull,
