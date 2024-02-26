@@ -81,6 +81,44 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
         CHECK(texture.getNativeHandle() != 0);
     }
 
+    SECTION("loadFromImage()")
+    {
+        SECTION("Empty image")
+        {
+            const sf::Image image;
+            sf::Texture     texture;
+            REQUIRE(!texture.loadFromImage(image));
+            REQUIRE(!texture.loadFromImage(image, {{0, 0}, {1, 1}}));
+        }
+
+        SECTION("Subarea of image")
+        {
+            sf::Image image;
+            image.create(sf::Vector2u(10, 15));
+            sf::Texture texture;
+
+            SECTION("Non-truncated area")
+            {
+                REQUIRE(texture.loadFromImage(image, {{0, 0}, {5, 10}}));
+                CHECK(texture.getSize() == sf::Vector2u(5, 10));
+            }
+
+            SECTION("Truncated area (negative position)")
+            {
+                REQUIRE(texture.loadFromImage(image, {{-5, -5}, {4, 8}}));
+                CHECK(texture.getSize() == sf::Vector2u(4, 8));
+            }
+
+            SECTION("Truncated area (width/height too big)")
+            {
+                REQUIRE(texture.loadFromImage(image, {{5, 5}, {12, 18}}));
+                CHECK(texture.getSize() == sf::Vector2u(5, 10));
+            }
+
+            CHECK(texture.getNativeHandle() != 0);
+        }
+    }
+
     SECTION("Copy semantics")
     {
         constexpr std::uint8_t red[] = {0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF};
