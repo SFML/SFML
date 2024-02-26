@@ -313,14 +313,10 @@ bool Texture::loadFromImage(const Image& image, const IntRect& area)
 
         // Adjust the rectangle to the size of the image
         IntRect rectangle = area;
-        if (rectangle.left < 0)
-            rectangle.left = 0;
-        if (rectangle.top < 0)
-            rectangle.top = 0;
-        if (rectangle.left + rectangle.width > width)
-            rectangle.width = width - rectangle.left;
-        if (rectangle.top + rectangle.height > height)
-            rectangle.height = height - rectangle.top;
+        rectangle.left    = std::max(rectangle.left, 0);
+        rectangle.top     = std::max(rectangle.top, 0);
+        rectangle.width   = std::min(rectangle.width, width - rectangle.left);
+        rectangle.height  = std::min(rectangle.height, height - rectangle.top);
 
         // Create the texture and upload the pixels
         if (create(Vector2u(rectangle.getSize())))
