@@ -276,8 +276,7 @@ float Text::getOutlineThickness() const
 Vector2f Text::findCharacterPos(std::size_t index) const
 {
     // Adjust the index if it's out of range
-    if (index > m_string.getSize())
-        index = m_string.getSize();
+    index = std::min(index, m_string.getSize());
 
     // Precompute the variables needed by the algorithm
     const bool  isBold          = m_style & Bold;
