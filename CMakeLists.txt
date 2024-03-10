@@ -213,13 +213,13 @@ if(SFML_INSTALL_PKGCONFIG_FILES)
 
     # set pkgconfig install directory
     # this could be e.g. macports on mac or msys2 on windows etc.
-    set(SFML_PKGCONFIG_DIR "/${SFML_RELATIVE_INSTALL_LIBDIR}/pkgconfig")
+    set(SFML_PKGCONFIG_DIR "${SFML_RELATIVE_INSTALL_LIBDIR}/pkgconfig")
 
     if(SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
-        set(SFML_PKGCONFIG_DIR "/libdata/pkgconfig")
+        set(SFML_PKGCONFIG_DIR "libdata/pkgconfig")
     endif()
 
-    sfml_set_option(SFML_PKGCONFIG_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/${SFML_PKGCONFIG_DIR}" PATH "Install directory for SFML's pkg-config .pc files")
+    sfml_set_option(SFML_PKGCONFIG_INSTALL_DIR "${SFML_PKGCONFIG_DIR}" PATH "Install directory for SFML's pkg-config .pc files")
 
     foreach(sfml_module IN ITEMS all system window graphics audio network)
         configure_file(
@@ -227,7 +227,7 @@ if(SFML_INSTALL_PKGCONFIG_FILES)
             "tools/pkg-config/sfml-${sfml_module}.pc"
             @ONLY)
         install(FILES "${CMAKE_CURRENT_BINARY_DIR}/tools/pkg-config/sfml-${sfml_module}.pc"
-            DESTINATION "${SFML_PKGCONFIG_INSTALL_PREFIX}")
+            DESTINATION "${SFML_PKGCONFIG_INSTALL_DIR}")
     endforeach()
 endif()
 
