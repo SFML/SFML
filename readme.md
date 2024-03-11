@@ -11,6 +11,12 @@ Development is focused on the next major version in the `master` branch. No more
 -   The [`master`](https://github.com/SFML/SFML/tree/master) branch contains work in progress for the next major version SFML 3. As such it's considered unstable, but any testing and feedback is highly appreciated.
 -   The [`2.6.0`](https://github.com/SFML/SFML/tree/2.6.0) tag is the latest official SFML release and will be the last minor release in the 2.x series.
 
+## CMake Template
+
+The easiest way to get started with SFML is our [CMake-based project template](https://github.com/SFML/cmake-sfml-project/blob/master/README.md).
+This template will automatically download and build SFML alongside your own application.
+Read the README for full instructions on how to use it.
+
 ## Download
 
 -   You can get the latest official release on [SFML's website](https://www.sfml-dev.org/download.php).
