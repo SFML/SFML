@@ -44,7 +44,8 @@ SoundSource::SoundSource()
 
 
 ////////////////////////////////////////////////////////////
-SoundSource::SoundSource(const SoundSource& copy)
+// NOLINTNEXTLINE(readability-redundant-member-init)
+SoundSource::SoundSource(const SoundSource& copy) : AlResource()
 {
     alCheck(alGenSources(1, &m_source));
     alCheck(alSourcei(m_source, AL_BUFFER, 0));
