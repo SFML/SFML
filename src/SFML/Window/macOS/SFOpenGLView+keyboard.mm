@@ -84,7 +84,7 @@
     // Handle key down event
     if (m_useKeyRepeat || ![theEvent isARepeat])
     {
-        sf::Event::KeyEvent key = [SFOpenGLView convertNSKeyEventToSFMLEvent:theEvent];
+        const auto key = sf::Event::KeyPressed{[SFOpenGLView convertNSKeyEventToSFMLEvent:theEvent]};
 
         if ((key.code != sf::Keyboard::Key::Unknown) || (key.scancode != sf::Keyboard::Scan::Unknown))
             m_requester->keyDown(key);
@@ -156,7 +156,7 @@
     if (m_requester == nil)
         return;
 
-    sf::Event::KeyEvent key = [SFOpenGLView convertNSKeyEventToSFMLEvent:theEvent];
+    const auto key = sf::Event::KeyReleased{[SFOpenGLView convertNSKeyEventToSFMLEvent:theEvent]};
 
     if ((key.code != sf::Keyboard::Key::Unknown) || (key.scancode != sf::Keyboard::Scan::Unknown))
         m_requester->keyUp(key);
@@ -178,7 +178,7 @@
 
 
 ////////////////////////////////////////////////////////
-+ (sf::Event::KeyEvent)convertNSKeyEventToSFMLEvent:(NSEvent*)event
++ (sf::Event::KeyChanged)convertNSKeyEventToSFMLEvent:(NSEvent*)event
 {
     // The scancode always depends on the hardware keyboard, not some OS setting.
     sf::Keyboard::Scancode code = sf::priv::HIDInputManager::nonLocalizedKey([event keyCode]);

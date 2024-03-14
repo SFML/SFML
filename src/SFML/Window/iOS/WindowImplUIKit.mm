@@ -230,9 +230,9 @@ bool WindowImplUIKit::hasFocus() const
 ////////////////////////////////////////////////////////////
 void WindowImplUIKit::forwardEvent(Event event)
 {
-    if (event.type == Event::GainedFocus)
+    if (event.is<Event::FocusGained>())
         m_hasFocus = true;
-    else if (event.type == Event::LostFocus)
+    else if (event.is<Event::FocusLost>())
         m_hasFocus = false;
 
     pushEvent(event);

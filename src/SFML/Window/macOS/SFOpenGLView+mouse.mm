@@ -138,7 +138,7 @@
         NSPoint loc = [self cursorPositionFromEvent:theEvent];
 
         if (button)
-            m_requester->mouseDownAt(*button, static_cast<int>(loc.x), static_cast<int>(loc.y));
+            m_requester->mouseDownAt(*button, sf::Vector2i(sf::Vector2(loc.x, loc.y)));
     }
 }
 
@@ -183,7 +183,7 @@
         NSPoint loc = [self cursorPositionFromEvent:theEvent];
 
         if (button)
-            m_requester->mouseUpAt(*button, static_cast<int>(loc.x), static_cast<int>(loc.y));
+            m_requester->mouseUpAt(*button, sf::Vector2i(sf::Vector2(loc.x, loc.y)));
     }
 }
 
@@ -244,7 +244,7 @@
     //  when the mouse is dragged. That would be too easy!)
     [self updateMouseState];
     if ((m_requester != nil) && m_mouseIsIn)
-        m_requester->mouseMovedAt(static_cast<int>(loc.x), static_cast<int>(loc.y));
+        m_requester->mouseMovedAt(sf::Vector2i(sf::Vector2(loc.x, loc.y)));
 }
 
 
@@ -304,8 +304,7 @@
         NSPoint loc = [self cursorPositionFromEvent:theEvent];
         m_requester->mouseWheelScrolledAt(static_cast<float>([theEvent deltaX]),
                                           static_cast<float>([theEvent deltaY]),
-                                          static_cast<int>(loc.x),
-                                          static_cast<int>(loc.y));
+                                          sf::Vector2i(sf::Vector2(loc.x, loc.y)));
     }
 
     // Transmit to non-SFML responder

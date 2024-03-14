@@ -119,13 +119,9 @@ std::vector<sf::Vector2i> touchPositions;
     // - the application is sent to background
     // - the application is interrupted by a call or message
 
-    // Generate a LostFocus event
+    // Generate a FocusLost event
     if (self.sfWindow)
-    {
-        sf::Event event;
-        event.type = sf::Event::LostFocus;
-        sfWindow->forwardEvent(event);
-    }
+        sfWindow->forwardEvent(sf::Event::FocusLost{});
 }
 
 
@@ -143,13 +139,9 @@ std::vector<sf::Vector2i> touchPositions;
     // - the application is sent to foreground
     // - the application was interrupted by a call or message
 
-    // Generate a GainedFocus event
+    // Generate a FocusGained event
     if (self.sfWindow)
-    {
-        sf::Event event;
-        event.type = sf::Event::GainedFocus;
-        sfWindow->forwardEvent(event);
-    }
+        sfWindow->forwardEvent(sf::Event::FocusGained{});
 }
 
 
@@ -165,11 +157,7 @@ std::vector<sf::Vector2i> touchPositions;
 {
     // Generate a Closed event
     if (self.sfWindow)
-    {
-        sf::Event event;
-        event.type = sf::Event::Closed;
-        sfWindow->forwardEvent(event);
-    }
+        sfWindow->forwardEvent(sf::Event::Closed{});
 }
 
 - (bool)supportsOrientation:(UIDeviceOrientation)orientation
@@ -229,11 +217,7 @@ std::vector<sf::Vector2i> touchPositions;
                 std::swap(size.x, size.y);
 
             // Send a Resized event to the current window
-            sf::Event event;
-            event.type        = sf::Event::Resized;
-            event.size.width  = size.x;
-            event.size.height = size.y;
-            sfWindow->forwardEvent(event);
+            sfWindow->forwardEvent(sf::Event::Resized{size});
         }
     }
 }
@@ -269,14 +253,7 @@ std::vector<sf::Vector2i> touchPositions;
 
     // notify the event to the application window
     if (self.sfWindow)
-    {
-        sf::Event event;
-        event.type         = sf::Event::TouchBegan;
-        event.touch.finger = index;
-        event.touch.x      = position.x;
-        event.touch.y      = position.y;
-        sfWindow->forwardEvent(event);
-    }
+        sfWindow->forwardEvent(sf::Event::TouchBegan{index, position});
 }
 
 
@@ -293,14 +270,7 @@ std::vector<sf::Vector2i> touchPositions;
 
     // notify the event to the application window
     if (self.sfWindow)
-    {
-        sf::Event event;
-        event.type         = sf::Event::TouchMoved;
-        event.touch.finger = index;
-        event.touch.x      = position.x;
-        event.touch.y      = position.y;
-        sfWindow->forwardEvent(event);
-    }
+        sfWindow->forwardEvent(sf::Event::TouchMoved{index, position});
 }
 
 
@@ -313,14 +283,7 @@ std::vector<sf::Vector2i> touchPositions;
 
     // notify the event to the application window
     if (self.sfWindow)
-    {
-        sf::Event event;
-        event.type         = sf::Event::TouchEnded;
-        event.touch.finger = index;
-        event.touch.x      = position.x * static_cast<int>(backingScaleFactor);
-        event.touch.y      = position.y * static_cast<int>(backingScaleFactor);
-        sfWindow->forwardEvent(event);
-    }
+        sfWindow->forwardEvent(sf::Event::TouchEnded{index, position * static_cast<int>(backingScaleFactor)});
 }
 
 
@@ -328,12 +291,7 @@ std::vector<sf::Vector2i> touchPositions;
 - (void)notifyCharacter:(std::uint32_t)character
 {
     if (self.sfWindow)
-    {
-        sf::Event event;
-        event.type         = sf::Event::TextEntered;
-        event.text.unicode = character;
-        sfWindow->forwardEvent(event);
-    }
+        sfWindow->forwardEvent(sf::Event::TextEntered{character});
 }
 
 

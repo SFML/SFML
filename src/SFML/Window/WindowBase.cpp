@@ -409,10 +409,10 @@ void WindowBase::create(VideoMode mode, std::uint32_t& style, State& state)
 void WindowBase::filterEvent(const Event& event)
 {
     // Notify resize events to the derived class
-    if (event.type == Event::Resized)
+    if (const auto* resized = event.getIf<Event::Resized>())
     {
         // Cache the new size
-        m_size = {event.size.width, event.size.height};
+        m_size = resized->size;
 
         // Notify the derived class
         onResize();

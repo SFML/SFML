@@ -76,13 +76,6 @@ void scaleOut(T& out, id<WindowImplDelegateProtocol> delegate)
 }
 
 template <class T>
-void scaleOutWidthHeight(T& width, T& height, id<WindowImplDelegateProtocol> delegate)
-{
-    scaleOut(width, delegate);
-    scaleOut(height, delegate);
-}
-
-template <class T>
 void scaleOutXY(T& out, id<WindowImplDelegateProtocol> delegate)
 {
     scaleOut(out.x, delegate);

@@ -43,7 +43,7 @@ int main()
         for (sf::Event event; window.pollEvent(event);)
         {
             // Window closed: exit
-            if (event.type == sf::Event::Closed)
+            if (event.is<sf::Event::Closed>())
             {
                 window.close();
                 break;

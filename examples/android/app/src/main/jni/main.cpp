@@ -115,44 +115,50 @@ int main(int argc, char* argv[])
     {
         for (sf::Event event; active ? window.pollEvent(event) : window.waitEvent(event);)
         {
-            switch (event.type)
+            switch (event.getType())
             {
-                case sf::Event::Closed:
+                case sf::Event::Type::Closed:
                     window.close();
                     break;
-                case sf::Event::KeyPressed:
-                    if (event.key.code == sf::Keyboard::Key::Escape)
+                case sf::Event::Type::KeyPressed:
+                    if (event.get<sf::Event::KeyPressed>().code == sf::Keyboard::Key::Escape)
                         window.close();
                     break;
-                case sf::Event::Resized:
-                    view.setSize(sf::Vector2f(event.size.width, event.size.height));
-                    view.setCenter(sf::Vector2f(event.size.width, event.size.height) / 2.f);
+                case sf::Event::Type::Resized:
+                {
+                    const auto size = sf::Vector2f(event.get<sf::Event::Resized>().size);
+                    view.setSize(size);
+                    view.setCenter(size / 2.f);
                     window.setView(view);
                     break;
-                case sf::Event::LostFocus:
+                }
+                case sf::Event::Type::FocusLost:
                     background = sf::Color::Black;
                     break;
-                case sf::Event::GainedFocus:
+                case sf::Event::Type::FocusGained:
                     background = sf::Color::White;
                     break;
 
                 // On Android MouseLeft/MouseEntered are (for now) triggered,
                 // whenever the app loses or gains focus.
-                case sf::Event::MouseLeft:
+                case sf::Event::Type::MouseLeft:
                     active = false;
                     break;
-                case sf::Event::MouseEntered:
+                case sf::Event::Type::MouseEntered:
                     active = true;
                     break;
-                case sf::Event::TouchBegan:
-                    if (event.touch.finger == 0)
+                case sf::Event::Type::TouchBegan:
+                {
+                    const auto& touchBegan = event.get<sf::Event::TouchBegan>();
+                    if (touchBegan.finger == 0)
                     {
-                        image.setPosition({static_cast<float>(event.touch.x), static_cast<float>(event.touch.y)});
+                        image.setPosition(sf::Vector2f(touchBegan.position));
 #if defined(USE_JNI)
                         vibrate(sf::milliseconds(10));
 #endif
                     }
                     break;
+                }
                 default:
                     break;
             }

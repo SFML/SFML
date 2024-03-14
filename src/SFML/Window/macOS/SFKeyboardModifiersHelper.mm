@@ -151,16 +151,15 @@ void initialiseKeyboardHelper()
 
 
 ////////////////////////////////////////////////////////
-sf::Event::KeyEvent keyEventWithModifiers(NSUInteger modifiers, sf::Keyboard::Key key, sf::Keyboard::Scancode code)
+sf::Event::KeyChanged keyEventWithModifiers(NSUInteger modifiers, sf::Keyboard::Key key, sf::Keyboard::Scancode code)
 {
-    sf::Event::KeyEvent event{};
+    sf::Event::KeyChanged event;
     event.code     = key;
     event.scancode = code;
     event.alt      = modifiers & NSAlternateKeyMask;
     event.control  = modifiers & NSControlKeyMask;
     event.shift    = modifiers & NSShiftKeyMask;
     event.system   = modifiers & NSCommandKeyMask;
-
     return event;
 }
 
@@ -244,19 +243,16 @@ void processOneModifier(NSUInteger                 modifiers,
                         sf::Keyboard::Scancode     code,
                         sf::priv::WindowImplCocoa& requester)
 {
-    // Setup a potential event key.
-    const sf::Event::KeyEvent event = keyEventWithModifiers(modifiers, key, code);
-
     // State
     const BOOL isDown = isKeyMaskActive(modifiers, mask);
 
     // Check for key pressed event
     if (isDown && !wasDown)
-        requester.keyDown(event);
+        requester.keyDown(sf::Event::KeyPressed{keyEventWithModifiers(modifiers, key, code)});
 
     // And check for key released event
     else if (!isDown && wasDown)
-        requester.keyUp(event);
+        requester.keyUp(sf::Event::KeyReleased{keyEventWithModifiers(modifiers, key, code)});
 
     // else isDown == wasDown, so no change
 

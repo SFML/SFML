@@ -52,7 +52,7 @@ namespace priv
 class WindowImpl;
 }
 
-struct Event;
+class Event;
 
 ////////////////////////////////////////////////////////////
 /// \brief Window that serves as a base for other windows
@@ -566,7 +566,7 @@ private:
 ///    for (sf::Event event; window.pollEvent(event);)
 ///    {
 ///        // Request for closing the window
-///        if (event.type == sf::Event::Closed)
+///        if (event.is<sf::Event::Closed>())
 ///            window.close();
 ///    }
 ///
