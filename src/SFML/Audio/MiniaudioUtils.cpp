@@ -46,24 +46,24 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 struct MiniaudioUtils::SavedSettings
 {
-    float          pitch;
-    float          pan;
-    float          volume;
-    ma_bool32      spatializationEnabled;
-    ma_vec3f       position;
-    ma_vec3f       direction;
-    float          directionalAttenuationFactor;
-    ma_vec3f       velocity;
-    float          dopplerFactor;
-    ma_positioning positioning;
-    float          minDistance;
-    float          maxDistance;
-    float          minGain;
-    float          maxGain;
-    float          rollOff;
-    float          innerAngle;
-    float          outerAngle;
-    float          outerGain;
+    float          pitch{1.f};
+    float          pan{0.f};
+    float          volume{1.f};
+    ma_bool32      spatializationEnabled{MA_TRUE};
+    ma_vec3f       position{0.f, 0.f, 0.f};
+    ma_vec3f       direction{0.f, 0.f, -1.f};
+    float          directionalAttenuationFactor{1.f};
+    ma_vec3f       velocity{0.f, 0.f, 0.f};
+    float          dopplerFactor{1.f};
+    ma_positioning positioning{ma_positioning_absolute};
+    float          minDistance{1.f};
+    float          maxDistance{std::numeric_limits<float>::max()};
+    float          minGain{0.f};
+    float          maxGain{1.f};
+    float          rollOff{1.f};
+    float          innerAngle{sf::degrees(360).asRadians()};
+    float          outerAngle{sf::degrees(360).asRadians()};
+    float          outerGain{0.f};
 };
 
 
@@ -172,22 +172,7 @@ ma_channel MiniaudioUtils::soundChannelToMiniaudioChannel(sf::SoundChannel sound
 ////////////////////////////////////////////////////////////
 void MiniaudioUtils::initializeSoundWithDefaultSettings(ma_sound& sound)
 {
-    ma_sound_set_pitch(&sound, 1.f);
-    ma_sound_set_pan(&sound, 0.f);
-    ma_sound_set_volume(&sound, 1.f);
-    ma_sound_set_spatialization_enabled(&sound, MA_TRUE);
-    ma_sound_set_position(&sound, 0.f, 0.f, 0.f);
-    ma_sound_set_direction(&sound, 0.f, 0.f, -1.f);
-    ma_sound_set_cone(&sound, degrees(360).asRadians(), degrees(360).asRadians(), 0.f); // inner = 360 degrees, outer = 360 degrees, gain = 0
-    ma_sound_set_directional_attenuation_factor(&sound, 1.f);
-    ma_sound_set_velocity(&sound, 0.f, 0.f, 0.f);
-    ma_sound_set_doppler_factor(&sound, 1.f);
-    ma_sound_set_positioning(&sound, ma_positioning_absolute);
-    ma_sound_set_min_distance(&sound, 1.f);
-    ma_sound_set_max_distance(&sound, std::numeric_limits<float>::max());
-    ma_sound_set_min_gain(&sound, 0.f);
-    ma_sound_set_max_gain(&sound, 1.f);
-    ma_sound_set_rolloff(&sound, 1.f);
+    applySettings(sound, {});
 }
 
 
