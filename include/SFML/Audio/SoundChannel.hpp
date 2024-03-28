@@ -22,62 +22,44 @@
 //
 ////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////
-// Headers
-////////////////////////////////////////////////////////////
-#include <SFML/Audio/SoundBufferRecorder.hpp>
-
-#include <SFML/System/Err.hpp>
-
-#include <algorithm>
-#include <iterator>
-#include <ostream>
-
+#pragma once
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-SoundBufferRecorder::~SoundBufferRecorder()
-{
-    // Make sure to stop the recording thread
-    stop();
-}
-
-
+/// \ingroup audio
+/// \brief Types of sound channels that can be read/written from sound buffers/files
+///
+/// In multi-channel audio, each sound channel can be
+/// assigned a position. The position of the channel is
+/// used to determine where to place a sound when it
+/// is spatialised. Assigning an incorrect sound channel
+/// will result in multi-channel audio being positioned
+/// incorrectly when using spatialisation.
+///
 ////////////////////////////////////////////////////////////
-bool SoundBufferRecorder::onStart()
+enum class SoundChannel
 {
-    m_samples.clear();
-    m_buffer = SoundBuffer();
-
-    return true;
-}
-
-
-////////////////////////////////////////////////////////////
-bool SoundBufferRecorder::onProcessSamples(const std::int16_t* samples, std::size_t sampleCount)
-{
-    std::copy(samples, samples + sampleCount, std::back_inserter(m_samples));
-
-    return true;
-}
-
-
-////////////////////////////////////////////////////////////
-void SoundBufferRecorder::onStop()
-{
-    if (m_samples.empty())
-        return;
-
-    if (!m_buffer.loadFromSamples(m_samples.data(), m_samples.size(), getChannelCount(), getSampleRate(), getChannelMap()))
-        err() << "Failed to stop capturing audio data" << std::endl;
-}
-
-
-////////////////////////////////////////////////////////////
-const SoundBuffer& SoundBufferRecorder::getBuffer() const
-{
-    return m_buffer;
-}
+    Unspecified,
+    Mono,
+    FrontLeft,
+    FrontRight,
+    FrontCenter,
+    FrontLeftOfCenter,
+    FrontRightOfCenter,
+    LowFrequencyEffects,
+    BackLeft,
+    BackRight,
+    BackCenter,
+    SideLeft,
+    SideRight,
+    TopCenter,
+    TopFrontLeft,
+    TopFrontRight,
+    TopFrontCenter,
+    TopBackLeft,
+    TopBackRight,
+    TopBackCenter
+};
 
 } // namespace sf

@@ -1,6 +1,7 @@
 #include <SFML/Audio/SoundFileFactory.hpp>
 
 // Other 1st party headers
+#include <SFML/Audio/SoundChannel.hpp>
 #include <SFML/Audio/SoundFileReader.hpp>
 #include <SFML/Audio/SoundFileWriter.hpp>
 
@@ -47,7 +48,7 @@ struct NoopSoundFileWriter : sf::SoundFileWriter
         return false;
     }
 
-    bool open(const std::filesystem::path&, unsigned int, unsigned int) override
+    bool open(const std::filesystem::path&, unsigned int, unsigned int, const std::vector<sf::SoundChannel>&) override
     {
         return false;
     }
