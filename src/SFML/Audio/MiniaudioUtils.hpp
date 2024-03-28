@@ -43,36 +43,15 @@ namespace sf
 class Time;
 }
 
-
-////////////////////////////////////////////////////////////
-// Declaration of 'MiniaudioUtils'
-////////////////////////////////////////////////////////////
-
-namespace sf::priv
+namespace sf::priv::MiniaudioUtils
 {
-////////////////////////////////////////////////////////////
-class MiniaudioUtils
-{
-private:
-    struct SavedSettings;
+[[nodiscard]] ma_channel soundChannelToMiniaudioChannel(sf::SoundChannel soundChannel);
+[[nodiscard]] Time       getPlayingOffset(ma_sound& sound);
+[[nodiscard]] ma_uint64  getFrameIndex(ma_sound& sound, Time timeOffset);
 
-    [[nodiscard]] static SavedSettings saveSettings(const ma_sound& sound);
-    static void                        applySettings(ma_sound& sound, const SavedSettings& savedSettings);
-
-    static void initializeSoundWithDefaultSettings(ma_sound& sound);
-    static void initializeDataSource(ma_data_source_base& dataSourceBase, const ma_data_source_vtable& vtable);
-
-public:
-    [[nodiscard]] static ma_channel soundChannelToMiniaudioChannel(sf::SoundChannel soundChannel);
-    [[nodiscard]] static Time       getPlayingOffset(ma_sound& sound);
-    [[nodiscard]] static ma_uint64  getFrameIndex(ma_sound& sound, Time timeOffset);
-
-    static void reinitializeSound(ma_sound& sound, const std::function<void()>& initializeFn);
-
-    static void initializeSound(const ma_data_source_vtable& vtable,
-                                ma_data_source_base&         dataSourceBase,
-                                ma_sound&                    sound,
-                                const std::function<void()>& initializeFn);
-};
-
-} // namespace sf::priv
+void reinitializeSound(ma_sound& sound, const std::function<void()>& initializeFn);
+void initializeSound(const ma_data_source_vtable& vtable,
+                     ma_data_source_base&         dataSourceBase,
+                     ma_sound&                    sound,
+                     const std::function<void()>& initializeFn);
+} // namespace sf::priv::MiniaudioUtils

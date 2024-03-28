@@ -43,8 +43,10 @@
 
 namespace sf::priv
 {
+namespace
+{
 ////////////////////////////////////////////////////////////
-struct MiniaudioUtils::SavedSettings
+struct SavedSettings
 {
     float          pitch{1.f};
     float          pan{0.f};
@@ -68,7 +70,7 @@ struct MiniaudioUtils::SavedSettings
 
 
 ////////////////////////////////////////////////////////////
-MiniaudioUtils::SavedSettings MiniaudioUtils::saveSettings(const ma_sound& sound)
+SavedSettings saveSettings(const ma_sound& sound)
 {
     float innerAngle;
     float outerAngle;
@@ -97,7 +99,7 @@ MiniaudioUtils::SavedSettings MiniaudioUtils::saveSettings(const ma_sound& sound
 
 
 ////////////////////////////////////////////////////////////
-void MiniaudioUtils::applySettings(ma_sound& sound, const SavedSettings& savedSettings)
+void applySettings(ma_sound& sound, const SavedSettings& savedSettings)
 {
     ma_sound_set_pitch(&sound, savedSettings.pitch);
     ma_sound_set_pan(&sound, savedSettings.pan);
@@ -117,6 +119,26 @@ void MiniaudioUtils::applySettings(ma_sound& sound, const SavedSettings& savedSe
 
     ma_sound_set_cone(&sound, savedSettings.innerAngle, savedSettings.outerAngle, savedSettings.outerGain);
 }
+
+
+////////////////////////////////////////////////////////////
+void initializeSoundWithDefaultSettings(ma_sound& sound)
+{
+    applySettings(sound, {});
+}
+
+
+////////////////////////////////////////////////////////////
+void initializeDataSource(ma_data_source_base& dataSourceBase, const ma_data_source_vtable& vtable)
+{
+    // Set this object up as a miniaudio data source
+    ma_data_source_config config = ma_data_source_config_init();
+    config.vtable                = &vtable;
+
+    if (const ma_result result = ma_data_source_init(&config, &dataSourceBase); result != MA_SUCCESS)
+        err() << "Failed to initialize audio data source: " << ma_result_description(result) << std::endl;
+}
+} // namespace
 
 
 ////////////////////////////////////////////////////////////
@@ -166,25 +188,6 @@ ma_channel MiniaudioUtils::soundChannelToMiniaudioChannel(sf::SoundChannel sound
             assert(soundChannel == SoundChannel::TopBackCenter);
             return MA_CHANNEL_TOP_BACK_CENTER;
     }
-}
-
-
-////////////////////////////////////////////////////////////
-void MiniaudioUtils::initializeSoundWithDefaultSettings(ma_sound& sound)
-{
-    applySettings(sound, {});
-}
-
-
-////////////////////////////////////////////////////////////
-void MiniaudioUtils::initializeDataSource(ma_data_source_base& dataSourceBase, const ma_data_source_vtable& vtable)
-{
-    // Set this object up as a miniaudio data source
-    ma_data_source_config config = ma_data_source_config_init();
-    config.vtable                = &vtable;
-
-    if (const ma_result result = ma_data_source_init(&config, &dataSourceBase); result != MA_SUCCESS)
-        err() << "Failed to initialize audio data source: " << ma_result_description(result) << std::endl;
 }
 
 
