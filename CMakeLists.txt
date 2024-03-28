@@ -201,7 +201,7 @@ endif()
 
 option(SFML_ENABLE_SANITIZERS "Enable sanitizers" OFF)
 if(SFML_ENABLE_SANITIZERS)
-    list(APPEND CMAKE_CXX_FLAGS "-fno-omit-frame-pointer -fno-sanitize-recover=all -fsanitize=undefined")
+    string(APPEND CMAKE_CXX_FLAGS " -fno-omit-frame-pointer -fno-sanitize-recover=all -fsanitize=undefined")
 endif()
 
 # set the output directory for SFML DLLs and executables
