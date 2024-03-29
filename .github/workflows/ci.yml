@@ -175,7 +175,6 @@ jobs:
 
     - name: Build Android example
       if: matrix.platform.name == 'Android'
-      shell: bash
       run: examples/android/gradlew ${{ matrix.type.name == 'Debug' && 'assembleDebug' || 'assembleRelease' }} -p examples/android -P ARCH_ABI=${{matrix.config.arch}} -P MIN_SDK=${{matrix.config.api}}
 
     - name: Prepare Test
