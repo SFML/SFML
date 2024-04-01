@@ -165,4 +165,21 @@ TEST_CASE("[Window] sf::Context", runDisplayTests())
         SUCCEED(std::string("OpenGL renderer: ") + renderer);
         SUCCEED(std::string("OpenGL version: ") + version);
     }
+
+    SECTION("isExtensionAvailable()")
+    {
+        CHECK(!sf::Context::isExtensionAvailable("2024-04-01"));
+        CHECK(!sf::Context::isExtensionAvailable("let's assume this extension does not exist"));
+    }
+
+    SECTION("getFunction()")
+    {
+        const sf::Context context; // Windows requires an active context to use getFunction
+        CHECK(sf::Context::getFunction("glEnable"));
+        CHECK(sf::Context::getFunction("glGetError"));
+        CHECK(sf::Context::getFunction("glGetIntegerv"));
+        CHECK(sf::Context::getFunction("glGetString"));
+        CHECK(sf::Context::getFunction("glGetStringi"));
+        CHECK(sf::Context::getFunction("glIsEnabled"));
+    }
 }
