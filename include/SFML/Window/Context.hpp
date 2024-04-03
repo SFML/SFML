@@ -131,6 +131,9 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Get the address of an OpenGL function
     ///
+    /// On Windows when not using OpenGL ES, a context must be
+    /// active for this function to succeed.
+    ///
     /// \param name Name of the function to get the address of
     ///
     /// \return Address of the OpenGL function, 0 on failure
