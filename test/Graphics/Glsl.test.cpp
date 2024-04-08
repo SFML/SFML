@@ -126,30 +126,30 @@ TEST_CASE("[Graphics] sf::Glsl")
 
         SECTION("Verbose constructor")
         {
-            const sf::Glsl::Vec4 vec(1, 2, 3, 4);
-            CHECK(vec.x == 1);
-            CHECK(vec.y == 2);
-            CHECK(vec.z == 3);
-            CHECK(vec.w == 4);
+            constexpr sf::Glsl::Vec4 vec(1, 2, 3, 4);
+            STATIC_CHECK(vec.x == 1);
+            STATIC_CHECK(vec.y == 2);
+            STATIC_CHECK(vec.z == 3);
+            STATIC_CHECK(vec.w == 4);
         }
 
         SECTION("Conversion constructor")
         {
-            const sf::Glsl::Ivec4 ivec(10, 12, 14, 16);
-            const sf::Glsl::Vec4  vec(ivec);
-            CHECK(vec.x == 10);
-            CHECK(vec.y == 12);
-            CHECK(vec.z == 14);
-            CHECK(vec.w == 16);
+            constexpr sf::Glsl::Ivec4 ivec(10, 12, 14, 16);
+            constexpr sf::Glsl::Vec4  vec(ivec);
+            STATIC_CHECK(vec.x == 10);
+            STATIC_CHECK(vec.y == 12);
+            STATIC_CHECK(vec.z == 14);
+            STATIC_CHECK(vec.w == 16);
         }
 
         SECTION("Color constructor")
         {
-            const sf::Glsl::Vec4 vec(sf::Color(0, 128, 192, 255));
-            CHECK(vec.x == 0.f);
-            CHECK(vec.y == Approx(0.50196f));
-            CHECK(vec.z == Approx(0.75294f));
-            CHECK(vec.w == 1.f);
+            constexpr sf::Glsl::Vec4 vec = sf::Color(0, 128, 192, 255);
+            STATIC_CHECK(vec.x == 0.f);
+            STATIC_CHECK(vec.y == 128 / 255.f);
+            STATIC_CHECK(vec.z == 192 / 255.f);
+            STATIC_CHECK(vec.w == 1.f);
         }
     }
 
@@ -174,30 +174,30 @@ TEST_CASE("[Graphics] sf::Glsl")
 
         SECTION("Verbose constructor")
         {
-            const sf::Glsl::Ivec4 vec(1, 2, 3, 4);
-            CHECK(vec.x == 1);
-            CHECK(vec.y == 2);
-            CHECK(vec.z == 3);
-            CHECK(vec.w == 4);
+            constexpr sf::Glsl::Ivec4 vec(1, 2, 3, 4);
+            STATIC_CHECK(vec.x == 1);
+            STATIC_CHECK(vec.y == 2);
+            STATIC_CHECK(vec.z == 3);
+            STATIC_CHECK(vec.w == 4);
         }
 
         SECTION("Conversion constructor")
         {
-            const sf::Glsl::Bvec4 bvec(true, false, true, false);
-            const sf::Glsl::Ivec4 vec(bvec);
-            CHECK(vec.x == 1);
-            CHECK(vec.y == 0);
-            CHECK(vec.z == 1);
-            CHECK(vec.w == 0);
+            constexpr sf::Glsl::Bvec4 bvec(true, false, true, false);
+            constexpr sf::Glsl::Ivec4 vec(bvec);
+            STATIC_CHECK(vec.x == 1);
+            STATIC_CHECK(vec.y == 0);
+            STATIC_CHECK(vec.z == 1);
+            STATIC_CHECK(vec.w == 0);
         }
 
         SECTION("Color constructor")
         {
-            const sf::Glsl::Ivec4 vec(sf::Color(0, 128, 192, 255));
-            CHECK(vec.x == 0);
-            CHECK(vec.y == 128);
-            CHECK(vec.z == 192);
-            CHECK(vec.w == 255);
+            constexpr sf::Glsl::Ivec4 vec = sf::Color(0, 128, 192, 255);
+            STATIC_CHECK(vec.x == 0);
+            STATIC_CHECK(vec.y == 128);
+            STATIC_CHECK(vec.z == 192);
+            STATIC_CHECK(vec.w == 255);
         }
     }
 
@@ -222,21 +222,21 @@ TEST_CASE("[Graphics] sf::Glsl")
 
         SECTION("Verbose constructor")
         {
-            const sf::Glsl::Bvec4 vec(false, true, true, false);
-            CHECK(vec.x == false);
-            CHECK(vec.y == true);
-            CHECK(vec.z == true);
-            CHECK(vec.w == false);
+            constexpr sf::Glsl::Bvec4 vec(false, true, true, false);
+            STATIC_CHECK(vec.x == false);
+            STATIC_CHECK(vec.y == true);
+            STATIC_CHECK(vec.z == true);
+            STATIC_CHECK(vec.w == false);
         }
 
         SECTION("Conversion constructor")
         {
-            const sf::Glsl::Ivec4 ivec(0, -7, 2, 10);
-            const sf::Glsl::Bvec4 vec(ivec);
-            CHECK(vec.x == false);
-            CHECK(vec.y == true);
-            CHECK(vec.z == true);
-            CHECK(vec.w == true);
+            constexpr sf::Glsl::Ivec4 ivec(0, -7, 2, 10);
+            constexpr sf::Glsl::Bvec4 vec(ivec);
+            STATIC_CHECK(vec.x == false);
+            STATIC_CHECK(vec.y == true);
+            STATIC_CHECK(vec.z == true);
+            STATIC_CHECK(vec.w == true);
         }
     }
 
