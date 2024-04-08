@@ -88,6 +88,7 @@ set(GRAPHICS_SRC
     Graphics/CoordinateType.test.cpp
     Graphics/Drawable.test.cpp
     Graphics/Font.test.cpp
+    Graphics/Glsl.test.cpp
     Graphics/Glyph.test.cpp
     Graphics/Image.test.cpp
     Graphics/Rect.test.cpp
