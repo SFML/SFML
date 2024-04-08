@@ -69,24 +69,4 @@ void copyMatrix(const float* source, std::size_t elements, float* dest)
     std::copy(source, source + elements, dest);
 }
 
-
-////////////////////////////////////////////////////////////
-void copyVector(const Color& source, Vector4<float>& dest)
-{
-    dest.x = source.r / 255.f;
-    dest.y = source.g / 255.f;
-    dest.z = source.b / 255.f;
-    dest.w = source.a / 255.f;
-}
-
-
-////////////////////////////////////////////////////////////
-void copyVector(const Color& source, Vector4<int>& dest)
-{
-    dest.x = static_cast<int>(source.r);
-    dest.y = static_cast<int>(source.g);
-    dest.z = static_cast<int>(source.b);
-    dest.w = static_cast<int>(source.a);
-}
-
 } // namespace sf::priv
