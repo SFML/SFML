@@ -205,30 +205,16 @@ jobs:
           gcovr -r $GITHUB_WORKSPACE -x build/coverage.out -s -f 'src/SFML/.*' -f 'include/SFML/.*' ${{ matrix.platform.gcovr_options }} $GITHUB_WORKSPACE
         fi
 
-    - name: Download Codecov Uploader
-      if: matrix.type.name == 'Debug' && github.repository == 'SFML/SFML' # Disable upload in forks
-      run: |
-        platform=$(echo "${{ runner.os }}" | tr '[:upper:]' '[:lower:]')
-        if [ "$platform" == "windows" ]; then CODECOV_BINARY="codecov.exe"; else CODECOV_BINARY="codecov"; fi
-        curl https://keybase.io/codecovsecurity/pgp_keys.asc | gpg --no-default-keyring --keyring trustedkeys.gpg --import
-        curl -s --remote-name-all "https://uploader.codecov.io/latest/$platform/{$CODECOV_BINARY,$CODECOV_BINARY.SHA256SUM,$CODECOV_BINARY.SHA256SUM.sig}"
-        if [ "$platform" == "windows" ]; then powershell 'If ($(Compare-Object -ReferenceObject $(($(certUtil -hashfile codecov.exe SHA256)[1], "codecov.exe") -join "  ") -DifferenceObject $(Get-Content codecov.exe.SHA256SUM)).length -eq 0) {echo "codecov: OK"} Else {exit 1}';
-        else shasum -a 256 -c codecov.SHA256SUM; fi
-        chmod +x "$CODECOV_BINARY"
-        echo "CODECOV_BINARY=$CODECOV_BINARY" >> $GITHUB_ENV
-
     - name: Upload Coverage Report to Codecov
+      uses: codecov/codecov-action@v4
       if: matrix.type.name == 'Debug' && github.repository == 'SFML/SFML' # Disable upload in forks
-      uses: nick-fields/retry@v3
       with:
-        timeout_seconds: 30
-        max_attempts: 10
-        retry_wait_seconds: 60
-        warning_on_retry: false
-        shell: bash
-        command: |
-          if [[ "${{ github.event_name }}" == "pull_request" || "${{ github.event_name }}" == "pull_request_target" ]]; then COMMIT_OVERRIDE="-C ${{ github.event.pull_request.head.sha }}"; fi
-          ./${{ env.CODECOV_BINARY }} -n "${{ matrix.platform.name }} ${{ matrix.config.name }} ${{ matrix.type.name }}" -Z -f ./build/coverage.out $COMMIT_OVERRIDE -s ./build -e GITHUB_ACTION,GITHUB_RUN_ID,GITHUB_REF,GITHUB_REPOSITORY,GITHUB_SHA,GITHUB_HEAD_REF
+        fail_ci_if_error: true
+        name: ${{ matrix.platform.name }} ${{ matrix.config.name }} ${{ matrix.type.name }}
+        directory: ./build
+        files: ./build/coverage.out
+        token: ${{ secrets.CODECOV_TOKEN }}
+        verbose: true
 
     - name: Test Install Interface
       if: matrix.platform.name != 'Android'
