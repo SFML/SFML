@@ -222,8 +222,8 @@ jobs:
       uses: nick-fields/retry@v3
       with:
         timeout_seconds: 30
-        max_attempts: 10
-        retry_wait_seconds: 60
+        max_attempts: 25
+        retry_wait_seconds: 120
         warning_on_retry: false
         shell: bash
         command: |
