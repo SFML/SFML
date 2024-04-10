@@ -205,22 +205,32 @@ jobs:
           gcovr -r $GITHUB_WORKSPACE -x build/coverage.out -s -f 'src/SFML/.*' -f 'include/SFML/.*' ${{ matrix.platform.gcovr_options }} $GITHUB_WORKSPACE
         fi
 
-    - name: Upload Coverage Report to Codecov
-      uses: codecov/codecov-action@v4
+    - name: Upload Coverage Report to Coveralls
       if: matrix.type.name == 'Debug' && github.repository == 'SFML/SFML' # Disable upload in forks
+      uses: coverallsapp/github-action@v2
       with:
-        fail_ci_if_error: false
-        name: ${{ matrix.platform.name }} ${{ matrix.config.name }} ${{ matrix.type.name }}
-        directory: ./build
-        files: ./build/coverage.out
-        token: ${{ secrets.CODECOV_TOKEN }}
-        verbose: true
+        file: ./build/coverage.out
+        flag-name: ${{ matrix.platform.name }} ${{ matrix.config.name }} ${{ matrix.type.name }}
+        parallel: true
+        allow-empty: true
+        base-path: ${{ github.workspace }}
 
     - name: Test Install Interface
       if: matrix.platform.name != 'Android'
       run: |
         cmake -S test/install -B test/install/build -DSFML_ROOT=build/install -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} ${{matrix.platform.flags}} ${{matrix.config.flags}} ${{matrix.type.flags}}
         cmake --build test/install/build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }}
+
+  coverage:
+    name: Finalize Coverage Upload
+    needs: build
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Coveralls Finished
+      uses: coverallsapp/github-action@v2
+      with:
+        parallel-finished: true
 
   format:
     name: Formatting
