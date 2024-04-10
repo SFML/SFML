@@ -209,7 +209,7 @@ jobs:
       uses: codecov/codecov-action@v4
       if: matrix.type.name == 'Debug' && github.repository == 'SFML/SFML' # Disable upload in forks
       with:
-        fail_ci_if_error: true
+        fail_ci_if_error: false
         name: ${{ matrix.platform.name }} ${{ matrix.config.name }} ${{ matrix.type.name }}
         directory: ./build
         files: ./build/coverage.out
