@@ -970,6 +970,14 @@ Shader::~Shader() = default;
 
 
 ////////////////////////////////////////////////////////////
+Shader::Shader(Shader&& source) noexcept = default;
+
+
+////////////////////////////////////////////////////////////
+Shader& Shader::operator=(Shader&& right) noexcept = default;
+
+
+////////////////////////////////////////////////////////////
 bool Shader::loadFromFile(const std::filesystem::path& /* filename */, Type /* type */)
 {
     return false;
