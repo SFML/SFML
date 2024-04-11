@@ -128,6 +128,12 @@ jobs:
         verbose: 2
         key: ${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}
 
+    - name: Install Gcovr for MinGW
+      if: matrix.type.name == 'Debug' && contains(matrix.platform.name, 'MinGW')
+      uses: threeal/pipx-install-action@v1.0.0
+      with:
+        packages: gcovr
+
     - name: Cache OpenCppCoverage
       if: matrix.type.name == 'Debug' && runner.os == 'Windows'
       id: opencppcoverage-cache
@@ -193,11 +199,11 @@ jobs:
         find build/bin -name test-sfml-window -or -name test-sfml-window.exe -exec sh -c "{} *sf::Context* --section=\"Version String\" --success | grep OpenGL" \;
 
     - name: Test
-      if: runner.os == 'Windows'
+      if: runner.os == 'Windows' && !contains(matrix.platform.name, 'MinGW')
       run: cmake --build build --target runtests --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }}
 
     - name: Test
-      if: runner.os != 'Windows'
+      if: runner.os != 'Windows' || contains(matrix.platform.name, 'MinGW')
       run: |
         ctest --test-dir build --output-on-failure -C ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} --repeat until-pass:3
         # Run gcovr to extract coverage information from the test run

@@ -152,7 +152,7 @@ if(SFML_OS_WINDOWS AND NOT SFML_USE_SYSTEM_DEPS)
         VERBATIM)
 endif()
 
-if(SFML_ENABLE_COVERAGE AND SFML_OS_WINDOWS)
+if(SFML_ENABLE_COVERAGE AND SFML_OS_WINDOWS AND NOT SFML_COMPILER_GCC)
     # Try to find and use OpenCppCoverage for coverage reporting when building with MSVC
     find_program(OpenCppCoverage_BINARY "OpenCppCoverage.exe")
 
