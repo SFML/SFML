@@ -517,9 +517,7 @@ sfml_set_option(SFML_BUILD_TEST_SUITE FALSE BOOL "TRUE to build the SFML test su
 sfml_set_option(SFML_ENABLE_COVERAGE FALSE BOOL "TRUE to enable coverage reporting, FALSE to ignore it")
 
 if(SFML_BUILD_TEST_SUITE)
-    if(SFML_OS_IOS)
-        message(WARNING "Unit testing not supported on iOS")
-    elseif(SFML_BUILD_WINDOW AND SFML_BUILD_GRAPHICS AND SFML_BUILD_NETWORK AND SFML_BUILD_AUDIO)
+    if(SFML_BUILD_WINDOW AND SFML_BUILD_GRAPHICS AND SFML_BUILD_NETWORK AND SFML_BUILD_AUDIO)
         enable_testing()
         add_subdirectory(test)
     else()
