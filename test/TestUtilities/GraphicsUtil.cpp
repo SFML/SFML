@@ -6,8 +6,11 @@
 
 #include <GraphicsUtil.hpp>
 #include <SystemUtil.hpp>
+#include <fstream>
 #include <limits>
 #include <ostream>
+
+#include <cassert>
 
 namespace sf
 {
@@ -112,4 +115,16 @@ bool operator==(const sf::Transform& lhs, const Approx<sf::Transform>& rhs)
            lhs.getMatrix()[3] == Approx(rhs.value.getMatrix()[3]) &&
            lhs.getMatrix()[7] == Approx(rhs.value.getMatrix()[7]) &&
            lhs.getMatrix()[15] == Approx(rhs.value.getMatrix()[15]);
+}
+
+std::vector<std::byte> loadIntoMemory(const std::filesystem::path& path)
+{
+    std::ifstream file(path, std::ios::binary | std::ios::ate);
+    assert(file);
+    const auto size = file.tellg();
+    file.seekg(0, std::ios::beg);
+    std::vector<std::byte>       buffer(static_cast<std::size_t>(size));
+    [[maybe_unused]] const auto& result = file.read(reinterpret_cast<char*>(buffer.data()), size);
+    assert(result);
+    return buffer;
 }
