@@ -32,6 +32,32 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
         CHECK(texture.getNativeHandle() == 0);
     }
 
+    SECTION("Move semantics")
+    {
+        SECTION("Construction")
+        {
+            sf::Texture       movedTexture;
+            const sf::Texture texture = std::move(movedTexture);
+            CHECK(texture.getSize() == sf::Vector2u());
+            CHECK(!texture.isSmooth());
+            CHECK(!texture.isSrgb());
+            CHECK(!texture.isRepeated());
+            CHECK(texture.getNativeHandle() == 0);
+        }
+
+        SECTION("Assignment")
+        {
+            sf::Texture movedTexture;
+            sf::Texture texture;
+            texture = std::move(movedTexture);
+            CHECK(texture.getSize() == sf::Vector2u());
+            CHECK(!texture.isSmooth());
+            CHECK(!texture.isSrgb());
+            CHECK(!texture.isRepeated());
+            CHECK(texture.getNativeHandle() == 0);
+        }
+    }
+
     SECTION("create()")
     {
         sf::Texture texture;
@@ -61,6 +87,18 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
     {
         sf::Texture texture;
         REQUIRE(texture.loadFromFile("Graphics/sfml-logo-big.png"));
+        CHECK(texture.getSize() == sf::Vector2u(1001, 304));
+        CHECK(!texture.isSmooth());
+        CHECK(!texture.isSrgb());
+        CHECK(!texture.isRepeated());
+        CHECK(texture.getNativeHandle() != 0);
+    }
+
+    SECTION("loadFromMemory()")
+    {
+        const auto  memory = loadIntoMemory("Graphics/sfml-logo-big.png");
+        sf::Texture texture;
+        REQUIRE(texture.loadFromMemory(memory.data(), memory.size()));
         CHECK(texture.getSize() == sf::Vector2u(1001, 304));
         CHECK(!texture.isSmooth());
         CHECK(!texture.isSrgb());
