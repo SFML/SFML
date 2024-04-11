@@ -286,12 +286,12 @@ int WglContext::selectBestPixelFormat(HDC deviceContext, unsigned int bitsPerPix
     // we can cache the result of the lookup instead of having to perform it multiple times for the same inputs
     struct PixelFormatCacheEntry
     {
-        unsigned int bitsPerPixel;
-        unsigned int depthBits;
-        unsigned int stencilBits;
-        unsigned int antialiasingLevel;
-        bool         pbuffer;
-        int          bestFormat;
+        unsigned int bitsPerPixel{};
+        unsigned int depthBits{};
+        unsigned int stencilBits{};
+        unsigned int antialiasingLevel{};
+        bool         pbuffer{};
+        int          bestFormat{};
     };
 
     static std::mutex                         cacheMutex;

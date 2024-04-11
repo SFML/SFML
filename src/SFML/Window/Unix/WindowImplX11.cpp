@@ -564,17 +564,12 @@ m_cursorGrabbed(m_fullscreen)
 
             struct WMHints
             {
-                unsigned long flags;
-                unsigned long functions;
-                unsigned long decorations;
-                long          inputMode;
-                unsigned long state;
-            };
-
-            auto hints        = WMHints();
-            hints.flags       = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
-            hints.decorations = 0;
-            hints.functions   = 0;
+                unsigned long flags{MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS};
+                unsigned long functions{};
+                unsigned long decorations{};
+                long          inputMode{};
+                unsigned long state{};
+            } hints;
 
             if (style & Style::Titlebar)
             {

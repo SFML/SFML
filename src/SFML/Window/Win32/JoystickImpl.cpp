@@ -79,9 +79,9 @@ IDirectInput8W* directInput = nullptr;
 
 struct JoystickRecord
 {
-    GUID         guid;
-    unsigned int index;
-    bool         plugged;
+    GUID         guid{};
+    unsigned int index{};
+    bool         plugged{};
 };
 
 using JoystickList = std::vector<JoystickRecord>;
@@ -89,8 +89,8 @@ JoystickList joystickList;
 
 struct JoystickBlacklistEntry
 {
-    unsigned int vendorId;
-    unsigned int productId;
+    unsigned int vendorId{};
+    unsigned int productId{};
 };
 
 using JoystickBlacklist = std::vector<JoystickBlacklistEntry>;

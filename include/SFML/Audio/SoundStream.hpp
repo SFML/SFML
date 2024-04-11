@@ -55,8 +55,8 @@ public:
     ////////////////////////////////////////////////////////////
     struct Chunk
     {
-        const std::int16_t* samples;     //!< Pointer to the audio samples
-        std::size_t         sampleCount; //!< Number of samples pointed by Samples
+        const std::int16_t* samples{};     //!< Pointer to the audio samples
+        std::size_t         sampleCount{}; //!< Number of samples pointed by Samples
     };
 
     ////////////////////////////////////////////////////////////

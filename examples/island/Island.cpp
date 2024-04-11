@@ -37,8 +37,8 @@ const unsigned int blockCount  = 32;
 
 struct WorkItem
 {
-    sf::Vertex*  targetBuffer;
-    unsigned int index;
+    sf::Vertex*  targetBuffer{};
+    unsigned int index{};
 };
 
 std::deque<WorkItem>     workQueue;
@@ -50,8 +50,8 @@ std::recursive_mutex     workQueueMutex;
 
 struct Setting
 {
-    const char* name;
-    float*      value;
+    const char* name{};
+    float*      value{};
 };
 
 // Terrain noise parameters

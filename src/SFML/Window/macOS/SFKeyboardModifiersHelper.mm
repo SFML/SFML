@@ -54,15 +54,15 @@
 /// Modifiers states
 struct ModifiersState
 {
-    BOOL rightShiftWasDown;
-    BOOL leftShiftWasDown;
-    BOOL rightCommandWasDown;
-    BOOL leftCommandWasDown;
-    BOOL rightAlternateWasDown;
-    BOOL leftAlternateWasDown;
-    BOOL leftControlWasDown;
-    BOOL rightControlWasDown;
-    BOOL capsLockWasOn;
+    BOOL rightShiftWasDown{};
+    BOOL leftShiftWasDown{};
+    BOOL rightCommandWasDown{};
+    BOOL leftCommandWasDown{};
+    BOOL rightAlternateWasDown{};
+    BOOL leftAlternateWasDown{};
+    BOOL leftControlWasDown{};
+    BOOL rightControlWasDown{};
+    BOOL capsLockWasOn{};
 };
 
 
