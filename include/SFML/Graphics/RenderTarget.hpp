@@ -547,18 +547,18 @@ private:
     ////////////////////////////////////////////////////////////
     struct StatesCache
     {
-        bool                  enable;                //!< Is the cache enabled?
-        bool                  glStatesSet{};         //!< Are our internal GL states set yet?
-        bool                  viewChanged;           //!< Has the current view changed since last draw?
-        bool                  scissorEnabled;        //!< Is scissor testing enabled?
-        bool                  stencilEnabled;        //!< Is stencil testing enabled?
-        BlendMode             lastBlendMode;         //!< Cached blending mode
-        StencilMode           lastStencilMode;       //!< Cached stencil
-        std::uint64_t         lastTextureId;         //!< Cached texture
-        CoordinateType        lastCoordinateType;    //!< Texture coordinate type
-        bool                  texCoordsArrayEnabled; //!< Is GL_TEXTURE_COORD_ARRAY client state enabled?
-        bool                  useVertexCache;        //!< Did we previously use the vertex cache?
-        std::array<Vertex, 4> vertexCache;           //!< Pre-transformed vertices cache
+        bool                  enable{};                //!< Is the cache enabled?
+        bool                  glStatesSet{};           //!< Are our internal GL states set yet?
+        bool                  viewChanged{};           //!< Has the current view changed since last draw?
+        bool                  scissorEnabled{};        //!< Is scissor testing enabled?
+        bool                  stencilEnabled{};        //!< Is stencil testing enabled?
+        BlendMode             lastBlendMode;           //!< Cached blending mode
+        StencilMode           lastStencilMode;         //!< Cached stencil
+        std::uint64_t         lastTextureId{};         //!< Cached texture
+        CoordinateType        lastCoordinateType{};    //!< Texture coordinate type
+        bool                  texCoordsArrayEnabled{}; //!< Is GL_TEXTURE_COORD_ARRAY client state enabled?
+        bool                  useVertexCache{};        //!< Did we previously use the vertex cache?
+        std::array<Vertex, 4> vertexCache{};           //!< Pre-transformed vertices cache
     };
 
     ////////////////////////////////////////////////////////////

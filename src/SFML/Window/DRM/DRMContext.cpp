@@ -53,14 +53,14 @@ namespace
 {
 struct DrmFb
 {
-    gbm_bo*       bo;
-    std::uint32_t fbId;
+    gbm_bo*       bo{};
+    std::uint32_t fbId{};
 };
 
 bool            initialized = false;
 sf::priv::Drm   drmNode;
-drmEventContext drmEventCtx;
-pollfd          pollFD;
+drmEventContext drmEventCtx{};
+pollfd          pollFD{};
 gbm_device*     gbmDevice      = nullptr;
 int             contextCount   = 0;
 EGLDisplay      display        = EGL_NO_DISPLAY;

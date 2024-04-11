@@ -425,7 +425,7 @@ struct GlContext::Impl
     // Structure to track which unshared object belongs to which context
     struct UnsharedGlObject
     {
-        std::uint64_t         contextId;
+        std::uint64_t         contextId{};
         std::shared_ptr<void> object;
     };
 

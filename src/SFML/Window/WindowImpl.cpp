@@ -96,8 +96,9 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 struct WindowImpl::JoystickStatesImpl
 {
-    JoystickState states[Joystick::Count]; //!< Previous state of the joysticks
+    JoystickState states[Joystick::Count]{}; //!< Previous state of the joysticks
 };
+
 
 ////////////////////////////////////////////////////////////
 std::unique_ptr<WindowImpl> WindowImpl::create(

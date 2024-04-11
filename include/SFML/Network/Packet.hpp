@@ -497,8 +497,8 @@ private:
 /// \code
 /// struct MyStruct
 /// {
-///     float       number;
-///     std::int8_t integer;
+///     float       number{};
+///     std::int8_t integer{};
 ///     std::string str;
 /// };
 ///
