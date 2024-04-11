@@ -365,6 +365,11 @@ function(sfml_add_test target SOURCES DEPENDS)
         add_dependencies(${target} "install-mesa3d")
     endif()
 
+    # Delay test registration when cross compiling to avoid running crosscompiled app on host OS
+    if(CMAKE_CROSSCOMPILING)
+        set(CMAKE_CATCH_DISCOVER_TESTS_DISCOVERY_MODE PRE_TEST)
+    endif()
+
     # Add the test
     catch_discover_tests(${target} WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 endfunction()

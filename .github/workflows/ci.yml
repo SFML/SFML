@@ -65,16 +65,16 @@ jobs:
         - platform: { name: macOS, os: macos-12 }
           config: { name: Frameworks, flags: -GNinja -DSFML_BUILD_FRAMEWORKS=TRUE -DBUILD_SHARED_LIBS=TRUE }
         - platform: { name: Android, os: ubuntu-22.04 }
-          config: { name: x86 (API 21), flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=x86 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=21 -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_ANDROID_NDK=$ANDROID_SDK_ROOT/ndk/26.1.10909125 -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared, arch: x86, api: 21 }
+          config: { name: x86 (API 21), flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=x86 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=21 -DCMAKE_ANDROID_NDK=$ANDROID_SDK_ROOT/ndk/26.1.10909125 -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared, arch: x86, api: 21 }
           type: { name: Release }
         - platform: { name: Android, os: ubuntu-22.04 }
-          config: { name: x86_64 (API 24), flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=x86_64 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=24 -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_ANDROID_NDK=$ANDROID_SDK_ROOT/ndk/26.1.10909125 -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared, arch: x86_64, api: 24 }
+          config: { name: x86_64 (API 24), flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=x86_64 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=24 -DCMAKE_ANDROID_NDK=$ANDROID_SDK_ROOT/ndk/26.1.10909125 -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared, arch: x86_64, api: 24 }
           type: { name: Release }
         - platform: { name: Android, os: ubuntu-22.04 }
-          config: { name: armeabi-v7a (API 29), flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=29 -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_ANDROID_NDK=$ANDROID_SDK_ROOT/ndk/26.1.10909125 -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared, arch: armeabi-v7a, api: 29 }
+          config: { name: armeabi-v7a (API 29), flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=29 -DCMAKE_ANDROID_NDK=$ANDROID_SDK_ROOT/ndk/26.1.10909125 -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared, arch: armeabi-v7a, api: 29 }
           type: { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug }
         - platform: { name: Android, os: ubuntu-22.04 }
-          config: { name: arm64-v8a (API 33), flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=33 -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_ANDROID_NDK=$ANDROID_SDK_ROOT/ndk/26.1.10909125 -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared, arch: arm64-v8a, api: 33 }
+          config: { name: arm64-v8a (API 33), flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=33 -DCMAKE_ANDROID_NDK=$ANDROID_SDK_ROOT/ndk/26.1.10909125 -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared, arch: arm64-v8a, api: 33 }
           type: { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug }
         - platform: { name: macOS , os: macos-12 }
           config: { name: System Deps, flags: -GNinja -DBUILD_SHARED_LIBS=TRUE -DSFML_USE_SYSTEM_DEPS=TRUE }
@@ -202,7 +202,7 @@ jobs:
       run: cmake --build build --target runtests --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }}
 
     - name: Test
-      if: runner.os != 'Windows' || contains(matrix.platform.name, 'MinGW')
+      if: (runner.os != 'Windows' || contains(matrix.platform.name, 'MinGW')) && !contains(matrix.platform.name, 'iOS') && !contains(matrix.platform.name, 'Android')
       run: |
         ctest --test-dir build --output-on-failure -C ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} --repeat until-pass:3
         # Run gcovr to extract coverage information from the test run
@@ -211,7 +211,7 @@ jobs:
         fi
 
     - name: Upload Coverage Report to Coveralls
-      if: matrix.type.name == 'Debug' && github.repository == 'SFML/SFML' # Disable upload in forks
+      if: matrix.type.name == 'Debug' && github.repository == 'SFML/SFML' && !contains(matrix.platform.name, 'iOS') && !contains(matrix.platform.name, 'Android') # Disable upload in forks
       uses: coverallsapp/github-action@v2
       with:
         file: ./build/coverage.out
@@ -269,7 +269,7 @@ jobs:
         - { name: Linux OpenGL ES, os: ubuntu-22.04, flags: -DSFML_OPENGL_ES=ON }
         - { name: macOS,           os: macos-12 }
         - { name: iOS,             os: macos-12,     flags: -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=arm64 }
-        - { name: Android,         os: ubuntu-22.04, flags: -DCMAKE_ANDROID_ARCH_ABI=x86_64 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=21 -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_ANDROID_NDK=$ANDROID_NDK -DCMAKE_ANDROID_STL_TYPE=c++_shared }
+        - { name: Android,         os: ubuntu-22.04, flags: -DCMAKE_ANDROID_ARCH_ABI=x86_64 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=21 -DCMAKE_ANDROID_NDK=$ANDROID_NDK -DCMAKE_ANDROID_STL_TYPE=c++_shared }
 
     steps:
     - name: Checkout Code
