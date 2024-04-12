@@ -6,11 +6,7 @@
 #pragma once
 
 #include <SystemUtil.hpp>
-#include <filesystem>
 #include <iosfwd>
-#include <vector>
-
-#include <cstddef>
 
 namespace sf
 {
@@ -39,5 +35,3 @@ bool operator==(const sf::Rect<T>& lhs, const Approx<sf::Rect<T>>& rhs)
     return lhs.left == Approx(rhs.value.left) && lhs.top == Approx(rhs.value.top) &&
            lhs.width == Approx(rhs.value.width) && lhs.height == Approx(rhs.value.height);
 }
-
-[[nodiscard]] std::vector<std::byte> loadIntoMemory(const std::filesystem::path& path);
