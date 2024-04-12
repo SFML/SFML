@@ -116,8 +116,7 @@ jobs:
     - name: Install macOS Tools
       if: runner.os == 'macOS'
       run: |
-        # Do not run updates until GitHub has fixed all the issues: https://github.com/orgs/Homebrew/discussions/4612
-        # brew update
+        brew update
         brew install gcovr ccache || true
 
     # In addition to installing a known working version of CCache, this action also takes care of saving and restoring the cache for us
@@ -294,8 +293,7 @@ jobs:
     - name: Install macOS Dependencies
       if: runner.os == 'macOS'
       run: |
-        # Do not run updates until GitHub has fixed all the issues: https://github.com/orgs/Homebrew/discussions/4612
-        # brew update
+        brew update
         brew install llvm || true
         echo /usr/local/opt/llvm/bin >> $GITHUB_PATH
 
