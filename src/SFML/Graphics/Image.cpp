@@ -31,6 +31,7 @@
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/Utils.hpp>
 #ifdef SFML_SYSTEM_ANDROID
+#include <SFML/System/Android/Activity.hpp>
 #include <SFML/System/Android/ResourceStream.hpp>
 #endif
 
@@ -157,7 +158,15 @@ void Image::create(const Vector2u& size, const std::uint8_t* pixels)
 ////////////////////////////////////////////////////////////
 bool Image::loadFromFile(const std::filesystem::path& filename)
 {
-#ifndef SFML_SYSTEM_ANDROID
+#ifdef SFML_SYSTEM_ANDROID
+
+    if (priv::getActivityStatesPtr() != nullptr)
+    {
+        priv::ResourceStream stream(filename);
+        return loadFromStream(stream);
+    }
+
+#endif
 
     // Clear the array (just in case)
     m_pixels.clear();
@@ -186,13 +195,6 @@ bool Image::loadFromFile(const std::filesystem::path& filename)
 
         return false;
     }
-
-#else
-
-    priv::ResourceStream stream(filename);
-    return loadFromStream(stream);
-
-#endif
 }
 
 
