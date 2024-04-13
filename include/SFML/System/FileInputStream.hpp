@@ -147,8 +147,8 @@ private:
     // Member data
     ////////////////////////////////////////////////////////////
 #ifdef SFML_SYSTEM_ANDROID
-    std::unique_ptr<priv::ResourceStream> m_file;
-#else
+    std::unique_ptr<priv::ResourceStream> m_androidFile;
+#endif
     ////////////////////////////////////////////////////////////
     /// \brief Deleter for stdio file stream that closes the file stream
     ///
@@ -159,7 +159,6 @@ private:
     };
 
     std::unique_ptr<std::FILE, FileCloser> m_file; //!< stdio file stream
-#endif
 };
 
 } // namespace sf
