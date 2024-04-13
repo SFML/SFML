@@ -368,6 +368,11 @@ function(sfml_add_test target SOURCES DEPENDS)
     # Delay test registration when cross compiling to avoid running crosscompiled app on host OS
     if(CMAKE_CROSSCOMPILING)
         set(CMAKE_CATCH_DISCOVER_TESTS_DISCOVERY_MODE PRE_TEST)
+
+        # When running tests on Android, use a custom shell script to invoke commands using adb shell
+        if(SFML_OS_ANDROID)
+            set_target_properties(${target} PROPERTIES CROSSCOMPILING_EMULATOR "${PROJECT_BINARY_DIR}/run-in-adb-shell.sh")
+        endif()
     endif()
 
     # Add the test
