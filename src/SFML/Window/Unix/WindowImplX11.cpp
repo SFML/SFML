@@ -574,7 +574,7 @@ m_cursorGrabbed(m_fullscreen)
             auto hints        = WMHints();
             hints.flags       = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
             hints.decorations = 0;
-            hints.functions   = 0;
+            hints.functions   = MWM_FUNC_CLOSE;
 
             if (style & Style::Titlebar)
             {
