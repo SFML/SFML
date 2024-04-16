@@ -53,11 +53,10 @@ public:
         m_shader.setUniform("pixel_threshold", (x + y) / 30);
     }
 
-    void onDraw(sf::RenderTarget& target, const sf::RenderStates& states) const override
+    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
-        sf::RenderStates statesCopy(states);
-        statesCopy.shader = &m_shader;
-        target.draw(*m_sprite, statesCopy);
+        states.shader = &m_shader;
+        target.draw(*m_sprite, states);
     }
 
 private:
@@ -113,11 +112,10 @@ public:
         m_shader.setUniform("blur_radius", (x + y) * 0.008f);
     }
 
-    void onDraw(sf::RenderTarget& target, const sf::RenderStates& states) const override
+    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
-        sf::RenderStates statesCopy(states);
-        statesCopy.shader = &m_shader;
-        target.draw(m_text, statesCopy);
+        states.shader = &m_shader;
+        target.draw(m_text, states);
     }
 
 private:
@@ -167,11 +165,10 @@ public:
         m_shader.setUniform("blink_alpha", 0.5f + std::cos(time * 3) * 0.25f);
     }
 
-    void onDraw(sf::RenderTarget& target, const sf::RenderStates& states) const override
+    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
-        sf::RenderStates statesCopy(states);
-        statesCopy.shader = &m_shader;
-        target.draw(m_points, statesCopy);
+        states.shader = &m_shader;
+        target.draw(m_points, states);
     }
 
 private:
@@ -247,11 +244,10 @@ public:
         m_surface.display();
     }
 
-    void onDraw(sf::RenderTarget& target, const sf::RenderStates& states) const override
+    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
-        sf::RenderStates statesCopy(states);
-        statesCopy.shader = &m_shader;
-        target.draw(sf::Sprite(m_surface.getTexture()), statesCopy);
+        states.shader = &m_shader;
+        target.draw(sf::Sprite(m_surface.getTexture()), states);
     }
 
 private:
@@ -320,17 +316,15 @@ public:
         m_shader.setUniform("size", sf::Vector2f(size, size));
     }
 
-    void onDraw(sf::RenderTarget& target, const sf::RenderStates& states) const override
+    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
-        sf::RenderStates statesCopy(states);
-
         // Prepare the render state
-        statesCopy.shader    = &m_shader;
-        statesCopy.texture   = &m_logoTexture;
-        statesCopy.transform = m_transform;
+        states.shader    = &m_shader;
+        states.texture   = &m_logoTexture;
+        states.transform = m_transform;
 
         // Draw the point cloud
-        target.draw(m_pointCloud, statesCopy);
+        target.draw(m_pointCloud, states);
     }
 
 private:
