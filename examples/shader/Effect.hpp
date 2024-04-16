@@ -38,7 +38,7 @@ public:
             onUpdate(time, x, y);
     }
 
-    void draw(sf::RenderTarget& target, const sf::RenderStates& states) const override
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
         if (m_isLoaded)
         {
@@ -66,9 +66,9 @@ protected:
 
 private:
     // Virtual functions to be implemented in derived effects
-    virtual bool onLoad()                                                               = 0;
-    virtual void onUpdate(float time, float x, float y)                                 = 0;
-    virtual void onDraw(sf::RenderTarget& target, const sf::RenderStates& states) const = 0;
+    virtual bool onLoad()                                                        = 0;
+    virtual void onUpdate(float time, float x, float y)                          = 0;
+    virtual void onDraw(sf::RenderTarget& target, sf::RenderStates states) const = 0;
 
     std::string m_name;
     bool        m_isLoaded{};
