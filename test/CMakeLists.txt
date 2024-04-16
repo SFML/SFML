@@ -138,6 +138,7 @@ set(AUDIO_SRC
     Audio/SoundBuffer.test.cpp
     Audio/SoundBufferRecorder.test.cpp
     Audio/SoundFileFactory.test.cpp
+    Audio/SoundFileReader.test.cpp
     Audio/SoundRecorder.test.cpp
     Audio/SoundSource.test.cpp
     Audio/SoundStream.test.cpp
