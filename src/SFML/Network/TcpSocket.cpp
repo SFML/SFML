@@ -33,6 +33,7 @@
 #include <SFML/System/Err.hpp>
 
 #include <algorithm>
+#include <array>
 #include <ostream>
 
 #include <cstring>
@@ -401,12 +402,12 @@ Socket::Status TcpSocket::receive(Packet& packet)
     }
 
     // Loop until we receive all the packet data
-    char buffer[1024];
+    std::array<char, 1024> buffer{};
     while (m_pendingPacket.data.size() < packetSize)
     {
         // Receive a chunk of data
         const std::size_t sizeToGet = std::min(packetSize - m_pendingPacket.data.size(), sizeof(buffer));
-        const Status      status    = receive(buffer, sizeToGet, received);
+        const Status      status    = receive(buffer.data(), sizeToGet, received);
         if (status != Status::Done)
             return status;
 
@@ -415,7 +416,7 @@ Socket::Status TcpSocket::receive(Packet& packet)
         {
             m_pendingPacket.data.resize(m_pendingPacket.data.size() + received);
             std::byte* begin = m_pendingPacket.data.data() + m_pendingPacket.data.size() - received;
-            std::memcpy(begin, buffer, received);
+            std::memcpy(begin, buffer.data(), received);
         }
     }
 

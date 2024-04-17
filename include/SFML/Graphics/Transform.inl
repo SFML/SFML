@@ -55,7 +55,7 @@ constexpr Transform::Transform(float a00, float a01, float a02,
 ////////////////////////////////////////////////////////////
 constexpr const float* Transform::getMatrix() const
 {
-    return m_matrix;
+    return m_matrix.data();
 }
 
 
@@ -133,8 +133,8 @@ constexpr FloatRect Transform::transformRect(const FloatRect& rectangle) const
 ////////////////////////////////////////////////////////////
 constexpr Transform& Transform::combine(const Transform& transform)
 {
-    const float* a = m_matrix;
-    const float* b = transform.m_matrix;
+    const auto& a = m_matrix;
+    const auto& b = transform.m_matrix;
 
     // clang-format off
     *this = Transform(a[0] * b[0]  + a[4] * b[1]  + a[12] * b[3],

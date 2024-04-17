@@ -31,6 +31,7 @@
 #include <SFML/System/Utils.hpp>
 
 #include <algorithm>
+#include <array>
 #include <ostream>
 
 #include <cassert>
@@ -45,25 +46,25 @@ namespace
 
 void encode(std::ostream& stream, std::int16_t value)
 {
-    const std::byte bytes[] = {static_cast<std::byte>(value & 0xFF), static_cast<std::byte>(value >> 8)};
-    stream.write(reinterpret_cast<const char*>(bytes), sizeof(bytes));
+    const std::array bytes = {static_cast<char>(value & 0xFF), static_cast<char>(value >> 8)};
+    stream.write(bytes.data(), bytes.size());
 }
 
 void encode(std::ostream& stream, std::uint16_t value)
 {
-    const std::byte bytes[] = {static_cast<std::byte>(value & 0xFF), static_cast<std::byte>(value >> 8)};
-    stream.write(reinterpret_cast<const char*>(bytes), sizeof(bytes));
+    const std::array bytes = {static_cast<char>(value & 0xFF), static_cast<char>(value >> 8)};
+    stream.write(bytes.data(), bytes.size());
 }
 
 void encode(std::ostream& stream, std::uint32_t value)
 {
-    const std::byte bytes[] = {
-        static_cast<std::byte>(value & 0x000000FF),
-        static_cast<std::byte>((value & 0x0000FF00) >> 8),
-        static_cast<std::byte>((value & 0x00FF0000) >> 16),
-        static_cast<std::byte>((value & 0xFF000000) >> 24),
+    const std::array bytes = {
+        static_cast<char>(value & 0x000000FF),
+        static_cast<char>((value & 0x0000FF00) >> 8),
+        static_cast<char>((value & 0x00FF0000) >> 16),
+        static_cast<char>((value & 0xFF000000) >> 24),
     };
-    stream.write(reinterpret_cast<const char*>(bytes), sizeof(bytes));
+    stream.write(bytes.data(), bytes.size());
 }
 } // namespace
 
@@ -247,17 +248,17 @@ void SoundFileWriterWav::writeHeader(unsigned int sampleRate, unsigned int chann
     assert(m_file.good() && "Most recent I/O operation failed");
 
     // Write the main chunk ID
-    char mainChunkId[4] = {'R', 'I', 'F', 'F'};
-    m_file.write(mainChunkId, sizeof(mainChunkId));
+    std::array mainChunkId = {'R', 'I', 'F', 'F'};
+    m_file.write(mainChunkId.data(), mainChunkId.size());
 
     // Write the main chunk header
     encode(m_file, static_cast<std::uint32_t>(0)); // 0 is a placeholder, will be written later
-    char mainChunkFormat[4] = {'W', 'A', 'V', 'E'};
-    m_file.write(mainChunkFormat, sizeof(mainChunkFormat));
+    std::array mainChunkFormat = {'W', 'A', 'V', 'E'};
+    m_file.write(mainChunkFormat.data(), mainChunkFormat.size());
 
     // Write the sub-chunk 1 ("format") id and size
-    char fmtChunkId[4] = {'f', 'm', 't', ' '};
-    m_file.write(fmtChunkId, sizeof(fmtChunkId));
+    std::array fmtChunkId = {'f', 'm', 't', ' '};
+    m_file.write(fmtChunkId.data(), fmtChunkId.size());
 
     if (channelCount > 2)
     {
@@ -295,14 +296,14 @@ void SoundFileWriterWav::writeHeader(unsigned int sampleRate, unsigned int chann
         encode(m_file, bitsPerSample);
         encode(m_file, channelMask);
         // Write the subformat (PCM)
-        char subformat[16] =
+        std::array subformat =
             {'\x01', '\x00', '\x00', '\x00', '\x00', '\x00', '\x10', '\x00', '\x80', '\x00', '\x00', '\xAA', '\x00', '\x38', '\x9B', '\x71'};
-        m_file.write(subformat, sizeof(subformat));
+        m_file.write(subformat.data(), subformat.size());
     }
 
     // Write the sub-chunk 2 ("data") id and size
-    char dataChunkId[4] = {'d', 'a', 't', 'a'};
-    m_file.write(dataChunkId, sizeof(dataChunkId));
+    std::array dataChunkId = {'d', 'a', 't', 'a'};
+    m_file.write(dataChunkId.data(), dataChunkId.size());
     const std::uint32_t dataChunkSize = 0; // placeholder, will be written later
     encode(m_file, dataChunkSize);
 }
