@@ -31,6 +31,7 @@
 
 #include <vorbis/vorbisenc.h>
 
+#include <array>
 #include <filesystem>
 #include <fstream>
 
@@ -103,12 +104,12 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int     m_channelCount{};  //!< Channel count of the sound being written
-    std::size_t      m_remapTable[8]{}; //!< Table we use to remap source to target channel order
-    std::ofstream    m_file;            //!< Output file
-    ogg_stream_state m_ogg{};           //!< OGG stream
-    vorbis_info      m_vorbis{};        //!< Vorbis handle
-    vorbis_dsp_state m_state{};         //!< Current encoding state
+    unsigned int               m_channelCount{}; //!< Channel count of the sound being written
+    std::array<std::size_t, 8> m_remapTable{};   //!< Table we use to remap source to target channel order
+    std::ofstream              m_file;           //!< Output file
+    ogg_stream_state           m_ogg{};          //!< OGG stream
+    vorbis_info                m_vorbis{};       //!< Vorbis handle
+    vorbis_dsp_state           m_state{};        //!< Current encoding state
 };
 
 } // namespace sf::priv

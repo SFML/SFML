@@ -33,6 +33,7 @@
 
 #include <SFML/System/Err.hpp>
 
+#include <array>
 #include <mutex>
 #include <ostream>
 #include <vector>
@@ -513,10 +514,10 @@ void GlxContext::createSurface(GlxContext* shared, const Vector2u& size, unsigne
 
             if (config)
             {
-                int attributes[] =
+                std::array attributes =
                     {GLX_PBUFFER_WIDTH, static_cast<int>(size.x), GLX_PBUFFER_HEIGHT, static_cast<int>(size.y), 0, 0};
 
-                m_pbuffer = glXCreatePbuffer(m_display.get(), *config, attributes);
+                m_pbuffer = glXCreatePbuffer(m_display.get(), *config, attributes.data());
 
                 updateSettingsFromVisualInfo(&visualInfo);
 
@@ -578,11 +579,11 @@ void GlxContext::createContext(GlxContext* shared)
 
         glXQueryDrawable(m_display.get(), m_pbuffer, GLX_FBCONFIG_ID, &fbConfigId);
 
-        int attributes[] = {GLX_FBCONFIG_ID, static_cast<int>(fbConfigId), 0, 0};
+        std::array attributes = {GLX_FBCONFIG_ID, static_cast<int>(fbConfigId), 0, 0};
 
         int        count    = 0;
         const auto fbconfig = X11Ptr<GLXFBConfig>(
-            glXChooseFBConfig(m_display.get(), DefaultScreen(m_display.get()), attributes, &count));
+            glXChooseFBConfig(m_display.get(), DefaultScreen(m_display.get()), attributes.data(), &count));
 
         if (count == 1)
             visualInfo = X11Ptr<XVisualInfo>(glXGetVisualFromFBConfig(m_display.get(), *fbconfig));

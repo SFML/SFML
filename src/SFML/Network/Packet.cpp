@@ -31,6 +31,8 @@
 #include <SFML/System/String.hpp>
 #include <SFML/System/Utils.hpp>
 
+#include <array>
+
 #include <cstring>
 #include <cwchar>
 
@@ -212,8 +214,8 @@ Packet& Packet::operator>>(std::uint64_t& data)
     {
         // Since ntohll is not available everywhere, we have to convert
         // to network byte order (big endian) manually
-        std::byte bytes[sizeof(data)];
-        std::memcpy(bytes, &m_data[m_readPos], sizeof(data));
+        std::array<std::byte, sizeof(data)> bytes{};
+        std::memcpy(bytes.data(), &m_data[m_readPos], sizeof(data));
 
         data = toInteger<std::uint64_t>(bytes[7], bytes[6], bytes[5], bytes[4], bytes[3], bytes[2], bytes[1], bytes[0]);
 
@@ -427,14 +429,14 @@ Packet& Packet::operator<<(std::int64_t data)
     // Since htonll is not available everywhere, we have to convert
     // to network byte order (big endian) manually
 
-    std::uint8_t toWrite[] = {static_cast<std::uint8_t>((data >> 56) & 0xFF),
-                              static_cast<std::uint8_t>((data >> 48) & 0xFF),
-                              static_cast<std::uint8_t>((data >> 40) & 0xFF),
-                              static_cast<std::uint8_t>((data >> 32) & 0xFF),
-                              static_cast<std::uint8_t>((data >> 24) & 0xFF),
-                              static_cast<std::uint8_t>((data >> 16) & 0xFF),
-                              static_cast<std::uint8_t>((data >> 8) & 0xFF),
-                              static_cast<std::uint8_t>((data)&0xFF)};
+    std::array toWrite = {static_cast<std::uint8_t>((data >> 56) & 0xFF),
+                          static_cast<std::uint8_t>((data >> 48) & 0xFF),
+                          static_cast<std::uint8_t>((data >> 40) & 0xFF),
+                          static_cast<std::uint8_t>((data >> 32) & 0xFF),
+                          static_cast<std::uint8_t>((data >> 24) & 0xFF),
+                          static_cast<std::uint8_t>((data >> 16) & 0xFF),
+                          static_cast<std::uint8_t>((data >> 8) & 0xFF),
+                          static_cast<std::uint8_t>((data)&0xFF)};
 
     append(&toWrite, sizeof(toWrite));
     return *this;
@@ -447,14 +449,14 @@ Packet& Packet::operator<<(std::uint64_t data)
     // Since htonll is not available everywhere, we have to convert
     // to network byte order (big endian) manually
 
-    std::uint8_t toWrite[] = {static_cast<std::uint8_t>((data >> 56) & 0xFF),
-                              static_cast<std::uint8_t>((data >> 48) & 0xFF),
-                              static_cast<std::uint8_t>((data >> 40) & 0xFF),
-                              static_cast<std::uint8_t>((data >> 32) & 0xFF),
-                              static_cast<std::uint8_t>((data >> 24) & 0xFF),
-                              static_cast<std::uint8_t>((data >> 16) & 0xFF),
-                              static_cast<std::uint8_t>((data >> 8) & 0xFF),
-                              static_cast<std::uint8_t>((data)&0xFF)};
+    std::array toWrite = {static_cast<std::uint8_t>((data >> 56) & 0xFF),
+                          static_cast<std::uint8_t>((data >> 48) & 0xFF),
+                          static_cast<std::uint8_t>((data >> 40) & 0xFF),
+                          static_cast<std::uint8_t>((data >> 32) & 0xFF),
+                          static_cast<std::uint8_t>((data >> 24) & 0xFF),
+                          static_cast<std::uint8_t>((data >> 16) & 0xFF),
+                          static_cast<std::uint8_t>((data >> 8) & 0xFF),
+                          static_cast<std::uint8_t>((data)&0xFF)};
 
     append(&toWrite, sizeof(toWrite));
     return *this;
