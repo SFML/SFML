@@ -86,10 +86,6 @@ unsigned int getDeviceUint(IOHIDDeviceRef ref, CFStringRef prop, unsigned int in
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-JoystickImpl::Location JoystickImpl::m_locationIDs[sf::Joystick::Count] = {0};
-
-
-////////////////////////////////////////////////////////////
 void JoystickImpl::initialize()
 {
     // Nothing to do
