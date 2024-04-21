@@ -81,7 +81,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     // NOLINTNEXTLINE(readability-identifier-naming)
-    static CurrentTextureType CurrentTexture;
+    static inline CurrentTextureType CurrentTexture;
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
