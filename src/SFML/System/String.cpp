@@ -264,10 +264,10 @@ std::wstring String::toWideString() const
 
 
 ////////////////////////////////////////////////////////////
-sf::U8String String::toUtf8() const
+U8String String::toUtf8() const
 {
     // Prepare the output string
-    sf::U8String output;
+    U8String output;
     output.reserve(m_string.length());
 
     // Convert

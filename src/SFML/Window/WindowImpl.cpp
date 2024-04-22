@@ -131,7 +131,7 @@ WindowImpl::WindowImpl() : m_joystickStatesImpl(std::make_unique<JoystickStatesI
     }
 
     // Get the initial sensor states
-    for (sf::Vector3f& vec : m_sensorValue)
+    for (Vector3f& vec : m_sensorValue)
         vec = Vector3f(0, 0, 0);
 }
 
@@ -202,7 +202,7 @@ Event WindowImpl::popEvent(bool block)
         }
     }
 
-    sf::Event event;
+    Event event;
 
     // Pop the first event of the queue, if it is not empty
     if (!m_events.empty())
