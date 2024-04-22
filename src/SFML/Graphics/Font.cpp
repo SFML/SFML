@@ -784,7 +784,7 @@ bool Font::setCurrentSize(unsigned int characterSize) const
 Font::Page::Page(bool smooth)
 {
     // Make sure that the texture is initialized by default
-    sf::Image image;
+    Image image;
     image.create({128, 128}, Color::Transparent);
 
     // Reserve a 2x2 white square for texturing underlines

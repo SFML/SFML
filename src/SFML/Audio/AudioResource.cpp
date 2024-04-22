@@ -41,8 +41,8 @@ m_device(
     {
         // Ensure we only ever create a single instance of an
         // AudioDevice that is shared between all AudioResources
-        static std::mutex                           mutex;
-        static std::weak_ptr<sf::priv::AudioDevice> weakAudioDevice;
+        static std::mutex                       mutex;
+        static std::weak_ptr<priv::AudioDevice> weakAudioDevice;
 
         const std::lock_guard lock(mutex);
 

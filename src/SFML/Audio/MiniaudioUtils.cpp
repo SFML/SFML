@@ -63,8 +63,8 @@ struct SavedSettings
     float          minGain{0.f};
     float          maxGain{1.f};
     float          rollOff{1.f};
-    float          innerAngle{sf::degrees(360).asRadians()};
-    float          outerAngle{sf::degrees(360).asRadians()};
+    float          innerAngle{degrees(360).asRadians()};
+    float          outerAngle{degrees(360).asRadians()};
     float          outerGain{0.f};
 };
 
@@ -135,7 +135,7 @@ void initializeDataSource(ma_data_source_base& dataSourceBase, const ma_data_sou
 
 
 ////////////////////////////////////////////////////////////
-ma_channel MiniaudioUtils::soundChannelToMiniaudioChannel(sf::SoundChannel soundChannel)
+ma_channel MiniaudioUtils::soundChannelToMiniaudioChannel(SoundChannel soundChannel)
 {
     switch (soundChannel)
     {

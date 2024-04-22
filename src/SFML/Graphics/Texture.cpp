@@ -921,7 +921,7 @@ unsigned int Texture::getMaximumSize()
         GLint value = 0;
 
         // Make sure that extensions are initialized
-        sf::priv::ensureExtensionsInit();
+        priv::ensureExtensionsInit();
 
         glCheck(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &value));
 
