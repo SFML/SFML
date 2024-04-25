@@ -124,7 +124,7 @@ Atom getAtom(const std::string& name, bool onlyIfExists)
 {
     static std::unordered_map<std::string, Atom> atoms;
 
-    if (auto it = atoms.find(name); it != atoms.end())
+    if (const auto it = atoms.find(name); it != atoms.end())
         return it->second;
 
     const auto display = openDisplay();

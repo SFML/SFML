@@ -970,9 +970,9 @@ void WindowImplX11::setIcon(const Vector2u& size, const std::uint8_t* pixels)
     }
 
     // Create the icon pixmap
-    Visual* defVisual = DefaultVisual(m_display.get(), m_screen);
-    auto    defDepth  = static_cast<unsigned int>(DefaultDepth(m_display.get(), m_screen));
-    auto    iconImage = X11Ptr<XImage>(
+    Visual*    defVisual = DefaultVisual(m_display.get(), m_screen);
+    const auto defDepth  = static_cast<unsigned int>(DefaultDepth(m_display.get(), m_screen));
+    const auto iconImage = X11Ptr<XImage>(
         XCreateImage(m_display.get(), defVisual, defDepth, ZPixmap, 0, reinterpret_cast<char*>(iconPixels), size.x, size.y, 32, 0));
     if (!iconImage)
     {
@@ -1287,7 +1287,7 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
     ::Window rootWindow = RootWindow(m_display.get(), m_screen);
 
     // Get the screen resources
-    auto res = X11Ptr<XRRScreenResources>(XRRGetScreenResources(m_display.get(), rootWindow));
+    const auto res = X11Ptr<XRRScreenResources>(XRRGetScreenResources(m_display.get(), rootWindow));
     if (!res)
     {
         err() << "Failed to get the current screen resources for fullscreen mode, switching to window mode" << std::endl;
@@ -1297,7 +1297,7 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
     RROutput output = getOutputPrimary(rootWindow, res.get(), xRandRMajor, xRandRMinor);
 
     // Get output info from output
-    auto outputInfo = X11Ptr<XRROutputInfo>(XRRGetOutputInfo(m_display.get(), res.get(), output));
+    const auto outputInfo = X11Ptr<XRROutputInfo>(XRRGetOutputInfo(m_display.get(), res.get(), output));
     if (!outputInfo || outputInfo->connection == RR_Disconnected)
     {
         err() << "Failed to get output info for fullscreen mode, switching to window mode" << std::endl;
@@ -1305,7 +1305,7 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
     }
 
     // Retrieve current RRMode, screen position and rotation
-    auto crtcInfo = X11Ptr<XRRCrtcInfo>(XRRGetCrtcInfo(m_display.get(), res.get(), outputInfo->crtc));
+    const auto crtcInfo = X11Ptr<XRRCrtcInfo>(XRRGetCrtcInfo(m_display.get(), res.get(), outputInfo->crtc));
     if (!crtcInfo)
     {
         err() << "Failed to get crtc info for fullscreen mode, switching to window mode" << std::endl;
@@ -1369,7 +1369,7 @@ void WindowImplX11::resetVideoMode()
         int xRandRMinor = 0;
         if (checkXRandR(xRandRMajor, xRandRMinor))
         {
-            auto res = X11Ptr<XRRScreenResources>(
+            const auto res = X11Ptr<XRRScreenResources>(
                 XRRGetScreenResources(m_display.get(), DefaultRootWindow(m_display.get())));
             if (!res)
             {
@@ -1378,7 +1378,7 @@ void WindowImplX11::resetVideoMode()
             }
 
             // Retrieve current screen position and rotation
-            auto crtcInfo = X11Ptr<XRRCrtcInfo>(XRRGetCrtcInfo(m_display.get(), res.get(), m_oldRRCrtc));
+            const auto crtcInfo = X11Ptr<XRRCrtcInfo>(XRRGetCrtcInfo(m_display.get(), res.get(), m_oldRRCrtc));
             if (!crtcInfo)
             {
                 err() << "Failed to get crtc info to reset the video mode" << std::endl;
@@ -1717,7 +1717,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             pushEvent(event);
 
             // If the window has been previously marked urgent (notification) as a result of a focus request, undo that
-            auto hints = X11Ptr<XWMHints>(XGetWMHints(m_display.get(), m_window));
+            const auto hints = X11Ptr<XWMHints>(XGetWMHints(m_display.get(), m_window));
             if (hints != nullptr)
             {
                 // Remove urgency (notification) flag from hints
@@ -2139,7 +2139,7 @@ Vector2i WindowImplX11::getPrimaryMonitorPosition()
     ::Window rootWindow = RootWindow(m_display.get(), m_screen);
 
     // Get the screen resources
-    auto res = X11Ptr<XRRScreenResources>(XRRGetScreenResources(m_display.get(), rootWindow));
+    const auto res = X11Ptr<XRRScreenResources>(XRRGetScreenResources(m_display.get(), rootWindow));
     if (!res)
     {
         err() << "Failed to get the current screen resources for primary monitor position" << std::endl;
@@ -2155,7 +2155,7 @@ Vector2i WindowImplX11::getPrimaryMonitorPosition()
     const RROutput output = getOutputPrimary(rootWindow, res.get(), xRandRMajor, xRandRMinor);
 
     // Get output info from output
-    auto outputInfo = X11Ptr<XRROutputInfo>(XRRGetOutputInfo(m_display.get(), res.get(), output));
+    const auto outputInfo = X11Ptr<XRROutputInfo>(XRRGetOutputInfo(m_display.get(), res.get(), output));
     if (!outputInfo || outputInfo->connection == RR_Disconnected)
     {
         err() << "Failed to get output info for primary monitor position" << std::endl;
@@ -2163,7 +2163,7 @@ Vector2i WindowImplX11::getPrimaryMonitorPosition()
     }
 
     // Retrieve current RRMode, screen position and rotation
-    auto crtcInfo = X11Ptr<XRRCrtcInfo>(XRRGetCrtcInfo(m_display.get(), res.get(), outputInfo->crtc));
+    const auto crtcInfo = X11Ptr<XRRCrtcInfo>(XRRGetCrtcInfo(m_display.get(), res.get(), outputInfo->crtc));
     if (!crtcInfo)
     {
         err() << "Failed to get crtc info for primary monitor position" << std::endl;

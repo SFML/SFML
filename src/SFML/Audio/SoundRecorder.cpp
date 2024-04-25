@@ -56,9 +56,9 @@ struct SoundRecorder::Impl
         // Find the device by its name
         auto devices = getAvailableDevices();
 
-        auto iter = std::find_if(devices.begin(),
-                                 devices.end(),
-                                 [this](const ma_device_info& info) { return info.name == deviceName; });
+        const auto iter = std::find_if(devices.begin(),
+                                       devices.end(),
+                                       [this](const ma_device_info& info) { return info.name == deviceName; });
 
         if (iter == devices.end())
             return false;
@@ -91,7 +91,7 @@ struct SoundRecorder::Impl
             if (!impl.owner->onProcessSamples(impl.samples.data(), impl.samples.size()))
             {
                 // If the derived class wants to stop, stop the capture
-                if (auto result = ma_device_stop(device); result != MA_SUCCESS)
+                if (const auto result = ma_device_stop(device); result != MA_SUCCESS)
                 {
                     err() << "Failed to stop audio capture device: " << ma_result_description(result) << std::endl;
                     return;
@@ -99,7 +99,7 @@ struct SoundRecorder::Impl
             }
         };
 
-        if (auto result = ma_device_init(&*context, &captureDeviceConfig, &*captureDevice); result != MA_SUCCESS)
+        if (const auto result = ma_device_init(&*context, &captureDeviceConfig, &*captureDevice); result != MA_SUCCESS)
         {
             captureDevice.reset();
             err() << "Failed to initialize the audio capture device: " << ma_result_description(result) << std::endl;
@@ -116,9 +116,9 @@ struct SoundRecorder::Impl
         // Create the context
         ma_context context;
 
-        auto contextConfig = ma_context_config_init();
+        const auto contextConfig = ma_context_config_init();
 
-        if (auto result = ma_context_init(nullptr, 0, &contextConfig, &context); result != MA_SUCCESS)
+        if (const auto result = ma_context_init(nullptr, 0, &contextConfig, &context); result != MA_SUCCESS)
         {
             err() << "Failed to initialize the audio context: " << ma_result_description(result) << std::endl;
             return deviceList;
@@ -128,7 +128,7 @@ struct SoundRecorder::Impl
         ma_device_info* deviceInfos = nullptr;
         ma_uint32       deviceCount = 0;
 
-        if (auto result = ma_context_get_devices(&context, nullptr, nullptr, &deviceInfos, &deviceCount);
+        if (const auto result = ma_context_get_devices(&context, nullptr, nullptr, &deviceInfos, &deviceCount);
             result != MA_SUCCESS)
         {
             err() << "Failed to get audio capture devices: " << ma_result_description(result) << std::endl;
@@ -164,7 +164,7 @@ SoundRecorder::SoundRecorder() : m_impl(std::make_unique<Impl>(this))
     // Create the log
     m_impl->log.emplace();
 
-    if (auto result = ma_log_init(nullptr, &*m_impl->log); result != MA_SUCCESS)
+    if (const auto result = ma_log_init(nullptr, &*m_impl->log); result != MA_SUCCESS)
     {
         m_impl->log.reset();
         err() << "Failed to initialize the audio log: " << ma_result_description(result) << std::endl;
@@ -172,15 +172,15 @@ SoundRecorder::SoundRecorder() : m_impl(std::make_unique<Impl>(this))
     }
 
     // Register our logging callback to output any warning/error messages
-    if (auto result = ma_log_register_callback(&*m_impl->log,
-                                               ma_log_callback_init(
-                                                   [](void*, ma_uint32 level, const char* message)
-                                                   {
-                                                       if (level <= MA_LOG_LEVEL_WARNING)
-                                                           err() << "miniaudio " << ma_log_level_to_string(level)
-                                                                 << ": " << message << std::flush;
-                                                   },
-                                                   nullptr));
+    if (const auto result = ma_log_register_callback(&*m_impl->log,
+                                                     ma_log_callback_init(
+                                                         [](void*, ma_uint32 level, const char* message)
+                                                         {
+                                                             if (level <= MA_LOG_LEVEL_WARNING)
+                                                                 err() << "miniaudio " << ma_log_level_to_string(level)
+                                                                       << ": " << message << std::flush;
+                                                         },
+                                                         nullptr));
         result != MA_SUCCESS)
         err() << "Failed to register audio log callback: " << ma_result_description(result) << std::endl;
 
@@ -190,7 +190,7 @@ SoundRecorder::SoundRecorder() : m_impl(std::make_unique<Impl>(this))
     auto contextConfig = ma_context_config_init();
     contextConfig.pLog = &*m_impl->log;
 
-    if (auto result = ma_context_init(nullptr, 0, &contextConfig, &*m_impl->context); result != MA_SUCCESS)
+    if (const auto result = ma_context_init(nullptr, 0, &contextConfig, &*m_impl->context); result != MA_SUCCESS)
     {
         m_impl->context.reset();
         err() << "Failed to initialize the audio context: " << ma_result_description(result) << std::endl;
@@ -270,7 +270,7 @@ bool SoundRecorder::start(unsigned int sampleRate)
     if (onStart())
     {
         // Start the capture
-        if (auto result = ma_device_start(&*m_impl->captureDevice); result != MA_SUCCESS)
+        if (const auto result = ma_device_start(&*m_impl->captureDevice); result != MA_SUCCESS)
         {
             err() << "Failed to start audio capture device: " << ma_result_description(result) << std::endl;
             return false;
@@ -290,7 +290,7 @@ void SoundRecorder::stop()
     if (m_impl->captureDevice && ma_device_is_started(&*m_impl->captureDevice))
     {
         // Stop the capture
-        if (auto result = ma_device_stop(&*m_impl->captureDevice); result != MA_SUCCESS)
+        if (const auto result = ma_device_stop(&*m_impl->captureDevice); result != MA_SUCCESS)
         {
             err() << "Failed to stop audio capture device: " << ma_result_description(result) << std::endl;
             return;
@@ -410,8 +410,8 @@ const std::vector<SoundChannel>& SoundRecorder::getChannelMap() const
 bool SoundRecorder::isAvailable()
 {
     // Try to open a device for capture to see if recording is available
-    auto      config = ma_device_config_init(ma_device_type_capture);
-    ma_device device;
+    const auto config = ma_device_config_init(ma_device_type_capture);
+    ma_device  device;
 
     if (ma_device_init(nullptr, &config, &device) != MA_SUCCESS)
         return false;

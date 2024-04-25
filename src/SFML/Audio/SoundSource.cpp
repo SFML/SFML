@@ -211,7 +211,7 @@ Vector3f SoundSource::getPosition() const
 {
     if (const auto* sound = static_cast<const ma_sound*>(getSound()))
     {
-        auto position = ma_sound_get_position(sound);
+        const auto position = ma_sound_get_position(sound);
         return {position.x, position.y, position.z};
     }
 
@@ -224,7 +224,7 @@ Vector3f SoundSource::getDirection() const
 {
     if (const auto* sound = static_cast<const ma_sound*>(getSound()))
     {
-        auto direction = ma_sound_get_direction(sound);
+        const auto direction = ma_sound_get_direction(sound);
         return {direction.x, direction.y, direction.z};
     }
 
@@ -255,7 +255,7 @@ Vector3f SoundSource::getVelocity() const
 {
     if (const auto* sound = static_cast<const ma_sound*>(getSound()))
     {
-        auto velocity = ma_sound_get_velocity(sound);
+        const auto velocity = ma_sound_get_velocity(sound);
         return {velocity.x, velocity.y, velocity.z};
     }
 

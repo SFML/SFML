@@ -45,7 +45,7 @@ AudioDevice::AudioDevice()
     // Create the log
     m_log.emplace();
 
-    if (auto result = ma_log_init(nullptr, &*m_log); result != MA_SUCCESS)
+    if (const auto result = ma_log_init(nullptr, &*m_log); result != MA_SUCCESS)
     {
         m_log.reset();
         err() << "Failed to initialize the audio log: " << ma_result_description(result) << std::endl;
@@ -53,15 +53,15 @@ AudioDevice::AudioDevice()
     }
 
     // Register our logging callback to output any warning/error messages
-    if (auto result = ma_log_register_callback(&*m_log,
-                                               ma_log_callback_init(
-                                                   [](void*, ma_uint32 level, const char* message)
-                                                   {
-                                                       if (level <= MA_LOG_LEVEL_WARNING)
-                                                           err() << "miniaudio " << ma_log_level_to_string(level)
-                                                                 << ": " << message << std::flush;
-                                                   },
-                                                   nullptr));
+    if (const auto result = ma_log_register_callback(&*m_log,
+                                                     ma_log_callback_init(
+                                                         [](void*, ma_uint32 level, const char* message)
+                                                         {
+                                                             if (level <= MA_LOG_LEVEL_WARNING)
+                                                                 err() << "miniaudio " << ma_log_level_to_string(level)
+                                                                       << ": " << message << std::flush;
+                                                         },
+                                                         nullptr));
         result != MA_SUCCESS)
         err() << "Failed to register audio log callback: " << ma_result_description(result) << std::endl;
 
@@ -71,7 +71,7 @@ AudioDevice::AudioDevice()
     auto contextConfig = ma_context_config_init();
     contextConfig.pLog = &*m_log;
 
-    if (auto result = ma_context_init(nullptr, 0, &contextConfig, &*m_context); result != MA_SUCCESS)
+    if (const auto result = ma_context_init(nullptr, 0, &contextConfig, &*m_context); result != MA_SUCCESS)
     {
         m_context.reset();
         err() << "Failed to initialize the audio context: " << ma_result_description(result) << std::endl;
@@ -81,7 +81,8 @@ AudioDevice::AudioDevice()
     // Count the playback devices
     ma_uint32 deviceCount = 0;
 
-    if (auto result = ma_context_get_devices(&*m_context, nullptr, &deviceCount, nullptr, nullptr); result != MA_SUCCESS)
+    if (const auto result = ma_context_get_devices(&*m_context, nullptr, &deviceCount, nullptr, nullptr);
+        result != MA_SUCCESS)
     {
         err() << "Failed to get audio playback devices: " << ma_result_description(result) << std::endl;
         return;
@@ -104,7 +105,7 @@ AudioDevice::AudioDevice()
 
         if (audioDevice.m_engine)
         {
-            if (auto result = ma_engine_read_pcm_frames(&*audioDevice.m_engine, output, frameCount, nullptr);
+            if (const auto result = ma_engine_read_pcm_frames(&*audioDevice.m_engine, output, frameCount, nullptr);
                 result != MA_SUCCESS)
                 err() << "Failed to read PCM frames from audio engine: " << ma_result_description(result) << std::endl;
         }
@@ -112,7 +113,7 @@ AudioDevice::AudioDevice()
     playbackDeviceConfig.pUserData       = this;
     playbackDeviceConfig.playback.format = ma_format_f32;
 
-    if (auto result = ma_device_init(&*m_context, &playbackDeviceConfig, &*m_playbackDevice); result != MA_SUCCESS)
+    if (const auto result = ma_device_init(&*m_context, &playbackDeviceConfig, &*m_playbackDevice); result != MA_SUCCESS)
     {
         m_playbackDevice.reset();
         err() << "Failed to initialize the audio playback device: " << ma_result_description(result) << std::endl;
@@ -127,7 +128,7 @@ AudioDevice::AudioDevice()
 
     m_engine.emplace();
 
-    if (auto result = ma_engine_init(&engineConfig, &*m_engine); result != MA_SUCCESS)
+    if (const auto result = ma_engine_init(&engineConfig, &*m_engine); result != MA_SUCCESS)
     {
         m_engine.reset();
         err() << "Failed to initialize the audio engine: " << ma_result_description(result) << std::endl;
@@ -135,7 +136,8 @@ AudioDevice::AudioDevice()
     }
 
     // Set master volume, position, velocity, cone and world up vector
-    if (auto result = ma_device_set_master_volume(ma_engine_get_device(&*m_engine), getListenerProperties().volume * 0.01f);
+    if (const auto result = ma_device_set_master_volume(ma_engine_get_device(&*m_engine),
+                                                        getListenerProperties().volume * 0.01f);
         result != MA_SUCCESS)
         err() << "Failed to set audio device master volume: " << ma_result_description(result) << std::endl;
 
@@ -210,7 +212,7 @@ void AudioDevice::setGlobalVolume(float volume)
     if (!instance || !instance->m_engine)
         return;
 
-    if (auto result = ma_device_set_master_volume(ma_engine_get_device(&*instance->m_engine), volume * 0.01f);
+    if (const auto result = ma_device_set_master_volume(ma_engine_get_device(&*instance->m_engine), volume * 0.01f);
         result != MA_SUCCESS)
         err() << "Failed to set audio device master volume: " << ma_result_description(result) << std::endl;
 }
