@@ -108,10 +108,10 @@ std::shared_ptr<_XIM> openXim()
         xim = sharedXIM;
 
         // Restore the previous locale
-        if (prevLoc.length() != 0)
+        if (!prevLoc.empty())
             std::setlocale(LC_ALL, prevLoc.c_str());
 
-        if (prevXLoc.length() != 0)
+        if (!prevXLoc.empty())
             XSetLocaleModifiers(prevXLoc.c_str());
     }
 

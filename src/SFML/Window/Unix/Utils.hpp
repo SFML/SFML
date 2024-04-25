@@ -48,7 +48,7 @@ struct XDeleter
 {
     void operator()(T* data) const
     {
-        XFree(data);
+        XFree(data); // NOLINT(bugprone-multi-level-implicit-pointer-conversion)
     }
 };
 
