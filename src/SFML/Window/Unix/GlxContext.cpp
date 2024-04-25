@@ -312,8 +312,8 @@ XVisualInfo GlxContext::selectBestVisual(::Display* display, unsigned int bitsPe
     const int screen = DefaultScreen(display);
 
     // Retrieve all the visuals
-    int  count   = 0;
-    auto visuals = X11Ptr<XVisualInfo[]>(XGetVisualInfo(display, 0, nullptr, &count));
+    int        count   = 0;
+    const auto visuals = X11Ptr<XVisualInfo[]>(XGetVisualInfo(display, 0, nullptr, &count));
     if (visuals)
     {
         // Evaluate all the returned visuals, and pick the best one
@@ -454,10 +454,10 @@ void GlxContext::updateSettingsFromWindow()
 
     // Get its visuals
     XVisualInfo tpl;
-    tpl.screen      = DefaultScreen(m_display.get());
-    tpl.visualid    = XVisualIDFromVisual(windowAttributes.visual);
-    int  nbVisuals  = 0;
-    auto visualInfo = X11Ptr<XVisualInfo>(
+    tpl.screen            = DefaultScreen(m_display.get());
+    tpl.visualid          = XVisualIDFromVisual(windowAttributes.visual);
+    int        nbVisuals  = 0;
+    const auto visualInfo = X11Ptr<XVisualInfo>(
         XGetVisualInfo(m_display.get(), VisualIDMask | VisualScreenMask, &tpl, &nbVisuals));
 
     if (!visualInfo)
@@ -493,13 +493,13 @@ void GlxContext::createSurface(GlxContext* shared, const Vector2u& size, unsigne
             // We don't supply attributes to match against, since
             // the visual we are matching against was already
             // deemed suitable in selectBestVisual()
-            int  nbConfigs = 0;
-            auto configs   = X11Ptr<GLXFBConfig[]>(
+            int        nbConfigs = 0;
+            const auto configs   = X11Ptr<GLXFBConfig[]>(
                 glXChooseFBConfig(m_display.get(), DefaultScreen(m_display.get()), nullptr, &nbConfigs));
 
             for (std::size_t i = 0; configs && (i < static_cast<std::size_t>(nbConfigs)); ++i)
             {
-                auto visual = X11Ptr<XVisualInfo>(glXGetVisualFromFBConfig(m_display.get(), configs[i]));
+                const auto visual = X11Ptr<XVisualInfo>(glXGetVisualFromFBConfig(m_display.get(), configs[i]));
 
                 if (!visual)
                     continue;
@@ -580,8 +580,8 @@ void GlxContext::createContext(GlxContext* shared)
 
         int attributes[] = {GLX_FBCONFIG_ID, static_cast<int>(fbConfigId), 0, 0};
 
-        int  count    = 0;
-        auto fbconfig = X11Ptr<GLXFBConfig>(
+        int        count    = 0;
+        const auto fbconfig = X11Ptr<GLXFBConfig>(
             glXChooseFBConfig(m_display.get(), DefaultScreen(m_display.get()), attributes, &count));
 
         if (count == 1)
@@ -633,13 +633,13 @@ void GlxContext::createContext(GlxContext* shared)
         // We don't supply attributes to match against, since
         // the visual we are matching against was already
         // deemed suitable in selectBestVisual()
-        int  nbConfigs = 0;
-        auto configs   = X11Ptr<GLXFBConfig[]>(
+        int        nbConfigs = 0;
+        const auto configs   = X11Ptr<GLXFBConfig[]>(
             glXChooseFBConfig(m_display.get(), DefaultScreen(m_display.get()), nullptr, &nbConfigs));
 
         for (std::size_t i = 0; configs && (i < static_cast<std::size_t>(nbConfigs)); ++i)
         {
-            auto visual = X11Ptr<XVisualInfo>(glXGetVisualFromFBConfig(m_display.get(), configs[i]));
+            const auto visual = X11Ptr<XVisualInfo>(glXGetVisualFromFBConfig(m_display.get(), configs[i]));
 
             if (!visual)
                 continue;

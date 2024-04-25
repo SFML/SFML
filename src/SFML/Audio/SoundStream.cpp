@@ -158,7 +158,7 @@ struct SoundStream::Impl
                 // If we are looping and at the end of the loop, set the cursor back to the beginning of the loop
                 if (!impl.streaming && impl.loop)
                 {
-                    if (auto seekPositionAfterLoop = owner->onLoop(); seekPositionAfterLoop != NoLoop)
+                    if (const auto seekPositionAfterLoop = owner->onLoop(); seekPositionAfterLoop != NoLoop)
                     {
                         impl.streaming        = true;
                         impl.samplesProcessed = static_cast<std::uint64_t>(seekPositionAfterLoop);

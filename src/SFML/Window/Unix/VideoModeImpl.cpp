@@ -68,7 +68,8 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
         if (XQueryExtension(display.get(), "RANDR", &version, &version, &version))
         {
             // Get the current configuration
-            auto config = X11Ptr<XRRScreenConfiguration>(XRRGetScreenInfo(display.get(), RootWindow(display.get(), screen)));
+            const auto config = X11Ptr<XRRScreenConfiguration>(
+                XRRGetScreenInfo(display.get(), RootWindow(display.get(), screen)));
             if (config)
             {
                 // Get the available screen sizes
@@ -77,8 +78,8 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
                 if (sizes && (nbSizes > 0))
                 {
                     // Get the list of supported depths
-                    int  nbDepths = 0;
-                    auto depths   = X11Ptr<int[]>(XListDepths(display.get(), screen, &nbDepths));
+                    int        nbDepths = 0;
+                    const auto depths   = X11Ptr<int[]>(XListDepths(display.get(), screen, &nbDepths));
                     if (depths && (nbDepths > 0))
                     {
                         // Combine depths and sizes to fill the array of supported modes
@@ -145,7 +146,8 @@ VideoMode VideoModeImpl::getDesktopMode()
         if (XQueryExtension(display.get(), "RANDR", &version, &version, &version))
         {
             // Get the current configuration
-            auto config = X11Ptr<XRRScreenConfiguration>(XRRGetScreenInfo(display.get(), RootWindow(display.get(), screen)));
+            const auto config = X11Ptr<XRRScreenConfiguration>(
+                XRRGetScreenInfo(display.get(), RootWindow(display.get(), screen)));
             if (config)
             {
                 // Get the current video mode

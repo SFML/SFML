@@ -305,7 +305,7 @@ EGLConfig EglContext::getBestConfig(EGLDisplay display, unsigned int bitsPerPixe
     eglCheck(eglGetConfigs(display, nullptr, 0, &configCount));
 
     // Retrieve the list of available configs
-    auto configs = std::make_unique<EGLConfig[]>(static_cast<std::size_t>(configCount));
+    const auto configs = std::make_unique<EGLConfig[]>(static_cast<std::size_t>(configCount));
 
     eglCheck(eglGetConfigs(display, configs.get(), configCount, &configCount));
 
@@ -433,8 +433,8 @@ XVisualInfo EglContext::selectBestVisual(::Display* xDisplay, unsigned int bitsP
     vTemplate.visualid = static_cast<VisualID>(nativeVisualId);
 
     // Get X11 visuals compatible with this EGL config
-    int  visualCount      = 0;
-    auto availableVisuals = X11Ptr<XVisualInfo[]>(XGetVisualInfo(xDisplay, VisualIDMask, &vTemplate, &visualCount));
+    int        visualCount      = 0;
+    const auto availableVisuals = X11Ptr<XVisualInfo[]>(XGetVisualInfo(xDisplay, VisualIDMask, &vTemplate, &visualCount));
 
     if (visualCount == 0)
     {

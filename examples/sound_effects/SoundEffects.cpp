@@ -579,7 +579,7 @@ private:
 
         for (auto i = 0u; i < chunkSize; ++i)
         {
-            auto value = m_amplitude * 2 * (m_time / period - std::floor(0.5f + m_time / period));
+            const auto value = m_amplitude * 2 * (m_time / period - std::floor(0.5f + m_time / period));
 
             m_sampleBuffer[i] = static_cast<std::int16_t>(std::lround(value * std::numeric_limits<std::int16_t>::max()));
             m_time += timePerSample;
