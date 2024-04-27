@@ -40,13 +40,6 @@
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-WindowImplUIKit::WindowImplUIKit(WindowHandle /* handle */)
-{
-    // Not implemented
-}
-
-
-////////////////////////////////////////////////////////////
 WindowImplUIKit::WindowImplUIKit(VideoMode mode,
                                  const String& /* title */,
                                  std::uint32_t style,

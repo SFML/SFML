@@ -47,14 +47,6 @@ class WindowImplUIKit : public WindowImpl
 {
 public:
     ////////////////////////////////////////////////////////////
-    /// \brief Construct the window implementation from an existing control
-    ///
-    /// \param handle Platform-specific handle of the control
-    ///
-    ////////////////////////////////////////////////////////////
-    WindowImplUIKit(WindowHandle handle);
-
-    ////////////////////////////////////////////////////////////
     /// \brief Create the window implementation
     ///
     /// \param mode     Video mode to use
