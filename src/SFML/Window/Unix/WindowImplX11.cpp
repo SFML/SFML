@@ -957,8 +957,10 @@ void WindowImplX11::setIcon(const Vector2u& size, const std::uint8_t* pixels)
 {
     // X11 wants BGRA pixels: swap red and blue channels
     // Note: this memory will be freed by X11Ptr<XImage> deleter
+    // NOLINTBEGIN(cppcoreguidelines-no-malloc)
     auto* iconPixels = static_cast<std::uint8_t*>(
         std::malloc(static_cast<std::size_t>(size.x) * static_cast<std::size_t>(size.y) * 4));
+    // NOLINTEND(cppcoreguidelines-no-malloc)
     for (std::size_t i = 0; i < static_cast<std::size_t>(size.x) * static_cast<std::size_t>(size.y); ++i)
     {
         iconPixels[i * 4 + 0] = pixels[i * 4 + 2];
