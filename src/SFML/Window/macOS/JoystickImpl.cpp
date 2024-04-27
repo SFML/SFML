@@ -71,7 +71,7 @@ unsigned int getDeviceUint(IOHIDDeviceRef ref, CFStringRef prop, unsigned int in
     CFTypeRef typeRef = IOHIDDeviceGetProperty(ref, prop);
     if (typeRef && (CFGetTypeID(typeRef) == CFNumberGetTypeID()))
     {
-        SInt32 value;
+        SInt32 value = 0;
         CFNumberGetValue(static_cast<CFNumberRef>(typeRef), kCFNumberSInt32Type, &value);
         return static_cast<unsigned int>(value);
     }

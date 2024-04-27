@@ -103,7 +103,7 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 String getErrorString(DWORD errorCode)
 {
-    PTCHAR buffer;
+    PTCHAR buffer = nullptr;
     if (FormatMessage(FORMAT_MESSAGE_MAX_WIDTH_MASK | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
                           FORMAT_MESSAGE_IGNORE_INSERTS,
                       nullptr,

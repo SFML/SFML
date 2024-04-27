@@ -88,12 +88,12 @@ bool isMouseButtonPressed(Mouse::Button button)
     const auto display = openDisplay();
 
     // we don't care about these but they are required
-    ::Window root;
-    ::Window child;
-    int      wx;
-    int      wy;
-    int      gx;
-    int      gy;
+    ::Window root  = 0;
+    ::Window child = 0;
+    int      wx    = 0;
+    int      wy    = 0;
+    int      gx    = 0;
+    int      gy    = 0;
 
     unsigned int buttons = 0;
     XQueryPointer(display.get(), DefaultRootWindow(display.get()), &root, &child, &gx, &gy, &wx, &wy, &buttons);
@@ -122,11 +122,11 @@ Vector2i getMousePosition()
     const auto display = openDisplay();
 
     // we don't care about these but they are required
-    ::Window     root;
-    ::Window     child;
-    int          x;
-    int          y;
-    unsigned int buttons;
+    ::Window     root    = 0;
+    ::Window     child   = 0;
+    int          x       = 0;
+    int          y       = 0;
+    unsigned int buttons = 0;
 
     int gx = 0;
     int gy = 0;
@@ -146,11 +146,11 @@ Vector2i getMousePosition(const WindowBase& relativeTo)
         const auto display = openDisplay();
 
         // we don't care about these but they are required
-        ::Window     root;
-        ::Window     child;
-        int          gx;
-        int          gy;
-        unsigned int buttons;
+        ::Window     root    = 0;
+        ::Window     child   = 0;
+        int          gx      = 0;
+        int          gy      = 0;
+        unsigned int buttons = 0;
 
         int x = 0;
         int y = 0;

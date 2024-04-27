@@ -125,8 +125,8 @@ struct SoundRecorder::Impl
         }
 
         // Enumerate the capture devices
-        ma_device_info* deviceInfos;
-        ma_uint32       deviceCount;
+        ma_device_info* deviceInfos = nullptr;
+        ma_uint32       deviceCount = 0;
 
         if (auto result = ma_context_get_devices(&context, nullptr, nullptr, &deviceInfos, &deviceCount);
             result != MA_SUCCESS)

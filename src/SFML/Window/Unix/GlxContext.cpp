@@ -312,7 +312,7 @@ XVisualInfo GlxContext::selectBestVisual(::Display* display, unsigned int bitsPe
     const int screen = DefaultScreen(display);
 
     // Retrieve all the visuals
-    int  count;
+    int  count   = 0;
     auto visuals = X11Ptr<XVisualInfo[]>(XGetVisualInfo(display, 0, nullptr, &count));
     if (visuals)
     {
@@ -326,21 +326,21 @@ XVisualInfo GlxContext::selectBestVisual(::Display* display, unsigned int bitsPe
                 continue;
 
             // Check mandatory attributes
-            int doubleBuffer;
+            int doubleBuffer = 0;
             glXGetConfig(display, &visuals[i], GLX_DOUBLEBUFFER, &doubleBuffer);
             if (!doubleBuffer)
                 continue;
 
             // Extract the components of the current visual
-            int red;
-            int green;
-            int blue;
-            int alpha;
-            int depth;
-            int stencil;
-            int multiSampling;
-            int samples;
-            int sRgb;
+            int red           = 0;
+            int green         = 0;
+            int blue          = 0;
+            int alpha         = 0;
+            int depth         = 0;
+            int stencil       = 0;
+            int multiSampling = 0;
+            int samples       = 0;
+            int sRgb          = 0;
             glXGetConfig(display, &visuals[i], GLX_RED_SIZE, &red);
             glXGetConfig(display, &visuals[i], GLX_GREEN_SIZE, &green);
             glXGetConfig(display, &visuals[i], GLX_BLUE_SIZE, &blue);
@@ -406,11 +406,11 @@ XVisualInfo GlxContext::selectBestVisual(::Display* display, unsigned int bitsPe
 void GlxContext::updateSettingsFromVisualInfo(XVisualInfo* visualInfo)
 {
     // Update the creation settings from the chosen format
-    int depth;
-    int stencil;
-    int multiSampling;
-    int samples;
-    int sRgb;
+    int depth         = 0;
+    int stencil       = 0;
+    int multiSampling = 0;
+    int samples       = 0;
+    int sRgb          = 0;
     glXGetConfig(m_display.get(), visualInfo, GLX_DEPTH_SIZE, &depth);
     glXGetConfig(m_display.get(), visualInfo, GLX_STENCIL_SIZE, &stencil);
 

@@ -26,9 +26,9 @@ void runUdpServer(unsigned short port)
 
     // Wait for a message
     char                         in[128];
-    std::size_t                  received;
+    std::size_t                  received = 0;
     std::optional<sf::IpAddress> sender;
-    unsigned short               senderPort;
+    unsigned short               senderPort = 0;
     if (socket.receive(in, sizeof(in), received, sender, senderPort) != sf::Socket::Status::Done)
         return;
     std::cout << "Message received from client " << sender.value() << ": " << std::quoted(in) << std::endl;
@@ -66,9 +66,9 @@ void runUdpClient(unsigned short port)
 
     // Receive an answer from anyone (but most likely from the server)
     char                         in[128];
-    std::size_t                  received;
+    std::size_t                  received = 0;
     std::optional<sf::IpAddress> sender;
-    unsigned short               senderPort;
+    unsigned short               senderPort = 0;
     if (socket.receive(in, sizeof(in), received, sender, senderPort) != sf::Socket::Status::Done)
         return;
     std::cout << "Message received from " << sender.value() << ": " << std::quoted(in) << std::endl;

@@ -79,7 +79,7 @@ AudioDevice::AudioDevice()
     }
 
     // Count the playback devices
-    ma_uint32 deviceCount;
+    ma_uint32 deviceCount = 0;
 
     if (auto result = ma_context_get_devices(&*m_context, nullptr, &deviceCount, nullptr, nullptr); result != MA_SUCCESS)
     {

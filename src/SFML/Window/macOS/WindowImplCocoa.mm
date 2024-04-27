@@ -60,7 +60,7 @@ NSString* sfStringToNSString(const sf::String& string)
     const auto  length = static_cast<std::uint32_t>(string.getSize() * sizeof(std::uint32_t));
     const void* data   = reinterpret_cast<const void*>(string.getData());
 
-    NSStringEncoding encoding;
+    NSStringEncoding encoding = 0;
     if (NSHostByteOrder() == NS_LittleEndian)
         encoding = NSUTF32LittleEndianStringEncoding;
     else

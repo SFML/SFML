@@ -262,7 +262,7 @@ void EglContext::createContext(EglContext* shared)
 {
     const EGLint contextVersion[] = {EGL_CONTEXT_CLIENT_VERSION, 1, EGL_NONE};
 
-    EGLContext toShared;
+    EGLContext toShared = nullptr;
 
     if (shared)
         toShared = shared->m_context;
@@ -301,7 +301,7 @@ EGLConfig EglContext::getBestConfig(EGLDisplay display, unsigned int bitsPerPixe
     EglContextImpl::ensureInit();
 
     // Determine the number of available configs
-    EGLint configCount;
+    EGLint configCount = 0;
     eglCheck(eglGetConfigs(display, nullptr, 0, &configCount));
 
     // Retrieve the list of available configs
@@ -316,23 +316,23 @@ EGLConfig EglContext::getBestConfig(EGLDisplay display, unsigned int bitsPerPixe
     for (std::size_t i = 0; i < static_cast<std::size_t>(configCount); ++i)
     {
         // Check mandatory attributes
-        int surfaceType;
-        int renderableType;
+        int surfaceType    = 0;
+        int renderableType = 0;
         eglCheck(eglGetConfigAttrib(display, configs[i], EGL_SURFACE_TYPE, &surfaceType));
         eglCheck(eglGetConfigAttrib(display, configs[i], EGL_RENDERABLE_TYPE, &renderableType));
         if (!(surfaceType & (EGL_WINDOW_BIT | EGL_PBUFFER_BIT)) || !(renderableType & EGL_OPENGL_ES_BIT))
             continue;
 
         // Extract the components of the current config
-        int red;
-        int green;
-        int blue;
-        int alpha;
-        int depth;
-        int stencil;
-        int multiSampling;
-        int samples;
-        int caveat;
+        int red           = 0;
+        int green         = 0;
+        int blue          = 0;
+        int alpha         = 0;
+        int depth         = 0;
+        int stencil       = 0;
+        int multiSampling = 0;
+        int samples       = 0;
+        int caveat        = 0;
         eglCheck(eglGetConfigAttrib(display, configs[i], EGL_RED_SIZE, &red));
         eglCheck(eglGetConfigAttrib(display, configs[i], EGL_GREEN_SIZE, &green));
         eglCheck(eglGetConfigAttrib(display, configs[i], EGL_BLUE_SIZE, &blue));
@@ -344,8 +344,15 @@ EGLConfig EglContext::getBestConfig(EGLDisplay display, unsigned int bitsPerPixe
         eglCheck(eglGetConfigAttrib(display, configs[i], EGL_CONFIG_CAVEAT, &caveat));
 
         // Evaluate the config
-        int color = red + green + blue + alpha;
-        int score = evaluateFormat(bitsPerPixel, settings, color, depth, stencil, multiSampling ? samples : 0, caveat == EGL_NONE, false);
+        const int color = red + green + blue + alpha;
+        const int score = evaluateFormat(bitsPerPixel,
+                                         settings,
+                                         color,
+                                         depth,
+                                         stencil,
+                                         multiSampling ? samples : 0,
+                                         caveat == EGL_NONE,
+                                         false);
 
         // If it's better than the current best, make it the new best
         if (score < bestScore)
@@ -410,7 +417,7 @@ XVisualInfo EglContext::selectBestVisual(::Display* xDisplay, unsigned int bitsP
     EGLConfig config = getBestConfig(display, bitsPerPixel, settings);
 
     // Retrieve the visual id associated with this EGL config
-    EGLint nativeVisualId;
+    EGLint nativeVisualId = 0;
 
     eglCheck(eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &nativeVisualId));
 

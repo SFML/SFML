@@ -329,7 +329,7 @@ int WindowImplAndroid::processEvent(int /* fd */, int /* events */, void* /* dat
 int WindowImplAndroid::processScrollEvent(AInputEvent* inputEvent, ActivityStates& states)
 {
     // Prepare the Java virtual machine
-    jint lResult;
+    jint lResult = 0;
 
     JavaVM* lJavaVM = states.activity->vm;
     JNIEnv* lJNIEnv = states.activity->env;
@@ -714,7 +714,7 @@ int WindowImplAndroid::getUnicode(AInputEvent* event)
     const std::lock_guard lock(states.mutex);
 
     // Initializes JNI
-    jint lResult;
+    jint lResult = 0;
 
     JavaVM* lJavaVM = states.activity->vm;
     JNIEnv* lJNIEnv = states.activity->env;

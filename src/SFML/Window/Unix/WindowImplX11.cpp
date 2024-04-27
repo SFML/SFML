@@ -169,11 +169,11 @@ bool ewmhSupported()
 
     const auto display = sf::priv::openDisplay();
 
-    Atom           actualType;
-    int            actualFormat;
-    unsigned long  numItems;
-    unsigned long  numBytes;
-    unsigned char* data;
+    Atom           actualType   = 0;
+    int            actualFormat = 0;
+    unsigned long  numItems     = 0;
+    unsigned long  numBytes     = 0;
+    unsigned char* data         = nullptr;
 
     int result = XGetWindowProperty(display.get(),
                                     DefaultRootWindow(display.get()),
@@ -289,10 +289,10 @@ bool ewmhSupported()
 // Get the parent window.
 ::Window getParentWindow(::Display* disp, ::Window win)
 {
-    ::Window     root;
-    ::Window     parent;
-    ::Window*    children = nullptr;
-    unsigned int numChildren;
+    ::Window     root        = 0;
+    ::Window     parent      = 0;
+    ::Window*    children    = nullptr;
+    unsigned int numChildren = 0;
 
     XQueryTree(disp, win, &root, &parent, &children, &numChildren);
 
@@ -315,11 +315,11 @@ bool getEWMHFrameExtents(::Display* disp, ::Window win, long& xFrameExtent, long
         return false;
 
     bool           gotFrameExtents = false;
-    Atom           actualType;
-    int            actualFormat;
-    unsigned long  numItems;
-    unsigned long  numBytesLeft;
-    unsigned char* data = nullptr;
+    Atom           actualType      = 0;
+    int            actualFormat    = 0;
+    unsigned long  numItems        = 0;
+    unsigned long  numBytesLeft    = 0;
+    unsigned char* data            = nullptr;
 
     const int result = XGetWindowProperty(disp,
                                           win,
@@ -781,9 +781,9 @@ Vector2i WindowImplX11::getPosition() const
     // window actually is, but not necessarily to where we told it to
     // go using setPosition() and XMoveWindow(). To have the two match
     // as expected, we may have to subtract decorations and borders.
-    ::Window child;
-    int      xAbsRelToRoot;
-    int      yAbsRelToRoot;
+    ::Window child         = 0;
+    int      xAbsRelToRoot = 0;
+    int      yAbsRelToRoot = 0;
 
     XTranslateCoordinates(m_display.get(), m_window, DefaultRootWindow(m_display.get()), 0, 0, &xAbsRelToRoot, &yAbsRelToRoot, &child);
 
@@ -796,8 +796,8 @@ Vector2i WindowImplX11::getPosition() const
     // CASE 2: most modern WMs support EWMH and can define _NET_FRAME_EXTENTS
     // with the exact frame size to subtract, so if present, we prefer it and
     // query it first. According to spec, this already includes any borders.
-    long xFrameExtent;
-    long yFrameExtent;
+    long xFrameExtent = 0;
+    long yFrameExtent = 0;
 
     if (getEWMHFrameExtents(m_display.get(), m_window, xFrameExtent, yFrameExtent))
     {
@@ -830,12 +830,12 @@ Vector2i WindowImplX11::getPosition() const
 
     // Get final X/Y coordinates: take the relative position to
     // the root of the furthest ancestor window.
-    int          xRelToRoot;
-    int          yRelToRoot;
-    unsigned int width;
-    unsigned int height;
-    unsigned int borderWidth;
-    unsigned int depth;
+    int          xRelToRoot  = 0;
+    int          yRelToRoot  = 0;
+    unsigned int width       = 0;
+    unsigned int height      = 0;
+    unsigned int borderWidth = 0;
+    unsigned int depth       = 0;
 
     XGetGeometry(m_display.get(), ancestor, &root, &xRelToRoot, &yRelToRoot, &width, &height, &borderWidth, &depth);
 
@@ -1272,8 +1272,8 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
         return;
 
     // Check if the XRandR extension is present
-    int xRandRMajor;
-    int xRandRMinor;
+    int xRandRMajor = 0;
+    int xRandRMinor = 0;
     if (!checkXRandR(xRandRMajor, xRandRMinor))
     {
         // XRandR extension is not supported: we cannot use fullscreen mode
@@ -1312,7 +1312,7 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
 
     // Find RRMode to set
     bool   modeFound = false;
-    RRMode xRandMode;
+    RRMode xRandMode = 0;
 
     for (int i = 0; (i < res->nmode) && !modeFound; ++i)
     {
@@ -1363,8 +1363,8 @@ void WindowImplX11::resetVideoMode()
     {
         // Try to set old configuration
         // Check if the XRandR extension
-        int xRandRMajor;
-        int xRandRMinor;
+        int xRandRMajor = 0;
+        int xRandRMinor = 0;
         if (checkXRandR(xRandRMajor, xRandRMinor))
         {
             auto res = X11Ptr<XRRScreenResources>(
@@ -1383,7 +1383,7 @@ void WindowImplX11::resetVideoMode()
                 return;
             }
 
-            RROutput output;
+            RROutput output = 0;
 
             // if version >= 1.3 get the primary screen else take the first screen
             if ((xRandRMajor == 1 && xRandRMinor >= 3) || xRandRMajor > 1)
@@ -1841,7 +1841,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
 #ifdef X_HAVE_UTF8_STRING
                 if (m_inputContext)
                 {
-                    Status       status;
+                    Status       status = 0;
                     std::uint8_t keyBuffer[64];
 
                     const int length = Xutf8LookupString(m_inputContext,
@@ -2089,7 +2089,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
 bool WindowImplX11::checkXRandR(int& xRandRMajor, int& xRandRMinor)
 {
     // Check if the XRandR extension is present
-    int version;
+    int version = 0;
     if (!XQueryExtension(m_display.get(), "RANDR", &version, &version, &version))
     {
         err() << "XRandR extension is not supported" << std::endl;
@@ -2145,8 +2145,8 @@ Vector2i WindowImplX11::getPrimaryMonitorPosition()
     }
 
     // Get xRandr version
-    int xRandRMajor;
-    int xRandRMinor;
+    int xRandRMajor = 0;
+    int xRandRMinor = 0;
     if (!checkXRandR(xRandRMajor, xRandRMinor))
         xRandRMajor = xRandRMinor = 0;
 
