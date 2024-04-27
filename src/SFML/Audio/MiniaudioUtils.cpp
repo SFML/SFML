@@ -72,9 +72,9 @@ struct SavedSettings
 ////////////////////////////////////////////////////////////
 SavedSettings saveSettings(const ma_sound& sound)
 {
-    float innerAngle;
-    float outerAngle;
-    float outerGain;
+    float innerAngle = 0;
+    float outerAngle = 0;
+    float outerGain  = 0;
     ma_sound_get_cone(&sound, &innerAngle, &outerAngle, &outerGain);
 
     return SavedSettings{ma_sound_get_pitch(&sound),

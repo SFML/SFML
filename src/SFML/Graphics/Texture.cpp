@@ -186,7 +186,7 @@ bool Texture::create(const Vector2u& size)
     // Create the OpenGL texture if it doesn't exist yet
     if (!m_texture)
     {
-        GLuint texture;
+        GLuint texture = 0;
         glCheck(glGenTextures(1, &texture));
         m_texture = texture;
     }
@@ -382,7 +382,7 @@ Image Texture::copyToImage() const
     glCheck(GLEXT_glGenFramebuffers(1, &frameBuffer));
     if (frameBuffer)
     {
-        GLint previousFrameBuffer;
+        GLint previousFrameBuffer = 0;
         glCheck(glGetIntegerv(GLEXT_GL_FRAMEBUFFER_BINDING, &previousFrameBuffer));
 
         glCheck(GLEXT_glBindFramebuffer(GLEXT_GL_FRAMEBUFFER, frameBuffer));
@@ -570,10 +570,10 @@ void Texture::update(const Texture& texture, const Vector2u& dest)
             GLEXT_glFramebufferTexture2D(GLEXT_GL_DRAW_FRAMEBUFFER, GLEXT_GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0));
 
         // A final check, just to be sure...
-        GLenum sourceStatus;
+        GLenum sourceStatus = 0;
         glCheck(sourceStatus = GLEXT_glCheckFramebufferStatus(GLEXT_GL_READ_FRAMEBUFFER));
 
-        GLenum destStatus;
+        GLenum destStatus = 0;
         glCheck(destStatus = GLEXT_glCheckFramebufferStatus(GLEXT_GL_DRAW_FRAMEBUFFER));
 
         if ((sourceStatus == GLEXT_GL_FRAMEBUFFER_COMPLETE) && (destStatus == GLEXT_GL_FRAMEBUFFER_COMPLETE))

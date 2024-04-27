@@ -1352,7 +1352,7 @@ public:
         commandBufferAllocateInfo.commandPool                 = commandPool;
         commandBufferAllocateInfo.commandBufferCount          = 1;
 
-        VkCommandBuffer commandBuffer;
+        VkCommandBuffer commandBuffer = nullptr;
 
         if (vkAllocateCommandBuffers(device, &commandBufferAllocateInfo, &commandBuffer) != VK_SUCCESS)
             return false;
@@ -1458,7 +1458,7 @@ public:
             return;
         }
 
-        void* ptr;
+        void* ptr = nullptr;
 
         // Map the buffer into our address space
         if (vkMapMemory(device, stagingBufferMemory, 0, sizeof(vertexData), 0, &ptr) != VK_SUCCESS)
@@ -1537,7 +1537,7 @@ public:
             return;
         }
 
-        void* ptr;
+        void* ptr = nullptr;
 
         // Map the buffer into our address space
         if (vkMapMemory(device, stagingBufferMemory, 0, sizeof(indexData), 0, &ptr) != VK_SUCCESS)
@@ -1689,7 +1689,7 @@ public:
         commandBufferAllocateInfo.commandPool                 = commandPool;
         commandBufferAllocateInfo.commandBufferCount          = 1;
 
-        VkCommandBuffer commandBuffer;
+        VkCommandBuffer commandBuffer = nullptr;
 
         if (vkAllocateCommandBuffers(device, &commandBufferAllocateInfo, &commandBuffer) != VK_SUCCESS)
         {
@@ -1820,7 +1820,7 @@ public:
                      stagingBuffer,
                      stagingBufferMemory);
 
-        void* ptr;
+        void* ptr = nullptr;
 
         // Map the buffer into our address space
         if (vkMapMemory(device, stagingBufferMemory, 0, imageSize, 0, &ptr) != VK_SUCCESS)
@@ -1862,7 +1862,7 @@ public:
         commandBufferAllocateInfo.commandPool                 = commandPool;
         commandBufferAllocateInfo.commandBufferCount          = 1;
 
-        VkCommandBuffer commandBuffer;
+        VkCommandBuffer commandBuffer = nullptr;
 
         if (vkAllocateCommandBuffers(device, &commandBufferAllocateInfo, &commandBuffer) != VK_SUCCESS)
         {
@@ -2431,7 +2431,7 @@ public:
 
         matrixPerspective(projection, fov, aspect, nearPlane, farPlane);
 
-        char* ptr;
+        char* ptr = nullptr;
 
         // Map the current frame's uniform buffer into our address space
         if (vkMapMemory(device, uniformBuffersMemory[currentFrame], 0, sizeof(Matrix) * 3, 0, reinterpret_cast<void**>(&ptr)) !=

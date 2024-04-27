@@ -170,7 +170,7 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
 {
     release();
 
-    unsigned int shape;
+    unsigned int shape = 0;
 
     // clang-format off
     switch (type)

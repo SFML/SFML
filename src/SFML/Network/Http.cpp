@@ -209,7 +209,7 @@ void Http::Response::parse(const std::string& data)
     }
 
     // Extract the status code from the first line
-    int status;
+    int status = 0;
     if (in >> status)
     {
         m_status = static_cast<Status>(status);
@@ -238,7 +238,7 @@ void Http::Response::parse(const std::string& data)
     else
     {
         // Chunked - have to read chunk by chunk
-        std::size_t length;
+        std::size_t length = 0;
 
         // Read all chunks, identified by a chunk-size not being 0
         while (in >> std::hex >> length)

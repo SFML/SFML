@@ -254,7 +254,7 @@ int getResources(int fd, drmModeResPtr& resources)
 
 int hasMonitorConnected(int fd, drmModeRes& resources)
 {
-    drmModeConnectorPtr connector;
+    drmModeConnectorPtr connector = nullptr;
     for (int i = 0; i < resources.count_connectors; ++i)
     {
         connector = drmModeGetConnector(fd, resources.connectors[i]);
@@ -314,7 +314,7 @@ int findDrmDevice(drmModeResPtr& resources)
 
 int initDrm(sf::priv::Drm& drm, const char* device, const char* modeStr, unsigned int vrefresh)
 {
-    drmModeResPtr resources;
+    drmModeResPtr resources = nullptr;
 
     if (device)
     {
@@ -486,8 +486,8 @@ EGLDisplay getInitializedDisplay()
 
         eglCheck(display = eglGetDisplay(reinterpret_cast<EGLNativeDisplayType>(gbmDevice)));
 
-        EGLint major;
-        EGLint minor;
+        EGLint major = 0;
+        EGLint minor = 0;
         eglCheck(eglInitialize(display, &major, &minor));
 
         gladLoaderLoadEGL(display);
@@ -576,7 +576,7 @@ DRMContext::DRMContext(DRMContext* shared, const ContextSettings& settings, cons
 DRMContext::~DRMContext()
 {
     // Deactivate the current context
-    EGLContext currentContext;
+    EGLContext currentContext = nullptr;
     eglCheck(currentContext = eglGetCurrentContext());
 
     if (currentContext == m_context)
@@ -692,7 +692,7 @@ void DRMContext::createContext(DRMContext* shared)
 {
     const EGLint contextVersion[] = {EGL_CONTEXT_CLIENT_VERSION, 1, EGL_NONE};
 
-    EGLContext toShared;
+    EGLContext toShared = nullptr;
 
     if (shared)
         toShared = shared->m_context;
@@ -785,7 +785,7 @@ EGLConfig DRMContext::getBestConfig(EGLDisplay display, unsigned int bitsPerPixe
 #endif
       EGL_NONE };
 
-    EGLint    configCount;
+    EGLint    configCount = 0;
     EGLConfig configs[1];
 
     // Ask EGL for the best config matching our video settings
@@ -798,7 +798,7 @@ EGLConfig DRMContext::getBestConfig(EGLDisplay display, unsigned int bitsPerPixe
 ////////////////////////////////////////////////////////////
 void DRMContext::updateSettings()
 {
-    EGLint tmp;
+    EGLint tmp = 0;
 
     // Update the internal context settings with the current config
     eglCheck(eglGetConfigAttrib(m_display, m_config, EGL_DEPTH_SIZE, &tmp));

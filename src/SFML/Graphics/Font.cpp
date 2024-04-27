@@ -143,7 +143,7 @@ bool Font::loadFromFile(const std::filesystem::path& filename)
     }
 
     // Load the new font face from the specified file
-    FT_Face face;
+    FT_Face face = nullptr;
     if (FT_New_Face(fontHandles->library, filename.string().c_str(), 0, &face) != 0)
     {
         err() << "Failed to load font (failed to create the font face)\n" << formatDebugPathInfo(filename) << std::endl;
@@ -201,7 +201,7 @@ bool Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
     }
 
     // Load the new font face from the specified file
-    FT_Face face;
+    FT_Face face = nullptr;
     if (FT_New_Memory_Face(fontHandles->library,
                            reinterpret_cast<const FT_Byte*>(data),
                            static_cast<FT_Long>(sizeInBytes),
@@ -276,7 +276,7 @@ bool Font::loadFromStream(InputStream& stream)
     args.driver = nullptr;
 
     // Load the new font face from the specified stream
-    FT_Face face;
+    FT_Face face = nullptr;
     if (FT_Open_Face(fontHandles->library, &args, 0, &face) != 0)
     {
         err() << "Failed to load font from stream (failed to create the font face)" << std::endl;
@@ -520,7 +520,7 @@ Glyph Font::loadGlyph(std::uint32_t codePoint, unsigned int characterSize, bool 
         return glyph;
 
     // Retrieve the glyph
-    FT_Glyph glyphDesc;
+    FT_Glyph glyphDesc = nullptr;
     if (FT_Get_Glyph(face->glyph, &glyphDesc) != 0)
         return glyph;
 

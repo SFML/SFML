@@ -48,7 +48,7 @@ int main()
     }
 
     // Choose the sample rate
-    unsigned int sampleRate;
+    unsigned int sampleRate = 0;
     std::cout << "Please choose the sample rate for sound capture (44100 is CD quality): ";
     std::cin >> sampleRate;
     std::cin.ignore(10000, '\n');
@@ -87,7 +87,7 @@ int main()
               << " " << buffer.getChannelCount() << " channels" << std::endl;
 
     // Choose what to do with the recorded sound data
-    char choice;
+    char choice = 0;
     std::cout << "What do you want to do with captured sound (p = play, s = save) ? ";
     std::cin >> choice;
     std::cin.ignore(10000, '\n');

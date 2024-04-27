@@ -95,7 +95,7 @@ std::shared_ptr<_XIM> openXim()
         // We need the default (environment) locale and X locale for opening
         // the IM and properly receiving text
         // First save the previous ones (this might be able to be written more elegantly?)
-        const char*       p;
+        const char*       p = nullptr;
         const std::string prevLoc((p = std::setlocale(LC_ALL, nullptr)) ? p : "");
         const std::string prevXLoc((p = XSetLocaleModifiers(nullptr)) ? p : "");
 

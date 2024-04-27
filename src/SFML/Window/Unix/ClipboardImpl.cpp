@@ -216,11 +216,11 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
             if ((selectionEvent.property == None) || (selectionEvent.selection != m_clipboard))
                 break;
 
-            Atom           type;
-            int            format;
-            unsigned long  items;
-            unsigned long  remainingBytes;
-            unsigned char* data = nullptr;
+            Atom           type           = 0;
+            int            format         = 0;
+            unsigned long  items          = 0;
+            unsigned long  remainingBytes = 0;
+            unsigned char* data           = nullptr;
 
             // The selection owner should have wrote the selection
             // data to the specified window property

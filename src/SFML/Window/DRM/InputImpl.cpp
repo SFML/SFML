@@ -374,7 +374,7 @@ bool eventProcess(sf::Event& event)
         return true;
     }
 
-    ssize_t bytesRead;
+    ssize_t bytesRead = 0;
 
     // Check all the open file descriptors for the next event
     for (auto& fileDescriptor : fileDescriptors)
