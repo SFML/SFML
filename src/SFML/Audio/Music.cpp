@@ -204,7 +204,7 @@ void Music::onSeek(Time timeOffset)
 
 
 ////////////////////////////////////////////////////////////
-std::int64_t Music::onLoop()
+std::optional<std::uint64_t> Music::onLoop()
 {
     // Called by underlying SoundStream so we can determine where to loop.
     const std::lock_guard lock(m_mutex);
@@ -222,7 +222,7 @@ std::int64_t Music::onLoop()
         m_file.seek(0);
         return 0;
     }
-    return NoLoop;
+    return std::nullopt;
 }
 
 
