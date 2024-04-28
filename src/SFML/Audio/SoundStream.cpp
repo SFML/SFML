@@ -79,7 +79,7 @@ struct SoundStream::Impl
             // Seek back to the start of the sound when it finishes playing
             auto& impl     = *static_cast<Impl*>(userData);
             impl.streaming = true;
-            impl.status    = Stopped;
+            impl.status    = Status::Stopped;
 
             if (const ma_result result = ma_sound_seek_to_pcm_frame(soundPtr, 0); result != MA_SUCCESS)
                 err() << "Failed to seek sound to frame 0: " << ma_result_description(result) << std::endl;
@@ -242,15 +242,15 @@ struct SoundStream::Impl
     SoundStream* const      owner;        //!< Owning SoundStream object
     std::vector<ma_channel> soundChannelMap; //!< The map of position in sample frame to sound channel (miniaudio channels)
     ma_sound                sound{};         //!< The sound
-    std::vector<std::int16_t> sampleBuffer;         //!< Our temporary sample buffer
-    std::size_t               sampleBufferCursor{}; //!< The current read position in the temporary sample buffer
-    std::uint64_t             samplesProcessed{};   //!< Number of samples processed since beginning of the stream
-    unsigned int              channelCount{};       //!< Number of channels (1 = mono, 2 = stereo, ...)
-    unsigned int              sampleRate{};         //!< Frequency (samples / second)
-    std::vector<SoundChannel> channelMap{};         //!< The map of position in sample frame to sound channel
-    bool                      loop{};               //!< Loop flag (true to loop, false to play once)
-    bool                      streaming{true};      //!< True if we are still streaming samples from the source
-    Status                    status{Stopped};      //!< The status
+    std::vector<std::int16_t> sampleBuffer;            //!< Our temporary sample buffer
+    std::size_t               sampleBufferCursor{};    //!< The current read position in the temporary sample buffer
+    std::uint64_t             samplesProcessed{};      //!< Number of samples processed since beginning of the stream
+    unsigned int              channelCount{};          //!< Number of channels (1 = mono, 2 = stereo, ...)
+    unsigned int              sampleRate{};            //!< Frequency (samples / second)
+    std::vector<SoundChannel> channelMap{};            //!< The map of position in sample frame to sound channel
+    bool                      loop{};                  //!< Loop flag (true to loop, false to play once)
+    bool                      streaming{true};         //!< True if we are still streaming samples from the source
+    Status                    status{Status::Stopped}; //!< The status
 };
 
 
@@ -279,7 +279,7 @@ void SoundStream::initialize(unsigned int channelCount, unsigned int sampleRate,
 ////////////////////////////////////////////////////////////
 void SoundStream::play()
 {
-    if (m_impl->status == Playing)
+    if (m_impl->status == Status::Playing)
         setPlayingOffset(Time::Zero);
 
     if (const ma_result result = ma_sound_start(&m_impl->sound); result != MA_SUCCESS)
@@ -288,7 +288,7 @@ void SoundStream::play()
     }
     else
     {
-        m_impl->status = Playing;
+        m_impl->status = Status::Playing;
     }
 }
 
@@ -302,8 +302,8 @@ void SoundStream::pause()
     }
     else
     {
-        if (m_impl->status == Playing)
-            m_impl->status = Paused;
+        if (m_impl->status == Status::Playing)
+            m_impl->status = Status::Paused;
     }
 }
 
@@ -318,7 +318,7 @@ void SoundStream::stop()
     else
     {
         setPlayingOffset(Time::Zero);
-        m_impl->status = Stopped;
+        m_impl->status = Status::Stopped;
     }
 }
 

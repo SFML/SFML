@@ -179,7 +179,7 @@ void doServer(unsigned short port)
     audioStream.start(port);
 
     // Loop until the sound playback is finished
-    while (audioStream.getStatus() != sf::SoundStream::Stopped)
+    while (audioStream.getStatus() != sf::SoundStream::Status::Stopped)
     {
         // Leave some CPU time for other threads
         sf::sleep(sf::milliseconds(100));
@@ -195,7 +195,7 @@ void doServer(unsigned short port)
     audioStream.play();
 
     // Loop until the sound playback is finished
-    while (audioStream.getStatus() != sf::SoundStream::Stopped)
+    while (audioStream.getStatus() != sf::SoundStream::Status::Stopped)
     {
         // Leave some CPU time for other threads
         sf::sleep(sf::milliseconds(100));

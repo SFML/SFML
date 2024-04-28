@@ -49,7 +49,7 @@ public:
     /// \brief Enumeration of the sound source states
     ///
     ////////////////////////////////////////////////////////////
-    enum Status
+    enum class Status
     {
         Stopped, //!< Sound is not playing
         Paused,  //!< Sound is paused
