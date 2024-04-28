@@ -194,10 +194,8 @@ public:
     bool getLoop() const;
 
 protected:
-    enum
-    {
-        NoLoop = -1 //!< "Invalid" endSeeks value, telling us to continue uninterrupted
-    };
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    static constexpr std::int64_t NoLoop = -1; //!< "Invalid" onLoop return value, telling us to continue uninterrupted
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
