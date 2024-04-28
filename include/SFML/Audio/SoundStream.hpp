@@ -35,6 +35,7 @@
 #include <SFML/System/Time.hpp>
 
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include <cstddef>
@@ -194,9 +195,6 @@ public:
     bool getLoop() const;
 
 protected:
-    // NOLINTNEXTLINE(readability-identifier-naming)
-    static constexpr std::int64_t NoLoop = -1; //!< "Invalid" onLoop return value, telling us to continue uninterrupted
-
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -259,10 +257,10 @@ protected:
     /// allow implementation of custom loop points. Otherwise,
     /// it just calls onSeek(Time::Zero) and returns 0.
     ///
-    /// \return The seek position after looping (or -1 if there's no loop)
+    /// \return The seek position after looping (or std::nullopt if there's no loop)
     ///
     ////////////////////////////////////////////////////////////
-    virtual std::int64_t onLoop();
+    virtual std::optional<std::uint64_t> onLoop();
 
 private:
     ////////////////////////////////////////////////////////////
