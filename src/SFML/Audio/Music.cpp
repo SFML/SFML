@@ -164,7 +164,7 @@ void Music::setLoopPoints(TimeSpan timePoints)
         setPlayingOffset(oldPos);
 
     // Resume
-    if (oldStatus == Playing)
+    if (oldStatus == Status::Playing)
         play();
 }
 

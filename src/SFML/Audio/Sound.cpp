@@ -77,7 +77,7 @@ struct Sound::Impl
         soundConfig.endCallback          = [](void* userData, ma_sound* soundPtr)
         {
             auto& impl  = *static_cast<Impl*>(userData);
-            impl.status = Stopped;
+            impl.status = Status::Stopped;
 
             // Seek back to the start of the sound when it finishes playing
             if (const ma_result result = ma_sound_seek_to_pcm_frame(soundPtr, 0); result != MA_SUCCESS)
@@ -214,7 +214,7 @@ struct Sound::Impl
     std::size_t             cursor{};        //!< The current playing position
     bool                    looping{};       //!< True if we are looping the sound
     const SoundBuffer*      buffer{};        //!< Sound buffer bound to the source
-    Status                  status{Stopped}; //!< The status
+    Status                  status{Status::Stopped}; //!< The status
 };
 
 
@@ -249,7 +249,7 @@ Sound::~Sound()
 ////////////////////////////////////////////////////////////
 void Sound::play()
 {
-    if (m_impl->status == Playing)
+    if (m_impl->status == Status::Playing)
         setPlayingOffset(Time::Zero);
 
     if (const ma_result result = ma_sound_start(&m_impl->sound); result != MA_SUCCESS)
@@ -258,7 +258,7 @@ void Sound::play()
     }
     else
     {
-        m_impl->status = Playing;
+        m_impl->status = Status::Playing;
     }
 }
 
@@ -272,8 +272,8 @@ void Sound::pause()
     }
     else
     {
-        if (m_impl->status == Playing)
-            m_impl->status = Paused;
+        if (m_impl->status == Status::Playing)
+            m_impl->status = Status::Paused;
     }
 }
 
@@ -288,7 +288,7 @@ void Sound::stop()
     else
     {
         setPlayingOffset(Time::Zero);
-        m_impl->status = Stopped;
+        m_impl->status = Status::Stopped;
     }
 }
 
