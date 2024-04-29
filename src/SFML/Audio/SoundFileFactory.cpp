@@ -58,7 +58,7 @@ std::unique_ptr<SoundFileReader> SoundFileFactory::createReaderFromFilename(cons
     // Test the filename in all the registered factories
     for (const auto& [fpCreate, fpCheck] : getReaderFactoryMap())
     {
-        if (stream.seek(0) == -1)
+        if (!stream.seek(0).has_value())
         {
             err() << "Failed to seek sound stream" << std::endl;
             return nullptr;
@@ -84,7 +84,7 @@ std::unique_ptr<SoundFileReader> SoundFileFactory::createReaderFromMemory(const 
     // Test the stream for all the registered factories
     for (const auto& [fpCreate, fpCheck] : getReaderFactoryMap())
     {
-        if (stream.seek(0) == -1)
+        if (!stream.seek(0).has_value())
         {
             err() << "Failed to seek sound stream" << std::endl;
             return nullptr;
@@ -106,7 +106,7 @@ std::unique_ptr<SoundFileReader> SoundFileFactory::createReaderFromStream(InputS
     // Test the stream for all the registered factories
     for (const auto& [fpCreate, fpCheck] : getReaderFactoryMap())
     {
-        if (stream.seek(0) == -1)
+        if (!stream.seek(0).has_value())
         {
             err() << "Failed to seek sound stream" << std::endl;
             return nullptr;

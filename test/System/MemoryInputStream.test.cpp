@@ -16,28 +16,73 @@ TEST_CASE("[System] sf::MemoryInputStream")
         STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::MemoryInputStream>);
     }
 
-    SECTION("Empty stream")
+    SECTION("Default constructor")
     {
-        sf::MemoryInputStream mis;
-
-        CHECK(mis.read(nullptr, 0) == -1);
-        CHECK(mis.seek(0) == -1);
-        CHECK(mis.tell() == -1);
-        CHECK(mis.getSize() == -1);
+        sf::MemoryInputStream memoryInputStream;
+        CHECK(memoryInputStream.read(nullptr, 0) == std::nullopt);
+        CHECK(memoryInputStream.seek(0) == std::nullopt);
+        CHECK(memoryInputStream.tell() == std::nullopt);
+        CHECK(memoryInputStream.getSize() == std::nullopt);
     }
 
-    SECTION("Open memory stream")
-    {
-        using namespace std::literals::string_view_literals;
-        constexpr auto        memoryContents = "hello world"sv;
-        sf::MemoryInputStream mis;
-        mis.open(memoryContents.data(), sizeof(char) * memoryContents.size());
+    using namespace std::literals::string_view_literals;
 
-        std::array<char, 32> buffer{};
-        CHECK(mis.read(buffer.data(), 5) == 5);
-        CHECK(std::string_view(buffer.data(), 5) == std::string_view(memoryContents.data(), 5));
-        CHECK(mis.seek(10) == 10);
-        CHECK(mis.tell() == 10);
-        CHECK(mis.getSize() == 11);
+    SECTION("open()")
+    {
+        sf::MemoryInputStream memoryInputStream;
+        memoryInputStream.open(nullptr, 0);
+        CHECK(memoryInputStream.tell() == std::nullopt);
+        CHECK(memoryInputStream.getSize() == std::nullopt);
+
+        static constexpr auto input = "hello world"sv;
+        memoryInputStream.open(input.data(), input.size());
+        CHECK(memoryInputStream.tell().value() == 0);
+        CHECK(memoryInputStream.getSize().value() == input.size());
+    }
+
+    SECTION("read()")
+    {
+        static constexpr auto input = "hello world"sv;
+        sf::MemoryInputStream memoryInputStream;
+        memoryInputStream.open(input.data(), input.size());
+        CHECK(memoryInputStream.tell().value() == 0);
+        CHECK(memoryInputStream.getSize().value() == input.size());
+
+        // Read within input
+        std::array<char, 32> output{};
+        CHECK(memoryInputStream.read(output.data(), 5).value() == 5);
+        CHECK(std::string_view(output.data(), 5) == "hello"sv);
+        CHECK(memoryInputStream.tell().value() == 5);
+        CHECK(memoryInputStream.getSize().value() == input.size());
+
+        // Read beyond input
+        CHECK(memoryInputStream.read(output.data(), 100).value() == 6);
+        CHECK(std::string_view(output.data(), 6) == " world"sv);
+        CHECK(memoryInputStream.tell().value() == 11);
+        CHECK(memoryInputStream.getSize().value() == input.size());
+    }
+
+    SECTION("seek()")
+    {
+        static constexpr auto input = "We Love SFML!"sv;
+        sf::MemoryInputStream memoryInputStream;
+        memoryInputStream.open(input.data(), input.size());
+        CHECK(memoryInputStream.tell().value() == 0);
+        CHECK(memoryInputStream.getSize().value() == input.size());
+
+        SECTION("Seek within input")
+        {
+            CHECK(memoryInputStream.seek(0).value() == 0);
+            CHECK(memoryInputStream.tell().value() == 0);
+
+            CHECK(memoryInputStream.seek(5).value() == 5);
+            CHECK(memoryInputStream.tell().value() == 5);
+        }
+
+        SECTION("Seek beyond input")
+        {
+            CHECK(memoryInputStream.seek(1'000).value() == input.size());
+            CHECK(memoryInputStream.tell().value() == input.size());
+        }
     }
 }

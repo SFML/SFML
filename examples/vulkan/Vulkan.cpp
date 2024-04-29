@@ -931,9 +931,10 @@ public:
                 return;
             }
 
-            std::vector<std::uint32_t> buffer(static_cast<std::size_t>(file.getSize()) / sizeof(std::uint32_t));
+            const auto                 fileSize = file.getSize().value();
+            std::vector<std::uint32_t> buffer(fileSize / sizeof(std::uint32_t));
 
-            if (file.read(buffer.data(), file.getSize()) != file.getSize())
+            if (file.read(buffer.data(), fileSize) != file.getSize())
             {
                 vulkanAvailable = false;
                 return;
@@ -959,9 +960,10 @@ public:
                 return;
             }
 
-            std::vector<std::uint32_t> buffer(static_cast<std::size_t>(file.getSize()) / sizeof(std::uint32_t));
+            const auto                 fileSize = file.getSize().value();
+            std::vector<std::uint32_t> buffer(fileSize / sizeof(std::uint32_t));
 
-            if (file.read(buffer.data(), file.getSize()) != file.getSize())
+            if (file.read(buffer.data(), fileSize) != file.getSize())
             {
                 vulkanAvailable = false;
                 return;

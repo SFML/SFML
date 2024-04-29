@@ -68,14 +68,14 @@ namespace
 std::size_t readCallback(void* ptr, std::size_t size, void* data)
 {
     auto* stream = static_cast<sf::InputStream*>(data);
-    return static_cast<std::size_t>(stream->read(ptr, static_cast<std::int64_t>(size)));
+    return stream->read(ptr, size).value_or(-1);
 }
 
 int seekCallback(std::uint64_t offset, void* data)
 {
-    auto*              stream   = static_cast<sf::InputStream*>(data);
-    const std::int64_t position = stream->seek(static_cast<std::int64_t>(offset));
-    return position < 0 ? -1 : 0;
+    auto*               stream   = static_cast<sf::InputStream*>(data);
+    const std::optional position = stream->seek(static_cast<std::size_t>(offset));
+    return position ? 0 : -1;
 }
 
 bool hasValidId3Tag(const std::uint8_t* header)
@@ -92,7 +92,7 @@ bool SoundFileReaderMp3::check(InputStream& stream)
 {
     std::uint8_t header[10];
 
-    if (static_cast<std::size_t>(stream.read(header, static_cast<std::int64_t>(sizeof(header)))) < sizeof(header))
+    if (stream.read(header, sizeof(header)) != sizeof(header))
         return false;
 
     if (hasValidId3Tag(header))

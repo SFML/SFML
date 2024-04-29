@@ -43,13 +43,13 @@ namespace
 {
 ma_result onRead(ma_decoder* decoder, void* buffer, size_t bytesToRead, size_t* bytesRead)
 {
-    auto*      stream = static_cast<sf::InputStream*>(decoder->pUserData);
-    const auto count  = stream->read(buffer, static_cast<std::int64_t>(bytesToRead));
+    auto*               stream = static_cast<sf::InputStream*>(decoder->pUserData);
+    const std::optional count  = stream->read(buffer, bytesToRead);
 
-    if (count < 0)
+    if (!count.has_value())
         return MA_ERROR;
 
-    *bytesRead = static_cast<size_t>(count);
+    *bytesRead = static_cast<std::size_t>(*count);
     return MA_SUCCESS;
 }
 
@@ -61,19 +61,17 @@ ma_result onSeek(ma_decoder* decoder, ma_int64 byteOffset, ma_seek_origin origin
     {
         case ma_seek_origin_start:
         {
-            if (stream->seek(byteOffset) < 0)
+            if (!stream->seek(static_cast<std::size_t>(byteOffset)).has_value())
                 return MA_ERROR;
 
             return MA_SUCCESS;
         }
         case ma_seek_origin_current:
         {
-            const auto currentPosition = stream->tell();
-
-            if (currentPosition < 0)
+            if (!stream->tell().has_value())
                 return MA_ERROR;
 
-            if (stream->seek(stream->tell() + byteOffset) < 0)
+            if (!stream->seek(stream->tell().value() + static_cast<std::size_t>(byteOffset)).has_value())
                 return MA_ERROR;
 
             return MA_SUCCESS;
