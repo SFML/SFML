@@ -55,13 +55,11 @@ namespace
 // FreeType callbacks that operate on a sf::InputStream
 unsigned long read(FT_Stream rec, unsigned long offset, unsigned char* buffer, unsigned long count)
 {
-    const auto convertedOffset = static_cast<std::int64_t>(offset);
-    auto*      stream          = static_cast<sf::InputStream*>(rec->descriptor.pointer);
-    if (stream->seek(convertedOffset) == convertedOffset)
+    auto* stream = static_cast<sf::InputStream*>(rec->descriptor.pointer);
+    if (stream->seek(offset) == offset)
     {
         if (count > 0)
-            return static_cast<unsigned long>(
-                stream->read(reinterpret_cast<char*>(buffer), static_cast<std::int64_t>(count)));
+            return static_cast<unsigned long>(stream->read(reinterpret_cast<char*>(buffer), count).value());
         else
             return 0;
     }
@@ -244,7 +242,7 @@ std::optional<Font> Font::loadFromStream(InputStream& stream)
     }
 
     // Make sure that the stream's reading position is at the beginning
-    if (stream.seek(0) == -1)
+    if (!stream.seek(0).has_value())
     {
         err() << "Failed to seek font stream" << std::endl;
         return std::nullopt;
@@ -252,7 +250,7 @@ std::optional<Font> Font::loadFromStream(InputStream& stream)
 
     // Prepare a wrapper for our stream, that we'll pass to FreeType callbacks
     fontHandles->streamRec.base               = nullptr;
-    fontHandles->streamRec.size               = static_cast<unsigned long>(stream.getSize());
+    fontHandles->streamRec.size               = static_cast<unsigned long>(stream.getSize().value());
     fontHandles->streamRec.pos                = 0;
     fontHandles->streamRec.descriptor.pointer = &stream;
     fontHandles->streamRec.read               = &read;

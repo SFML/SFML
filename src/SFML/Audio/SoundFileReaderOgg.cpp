@@ -41,29 +41,32 @@ namespace
 std::size_t read(void* ptr, std::size_t size, std::size_t nmemb, void* data)
 {
     auto* stream = static_cast<sf::InputStream*>(data);
-    return static_cast<std::size_t>(stream->read(ptr, static_cast<std::int64_t>(size * nmemb)));
+    return stream->read(ptr, size * nmemb).value_or(-1);
 }
 
-int seek(void* data, ogg_int64_t offset, int whence)
+int seek(void* data, ogg_int64_t signedOffset, int whence)
 {
     auto* stream = static_cast<sf::InputStream*>(data);
+    auto  offset = static_cast<std::size_t>(signedOffset);
     switch (whence)
     {
         case SEEK_SET:
             break;
         case SEEK_CUR:
-            offset += stream->tell();
+            offset += stream->tell().value();
             break;
         case SEEK_END:
-            offset = stream->getSize() - offset;
+            offset = stream->getSize().value() - offset;
     }
-    return static_cast<int>(stream->seek(offset));
+    const std::optional position = stream->seek(offset);
+    return position ? static_cast<int>(*position) : -1;
 }
 
 long tell(void* data)
 {
-    auto* stream = static_cast<sf::InputStream*>(data);
-    return static_cast<long>(stream->tell());
+    auto*               stream   = static_cast<sf::InputStream*>(data);
+    const std::optional position = stream->tell();
+    return position ? static_cast<long>(*position) : -1;
 }
 
 ov_callbacks callbacks = {&read, &seek, nullptr, &tell};

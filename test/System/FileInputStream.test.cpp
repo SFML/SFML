@@ -75,10 +75,10 @@ TEST_CASE("[System] sf::FileInputStream")
     SECTION("Default constructor")
     {
         sf::FileInputStream fileInputStream;
-        CHECK(fileInputStream.read(nullptr, 0) == -1);
-        CHECK(fileInputStream.seek(0) == -1);
-        CHECK(fileInputStream.tell() == -1);
-        CHECK(fileInputStream.getSize() == -1);
+        CHECK(fileInputStream.read(nullptr, 0) == std::nullopt);
+        CHECK(fileInputStream.seek(0) == std::nullopt);
+        CHECK(fileInputStream.tell() == std::nullopt);
+        CHECK(fileInputStream.getSize() == std::nullopt);
     }
 
     const TemporaryFile temporaryFile("Hello world");

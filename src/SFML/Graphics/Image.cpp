@@ -55,14 +55,15 @@ namespace
 // stb_image callbacks that operate on a sf::InputStream
 int read(void* user, char* data, int size)
 {
-    auto& stream = *static_cast<sf::InputStream*>(user);
-    return static_cast<int>(stream.read(data, size));
+    auto&               stream = *static_cast<sf::InputStream*>(user);
+    const std::optional count  = stream.read(data, static_cast<std::size_t>(size));
+    return count ? static_cast<int>(*count) : -1;
 }
 
 void skip(void* user, int size)
 {
     auto& stream = *static_cast<sf::InputStream*>(user);
-    if (stream.seek(stream.tell() + size) == -1)
+    if (!stream.seek(stream.tell().value() + static_cast<std::size_t>(size)).has_value())
         sf::err() << "Failed to seek image loader input stream" << std::endl;
 }
 
@@ -233,7 +234,7 @@ std::optional<Image> Image::loadFromMemory(const void* data, std::size_t size)
 std::optional<Image> Image::loadFromStream(InputStream& stream)
 {
     // Make sure that the stream's reading position is at the beginning
-    if (stream.seek(0) == -1)
+    if (!stream.seek(0).has_value())
     {
         err() << "Failed to seek image stream" << std::endl;
         return std::nullopt;
