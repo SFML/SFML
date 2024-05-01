@@ -276,6 +276,15 @@ public:
     template <typename T>
     [[nodiscard]] const T* getIf() const;
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Check if the event type is not `Empty`
+    ///
+    /// \return True if this event's type is not `Empty`
+    ///
+    ////////////////////////////////////////////////////////////
+    template <typename T>
+    operator bool() const;
+
 private:
     ////////////////////////////////////////////////////////////
     // Member data
