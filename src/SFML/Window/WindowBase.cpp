@@ -136,32 +136,22 @@ bool WindowBase::isOpen() const
 
 
 ////////////////////////////////////////////////////////////
-bool WindowBase::pollEvent(Event& event)
+Event WindowBase::pollEvent()
 {
+    sf::Event event; // subtype is `Empty` by default
     if (m_impl && m_impl->popEvent(event, false))
-    {
         filterEvent(event);
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return event; // either `Empty` or whatever was popped from the queue
 }
 
 
 ////////////////////////////////////////////////////////////
-bool WindowBase::waitEvent(Event& event)
+Event WindowBase::waitEvent()
 {
+    sf::Event event; // subtype is `Empty` by default
     if (m_impl && m_impl->popEvent(event, true))
-    {
         filterEvent(event);
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return event; // either `Empty` on error or whatever was popped from the queue
 }
 
 

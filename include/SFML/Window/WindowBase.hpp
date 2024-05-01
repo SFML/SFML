@@ -180,25 +180,23 @@ public:
     /// \brief Pop the next event from the front of the FIFO event queue, if any, and return it
     ///
     /// This function is not blocking: if there's no pending event then
-    /// it will return false and leave \a event unmodified.
+	/// it will return an empty event, implying `event.is<sf::Event::Empty>()`.
     /// Note that more than one event may be present in the event queue,
     /// thus you should always call this function in a loop
     /// to make sure that you process every pending event.
     /// \code
-    /// for (sf::Event event; window.pollEvent(event);)
+    /// while (const auto event = window.pollEvent())
     /// {
     ///    // process event...
     /// }
     /// \endcode
     ///
-    /// \param event Event to be returned
-    ///
-    /// \return True if an event was returned, or false if the event queue was empty
+    /// \return The event
     ///
     /// \see waitEvent
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool pollEvent(Event& event);
+    [[nodiscard]] Event pollEvent();
 
     ////////////////////////////////////////////////////////////
     /// \brief Wait for an event and return it
@@ -211,21 +209,18 @@ public:
     /// is dedicated to events handling: you want to make this thread
     /// sleep as long as no new event is received.
     /// \code
-    /// sf::Event event;
-    /// if (window.waitEvent(event))
+    /// if (const auto event = window.waitEvent())
     /// {
     ///    // process event...
     /// }
     /// \endcode
     ///
-    /// \param event Event to be returned
-    ///
-    /// \return False if any error occurred
+    /// \return The event; will be empty (converts to `false`) if any error occurred
     ///
     /// \see pollEvent
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool waitEvent(Event& event);
+    [[nodiscard]] Event waitEvent();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of the window
