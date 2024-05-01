@@ -58,10 +58,3 @@ const T* Event::getIf() const
     if constexpr (isEventType<T>)
         return std::get_if<T>(&m_data);
 }
-
-////////////////////////////////////////////////////////////
-template <typename T>
-Event::operator bool() const
-{
-    return !is<Empty>();
-}

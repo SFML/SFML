@@ -40,7 +40,7 @@ int main()
     while (window.isOpen())
     {
         // Handle events
-        for (sf::Event event; window.pollEvent(event);)
+        while (const auto event = window.pollEvent())
         {
             // Window closed: exit
             if (event.is<sf::Event::Closed>())

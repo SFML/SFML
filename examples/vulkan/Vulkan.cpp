@@ -2542,7 +2542,7 @@ public:
         while (window.isOpen())
         {
             // Process events
-            for (sf::Event event; window.pollEvent(event);)
+            while (const auto event = window.pollEvent())
             {
                 // Close window: exit
                 if (event.is<sf::Event::Closed>())

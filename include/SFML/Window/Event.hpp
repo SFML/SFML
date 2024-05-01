@@ -125,8 +125,8 @@ public:
     struct MouseWheelScrolled
     {
         Mouse::Wheel wheel{}; //!< Which wheel (for mice with multiple ones)
-        float        delta{}; //!< Wheel offset (positive is up/left, negative is down/right). High-precision mice may use non-integral offsets.
-        Vector2i     position; //!< Position of the mouse pointer, relative to the top left of the owner window
+        float delta{}; //!< Wheel offset (positive is up/left, negative is down/right). High-precision mice may use non-integral offsets.
+        Vector2i position; //!< Position of the mouse pointer, relative to the top left of the owner window
     };
 
     ////////////////////////////////////////////////////////////
@@ -282,8 +282,10 @@ public:
     /// \return True if this event's type is not `Empty`
     ///
     ////////////////////////////////////////////////////////////
-    template <typename T>
-    operator bool() const;
+    [[nodiscard]] operator bool() const
+    {
+        return !is<Empty>();
+    }
 
 private:
     ////////////////////////////////////////////////////////////
@@ -354,7 +356,7 @@ private:
 /// any of the corresponding event data.
 ///
 /// \code
-/// for (sf::Event event; window.pollEvent(event);)
+/// while (const auto event = window.pollEvent())
 /// {
 ///     // Request for closing the window
 ///     if (event.is<sf::Event::Closed>())
