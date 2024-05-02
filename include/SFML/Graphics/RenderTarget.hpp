@@ -109,7 +109,7 @@ public:
     /// The specified value is truncated to the bit width of
     /// the current stencil buffer.
     ///
-    /// \param value Stencil value to clear to
+    /// \param stencilValue Stencil value to clear to
     ///
     ////////////////////////////////////////////////////////////
     void clearStencil(StencilValue stencilValue);
@@ -120,8 +120,8 @@ public:
     /// The specified stencil value is truncated to the bit
     /// width of the current stencil buffer.
     ///
-    /// \param color Fill color to use to clear the render target
-    /// \param value Stencil value to clear to
+    /// \param color        Fill color to use to clear the render target
+    /// \param stencilValue Stencil value to clear to
     ///
     ////////////////////////////////////////////////////////////
     void clear(const Color& color, StencilValue stencilValue);

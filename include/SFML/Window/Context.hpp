@@ -171,8 +171,7 @@ public:
     /// to bother with it.
     ///
     /// \param settings Creation parameters
-    /// \param width    Back buffer width
-    /// \param height   Back buffer height
+    /// \param size     Back buffer size
     ///
     ////////////////////////////////////////////////////////////
     Context(const ContextSettings& settings, const Vector2u& size);
