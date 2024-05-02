@@ -276,6 +276,17 @@ public:
     template <typename T>
     [[nodiscard]] const T* getIf() const;
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Check if current event type is not `Empty`
+    ///
+    /// \return True if current event type is not `Empty`
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] explicit operator bool() const
+    {
+        return !is<Empty>();
+    }
+
 private:
     ////////////////////////////////////////////////////////////
     // Member data
@@ -345,7 +356,7 @@ private:
 /// any of the corresponding event data.
 ///
 /// \code
-/// for (sf::Event event; window.pollEvent(event);)
+/// while (const auto event = window.pollEvent())
 /// {
 ///     // Request for closing the window
 ///     if (event.is<sf::Event::Closed>())
