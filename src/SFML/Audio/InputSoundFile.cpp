@@ -98,10 +98,7 @@ std::optional<InputSoundFile> InputSoundFile::openFromMemory(const void* data, s
         return std::nullopt;
 
     // Wrap the memory file into a stream
-    auto memory = std::make_unique<MemoryInputStream>();
-
-    // Open it
-    memory->open(data, sizeInBytes);
+    auto memory = std::make_unique<MemoryInputStream>(data, sizeInBytes);
 
     // Pass the stream to the reader
     auto info = reader->open(*memory);

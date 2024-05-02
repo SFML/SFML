@@ -47,13 +47,13 @@ class SFML_SYSTEM_API MemoryInputStream : public InputStream
 {
 public:
     ////////////////////////////////////////////////////////////
-    /// \brief Open the stream from its data
+    /// \brief Construct the stream from its data
     ///
     /// \param data        Pointer to the data in memory
     /// \param sizeInBytes Size of the data, in bytes
     ///
     ////////////////////////////////////////////////////////////
-    void open(const void* data, std::size_t sizeInBytes);
+    MemoryInputStream(const void* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// \brief Read data from the stream
@@ -130,8 +130,7 @@ private:
 /// \code
 /// void process(InputStream& stream);
 ///
-/// MemoryInputStream stream;
-/// stream.open(thePtr, theSize);
+/// MemoryInputStream stream(thePtr, theSize);
 /// process(stream);
 /// \endcode
 ///
