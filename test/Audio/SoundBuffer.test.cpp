@@ -71,7 +71,6 @@ TEST_CASE("[Audio] sf::SoundBuffer", runAudioDeviceTests())
     {
         SECTION("Invalid memory")
         {
-            CHECK(!sf::SoundBuffer::loadFromMemory(nullptr, 0));
             constexpr std::array<std::byte, 5> memory{};
             CHECK(!sf::SoundBuffer::loadFromMemory(memory.data(), memory.size()));
         }

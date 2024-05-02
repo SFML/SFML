@@ -56,7 +56,7 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
 
     SECTION("openFromMemory()")
     {
-        std::vector<std::byte> memory;
+        std::vector<std::byte> memory(10, std::byte{0xCA});
 
         SECTION("Invalid buffer")
         {

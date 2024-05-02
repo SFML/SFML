@@ -16,35 +16,31 @@ TEST_CASE("[System] sf::MemoryInputStream")
         STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::MemoryInputStream>);
     }
 
-    SECTION("Default constructor")
-    {
-        sf::MemoryInputStream memoryInputStream;
-        CHECK(memoryInputStream.read(nullptr, 0) == std::nullopt);
-        CHECK(memoryInputStream.seek(0) == std::nullopt);
-        CHECK(memoryInputStream.tell() == std::nullopt);
-        CHECK(memoryInputStream.getSize() == std::nullopt);
-    }
-
     using namespace std::literals::string_view_literals;
 
     SECTION("open()")
     {
-        sf::MemoryInputStream memoryInputStream;
-        memoryInputStream.open(nullptr, 0);
-        CHECK(memoryInputStream.tell() == std::nullopt);
-        CHECK(memoryInputStream.getSize() == std::nullopt);
-
         static constexpr auto input = "hello world"sv;
-        memoryInputStream.open(input.data(), input.size());
-        CHECK(memoryInputStream.tell().value() == 0);
-        CHECK(memoryInputStream.getSize().value() == input.size());
+
+        SECTION("Zero length")
+        {
+            sf::MemoryInputStream memoryInputStream(input.data(), 0);
+            CHECK(memoryInputStream.tell().value() == 0);
+            CHECK(memoryInputStream.getSize().value() == 0);
+        }
+
+        SECTION("Full length")
+        {
+            sf::MemoryInputStream memoryInputStream(input.data(), input.size());
+            CHECK(memoryInputStream.tell().value() == 0);
+            CHECK(memoryInputStream.getSize().value() == input.size());
+        }
     }
 
     SECTION("read()")
     {
         static constexpr auto input = "hello world"sv;
-        sf::MemoryInputStream memoryInputStream;
-        memoryInputStream.open(input.data(), input.size());
+        sf::MemoryInputStream memoryInputStream(input.data(), input.size());
         CHECK(memoryInputStream.tell().value() == 0);
         CHECK(memoryInputStream.getSize().value() == input.size());
 
@@ -65,8 +61,7 @@ TEST_CASE("[System] sf::MemoryInputStream")
     SECTION("seek()")
     {
         static constexpr auto input = "We Love SFML!"sv;
-        sf::MemoryInputStream memoryInputStream;
-        memoryInputStream.open(input.data(), input.size());
+        sf::MemoryInputStream memoryInputStream(input.data(), input.size());
         CHECK(memoryInputStream.tell().value() == 0);
         CHECK(memoryInputStream.getSize().value() == input.size());
 
