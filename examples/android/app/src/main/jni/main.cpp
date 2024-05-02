@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
 
     while (window.isOpen())
     {
-        for (sf::Event event; active ? window.pollEvent(event) : window.waitEvent(event);)
+        while (const auto event = active ? window.pollEvent() : window.waitEvent())
         {
             if (event.is<sf::Event::Closed>())
             {
