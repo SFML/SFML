@@ -132,7 +132,7 @@ public:
     ///
     /// \param block Use true to block the thread until an event arrives
     ///
-    /// \return The event; can be `Empty` (convertible to `false`) if not blocking
+    /// \return The event; can be empty (convertible to `false`) if not blocking
     ///
     ////////////////////////////////////////////////////////////
     Event popEvent(bool block);

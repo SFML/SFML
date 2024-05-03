@@ -191,7 +191,7 @@ public:
     /// }
     /// \endcode
     ///
-    /// \return The event; will be `Empty` (convertible to `false`) if no events are pending
+    /// \return The event; will be empty (convertible to `false`) if no events are pending
     ///
     /// \see waitEvent
     ///

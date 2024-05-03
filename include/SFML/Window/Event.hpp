@@ -49,14 +49,6 @@ class SFML_WINDOW_API Event
 {
 public:
     ////////////////////////////////////////////////////////////
-    /// \brief Empty event
-    ///
-    ////////////////////////////////////////////////////////////
-    struct Empty
-    {
-    };
-
-    ////////////////////////////////////////////////////////////
     /// \brief Closed event
     ///
     ////////////////////////////////////////////////////////////
@@ -244,7 +236,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
-    /// Sets the event to sf::Event::Empty
+    /// Sets the event to an empty state
     ///
     ////////////////////////////////////////////////////////////
     Event() = default;
@@ -277,21 +269,21 @@ public:
     [[nodiscard]] const T* getIf() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Check if current event type is not `Empty`
+    /// \brief Check if current event type is not empty
     ///
-    /// \return True if current event type is not `Empty`
+    /// \return True if current event type is not empty
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] explicit operator bool() const
     {
-        return !is<Empty>();
+        return !is<std::monostate>();
     }
 
 private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::variant<Empty,
+    std::variant<std::monostate,
                  Closed,
                  Resized,
                  FocusLost,

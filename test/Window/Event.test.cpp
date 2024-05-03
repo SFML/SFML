@@ -20,8 +20,8 @@ TEST_CASE("[Window] sf::Event")
         {
             const sf::Event event;
             CHECK(!event);
-            CHECK(event.is<sf::Event::Empty>());
-            CHECK(event.getIf<sf::Event::Empty>());
+            CHECK(event.is<std::monostate>());
+            CHECK(event.getIf<std::monostate>());
         }
 
         SECTION("Template constructor")
@@ -208,7 +208,6 @@ TEST_CASE("[Window] sf::Event")
     SECTION("Subtypes")
     {
         // Empty structs
-        STATIC_CHECK(std::is_empty_v<sf::Event::Empty>);
         STATIC_CHECK(std::is_empty_v<sf::Event::Closed>);
         STATIC_CHECK(std::is_empty_v<sf::Event::FocusLost>);
         STATIC_CHECK(std::is_empty_v<sf::Event::FocusGained>);
