@@ -34,6 +34,8 @@
 #include <utility>
 
 #include <cmath>
+#include <cstddef>
+#include <cstdint>
 
 
 namespace
@@ -50,15 +52,12 @@ void addLine(sf::VertexArray& vertices,
     const float top    = std::floor(lineTop + offset - (thickness / 2) + 0.5f);
     const float bottom = top + std::floor(thickness + 0.5f);
 
-    vertices.append(sf::Vertex(sf::Vector2f(-outlineThickness, top - outlineThickness), color, sf::Vector2f(1, 1)));
-    vertices.append(
-        sf::Vertex(sf::Vector2f(lineLength + outlineThickness, top - outlineThickness), color, sf::Vector2f(1, 1)));
-    vertices.append(sf::Vertex(sf::Vector2f(-outlineThickness, bottom + outlineThickness), color, sf::Vector2f(1, 1)));
-    vertices.append(sf::Vertex(sf::Vector2f(-outlineThickness, bottom + outlineThickness), color, sf::Vector2f(1, 1)));
-    vertices.append(
-        sf::Vertex(sf::Vector2f(lineLength + outlineThickness, top - outlineThickness), color, sf::Vector2f(1, 1)));
-    vertices.append(
-        sf::Vertex(sf::Vector2f(lineLength + outlineThickness, bottom + outlineThickness), color, sf::Vector2f(1, 1)));
+    vertices.append({{-outlineThickness, top - outlineThickness}, color, {1.0f, 1.0f}});
+    vertices.append({{lineLength + outlineThickness, top - outlineThickness}, color, {1.0f, 1.0f}});
+    vertices.append({{-outlineThickness, bottom + outlineThickness}, color, {1.0f, 1.0f}});
+    vertices.append({{-outlineThickness, bottom + outlineThickness}, color, {1.0f, 1.0f}});
+    vertices.append({{lineLength + outlineThickness, top - outlineThickness}, color, {1.0f, 1.0f}});
+    vertices.append({{lineLength + outlineThickness, bottom + outlineThickness}, color, {1.0f, 1.0f}});
 }
 
 // Add a glyph quad to the vertex array
@@ -76,19 +75,12 @@ void addGlyphQuad(sf::VertexArray& vertices, sf::Vector2f position, const sf::Co
     const float u2 = static_cast<float>(glyph.textureRect.left + glyph.textureRect.width) + padding;
     const float v2 = static_cast<float>(glyph.textureRect.top + glyph.textureRect.height) + padding;
 
-    vertices.append(
-        sf::Vertex(sf::Vector2f(position.x + left - italicShear * top, position.y + top), color, sf::Vector2f(u1, v1)));
-    vertices.append(
-        sf::Vertex(sf::Vector2f(position.x + right - italicShear * top, position.y + top), color, sf::Vector2f(u2, v1)));
-    vertices.append(
-        sf::Vertex(sf::Vector2f(position.x + left - italicShear * bottom, position.y + bottom), color, sf::Vector2f(u1, v2)));
-    vertices.append(
-        sf::Vertex(sf::Vector2f(position.x + left - italicShear * bottom, position.y + bottom), color, sf::Vector2f(u1, v2)));
-    vertices.append(
-        sf::Vertex(sf::Vector2f(position.x + right - italicShear * top, position.y + top), color, sf::Vector2f(u2, v1)));
-    vertices.append(sf::Vertex(sf::Vector2f(position.x + right - italicShear * bottom, position.y + bottom),
-                               color,
-                               sf::Vector2f(u2, v2)));
+    vertices.append({{position.x + left - italicShear * top, position.y + top}, color, {u1, v1}});
+    vertices.append({{position.x + right - italicShear * top, position.y + top}, color, {u2, v1}});
+    vertices.append({{position.x + left - italicShear * bottom, position.y + bottom}, color, {u1, v2}});
+    vertices.append({{position.x + left - italicShear * bottom, position.y + bottom}, color, {u1, v2}});
+    vertices.append({{position.x + right - italicShear * top, position.y + top}, color, {u2, v1}});
+    vertices.append({{position.x + right - italicShear * bottom, position.y + bottom}, color, {u2, v2}});
 }
 } // namespace
 
@@ -284,8 +276,7 @@ float Text::getOutlineThickness() const
 Vector2f Text::findCharacterPos(std::size_t index) const
 {
     // Adjust the index if it's out of range
-    if (index > m_string.getSize())
-        index = m_string.getSize();
+    index = std::min(index, m_string.getSize());
 
     // Precompute the variables needed by the algorithm
     const bool  isBold          = m_style & Bold;
@@ -348,21 +339,19 @@ FloatRect Text::getGlobalBounds() const
 
 
 ////////////////////////////////////////////////////////////
-void Text::draw(RenderTarget& target, const RenderStates& states) const
+void Text::draw(RenderTarget& target, RenderStates states) const
 {
     ensureGeometryUpdate();
 
-    RenderStates statesCopy(states);
-
-    statesCopy.transform *= getTransform();
-    statesCopy.texture        = &m_font->getTexture(m_characterSize);
-    statesCopy.coordinateType = CoordinateType::Pixels;
+    states.transform *= getTransform();
+    states.texture        = &m_font->getTexture(m_characterSize);
+    states.coordinateType = CoordinateType::Pixels;
 
     // Only draw the outline if there is something to draw
     if (m_outlineThickness != 0)
-        target.draw(m_outlineVertices, statesCopy);
+        target.draw(m_outlineVertices, states);
 
-    target.draw(m_vertices, statesCopy);
+    target.draw(m_vertices, states);
 }
 
 

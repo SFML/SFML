@@ -33,8 +33,10 @@
 #include <SFML/Audio/SoundStream.hpp>
 
 #include <filesystem>
+#include <mutex>
 #include <vector>
 
+#include <cstddef>
 #include <cstdint>
 
 
@@ -211,10 +213,10 @@ protected:
     /// the seek position for a loop. We then determine whether we are looping on a
     /// loop point or the end-of-file, perform the seek, and return the new position.
     ///
-    /// \return The seek position after looping (or -1 if there's no loop)
+    /// \return The seek position after looping (or std::nullopt if there's no loop)
     ///
     ////////////////////////////////////////////////////////////
-    std::int64_t onLoop() override;
+    std::optional<std::uint64_t> onLoop() override;
 
 private:
     ////////////////////////////////////////////////////////////

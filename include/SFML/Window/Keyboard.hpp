@@ -401,6 +401,8 @@ SFML_WINDOW_API Scancode delocalize(Key key);
 /// interpret the scancode: for example, sf::Keyboard::Key::Semicolon is
 /// mapped to ";" for layout and to "é" for others.
 ///
+/// \param code Scancode to check
+///
 /// \return The localized description of the code
 ///
 ////////////////////////////////////////////////////////////

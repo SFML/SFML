@@ -227,7 +227,7 @@ Socket::Status TcpSocket::send(const void* data, std::size_t size)
     if (!isBlocking())
         err() << "Warning: Partial sends might not be handled properly." << std::endl;
 
-    std::size_t sent;
+    std::size_t sent = 0;
 
     return send(data, size, sent);
 }
@@ -347,7 +347,7 @@ Socket::Status TcpSocket::send(Packet& packet)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wsign-conversion"
     // Send the data block
-    std::size_t  sent;
+    std::size_t  sent   = 0;
     const Status status = send(m_blockToSendBuffer.data() + packet.m_sendPos,
                                static_cast<priv::SocketImpl::Size>(m_blockToSendBuffer.size() - packet.m_sendPos),
                                sent);

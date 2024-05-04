@@ -22,58 +22,44 @@
 //
 ////////////////////////////////////////////////////////////
 
-////////////////////////////////////////////////////////////
-// Headers
-////////////////////////////////////////////////////////////
-#include <SFML/Audio/AlResource.hpp>
-#include <SFML/Audio/AudioDevice.hpp>
-
-#include <memory>
-#include <mutex>
-
-
-namespace
-{
-// OpenAL resources counter and its mutex
-unsigned int         count = 0;
-std::recursive_mutex mutex;
-
-// The audio device is instantiated on demand rather than at global startup,
-// which solves a lot of weird crashes and errors.
-// It is destroyed when it is no longer needed.
-std::unique_ptr<sf::priv::AudioDevice> globalDevice;
-} // namespace
-
+#pragma once
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-AlResource::AlResource()
-{
-    // Protect from concurrent access
-    const std::lock_guard lock(mutex);
-
-    // If this is the very first resource, trigger the global device initialization
-    if (count == 0)
-        globalDevice = std::make_unique<priv::AudioDevice>();
-
-    // Increment the resources counter
-    ++count;
-}
-
-
+/// \ingroup audio
+/// \brief Types of sound channels that can be read/written from sound buffers/files
+///
+/// In multi-channel audio, each sound channel can be
+/// assigned a position. The position of the channel is
+/// used to determine where to place a sound when it
+/// is spatialised. Assigning an incorrect sound channel
+/// will result in multi-channel audio being positioned
+/// incorrectly when using spatialisation.
+///
 ////////////////////////////////////////////////////////////
-AlResource::~AlResource()
+enum class SoundChannel
 {
-    // Protect from concurrent access
-    const std::lock_guard lock(mutex);
-
-    // Decrement the resources counter
-    --count;
-
-    // If there's no more resource alive, we can destroy the device
-    if (count == 0)
-        globalDevice.reset();
-}
+    Unspecified,
+    Mono,
+    FrontLeft,
+    FrontRight,
+    FrontCenter,
+    FrontLeftOfCenter,
+    FrontRightOfCenter,
+    LowFrequencyEffects,
+    BackLeft,
+    BackRight,
+    BackCenter,
+    SideLeft,
+    SideRight,
+    TopCenter,
+    TopFrontLeft,
+    TopFrontRight,
+    TopFrontCenter,
+    TopBackLeft,
+    TopBackRight,
+    TopBackCenter
+};
 
 } // namespace sf

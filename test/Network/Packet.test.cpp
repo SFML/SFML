@@ -11,6 +11,7 @@
 #include <vector>
 
 #include <cstddef>
+#include <cwchar>
 
 #define CHECK_PACKET_STREAM_OPERATORS(expected)              \
     do                                                       \
@@ -270,7 +271,7 @@ TEST_CASE("[Network] sf::Packet")
     SECTION("onSend")
     {
         Packet      packet;
-        std::size_t size;
+        std::size_t size = 0;
         CHECK(packet.onSend(size) == nullptr);
         CHECK(size == 0);
 

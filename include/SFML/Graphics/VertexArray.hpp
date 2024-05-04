@@ -32,13 +32,18 @@
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/Vertex.hpp>
 
 #include <vector>
 
+#include <cstddef>
+
 
 namespace sf
 {
+class RenderTarget;
+
 ////////////////////////////////////////////////////////////
 /// \brief Define a set of one or more 2D primitives
 ///
@@ -178,7 +183,7 @@ private:
     /// \param states Current render states
     ///
     ////////////////////////////////////////////////////////////
-    void draw(RenderTarget& target, const RenderStates& states) const override;
+    void draw(RenderTarget& target, RenderStates states) const override;
 
     ////////////////////////////////////////////////////////////
     // Member data

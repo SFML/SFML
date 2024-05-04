@@ -5,6 +5,9 @@
 
 #include <iomanip>
 #include <iostream>
+#include <optional>
+
+#include <cstddef>
 
 
 ////////////////////////////////////////////////////////////
@@ -36,7 +39,7 @@ void runTcpServer(unsigned short port)
 
     // Receive a message back from the client
     char        in[128];
-    std::size_t received;
+    std::size_t received = 0;
     if (socket.receive(in, sizeof(in), received) != sf::Socket::Status::Done)
         return;
     std::cout << "Answer received from the client: " << std::quoted(in) << std::endl;
@@ -68,7 +71,7 @@ void runTcpClient(unsigned short port)
 
     // Receive a message from the server
     char        in[128];
-    std::size_t received;
+    std::size_t received = 0;
     if (socket.receive(in, sizeof(in), received) != sf::Socket::Status::Done)
         return;
     std::cout << "Message received from the server: " << std::quoted(in) << std::endl;

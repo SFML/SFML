@@ -160,22 +160,36 @@ int main()
     while (window.isOpen())
     {
         // Handle events
-        for (sf::Event event; window.pollEvent(event);)
+        while (const auto event = window.pollEvent())
         {
             // Window closed or escape key pressed: exit
-            if ((event.type == sf::Event::Closed) ||
-                ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Key::Escape)))
+            if (event.is<sf::Event::Closed>() || (event.is<sf::Event::KeyPressed>() &&
+                                                  event.getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Escape))
             {
                 window.close();
                 break;
             }
-            else if ((event.type == sf::Event::JoystickButtonPressed) || (event.type == sf::Event::JoystickButtonReleased) ||
-                     (event.type == sf::Event::JoystickMoved) || (event.type == sf::Event::JoystickConnected))
+            else if (const auto* joystickButtonPressed = event.getIf<sf::Event::JoystickButtonPressed>())
             {
                 // Update displayed joystick values
-                updateValues(event.joystickConnect.joystickId);
+                updateValues(joystickButtonPressed->joystickId);
             }
-            else if (event.type == sf::Event::JoystickDisconnected)
+            else if (const auto* joystickButtonReleased = event.getIf<sf::Event::JoystickButtonReleased>())
+            {
+                // Update displayed joystick values
+                updateValues(joystickButtonReleased->joystickId);
+            }
+            else if (const auto* joystickMoved = event.getIf<sf::Event::JoystickMoved>())
+            {
+                // Update displayed joystick values
+                updateValues(joystickMoved->joystickId);
+            }
+            else if (const auto* joystickConnected = event.getIf<sf::Event::JoystickConnected>())
+            {
+                // Update displayed joystick values
+                updateValues(joystickConnected->joystickId);
+            }
+            else if (event.is<sf::Event::JoystickDisconnected>())
             {
                 // Reset displayed joystick values to empty
                 for (auto& [label, joystickObject] : texts)

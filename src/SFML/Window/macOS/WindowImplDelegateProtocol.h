@@ -60,7 +60,7 @@ class WindowImplCocoa;
 /// The requester is a WindowImplCocoa. It's used to send back
 /// event via these functions:
 ///
-/// windowClosed, windowResized, windowLostFocus, windowGainedFocus
+/// windowClosed, windowResized, windowFocusLost, windowFocusGained
 ///
 /// mouseDownAt, mouseUpAt, mouseMovedAt, mouseWheelScrolledAt,
 /// mouseMovedIn, mouseMovedOut

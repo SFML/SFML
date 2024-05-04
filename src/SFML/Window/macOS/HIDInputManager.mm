@@ -755,7 +755,7 @@ void HIDInputManager::initializeKeyboard()
     }
 
     auto* const keyboards = static_cast<NSSet*>(underlying); // Toll-Free Bridge
-    for (id keyboard in keyboards)
+    for (id keyboard in keyboards)                           // NOLINT(cppcoreguidelines-init-variables)
         loadKeyboard(static_cast<IOHIDDeviceRef>(keyboard));
 
     CFRelease(underlying);
@@ -776,7 +776,7 @@ void HIDInputManager::loadKeyboard(IOHIDDeviceRef keyboard)
     }
 
     auto* const keys = static_cast<NSArray*>(underlying); // Toll-Free Bridge
-    for (id key in keys)
+    for (id key in keys)                                  // NOLINT(cppcoreguidelines-init-variables)
     {
         auto* elem = static_cast<IOHIDElementRef>(key);
         if (IOHIDElementGetUsagePage(elem) == kHIDPage_KeyboardOrKeypad)

@@ -28,6 +28,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Socket.hpp>
+#include <SFML/Network/SocketHandle.hpp>
 
 #if defined(SFML_SYSTEM_WINDOWS)
 

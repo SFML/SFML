@@ -7,7 +7,7 @@ set(CATCH_CONFIG_FAST_COMPILE ON CACHE BOOL "")
 set(CATCH_CONFIG_NO_EXPERIMENTAL_STATIC_ANALYSIS_SUPPORT ON CACHE BOOL "")
 FetchContent_Declare(Catch2
     GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-    GIT_TAG v3.5.2
+    GIT_TAG v3.5.4
     GIT_SHALLOW ON)
 FetchContent_MakeAvailable(Catch2)
 include(Catch)
@@ -103,6 +103,7 @@ set(GRAPHICS_SRC
     Graphics/CoordinateType.test.cpp
     Graphics/Drawable.test.cpp
     Graphics/Font.test.cpp
+    Graphics/Glsl.test.cpp
     Graphics/Glyph.test.cpp
     Graphics/Image.test.cpp
     Graphics/Rect.test.cpp
@@ -144,7 +145,7 @@ set(NETWORK_SRC
 sfml_add_test(test-sfml-network "${NETWORK_SRC}" SFML::Network)
 
 set(AUDIO_SRC
-    Audio/AlResource.test.cpp
+    Audio/AudioResource.test.cpp
     Audio/InputSoundFile.test.cpp
     Audio/Music.test.cpp
     Audio/OutputSoundFile.test.cpp
@@ -152,21 +153,50 @@ set(AUDIO_SRC
     Audio/SoundBuffer.test.cpp
     Audio/SoundBufferRecorder.test.cpp
     Audio/SoundFileFactory.test.cpp
+    Audio/SoundFileReader.test.cpp
+    Audio/SoundFileWriter.test.cpp
     Audio/SoundRecorder.test.cpp
     Audio/SoundSource.test.cpp
     Audio/SoundStream.test.cpp
 )
 sfml_add_test(test-sfml-audio "${AUDIO_SRC}" SFML::Audio)
 
-if(SFML_OS_WINDOWS AND NOT SFML_USE_SYSTEM_DEPS)
-    add_custom_command(
-        TARGET test-sfml-audio
-        COMMENT "Copy OpenAL DLL"
-        PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_SOURCE_DIR}/extlibs/bin/$<IF:$<BOOL:${ARCH_64BITS}>,x64,x86>/openal32.dll $<TARGET_FILE_DIR:test-sfml-audio>
-        VERBATIM)
+if(SFML_OS_ANDROID AND DEFINED ENV{LIBCXX_SHARED_SO})
+    # Because we can only write to the tmp directory on the Android virtual device we will need to build our directory tree under it
+    set(TARGET_DIR "/data/local/tmp/$<TARGET_FILE_DIR:test-sfml-system>")
+
+    # Generate script that copies necessary files over to the Android virtual device
+    file(GENERATE OUTPUT "${PROJECT_BINARY_DIR}/prepare-android-files.sh" CONTENT
+        "#!/bin/bash\n\
+        adb shell \"mkdir -p ${TARGET_DIR}\"\n\
+        adb push $<TARGET_FILE:test-sfml-audio>    ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:test-sfml-graphics> ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:test-sfml-network>  ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:test-sfml-system>   ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:test-sfml-window>   ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:SFML::Audio>        ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:SFML::Graphics>     ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:SFML::Network>      ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:SFML::System>       ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:SFML::Window>       ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:Catch2>             ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:Catch2WithMain>     ${TARGET_DIR}\n\
+        adb push $ENV{LIBCXX_SHARED_SO}            ${TARGET_DIR}\n\
+        adb push ${CMAKE_CURRENT_LIST_DIR}         ${TARGET_DIR}\n\
+        adb shell \"chmod -R 775 ${TARGET_DIR} && ls -la ${TARGET_DIR}\"\n"
+        FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE)
+
+    # Add the target to invoke the file copy script
+    add_custom_target(prepare-android-files COMMAND "${PROJECT_BINARY_DIR}/prepare-android-files.sh")
+
+    # Generate proxy script that translates CTest commands into adb shell commands
+    file(GENERATE OUTPUT "${PROJECT_BINARY_DIR}/run-in-adb-shell.sh" CONTENT
+        "#!/bin/bash\n\
+        adb shell \"cd ${TARGET_DIR}/test; LD_LIBRARY_PATH=${TARGET_DIR} /data/local/tmp/$1 \\\"$2\\\" \\\"$3\\\" \\\"$4\\\" \\\"$5\\\" \\\"$6\\\" \\\"$7\\\" \\\"$8\\\" \\\"$9\\\"\"\n"
+        FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE)
 endif()
 
-if(SFML_ENABLE_COVERAGE AND SFML_OS_WINDOWS)
+if(SFML_ENABLE_COVERAGE AND SFML_OS_WINDOWS AND NOT SFML_COMPILER_GCC)
     # Try to find and use OpenCppCoverage for coverage reporting when building with MSVC
     find_program(OpenCppCoverage_BINARY "OpenCppCoverage.exe")
 
@@ -194,12 +224,28 @@ if(SFML_ENABLE_COVERAGE AND OpenCppCoverage_FOUND)
     string(REPLACE "/" "\\" COVERAGE_SRC "${PROJECT_SOURCE_DIR}/src")
     string(REPLACE "/" "\\" COVERAGE_INCLUDE "${PROJECT_SOURCE_DIR}/include")
 
-    set(COVERAGE_PREFIX ${OpenCppCoverage_BINARY} ARGS --quiet --export_type cobertura:${PROJECT_BINARY_DIR}/coverage.out --cover_children --excluded_modules "${COVERAGE_EXCLUDE}" --sources "${COVERAGE_SRC}" --sources "${COVERAGE_INCLUDE}" --)
+    # We need to patch the OpenCppCoverage output to remove path prefixes so Coveralls doesn't get confused
+    cmake_path(GET PROJECT_SOURCE_DIR ROOT_NAME COVERAGE_ROOT_NAME)
+    string(REPLACE "/" "\\\\" COVERAGE_PATH_PREFIX "${PROJECT_SOURCE_DIR}/")
+    string(REPLACE "${COVERAGE_ROOT_NAME}\\\\" "" COVERAGE_PATH_PREFIX "${COVERAGE_PATH_PREFIX}")
+
+    file(WRITE "${PROJECT_BINARY_DIR}/patch_coverage.cmake"
+         "file(READ \"${PROJECT_BINARY_DIR}/coverage.out\" COVERAGE_OUT)\n\
+         string(REPLACE \"${COVERAGE_PATH_PREFIX}\" \"\" COVERAGE_OUT \"\${COVERAGE_OUT}\")\n\
+         string(REPLACE \"${COVERAGE_ROOT_NAME}\" \".\" COVERAGE_OUT \"\${COVERAGE_OUT}\")\n\
+         file(WRITE \"${PROJECT_BINARY_DIR}/coverage.out\" \"\${COVERAGE_OUT}\")\n")
+
+    set(COVERAGE_PREFIX ${OpenCppCoverage_BINARY} --quiet --export_type cobertura:${PROJECT_BINARY_DIR}/coverage.out --cover_children --excluded_modules "${COVERAGE_EXCLUDE}" --sources "${COVERAGE_SRC}" --sources "${COVERAGE_INCLUDE}" --)
+else()
+    # On all other systems, we just run an empty script
+    file(WRITE "${PROJECT_BINARY_DIR}/patch_coverage.cmake" "")
 endif()
 
 # Convenience for building and running tests in a single command
 add_custom_target(runtests DEPENDS test-sfml-system test-sfml-window test-sfml-graphics test-sfml-network test-sfml-audio)
 add_custom_command(TARGET runtests
                    COMMENT "Run tests"
-                   POST_BUILD COMMAND ${COVERAGE_PREFIX} ${CMAKE_CTEST_COMMAND} --output-on-failure -C $<CONFIG>
+                   POST_BUILD
+                   COMMAND ${COVERAGE_PREFIX} ${CMAKE_CTEST_COMMAND} --output-on-failure -C $<CONFIG>
+                   COMMAND ${CMAKE_COMMAND} -P "${PROJECT_BINARY_DIR}/patch_coverage.cmake"
                    VERBATIM)

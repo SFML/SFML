@@ -95,7 +95,7 @@ std::shared_ptr<_XIM> openXim()
         // We need the default (environment) locale and X locale for opening
         // the IM and properly receiving text
         // First save the previous ones (this might be able to be written more elegantly?)
-        const char*       p;
+        const char*       p = nullptr;
         const std::string prevLoc((p = std::setlocale(LC_ALL, nullptr)) ? p : "");
         const std::string prevXLoc((p = XSetLocaleModifiers(nullptr)) ? p : "");
 
@@ -108,10 +108,10 @@ std::shared_ptr<_XIM> openXim()
         xim = sharedXIM;
 
         // Restore the previous locale
-        if (prevLoc.length() != 0)
+        if (!prevLoc.empty())
             std::setlocale(LC_ALL, prevLoc.c_str());
 
-        if (prevXLoc.length() != 0)
+        if (!prevXLoc.empty())
             XSetLocaleModifiers(prevXLoc.c_str());
     }
 
@@ -124,7 +124,7 @@ Atom getAtom(const std::string& name, bool onlyIfExists)
 {
     static std::unordered_map<std::string, Atom> atoms;
 
-    if (auto it = atoms.find(name); it != atoms.end())
+    if (const auto it = atoms.find(name); it != atoms.end())
         return it->second;
 
     const auto display = openDisplay();

@@ -172,6 +172,24 @@ TEST_CASE("[Graphics] sf::Shader", skipShaderFullTests())
         CHECK(shader.getNativeHandle() == 0);
     }
 
+    SECTION("Move semantics")
+    {
+        SECTION("Construction")
+        {
+            sf::Shader       movedShader;
+            const sf::Shader shader = std::move(movedShader);
+            CHECK(shader.getNativeHandle() == 0);
+        }
+
+        SECTION("Assignment")
+        {
+            sf::Shader movedShader;
+            sf::Shader shader;
+            shader = std::move(movedShader);
+            CHECK(shader.getNativeHandle() == 0);
+        }
+    }
+
     SECTION("loadFromFile()")
     {
         sf::Shader shader;
@@ -229,19 +247,24 @@ TEST_CASE("[Graphics] sf::Shader", skipShaderFullTests())
         sf::FileInputStream geometryShaderStream;
         REQUIRE(geometryShaderStream.open("Graphics/shader.geom"));
 
+        sf::FileInputStream emptyStream;
+
         SECTION("One shader")
         {
+            REQUIRE(!shader.loadFromStream(emptyStream, sf::Shader::Type::Vertex));
             REQUIRE(shader.loadFromStream(vertexShaderStream, sf::Shader::Type::Vertex) == sf::Shader::isAvailable());
+            REQUIRE(shader.loadFromStream(fragmentShaderStream, sf::Shader::Type::Fragment) == sf::Shader::isAvailable());
         }
 
         SECTION("Two shaders")
         {
+            REQUIRE(!shader.loadFromStream(emptyStream, fragmentShaderStream));
+            REQUIRE(!shader.loadFromStream(vertexShaderStream, emptyStream));
             REQUIRE(shader.loadFromStream(vertexShaderStream, fragmentShaderStream) == sf::Shader::isAvailable());
         }
 
         SECTION("Three shaders")
         {
-            sf::FileInputStream emptyStream;
             REQUIRE(!shader.loadFromStream(emptyStream, geometryShaderStream, fragmentShaderStream));
             REQUIRE(!shader.loadFromStream(vertexShaderStream, emptyStream, fragmentShaderStream));
             REQUIRE(!shader.loadFromStream(vertexShaderStream, geometryShaderStream, emptyStream));

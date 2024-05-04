@@ -25,40 +25,37 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/Vertex.hpp> // NOLINT(misc-header-include-cycle)
+#include <SFML/Audio/AudioDevice.hpp>
+#include <SFML/Audio/AudioResource.hpp>
+
+#include <memory>
+#include <mutex>
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-constexpr Vertex::Vertex() = default;
+AudioResource::AudioResource() :
+m_device(
+    []()
+    {
+        // Ensure we only ever create a single instance of an
+        // AudioDevice that is shared between all AudioResources
+        static std::mutex                           mutex;
+        static std::weak_ptr<sf::priv::AudioDevice> weakAudioDevice;
 
+        const std::lock_guard lock(mutex);
 
-////////////////////////////////////////////////////////////
-constexpr Vertex::Vertex(const Vector2f& thePosition) : position(thePosition)
-{
-}
+        auto audioDevice = weakAudioDevice.lock();
 
+        if (audioDevice == nullptr)
+        {
+            audioDevice     = std::make_shared<priv::AudioDevice>();
+            weakAudioDevice = audioDevice;
+        }
 
-////////////////////////////////////////////////////////////
-constexpr Vertex::Vertex(const Vector2f& thePosition, const Color& theColor) : position(thePosition), color(theColor)
-{
-}
-
-
-////////////////////////////////////////////////////////////
-constexpr Vertex::Vertex(const Vector2f& thePosition, const Vector2f& theTexCoords) :
-position(thePosition),
-texCoords(theTexCoords)
-{
-}
-
-
-////////////////////////////////////////////////////////////
-constexpr Vertex::Vertex(const Vector2f& thePosition, const Color& theColor, const Vector2f& theTexCoords) :
-position(thePosition),
-color(theColor),
-texCoords(theTexCoords)
+        return audioDevice;
+    }())
 {
 }
 

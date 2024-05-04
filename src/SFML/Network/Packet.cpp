@@ -96,7 +96,7 @@ Packet::operator bool() const
 ////////////////////////////////////////////////////////////
 Packet& Packet::operator>>(bool& data)
 {
-    std::uint8_t value;
+    std::uint8_t value = 0;
     if (*this >> value)
         data = (value != 0);
 

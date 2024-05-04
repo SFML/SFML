@@ -31,6 +31,7 @@
 #include <SFML/System/Err.hpp>
 
 #include <ostream>
+#include <utility>
 
 
 namespace

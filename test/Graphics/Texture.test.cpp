@@ -8,6 +8,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <GraphicsUtil.hpp>
+#include <WindowUtil.hpp>
 #include <type_traits>
 
 TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
@@ -29,6 +30,32 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
         CHECK(!texture.isSrgb());
         CHECK(!texture.isRepeated());
         CHECK(texture.getNativeHandle() == 0);
+    }
+
+    SECTION("Move semantics")
+    {
+        SECTION("Construction")
+        {
+            sf::Texture       movedTexture;
+            const sf::Texture texture = std::move(movedTexture);
+            CHECK(texture.getSize() == sf::Vector2u());
+            CHECK(!texture.isSmooth());
+            CHECK(!texture.isSrgb());
+            CHECK(!texture.isRepeated());
+            CHECK(texture.getNativeHandle() == 0);
+        }
+
+        SECTION("Assignment")
+        {
+            sf::Texture movedTexture;
+            sf::Texture texture;
+            texture = std::move(movedTexture);
+            CHECK(texture.getSize() == sf::Vector2u());
+            CHECK(!texture.isSmooth());
+            CHECK(!texture.isSrgb());
+            CHECK(!texture.isRepeated());
+            CHECK(texture.getNativeHandle() == 0);
+        }
     }
 
     SECTION("create()")
@@ -67,6 +94,18 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
         CHECK(texture.getNativeHandle() != 0);
     }
 
+    SECTION("loadFromMemory()")
+    {
+        const auto  memory = loadIntoMemory("Graphics/sfml-logo-big.png");
+        sf::Texture texture;
+        REQUIRE(texture.loadFromMemory(memory.data(), memory.size()));
+        CHECK(texture.getSize() == sf::Vector2u(1001, 304));
+        CHECK(!texture.isSmooth());
+        CHECK(!texture.isSrgb());
+        CHECK(!texture.isRepeated());
+        CHECK(texture.getNativeHandle() != 0);
+    }
+
     SECTION("loadFromStream()")
     {
         sf::Texture         texture;
@@ -78,6 +117,44 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
         CHECK(!texture.isSrgb());
         CHECK(!texture.isRepeated());
         CHECK(texture.getNativeHandle() != 0);
+    }
+
+    SECTION("loadFromImage()")
+    {
+        SECTION("Empty image")
+        {
+            const sf::Image image;
+            sf::Texture     texture;
+            REQUIRE(!texture.loadFromImage(image));
+            REQUIRE(!texture.loadFromImage(image, {{0, 0}, {1, 1}}));
+        }
+
+        SECTION("Subarea of image")
+        {
+            sf::Image image;
+            image.create(sf::Vector2u(10, 15));
+            sf::Texture texture;
+
+            SECTION("Non-truncated area")
+            {
+                REQUIRE(texture.loadFromImage(image, {{0, 0}, {5, 10}}));
+                CHECK(texture.getSize() == sf::Vector2u(5, 10));
+            }
+
+            SECTION("Truncated area (negative position)")
+            {
+                REQUIRE(texture.loadFromImage(image, {{-5, -5}, {4, 8}}));
+                CHECK(texture.getSize() == sf::Vector2u(4, 8));
+            }
+
+            SECTION("Truncated area (width/height too big)")
+            {
+                REQUIRE(texture.loadFromImage(image, {{5, 5}, {12, 18}}));
+                CHECK(texture.getSize() == sf::Vector2u(5, 10));
+            }
+
+            CHECK(texture.getNativeHandle() != 0);
+        }
     }
 
     SECTION("Copy semantics")

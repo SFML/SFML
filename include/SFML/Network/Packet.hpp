@@ -39,8 +39,6 @@
 namespace sf
 {
 class String;
-class TcpSocket;
-class UdpSocket;
 
 ////////////////////////////////////////////////////////////
 /// \brief Utility class to build blocks of data to transfer
@@ -499,8 +497,8 @@ private:
 /// \code
 /// struct MyStruct
 /// {
-///     float       number;
-///     std::int8_t integer;
+///     float       number{};
+///     std::int8_t integer{};
 ///     std::string str;
 /// };
 ///

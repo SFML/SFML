@@ -61,21 +61,30 @@ TEST_CASE("[Graphics] sf::RenderTarget")
         CHECK(renderTarget.setActive(true));
     }
 
+    const auto makeView = [](const auto& viewport)
+    {
+        sf::View view;
+        view.setViewport(viewport);
+        return view;
+    };
+
     SECTION("getViewport(const View&)")
     {
-        const auto makeView = [](const auto& viewport)
-        {
-            sf::View view;
-            view.setViewport(viewport);
-            return view;
-        };
-
         const RenderTarget renderTarget;
         CHECK(renderTarget.getViewport(makeView(sf::FloatRect({0, 0}, {1, 1}))) == sf::IntRect({0, 0}, {640, 480}));
         CHECK(renderTarget.getViewport(makeView(sf::FloatRect({1, 1}, {.5f, .25f}))) ==
               sf::IntRect({640, 480}, {320, 120}));
         CHECK(renderTarget.getViewport(makeView(sf::FloatRect({.5f, .5f}, {.25f, .75f}))) ==
               sf::IntRect({320, 240}, {160, 360}));
+    }
+
+    SECTION("getScissor(const View&)")
+    {
+        const RenderTarget renderTarget;
+        CHECK(renderTarget.getScissor(makeView(sf::FloatRect({0, 0}, {1, 1}))) == sf::IntRect({0, 0}, {640, 480}));
+        CHECK(renderTarget.getScissor(makeView(sf::FloatRect({1, 1}, {.5f, .25f}))) == sf::IntRect({0, 0}, {640, 480}));
+        CHECK(renderTarget.getScissor(makeView(sf::FloatRect({.5f, .5f}, {.25f, .75f}))) ==
+              sf::IntRect({0, 0}, {640, 480}));
     }
 
     SECTION("mapPixelToCoords(const Vector2i&)")

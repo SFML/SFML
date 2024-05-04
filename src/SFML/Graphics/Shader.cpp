@@ -26,24 +26,26 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/Graphics/GLExtensions.hpp>
 #include <SFML/Graphics/Shader.hpp>
 #include <SFML/Graphics/Texture.hpp>
-#include <SFML/Graphics/Transform.hpp>
 
-#include <SFML/Window/Context.hpp>
+#include <SFML/Window/GlResource.hpp>
 
 #include <SFML/System/Err.hpp>
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/Utils.hpp>
+#include <SFML/System/Vector2.hpp>
+#include <SFML/System/Vector3.hpp>
 
 #include <fstream>
 #include <iomanip>
 #include <ostream>
 #include <utility>
 #include <vector>
+
+#include <cstdint>
 
 #ifndef SFML_OPENGL_ES
 
@@ -172,10 +174,6 @@ std::vector<float> flatten(const sf::Glsl::Vec4* vectorArray, std::size_t length
 
 namespace sf
 {
-////////////////////////////////////////////////////////////
-Shader::CurrentTextureType Shader::CurrentTexture;
-
-
 ////////////////////////////////////////////////////////////
 struct Shader::UniformBinder
 {
@@ -803,20 +801,20 @@ bool Shader::compile(const char* vertexShaderCode, const char* geometryShaderCod
     m_uniforms.clear();
 
     // Create the program
-    GLEXT_GLhandle shaderProgram;
+    GLEXT_GLhandle shaderProgram{};
     glCheck(shaderProgram = GLEXT_glCreateProgramObject());
 
     // Create the vertex shader if needed
     if (vertexShaderCode)
     {
         // Create and compile the shader
-        GLEXT_GLhandle vertexShader;
+        GLEXT_GLhandle vertexShader{};
         glCheck(vertexShader = GLEXT_glCreateShaderObject(GLEXT_GL_VERTEX_SHADER));
         glCheck(GLEXT_glShaderSource(vertexShader, 1, &vertexShaderCode, nullptr));
         glCheck(GLEXT_glCompileShader(vertexShader));
 
         // Check the compile log
-        GLint success;
+        GLint success = 0;
         glCheck(GLEXT_glGetObjectParameteriv(vertexShader, GLEXT_GL_OBJECT_COMPILE_STATUS, &success));
         if (success == GL_FALSE)
         {
@@ -842,7 +840,7 @@ bool Shader::compile(const char* vertexShaderCode, const char* geometryShaderCod
         glCheck(GLEXT_glCompileShader(geometryShader));
 
         // Check the compile log
-        GLint success;
+        GLint success = 0;
         glCheck(GLEXT_glGetObjectParameteriv(geometryShader, GLEXT_GL_OBJECT_COMPILE_STATUS, &success));
         if (success == GL_FALSE)
         {
@@ -863,13 +861,13 @@ bool Shader::compile(const char* vertexShaderCode, const char* geometryShaderCod
     if (fragmentShaderCode)
     {
         // Create and compile the shader
-        GLEXT_GLhandle fragmentShader;
+        GLEXT_GLhandle fragmentShader{};
         glCheck(fragmentShader = GLEXT_glCreateShaderObject(GLEXT_GL_FRAGMENT_SHADER));
         glCheck(GLEXT_glShaderSource(fragmentShader, 1, &fragmentShaderCode, nullptr));
         glCheck(GLEXT_glCompileShader(fragmentShader));
 
         // Check the compile log
-        GLint success;
+        GLint success = 0;
         glCheck(GLEXT_glGetObjectParameteriv(fragmentShader, GLEXT_GL_OBJECT_COMPILE_STATUS, &success));
         if (success == GL_FALSE)
         {
@@ -890,7 +888,7 @@ bool Shader::compile(const char* vertexShaderCode, const char* geometryShaderCod
     glCheck(GLEXT_glLinkProgram(shaderProgram));
 
     // Check the link log
-    GLint success;
+    GLint success = 0;
     glCheck(GLEXT_glGetObjectParameteriv(shaderProgram, GLEXT_GL_OBJECT_LINK_STATUS, &success));
     if (success == GL_FALSE)
     {
@@ -960,11 +958,15 @@ int Shader::getUniformLocation(const std::string& name)
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Shader::CurrentTextureType Shader::CurrentTexture;
+Shader::~Shader() = default;
 
 
 ////////////////////////////////////////////////////////////
-Shader::~Shader() = default;
+Shader::Shader(Shader&& source) noexcept = default;
+
+
+////////////////////////////////////////////////////////////
+Shader& Shader::operator=(Shader&& right) noexcept = default;
 
 
 ////////////////////////////////////////////////////////////

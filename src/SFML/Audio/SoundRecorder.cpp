@@ -25,44 +25,206 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Audio/ALCheck.hpp>
-#include <SFML/Audio/AudioDevice.hpp>
 #include <SFML/Audio/SoundRecorder.hpp>
 
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Sleep.hpp>
 
+#include <miniaudio.h>
+
+#include <algorithm>
+#include <optional>
 #include <ostream>
 
 #include <cassert>
 #include <cstring>
 
-#ifdef _MSC_VER
-#pragma warning(disable : 4355) // 'this' used in base member initializer list
-#endif
-
-#if defined(__APPLE__)
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-#endif
-
-namespace
-{
-ALCdevice* captureDevice = nullptr;
-}
 
 namespace sf
 {
+struct SoundRecorder::Impl
+{
+    Impl(SoundRecorder* ownerPtr) : owner(ownerPtr)
+    {
+    }
+
+    bool initialize()
+    {
+        if (!context)
+            return false;
+
+        // Find the device by its name
+        auto devices = getAvailableDevices();
+
+        const auto iter = std::find_if(devices.begin(),
+                                       devices.end(),
+                                       [this](const ma_device_info& info) { return info.name == deviceName; });
+
+        if (iter == devices.end())
+            return false;
+
+        // (Re-)create the capture device
+        if (captureDevice)
+        {
+            ma_device_uninit(&*captureDevice);
+        }
+        else
+        {
+            captureDevice.emplace();
+        }
+
+        auto captureDeviceConfig              = ma_device_config_init(ma_device_type_capture);
+        captureDeviceConfig.capture.pDeviceID = &iter->id;
+        captureDeviceConfig.capture.channels  = channelCount;
+        captureDeviceConfig.capture.format    = ma_format_s16;
+        captureDeviceConfig.sampleRate        = sampleRate;
+        captureDeviceConfig.pUserData         = this;
+        captureDeviceConfig.dataCallback      = [](ma_device* device, void*, const void* input, ma_uint32 frameCount)
+        {
+            auto& impl = *static_cast<Impl*>(device->pUserData);
+
+            // Copy the new samples into our temporary buffer
+            impl.samples.resize(frameCount * impl.channelCount);
+            std::memcpy(impl.samples.data(), input, frameCount * impl.channelCount * sizeof(std::int16_t));
+
+            // Notify the derived class of the availability of new samples
+            if (!impl.owner->onProcessSamples(impl.samples.data(), impl.samples.size()))
+            {
+                // If the derived class wants to stop, stop the capture
+                if (const auto result = ma_device_stop(device); result != MA_SUCCESS)
+                {
+                    err() << "Failed to stop audio capture device: " << ma_result_description(result) << std::endl;
+                    return;
+                }
+            }
+        };
+
+        if (const auto result = ma_device_init(&*context, &captureDeviceConfig, &*captureDevice); result != MA_SUCCESS)
+        {
+            captureDevice.reset();
+            err() << "Failed to initialize the audio capture device: " << ma_result_description(result) << std::endl;
+            return false;
+        }
+
+        return true;
+    }
+
+    static std::vector<ma_device_info> getAvailableDevices()
+    {
+        std::vector<ma_device_info> deviceList;
+
+        // Create the context
+        ma_context context;
+
+        const auto contextConfig = ma_context_config_init();
+
+        if (const auto result = ma_context_init(nullptr, 0, &contextConfig, &context); result != MA_SUCCESS)
+        {
+            err() << "Failed to initialize the audio context: " << ma_result_description(result) << std::endl;
+            return deviceList;
+        }
+
+        // Enumerate the capture devices
+        ma_device_info* deviceInfos = nullptr;
+        ma_uint32       deviceCount = 0;
+
+        if (const auto result = ma_context_get_devices(&context, nullptr, nullptr, &deviceInfos, &deviceCount);
+            result != MA_SUCCESS)
+        {
+            err() << "Failed to get audio capture devices: " << ma_result_description(result) << std::endl;
+            ma_context_uninit(&context);
+            return deviceList;
+        }
+
+        for (auto i = 0u; i < deviceCount; ++i)
+            deviceList.push_back(deviceInfos[i]);
+
+        ma_context_uninit(&context);
+        return deviceList;
+    }
+
+    ////////////////////////////////////////////////////////////
+    // Member data
+    ////////////////////////////////////////////////////////////
+    SoundRecorder* const      owner;                          //!< Owning SoundRecorder object
+    std::optional<ma_log>     log;                            //!< The miniaudio log
+    std::optional<ma_context> context;                        //!< The miniaudio context
+    std::optional<ma_device>  captureDevice;                  //!< The miniaudio capture device
+    std::string               deviceName{getDefaultDevice()}; //!< Name of the audio capture device
+    unsigned int              channelCount{1};                //!< Number of recording channels
+    unsigned int              sampleRate{44100};              //!< Sample rate
+    std::vector<std::int16_t> samples;                        //!< Buffer to store captured samples
+    std::vector<SoundChannel> channelMap{SoundChannel::Mono}; //!< The map of position in sample frame to sound channel
+};
+
+
+////////////////////////////////////////////////////////////
+SoundRecorder::SoundRecorder() : m_impl(std::make_unique<Impl>(this))
+{
+    // Create the log
+    m_impl->log.emplace();
+
+    if (const auto result = ma_log_init(nullptr, &*m_impl->log); result != MA_SUCCESS)
+    {
+        m_impl->log.reset();
+        err() << "Failed to initialize the audio log: " << ma_result_description(result) << std::endl;
+        return;
+    }
+
+    // Register our logging callback to output any warning/error messages
+    if (const auto result = ma_log_register_callback(&*m_impl->log,
+                                                     ma_log_callback_init(
+                                                         [](void*, ma_uint32 level, const char* message)
+                                                         {
+                                                             if (level <= MA_LOG_LEVEL_WARNING)
+                                                                 err() << "miniaudio " << ma_log_level_to_string(level)
+                                                                       << ": " << message << std::flush;
+                                                         },
+                                                         nullptr));
+        result != MA_SUCCESS)
+        err() << "Failed to register audio log callback: " << ma_result_description(result) << std::endl;
+
+    // Create the context
+    m_impl->context.emplace();
+
+    auto contextConfig = ma_context_config_init();
+    contextConfig.pLog = &*m_impl->log;
+
+    if (const auto result = ma_context_init(nullptr, 0, &contextConfig, &*m_impl->context); result != MA_SUCCESS)
+    {
+        m_impl->context.reset();
+        err() << "Failed to initialize the audio context: " << ma_result_description(result) << std::endl;
+        return;
+    }
+
+    // Create the capture device
+    m_impl->initialize();
+}
+
+
 ////////////////////////////////////////////////////////////
 SoundRecorder::~SoundRecorder()
 {
     // This assertion is triggered if the recording is still running while
     // the object is destroyed. It ensures that stop() is called in the
-    // destructor of the derived class, which makes sure that the recording
-    // thread finishes before the derived object is destroyed. Otherwise a
+    // destructor of the derived class, which makes sure that the capture
+    // device is stopped before the derived object is destroyed. Otherwise a
     // "pure virtual method called" exception is triggered.
-    assert(!m_isCapturing &&
-           "You must call stop() in the destructor of your derived class, so that the recording thread finishes before "
-           "your object is destroyed.");
+    assert(!(m_impl->captureDevice && ma_device_is_started(&*m_impl->captureDevice)) &&
+           "You must call stop() in the destructor of your derived class, so that the "
+           "capture device is stopped before your object is destroyed.");
+
+    // Destroy the capture device
+    if (m_impl->captureDevice)
+        ma_device_uninit(&*m_impl->captureDevice);
+
+    // Destroy the context
+    if (m_impl->context)
+        ma_context_uninit(&*m_impl->context);
+
+    // Destroy the log
+    if (m_impl->log)
+        ma_log_uninit(&*m_impl->log);
 }
 
 
@@ -78,38 +240,41 @@ bool SoundRecorder::start(unsigned int sampleRate)
         return false;
     }
 
+    // Store the sample rate and re-initialize if necessary
+    if (m_impl->sampleRate != sampleRate)
+    {
+        m_impl->sampleRate = sampleRate;
+
+        if (!m_impl->initialize())
+        {
+            err() << "Failed to set audio capture device sample rate to " << sampleRate << std::endl;
+            return false;
+        }
+    }
+
+    // Ensure we have a capture device
+    if (!m_impl->captureDevice)
+    {
+        err() << "Trying to start audio capture, but no device available" << std::endl;
+        return false;
+    }
+
     // Check that another capture is not already running
-    if (captureDevice)
+    if (ma_device_is_started(&*m_impl->captureDevice))
     {
         err() << "Trying to start audio capture, but another capture is already running" << std::endl;
         return false;
     }
 
-    // Determine the recording format
-    const ALCenum format = (m_channelCount == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
-
-    // Open the capture device for capturing 16 bits samples
-    captureDevice = alcCaptureOpenDevice(m_deviceName.c_str(), sampleRate, format, static_cast<ALCsizei>(sampleRate));
-    if (!captureDevice)
-    {
-        err() << "Failed to open the audio capture device with the name: " << m_deviceName << std::endl;
-        return false;
-    }
-
-    // Clear the array of samples
-    m_samples.clear();
-
-    // Store the sample rate
-    m_sampleRate = sampleRate;
-
     // Notify derived class
     if (onStart())
     {
         // Start the capture
-        alcCaptureStart(captureDevice);
-
-        // Start the capture in a new thread, to avoid blocking the main thread
-        launchCapturingThread();
+        if (const auto result = ma_device_start(&*m_impl->captureDevice); result != MA_SUCCESS)
+        {
+            err() << "Failed to start audio capture device: " << ma_result_description(result) << std::endl;
+            return false;
+        }
 
         return true;
     }
@@ -121,10 +286,15 @@ bool SoundRecorder::start(unsigned int sampleRate)
 ////////////////////////////////////////////////////////////
 void SoundRecorder::stop()
 {
-    // Stop the capturing thread if there is one
-    if (m_isCapturing)
+    // Stop the capturing device if one is started
+    if (m_impl->captureDevice && ma_device_is_started(&*m_impl->captureDevice))
     {
-        awaitCapturingThread();
+        // Stop the capture
+        if (const auto result = ma_device_stop(&*m_impl->captureDevice); result != MA_SUCCESS)
+        {
+            err() << "Failed to stop audio capture device: " << ma_result_description(result) << std::endl;
+            return;
+        }
 
         // Notify derived class
         onStop();
@@ -135,24 +305,20 @@ void SoundRecorder::stop()
 ////////////////////////////////////////////////////////////
 unsigned int SoundRecorder::getSampleRate() const
 {
-    return m_sampleRate;
+    return m_impl->sampleRate;
 }
 
 
 ////////////////////////////////////////////////////////////
 std::vector<std::string> SoundRecorder::getAvailableDevices()
 {
+    // Convert the internal miniaudio device list into a name-only list
+    const auto               devices = Impl::getAvailableDevices();
     std::vector<std::string> deviceNameList;
+    deviceNameList.reserve(devices.size());
 
-    const ALchar* deviceList = alcGetString(nullptr, ALC_CAPTURE_DEVICE_SPECIFIER);
-    if (deviceList)
-    {
-        while (*deviceList)
-        {
-            deviceNameList.emplace_back(deviceList);
-            deviceList += std::strlen(deviceList) + 1;
-        }
-    }
+    for (const auto& device : devices)
+        deviceNameList.emplace_back(device.name);
 
     return deviceNameList;
 }
@@ -161,43 +327,28 @@ std::vector<std::string> SoundRecorder::getAvailableDevices()
 ////////////////////////////////////////////////////////////
 std::string SoundRecorder::getDefaultDevice()
 {
-    return alcGetString(nullptr, ALC_CAPTURE_DEFAULT_DEVICE_SPECIFIER);
+    const auto devices = Impl::getAvailableDevices();
+
+    for (const auto& device : devices)
+    {
+        if (device.isDefault)
+            return device.name;
+    }
+
+    return "";
 }
 
 
 ////////////////////////////////////////////////////////////
 bool SoundRecorder::setDevice(const std::string& name)
 {
-    // Store the device name
-    if (name.empty())
-        m_deviceName = getDefaultDevice();
-    else
-        m_deviceName = name;
-
-    if (m_isCapturing)
+    // Store the device name and re-initialize if necessary
+    if (m_impl->deviceName != name)
     {
-        // Stop the capturing thread
-        awaitCapturingThread();
+        m_impl->deviceName = name;
 
-        // Determine the recording format
-        const ALCenum format = (m_channelCount == 1) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16;
-
-        // Open the requested capture device for capturing 16 bits samples
-        captureDevice = alcCaptureOpenDevice(m_deviceName.c_str(), m_sampleRate, format, static_cast<ALCsizei>(m_sampleRate));
-        if (!captureDevice)
-        {
-            // Notify derived class
-            onStop();
-
-            err() << "Failed to open the audio capture device with the name: " << m_deviceName << std::endl;
+        if (!m_impl->initialize())
             return false;
-        }
-
-        // Start the capture
-        alcCaptureStart(captureDevice);
-
-        // Start the capture in a new thread, to avoid blocking the main thread
-        launchCapturingThread();
     }
 
     return true;
@@ -207,19 +358,14 @@ bool SoundRecorder::setDevice(const std::string& name)
 ////////////////////////////////////////////////////////////
 const std::string& SoundRecorder::getDevice() const
 {
-    return m_deviceName;
+    return m_impl->deviceName;
 }
 
 
 ////////////////////////////////////////////////////////////
 void SoundRecorder::setChannelCount(unsigned int channelCount)
 {
-    if (m_isCapturing)
-    {
-        err() << "It's not possible to change the channels while recording." << std::endl;
-        return;
-    }
-
+    // We only bother supporting mono/stereo recording for now
     if (channelCount < 1 || channelCount > 2)
     {
         err() << "Unsupported channel count: " << channelCount
@@ -227,29 +373,52 @@ void SoundRecorder::setChannelCount(unsigned int channelCount)
         return;
     }
 
-    m_channelCount = channelCount;
+    // Store the channel count and re-initialize if necessary
+    if (m_impl->channelCount != channelCount)
+    {
+        m_impl->channelCount = channelCount;
+        m_impl->initialize();
+
+        // We only bother supporting mono/stereo recording for now
+        if (channelCount == 1)
+        {
+            m_impl->channelMap = {SoundChannel::Mono};
+        }
+        else if (channelCount == 2)
+        {
+            m_impl->channelMap = {SoundChannel::FrontLeft, SoundChannel::FrontRight};
+        }
+    }
 }
 
 
 ////////////////////////////////////////////////////////////
 unsigned int SoundRecorder::getChannelCount() const
 {
-    return m_channelCount;
+    return m_impl->channelCount;
+}
+
+
+////////////////////////////////////////////////////////////
+const std::vector<SoundChannel>& SoundRecorder::getChannelMap() const
+{
+    return m_impl->channelMap;
 }
 
 
 ////////////////////////////////////////////////////////////
 bool SoundRecorder::isAvailable()
 {
-    return (priv::AudioDevice::isExtensionSupported("ALC_EXT_CAPTURE") != AL_FALSE) ||
-           (priv::AudioDevice::isExtensionSupported("ALC_EXT_capture") != AL_FALSE); // "bug" in macOS 10.5 and 10.6
-}
+    // Try to open a device for capture to see if recording is available
+    const auto config = ma_device_config_init(ma_device_type_capture);
+    ma_device  device;
 
+    if (ma_device_init(nullptr, &config, &device) != MA_SUCCESS)
+        return false;
 
-////////////////////////////////////////////////////////////
-void SoundRecorder::setProcessingInterval(Time interval)
-{
-    m_processingInterval = interval;
+    ma_device_uninit(&device);
+
+    return true;
 }
 
 
@@ -265,81 +434,6 @@ bool SoundRecorder::onStart()
 void SoundRecorder::onStop()
 {
     // Nothing to do
-}
-
-
-////////////////////////////////////////////////////////////
-void SoundRecorder::record()
-{
-    while (m_isCapturing)
-    {
-        // Process available samples
-        processCapturedSamples();
-
-        // Don't bother the CPU while waiting for more captured data
-        sleep(m_processingInterval);
-    }
-
-    // Capture is finished: clean up everything
-    cleanup();
-}
-
-
-////////////////////////////////////////////////////////////
-void SoundRecorder::processCapturedSamples()
-{
-    // Get the number of samples available
-    ALCint samplesAvailable;
-    alcGetIntegerv(captureDevice, ALC_CAPTURE_SAMPLES, 1, &samplesAvailable);
-
-    if (samplesAvailable > 0)
-    {
-        // Get the recorded samples
-        m_samples.resize(static_cast<std::size_t>(samplesAvailable) * getChannelCount());
-        alcCaptureSamples(captureDevice, m_samples.data(), samplesAvailable);
-
-        // Forward them to the derived class
-        if (!onProcessSamples(m_samples.data(), m_samples.size()))
-        {
-            // The user wants to stop the capture
-            m_isCapturing = false;
-        }
-    }
-}
-
-
-////////////////////////////////////////////////////////////
-void SoundRecorder::cleanup()
-{
-    // Stop the capture
-    alcCaptureStop(captureDevice);
-
-    // Get the samples left in the buffer
-    processCapturedSamples();
-
-    // Close the device
-    alcCaptureCloseDevice(captureDevice);
-    captureDevice = nullptr;
-}
-
-
-////////////////////////////////////////////////////////////
-void SoundRecorder::launchCapturingThread()
-{
-    m_isCapturing = true;
-
-    assert(!m_thread.joinable() && "Capture thread is already running");
-    m_thread = std::thread(&SoundRecorder::record, this);
-}
-
-
-////////////////////////////////////////////////////////////
-void SoundRecorder::awaitCapturingThread()
-{
-    m_isCapturing = false;
-
-    if (m_thread.joinable())
-        m_thread.join();
 }
 
 } // namespace sf

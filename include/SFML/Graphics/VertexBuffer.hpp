@@ -31,6 +31,7 @@
 
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
+#include <SFML/Graphics/RenderStates.hpp>
 
 #include <SFML/Window/GlResource.hpp>
 
@@ -40,7 +41,7 @@
 namespace sf
 {
 class RenderTarget;
-class Vertex;
+struct Vertex;
 
 ////////////////////////////////////////////////////////////
 /// \brief Vertex buffer storage for one or more 2D primitives
@@ -328,7 +329,7 @@ private:
     /// \param states Current render states
     ///
     ////////////////////////////////////////////////////////////
-    void draw(RenderTarget& target, const RenderStates& states) const override;
+    void draw(RenderTarget& target, RenderStates states) const override;
 
     ////////////////////////////////////////////////////////////
     // Member data

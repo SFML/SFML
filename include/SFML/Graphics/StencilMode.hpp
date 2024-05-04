@@ -96,7 +96,7 @@ struct SFML_GRAPHICS_API StencilValue
     template <typename T>
     StencilValue(T) = delete;
 
-    unsigned int value = 0u; //!< The stored stencil value
+    unsigned int value{}; //!< The stored stencil value
 };
 
 ////////////////////////////////////////////////////////////

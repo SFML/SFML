@@ -29,8 +29,11 @@
 #include <SFML/Window/Unix/VulkanImplX11.hpp>
 
 #include <dlfcn.h>
-#include <map>
-#include <string>
+#include <string_view>
+#include <vector>
+
+#include <cstdint>
+
 #define VK_USE_PLATFORM_XLIB_KHR
 #define VK_NO_PROTOTYPES
 #include <vulkan.h>

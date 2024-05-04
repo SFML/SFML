@@ -29,7 +29,7 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
-#include <cassert>
+#include <cmath>
 #include <cstdlib>
 
 
@@ -126,14 +126,12 @@ FloatRect Sprite::getGlobalBounds() const
 
 
 ////////////////////////////////////////////////////////////
-void Sprite::draw(RenderTarget& target, const RenderStates& states) const
+void Sprite::draw(RenderTarget& target, RenderStates states) const
 {
-    RenderStates statesCopy(states);
-
-    statesCopy.transform *= getTransform();
-    statesCopy.texture        = m_texture;
-    statesCopy.coordinateType = CoordinateType::Pixels;
-    target.draw(m_vertices.data(), m_vertices.size(), PrimitiveType::TriangleStrip, statesCopy);
+    states.transform *= getTransform();
+    states.texture        = m_texture;
+    states.coordinateType = CoordinateType::Pixels;
+    target.draw(m_vertices.data(), m_vertices.size(), PrimitiveType::TriangleStrip, states);
 }
 
 

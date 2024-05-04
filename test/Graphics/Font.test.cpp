@@ -1,4 +1,5 @@
 #include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/Texture.hpp>
 
 // Other 1st party headers
 #include <SFML/System/FileInputStream.hpp>
@@ -6,6 +7,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <GraphicsUtil.hpp>
+#include <WindowUtil.hpp>
 #include <fstream>
 #include <type_traits>
 
@@ -79,17 +81,7 @@ TEST_CASE("[Graphics] sf::Font", runDisplayTests())
 
         SECTION("Successful load")
         {
-            const auto memory = []()
-            {
-                std::ifstream file("Graphics/tuffy.ttf", std::ios::binary | std::ios::ate);
-                REQUIRE(file);
-                const auto size = file.tellg();
-                file.seekg(0, std::ios::beg);
-                std::vector<std::byte> buffer(static_cast<std::size_t>(size));
-                REQUIRE(file.read(reinterpret_cast<char*>(buffer.data()), size));
-                return buffer;
-            }();
-
+            const auto memory = loadIntoMemory("Graphics/tuffy.ttf");
             REQUIRE(font.loadFromMemory(memory.data(), memory.size()));
             CHECK(font.getInfo().family == "Tuffy");
             const auto& glyph = font.getGlyph(0x45, 16, false);
@@ -156,6 +148,7 @@ TEST_CASE("[Graphics] sf::Font", runDisplayTests())
     SECTION("Set/get smooth")
     {
         sf::Font font;
+        REQUIRE(font.loadFromFile("Graphics/tuffy.ttf"));
         font.setSmooth(false);
         CHECK(!font.isSmooth());
     }

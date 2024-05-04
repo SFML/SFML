@@ -31,6 +31,15 @@
 
 #include <vorbis/vorbisfile.h>
 
+#include <optional>
+
+#include <cstdint>
+
+
+namespace sf
+{
+class InputStream;
+}
 
 namespace sf::priv
 {

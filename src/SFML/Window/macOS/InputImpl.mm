@@ -71,7 +71,7 @@ SFOpenGLView* getSFOpenGLViewFromSFMLWindow(const sf::WindowBase& window)
             if ([view isKindOfClass:[NSView class]])
             {
                 NSArray* const subviews = [view subviews];
-                for (NSView* subview in subviews)
+                for (NSView* subview in subviews) // NOLINT(cppcoreguidelines-init-variables)
                 {
                     if ([subview isKindOfClass:[SFOpenGLView class]])
                     {
@@ -92,7 +92,7 @@ SFOpenGLView* getSFOpenGLViewFromSFMLWindow(const sf::WindowBase& window)
     {
         // If system handle is a view then from a subview of kind SFOpenGLView.
         NSArray* const subviews = [nsHandle subviews];
-        for (NSView* subview in subviews)
+        for (NSView* subview in subviews) // NOLINT(cppcoreguidelines-init-variables)
         {
             if ([subview isKindOfClass:[SFOpenGLView class]])
             {

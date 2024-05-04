@@ -96,8 +96,9 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 struct WindowImpl::JoystickStatesImpl
 {
-    JoystickState states[Joystick::Count]; //!< Previous state of the joysticks
+    JoystickState states[Joystick::Count]{}; //!< Previous state of the joysticks
 };
+
 
 ////////////////////////////////////////////////////////////
 std::unique_ptr<WindowImpl> WindowImpl::create(
@@ -175,7 +176,7 @@ void WindowImpl::setMaximumSize(const std::optional<Vector2u>& maximumSize)
 
 
 ////////////////////////////////////////////////////////////
-bool WindowImpl::popEvent(Event& event, bool block)
+Event WindowImpl::popEvent(bool block)
 {
     // If the event queue is empty, let's first check if new events are available from the OS
     if (m_events.empty())
@@ -201,16 +202,16 @@ bool WindowImpl::popEvent(Event& event, bool block)
         }
     }
 
+    sf::Event event;
+
     // Pop the first event of the queue, if it is not empty
     if (!m_events.empty())
     {
         event = m_events.front();
         m_events.pop();
-
-        return true;
     }
 
-    return false;
+    return event;
 }
 
 
@@ -237,10 +238,10 @@ void WindowImpl::processJoystickEvents()
         const bool connected = m_joystickStatesImpl->states[i].connected;
         if (previousState.connected ^ connected)
         {
-            Event event;
-            event.type                      = connected ? Event::JoystickConnected : Event::JoystickDisconnected;
-            event.joystickButton.joystickId = i;
-            pushEvent(event);
+            if (connected)
+                pushEvent(Event::JoystickConnected{i});
+            else
+                pushEvent(Event::JoystickDisconnected{i});
 
             // Clear previous axes positions
             if (connected)
@@ -261,13 +262,7 @@ void WindowImpl::processJoystickEvents()
                     const float currPos = m_joystickStatesImpl->states[i].axes[axis];
                     if (std::abs(currPos - prevPos) >= m_joystickThreshold)
                     {
-                        Event event;
-                        event.type                    = Event::JoystickMoved;
-                        event.joystickMove.joystickId = i;
-                        event.joystickMove.axis       = axis;
-                        event.joystickMove.position   = currPos;
-                        pushEvent(event);
-
+                        pushEvent(Event::JoystickMoved{i, axis, currPos});
                         m_previousAxes[i][axis] = currPos;
                     }
                 }
@@ -281,11 +276,10 @@ void WindowImpl::processJoystickEvents()
 
                 if (prevPressed ^ currPressed)
                 {
-                    Event event;
-                    event.type = currPressed ? Event::JoystickButtonPressed : Event::JoystickButtonReleased;
-                    event.joystickButton.joystickId = i;
-                    event.joystickButton.button     = j;
-                    pushEvent(event);
+                    if (currPressed)
+                        pushEvent(Event::JoystickButtonPressed{i, j});
+                    else
+                        pushEvent(Event::JoystickButtonReleased{i, j});
                 }
             }
         }
@@ -312,15 +306,7 @@ void WindowImpl::processSensorEvents()
 
             // If the value has changed, trigger an event
             if (m_sensorValue[sensor] != previousValue) // TODO use a threshold?
-            {
-                Event event;
-                event.type        = Event::SensorChanged;
-                event.sensor.type = sensor;
-                event.sensor.x    = m_sensorValue[sensor].x;
-                event.sensor.y    = m_sensorValue[sensor].y;
-                event.sensor.z    = m_sensorValue[sensor].z;
-                pushEvent(event);
-            }
+                pushEvent(Event::SensorChanged{sensor, m_sensorValue[sensor]});
         }
     }
 }

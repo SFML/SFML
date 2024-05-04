@@ -201,7 +201,7 @@ endif()
 
 option(SFML_ENABLE_SANITIZERS "Enable sanitizers" OFF)
 if(SFML_ENABLE_SANITIZERS)
-    list(APPEND CMAKE_CXX_FLAGS "-fno-omit-frame-pointer -fno-sanitize-recover=all -fsanitize=undefined")
+    string(APPEND CMAKE_CXX_FLAGS " -fno-omit-frame-pointer -fno-sanitize-recover=all -fsanitize=undefined")
 endif()
 
 # set the output directory for SFML DLLs and executables
@@ -384,14 +384,12 @@ if(SFML_OS_WINDOWS)
     if(NOT SFML_USE_SYSTEM_DEPS)
         # install the binaries of SFML dependencies
         if(ARCH_32BITS)
-            install(DIRECTORY extlibs/bin/x86/ DESTINATION ${CMAKE_INSTALL_BINDIR})
             if(SFML_COMPILER_MSVC OR (SFML_COMPILER_CLANG AND NOT MINGW))
                 install(DIRECTORY extlibs/libs-msvc-universal/x86/ DESTINATION ${CMAKE_INSTALL_LIBDIR})
             else()
                 install(DIRECTORY extlibs/libs-mingw/x86/ DESTINATION ${CMAKE_INSTALL_LIBDIR})
             endif()
         elseif(ARCH_64BITS)
-            install(DIRECTORY extlibs/bin/x64/ DESTINATION ${CMAKE_INSTALL_BINDIR})
             if(SFML_COMPILER_MSVC OR (SFML_COMPILER_CLANG AND NOT MINGW))
                 install(DIRECTORY extlibs/libs-msvc-universal/x64/ DESTINATION ${CMAKE_INSTALL_LIBDIR})
             else()
@@ -427,10 +425,6 @@ elseif(SFML_OS_MACOS)
 
         if(VORBISFILE_LIBRARY STREQUAL "${PROJECT_SOURCE_DIR}/extlibs/libs-macos/Frameworks/vorbisfile.framework")
             install(DIRECTORY extlibs/libs-macos/Frameworks/vorbisfile.framework DESTINATION ${CMAKE_INSTALL_LIBDIR})
-        endif()
-
-        if(OPENAL_LIBRARY STREQUAL "${PROJECT_SOURCE_DIR}/extlibs/libs-macos/Frameworks/OpenAL.framework")
-            install(DIRECTORY "${OPENAL_LIBRARY}" DESTINATION ${CMAKE_INSTALL_LIBDIR})
         endif()
     endif()
 
@@ -523,9 +517,7 @@ sfml_set_option(SFML_BUILD_TEST_SUITE FALSE BOOL "TRUE to build the SFML test su
 sfml_set_option(SFML_ENABLE_COVERAGE FALSE BOOL "TRUE to enable coverage reporting, FALSE to ignore it")
 
 if(SFML_BUILD_TEST_SUITE)
-    if(SFML_OS_IOS)
-        message(WARNING "Unit testing not supported on iOS")
-    elseif(SFML_BUILD_WINDOW AND SFML_BUILD_GRAPHICS AND SFML_BUILD_NETWORK AND SFML_BUILD_AUDIO)
+    if(SFML_BUILD_WINDOW AND SFML_BUILD_GRAPHICS AND SFML_BUILD_NETWORK AND SFML_BUILD_AUDIO)
         enable_testing()
         add_subdirectory(test)
     else()

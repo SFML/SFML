@@ -25,15 +25,19 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/ContextSettings.hpp>
+#include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/Win32/WglContext.hpp>
 #include <SFML/Window/WindowImpl.hpp>
 
 #include <SFML/System/Err.hpp>
+#include <SFML/System/String.hpp>
 
 #include <mutex>
-#include <ostream>
 #include <sstream>
 #include <vector>
+
+#include <cassert>
 
 // We check for this definition in order to avoid multiple definitions of GLAD
 // entities during unity builds of SFML.
@@ -99,7 +103,7 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 String getErrorString(DWORD errorCode)
 {
-    PTCHAR buffer;
+    PTCHAR buffer = nullptr;
     if (FormatMessage(FORMAT_MESSAGE_MAX_WIDTH_MASK | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
                           FORMAT_MESSAGE_IGNORE_INSERTS,
                       nullptr,
@@ -199,8 +203,8 @@ WglContext::~WglContext()
 ////////////////////////////////////////////////////////////
 GlFunctionPointer WglContext::getFunction(const char* name)
 {
-    assert(WglContextImpl::currentContext != nullptr &&
-           "Current WGL context cannot be null. Call WglContext::makeCurrent() to initialize it.");
+    if (WglContextImpl::currentContext == nullptr)
+        return nullptr;
 
     // If we are using the generic GDI implementation, skip to loading directly from OpenGL32.dll since it doesn't support extensions
     if (!WglContextImpl::currentContext->m_isGeneric)
@@ -282,12 +286,12 @@ int WglContext::selectBestPixelFormat(HDC deviceContext, unsigned int bitsPerPix
     // we can cache the result of the lookup instead of having to perform it multiple times for the same inputs
     struct PixelFormatCacheEntry
     {
-        unsigned int bitsPerPixel;
-        unsigned int depthBits;
-        unsigned int stencilBits;
-        unsigned int antialiasingLevel;
-        bool         pbuffer;
-        int          bestFormat;
+        unsigned int bitsPerPixel{};
+        unsigned int depthBits{};
+        unsigned int stencilBits{};
+        unsigned int antialiasingLevel{};
+        bool         pbuffer{};
+        int          bestFormat{};
     };
 
     static std::mutex                         cacheMutex;

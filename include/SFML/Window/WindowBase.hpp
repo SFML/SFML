@@ -38,6 +38,8 @@
 #include <memory>
 #include <optional>
 
+#include <cstdint>
+
 
 namespace sf
 {
@@ -50,7 +52,7 @@ namespace priv
 class WindowImpl;
 }
 
-struct Event;
+class Event;
 
 ////////////////////////////////////////////////////////////
 /// \brief Window that serves as a base for other windows
@@ -178,52 +180,46 @@ public:
     /// \brief Pop the next event from the front of the FIFO event queue, if any, and return it
     ///
     /// This function is not blocking: if there's no pending event then
-    /// it will return false and leave \a event unmodified.
-    /// Note that more than one event may be present in the event queue,
-    /// thus you should always call this function in a loop
-    /// to make sure that you process every pending event.
+    /// it will return an empty event. Note that more than one event
+    /// may be present in the event queue, thus you should always call
+    /// this function in a loop to make sure that you process every
+    /// pending event.
     /// \code
-    /// for (sf::Event event; window.pollEvent(event);)
+    /// while (const auto event = window.pollEvent())
     /// {
     ///    // process event...
     /// }
     /// \endcode
     ///
-    /// \param event Event to be returned
-    ///
-    /// \return True if an event was returned, or false if the event queue was empty
+    /// \return The event; will be `Empty` (convertible to `false`) if no events are pending
     ///
     /// \see waitEvent
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool pollEvent(Event& event);
+    [[nodiscard]] Event pollEvent();
 
     ////////////////////////////////////////////////////////////
     /// \brief Wait for an event and return it
     ///
     /// This function is blocking: if there's no pending event then
-    /// it will wait until an event is received.
-    /// After this function returns (and no error occurred),
-    /// the \a event object is always valid and filled properly.
-    /// This function is typically used when you have a thread that
-    /// is dedicated to events handling: you want to make this thread
-    /// sleep as long as no new event is received.
+    /// it will wait until an event is received. After this function
+    /// returns if no error occurred, the returned event will not be
+    /// empty. This function is typically used when you have a thread
+    /// that is dedicated to events handling: you want to make this
+    /// thread sleep as long as no new event is received.
     /// \code
-    /// sf::Event event;
-    /// if (window.waitEvent(event))
+    /// if (const auto event = window.waitEvent())
     /// {
     ///    // process event...
     /// }
     /// \endcode
     ///
-    /// \param event Event to be returned
-    ///
-    /// \return False if any error occurred
+    /// \return The event
     ///
     /// \see pollEvent
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool waitEvent(Event& event);
+    [[nodiscard]] Event waitEvent();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of the window
@@ -561,10 +557,10 @@ private:
 /// while (window.isOpen())
 /// {
 ///    // Event processing
-///    for (sf::Event event; window.pollEvent(event);)
+///    while (const auto event = window.pollEvent())
 ///    {
 ///        // Request for closing the window
-///        if (event.type == sf::Event::Closed)
+///        if (event.is<sf::Event::Closed>())
 ///            window.close();
 ///    }
 ///

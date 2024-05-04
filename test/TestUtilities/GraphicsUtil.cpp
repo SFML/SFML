@@ -6,6 +6,7 @@
 
 #include <GraphicsUtil.hpp>
 #include <SystemUtil.hpp>
+#include <limits>
 #include <ostream>
 
 namespace sf

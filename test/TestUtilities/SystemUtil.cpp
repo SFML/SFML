@@ -5,11 +5,14 @@
 #include <SFML/System/Vector3.hpp>
 
 #include <catch2/catch_approx.hpp>
-#include <catch2/catch_test_macros.hpp>
 
 #include <SystemUtil.hpp>
+#include <fstream>
 #include <iomanip>
 #include <limits>
+
+#include <cassert>
+
 
 namespace sf
 {
@@ -75,4 +78,17 @@ bool operator==(const sf::Vector3f& lhs, const Approx<sf::Vector3f>& rhs)
 bool operator==(const sf::Angle& lhs, const Approx<sf::Angle>& rhs)
 {
     return lhs.asDegrees() == Approx(rhs.value.asDegrees());
+}
+
+std::vector<std::byte> loadIntoMemory(const std::filesystem::path& path)
+{
+    std::ifstream file(path, std::ios::binary | std::ios::ate);
+    assert(file);
+    const auto size = file.tellg();
+    file.seekg(0, std::ios::beg);
+    std::vector<std::byte>       buffer(static_cast<std::size_t>(size));
+    [[maybe_unused]] const auto& result = file.read(reinterpret_cast<char*>(buffer.data()),
+                                                    static_cast<std::streamsize>(size));
+    assert(result);
+    return buffer;
 }

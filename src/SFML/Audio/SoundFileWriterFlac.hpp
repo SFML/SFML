@@ -34,6 +34,8 @@
 #include <memory>
 #include <vector>
 
+#include <cstdint>
+
 
 namespace sf::priv
 {
@@ -60,11 +62,15 @@ public:
     /// \param filename     Path of the file to open
     /// \param sampleRate   Sample rate of the sound
     /// \param channelCount Number of channels of the sound
+    /// \param channelMap   Map of position in sample frame to sound channel
     ///
     /// \return True if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool open(const std::filesystem::path& filename, unsigned int sampleRate, unsigned int channelCount) override;
+    [[nodiscard]] bool open(const std::filesystem::path&     filename,
+                            unsigned int                     sampleRate,
+                            unsigned int                     channelCount,
+                            const std::vector<SoundChannel>& channelMap) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Write audio samples to the open file
@@ -85,7 +91,8 @@ private:
     };
     std::unique_ptr<FLAC__StreamEncoder, FlacStreamEncoderDeleter> m_encoder;        //!< FLAC stream encoder
     unsigned int                                                   m_channelCount{}; //!< Number of channels
-    std::vector<std::int32_t>                                      m_samples32;      //!< Conversion buffer
+    std::size_t               m_remapTable[8]{}; //!< Table we use to remap source to target channel order
+    std::vector<std::int32_t> m_samples32;       //!< Conversion buffer
 };
 
 } // namespace sf::priv

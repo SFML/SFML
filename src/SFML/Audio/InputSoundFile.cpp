@@ -35,8 +35,10 @@
 #include <SFML/System/MemoryInputStream.hpp>
 #include <SFML/System/Time.hpp>
 
-#include <algorithm>
 #include <ostream>
+#include <utility>
+
+#include <cstdint>
 
 
 namespace sf
@@ -90,9 +92,9 @@ bool InputSoundFile::openFromFile(const std::filesystem::path& filename)
     m_stream = std::move(file);
 
     // Retrieve the attributes of the open sound file
-    m_sampleCount  = info->sampleCount;
-    m_channelCount = info->channelCount;
-    m_sampleRate   = info->sampleRate;
+    m_sampleCount = info->sampleCount;
+    m_sampleRate  = info->sampleRate;
+    m_channelMap  = info->channelMap;
 
     return true;
 }
@@ -125,9 +127,9 @@ bool InputSoundFile::openFromMemory(const void* data, std::size_t sizeInBytes)
     m_stream = std::move(memory);
 
     // Retrieve the attributes of the open sound file
-    m_sampleCount  = info->sampleCount;
-    m_channelCount = info->channelCount;
-    m_sampleRate   = info->sampleRate;
+    m_sampleCount = info->sampleCount;
+    m_sampleRate  = info->sampleRate;
+    m_channelMap  = info->channelMap;
 
     return true;
 }
@@ -161,9 +163,9 @@ bool InputSoundFile::openFromStream(InputStream& stream)
     m_stream = {&stream, false};
 
     // Retrieve the attributes of the open sound file
-    m_sampleCount  = info->sampleCount;
-    m_channelCount = info->channelCount;
-    m_sampleRate   = info->sampleRate;
+    m_sampleCount = info->sampleCount;
+    m_sampleRate  = info->sampleRate;
+    m_channelMap  = info->channelMap;
 
     return true;
 }
@@ -179,7 +181,7 @@ std::uint64_t InputSoundFile::getSampleCount() const
 ////////////////////////////////////////////////////////////
 unsigned int InputSoundFile::getChannelCount() const
 {
-    return m_channelCount;
+    return static_cast<unsigned int>(m_channelMap.size());
 }
 
 
@@ -191,14 +193,21 @@ unsigned int InputSoundFile::getSampleRate() const
 
 
 ////////////////////////////////////////////////////////////
+const std::vector<SoundChannel>& InputSoundFile::getChannelMap() const
+{
+    return m_channelMap;
+}
+
+
+////////////////////////////////////////////////////////////
 Time InputSoundFile::getDuration() const
 {
     // Make sure we don't divide by 0
-    if (m_channelCount == 0 || m_sampleRate == 0)
+    if (m_channelMap.empty() || m_sampleRate == 0)
         return Time::Zero;
 
     return seconds(
-        static_cast<float>(m_sampleCount) / static_cast<float>(m_channelCount) / static_cast<float>(m_sampleRate));
+        static_cast<float>(m_sampleCount) / static_cast<float>(m_channelMap.size()) / static_cast<float>(m_sampleRate));
 }
 
 
@@ -206,11 +215,11 @@ Time InputSoundFile::getDuration() const
 Time InputSoundFile::getTimeOffset() const
 {
     // Make sure we don't divide by 0
-    if (m_channelCount == 0 || m_sampleRate == 0)
+    if (m_channelMap.empty() || m_sampleRate == 0)
         return Time::Zero;
 
     return seconds(
-        static_cast<float>(m_sampleOffset) / static_cast<float>(m_channelCount) / static_cast<float>(m_sampleRate));
+        static_cast<float>(m_sampleOffset) / static_cast<float>(m_channelMap.size()) / static_cast<float>(m_sampleRate));
 }
 
 
@@ -224,11 +233,11 @@ std::uint64_t InputSoundFile::getSampleOffset() const
 ////////////////////////////////////////////////////////////
 void InputSoundFile::seek(std::uint64_t sampleOffset)
 {
-    if (m_reader && m_channelCount != 0)
+    if (m_reader && !m_channelMap.empty())
     {
         // The reader handles an overrun gracefully, but we
         // pre-check to keep our known position consistent
-        m_sampleOffset = std::min(sampleOffset / m_channelCount * m_channelCount, m_sampleCount);
+        m_sampleOffset = std::min(sampleOffset / m_channelMap.size() * m_channelMap.size(), m_sampleCount);
         m_reader->seek(m_sampleOffset);
     }
 }
@@ -237,7 +246,7 @@ void InputSoundFile::seek(std::uint64_t sampleOffset)
 ////////////////////////////////////////////////////////////
 void InputSoundFile::seek(Time timeOffset)
 {
-    seek(static_cast<std::uint64_t>(timeOffset.asSeconds() * static_cast<float>(m_sampleRate)) * m_channelCount);
+    seek(static_cast<std::uint64_t>(timeOffset.asSeconds() * static_cast<float>(m_sampleRate)) * m_channelMap.size());
 }
 
 
@@ -256,6 +265,7 @@ std::uint64_t InputSoundFile::read(std::int16_t* samples, std::uint64_t maxCount
 void InputSoundFile::close()
 {
     *this = {};
+    m_channelMap.clear();
 }
 
 } // namespace sf

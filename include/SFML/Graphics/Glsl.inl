@@ -25,8 +25,18 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Graphics/Export.hpp>
+
+#include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Glsl.hpp> // NOLINT(misc-header-include-cycle)
 
+#include <cstddef>
+
+
+namespace sf
+{
+class Transform;
+} // namespace sf
 
 namespace sf::priv
 {
@@ -45,13 +55,6 @@ void SFML_GRAPHICS_API copyMatrix(const Transform& source, Matrix<4, 4>& dest);
 ///
 ////////////////////////////////////////////////////////////
 void SFML_GRAPHICS_API copyMatrix(const float* source, std::size_t elements, float* dest);
-
-////////////////////////////////////////////////////////////
-/// \brief Helper functions to copy sf::Color to sf::Glsl::Vec4/Ivec4
-///
-////////////////////////////////////////////////////////////
-void SFML_GRAPHICS_API copyVector(const Color& source, Vector4<float>& dest);
-void SFML_GRAPHICS_API copyVector(const Color& source, Vector4<int>& dest);
 
 
 ////////////////////////////////////////////////////////////
@@ -102,7 +105,7 @@ struct Vector4
     /// \brief Default constructor, creates a zero vector
     ///
     ////////////////////////////////////////////////////////////
-    Vector4() = default;
+    constexpr Vector4() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct from 4 vector components
@@ -117,7 +120,7 @@ struct Vector4
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wshadow"
 #endif
-    Vector4(T x, T y, T z, T w) : x(x), y(y), z(z), w(w)
+    constexpr Vector4(T x, T y, T z, T w) : x(x), y(y), z(z), w(w)
     {
     }
 #if defined(__GNUC__)
@@ -131,7 +134,7 @@ struct Vector4
     ///
     ////////////////////////////////////////////////////////////
     template <typename U>
-    explicit Vector4(const Vector4<U>& other) :
+    constexpr explicit Vector4(const Vector4<U>& other) :
     x(static_cast<T>(other.x)),
     y(static_cast<T>(other.y)),
     z(static_cast<T>(other.z)),
@@ -140,21 +143,38 @@ struct Vector4
     }
 
     ////////////////////////////////////////////////////////////
-    /// \brief Construct float vector implicitly from color
+    /// \brief Construct vector implicitly from color
     ///
-    /// \param color Color instance. Is normalized to [0, 1]
-    ///              for floats, and left as-is for ints.
+    /// Vector is normalized to [0, 1] for floats, and left as-is
+    /// for ints. Not defined for other template arguments.
+    ///
+    /// \param color Color instance
     ///
     ////////////////////////////////////////////////////////////
-    Vector4(const Color& color)
-    {
-        copyVector(color, *this);
-    }
+    constexpr Vector4(const Color& color);
 
     T x{}; //!< 1st component (X) of the 4D vector
     T y{}; //!< 2nd component (Y) of the 4D vector
     T z{}; //!< 3rd component (Z) of the 4D vector
     T w{}; //!< 4th component (W) of the 4D vector
 };
+
+
+////////////////////////////////////////////////////////////
+template <>
+constexpr Vector4<float>::Vector4(const Color& color) :
+x(color.r / 255.f),
+y(color.g / 255.f),
+z(color.b / 255.f),
+w(color.a / 255.f)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+template <>
+constexpr Vector4<int>::Vector4(const Color& color) : x(color.r), y(color.g), z(color.b), w(color.a)
+{
+}
 
 } // namespace sf::priv

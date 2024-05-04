@@ -28,15 +28,14 @@
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/Graphics/GLExtensions.hpp>
 #include <SFML/Graphics/RenderTextureImplFBO.hpp>
-#include <SFML/Graphics/Texture.hpp>
 
 #include <SFML/Window/Context.hpp>
 #include <SFML/Window/ContextSettings.hpp>
 
 #include <SFML/System/Err.hpp>
 
-#include <mutex>
 #include <ostream>
+#include <utility>
 
 
 namespace sf::priv
@@ -431,7 +430,7 @@ bool RenderTextureImplFBO::createFrameBuffer()
     glCheck(GLEXT_glFramebufferTexture2D(GLEXT_GL_FRAMEBUFFER, GLEXT_GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_textureId, 0));
 
     // A final check, just to be sure...
-    GLenum status;
+    GLenum status = 0;
     glCheck(status = GLEXT_glCheckFramebufferStatus(GLEXT_GL_FRAMEBUFFER));
     if (status != GLEXT_GL_FRAMEBUFFER_COMPLETE)
     {

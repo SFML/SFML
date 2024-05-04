@@ -34,15 +34,17 @@
 
 #include <SFML/Window/GlResource.hpp>
 
+#include <SFML/System/Vector2.hpp>
+
 #include <filesystem>
+
+#include <cstddef>
+#include <cstdint>
 
 
 namespace sf
 {
 class InputStream;
-class RenderTarget;
-class RenderTexture;
-class Text;
 class Window;
 class Image;
 

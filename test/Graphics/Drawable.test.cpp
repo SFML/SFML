@@ -4,6 +4,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <GraphicsUtil.hpp>
+#include <WindowUtil.hpp>
 #include <type_traits>
 
 class DrawableTest : public sf::Drawable
@@ -15,7 +16,7 @@ public:
     }
 
 private:
-    void draw(sf::RenderTarget&, const sf::RenderStates&) const override
+    void draw(sf::RenderTarget&, sf::RenderStates) const override
     {
         ++m_callCount;
     }

@@ -306,7 +306,7 @@ sf::Keyboard::Key toKey(int code)
     }
 }
 
-void pushEvent(sf::Event& event)
+void pushEvent(const sf::Event& event)
 {
     if (eventQueue.size() >= maxQueue)
         eventQueue.pop();
@@ -325,31 +325,16 @@ void processSlots()
 {
     for (auto& slot : touchSlots)
     {
-        sf::Event event;
-
-        event.touch.x = slot.pos.x;
-        event.touch.y = slot.pos.y;
-
         if (slot.oldId == slot.id)
         {
-            event.type         = sf::Event::TouchMoved;
-            event.touch.finger = static_cast<unsigned int>(slot.id);
-            pushEvent(event);
+            pushEvent(sf::Event::TouchMoved{static_cast<unsigned int>(slot.id), slot.pos});
         }
         else
         {
             if (slot.oldId != -1)
-            {
-                event.type         = sf::Event::TouchEnded;
-                event.touch.finger = static_cast<unsigned int>(slot.oldId);
-                pushEvent(event);
-            }
+                pushEvent(sf::Event::TouchEnded{static_cast<unsigned int>(slot.oldId), slot.pos});
             if (slot.id != -1)
-            {
-                event.type         = sf::Event::TouchBegan;
-                event.touch.finger = static_cast<unsigned int>(slot.id);
-                pushEvent(event);
-            }
+                pushEvent(sf::Event::TouchBegan{static_cast<unsigned int>(slot.id), slot.pos});
 
             slot.oldId = slot.id;
         }
@@ -368,13 +353,12 @@ bool eventProcess(sf::Event& event)
     static unsigned int doDeferredText = 0;
     if (doDeferredText)
     {
-        event.type         = sf::Event::TextEntered;
-        event.text.unicode = doDeferredText;
-        doDeferredText     = 0;
+        event          = sf::Event::TextEntered{doDeferredText};
+        doDeferredText = 0;
         return true;
     }
 
-    ssize_t bytesRead;
+    ssize_t bytesRead = 0;
 
     // Check all the open file descriptors for the next event
     for (auto& fileDescriptor : fileDescriptors)
@@ -388,10 +372,10 @@ bool eventProcess(sf::Event& event)
             {
                 if (const std::optional<sf::Mouse::Button> mb = toMouseButton(inputEvent.code))
                 {
-                    event.type = inputEvent.value ? sf::Event::MouseButtonPressed : sf::Event::MouseButtonReleased;
-                    event.mouseButton.button = *mb;
-                    event.mouseButton.x      = mousePos.x;
-                    event.mouseButton.y      = mousePos.y;
+                    if (inputEvent.value)
+                        event = sf::Event::MouseButtonPressed{*mb, mousePos};
+                    else
+                        event = sf::Event::MouseButtonReleased{*mb, mousePos};
 
                     mouseMap[*mb] = inputEvent.value;
                     return true;
@@ -410,8 +394,7 @@ bool eventProcess(sf::Event& event)
                         //
                         if (special)
                         {
-                            event.type         = sf::Event::TextEntered;
-                            event.text.unicode = special;
+                            event = sf::Event::TextEntered{special};
                             return true;
                         }
                     }
@@ -419,13 +402,18 @@ bool eventProcess(sf::Event& event)
                     {
                         // key down and key up events
                         //
-                        event.type         = inputEvent.value ? sf::Event::KeyPressed : sf::Event::KeyReleased;
-                        event.key.code     = kb;
-                        event.key.scancode = sf::Keyboard::Scan::Unknown; // TODO: not implemented
-                        event.key.alt      = altDown();
-                        event.key.control  = controlDown();
-                        event.key.shift    = shiftDown();
-                        event.key.system   = systemDown();
+                        sf::Event::KeyChanged keyChanged;
+                        keyChanged.code     = kb;
+                        keyChanged.scancode = sf::Keyboard::Scan::Unknown; // TODO: not implemented
+                        keyChanged.alt      = altDown();
+                        keyChanged.control  = controlDown();
+                        keyChanged.shift    = shiftDown();
+                        keyChanged.system   = systemDown();
+
+                        if (inputEvent.value)
+                            event = sf::Event::KeyPressed{keyChanged};
+                        else
+                            event = sf::Event::KeyReleased{keyChanged};
 
                         keyMap[kb] = inputEvent.value;
 
@@ -452,18 +440,16 @@ bool eventProcess(sf::Event& event)
                         break;
 
                     case REL_WHEEL:
-                        event.type                   = sf::Event::MouseWheelScrolled;
-                        event.mouseWheelScroll.delta = static_cast<float>(inputEvent.value);
-                        event.mouseWheelScroll.x     = mousePos.x;
-                        event.mouseWheelScroll.y     = mousePos.y;
+                        sf::Event::MouseWheelScrolled mouseWheelScrolled;
+                        mouseWheelScrolled.delta    = static_cast<float>(inputEvent.value);
+                        mouseWheelScrolled.position = mousePos;
+                        event                       = mouseWheelScrolled;
                         return true;
                 }
 
                 if (posChange)
                 {
-                    event.type        = sf::Event::MouseMoved;
-                    event.mouseMove.x = mousePos.x;
-                    event.mouseMove.y = mousePos.y;
+                    event = sf::Event::MouseMoved{mousePos};
                     return true;
                 }
             }
@@ -548,8 +534,7 @@ bool eventProcess(sf::Event& event)
     if (code > 0)
     {
         // TODO: Proper unicode handling
-        event.type         = sf::Event::TextEntered;
-        event.text.unicode = code;
+        event = sf::Event::TextEntered{code};
         return true;
     }
 

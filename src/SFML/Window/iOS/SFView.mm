@@ -80,8 +80,8 @@
     const char* end = utf8 + std::strlen(utf8);
     while (utf8 < end)
     {
-        std::uint32_t character;
-        utf8 = sf::Utf8::decode(utf8, end, character);
+        std::uint32_t character = 0;
+        utf8                    = sf::Utf8::decode(utf8, end, character);
         [[SFAppDelegate getInstance] notifyCharacter:character];
     }
 }
@@ -90,7 +90,7 @@
 ////////////////////////////////////////////////////////////
 - (void)touchesBegan:(NSSet*)touches withEvent:(UIEvent*)event
 {
-    for (UITouch* touch in touches)
+    for (UITouch* touch in touches) // NOLINT(cppcoreguidelines-init-variables)
     {
         // find an empty slot for the new touch
         NSUInteger index = [self.touches indexOfObject:[NSNull null]];
@@ -117,7 +117,7 @@
 ////////////////////////////////////////////////////////////
 - (void)touchesMoved:(NSSet*)touches withEvent:(UIEvent*)event
 {
-    for (UITouch* touch in touches)
+    for (UITouch* touch in touches) // NOLINT(cppcoreguidelines-init-variables)
     {
         // find the touch
         NSUInteger index = [self.touches indexOfObject:touch];
@@ -137,7 +137,7 @@
 ////////////////////////////////////////////////////////////
 - (void)touchesEnded:(NSSet*)touches withEvent:(UIEvent*)event
 {
-    for (UITouch* touch in touches)
+    for (UITouch* touch in touches) // NOLINT(cppcoreguidelines-init-variables)
     {
         // find the touch
         NSUInteger index = [self.touches indexOfObject:touch];

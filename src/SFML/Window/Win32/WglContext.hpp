@@ -27,13 +27,22 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/Context.hpp>
 #include <SFML/Window/GlContext.hpp>
+
+#include <SFML/System/Vector2.hpp>
 
 #include <glad/wgl.h>
 
 
-namespace sf::priv
+namespace sf
 {
+struct ContextSettings;
+
+namespace priv
+{
+class WindowImpl;
+
 ////////////////////////////////////////////////////////////
 /// \brief Windows (WGL) implementation of OpenGL contexts
 ///
@@ -184,4 +193,5 @@ private:
     bool        m_isGeneric{};     //!< Is this context provided by the generic GDI implementation?
 };
 
-} // namespace sf::priv
+} // namespace priv
+} // namespace sf
