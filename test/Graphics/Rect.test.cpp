@@ -22,19 +22,8 @@ TEMPLATE_TEST_CASE("[Graphics] sf::Rect", "", int, float)
         SECTION("Default constructor")
         {
             constexpr sf::Rect<TestType> rectangle;
-            STATIC_CHECK(rectangle.position.x == 0);
-            STATIC_CHECK(rectangle.position.y == 0);
-            STATIC_CHECK(rectangle.size.x == 0);
-            STATIC_CHECK(rectangle.size.y == 0);
-        }
-
-        SECTION("(left, top, width, height) constructor")
-        {
-            constexpr sf::Rect<TestType> rectangle({1, 2}, {3, 4});
-            STATIC_CHECK(rectangle.position.x == 1);
-            STATIC_CHECK(rectangle.position.y == 2);
-            STATIC_CHECK(rectangle.size.x == 3);
-            STATIC_CHECK(rectangle.size.y == 4);
+            STATIC_CHECK(rectangle.position == sf::Vector2<TestType>());
+            STATIC_CHECK(rectangle.size == sf::Vector2<TestType>());
         }
 
         SECTION("(Vector2, Vector2) constructor")
@@ -43,10 +32,8 @@ TEMPLATE_TEST_CASE("[Graphics] sf::Rect", "", int, float)
             constexpr sf::Vector2<TestType> dimension(3, 4);
             constexpr sf::Rect<TestType>    rectangle(position, dimension);
 
-            STATIC_CHECK(rectangle.position.x == 1);
-            STATIC_CHECK(rectangle.position.y == 2);
-            STATIC_CHECK(rectangle.size.x == 3);
-            STATIC_CHECK(rectangle.size.y == 4);
+            STATIC_CHECK(rectangle.position == position);
+            STATIC_CHECK(rectangle.size == dimension);
         }
 
         SECTION("Conversion constructor")
@@ -54,10 +41,8 @@ TEMPLATE_TEST_CASE("[Graphics] sf::Rect", "", int, float)
             constexpr sf::FloatRect sourceRectangle({1.0f, 2.0f}, {3.0f, 4.0f});
             constexpr sf::IntRect   rectangle(sourceRectangle);
 
-            STATIC_CHECK(rectangle.position.x == static_cast<int>(sourceRectangle.position.x));
-            STATIC_CHECK(rectangle.position.y == static_cast<int>(sourceRectangle.position.y));
-            STATIC_CHECK(rectangle.size.x == static_cast<int>(sourceRectangle.size.x));
-            STATIC_CHECK(rectangle.size.y == static_cast<int>(sourceRectangle.size.y));
+            STATIC_CHECK(rectangle.position == sf::Vector2i(1, 2));
+            STATIC_CHECK(rectangle.size == sf::Vector2i(3, 4));
         }
     }
 
@@ -82,10 +67,7 @@ TEMPLATE_TEST_CASE("[Graphics] sf::Rect", "", int, float)
 
         constexpr auto intersectionResult = rectangle.findIntersection(intersectingRectangle);
         STATIC_REQUIRE(intersectionResult.has_value());
-        STATIC_CHECK(intersectionResult->position.x == 5);
-        STATIC_CHECK(intersectionResult->position.y == 5);
-        STATIC_CHECK(intersectionResult->size.x == 5);
-        STATIC_CHECK(intersectionResult->size.y == 5);
+        STATIC_CHECK(*intersectionResult == sf::Rect<TestType>({5, 5}, {5, 5}));
 
         constexpr sf::Rect<TestType> nonIntersectingRectangle({-5, -5}, {5, 5});
         STATIC_CHECK_FALSE(rectangle.findIntersection(nonIntersectingRectangle).has_value());
