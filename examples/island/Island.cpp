@@ -37,8 +37,8 @@ const unsigned int blockCount  = 32;
 
 struct WorkItem
 {
-    sf::Vertex*  targetBuffer;
-    unsigned int index;
+    sf::Vertex*  targetBuffer{};
+    unsigned int index{};
 };
 
 std::deque<WorkItem>     workQueue;
@@ -50,8 +50,8 @@ std::recursive_mutex     workQueueMutex;
 
 struct Setting
 {
-    const char* name;
-    float*      value;
+    const char* name{};
+    float*      value{};
 };
 
 // Terrain noise parameters
@@ -179,20 +179,20 @@ int main()
     while (window.isOpen())
     {
         // Handle events
-        for (sf::Event event; window.pollEvent(event);)
+        while (const auto event = window.pollEvent())
         {
             // Window closed or escape key pressed: exit
-            if ((event.type == sf::Event::Closed) ||
-                ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Key::Escape)))
+            if (event.is<sf::Event::Closed>() || (event.is<sf::Event::KeyPressed>() &&
+                                                  event.getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Escape))
             {
                 window.close();
                 break;
             }
 
             // Arrow key pressed:
-            if (prerequisitesSupported && (event.type == sf::Event::KeyPressed))
+            if (prerequisitesSupported && event.is<sf::Event::KeyPressed>())
             {
-                switch (event.key.code)
+                switch (event.getIf<sf::Event::KeyPressed>()->code)
                 {
                     case sf::Keyboard::Key::Enter:
                         generateTerrain(terrainStagingBuffer.data());
@@ -346,19 +346,23 @@ sf::Color colorFromFloats(float r, float g, float b)
 
 sf::Color getLowlandsTerrainColor(float moisture)
 {
-    sf::Color color = moisture < 0.27f   ? colorFromFloats(240, 240, 180)
-                      : moisture < 0.3f  ? colorFromFloats(240 - (240 * (moisture - 0.27f) / 0.03f),
-                                                          240 - (40 * (moisture - 0.27f) / 0.03f),
-                                                          180 - (180 * (moisture - 0.27f) / 0.03f))
-                      : moisture < 0.4f  ? colorFromFloats(0, 200, 0)
-                      : moisture < 0.48f ? colorFromFloats(0, 200 - (40 * (moisture - 0.4f) / 0.08f), 0)
-                      : moisture < 0.6f  ? colorFromFloats(0, 160, 0)
-                      : moisture < 0.7f  ? colorFromFloats((34 * (moisture - 0.6f) / 0.1f),
-                                                          160 - (60 * (moisture - 0.6f) / 0.1f),
-                                                          (34 * (moisture - 0.6f) / 0.1f))
-                                         : colorFromFloats(34, 100, 34);
-
-    return color;
+    if (moisture < 0.27f)
+        return colorFromFloats(240, 240, 180);
+    if (moisture < 0.3f)
+        return colorFromFloats(240 - (240 * (moisture - 0.27f) / 0.03f),
+                               240 - (40 * (moisture - 0.27f) / 0.03f),
+                               180 - (180 * (moisture - 0.27f) / 0.03f));
+    if (moisture < 0.4f)
+        return colorFromFloats(0, 200, 0);
+    if (moisture < 0.48f)
+        return colorFromFloats(0, 200 - (40 * (moisture - 0.4f) / 0.08f), 0);
+    if (moisture < 0.6f)
+        return colorFromFloats(0, 160, 0);
+    if (moisture < 0.7f)
+        return colorFromFloats((34 * (moisture - 0.6f) / 0.1f),
+                               160 - (60 * (moisture - 0.6f) / 0.1f),
+                               (34 * (moisture - 0.6f) / 0.1f));
+    return colorFromFloats(34, 100, 34);
 }
 
 

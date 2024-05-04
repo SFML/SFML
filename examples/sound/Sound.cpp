@@ -28,7 +28,7 @@ void playSound()
     sound.play();
 
     // Loop while the sound is playing
-    while (sound.getStatus() == sf::Sound::Playing)
+    while (sound.getStatus() == sf::Sound::Status::Playing)
     {
         // Leave some CPU time for other processes
         sf::sleep(sf::milliseconds(100));
@@ -62,7 +62,7 @@ void playMusic(const std::filesystem::path& filename)
     music.play();
 
     // Loop while the music is playing
-    while (music.getStatus() == sf::Music::Playing)
+    while (music.getStatus() == sf::Music::Status::Playing)
     {
         // Leave some CPU time for other processes
         sf::sleep(sf::milliseconds(100));

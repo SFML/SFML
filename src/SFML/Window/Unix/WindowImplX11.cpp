@@ -169,11 +169,11 @@ bool ewmhSupported()
 
     const auto display = sf::priv::openDisplay();
 
-    Atom           actualType;
-    int            actualFormat;
-    unsigned long  numItems;
-    unsigned long  numBytes;
-    unsigned char* data;
+    Atom           actualType   = 0;
+    int            actualFormat = 0;
+    unsigned long  numItems     = 0;
+    unsigned long  numBytes     = 0;
+    unsigned char* data         = nullptr;
 
     int result = XGetWindowProperty(display.get(),
                                     DefaultRootWindow(display.get()),
@@ -289,10 +289,10 @@ bool ewmhSupported()
 // Get the parent window.
 ::Window getParentWindow(::Display* disp, ::Window win)
 {
-    ::Window     root;
-    ::Window     parent;
-    ::Window*    children = nullptr;
-    unsigned int numChildren;
+    ::Window     root        = 0;
+    ::Window     parent      = 0;
+    ::Window*    children    = nullptr;
+    unsigned int numChildren = 0;
 
     XQueryTree(disp, win, &root, &parent, &children, &numChildren);
 
@@ -315,11 +315,11 @@ bool getEWMHFrameExtents(::Display* disp, ::Window win, long& xFrameExtent, long
         return false;
 
     bool           gotFrameExtents = false;
-    Atom           actualType;
-    int            actualFormat;
-    unsigned long  numItems;
-    unsigned long  numBytesLeft;
-    unsigned char* data = nullptr;
+    Atom           actualType      = 0;
+    int            actualFormat    = 0;
+    unsigned long  numItems        = 0;
+    unsigned long  numBytesLeft    = 0;
+    unsigned char* data            = nullptr;
 
     const int result = XGetWindowProperty(disp,
                                           win,
@@ -564,17 +564,12 @@ m_cursorGrabbed(m_fullscreen)
 
             struct WMHints
             {
-                unsigned long flags;
-                unsigned long functions;
-                unsigned long decorations;
-                long          inputMode;
-                unsigned long state;
-            };
-
-            auto hints        = WMHints();
-            hints.flags       = MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS;
-            hints.decorations = 0;
-            hints.functions   = 0;
+                unsigned long flags{MWM_HINTS_FUNCTIONS | MWM_HINTS_DECORATIONS};
+                unsigned long functions{};
+                unsigned long decorations{};
+                long          inputMode{};
+                unsigned long state{};
+            } hints;
 
             if (style & Style::Titlebar)
             {
@@ -786,9 +781,9 @@ Vector2i WindowImplX11::getPosition() const
     // window actually is, but not necessarily to where we told it to
     // go using setPosition() and XMoveWindow(). To have the two match
     // as expected, we may have to subtract decorations and borders.
-    ::Window child;
-    int      xAbsRelToRoot;
-    int      yAbsRelToRoot;
+    ::Window child         = 0;
+    int      xAbsRelToRoot = 0;
+    int      yAbsRelToRoot = 0;
 
     XTranslateCoordinates(m_display.get(), m_window, DefaultRootWindow(m_display.get()), 0, 0, &xAbsRelToRoot, &yAbsRelToRoot, &child);
 
@@ -801,8 +796,8 @@ Vector2i WindowImplX11::getPosition() const
     // CASE 2: most modern WMs support EWMH and can define _NET_FRAME_EXTENTS
     // with the exact frame size to subtract, so if present, we prefer it and
     // query it first. According to spec, this already includes any borders.
-    long xFrameExtent;
-    long yFrameExtent;
+    long xFrameExtent = 0;
+    long yFrameExtent = 0;
 
     if (getEWMHFrameExtents(m_display.get(), m_window, xFrameExtent, yFrameExtent))
     {
@@ -835,12 +830,12 @@ Vector2i WindowImplX11::getPosition() const
 
     // Get final X/Y coordinates: take the relative position to
     // the root of the furthest ancestor window.
-    int          xRelToRoot;
-    int          yRelToRoot;
-    unsigned int width;
-    unsigned int height;
-    unsigned int borderWidth;
-    unsigned int depth;
+    int          xRelToRoot  = 0;
+    int          yRelToRoot  = 0;
+    unsigned int width       = 0;
+    unsigned int height      = 0;
+    unsigned int borderWidth = 0;
+    unsigned int depth       = 0;
 
     XGetGeometry(m_display.get(), ancestor, &root, &xRelToRoot, &yRelToRoot, &width, &height, &borderWidth, &depth);
 
@@ -962,8 +957,10 @@ void WindowImplX11::setIcon(const Vector2u& size, const std::uint8_t* pixels)
 {
     // X11 wants BGRA pixels: swap red and blue channels
     // Note: this memory will be freed by X11Ptr<XImage> deleter
+    // NOLINTBEGIN(cppcoreguidelines-no-malloc)
     auto* iconPixels = static_cast<std::uint8_t*>(
         std::malloc(static_cast<std::size_t>(size.x) * static_cast<std::size_t>(size.y) * 4));
+    // NOLINTEND(cppcoreguidelines-no-malloc)
     for (std::size_t i = 0; i < static_cast<std::size_t>(size.x) * static_cast<std::size_t>(size.y); ++i)
     {
         iconPixels[i * 4 + 0] = pixels[i * 4 + 2];
@@ -973,9 +970,9 @@ void WindowImplX11::setIcon(const Vector2u& size, const std::uint8_t* pixels)
     }
 
     // Create the icon pixmap
-    Visual* defVisual = DefaultVisual(m_display.get(), m_screen);
-    auto    defDepth  = static_cast<unsigned int>(DefaultDepth(m_display.get(), m_screen));
-    auto    iconImage = X11Ptr<XImage>(
+    Visual*    defVisual = DefaultVisual(m_display.get(), m_screen);
+    const auto defDepth  = static_cast<unsigned int>(DefaultDepth(m_display.get(), m_screen));
+    const auto iconImage = X11Ptr<XImage>(
         XCreateImage(m_display.get(), defVisual, defDepth, ZPixmap, 0, reinterpret_cast<char*>(iconPixels), size.x, size.y, 32, 0));
     if (!iconImage)
     {
@@ -1277,8 +1274,8 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
         return;
 
     // Check if the XRandR extension is present
-    int xRandRMajor;
-    int xRandRMinor;
+    int xRandRMajor = 0;
+    int xRandRMinor = 0;
     if (!checkXRandR(xRandRMajor, xRandRMinor))
     {
         // XRandR extension is not supported: we cannot use fullscreen mode
@@ -1290,7 +1287,7 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
     ::Window rootWindow = RootWindow(m_display.get(), m_screen);
 
     // Get the screen resources
-    auto res = X11Ptr<XRRScreenResources>(XRRGetScreenResources(m_display.get(), rootWindow));
+    const auto res = X11Ptr<XRRScreenResources>(XRRGetScreenResources(m_display.get(), rootWindow));
     if (!res)
     {
         err() << "Failed to get the current screen resources for fullscreen mode, switching to window mode" << std::endl;
@@ -1300,7 +1297,7 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
     RROutput output = getOutputPrimary(rootWindow, res.get(), xRandRMajor, xRandRMinor);
 
     // Get output info from output
-    auto outputInfo = X11Ptr<XRROutputInfo>(XRRGetOutputInfo(m_display.get(), res.get(), output));
+    const auto outputInfo = X11Ptr<XRROutputInfo>(XRRGetOutputInfo(m_display.get(), res.get(), output));
     if (!outputInfo || outputInfo->connection == RR_Disconnected)
     {
         err() << "Failed to get output info for fullscreen mode, switching to window mode" << std::endl;
@@ -1308,7 +1305,7 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
     }
 
     // Retrieve current RRMode, screen position and rotation
-    auto crtcInfo = X11Ptr<XRRCrtcInfo>(XRRGetCrtcInfo(m_display.get(), res.get(), outputInfo->crtc));
+    const auto crtcInfo = X11Ptr<XRRCrtcInfo>(XRRGetCrtcInfo(m_display.get(), res.get(), outputInfo->crtc));
     if (!crtcInfo)
     {
         err() << "Failed to get crtc info for fullscreen mode, switching to window mode" << std::endl;
@@ -1317,7 +1314,7 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
 
     // Find RRMode to set
     bool   modeFound = false;
-    RRMode xRandMode;
+    RRMode xRandMode = 0;
 
     for (int i = 0; (i < res->nmode) && !modeFound; ++i)
     {
@@ -1368,11 +1365,11 @@ void WindowImplX11::resetVideoMode()
     {
         // Try to set old configuration
         // Check if the XRandR extension
-        int xRandRMajor;
-        int xRandRMinor;
+        int xRandRMajor = 0;
+        int xRandRMinor = 0;
         if (checkXRandR(xRandRMajor, xRandRMinor))
         {
-            auto res = X11Ptr<XRRScreenResources>(
+            const auto res = X11Ptr<XRRScreenResources>(
                 XRRGetScreenResources(m_display.get(), DefaultRootWindow(m_display.get())));
             if (!res)
             {
@@ -1381,14 +1378,14 @@ void WindowImplX11::resetVideoMode()
             }
 
             // Retrieve current screen position and rotation
-            auto crtcInfo = X11Ptr<XRRCrtcInfo>(XRRGetCrtcInfo(m_display.get(), res.get(), m_oldRRCrtc));
+            const auto crtcInfo = X11Ptr<XRRCrtcInfo>(XRRGetCrtcInfo(m_display.get(), res.get(), m_oldRRCrtc));
             if (!crtcInfo)
             {
                 err() << "Failed to get crtc info to reset the video mode" << std::endl;
                 return;
             }
 
-            RROutput output;
+            RROutput output = 0;
 
             // if version >= 1.3 get the primary screen else take the first screen
             if ((xRandRMajor == 1 && xRandRMinor >= 3) || xRandRMajor > 1)
@@ -1715,12 +1712,10 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                     err() << "Failed to grab mouse cursor" << std::endl;
             }
 
-            Event event;
-            event.type = Event::GainedFocus;
-            pushEvent(event);
+            pushEvent(Event::FocusGained{});
 
             // If the window has been previously marked urgent (notification) as a result of a focus request, undo that
-            auto hints = X11Ptr<XWMHints>(XGetWMHints(m_display.get(), m_window));
+            const auto hints = X11Ptr<XWMHints>(XGetWMHints(m_display.get(), m_window));
             if (hints != nullptr)
             {
                 // Remove urgency (notification) flag from hints
@@ -1742,9 +1737,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             if (m_cursorGrabbed)
                 XUngrabPointer(m_display.get(), CurrentTime);
 
-            Event event;
-            event.type = Event::LostFocus;
-            pushEvent(event);
+            pushEvent(Event::FocusLost{});
             break;
         }
 
@@ -1754,11 +1747,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             // ConfigureNotify can be triggered for other reasons, check if the size has actually changed
             if ((windowEvent.xconfigure.width != m_previousSize.x) || (windowEvent.xconfigure.height != m_previousSize.y))
             {
-                Event event;
-                event.type        = Event::Resized;
-                event.size.width  = static_cast<unsigned int>(windowEvent.xconfigure.width);
-                event.size.height = static_cast<unsigned int>(windowEvent.xconfigure.height);
-                pushEvent(event);
+                pushEvent(Event::Resized{Vector2u(Vector2(windowEvent.xconfigure.width, windowEvent.xconfigure.height))});
 
                 m_previousSize.x = windowEvent.xconfigure.width;
                 m_previousSize.y = windowEvent.xconfigure.height;
@@ -1784,9 +1773,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                         (windowEvent.xclient.data.l[0]) == static_cast<long>(wmDeleteWindow))
                     {
                         // Handle the WM_DELETE_WINDOW message
-                        Event event;
-                        event.type = Event::Closed;
-                        pushEvent(event);
+                        pushEvent(Event::Closed{});
                     }
                     else if (netWmPing && (windowEvent.xclient.format == 32) &&
                              (windowEvent.xclient.data.l[0]) == static_cast<long>(netWmPing))
@@ -1810,14 +1797,13 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
         {
             // Fill the event parameters
             // TODO: if modifiers are wrong, use XGetModifierMapping to retrieve the actual modifiers mapping
-            Event event;
-            event.type         = Event::KeyPressed;
-            event.key.code     = KeyboardImpl::getKeyFromEvent(windowEvent.xkey);
-            event.key.scancode = KeyboardImpl::getScancodeFromEvent(windowEvent.xkey);
-            event.key.alt      = windowEvent.xkey.state & Mod1Mask;
-            event.key.control  = windowEvent.xkey.state & ControlMask;
-            event.key.shift    = windowEvent.xkey.state & ShiftMask;
-            event.key.system   = windowEvent.xkey.state & Mod4Mask;
+            Event::KeyPressed event;
+            event.code     = KeyboardImpl::getKeyFromEvent(windowEvent.xkey);
+            event.scancode = KeyboardImpl::getScancodeFromEvent(windowEvent.xkey);
+            event.alt      = windowEvent.xkey.state & Mod1Mask;
+            event.control  = windowEvent.xkey.state & ControlMask;
+            event.shift    = windowEvent.xkey.state & ShiftMask;
+            event.system   = windowEvent.xkey.state & Mod4Mask;
 
             const bool filtered = XFilterEvent(&windowEvent, None);
 
@@ -1846,7 +1832,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
 #ifdef X_HAVE_UTF8_STRING
                 if (m_inputContext)
                 {
-                    Status       status;
+                    Status       status = 0;
                     std::uint8_t keyBuffer[64];
 
                     const int length = Xutf8LookupString(m_inputContext,
@@ -1871,12 +1857,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                         {
                             iter = Utf8::decode(iter, keyBuffer + length, unicode, 0);
                             if (unicode != 0)
-                            {
-                                Event textEvent;
-                                textEvent.type         = Event::TextEntered;
-                                textEvent.text.unicode = unicode;
-                                pushEvent(textEvent);
-                            }
+                                pushEvent(Event::TextEntered{unicode});
                         }
                     }
                 }
@@ -1886,12 +1867,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                     static XComposeStatus status;
                     char                  keyBuffer[16];
                     if (XLookupString(&windowEvent.xkey, keyBuffer, sizeof(keyBuffer), nullptr, &status))
-                    {
-                        Event textEvent;
-                        textEvent.type         = Event::TextEntered;
-                        textEvent.text.unicode = static_cast<std::uint32_t>(keyBuffer[0]);
-                        pushEvent(textEvent);
-                    }
+                        pushEvent(Event::TextEntered{static_cast<std::uint32_t>(keyBuffer[0])});
                 }
             }
 
@@ -1904,14 +1880,13 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
         case KeyRelease:
         {
             // Fill the event parameters
-            Event event;
-            event.type         = Event::KeyReleased;
-            event.key.code     = KeyboardImpl::getKeyFromEvent(windowEvent.xkey);
-            event.key.scancode = KeyboardImpl::getScancodeFromEvent(windowEvent.xkey);
-            event.key.alt      = windowEvent.xkey.state & Mod1Mask;
-            event.key.control  = windowEvent.xkey.state & ControlMask;
-            event.key.shift    = windowEvent.xkey.state & ShiftMask;
-            event.key.system   = windowEvent.xkey.state & Mod4Mask;
+            Event::KeyReleased event;
+            event.code     = KeyboardImpl::getKeyFromEvent(windowEvent.xkey);
+            event.scancode = KeyboardImpl::getScancodeFromEvent(windowEvent.xkey);
+            event.alt      = windowEvent.xkey.state & Mod1Mask;
+            event.control  = windowEvent.xkey.state & ControlMask;
+            event.shift    = windowEvent.xkey.state & ShiftMask;
+            event.system   = windowEvent.xkey.state & Mod4Mask;
             pushEvent(event);
 
             break;
@@ -1924,19 +1899,17 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             const unsigned int button = windowEvent.xbutton.button;
             if ((button == Button1) || (button == Button2) || (button == Button3) || (button == 8) || (button == 9))
             {
-                Event event;
-                event.type          = Event::MouseButtonPressed;
-                event.mouseButton.x = windowEvent.xbutton.x;
-                event.mouseButton.y = windowEvent.xbutton.y;
+                Event::MouseButtonPressed event;
+                event.position = {windowEvent.xbutton.x, windowEvent.xbutton.y};
 
                 // clang-format off
                 switch(button)
                 {
-                    case Button1: event.mouseButton.button = Mouse::Button::Left;   break;
-                    case Button2: event.mouseButton.button = Mouse::Button::Middle; break;
-                    case Button3: event.mouseButton.button = Mouse::Button::Right;  break;
-                    case 8:       event.mouseButton.button = Mouse::Button::Extra1; break;
-                    case 9:       event.mouseButton.button = Mouse::Button::Extra2; break;
+                    case Button1: event.button = Mouse::Button::Left;     break;
+                    case Button2: event.button = Mouse::Button::Middle;   break;
+                    case Button3: event.button = Mouse::Button::Right;    break;
+                    case 8:       event.button = Mouse::Button::Extra1;   break;
+                    case 9:       event.button = Mouse::Button::Extra2;   break;
                 }
                 // clang-format on
 
@@ -1954,49 +1927,42 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             const unsigned int button = windowEvent.xbutton.button;
             if ((button == Button1) || (button == Button2) || (button == Button3) || (button == 8) || (button == 9))
             {
-                Event event;
-                event.type          = Event::MouseButtonReleased;
-                event.mouseButton.x = windowEvent.xbutton.x;
-                event.mouseButton.y = windowEvent.xbutton.y;
+                Event::MouseButtonReleased event;
+                event.position = {windowEvent.xbutton.x, windowEvent.xbutton.y};
                 switch (button)
                 {
                     case Button1:
-                        event.mouseButton.button = Mouse::Button::Left;
+                        event.button = Mouse::Button::Left;
                         break;
                     case Button2:
-                        event.mouseButton.button = Mouse::Button::Middle;
+                        event.button = Mouse::Button::Middle;
                         break;
                     case Button3:
-                        event.mouseButton.button = Mouse::Button::Right;
+                        event.button = Mouse::Button::Right;
                         break;
                     case 8:
-                        event.mouseButton.button = Mouse::Button::Extra1;
+                        event.button = Mouse::Button::Extra1;
                         break;
                     case 9:
-                        event.mouseButton.button = Mouse::Button::Extra2;
+                        event.button = Mouse::Button::Extra2;
                         break;
                 }
                 pushEvent(event);
             }
             else if ((button == Button4) || (button == Button5))
             {
-                Event event;
-
-                event.type                   = Event::MouseWheelScrolled;
-                event.mouseWheelScroll.wheel = Mouse::Wheel::Vertical;
-                event.mouseWheelScroll.delta = (button == Button4) ? 1 : -1;
-                event.mouseWheelScroll.x     = windowEvent.xbutton.x;
-                event.mouseWheelScroll.y     = windowEvent.xbutton.y;
+                Event::MouseWheelScrolled event;
+                event.wheel    = Mouse::Wheel::Vertical;
+                event.delta    = (button == Button4) ? 1 : -1;
+                event.position = {windowEvent.xbutton.x, windowEvent.xbutton.y};
                 pushEvent(event);
             }
             else if ((button == 6) || (button == 7))
             {
-                Event event;
-                event.type                   = Event::MouseWheelScrolled;
-                event.mouseWheelScroll.wheel = Mouse::Wheel::Horizontal;
-                event.mouseWheelScroll.delta = (button == 6) ? 1 : -1;
-                event.mouseWheelScroll.x     = windowEvent.xbutton.x;
-                event.mouseWheelScroll.y     = windowEvent.xbutton.y;
+                Event::MouseWheelScrolled event;
+                event.wheel    = Mouse::Wheel::Horizontal;
+                event.delta    = (button == 6) ? 1 : -1;
+                event.position = {windowEvent.xbutton.x, windowEvent.xbutton.y};
                 pushEvent(event);
             }
             break;
@@ -2005,11 +1971,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
         // Mouse moved
         case MotionNotify:
         {
-            Event event;
-            event.type        = Event::MouseMoved;
-            event.mouseMove.x = windowEvent.xmotion.x;
-            event.mouseMove.y = windowEvent.xmotion.y;
-            pushEvent(event);
+            pushEvent(Event::MouseMoved{{windowEvent.xmotion.x, windowEvent.xmotion.y}});
             break;
         }
 
@@ -2017,11 +1979,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
         case EnterNotify:
         {
             if (windowEvent.xcrossing.mode == NotifyNormal)
-            {
-                Event event;
-                event.type = Event::MouseEntered;
-                pushEvent(event);
-            }
+                pushEvent(Event::MouseEntered{});
             break;
         }
 
@@ -2029,11 +1987,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
         case LeaveNotify:
         {
             if (windowEvent.xcrossing.mode == NotifyNormal)
-            {
-                Event event;
-                event.type = Event::MouseLeft;
-                pushEvent(event);
-            }
+                pushEvent(Event::MouseLeft{});
             break;
         }
 
@@ -2094,7 +2048,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
 bool WindowImplX11::checkXRandR(int& xRandRMajor, int& xRandRMinor)
 {
     // Check if the XRandR extension is present
-    int version;
+    int version = 0;
     if (!XQueryExtension(m_display.get(), "RANDR", &version, &version, &version))
     {
         err() << "XRandR extension is not supported" << std::endl;
@@ -2142,7 +2096,7 @@ Vector2i WindowImplX11::getPrimaryMonitorPosition()
     ::Window rootWindow = RootWindow(m_display.get(), m_screen);
 
     // Get the screen resources
-    auto res = X11Ptr<XRRScreenResources>(XRRGetScreenResources(m_display.get(), rootWindow));
+    const auto res = X11Ptr<XRRScreenResources>(XRRGetScreenResources(m_display.get(), rootWindow));
     if (!res)
     {
         err() << "Failed to get the current screen resources for primary monitor position" << std::endl;
@@ -2150,15 +2104,15 @@ Vector2i WindowImplX11::getPrimaryMonitorPosition()
     }
 
     // Get xRandr version
-    int xRandRMajor;
-    int xRandRMinor;
+    int xRandRMajor = 0;
+    int xRandRMinor = 0;
     if (!checkXRandR(xRandRMajor, xRandRMinor))
         xRandRMajor = xRandRMinor = 0;
 
     const RROutput output = getOutputPrimary(rootWindow, res.get(), xRandRMajor, xRandRMinor);
 
     // Get output info from output
-    auto outputInfo = X11Ptr<XRROutputInfo>(XRRGetOutputInfo(m_display.get(), res.get(), output));
+    const auto outputInfo = X11Ptr<XRROutputInfo>(XRRGetOutputInfo(m_display.get(), res.get(), output));
     if (!outputInfo || outputInfo->connection == RR_Disconnected)
     {
         err() << "Failed to get output info for primary monitor position" << std::endl;
@@ -2166,7 +2120,7 @@ Vector2i WindowImplX11::getPrimaryMonitorPosition()
     }
 
     // Retrieve current RRMode, screen position and rotation
-    auto crtcInfo = X11Ptr<XRRCrtcInfo>(XRRGetCrtcInfo(m_display.get(), res.get(), outputInfo->crtc));
+    const auto crtcInfo = X11Ptr<XRRCrtcInfo>(XRRGetCrtcInfo(m_display.get(), res.get(), outputInfo->crtc));
     if (!crtcInfo)
     {
         err() << "Failed to get crtc info for primary monitor position" << std::endl;

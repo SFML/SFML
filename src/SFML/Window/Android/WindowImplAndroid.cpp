@@ -234,14 +234,14 @@ void WindowImplAndroid::forwardEvent(const Event& event)
     {
         ActivityStates& states = getActivity();
 
-        if (event.type == Event::GainedFocus)
+        if (event.is<Event::FocusGained>())
         {
             WindowImplAndroid::singleInstance->m_size = Vector2u(
                 Vector2i(ANativeWindow_getWidth(states.window), ANativeWindow_getHeight(states.window)));
             WindowImplAndroid::singleInstance->m_windowBeingCreated = true;
             WindowImplAndroid::singleInstance->m_hasFocus           = true;
         }
-        else if (event.type == Event::LostFocus)
+        else if (event.is<Event::FocusLost>())
         {
             WindowImplAndroid::singleInstance->m_windowBeingDestroyed = true;
             WindowImplAndroid::singleInstance->m_hasFocus             = false;
@@ -329,7 +329,7 @@ int WindowImplAndroid::processEvent(int /* fd */, int /* events */, void* /* dat
 int WindowImplAndroid::processScrollEvent(AInputEvent* inputEvent, ActivityStates& states)
 {
     // Prepare the Java virtual machine
-    jint lResult;
+    jint lResult = 0;
 
     JavaVM* lJavaVM = states.activity->vm;
     JNIEnv* lJNIEnv = states.activity->env;
@@ -392,13 +392,10 @@ int WindowImplAndroid::processScrollEvent(AInputEvent* inputEvent, ActivityState
     lJNIEnv->DeleteLocalRef(objectMotionEvent);
 
     // Create and send our mouse wheel event
-    Event event;
-    event.type                   = Event::MouseWheelScrolled;
-    event.mouseWheelScroll.wheel = Mouse::Wheel::Vertical;
-    event.mouseWheelScroll.delta = static_cast<float>(delta);
-    event.mouseWheelScroll.x     = static_cast<int>(AMotionEvent_getX(inputEvent, 0));
-    event.mouseWheelScroll.y     = static_cast<int>(AMotionEvent_getY(inputEvent, 0));
-
+    Event::MouseWheelScrolled event;
+    event.wheel    = Mouse::Wheel::Vertical;
+    event.delta    = static_cast<float>(delta);
+    event.position = Vector2i(Vector2(AMotionEvent_getX(inputEvent, 0), AMotionEvent_getY(inputEvent, 0)));
     forwardEvent(event);
 
     // Detach this thread from the JVM
@@ -416,36 +413,28 @@ int WindowImplAndroid::processKeyEvent(AInputEvent* inputEvent, ActivityStates& 
     std::int32_t key     = AKeyEvent_getKeyCode(inputEvent);
     std::int32_t metakey = AKeyEvent_getMetaState(inputEvent);
 
-    Event event;
-    event.key.code    = androidKeyToSF(key);
-    event.key.alt     = metakey & AMETA_ALT_ON;
-    event.key.control = false;
-    event.key.shift   = metakey & AMETA_SHIFT_ON;
+    Event::KeyChanged keyChanged;
+    keyChanged.code    = androidKeyToSF(key);
+    keyChanged.alt     = metakey & AMETA_ALT_ON;
+    keyChanged.control = false;
+    keyChanged.shift   = metakey & AMETA_SHIFT_ON;
 
     switch (action)
     {
         case AKEY_EVENT_ACTION_DOWN:
-            event.type = Event::KeyPressed;
-            forwardEvent(event);
+            forwardEvent(Event::KeyPressed{keyChanged});
             return 1;
         case AKEY_EVENT_ACTION_UP:
-            event.type = Event::KeyReleased;
-            forwardEvent(event);
+            forwardEvent(Event::KeyReleased{keyChanged});
 
             if (auto unicode = static_cast<std::uint32_t>(getUnicode(inputEvent)))
-            {
-                event.type         = Event::TextEntered;
-                event.text.unicode = static_cast<std::uint32_t>(unicode);
-                forwardEvent(event);
-            }
+                forwardEvent(Event::TextEntered{static_cast<std::uint32_t>(unicode)});
             return 1;
         case AKEY_EVENT_ACTION_MULTIPLE:
             // Since complex inputs don't get separate key down/up events
             // both have to be faked at once
-            event.type = Event::KeyPressed;
-            forwardEvent(event);
-            event.type = Event::KeyReleased;
-            forwardEvent(event);
+            forwardEvent(Event::KeyPressed{keyChanged});
+            forwardEvent(Event::KeyReleased{keyChanged});
 
             // This requires some special treatment, since this might represent
             // a repetition of key presses or a complete sequence
@@ -457,8 +446,7 @@ int WindowImplAndroid::processKeyEvent(AInputEvent* inputEvent, ActivityStates& 
             }
             else if (auto unicode = static_cast<std::uint32_t>(getUnicode(inputEvent))) // This is a repeated sequence
             {
-                event.type         = Event::TextEntered;
-                event.text.unicode = static_cast<std::uint32_t>(unicode);
+                const Event event(Event::TextEntered{static_cast<std::uint32_t>(unicode)});
 
                 std::int32_t repeats = AKeyEvent_getRepeatCount(inputEvent);
                 for (std::int32_t i = 0; i < repeats; ++i)
@@ -479,9 +467,9 @@ int WindowImplAndroid::processMotionEvent(AInputEvent* inputEvent, ActivityState
     Event event;
 
     if (device == AINPUT_SOURCE_MOUSE)
-        event.type = Event::MouseMoved;
+        event = Event::MouseMoved{};
     else if (static_cast<std::uint32_t>(device) & AINPUT_SOURCE_TOUCHSCREEN)
-        event.type = Event::TouchMoved;
+        event = Event::TouchMoved{};
 
     std::size_t pointerCount = AMotionEvent_getPointerCount(inputEvent);
 
@@ -494,21 +482,20 @@ int WindowImplAndroid::processMotionEvent(AInputEvent* inputEvent, ActivityState
 
         if (device == AINPUT_SOURCE_MOUSE)
         {
-            event.mouseMove.x = x;
-            event.mouseMove.y = y;
+            const Event::MouseMoved mouseMoved{{x, y}};
+            event = mouseMoved;
 
-            states.mousePosition = Vector2i(event.mouseMove.x, event.mouseMove.y);
+            states.mousePosition = mouseMoved.position;
         }
         else if (static_cast<std::uint32_t>(device) & AINPUT_SOURCE_TOUCHSCREEN)
         {
             if (states.touchEvents[id].x == x && states.touchEvents[id].y == y)
                 continue;
 
-            event.touch.finger = static_cast<unsigned int>(id);
-            event.touch.x      = x;
-            event.touch.y      = y;
+            const Event::TouchMoved touchMoved{static_cast<unsigned int>(id), {x, y}};
+            event = touchMoved;
 
-            states.touchEvents[id] = Vector2i(event.touch.x, event.touch.y);
+            states.touchEvents[id] = touchMoved.position;
         }
 
         forwardEvent(event);
@@ -536,42 +523,33 @@ int WindowImplAndroid::processPointerEvent(bool isDown, AInputEvent* inputEvent,
     {
         if (device == AINPUT_SOURCE_MOUSE)
         {
-            event.type               = Event::MouseButtonPressed;
-            event.mouseButton.button = button;
-            event.mouseButton.x      = x;
-            event.mouseButton.y      = y;
+            event = Event::MouseButtonPressed{button, {x, y}};
 
             if (id >= 0 && id < static_cast<int>(Mouse::ButtonCount))
                 states.isButtonPressed[button] = true;
         }
         else if (static_cast<unsigned int>(device) & AINPUT_SOURCE_TOUCHSCREEN)
         {
-            event.type         = Event::TouchBegan;
-            event.touch.finger = static_cast<unsigned int>(id);
-            event.touch.x      = x;
-            event.touch.y      = y;
+            Event::TouchBegan touchBegan;
+            touchBegan.finger   = static_cast<unsigned int>(id);
+            touchBegan.position = {x, y};
+            event               = touchBegan;
 
-            states.touchEvents[id] = Vector2i(event.touch.x, event.touch.y);
+            states.touchEvents[id] = touchBegan.position;
         }
     }
     else
     {
         if (device == AINPUT_SOURCE_MOUSE)
         {
-            event.type               = Event::MouseButtonReleased;
-            event.mouseButton.button = button;
-            event.mouseButton.x      = x;
-            event.mouseButton.y      = y;
+            event = Event::MouseButtonReleased{button, {x, y}};
 
             if (id >= 0 && id < static_cast<int>(Mouse::ButtonCount))
                 states.isButtonPressed[button] = false;
         }
         else if (static_cast<std::uint32_t>(device) & AINPUT_SOURCE_TOUCHSCREEN)
         {
-            event.type         = Event::TouchEnded;
-            event.touch.finger = static_cast<unsigned int>(id);
-            event.touch.x      = x;
-            event.touch.y      = y;
+            event = Event::TouchEnded{static_cast<unsigned int>(id), {x, y}};
 
             states.touchEvents.erase(id);
         }
@@ -714,7 +692,7 @@ int WindowImplAndroid::getUnicode(AInputEvent* event)
     const std::lock_guard lock(states.mutex);
 
     // Initializes JNI
-    jint lResult;
+    jint lResult = 0;
 
     JavaVM* lJavaVM = states.activity->vm;
     JNIEnv* lJNIEnv = states.activity->env;

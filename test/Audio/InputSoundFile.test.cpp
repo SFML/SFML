@@ -91,18 +91,8 @@ TEST_CASE("[Audio] sf::InputSoundFile")
 
     SECTION("openFromMemory()")
     {
+        const auto         memory = loadIntoMemory("Audio/killdeer.wav");
         sf::InputSoundFile inputSoundFile;
-        const auto         memory = []()
-        {
-            std::ifstream file("Audio/killdeer.wav", std::ios::binary | std::ios::ate);
-            REQUIRE(file);
-            const auto size = file.tellg();
-            file.seekg(0, std::ios::beg);
-            std::vector<char> buffer(static_cast<std::size_t>(size));
-            REQUIRE(file.read(buffer.data(), size));
-            return buffer;
-        }();
-
         REQUIRE(inputSoundFile.openFromMemory(memory.data(), memory.size()));
         CHECK(inputSoundFile.getSampleCount() == 112'941);
         CHECK(inputSoundFile.getChannelCount() == 1);

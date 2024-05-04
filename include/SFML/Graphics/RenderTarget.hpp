@@ -109,7 +109,7 @@ public:
     /// The specified value is truncated to the bit width of
     /// the current stencil buffer.
     ///
-    /// \param value Stencil value to clear to
+    /// \param stencilValue Stencil value to clear to
     ///
     ////////////////////////////////////////////////////////////
     void clearStencil(StencilValue stencilValue);
@@ -120,8 +120,8 @@ public:
     /// The specified stencil value is truncated to the bit
     /// width of the current stencil buffer.
     ///
-    /// \param color Fill color to use to clear the render target
-    /// \param value Stencil value to clear to
+    /// \param color        Fill color to use to clear the render target
+    /// \param stencilValue Stencil value to clear to
     ///
     ////////////////////////////////////////////////////////////
     void clear(const Color& color, StencilValue stencilValue);
@@ -547,18 +547,18 @@ private:
     ////////////////////////////////////////////////////////////
     struct StatesCache
     {
-        bool                  enable;                //!< Is the cache enabled?
-        bool                  glStatesSet{};         //!< Are our internal GL states set yet?
-        bool                  viewChanged;           //!< Has the current view changed since last draw?
-        bool                  scissorEnabled;        //!< Is scissor testing enabled?
-        bool                  stencilEnabled;        //!< Is stencil testing enabled?
-        BlendMode             lastBlendMode;         //!< Cached blending mode
-        StencilMode           lastStencilMode;       //!< Cached stencil
-        std::uint64_t         lastTextureId;         //!< Cached texture
-        CoordinateType        lastCoordinateType;    //!< Texture coordinate type
-        bool                  texCoordsArrayEnabled; //!< Is GL_TEXTURE_COORD_ARRAY client state enabled?
-        bool                  useVertexCache;        //!< Did we previously use the vertex cache?
-        std::array<Vertex, 4> vertexCache;           //!< Pre-transformed vertices cache
+        bool                  enable{};                //!< Is the cache enabled?
+        bool                  glStatesSet{};           //!< Are our internal GL states set yet?
+        bool                  viewChanged{};           //!< Has the current view changed since last draw?
+        bool                  scissorEnabled{};        //!< Is scissor testing enabled?
+        bool                  stencilEnabled{};        //!< Is stencil testing enabled?
+        BlendMode             lastBlendMode;           //!< Cached blending mode
+        StencilMode           lastStencilMode;         //!< Cached stencil
+        std::uint64_t         lastTextureId{};         //!< Cached texture
+        CoordinateType        lastCoordinateType{};    //!< Texture coordinate type
+        bool                  texCoordsArrayEnabled{}; //!< Is GL_TEXTURE_COORD_ARRAY client state enabled?
+        bool                  useVertexCache{};        //!< Did we previously use the vertex cache?
+        std::array<Vertex, 4> vertexCache{};           //!< Pre-transformed vertices cache
     };
 
     ////////////////////////////////////////////////////////////

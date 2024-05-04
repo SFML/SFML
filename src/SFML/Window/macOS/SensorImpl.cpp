@@ -33,21 +33,21 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 void SensorImpl::initialize()
 {
-    // To be implemented
+    // TODO: not implemented
 }
 
 
 ////////////////////////////////////////////////////////////
 void SensorImpl::cleanup()
 {
-    // To be implemented
+    // TODO: not implemented
 }
 
 
 ////////////////////////////////////////////////////////////
 bool SensorImpl::isAvailable(Sensor::Type /*sensor*/)
 {
-    // To be implemented
+    // TODO: not implemented
     return false;
 }
 
@@ -55,7 +55,7 @@ bool SensorImpl::isAvailable(Sensor::Type /*sensor*/)
 ////////////////////////////////////////////////////////////
 bool SensorImpl::open(Sensor::Type /*sensor*/)
 {
-    // To be implemented
+    // TODO: not implemented
     return false;
 }
 
@@ -63,14 +63,14 @@ bool SensorImpl::open(Sensor::Type /*sensor*/)
 ////////////////////////////////////////////////////////////
 void SensorImpl::close()
 {
-    // To be implemented
+    // TODO: not implemented
 }
 
 
 ////////////////////////////////////////////////////////////
 Vector3f SensorImpl::update()
 {
-    // To be implemented
+    // TODO: not implemented
     return {0, 0, 0};
 }
 
@@ -78,7 +78,7 @@ Vector3f SensorImpl::update()
 ////////////////////////////////////////////////////////////
 void SensorImpl::setEnabled(bool /*enabled*/)
 {
-    // To be implemented
+    // TODO: not implemented
 }
 
 } // namespace sf::priv

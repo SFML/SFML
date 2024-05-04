@@ -115,19 +115,19 @@ int main()
     while (window.isOpen())
     {
         // Handle events
-        for (sf::Event event; window.pollEvent(event);)
+        while (const auto event = window.pollEvent())
         {
             // Window closed or escape key pressed: exit
-            if ((event.type == sf::Event::Closed) ||
-                ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Key::Escape)))
+            if (event.is<sf::Event::Closed>() || (event.is<sf::Event::KeyPressed>() &&
+                                                  event.getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Escape))
             {
                 window.close();
                 break;
             }
 
             // Space key pressed: play
-            if (((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Key::Space)) ||
-                (event.type == sf::Event::TouchBegan))
+            if ((event.is<sf::Event::KeyPressed>() && event.getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Space) ||
+                event.is<sf::Event::TouchBegan>())
             {
                 if (!isPlaying)
                 {
@@ -150,7 +150,7 @@ int main()
             }
 
             // Window size changed, adjust view appropriately
-            if (event.type == sf::Event::Resized)
+            if (event.is<sf::Event::Resized>())
             {
                 sf::View view;
                 view.setSize({gameWidth, gameHeight});

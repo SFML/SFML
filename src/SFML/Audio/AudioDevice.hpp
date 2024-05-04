@@ -27,9 +27,13 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Audio/Listener.hpp>
+
 #include <SFML/System/Vector3.hpp>
 
-#include <string>
+#include <miniaudio.h>
+
+#include <optional>
 
 
 namespace sf::priv
@@ -56,28 +60,16 @@ public:
     ~AudioDevice();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Check if an OpenAL extension is supported
+    /// \brief Get the audio engine
     ///
-    /// This functions automatically finds whether it
-    /// is an AL or ALC extension, and calls the corresponding
-    /// function.
+    /// There should only be a single instance of AudioDevice.
+    /// As long as an AudioResource exists, this function should
+    /// always return a valid pointer to the audio engine.
     ///
-    /// \param extension Name of the extension to test
-    ///
-    /// \return True if the extension is supported, false if not
+    /// \return The audio engine
     ///
     ////////////////////////////////////////////////////////////
-    static bool isExtensionSupported(const std::string& extension);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the OpenAL format that matches the given number of channels
-    ///
-    /// \param channelCount Number of channels
-    ///
-    /// \return Corresponding format
-    ///
-    ////////////////////////////////////////////////////////////
-    static int getFormatFromChannelCount(unsigned int channelCount);
+    static ma_engine* getEngine();
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the global volume of all the sounds and musics
@@ -153,6 +145,51 @@ public:
     static Vector3f getDirection();
 
     ////////////////////////////////////////////////////////////
+    /// \brief Set the velocity of the listener in the scene
+    ///
+    /// The default listener's velocity is (0, 0, -1).
+    ///
+    /// \param velocity New listener's velocity
+    ///
+    /// \see getVelocity, getDirection, setUpVector, setPosition
+    ///
+    ////////////////////////////////////////////////////////////
+    static void setVelocity(const Vector3f& velocity);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the current forward vector of the listener in the scene
+    ///
+    /// \return Listener's velocity
+    ///
+    /// \see setVelocity
+    ///
+    ////////////////////////////////////////////////////////////
+    static Vector3f getVelocity();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the cone properties of the listener in the audio scene
+    ///
+    /// The cone defines how directional attenuation is applied.
+    /// The default cone of a sound is {2 * PI, 2 * PI, 1}.
+    ///
+    /// \param cone Cone properties of the listener in the scene
+    ///
+    /// \see getCone
+    ///
+    ////////////////////////////////////////////////////////////
+    static void setCone(const Listener::Cone& cone);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the cone properties of the listener in the audio scene
+    ///
+    /// \return Cone properties of the listener
+    ///
+    /// \see setCone
+    ///
+    ////////////////////////////////////////////////////////////
+    static Listener::Cone getCone();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Set the upward vector of the listener in the scene
     ///
     /// The up vector is the vector that points upward from the
@@ -178,6 +215,41 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     static Vector3f getUpVector();
+
+private:
+    ////////////////////////////////////////////////////////////
+    /// \brief This function makes sure the instance pointer is initialized before using it
+    ///
+    /// \return The instance pointer
+    ///
+    ////////////////////////////////////////////////////////////
+    static AudioDevice*& getInstance();
+
+    struct ListenerProperties
+    {
+        float          volume{100.f};
+        sf::Vector3f   position{0, 0, 0};
+        sf::Vector3f   direction{0, 0, -1};
+        sf::Vector3f   velocity{0, 0, 0};
+        Listener::Cone cone{sf::degrees(360), sf::degrees(360), 1};
+        sf::Vector3f   upVector{0, 1, 0};
+    };
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the listener properties
+    ///
+    /// \return The listener properties
+    ///
+    ////////////////////////////////////////////////////////////
+    static ListenerProperties& getListenerProperties();
+
+    ////////////////////////////////////////////////////////////
+    // Member data
+    ////////////////////////////////////////////////////////////
+    std::optional<ma_log>     m_log;            //!< The miniaudio log
+    std::optional<ma_context> m_context;        //!< The miniaudio context
+    std::optional<ma_device>  m_playbackDevice; //!< The miniaudio playback device
+    std::optional<ma_engine>  m_engine;         //!< The miniaudio engine (used for effects and spatialisation)
 };
 
 } // namespace sf::priv

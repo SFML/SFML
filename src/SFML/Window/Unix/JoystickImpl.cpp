@@ -208,7 +208,7 @@ void updatePluggedList(udev_device* udevDevice = nullptr)
     }
 
     udev_list_entry* devices = udev_enumerate_get_list_entry(udevEnumerator);
-    udev_list_entry* device;
+    udev_list_entry* device  = nullptr;
 
     udev_list_entry_foreach(device, devices)
     {
@@ -589,14 +589,14 @@ JoystickCaps JoystickImpl::getCapabilities() const
         return caps;
 
     // Get the number of buttons
-    char buttonCount;
+    char buttonCount = 0;
     ioctl(m_file, JSIOCGBUTTONS, &buttonCount);
     caps.buttonCount = static_cast<unsigned int>(buttonCount);
     if (caps.buttonCount > Joystick::ButtonCount)
         caps.buttonCount = Joystick::ButtonCount;
 
     // Get the supported axes
-    char axesCount;
+    char axesCount = 0;
     ioctl(m_file, JSIOCGAXES, &axesCount);
     for (int i = 0; i < axesCount; ++i)
     {

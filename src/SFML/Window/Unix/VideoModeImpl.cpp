@@ -64,21 +64,22 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
         const int screen = DefaultScreen(display.get());
 
         // Check if the XRandR extension is present
-        int version;
+        int version = 0;
         if (XQueryExtension(display.get(), "RANDR", &version, &version, &version))
         {
             // Get the current configuration
-            auto config = X11Ptr<XRRScreenConfiguration>(XRRGetScreenInfo(display.get(), RootWindow(display.get(), screen)));
+            const auto config = X11Ptr<XRRScreenConfiguration>(
+                XRRGetScreenInfo(display.get(), RootWindow(display.get(), screen)));
             if (config)
             {
                 // Get the available screen sizes
-                int            nbSizes;
-                XRRScreenSize* sizes = XRRConfigSizes(config.get(), &nbSizes);
+                int            nbSizes = 0;
+                XRRScreenSize* sizes   = XRRConfigSizes(config.get(), &nbSizes);
                 if (sizes && (nbSizes > 0))
                 {
                     // Get the list of supported depths
-                    int  nbDepths = 0;
-                    auto depths   = X11Ptr<int[]>(XListDepths(display.get(), screen, &nbDepths));
+                    int        nbDepths = 0;
+                    const auto depths   = X11Ptr<int[]>(XListDepths(display.get(), screen, &nbDepths));
                     if (depths && (nbDepths > 0))
                     {
                         // Combine depths and sizes to fill the array of supported modes
@@ -91,7 +92,7 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
                                                 static_cast<unsigned int>(sizes[j].height)},
                                                static_cast<unsigned int>(depths[i]));
 
-                                Rotation currentRotation;
+                                Rotation currentRotation = 0;
                                 XRRConfigRotations(config.get(), &currentRotation);
 
                                 if (currentRotation == RR_Rotate_90 || currentRotation == RR_Rotate_270)
@@ -141,27 +142,28 @@ VideoMode VideoModeImpl::getDesktopMode()
         const int screen = DefaultScreen(display.get());
 
         // Check if the XRandR extension is present
-        int version;
+        int version = 0;
         if (XQueryExtension(display.get(), "RANDR", &version, &version, &version))
         {
             // Get the current configuration
-            auto config = X11Ptr<XRRScreenConfiguration>(XRRGetScreenInfo(display.get(), RootWindow(display.get(), screen)));
+            const auto config = X11Ptr<XRRScreenConfiguration>(
+                XRRGetScreenInfo(display.get(), RootWindow(display.get(), screen)));
             if (config)
             {
                 // Get the current video mode
-                Rotation  currentRotation;
-                const int currentMode = XRRConfigCurrentConfiguration(config.get(), &currentRotation);
+                Rotation  currentRotation = 0;
+                const int currentMode     = XRRConfigCurrentConfiguration(config.get(), &currentRotation);
 
                 // Get the available screen sizes
-                int            nbSizes;
-                XRRScreenSize* sizes = XRRConfigSizes(config.get(), &nbSizes);
+                int            nbSizes = 0;
+                XRRScreenSize* sizes   = XRRConfigSizes(config.get(), &nbSizes);
                 if (sizes && (nbSizes > 0))
                 {
                     desktopMode = VideoMode({static_cast<unsigned int>(sizes[currentMode].width),
                                              static_cast<unsigned int>(sizes[currentMode].height)},
                                             static_cast<unsigned int>(DefaultDepth(display.get(), screen)));
 
-                    Rotation modeRotation;
+                    Rotation modeRotation = 0;
                     XRRConfigRotations(config.get(), &modeRotation);
 
                     if (modeRotation == RR_Rotate_90 || modeRotation == RR_Rotate_270)

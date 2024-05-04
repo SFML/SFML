@@ -43,16 +43,16 @@ namespace sf::priv
 {
 struct Drm
 {
-    int fileDescriptor;
+    int fileDescriptor{};
 
-    drmModeModeInfoPtr mode;
-    std::uint32_t      crtcId;
-    std::uint32_t      connectorId;
+    drmModeModeInfoPtr mode{};
+    std::uint32_t      crtcId{};
+    std::uint32_t      connectorId{};
 
-    drmModeCrtcPtr originalCrtc;
+    drmModeCrtcPtr originalCrtc{};
 
-    drmModeConnectorPtr savedConnector;
-    drmModeEncoderPtr   savedEncoder;
+    drmModeConnectorPtr savedConnector{};
+    drmModeEncoderPtr   savedEncoder{};
 };
 
 class WindowImplDRM;

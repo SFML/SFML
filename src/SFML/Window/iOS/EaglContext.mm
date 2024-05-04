@@ -212,8 +212,8 @@ void EaglContext::recreateRenderBuffers(SFView* glView)
                                   : GL_DEPTH_COMPONENT16_OES;
 
         // Get the size of the color-buffer (which fits the current size of the GL view)
-        GLint width;
-        GLint height;
+        GLint width  = 0;
+        GLint height = 0;
         glGetRenderbufferParameterivOESFunc(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_WIDTH_OES, &width);
         glGetRenderbufferParameterivOESFunc(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_HEIGHT_OES, &height);
 

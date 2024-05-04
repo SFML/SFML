@@ -23,8 +23,32 @@ int main()
         return EXIT_SUCCESS;
     }
 
+    // List the available capture devices
+    auto devices = sf::SoundRecorder::getAvailableDevices();
+
+    std::cout << "Available capture devices:\n" << std::endl;
+
+    for (auto i = 0u; i < devices.size(); ++i)
+        std::cout << i << ": " << devices[i] << '\n';
+
+    std::cout << std::endl;
+
+    std::size_t deviceIndex = 0;
+
+    // Choose the capture device
+    if (devices.size() > 1)
+    {
+        deviceIndex = devices.size();
+        std::cout << "Please choose the capture device to use [0-" << devices.size() - 1 << "]: ";
+        do
+        {
+            std::cin >> deviceIndex;
+            std::cin.ignore(10000, '\n');
+        } while (deviceIndex >= devices.size());
+    }
+
     // Choose the sample rate
-    unsigned int sampleRate;
+    unsigned int sampleRate = 0;
     std::cout << "Please choose the sample rate for sound capture (44100 is CD quality): ";
     std::cin >> sampleRate;
     std::cin.ignore(10000, '\n');
@@ -35,6 +59,12 @@ int main()
 
     // Here we'll use an integrated custom recorder, which saves the captured data into a SoundBuffer
     sf::SoundBufferRecorder recorder;
+
+    if (!recorder.setDevice(devices[deviceIndex]))
+    {
+        std::cerr << "Failed to set the capture device" << std::endl;
+        return EXIT_FAILURE;
+    }
 
     // Audio capture is done in a separate thread, so we can block the main thread while it is capturing
     if (!recorder.start(sampleRate))
@@ -57,7 +87,7 @@ int main()
               << " " << buffer.getChannelCount() << " channels" << std::endl;
 
     // Choose what to do with the recorded sound data
-    char choice;
+    char choice = 0;
     std::cout << "What do you want to do with captured sound (p = play, s = save) ? ";
     std::cin >> choice;
     std::cin.ignore(10000, '\n');
@@ -80,7 +110,7 @@ int main()
         sound.play();
 
         // Wait until finished
-        while (sound.getStatus() == sf::Sound::Playing)
+        while (sound.getStatus() == sf::Sound::Status::Playing)
         {
             // Display the playing position
             std::cout << "\rPlaying... " << sound.getPlayingOffset().asSeconds() << " sec        ";

@@ -128,13 +128,14 @@ public:
     /// The \a block parameter controls the behavior of the function
     /// if no event is available: if it is true then the function
     /// doesn't return until a new event is triggered; otherwise it
-    /// returns false to indicate that no event is available.
+    /// returns an empty event to indicate that no event is available.
     ///
-    /// \param event Event to be returned
     /// \param block Use true to block the thread until an event arrives
     ///
+    /// \return The event; can be `Empty` (convertible to `false`) if not blocking
+    ///
     ////////////////////////////////////////////////////////////
-    bool popEvent(Event& event, bool block);
+    Event popEvent(bool block);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the OS-specific handle of the window

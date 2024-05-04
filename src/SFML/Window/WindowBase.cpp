@@ -136,32 +136,22 @@ bool WindowBase::isOpen() const
 
 
 ////////////////////////////////////////////////////////////
-bool WindowBase::pollEvent(Event& event)
+Event WindowBase::pollEvent()
 {
-    if (m_impl && m_impl->popEvent(event, false))
-    {
+    sf::Event event;
+    if (m_impl && (event = m_impl->popEvent(false)))
         filterEvent(event);
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return event;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool WindowBase::waitEvent(Event& event)
+Event WindowBase::waitEvent()
 {
-    if (m_impl && m_impl->popEvent(event, true))
-    {
+    sf::Event event;
+    if (m_impl && (event = m_impl->popEvent(true)))
         filterEvent(event);
-        return true;
-    }
-    else
-    {
-        return false;
-    }
+    return event;
 }
 
 
@@ -409,10 +399,10 @@ void WindowBase::create(VideoMode mode, std::uint32_t& style, State& state)
 void WindowBase::filterEvent(const Event& event)
 {
     // Notify resize events to the derived class
-    if (event.type == Event::Resized)
+    if (const auto* resized = event.getIf<Event::Resized>())
     {
         // Cache the new size
-        m_size = {event.size.width, event.size.height};
+        m_size = resized->size;
 
         // Notify the derived class
         onResize();

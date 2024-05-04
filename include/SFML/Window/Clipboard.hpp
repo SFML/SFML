@@ -91,18 +91,18 @@ SFML_WINDOW_API void setString(const String& text);
 /// sf::String string = sf::Clipboard::getString();
 ///
 /// // or use it in the event loop
-/// for (sf::Event event; window.pollEvent(event);)
+/// while (const auto event = window.pollEvent())
 /// {
-///     if(event.type == sf::Event::Closed)
+///     if(event.is<sf::Event::Closed>())
 ///         window.close();
-///     if(event.type == sf::Event::KeyPressed)
+///     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>())
 ///     {
 ///         // Using Ctrl + V to paste a string into SFML
-///         if(event.key.control && event.key.code == sf::Keyboard::Key::V)
+///         if(keyPressed->control && keyPressed->code == sf::Keyboard::Key::V)
 ///             string = sf::Clipboard::getString();
 ///
 ///         // Using Ctrl + C to copy a string out of SFML
-///         if(event.key.control && event.key.code == sf::Keyboard::Key::C)
+///         if(keyPressed->control && keyPressed->code == sf::Keyboard::Key::C)
 ///             sf::Clipboard::setString("Hello World!");
 ///     }
 /// }

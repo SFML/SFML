@@ -29,7 +29,6 @@
 
 #include <memory>
 
-
 namespace sf
 {
 namespace priv

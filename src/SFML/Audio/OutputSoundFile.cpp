@@ -33,7 +33,10 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-bool OutputSoundFile::openFromFile(const std::filesystem::path& filename, unsigned int sampleRate, unsigned int channelCount)
+bool OutputSoundFile::openFromFile(const std::filesystem::path&     filename,
+                                   unsigned int                     sampleRate,
+                                   unsigned int                     channelCount,
+                                   const std::vector<SoundChannel>& channelMap)
 {
     // If the file is already open, first close it
     close();
@@ -44,7 +47,7 @@ bool OutputSoundFile::openFromFile(const std::filesystem::path& filename, unsign
         return false;
 
     // Pass the stream to the reader
-    if (!m_writer->open(filename, sampleRate, channelCount))
+    if (!m_writer->open(filename, sampleRate, channelCount, channelMap))
     {
         close();
         return false;

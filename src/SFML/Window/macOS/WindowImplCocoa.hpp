@@ -110,7 +110,7 @@ public:
     /// \param size new width and height
     ///
     ////////////////////////////////////////////////////////////
-    void windowResized(const Vector2u& size);
+    void windowResized(Vector2u size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Window Lost Focus Event - called by the cocoa window object
@@ -118,7 +118,7 @@ public:
     /// Send the event to SFML WindowImpl class.
     ///
     ////////////////////////////////////////////////////////////
-    void windowLostFocus();
+    void windowFocusLost();
 
     ////////////////////////////////////////////////////////////
     /// \brief Window Get Focus Event - called by the cocoa window object
@@ -126,55 +126,51 @@ public:
     /// Send the event to SFML WindowImpl class.
     ///
     ////////////////////////////////////////////////////////////
-    void windowGainedFocus();
+    void windowFocusGained();
 
     ////////////////////////////////////////////////////////////
     /// \brief Mouse Down Event - called by the cocoa view object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
-    /// \param button active button
-    /// \param x mouse x position
-    /// \param y mouse y position
+    /// \param button   active button
+    /// \param position mouse x and y position
     ///
     ////////////////////////////////////////////////////////////
-    void mouseDownAt(Mouse::Button button, int x, int y);
+    void mouseDownAt(Mouse::Button button, Vector2i position);
 
     ////////////////////////////////////////////////////////////
     /// \brief Mouse Up Event - called by the cocoa view object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
-    /// \param button active button
-    /// \param x mouse x position
-    /// \param y mouse y position
+    /// \param button   active button
+    /// \param position mouse x and y position
     ///
     ////////////////////////////////////////////////////////////
-    void mouseUpAt(Mouse::Button button, int x, int y);
+    void mouseUpAt(Mouse::Button button, Vector2i position);
 
     ////////////////////////////////////////////////////////////
     /// \brief Mouse Moved Event - called by the cocoa view object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
-    /// \param x mouse x position
-    /// \param y mouse y position
+    /// \param position mouse x and y position
     ///
     ////////////////////////////////////////////////////////////
-    void mouseMovedAt(int x, int y);
+    void mouseMovedAt(Vector2i position);
 
     ////////////////////////////////////////////////////////////
     /// \brief Mouse Wheel Scrolled Event - called by the cocoa view object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
-    /// \param deltaX horizontal scrolling delta
-    /// \param deltaY vertical scrolling delta
-    /// \param x mouse x position
-    /// \param y mouse y position
+    /// \param deltaX   horizontal scrolling delta
+    /// \param deltaY   vertical scrolling delta
+    /// \param position mouse x and y position
     ///
     ////////////////////////////////////////////////////////////
-    void mouseWheelScrolledAt(float deltaX, float deltaY, int x, int y);
+    void mouseWheelScrolledAt(float deltaX, float deltaY, Vector2i position);
 
     ////////////////////////////////////////////////////////////
     /// \brief Mouse In Event - called by the cocoa view object
@@ -197,20 +193,20 @@ public:
     ///
     /// Send the event to SFML WindowImpl class.
     ///
-    /// \param key active key
+    /// \param event active key
     ///
     ////////////////////////////////////////////////////////////
-    void keyDown(Event::KeyEvent key);
+    void keyDown(Event::KeyPressed event);
 
     ////////////////////////////////////////////////////////////
     /// \brief Key Up Event - called by the cocoa view object
     ///
     /// Send the event to SFML WindowImpl class.
     ///
-    /// \param key active key
+    /// \param event active key
     ///
     ////////////////////////////////////////////////////////////
-    void keyUp(Event::KeyEvent key);
+    void keyUp(Event::KeyReleased event);
 
     ////////////////////////////////////////////////////////////
     /// \brief Text Entred Event - called by the cocoa view object

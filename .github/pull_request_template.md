@@ -39,9 +39,9 @@ int main()
 
     while (window.isOpen())
     {
-        for (sf::Event event; window.pollEvent(event);)
+        while (const auto event = window.pollEvent())
         {
-            if (event.type == sf::Event::Closed)
+            if (event.is<sf::Event::Closed>())
                 window.close();
         }
 

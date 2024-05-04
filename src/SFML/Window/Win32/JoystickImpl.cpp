@@ -79,9 +79,9 @@ IDirectInput8W* directInput = nullptr;
 
 struct JoystickRecord
 {
-    GUID         guid;
-    unsigned int index;
-    bool         plugged;
+    GUID         guid{};
+    unsigned int index{};
+    bool         plugged{};
 };
 
 using JoystickList = std::vector<JoystickRecord>;
@@ -89,8 +89,8 @@ JoystickList joystickList;
 
 struct JoystickBlacklistEntry
 {
-    unsigned int vendorId;
-    unsigned int productId;
+    unsigned int vendorId{};
+    unsigned int productId{};
 };
 
 using JoystickBlacklist = std::vector<JoystickBlacklistEntry>;
@@ -120,7 +120,7 @@ bool lazyUpdates = false;
 // Get a system error string from an error code
 std::string getErrorString(DWORD error)
 {
-    PTCHAR buffer;
+    PTCHAR buffer = nullptr;
 
     if (FormatMessage(FORMAT_MESSAGE_MAX_WIDTH_MASK | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
                       nullptr,
@@ -142,9 +142,9 @@ sf::String getDeviceName(unsigned int index, JOYCAPS caps)
     // Give the joystick a default name
     sf::String joystickDescription = "Unknown Joystick";
 
-    LONG                     result;
-    HKEY                     rootKey;
-    HKEY                     currentKey;
+    LONG                     result     = 0;
+    HKEY                     rootKey    = nullptr;
+    HKEY                     currentKey = nullptr;
     std::basic_string<TCHAR> subkey;
 
     subkey = REGSTR_PATH_JOYCONFIG;

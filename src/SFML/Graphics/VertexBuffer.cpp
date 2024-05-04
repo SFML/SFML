@@ -348,7 +348,7 @@ bool VertexBuffer::isAvailable()
 
 
 ////////////////////////////////////////////////////////////
-void VertexBuffer::draw(RenderTarget& target, const RenderStates& states) const
+void VertexBuffer::draw(RenderTarget& target, RenderStates states) const
 {
     if (m_buffer && m_size)
         target.draw(*this, 0, m_size, states);

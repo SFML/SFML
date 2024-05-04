@@ -131,6 +131,9 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Get the address of an OpenGL function
     ///
+    /// On Windows when not using OpenGL ES, a context must be
+    /// active for this function to succeed.
+    ///
     /// \param name Name of the function to get the address of
     ///
     /// \return Address of the OpenGL function, 0 on failure
@@ -168,8 +171,7 @@ public:
     /// to bother with it.
     ///
     /// \param settings Creation parameters
-    /// \param width    Back buffer width
-    /// \param height   Back buffer height
+    /// \param size     Back buffer size
     ///
     ////////////////////////////////////////////////////////////
     Context(const ContextSettings& settings, const Vector2u& size);
