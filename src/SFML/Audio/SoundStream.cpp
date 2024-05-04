@@ -55,6 +55,7 @@ struct SoundStream::Impl
     ~Impl()
     {
         ma_sound_uninit(&sound);
+        ma_node_uninit(&effectNode, nullptr);
         ma_data_source_uninit(&dataSourceBase);
     }
 
@@ -91,6 +92,34 @@ struct SoundStream::Impl
             return;
         }
 
+        // Initialize the custom effect node
+        effectNodeVTable.onProcess =
+            [](ma_node* node, const float** framesIn, ma_uint32* frameCountIn, float** framesOut, ma_uint32* frameCountOut)
+        { static_cast<EffectNode*>(node)->impl->processEffect(framesIn, *frameCountIn, framesOut, *frameCountOut); };
+        effectNodeVTable.onGetRequiredInputFrameCount = nullptr;
+        effectNodeVTable.inputBusCount                = 1;
+        effectNodeVTable.outputBusCount               = 1;
+        effectNodeVTable.flags = MA_NODE_FLAG_CONTINUOUS_PROCESSING | MA_NODE_FLAG_ALLOW_NULL_INPUT;
+
+        const auto     nodeChannelCount = ma_engine_get_channels(engine);
+        ma_node_config nodeConfig       = ma_node_config_init();
+        nodeConfig.vtable               = &effectNodeVTable;
+        nodeConfig.pInputChannels       = &nodeChannelCount;
+        nodeConfig.pOutputChannels      = &nodeChannelCount;
+
+        if (const ma_result result = ma_node_init(ma_engine_get_node_graph(engine), &nodeConfig, nullptr, &effectNode);
+            result != MA_SUCCESS)
+        {
+            err() << "Failed to initialize effect node: " << ma_result_description(result) << std::endl;
+            return;
+        }
+
+        effectNode.impl         = this;
+        effectNode.channelCount = nodeChannelCount;
+
+        // Route the sound through the effect node depending on whether an effect processor is set
+        connectEffect(bool{effectProcessor});
+
         // Because we are providing a custom data source, we have to provide the channel map ourselves
         if (!channelMap.empty())
         {
@@ -111,7 +140,79 @@ struct SoundStream::Impl
 
     void reinitialize()
     {
-        priv::MiniaudioUtils::reinitializeSound(sound, [this] { initialize(); });
+        priv::MiniaudioUtils::reinitializeSound(sound,
+                                                [this]
+                                                {
+                                                    ma_node_uninit(&effectNode, nullptr);
+                                                    initialize();
+                                                });
+    }
+
+    void processEffect(const float** framesIn, ma_uint32& frameCountIn, float** framesOut, ma_uint32& frameCountOut) const
+    {
+        // If a processor is set, call it
+        if (effectProcessor)
+        {
+            if (!framesIn)
+                frameCountIn = 0;
+
+            effectProcessor(framesIn ? framesIn[0] : nullptr, frameCountIn, framesOut[0], frameCountOut, effectNode.channelCount);
+            return;
+        }
+
+        // Otherwise just pass the data through 1:1
+        if (framesIn == nullptr)
+        {
+            frameCountIn  = 0;
+            frameCountOut = 0;
+            return;
+        }
+
+        const auto toProcess = std::min(frameCountIn, frameCountOut);
+        std::memcpy(framesOut[0], framesIn[0], toProcess * effectNode.channelCount * sizeof(float));
+        frameCountIn  = toProcess;
+        frameCountOut = toProcess;
+    }
+
+    void connectEffect(bool connect)
+    {
+        auto* engine = priv::AudioDevice::getEngine();
+
+        if (engine == nullptr)
+        {
+            err() << "Failed to connect effect: No engine available" << std::endl;
+            return;
+        }
+
+        if (connect)
+        {
+            // Attach the custom effect node output to our engine endpoint
+            if (const ma_result result = ma_node_attach_output_bus(&effectNode, 0, ma_engine_get_endpoint(engine), 0);
+                result != MA_SUCCESS)
+            {
+                err() << "Failed to attach effect node output to endpoint: " << ma_result_description(result) << std::endl;
+                return;
+            }
+        }
+        else
+        {
+            // Detach the custom effect node output from our engine endpoint
+            if (const ma_result result = ma_node_detach_output_bus(&effectNode, 0); result != MA_SUCCESS)
+            {
+                err() << "Failed to detach effect node output from endpoint: " << ma_result_description(result)
+                      << std::endl;
+                return;
+            }
+        }
+
+        // Attach the sound output to the custom effect node or the engine endpoint
+        if (const ma_result
+                result = ma_node_attach_output_bus(&sound, 0, connect ? &effectNode : ma_engine_get_endpoint(engine), 0);
+            result != MA_SUCCESS)
+        {
+            err() << "Failed to attach sound node output to effect node: " << ma_result_description(result) << std::endl;
+            return;
+        }
     }
 
     static ma_result read(ma_data_source* dataSource, void* framesOut, ma_uint64 frameCount, ma_uint64* framesRead)
@@ -238,8 +339,17 @@ struct SoundStream::Impl
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
+    struct EffectNode
+    {
+        ma_node_base base{};
+        Impl*        impl{};
+        ma_uint32    channelCount{};
+    };
+
     ma_data_source_base dataSourceBase{}; //!< The struct that makes this object a miniaudio data source (must be first member)
     SoundStream* const      owner;        //!< Owning SoundStream object
+    ma_node_vtable          effectNodeVTable{}; //!< Vtable of the effect node
+    EffectNode              effectNode;         //!< The engine node that performs effect processing
     std::vector<ma_channel> soundChannelMap; //!< The map of position in sample frame to sound channel (miniaudio channels)
     ma_sound                sound{};         //!< The sound
     std::vector<std::int16_t> sampleBuffer;            //!< Our temporary sample buffer
@@ -251,6 +361,7 @@ struct SoundStream::Impl
     bool                      loop{};                  //!< Loop flag (true to loop, false to play once)
     bool                      streaming{true};         //!< True if we are still streaming samples from the source
     Status                    status{Status::Stopped}; //!< The status
+    EffectProcessor           effectProcessor;         //!< The effect processor
 };
 
 
@@ -392,6 +503,14 @@ void SoundStream::setLoop(bool loop)
 bool SoundStream::getLoop() const
 {
     return ma_sound_is_looping(&m_impl->sound) == MA_TRUE;
+}
+
+
+////////////////////////////////////////////////////////////
+void SoundStream::setEffectProcessor(EffectProcessor effectProcessor)
+{
+    m_impl->effectProcessor = std::move(effectProcessor);
+    m_impl->connectEffect(bool{m_impl->effectProcessor});
 }
 
 
