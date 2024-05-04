@@ -125,14 +125,14 @@ public:
 ///
 /// This operator compares strict equality between two rectangles.
 ///
-/// \param left  Left operand (a rectangle)
-/// \param right Right operand (a rectangle)
+/// \param lhs Left operand (a rectangle)
+/// \param rhs Right operand (a rectangle)
 ///
-/// \return True if \a left is equal to \a right
+/// \return True if \a lhs is equal to \a rhs
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-[[nodiscard]] constexpr bool operator==(const Rect<T>& left, const Rect<T>& right);
+[[nodiscard]] constexpr bool operator==(const Rect<T>& lhs, const Rect<T>& rhs);
 
 ////////////////////////////////////////////////////////////
 /// \relates Rect
@@ -140,14 +140,14 @@ template <typename T>
 ///
 /// This operator compares strict difference between two rectangles.
 ///
-/// \param left  Left operand (a rectangle)
-/// \param right Right operand (a rectangle)
+/// \param lhs Left operand (a rectangle)
+/// \param rhs Right operand (a rectangle)
 ///
-/// \return True if \a left is not equal to \a right
+/// \return True if \a lhs is not equal to \a rhs
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-[[nodiscard]] constexpr bool operator!=(const Rect<T>& left, const Rect<T>& right);
+[[nodiscard]] constexpr bool operator!=(const Rect<T>& lhs, const Rect<T>& rhs);
 
 // Create type aliases for the most common types
 using IntRect   = Rect<int>;

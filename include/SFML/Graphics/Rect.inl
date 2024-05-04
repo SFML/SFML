@@ -120,17 +120,17 @@ constexpr Vector2<T> Rect<T>::getCenter() const
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr bool operator==(const Rect<T>& left, const Rect<T>& right)
+constexpr bool operator==(const Rect<T>& lhs, const Rect<T>& rhs)
 {
-    return (left.position == right.position) && (left.size == right.size);
+    return (lhs.position == rhs.position) && (lhs.size == rhs.size);
 }
 
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr bool operator!=(const Rect<T>& left, const Rect<T>& right)
+constexpr bool operator!=(const Rect<T>& lhs, const Rect<T>& rhs)
 {
-    return !(left == right);
+    return !(lhs == rhs);
 }
 
 } // namespace sf
