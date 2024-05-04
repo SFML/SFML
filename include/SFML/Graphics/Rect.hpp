@@ -109,8 +109,6 @@ public:
     ///
     /// \return Center of rectangle
     ///
-    /// \see getSize, getPosition
-    ///
     ////////////////////////////////////////////////////////////
     constexpr Vector2<T> getCenter() const;
 
@@ -166,18 +164,18 @@ using FloatRect = Rect<float>;
 ///
 /// A rectangle is defined by its top-left corner and its size.
 /// It is a very simple class defined for convenience, so
-/// its member variables (left, top, width and height) are public
+/// its member variables (position and size) are public
 /// and can be accessed directly, just like the vector classes
 /// (Vector2 and Vector3).
 ///
 /// To keep things simple, sf::Rect doesn't define
 /// functions to emulate the properties that are not directly
-/// members (such as right, bottom, center, etc.), it rather
+/// members (such as right, bottom, etc.), it rather
 /// only provides intersection functions.
 ///
 /// sf::Rect uses the usual rules for its boundaries:
 /// \li The left and top edges are included in the rectangle's area
-/// \li The right (left + width) and bottom (top + height) edges are excluded from the rectangle's area
+/// \li The right and bottom edges are excluded from the rectangle's area
 ///
 /// This means that sf::IntRect({0, 0}, {1, 1}) and sf::IntRect({1, 1}, {1, 1})
 /// don't intersect.
@@ -206,7 +204,7 @@ using FloatRect = Rect<float>;
 /// // Test the intersection between r1 and r2
 /// std::optional<sf::IntRect> result = r1.findIntersection(r2);
 /// // result.has_value() == true
-/// // result.value() == (4, 2, 16, 3)
+/// // result.value() == sf::IntRect({4, 2}, {16, 3})
 /// \endcode
 ///
 ////////////////////////////////////////////////////////////
