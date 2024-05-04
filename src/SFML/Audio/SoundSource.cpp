@@ -167,6 +167,13 @@ void SoundSource::setAttenuation(float attenuation)
 
 
 ////////////////////////////////////////////////////////////
+// NOLINTNEXTLINE(performance-unnecessary-value-param)
+void SoundSource::setEffectProcessor(EffectProcessor)
+{
+}
+
+
+////////////////////////////////////////////////////////////
 float SoundSource::getPitch() const
 {
     if (const auto* sound = static_cast<const ma_sound*>(getSound()))

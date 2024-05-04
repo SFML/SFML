@@ -163,6 +163,17 @@ public:
     void setPlayingOffset(Time timeOffset);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Set the effect processor to be applied to the sound
+    ///
+    /// The effect processor is a callable that will be called
+    /// with sound data to be processed.
+    ///
+    /// \param effectProcessor The effect processor to attach to this sound, attach an empty processor to disable processing
+    ///
+    ////////////////////////////////////////////////////////////
+    void setEffectProcessor(EffectProcessor effectProcessor) override;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Get the audio buffer attached to the sound
     ///
     /// \return Sound buffer attached to the sound
