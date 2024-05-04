@@ -34,84 +34,84 @@ namespace sf
 ////////////////////////////////////////////////////////////
 void Listener::setGlobalVolume(float volume)
 {
-    priv::AudioDevice::setGlobalVolume(volume);
+    priv::AudioDevice::get().setGlobalVolume(volume);
 }
 
 
 ////////////////////////////////////////////////////////////
 float Listener::getGlobalVolume()
 {
-    return priv::AudioDevice::getGlobalVolume();
+    return priv::AudioDevice::get().getGlobalVolume();
 }
 
 
 ////////////////////////////////////////////////////////////
 void Listener::setPosition(const Vector3f& position)
 {
-    priv::AudioDevice::setPosition(position);
+    priv::AudioDevice::get().setPosition(position);
 }
 
 
 ////////////////////////////////////////////////////////////
 Vector3f Listener::getPosition()
 {
-    return priv::AudioDevice::getPosition();
+    return priv::AudioDevice::get().getPosition();
 }
 
 
 ////////////////////////////////////////////////////////////
 void Listener::setDirection(const Vector3f& direction)
 {
-    priv::AudioDevice::setDirection(direction);
+    priv::AudioDevice::get().setDirection(direction);
 }
 
 
 ////////////////////////////////////////////////////////////
 Vector3f Listener::getDirection()
 {
-    return priv::AudioDevice::getDirection();
+    return priv::AudioDevice::get().getDirection();
 }
 
 
 ////////////////////////////////////////////////////////////
 void Listener::setVelocity(const Vector3f& velocity)
 {
-    priv::AudioDevice::setVelocity(velocity);
+    priv::AudioDevice::get().setVelocity(velocity);
 }
 
 
 ////////////////////////////////////////////////////////////
 Vector3f Listener::getVelocity()
 {
-    return priv::AudioDevice::getVelocity();
+    return priv::AudioDevice::get().getVelocity();
 }
 
 
 ////////////////////////////////////////////////////////////
 void Listener::setCone(const Listener::Cone& cone)
 {
-    priv::AudioDevice::setCone(cone);
+    priv::AudioDevice::get().setCone(cone);
 }
 
 
 ////////////////////////////////////////////////////////////
 Listener::Cone Listener::getCone()
 {
-    return priv::AudioDevice::getCone();
+    return priv::AudioDevice::get().getCone();
 }
 
 
 ////////////////////////////////////////////////////////////
 void Listener::setUpVector(const Vector3f& upVector)
 {
-    priv::AudioDevice::setUpVector(upVector);
+    priv::AudioDevice::get().setUpVector(upVector);
 }
 
 
 ////////////////////////////////////////////////////////////
 Vector3f Listener::getUpVector()
 {
-    return priv::AudioDevice::getUpVector();
+    return priv::AudioDevice::get().getUpVector();
 }
 
 } // namespace sf

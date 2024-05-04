@@ -62,7 +62,7 @@ struct SoundStream::Impl
     void initialize()
     {
         // Initialize the sound
-        auto* engine = priv::AudioDevice::getEngine();
+        auto* engine = priv::AudioDevice::get().getEngine();
 
         if (engine == nullptr)
         {
@@ -176,7 +176,7 @@ struct SoundStream::Impl
 
     void connectEffect(bool connect)
     {
-        auto* engine = priv::AudioDevice::getEngine();
+        auto* engine = priv::AudioDevice::get().getEngine();
 
         if (engine == nullptr)
         {

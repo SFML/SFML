@@ -46,7 +46,7 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 class AudioDevice
 {
-public:
+private:
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -59,17 +59,16 @@ public:
     ////////////////////////////////////////////////////////////
     ~AudioDevice();
 
+public:
     ////////////////////////////////////////////////////////////
     /// \brief Get the audio engine
     ///
     /// There should only be a single instance of AudioDevice.
-    /// As long as an AudioResource exists, this function should
-    /// always return a valid pointer to the audio engine.
     ///
     /// \return The audio engine
     ///
     ////////////////////////////////////////////////////////////
-    static ma_engine* getEngine();
+    ma_engine* getEngine();
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the global volume of all the sounds and musics
@@ -83,7 +82,7 @@ public:
     /// \see getGlobalVolume
     ///
     ////////////////////////////////////////////////////////////
-    static void setGlobalVolume(float volume);
+    void setGlobalVolume(float volume);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current value of the global volume
@@ -93,7 +92,7 @@ public:
     /// \see setGlobalVolume
     ///
     ////////////////////////////////////////////////////////////
-    static float getGlobalVolume();
+    float getGlobalVolume() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the position of the listener in the scene
@@ -105,7 +104,7 @@ public:
     /// \see getPosition, setDirection
     ///
     ////////////////////////////////////////////////////////////
-    static void setPosition(const Vector3f& position);
+    void setPosition(const Vector3f& position);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current position of the listener in the scene
@@ -115,7 +114,7 @@ public:
     /// \see setPosition
     ///
     ////////////////////////////////////////////////////////////
-    static Vector3f getPosition();
+    Vector3f getPosition() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the forward vector of the listener in the scene
@@ -132,7 +131,7 @@ public:
     /// \see getDirection, setUpVector, setPosition
     ///
     ////////////////////////////////////////////////////////////
-    static void setDirection(const Vector3f& direction);
+    void setDirection(const Vector3f& direction);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current forward vector of the listener in the scene
@@ -142,7 +141,7 @@ public:
     /// \see setDirection
     ///
     ////////////////////////////////////////////////////////////
-    static Vector3f getDirection();
+    Vector3f getDirection() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the velocity of the listener in the scene
@@ -154,7 +153,7 @@ public:
     /// \see getVelocity, getDirection, setUpVector, setPosition
     ///
     ////////////////////////////////////////////////////////////
-    static void setVelocity(const Vector3f& velocity);
+    void setVelocity(const Vector3f& velocity);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current forward vector of the listener in the scene
@@ -164,7 +163,7 @@ public:
     /// \see setVelocity
     ///
     ////////////////////////////////////////////////////////////
-    static Vector3f getVelocity();
+    Vector3f getVelocity() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the cone properties of the listener in the audio scene
@@ -177,7 +176,7 @@ public:
     /// \see getCone
     ///
     ////////////////////////////////////////////////////////////
-    static void setCone(const Listener::Cone& cone);
+    void setCone(const Listener::Cone& cone);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the cone properties of the listener in the audio scene
@@ -187,7 +186,7 @@ public:
     /// \see setCone
     ///
     ////////////////////////////////////////////////////////////
-    static Listener::Cone getCone();
+    Listener::Cone getCone() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the upward vector of the listener in the scene
@@ -204,7 +203,7 @@ public:
     /// \see getUpVector, setDirection, setPosition
     ///
     ////////////////////////////////////////////////////////////
-    static void setUpVector(const Vector3f& upVector);
+    void setUpVector(const Vector3f& upVector);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current upward vector of the listener in the scene
@@ -214,17 +213,17 @@ public:
     /// \see setUpVector
     ///
     ////////////////////////////////////////////////////////////
-    static Vector3f getUpVector();
+    Vector3f getUpVector() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Gets the audio device singleton, initializing it if necessary
+    ///
+    /// \return The audio device
+    ///
+    ////////////////////////////////////////////////////////////
+    static AudioDevice& get();
 
 private:
-    ////////////////////////////////////////////////////////////
-    /// \brief This function makes sure the instance pointer is initialized before using it
-    ///
-    /// \return The instance pointer
-    ///
-    ////////////////////////////////////////////////////////////
-    static AudioDevice*& getInstance();
-
     struct ListenerProperties
     {
         float          volume{100.f};
@@ -236,20 +235,13 @@ private:
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the listener properties
-    ///
-    /// \return The listener properties
-    ///
-    ////////////////////////////////////////////////////////////
-    static ListenerProperties& getListenerProperties();
-
-    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::optional<ma_log>     m_log;            //!< The miniaudio log
-    std::optional<ma_context> m_context;        //!< The miniaudio context
-    std::optional<ma_device>  m_playbackDevice; //!< The miniaudio playback device
-    std::optional<ma_engine>  m_engine;         //!< The miniaudio engine (used for effects and spatialisation)
+    ListenerProperties        m_listenerProperties; //!< The listener properties
+    std::optional<ma_log>     m_log;                //!< The miniaudio log
+    std::optional<ma_context> m_context;            //!< The miniaudio context
+    std::optional<ma_device>  m_playbackDevice;     //!< The miniaudio playback device
+    std::optional<ma_engine>  m_engine;             //!< The miniaudio engine (used for effects and spatialisation)
 };
 
 } // namespace sf::priv

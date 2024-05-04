@@ -39,10 +39,6 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 AudioDevice::AudioDevice()
 {
-    // Ensure we only ever have a single AudioDevice instance
-    assert(getInstance() == nullptr);
-    getInstance() = this;
-
     // Create the log
     m_log.emplace();
 
@@ -156,31 +152,33 @@ AudioDevice::AudioDevice()
     }
 
     // Set master volume, position, velocity, cone and world up vector
-    if (const auto result = ma_device_set_master_volume(ma_engine_get_device(&*m_engine),
-                                                        getListenerProperties().volume * 0.01f);
+    if (const auto result = ma_device_set_master_volume(ma_engine_get_device(&*m_engine), m_listenerProperties.volume * 0.01f);
         result != MA_SUCCESS)
         err() << "Failed to set audio device master volume: " << ma_result_description(result) << std::endl;
 
     ma_engine_listener_set_position(&*m_engine,
                                     0,
-                                    getListenerProperties().position.x,
-                                    getListenerProperties().position.y,
-                                    getListenerProperties().position.z);
+                                    m_listenerProperties.position.x,
+                                    m_listenerProperties.position.y,
+                                    m_listenerProperties.position.z);
+
     ma_engine_listener_set_velocity(&*m_engine,
                                     0,
-                                    getListenerProperties().velocity.x,
-                                    getListenerProperties().velocity.y,
-                                    getListenerProperties().velocity.z);
+                                    m_listenerProperties.velocity.x,
+                                    m_listenerProperties.velocity.y,
+                                    m_listenerProperties.velocity.z);
+
     ma_engine_listener_set_cone(&*m_engine,
                                 0,
-                                getListenerProperties().cone.innerAngle.asRadians(),
-                                getListenerProperties().cone.outerAngle.asRadians(),
-                                getListenerProperties().cone.outerGain);
+                                m_listenerProperties.cone.innerAngle.asRadians(),
+                                m_listenerProperties.cone.outerAngle.asRadians(),
+                                m_listenerProperties.cone.outerGain);
+
     ma_engine_listener_set_world_up(&*m_engine,
                                     0,
-                                    getListenerProperties().upVector.x,
-                                    getListenerProperties().upVector.y,
-                                    getListenerProperties().upVector.z);
+                                    m_listenerProperties.upVector.x,
+                                    m_listenerProperties.upVector.y,
+                                    m_listenerProperties.upVector.z);
 }
 
 
@@ -202,20 +200,14 @@ AudioDevice::~AudioDevice()
     // Destroy the log
     if (m_log)
         ma_log_uninit(&*m_log);
-
-    // Ensure we only ever have a single AudioDevice instance
-    assert(getInstance() != nullptr);
-    getInstance() = nullptr;
 }
 
 
 ////////////////////////////////////////////////////////////
 ma_engine* AudioDevice::getEngine()
 {
-    auto* instance = getInstance();
-
-    if (instance && instance->m_engine)
-        return &*instance->m_engine;
+    if (m_engine.has_value())
+        return &*m_engine;
 
     return nullptr;
 }
@@ -225,23 +217,21 @@ ma_engine* AudioDevice::getEngine()
 void AudioDevice::setGlobalVolume(float volume)
 {
     // Store the volume in case no audio device exists yet
-    getListenerProperties().volume = volume;
+    m_listenerProperties.volume = volume;
 
-    auto* instance = getInstance();
-
-    if (!instance || !instance->m_engine)
+    if (!m_engine.has_value())
         return;
 
-    if (const auto result = ma_device_set_master_volume(ma_engine_get_device(&*instance->m_engine), volume * 0.01f);
+    if (const auto result = ma_device_set_master_volume(ma_engine_get_device(&*m_engine), volume * 0.01f);
         result != MA_SUCCESS)
         err() << "Failed to set audio device master volume: " << ma_result_description(result) << std::endl;
 }
 
 
 ////////////////////////////////////////////////////////////
-float AudioDevice::getGlobalVolume()
+float AudioDevice::getGlobalVolume() const
 {
-    return getListenerProperties().volume;
+    return m_listenerProperties.volume;
 }
 
 
@@ -249,21 +239,19 @@ float AudioDevice::getGlobalVolume()
 void AudioDevice::setPosition(const Vector3f& position)
 {
     // Store the position in case no audio device exists yet
-    getListenerProperties().position = position;
+    m_listenerProperties.position = position;
 
-    auto* instance = getInstance();
-
-    if (!instance || !instance->m_engine)
+    if (!m_engine.has_value())
         return;
 
-    ma_engine_listener_set_position(&*instance->m_engine, 0, position.x, position.y, position.z);
+    ma_engine_listener_set_position(&*m_engine, 0, position.x, position.y, position.z);
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector3f AudioDevice::getPosition()
+Vector3f AudioDevice::getPosition() const
 {
-    return getListenerProperties().position;
+    return m_listenerProperties.position;
 }
 
 
@@ -271,21 +259,19 @@ Vector3f AudioDevice::getPosition()
 void AudioDevice::setDirection(const Vector3f& direction)
 {
     // Store the direction in case no audio device exists yet
-    getListenerProperties().direction = direction;
+    m_listenerProperties.direction = direction;
 
-    auto* instance = getInstance();
-
-    if (!instance || !instance->m_engine)
+    if (!m_engine.has_value())
         return;
 
-    ma_engine_listener_set_direction(&*instance->m_engine, 0, direction.x, direction.y, direction.z);
+    ma_engine_listener_set_direction(&*m_engine, 0, direction.x, direction.y, direction.z);
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector3f AudioDevice::getDirection()
+Vector3f AudioDevice::getDirection() const
 {
-    return getListenerProperties().direction;
+    return m_listenerProperties.direction;
 }
 
 
@@ -293,21 +279,19 @@ Vector3f AudioDevice::getDirection()
 void AudioDevice::setVelocity(const Vector3f& velocity)
 {
     // Store the velocity in case no audio device exists yet
-    getListenerProperties().velocity = velocity;
+    m_listenerProperties.velocity = velocity;
 
-    auto* instance = getInstance();
-
-    if (!instance || !instance->m_engine)
+    if (!m_engine.has_value())
         return;
 
-    ma_engine_listener_set_velocity(&*instance->m_engine, 0, velocity.x, velocity.y, velocity.z);
+    ma_engine_listener_set_velocity(&*m_engine, 0, velocity.x, velocity.y, velocity.z);
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector3f AudioDevice::getVelocity()
+Vector3f AudioDevice::getVelocity() const
 {
-    return getListenerProperties().velocity;
+    return m_listenerProperties.velocity;
 }
 
 
@@ -315,14 +299,12 @@ Vector3f AudioDevice::getVelocity()
 void AudioDevice::setCone(const Listener::Cone& cone)
 {
     // Store the cone in case no audio device exists yet
-    getListenerProperties().cone = cone;
+    m_listenerProperties.cone = cone;
 
-    auto* instance = getInstance();
-
-    if (!instance || !instance->m_engine)
+    if (!m_engine.has_value())
         return;
 
-    ma_engine_listener_set_cone(&*instance->m_engine,
+    ma_engine_listener_set_cone(&*m_engine,
                                 0,
                                 std::clamp(cone.innerAngle, Angle::Zero, degrees(360.f)).asRadians(),
                                 std::clamp(cone.outerAngle, Angle::Zero, degrees(360.f)).asRadians(),
@@ -331,9 +313,9 @@ void AudioDevice::setCone(const Listener::Cone& cone)
 
 
 ////////////////////////////////////////////////////////////
-Listener::Cone AudioDevice::getCone()
+Listener::Cone AudioDevice::getCone() const
 {
-    return getListenerProperties().cone;
+    return m_listenerProperties.cone;
 }
 
 
@@ -341,37 +323,27 @@ Listener::Cone AudioDevice::getCone()
 void AudioDevice::setUpVector(const Vector3f& upVector)
 {
     // Store the up vector in case no audio device exists yet
-    getListenerProperties().upVector = upVector;
+    m_listenerProperties.upVector = upVector;
 
-    auto* instance = getInstance();
-
-    if (!instance || !instance->m_engine)
+    if (!m_engine.has_value())
         return;
 
-    ma_engine_listener_set_world_up(&*instance->m_engine, 0, upVector.x, upVector.y, upVector.z);
+    ma_engine_listener_set_world_up(&*m_engine, 0, upVector.x, upVector.y, upVector.z);
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector3f AudioDevice::getUpVector()
+Vector3f AudioDevice::getUpVector() const
 {
-    return getListenerProperties().upVector;
+    return m_listenerProperties.upVector;
 }
 
 
 ////////////////////////////////////////////////////////////
-AudioDevice*& AudioDevice::getInstance()
+AudioDevice& AudioDevice::get()
 {
-    static AudioDevice* instance{};
+    static AudioDevice instance;
     return instance;
-}
-
-
-////////////////////////////////////////////////////////////
-AudioDevice::ListenerProperties& AudioDevice::getListenerProperties()
-{
-    static ListenerProperties properties;
-    return properties;
 }
 
 } // namespace sf::priv
