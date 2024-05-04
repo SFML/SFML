@@ -3,8 +3,6 @@ set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/Audio)
 
 # all source files
 set(SRC
-    ${SRCROOT}/AudioResource.cpp
-    ${INCROOT}/AudioResource.hpp
     ${SRCROOT}/AudioDevice.cpp
     ${SRCROOT}/AudioDevice.hpp
     ${INCROOT}/Export.hpp

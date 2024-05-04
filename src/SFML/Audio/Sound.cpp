@@ -61,7 +61,7 @@ struct Sound::Impl
     void initialize()
     {
         // Initialize the sound
-        auto* engine = priv::AudioDevice::getEngine();
+        auto* engine = priv::AudioDevice::get().getEngine();
 
         if (engine == nullptr)
         {
