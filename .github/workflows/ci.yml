@@ -85,7 +85,7 @@ jobs:
             api: 24
             libcxx: x86_64-linux-android/libc++_shared.so
             emuarch: x86_64
-            emuapi: 34
+            # emuapi: 34 # Removing this causes the tests to not run. This works around an issue that causes the Network module tests to fail.
           type: { name: Release }
         - platform: { name: Android, os: ubuntu-latest }
           config:
