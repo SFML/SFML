@@ -465,6 +465,13 @@ endif()
 
 sfml_export_targets()
 
+# configure extras by default when building SFML directly, otherwise hide them
+sfml_set_option(SFML_CONFIGURE_EXTRAS ${PROJECT_IS_TOP_LEVEL} BOOL "TRUE to configure extras, FALSE to ignore them")
+
+if(NOT SFML_CONFIGURE_EXTRAS)
+    return()
+endif()
+
 set(CPACK_PACKAGE_NAME_SUMMARY "Simple and Fast Multimedia Library")
 set(CPACK_PACKAGE_VENDOR "SFML Team")
 set(CPACK_PACKAGE_FILE_NAME "SFML-${PROJECT_VERSION}-${CMAKE_CXX_COMPILER_ID}-${CMAKE_CXX_COMPILER_VERSION}-${CMAKE_BUILD_TYPE}")
@@ -484,13 +491,6 @@ string(REGEX REPLACE "/" "\\\\\\\\" NSIS_IMAGE_PATH ${NSIS_IMAGE_PATH})
 set(CPACK_NSIS_INSTALLER_MUI_ICON_CODE "!define MUI_WELCOMEFINISHPAGE_BITMAP \\\"${NSIS_IMAGE_PATH}sidebar.bmp\\\"\n!define MUI_HEADERIMAGE_BITMAP \\\"${NSIS_IMAGE_PATH}header.bmp\\\"\n!define MUI_ICON \\\"${NSIS_IMAGE_PATH}sfml.ico\\\"")
 
 include(CPack)
-
-# configure extras by default when building SFML directly, otherwise hide them
-sfml_set_option(SFML_CONFIGURE_EXTRAS ${PROJECT_IS_TOP_LEVEL} BOOL "TRUE to configure extras, FALSE to ignore them")
-
-if(NOT SFML_CONFIGURE_EXTRAS)
-    return()
-endif()
 
 # add an option for building the API documentation
 sfml_set_option(SFML_BUILD_DOC FALSE BOOL "TRUE to generate the API documentation, FALSE to ignore it")
