@@ -371,8 +371,8 @@ void WindowBase::create(VideoMode mode, std::uint32_t& style, State& state)
             if (!mode.isValid())
             {
                 err() << "The requested video mode is not available, switching to a valid mode" << std::endl;
-                assert(!VideoMode::getFullscreenModes().empty() && "No video modes available");
-                mode = VideoMode::getFullscreenModes()[0];
+                assert(!Monitor::getPrimaryMonitor().getFullscreenModes().empty() && "No video modes available");
+                mode = Monitor::getPrimaryMonitor().getFullscreenModes()[0];
                 err() << "  VideoMode: { size: { " << mode.size.x << ", " << mode.size.y
                       << " }, bitsPerPixel: " << mode.bitsPerPixel << " }" << std::endl;
             }

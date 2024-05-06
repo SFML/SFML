@@ -27,12 +27,15 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/VideoMode.hpp>
-
 #include <vector>
+#include <memory>
 
 
-namespace sf::priv
+namespace sf
+{
+class VideoMode;
+
+namespace priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief OS-specific implementation of video modes functions
@@ -47,7 +50,7 @@ public:
     /// \return Array filled with the fullscreen video modes
     ///
     ////////////////////////////////////////////////////////////
-    static std::vector<VideoMode> getFullscreenModes();
+    std::vector<VideoMode> getFullscreenModes();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current desktop video mode
@@ -55,7 +58,23 @@ public:
     /// \return Current desktop video mode
     ///
     ////////////////////////////////////////////////////////////
-    static VideoMode getDesktopMode();
+    VideoMode getDesktopMode();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create a new window depending on the current OS
+    ///
+    /// \param mode  Video mode to use
+    /// \param title Title of the window
+    /// \param style Window style
+    /// \param state Window state
+    /// \param settings Additional settings for the underlying OpenGL context
+    ///
+    /// \return Pointer to the created window
+    ///
+    ////////////////////////////////////////////////////////////
+    static std::unique_ptr<MonitorImpl> getPrimaryMonitor();
 };
 
-} // namespace sf::priv
+} // namespace priv
+
+} // namespace sf

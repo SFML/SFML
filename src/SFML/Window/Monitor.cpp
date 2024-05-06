@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Monitor.hpp>
 #include <SFML/Window/MonitorImpl.hpp>
+#include <SFML/Window/VideoMode.hpp>
 
 #include <algorithm>
 #include <functional>
@@ -37,19 +38,41 @@ namespace sf
 
 
 ////////////////////////////////////////////////////////////
+Monitor::Monitor(std::unique_ptr<priv::MonitorImpl>&& impl) : m_impl(std::move(impl))
+{
+}
+
+////////////////////////////////////////////////////////////
+Monitor Monitor::getPrimaryMonitor()
+{
+    // Directly forward to the OS-specific implementation
+    return priv::MonitorImpl::getPrimaryMonitor();
+}
+
+
+////////////////////////////////////////////////////////////
 VideoMode Monitor::getDesktopMode()
 {
     // Directly forward to the OS-specific implementation
-    return priv::MonitorImpl::getDesktopMode();
+    return m_impl->getDesktopMode();
+}
+
+
+////////////////////////////////////////////////////////////
+bool Monitor::isValid(const VideoMode& mode)
+{
+    const std::vector<VideoMode>& modes = getFullscreenModes();
+
+    return std::find(modes.begin(), modes.end(), mode) != modes.end();
 }
 
 
 ////////////////////////////////////////////////////////////
 const std::vector<VideoMode>& Monitor::getFullscreenModes()
 {
-    static const auto modes = []
+    static const auto modes = [&]
     {
-        std::vector<VideoMode> result = priv::MonitorImpl::getFullscreenModes();
+        std::vector<VideoMode> result = m_impl->getFullscreenModes();
         std::sort(result.begin(), result.end(), std::greater<>());
         return result;
     }();

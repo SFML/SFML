@@ -34,6 +34,8 @@
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/Time.hpp>
 
+#include <SFML/Config.hpp>
+
 #include <memory>
 
 #include <cmath>

@@ -27,16 +27,18 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/MonitorImpl.hpp>
 #include <SFML/Window/Export.hpp>
-#include <SFML/Window/VideoMode.hpp>
 
 #include <SFML/System/Vector2.hpp>
 
 #include <vector>
+#include <memory>
 
 
 namespace sf
 {
+class VideoMode;
 ////////////////////////////////////////////////////////////
 /// \brief VideoMode defines a video mode (width, height, bpp)
 ///
@@ -44,12 +46,10 @@ namespace sf
 class SFML_WINDOW_API Monitor
 {
     ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    /// This constructors initializes all members to 0.
+    /// \brief Construct monitor with a MonitorImpl pointer
     ///
     ////////////////////////////////////////////////////////////
-    Monitor() = default;
+    Monitor(std::unique_ptr<priv::MonitorImpl>&& impl);
 public:
 
     ////////////////////////////////////////////////////////////
@@ -58,7 +58,7 @@ public:
     /// \return Primary monitor
     ///
     ////////////////////////////////////////////////////////////
-    static const Monitor getPrimaryMonitor();
+    static Monitor getPrimaryMonitor();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current desktop video mode
@@ -83,6 +83,24 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     const std::vector<VideoMode>& getFullscreenModes();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Tell whether or not the video mode is valid
+    ///
+    /// The validity of video modes is only relevant when using
+    /// fullscreen windows; otherwise any video mode can be used
+    /// with no restriction.
+    ///
+    /// \return True if the video mode is valid for fullscreen mode
+    ///
+    ////////////////////////////////////////////////////////////
+    bool isValid(const VideoMode& mode);
+
+private:
+    ////////////////////////////////////////////////////////////
+    // Member data
+    ////////////////////////////////////////////////////////////
+    const std::unique_ptr<priv::MonitorImpl> m_impl; //!< Platform-specific implementation of the monitor
 };
 
 } // namespace sf
