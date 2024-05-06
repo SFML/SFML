@@ -61,42 +61,6 @@ public:
     explicit VideoMode(const Vector2u& modeSize, unsigned int modeBitsPerPixel = 32);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the current desktop video mode
-    ///
-    /// \return Current desktop video mode
-    ///
-    ////////////////////////////////////////////////////////////
-    static VideoMode getDesktopMode();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Retrieve all the video modes supported in fullscreen mode
-    ///
-    /// When creating a fullscreen window, the video mode is restricted
-    /// to be compatible with what the graphics driver and monitor
-    /// support. This function returns the complete list of all video
-    /// modes that can be used in fullscreen mode.
-    /// The returned array is sorted from best to worst, so that
-    /// the first element will always give the best mode (higher
-    /// width, height and bits-per-pixel).
-    ///
-    /// \return Array containing all the supported fullscreen modes
-    ///
-    ////////////////////////////////////////////////////////////
-    static const std::vector<VideoMode>& getFullscreenModes();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Tell whether or not the video mode is valid
-    ///
-    /// The validity of video modes is only relevant when using
-    /// fullscreen windows; otherwise any video mode can be used
-    /// with no restriction.
-    ///
-    /// \return True if the video mode is valid for fullscreen mode
-    ///
-    ////////////////////////////////////////////////////////////
-    bool isValid() const;
-
-    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     Vector2u     size;           //!< Video mode width and height, in pixels

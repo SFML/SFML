@@ -25,73 +25,36 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/VideoMode.hpp>
+#include <SFML/Window/Monitor.hpp>
 #include <SFML/Window/VideoModeImpl.hpp>
+
+#include <algorithm>
+#include <functional>
 
 
 namespace sf
 {
+
+
 ////////////////////////////////////////////////////////////
-VideoMode::VideoMode(const Vector2u& modeSize, unsigned int modeBitsPerPixel) :
-size(modeSize),
-bitsPerPixel(modeBitsPerPixel)
+VideoMode Monitor::getDesktopMode()
 {
+    // Directly forward to the OS-specific implementation
+    return priv::VideoModeImpl::getDesktopMode();
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator==(const VideoMode& left, const VideoMode& right)
+const std::vector<VideoMode>& Monitor::getFullscreenModes()
 {
-    return (left.size == right.size) && (left.bitsPerPixel == right.bitsPerPixel);
-}
-
-
-////////////////////////////////////////////////////////////
-bool operator!=(const VideoMode& left, const VideoMode& right)
-{
-    return !(left == right);
-}
-
-
-////////////////////////////////////////////////////////////
-bool operator<(const VideoMode& left, const VideoMode& right)
-{
-    if (left.bitsPerPixel == right.bitsPerPixel)
+    static const auto modes = []
     {
-        if (left.size.x == right.size.x)
-        {
-            return left.size.y < right.size.y;
-        }
-        else
-        {
-            return left.size.x < right.size.x;
-        }
-    }
-    else
-    {
-        return left.bitsPerPixel < right.bitsPerPixel;
-    }
-}
+        std::vector<VideoMode> result = priv::VideoModeImpl::getFullscreenModes();
+        std::sort(result.begin(), result.end(), std::greater<>());
+        return result;
+    }();
 
-
-////////////////////////////////////////////////////////////
-bool operator>(const VideoMode& left, const VideoMode& right)
-{
-    return right < left;
-}
-
-
-////////////////////////////////////////////////////////////
-bool operator<=(const VideoMode& left, const VideoMode& right)
-{
-    return !(right < left);
-}
-
-
-////////////////////////////////////////////////////////////
-bool operator>=(const VideoMode& left, const VideoMode& right)
-{
-    return !(left < right);
+    return modes;
 }
 
 } // namespace sf
