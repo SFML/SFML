@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Monitor.hpp>
-#include <SFML/Window/VideoModeImpl.hpp>
+#include <SFML/Window/MonitorImpl.hpp>
 
 #include <algorithm>
 #include <functional>
@@ -40,7 +40,7 @@ namespace sf
 VideoMode Monitor::getDesktopMode()
 {
     // Directly forward to the OS-specific implementation
-    return priv::VideoModeImpl::getDesktopMode();
+    return priv::MonitorImpl::getDesktopMode();
 }
 
 
@@ -49,7 +49,7 @@ const std::vector<VideoMode>& Monitor::getFullscreenModes()
 {
     static const auto modes = []
     {
-        std::vector<VideoMode> result = priv::VideoModeImpl::getFullscreenModes();
+        std::vector<VideoMode> result = priv::MonitorImpl::getFullscreenModes();
         std::sort(result.begin(), result.end(), std::greater<>());
         return result;
     }();

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2024 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2024 Andrew Mickelson
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,30 +25,43 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/VideoModeImpl.hpp>
-#include <SFML/Window/iOS/SFAppDelegate.hpp>
+#include <SFML/Window/DRM/DRMContext.hpp>
+#include <SFML/Window/MonitorImpl.hpp>
 
-#include <UIKit/UIKit.h>
+#include <SFML/System/Err.hpp>
+
 
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
+std::vector<VideoMode> MonitorImpl::getFullscreenModes()
 {
-    const VideoMode desktop = getDesktopMode();
+    std::vector<VideoMode> modes;
 
-    // Return both portrait and landscape resolutions
-    return {desktop, VideoMode(Vector2u(desktop.size.y, desktop.size.x), desktop.bitsPerPixel)};
+    const Drm&          drm  = DRMContext::getDRM();
+    drmModeConnectorPtr conn = drm.savedConnector;
+
+    if (conn)
+    {
+        for (int i = 0; i < conn->count_modes; i++)
+            modes.push_back(VideoMode({conn->modes[i].hdisplay, conn->modes[i].vdisplay}));
+    }
+    else
+        modes.push_back(getDesktopMode());
+
+    return modes;
 }
 
 
 ////////////////////////////////////////////////////////////
-VideoMode VideoModeImpl::getDesktopMode()
+VideoMode MonitorImpl::getDesktopMode()
 {
-    const CGRect bounds       = [[UIScreen mainScreen] bounds];
-    const double backingScale = [SFAppDelegate getInstance].backingScaleFactor;
-    return VideoMode({static_cast<unsigned int>(bounds.size.width * backingScale),
-                      static_cast<unsigned int>(bounds.size.height * backingScale)});
+    const Drm&         drm = DRMContext::getDRM();
+    drmModeModeInfoPtr ptr = drm.mode;
+    if (ptr)
+        return VideoMode({ptr->hdisplay, ptr->vdisplay});
+    else
+        return VideoMode({0, 0});
 }
 
 } // namespace sf::priv

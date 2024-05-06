@@ -26,7 +26,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/VideoModeImpl.hpp>
+#include <SFML/Window/MonitorImpl.hpp>
 #include <SFML/Window/macOS/cg_sf_conversion.hpp>
 
 #include <SFML/System/Err.hpp>
@@ -38,7 +38,7 @@ namespace sf::priv
 {
 
 ////////////////////////////////////////////////////////////
-std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
+std::vector<VideoMode> MonitorImpl::getFullscreenModes()
 {
     std::vector<VideoMode> modes;
 
@@ -78,7 +78,7 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 
 
 ////////////////////////////////////////////////////////////
-VideoMode VideoModeImpl::getDesktopMode()
+VideoMode MonitorImpl::getDesktopMode()
 {
     VideoMode mode; // RVO
 

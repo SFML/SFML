@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2013 Jonathan De Wachter (dewachter.jonathan@gmail.com)
+// Copyright (C) 2007-2024 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,34 +25,47 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/VideoModeImpl.hpp>
+#include <SFML/Window/MonitorImpl.hpp>
 
-#include <SFML/System/Android/Activity.hpp>
-#include <SFML/System/Sleep.hpp>
-#include <SFML/System/Vector2.hpp>
+#include <SFML/System/Win32/WindowsHeader.hpp>
 
-#include <mutex>
+#include <algorithm>
+
 
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
+std::vector<VideoMode> MonitorImpl::getFullscreenModes()
 {
-    const VideoMode desktop = getDesktopMode();
+    std::vector<VideoMode> modes;
 
-    // Return both portrait and landscape resolutions
-    return {desktop, VideoMode(Vector2u(desktop.size.y, desktop.size.x), desktop.bitsPerPixel)};
+    // Enumerate all available video modes for the primary display adapter
+    DEVMODE win32Mode;
+    win32Mode.dmSize        = sizeof(win32Mode);
+    win32Mode.dmDriverExtra = 0;
+    for (int count = 0; EnumDisplaySettings(nullptr, static_cast<DWORD>(count), &win32Mode); ++count)
+    {
+        // Convert to sf::VideoMode
+        const VideoMode mode({win32Mode.dmPelsWidth, win32Mode.dmPelsHeight}, win32Mode.dmBitsPerPel);
+
+        // Add it only if it is not already in the array
+        if (std::find(modes.begin(), modes.end(), mode) == modes.end())
+            modes.push_back(mode);
+    }
+
+    return modes;
 }
 
 
 ////////////////////////////////////////////////////////////
-VideoMode VideoModeImpl::getDesktopMode()
+VideoMode MonitorImpl::getDesktopMode()
 {
-    // Get the activity states
-    priv::ActivityStates& states = priv::getActivity();
-    const std::lock_guard lock(states.mutex);
+    DEVMODE win32Mode;
+    win32Mode.dmSize        = sizeof(win32Mode);
+    win32Mode.dmDriverExtra = 0;
+    EnumDisplaySettings(nullptr, ENUM_CURRENT_SETTINGS, &win32Mode);
 
-    return VideoMode(Vector2u(states.screenSize));
+    return VideoMode({win32Mode.dmPelsWidth, win32Mode.dmPelsHeight}, win32Mode.dmBitsPerPel);
 }
 
 } // namespace sf::priv

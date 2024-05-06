@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/Unix/Utils.hpp>
-#include <SFML/Window/VideoModeImpl.hpp>
+#include <SFML/Window/MonitorImpl.hpp>
 
 #include <SFML/System/Err.hpp>
 
@@ -52,7 +52,7 @@ struct XDeleter<XRRScreenConfiguration>
 
 
 ////////////////////////////////////////////////////////////
-std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
+std::vector<VideoMode> MonitorImpl::getFullscreenModes()
 {
     std::vector<VideoMode> modes;
 
@@ -130,7 +130,7 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 
 
 ////////////////////////////////////////////////////////////
-VideoMode VideoModeImpl::getDesktopMode()
+VideoMode MonitorImpl::getDesktopMode()
 {
     VideoMode desktopMode;
 

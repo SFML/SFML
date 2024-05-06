@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2024 Andrew Mickelson
+// Copyright (C) 2007-2024 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,43 +25,30 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/DRM/DRMContext.hpp>
-#include <SFML/Window/VideoModeImpl.hpp>
+#include <SFML/Window/MonitorImpl.hpp>
+#include <SFML/Window/iOS/SFAppDelegate.hpp>
 
-#include <SFML/System/Err.hpp>
-
+#include <UIKit/UIKit.h>
 
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
+std::vector<VideoMode> MonitorImpl::getFullscreenModes()
 {
-    std::vector<VideoMode> modes;
+    const VideoMode desktop = getDesktopMode();
 
-    const Drm&          drm  = DRMContext::getDRM();
-    drmModeConnectorPtr conn = drm.savedConnector;
-
-    if (conn)
-    {
-        for (int i = 0; i < conn->count_modes; i++)
-            modes.push_back(VideoMode({conn->modes[i].hdisplay, conn->modes[i].vdisplay}));
-    }
-    else
-        modes.push_back(getDesktopMode());
-
-    return modes;
+    // Return both portrait and landscape resolutions
+    return {desktop, VideoMode(Vector2u(desktop.size.y, desktop.size.x), desktop.bitsPerPixel)};
 }
 
 
 ////////////////////////////////////////////////////////////
-VideoMode VideoModeImpl::getDesktopMode()
+VideoMode MonitorImpl::getDesktopMode()
 {
-    const Drm&         drm = DRMContext::getDRM();
-    drmModeModeInfoPtr ptr = drm.mode;
-    if (ptr)
-        return VideoMode({ptr->hdisplay, ptr->vdisplay});
-    else
-        return VideoMode({0, 0});
+    const CGRect bounds       = [[UIScreen mainScreen] bounds];
+    const double backingScale = [SFAppDelegate getInstance].backingScaleFactor;
+    return VideoMode({static_cast<unsigned int>(bounds.size.width * backingScale),
+                      static_cast<unsigned int>(bounds.size.height * backingScale)});
 }
 
 } // namespace sf::priv
