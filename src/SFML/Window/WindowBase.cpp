@@ -28,7 +28,7 @@
 #include <SFML/Window/ContextSettings.hpp>
 #include <SFML/Window/Cursor.hpp>
 #include <SFML/Window/Event.hpp>
-#include <SFML/Window/VideoMode.hpp>
+#include <SFML/Window/Monitor.hpp>
 #include <SFML/Window/Vulkan.hpp>
 #include <SFML/Window/WindowBase.hpp>
 #include <SFML/Window/WindowEnums.hpp>
@@ -368,7 +368,7 @@ void WindowBase::create(VideoMode mode, std::uint32_t& style, State& state)
         else
         {
             // Make sure that the chosen video mode is compatible
-            if (!mode.isValid())
+            if (!Monitor::getPrimaryMonitor().isValid(mode))
             {
                 err() << "The requested video mode is not available, switching to a valid mode" << std::endl;
                 assert(!Monitor::getPrimaryMonitor().getFullscreenModes().empty() && "No video modes available");

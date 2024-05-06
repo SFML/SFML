@@ -27,8 +27,11 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <vector>
+#include <SFML/Window/MonitorImpl.hpp>
+#include <SFML/Window/Unix/Display.hpp>
+
 #include <memory>
+#include <vector>
 
 
 namespace sf
@@ -38,28 +41,17 @@ class VideoMode;
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// \brief OS-specific implementation of video modes functions
+/// \brief Linux (X11) implementation of MonitorImpl
 ///
 ////////////////////////////////////////////////////////////
-class MonitorImpl
+class MonitorImplX11 : public MonitorImpl
 {
 public:
     ////////////////////////////////////////////////////////////
-    /// \brief Get the list of all the supported fullscreen video modes
-    ///
-    /// \return Array filled with the fullscreen video modes
+    /// \brief Construct the window implementation
     ///
     ////////////////////////////////////////////////////////////
-    std::vector<VideoMode> getFullscreenModes() = delete;
-
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the current desktop video mode
-    ///
-    /// \return Current desktop video mode
-    ///
-    ////////////////////////////////////////////////////////////
-    VideoMode getDesktopMode() = delete;
+    MonitorImplX11(std::shared_ptr<Display>&& display, int screen);
 
 
     ////////////////////////////////////////////////////////////
@@ -74,7 +66,33 @@ public:
     /// \return Pointer to the created window
     ///
     ////////////////////////////////////////////////////////////
-    static std::unique_ptr<MonitorImpl> getPrimaryMonitor() = delete;
+    static std::unique_ptr<MonitorImpl> getPrimaryMonitor();
+
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the list of all the supported fullscreen video modes
+    ///
+    /// \return Array filled with the fullscreen video modes
+    ///
+    ////////////////////////////////////////////////////////////
+    std::vector<VideoMode> getFullscreenModes();
+
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the current desktop video mode
+    ///
+    /// \return Current desktop video mode
+    ///
+    ////////////////////////////////////////////////////////////
+    VideoMode getDesktopMode();
+
+
+private:
+    ////////////////////////////////////////////////////////////
+    // Member data
+    ////////////////////////////////////////////////////////////
+	const std::shared_ptr<Display> m_display;
+	const int m_screen;
 };
 
 } // namespace priv

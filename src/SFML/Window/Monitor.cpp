@@ -31,6 +31,45 @@
 
 #include <algorithm>
 #include <functional>
+#include <memory>
+
+
+#if defined(SFML_SYSTEM_WINDOWS)
+
+#include <SFML/Window/Win32/MonitorImplWin32.hpp>
+using MonitorImplType = sf::priv::MonitorImplWin32;
+
+#elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || \
+    defined(SFML_SYSTEM_NETBSD)
+
+#if defined(SFML_USE_DRM)
+
+#include <SFML/Window/DRM/MonitorImplDRM.hpp>
+using MonitorImplType = sf::priv::MonitorImplDRM;
+
+#else
+
+#include <SFML/Window/Unix/MonitorImplX11.hpp>
+using MonitorImplType = sf::priv::MonitorImplX11;
+
+#endif
+
+#elif defined(SFML_SYSTEM_MACOS)
+
+#include <SFML/Window/macOS/MonitorImplCocoa.hpp>
+using MonitorImplType = sf::priv::MonitorImplCocoa;
+
+#elif defined(SFML_SYSTEM_IOS)
+
+#include <SFML/Window/iOS/MonitorImplUIKit.hpp>
+using MonitorImplType = sf::priv::MonitorImplUIKit;
+
+#elif defined(SFML_SYSTEM_ANDROID)
+
+#include <SFML/Window/Android/MonitorImplAndroid.hpp>
+using MonitorImplType = sf::priv::MonitorImplAndroid;
+
+#endif
 
 
 namespace sf
@@ -46,7 +85,7 @@ Monitor::Monitor(std::unique_ptr<priv::MonitorImpl>&& impl) : m_impl(std::move(i
 Monitor Monitor::getPrimaryMonitor()
 {
     // Directly forward to the OS-specific implementation
-    return priv::MonitorImpl::getPrimaryMonitor();
+    return MonitorImplType::getPrimaryMonitor();
 }
 
 
@@ -54,7 +93,7 @@ Monitor Monitor::getPrimaryMonitor()
 VideoMode Monitor::getDesktopMode()
 {
     // Directly forward to the OS-specific implementation
-    return m_impl->getDesktopMode();
+    return static_cast<MonitorImplType* const>(m_impl.get())->getDesktopMode();
 }
 
 
@@ -72,7 +111,7 @@ const std::vector<VideoMode>& Monitor::getFullscreenModes()
 {
     static const auto modes = [&]
     {
-        std::vector<VideoMode> result = m_impl->getFullscreenModes();
+        std::vector<VideoMode> result = static_cast<MonitorImplType* const>(m_impl.get())->getFullscreenModes();
         std::sort(result.begin(), result.end(), std::greater<>());
         return result;
     }();
