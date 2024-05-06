@@ -82,8 +82,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-	const std::shared_ptr<Display> m_display;
-	const int m_screen;
+    const std::shared_ptr<Display> m_display;
+    const int m_screen;
 };
 
 } // namespace priv

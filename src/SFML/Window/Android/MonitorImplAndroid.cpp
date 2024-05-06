@@ -38,7 +38,7 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 std::unique_ptr<MonitorImpl> MonitorImplAndroid::getPrimaryMonitor()
 {
-	return std::make_unique<MonitorImplAndroid>();
+    return std::make_unique<MonitorImplAndroid>();
 }
 
 

@@ -65,7 +65,7 @@ std::unique_ptr<MonitorImpl> MonitorImplX11::getPrimaryMonitor() {
     if (display)
     {
         // Retrieve the default screen number
-		return std::make_unique<MonitorImplX11>(std::move(display), DefaultScreen(display.get()));
+        return std::make_unique<MonitorImplX11>(std::move(display), DefaultScreen(display.get()));
     }
     else
     {
@@ -80,61 +80,61 @@ std::vector<VideoMode> MonitorImplX11::getFullscreenModes()
 {
     std::vector<VideoMode> modes;
 
-	// Check if the XRandR extension is present
-	int version = 0;
-	if (XQueryExtension(m_display.get(), "RANDR", &version, &version, &version))
-	{
-		// Get the current configuration
-		const auto config = X11Ptr<XRRScreenConfiguration>(
-			XRRGetScreenInfo(m_display.get(), RootWindow(m_display.get(), m_screen)));
-		if (config)
-		{
-			// Get the available screen sizes
-			int            nbSizes = 0;
-			XRRScreenSize* sizes   = XRRConfigSizes(config.get(), &nbSizes);
-			if (sizes && (nbSizes > 0))
-			{
-				// Get the list of supported depths
-				int        nbDepths = 0;
-				const auto depths   = X11Ptr<int[]>(XListDepths(m_display.get(), m_screen, &nbDepths));
-				if (depths && (nbDepths > 0))
-				{
-					// Combine depths and sizes to fill the array of supported modes
-					for (std::size_t i = 0; i < static_cast<std::size_t>(nbDepths); ++i)
-					{
-						for (int j = 0; j < nbSizes; ++j)
-						{
-							// Convert to VideoMode
-							VideoMode mode({static_cast<unsigned int>(sizes[j].width),
-											static_cast<unsigned int>(sizes[j].height)},
-											static_cast<unsigned int>(depths[i]));
+    // Check if the XRandR extension is present
+    int version = 0;
+    if (XQueryExtension(m_display.get(), "RANDR", &version, &version, &version))
+    {
+        // Get the current configuration
+        const auto config = X11Ptr<XRRScreenConfiguration>(
+            XRRGetScreenInfo(m_display.get(), RootWindow(m_display.get(), m_screen)));
+        if (config)
+        {
+            // Get the available screen sizes
+            int            nbSizes = 0;
+            XRRScreenSize* sizes   = XRRConfigSizes(config.get(), &nbSizes);
+            if (sizes && (nbSizes > 0))
+            {
+                // Get the list of supported depths
+                int        nbDepths = 0;
+                const auto depths   = X11Ptr<int[]>(XListDepths(m_display.get(), m_screen, &nbDepths));
+                if (depths && (nbDepths > 0))
+                {
+                    // Combine depths and sizes to fill the array of supported modes
+                    for (std::size_t i = 0; i < static_cast<std::size_t>(nbDepths); ++i)
+                    {
+                        for (int j = 0; j < nbSizes; ++j)
+                        {
+                            // Convert to VideoMode
+                            VideoMode mode({static_cast<unsigned int>(sizes[j].width),
+                                            static_cast<unsigned int>(sizes[j].height)},
+                                            static_cast<unsigned int>(depths[i]));
 
-							Rotation currentRotation = 0;
-							XRRConfigRotations(config.get(), &currentRotation);
+                            Rotation currentRotation = 0;
+                            XRRConfigRotations(config.get(), &currentRotation);
 
-							if (currentRotation == RR_Rotate_90 || currentRotation == RR_Rotate_270)
-								std::swap(mode.size.x, mode.size.y);
+                            if (currentRotation == RR_Rotate_90 || currentRotation == RR_Rotate_270)
+                                std::swap(mode.size.x, mode.size.y);
 
-							// Add it only if it is not already in the array
-							if (std::find(modes.begin(), modes.end(), mode) == modes.end())
-								modes.push_back(mode);
-						}
-					}
-				}
-			}
-		}
-		else
-		{
-			// Failed to get the screen configuration
-			err() << "Failed to retrieve the screen configuration while trying to get the supported video modes"
-					<< std::endl;
-		}
-	}
-	else
-	{
-		// XRandr extension is not supported: we cannot get the video modes
-		err() << "Failed to use the XRandR extension while trying to get the supported video modes" << std::endl;
-	}
+                            // Add it only if it is not already in the array
+                            if (std::find(modes.begin(), modes.end(), mode) == modes.end())
+                                modes.push_back(mode);
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            // Failed to get the screen configuration
+            err() << "Failed to retrieve the screen configuration while trying to get the supported video modes"
+                    << std::endl;
+        }
+    }
+    else
+    {
+        // XRandr extension is not supported: we cannot get the video modes
+        err() << "Failed to use the XRandR extension while trying to get the supported video modes" << std::endl;
+    }
 
     return modes;
 }
@@ -145,47 +145,47 @@ VideoMode MonitorImplX11::getDesktopMode()
 {
     VideoMode desktopMode;
 
-	// Check if the XRandR extension is present
-	int version = 0;
-	if (XQueryExtension(m_display.get(), "RANDR", &version, &version, &version))
-	{
-		// Get the current configuration
-		const auto config = X11Ptr<XRRScreenConfiguration>(
-			XRRGetScreenInfo(m_display.get(), RootWindow(m_display.get(), m_screen)));
-		if (config)
-		{
-			// Get the current video mode
-			Rotation  currentRotation = 0;
-			const int currentMode     = XRRConfigCurrentConfiguration(config.get(), &currentRotation);
+    // Check if the XRandR extension is present
+    int version = 0;
+    if (XQueryExtension(m_display.get(), "RANDR", &version, &version, &version))
+    {
+        // Get the current configuration
+        const auto config = X11Ptr<XRRScreenConfiguration>(
+            XRRGetScreenInfo(m_display.get(), RootWindow(m_display.get(), m_screen)));
+        if (config)
+        {
+            // Get the current video mode
+            Rotation  currentRotation = 0;
+            const int currentMode     = XRRConfigCurrentConfiguration(config.get(), &currentRotation);
 
-			// Get the available screen sizes
-			int            nbSizes = 0;
-			XRRScreenSize* sizes   = XRRConfigSizes(config.get(), &nbSizes);
-			if (sizes && (nbSizes > 0))
-			{
-				desktopMode = VideoMode({static_cast<unsigned int>(sizes[currentMode].width),
-											static_cast<unsigned int>(sizes[currentMode].height)},
-										static_cast<unsigned int>(DefaultDepth(m_display.get(), m_screen)));
+            // Get the available screen sizes
+            int            nbSizes = 0;
+            XRRScreenSize* sizes   = XRRConfigSizes(config.get(), &nbSizes);
+            if (sizes && (nbSizes > 0))
+            {
+                desktopMode = VideoMode({static_cast<unsigned int>(sizes[currentMode].width),
+                                            static_cast<unsigned int>(sizes[currentMode].height)},
+                                        static_cast<unsigned int>(DefaultDepth(m_display.get(), m_screen)));
 
-				Rotation modeRotation = 0;
-				XRRConfigRotations(config.get(), &modeRotation);
+                Rotation modeRotation = 0;
+                XRRConfigRotations(config.get(), &modeRotation);
 
-				if (modeRotation == RR_Rotate_90 || modeRotation == RR_Rotate_270)
-					std::swap(desktopMode.size.x, desktopMode.size.y);
-			}
-		}
-		else
-		{
-			// Failed to get the screen configuration
-			err() << "Failed to retrieve the screen configuration while trying to get the desktop video modes"
-					<< std::endl;
-		}
-	}
-	else
-	{
-		// XRandr extension is not supported: we cannot get the video modes
-		err() << "Failed to use the XRandR extension while trying to get the desktop video modes" << std::endl;
-	}
+                if (modeRotation == RR_Rotate_90 || modeRotation == RR_Rotate_270)
+                    std::swap(desktopMode.size.x, desktopMode.size.y);
+            }
+        }
+        else
+        {
+            // Failed to get the screen configuration
+            err() << "Failed to retrieve the screen configuration while trying to get the desktop video modes"
+                    << std::endl;
+        }
+    }
+    else
+    {
+        // XRandr extension is not supported: we cannot get the video modes
+        err() << "Failed to use the XRandR extension while trying to get the desktop video modes" << std::endl;
+    }
 
     return desktopMode;
 }

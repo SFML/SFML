@@ -36,7 +36,7 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 std::unique_ptr<MonitorImpl> MonitorImplWin32::getPrimaryMonitor()
 {
-	return std::make_unique<MonitorImplWin32>();
+    return std::make_unique<MonitorImplWin32>();
 }
 
 
