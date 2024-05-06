@@ -28,7 +28,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/MonitorImpl.hpp>
-#include <SFML/Window/Unix/Display.hpp>
 
 
 namespace sf
@@ -38,17 +37,19 @@ class VideoMode;
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// \brief Linux (X11) implementation of MonitorImpl
+/// \brief Windows implementation of MonitorImpl
+///
+/// \note Placeholder class. Actual storage of the monitor handle not implemented yet.
 ///
 ////////////////////////////////////////////////////////////
-class MonitorImplX11 : public MonitorImpl
+class MonitorImplAndroid : public MonitorImpl
 {
 public:
     ////////////////////////////////////////////////////////////
     /// \brief Construct the window implementation
     ///
     ////////////////////////////////////////////////////////////
-    MonitorImplX11(std::shared_ptr<Display>&& display, int screen);
+    MonitorImplAndroid();
 
 
     ////////////////////////////////////////////////////////////
@@ -76,14 +77,6 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     VideoMode getDesktopMode();
-
-
-private:
-    ////////////////////////////////////////////////////////////
-    // Member data
-    ////////////////////////////////////////////////////////////
-	const std::shared_ptr<Display> m_display;
-	const int m_screen;
 };
 
 } // namespace priv

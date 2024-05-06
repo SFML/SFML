@@ -25,8 +25,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/DRM/MonitorImplDRM.hpp>
 #include <SFML/Window/DRM/DRMContext.hpp>
-#include <SFML/Window/MonitorImpl.hpp>
 
 #include <SFML/System/Err.hpp>
 
@@ -34,7 +34,14 @@
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-std::vector<VideoMode> MonitorImpl::getFullscreenModes()
+std::unique_ptr<MonitorImpl> MonitorImplDRM::getPrimaryMonitor()
+{
+	return std::make_unique<MonitorImplDRM>();
+}
+
+
+////////////////////////////////////////////////////////////
+std::vector<VideoMode> MonitorImplDRM::getFullscreenModes()
 {
     std::vector<VideoMode> modes;
 
@@ -54,7 +61,7 @@ std::vector<VideoMode> MonitorImpl::getFullscreenModes()
 
 
 ////////////////////////////////////////////////////////////
-VideoMode MonitorImpl::getDesktopMode()
+VideoMode MonitorImplDRM::getDesktopMode()
 {
     const Drm&         drm = DRMContext::getDRM();
     drmModeModeInfoPtr ptr = drm.mode;

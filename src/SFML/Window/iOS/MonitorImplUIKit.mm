@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2013 Jonathan De Wachter (dewachter.jonathan@gmail.com)
+// Copyright (C) 2007-2024 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,18 +25,22 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/MonitorImpl.hpp>
+#include <SFML/Window/iOS/MonitorImplUIKit.hpp>
+#include <SFML/Window/iOS/SFAppDelegate.hpp>
 
-#include <SFML/System/Android/Activity.hpp>
-#include <SFML/System/Sleep.hpp>
-#include <SFML/System/Vector2.hpp>
-
-#include <mutex>
+#include <UIKit/UIKit.h>
 
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-std::vector<VideoMode> MonitorImpl::getFullscreenModes()
+std::unique_ptr<MonitorImpl> MonitorImplUIKit::getPrimaryMonitor()
+{
+	return std::make_unique<MonitorImplUIKit>();
+}
+
+
+////////////////////////////////////////////////////////////
+std::vector<VideoMode> MonitorImplUIKit::getFullscreenModes()
 {
     const VideoMode desktop = getDesktopMode();
 
@@ -46,13 +50,12 @@ std::vector<VideoMode> MonitorImpl::getFullscreenModes()
 
 
 ////////////////////////////////////////////////////////////
-VideoMode MonitorImpl::getDesktopMode()
+VideoMode MonitorImplUIKit::getDesktopMode()
 {
-    // Get the activity states
-    priv::ActivityStates& states = priv::getActivity();
-    const std::lock_guard lock(states.mutex);
-
-    return VideoMode(Vector2u(states.screenSize));
+    const CGRect bounds       = [[UIScreen mainScreen] bounds];
+    const double backingScale = [SFAppDelegate getInstance].backingScaleFactor;
+    return VideoMode({static_cast<unsigned int>(bounds.size.width * backingScale),
+                      static_cast<unsigned int>(bounds.size.height * backingScale)});
 }
 
 } // namespace sf::priv

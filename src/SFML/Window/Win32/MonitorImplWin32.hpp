@@ -28,10 +28,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/MonitorImpl.hpp>
-#include <SFML/Window/Unix/Display.hpp>
-
-#include <memory>
-#include <vector>
 
 
 namespace sf
