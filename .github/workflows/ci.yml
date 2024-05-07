@@ -75,7 +75,7 @@ jobs:
             api: 21
             libcxx: i686-linux-android/libc++_shared.so
             emuarch: x86
-            emuapi: 29
+            # emuapi: 29 # Removing this causes the tests to not run. This works around an issue that causes the test step to hang indefinitely.
           type: { name: Release }
         - platform: { name: Android, os: ubuntu-latest }
           config:
