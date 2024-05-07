@@ -239,9 +239,9 @@ struct SoundStream::Impl
     // Member data
     ////////////////////////////////////////////////////////////
     ma_data_source_base dataSourceBase{}; //!< The struct that makes this object a miniaudio data source (must be first member)
-    SoundStream* const      owner;        //!< Owning SoundStream object
+    SoundStream* const owner;             //!< Owning SoundStream object
     std::vector<ma_channel> soundChannelMap; //!< The map of position in sample frame to sound channel (miniaudio channels)
-    ma_sound                sound{};         //!< The sound
+    ma_sound                  sound{};       //!< The sound
     std::vector<std::int16_t> sampleBuffer;            //!< Our temporary sample buffer
     std::size_t               sampleBufferCursor{};    //!< The current read position in the temporary sample buffer
     std::uint64_t             samplesProcessed{};      //!< Number of samples processed since beginning of the stream

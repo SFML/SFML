@@ -31,9 +31,13 @@
 
 #include <SFML/System/Vector3.hpp>
 
-#include <miniaudio.h>
+#include <memory>
 
-#include <optional>
+
+////////////////////////////////////////////////////////////
+// Forward declarations
+////////////////////////////////////////////////////////////
+struct ma_engine;
 
 
 namespace sf::priv
@@ -225,15 +229,7 @@ private:
     ////////////////////////////////////////////////////////////
     static AudioDevice*& getInstance();
 
-    struct ListenerProperties
-    {
-        float          volume{100.f};
-        sf::Vector3f   position{0, 0, 0};
-        sf::Vector3f   direction{0, 0, -1};
-        sf::Vector3f   velocity{0, 0, 0};
-        Listener::Cone cone{sf::degrees(360), sf::degrees(360), 1};
-        sf::Vector3f   upVector{0, 1, 0};
-    };
+    struct ListenerProperties;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the listener properties
@@ -246,10 +242,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::optional<ma_log>     m_log;            //!< The miniaudio log
-    std::optional<ma_context> m_context;        //!< The miniaudio context
-    std::optional<ma_device>  m_playbackDevice; //!< The miniaudio playback device
-    std::optional<ma_engine>  m_engine;         //!< The miniaudio engine (used for effects and spatialisation)
+    struct Impl;
+    const std::unique_ptr<Impl> m_impl; //!< Implementation details
 };
 
 } // namespace sf::priv
