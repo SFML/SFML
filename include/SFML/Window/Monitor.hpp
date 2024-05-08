@@ -57,7 +57,7 @@ class SFML_WINDOW_API Monitor
     Monitor(std::unique_ptr<priv::MonitorImpl>&& impl);
 
 public:
-	~Monitor();
+    ~Monitor();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the primary monitor
