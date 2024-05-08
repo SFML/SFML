@@ -54,7 +54,7 @@ struct XDeleter<XRRScreenConfiguration>
 
 
 ////////////////////////////////////////////////////////////
-std::unique_ptr<MonitorImpl> MonitorImplX11::getPrimaryMonitor() {
+std::unique_ptr<MonitorImpl> MonitorImplX11::createPrimaryMonitor() {
     return std::make_unique<MonitorImplX11>();
 }
 

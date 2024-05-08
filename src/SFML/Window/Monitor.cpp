@@ -89,7 +89,7 @@ Monitor::~Monitor() = default;
 Monitor Monitor::getPrimaryMonitor()
 {
     // Directly forward to the OS-specific implementation
-    return MonitorImplType::getPrimaryMonitor();
+    return MonitorImplType::createPrimaryMonitor();
 }
 
 
