@@ -38,7 +38,9 @@ set(SRC
     ${SRCROOT}/SensorManager.hpp
     ${SRCROOT}/VideoMode.cpp
     ${INCROOT}/VideoMode.hpp
-    ${SRCROOT}/VideoModeImpl.hpp
+    ${SRCROOT}/Monitor.cpp
+    ${INCROOT}/Monitor.hpp
+    ${SRCROOT}/MonitorImpl.hpp
     ${SRCROOT}/Vulkan.cpp
     ${INCROOT}/Vulkan.hpp
     ${SRCROOT}/Window.cpp
@@ -62,9 +64,10 @@ if(SFML_OS_WINDOWS)
         ${SRCROOT}/Win32/InputImpl.cpp
         ${SRCROOT}/Win32/JoystickImpl.cpp
         ${SRCROOT}/Win32/JoystickImpl.hpp
+        ${SRCROOT}/Win32/MonitorImplWin32.cpp
+        ${SRCROOT}/Win32/MonitorImplWin32.hpp
         ${SRCROOT}/Win32/SensorImpl.hpp
         ${SRCROOT}/Win32/SensorImpl.cpp
-        ${SRCROOT}/Win32/VideoModeImpl.cpp
         ${SRCROOT}/Win32/VulkanImplWin32.cpp
         ${SRCROOT}/Win32/VulkanImplWin32.hpp
         ${SRCROOT}/Win32/WindowImplWin32.cpp
@@ -97,7 +100,8 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
             ${SRCROOT}/Unix/SensorImpl.cpp
             ${SRCROOT}/Unix/SensorImpl.hpp
             ${SRCROOT}/DRM/InputImpl.cpp
-            ${SRCROOT}/DRM/VideoModeImpl.cpp
+			${SRCROOT}/DRM/MonitorImplDRM.cpp
+			${SRCROOT}/DRM/MonitorImplDRM.hpp
             ${SRCROOT}/DRM/DRMContext.cpp
             ${SRCROOT}/DRM/DRMContext.hpp
             ${SRCROOT}/DRM/WindowImplDRM.cpp
@@ -116,12 +120,13 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
             ${SRCROOT}/Unix/KeySymToKeyMapping.cpp
             ${SRCROOT}/Unix/KeySymToUnicodeMapping.hpp
             ${SRCROOT}/Unix/KeySymToUnicodeMapping.cpp
+			${SRCROOT}/Unix/MonitorImplX11.cpp
+			${SRCROOT}/Unix/MonitorImplX11.hpp
             ${SRCROOT}/Unix/SensorImpl.cpp
             ${SRCROOT}/Unix/SensorImpl.hpp
             ${SRCROOT}/Unix/Display.cpp
             ${SRCROOT}/Unix/Display.hpp
             ${SRCROOT}/Unix/Utils.hpp
-            ${SRCROOT}/Unix/VideoModeImpl.cpp
             ${SRCROOT}/Unix/VulkanImplX11.cpp
             ${SRCROOT}/Unix/VulkanImplX11.hpp
             ${SRCROOT}/Unix/WindowImplX11.cpp
@@ -179,6 +184,8 @@ elseif(SFML_OS_MACOS)
         ${SRCROOT}/macOS/HIDJoystickManager.cpp
         ${SRCROOT}/macOS/JoystickImpl.cpp
         ${SRCROOT}/macOS/JoystickImpl.hpp
+		${SRCROOT}/macOS/MonitorImplCocoa.cpp
+		${SRCROOT}/macOS/MonitorImplCocoa.hpp
         ${SRCROOT}/macOS/NSImage+raw.h
         ${SRCROOT}/macOS/NSImage+raw.mm
         ${SRCROOT}/macOS/Scaling.h
@@ -206,7 +213,6 @@ elseif(SFML_OS_MACOS)
         ${SRCROOT}/macOS/SFWindowController.mm
         ${SRCROOT}/macOS/SFViewController.h
         ${SRCROOT}/macOS/SFViewController.mm
-        ${SRCROOT}/macOS/VideoModeImpl.cpp
         ${SRCROOT}/macOS/WindowImplCocoa.hpp
         ${SRCROOT}/macOS/WindowImplCocoa.mm
         ${SRCROOT}/macOS/WindowImplDelegateProtocol.h
@@ -226,9 +232,10 @@ elseif(SFML_OS_IOS)
         ${SRCROOT}/iOS/InputImpl.mm
         ${SRCROOT}/iOS/JoystickImpl.mm
         ${SRCROOT}/iOS/JoystickImpl.hpp
+		${SRCROOT}/iOS/MonitorImplUIKit.mm
+		${SRCROOT}/iOS/MonitorImplUIKit.hpp
         ${SRCROOT}/iOS/SensorImpl.mm
         ${SRCROOT}/iOS/SensorImpl.hpp
-        ${SRCROOT}/iOS/VideoModeImpl.mm
         ${SRCROOT}/iOS/WindowImplUIKit.hpp
         ${SRCROOT}/iOS/WindowImplUIKit.mm
         ${SRCROOT}/iOS/ObjCType.hpp
@@ -252,9 +259,10 @@ elseif(SFML_OS_ANDROID)
         ${SRCROOT}/Android/CursorImpl.cpp
         ${SRCROOT}/Android/ClipboardImpl.hpp
         ${SRCROOT}/Android/ClipboardImpl.cpp
+		${SRCROOT}/Android/MonitorImplAndroid.cpp
+		${SRCROOT}/Android/MonitorImplAndroid.hpp
         ${SRCROOT}/Android/WindowImplAndroid.hpp
         ${SRCROOT}/Android/WindowImplAndroid.cpp
-        ${SRCROOT}/Android/VideoModeImpl.cpp
         ${SRCROOT}/Android/InputImpl.cpp
         ${SRCROOT}/Android/JoystickImpl.hpp
         ${SRCROOT}/Android/JoystickImpl.cpp
