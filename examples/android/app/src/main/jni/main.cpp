@@ -81,7 +81,7 @@ int vibrate(sf::Time duration)
 // ('vibrate()' in this example; undefine 'USE_JNI' above to disable it)
 int main(int argc, char* argv[])
 {
-    sf::VideoMode screen(sf::VideoMode::getDesktopMode());
+    sf::VideoMode screen(sf::Monitor::getPrimaryMonitor().getDesktopMode());
 
     sf::RenderWindow window(screen, "");
     window.setFramerateLimit(30);

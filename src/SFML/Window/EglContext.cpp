@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/EglContext.hpp>
 #include <SFML/Window/WindowImpl.hpp>
+#include <SFML/Window/Monitor.hpp>
 
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Sleep.hpp>
@@ -121,7 +122,7 @@ EglContext::EglContext(EglContext* shared)
     m_display = EglContextImpl::getInitializedDisplay();
 
     // Get the best EGL config matching the default video settings
-    m_config = getBestConfig(m_display, VideoMode::getDesktopMode().bitsPerPixel, ContextSettings());
+    m_config = getBestConfig(m_display, Monitor::getPrimaryMonitor().getDesktopMode().bitsPerPixel, ContextSettings());
     updateSettings();
 
     // Note: The EGL specs say that attribList can be a null pointer when passed to eglCreatePbufferSurface,

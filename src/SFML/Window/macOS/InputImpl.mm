@@ -27,8 +27,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/InputImpl.hpp>
-#include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/Window.hpp>
+#include <SFML/Window/Monitor.hpp>
 #include <SFML/Window/macOS/AutoreleasePoolWrapper.hpp>
 #include <SFML/Window/macOS/HIDInputManager.hpp>
 #import <SFML/Window/macOS/SFOpenGLView.h>
@@ -178,7 +178,7 @@ Vector2i getMousePosition()
     const AutoreleasePool pool;
     // Reverse Y axis to match SFML coord.
     NSPoint pos = [NSEvent mouseLocation];
-    pos.y       = sf::VideoMode::getDesktopMode().size.y - pos.y;
+    pos.y       = sf::Monitor::getPrimaryMonitor().getDesktopMode().size.y - pos.y;
 
     const int scale = static_cast<int>([[NSScreen mainScreen] backingScaleFactor]);
     return Vector2i(static_cast<int>(pos.x), static_cast<int>(pos.y)) * scale;

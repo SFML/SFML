@@ -26,9 +26,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/ContextSettings.hpp>
-#include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/Win32/WglContext.hpp>
 #include <SFML/Window/WindowImpl.hpp>
+#include <SFML/Window/Monitor.hpp>
 
 #include <SFML/System/Err.hpp>
 #include <SFML/System/String.hpp>
@@ -155,7 +155,7 @@ WglContext::WglContext(WglContext* shared, const ContextSettings& settings, cons
     m_settings = settings;
 
     // Create the rendering surface (window or pbuffer if supported)
-    createSurface(shared, size, VideoMode::getDesktopMode().bitsPerPixel);
+    createSurface(shared, size, Monitor::getPrimaryMonitor().getDesktopMode().bitsPerPixel);
 
     // Create the context
     createContext(shared);

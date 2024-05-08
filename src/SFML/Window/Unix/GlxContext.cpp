@@ -30,6 +30,7 @@
 #include <SFML/Window/Unix/GlxContext.hpp>
 #include <SFML/Window/Unix/Utils.hpp>
 #include <SFML/Window/Unix/WindowImplX11.hpp>
+#include <SFML/Window/Monitor.hpp>
 
 #include <SFML/System/Err.hpp>
 
@@ -118,7 +119,7 @@ GlxContext::GlxContext(GlxContext* shared)
     ensureExtensionsInit(m_display.get(), DefaultScreen(m_display.get()));
 
     // Create the rendering surface (window or pbuffer if supported)
-    createSurface(shared, {1, 1}, VideoMode::getDesktopMode().bitsPerPixel);
+    createSurface(shared, {1, 1}, Monitor::getPrimaryMonitor().getDesktopMode().bitsPerPixel);
 
     // Create the context
     createContext(shared);
@@ -158,7 +159,7 @@ GlxContext::GlxContext(GlxContext* shared, const ContextSettings& settings, cons
     ensureExtensionsInit(m_display.get(), DefaultScreen(m_display.get()));
 
     // Create the rendering surface (window or pbuffer if supported)
-    createSurface(shared, size, VideoMode::getDesktopMode().bitsPerPixel);
+    createSurface(shared, size, Monitor::getPrimaryMonitor().getDesktopMode().bitsPerPixel);
 
     // Create the context
     createContext(shared);

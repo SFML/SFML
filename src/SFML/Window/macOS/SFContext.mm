@@ -29,6 +29,7 @@
 #include <SFML/Window/macOS/AutoreleasePoolWrapper.hpp>
 #include <SFML/Window/macOS/SFContext.hpp>
 #include <SFML/Window/macOS/WindowImplCocoa.hpp>
+#include <SFML/Window/Monitor.hpp>
 
 #include <SFML/System/Err.hpp>
 
@@ -45,7 +46,7 @@ SFContext::SFContext(SFContext* shared)
 {
     const AutoreleasePool pool;
     // Create the context
-    createContext(shared, VideoMode::getDesktopMode().bitsPerPixel, ContextSettings(0, 0, 0));
+    createContext(shared, Monitor::getPrimaryMonitor().getDesktopMode().bitsPerPixel, ContextSettings(0, 0, 0));
 }
 
 
@@ -70,7 +71,7 @@ SFContext::SFContext(SFContext* shared, const ContextSettings& settings, const V
     WindowImplCocoa::setUpProcess();
 
     // Create the context.
-    createContext(shared, VideoMode::getDesktopMode().bitsPerPixel, settings);
+    createContext(shared, Monitor::getPrimaryMonitor().getDesktopMode().bitsPerPixel, settings);
 
     // Create a dummy window/view pair (hidden) and assign it our context.
     m_window = [[NSWindow alloc]

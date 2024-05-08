@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 
 #include <SFML/Window/InputImpl.hpp>
+#include <SFML/Window/Monitor.hpp>
 #include <SFML/Window/Unix/ClipboardImpl.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/Unix/KeyboardImpl.hpp>
@@ -1270,7 +1271,7 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
     using namespace WindowImplX11Impl;
 
     // Skip mode switching if the new mode is equal to the desktop mode
-    if (mode == VideoMode::getDesktopMode())
+    if (mode == Monitor::getPrimaryMonitor().getDesktopMode())
         return;
 
     // Check if the XRandR extension is present
