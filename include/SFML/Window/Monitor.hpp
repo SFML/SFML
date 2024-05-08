@@ -40,7 +40,7 @@ namespace sf
 {
 class VideoMode;
 ////////////////////////////////////////////////////////////
-/// \brief VideoMode defines a video mode (width, height, bpp)
+/// \brief Monitor represents a monitor made available by the OS
 ///
 ////////////////////////////////////////////////////////////
 class SFML_WINDOW_API Monitor
@@ -50,8 +50,8 @@ class SFML_WINDOW_API Monitor
     ///
     ////////////////////////////////////////////////////////////
     Monitor(std::unique_ptr<priv::MonitorImpl>&& impl);
-public:
 
+public:
     ////////////////////////////////////////////////////////////
     /// \brief Get the primary monitor
     ///
@@ -61,15 +61,7 @@ public:
     static Monitor getPrimaryMonitor();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the current desktop video mode
-    ///
-    /// \return Current desktop video mode
-    ///
-    ////////////////////////////////////////////////////////////
-    VideoMode getDesktopMode();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Retrieve all the video modes supported in fullscreen mode
+    /// \brief Retrieve all the fullscreen video modes this monitor supports
     ///
     /// When creating a fullscreen window, the video mode is restricted
     /// to be compatible with what the graphics driver and monitor
@@ -79,19 +71,27 @@ public:
     /// the first element will always give the best mode (higher
     /// width, height and bits-per-pixel).
     ///
-    /// \return Array containing all the supported fullscreen modes
+    /// \return Array containing all  the fullscreen video modes this monitor supports
     ///
     ////////////////////////////////////////////////////////////
     const std::vector<VideoMode>& getFullscreenModes();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Tell whether or not the video mode is valid
+    /// \brief Get the current desktop video mode of this monitor
+    ///
+    /// \return Current desktop video mode of this monitor
+    ///
+    ////////////////////////////////////////////////////////////
+    VideoMode getDesktopMode();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Tell whether or not the video mode is valid on this monitor
     ///
     /// The validity of video modes is only relevant when using
     /// fullscreen windows; otherwise any video mode can be used
     /// with no restriction.
     ///
-    /// \return True if the video mode is valid for fullscreen mode
+    /// \return True if the video mode is valid for fullscreen mode on this monitor
     ///
     ////////////////////////////////////////////////////////////
     bool isValid(const VideoMode& mode);

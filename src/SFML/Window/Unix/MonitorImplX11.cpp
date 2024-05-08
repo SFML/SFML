@@ -25,8 +25,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Unix/Utils.hpp>
 #include <SFML/Window/Unix/MonitorImplX11.hpp>
+#include <SFML/Window/Unix/Display.hpp>
+#include <SFML/Window/Unix/Utils.hpp>
 #include <SFML/Window/VideoMode.hpp>
 
 #include <SFML/System/Err.hpp>

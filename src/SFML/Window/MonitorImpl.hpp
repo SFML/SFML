@@ -45,36 +45,28 @@ class MonitorImpl
 {
 public:
     ////////////////////////////////////////////////////////////
-    /// \brief Get the list of all the supported fullscreen video modes
+    /// \brief Create primary monitor implementation
     ///
-    /// \return Array filled with the fullscreen video modes
+    /// \return Pointer to the created primary monitor implementation
+    ///
+    ////////////////////////////////////////////////////////////
+    static std::unique_ptr<MonitorImpl> getPrimaryMonitor() = delete;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the list of all the supported fullscreen video modes of this monitor
+    ///
+    /// \return Array filled with the fullscreen video modes of this monitor
     ///
     ////////////////////////////////////////////////////////////
     std::vector<VideoMode> getFullscreenModes() = delete;
 
-
     ////////////////////////////////////////////////////////////
-    /// \brief Get the current desktop video mode
+    /// \brief Get the current desktop video mode of this monitor
     ///
-    /// \return Current desktop video mode
+    /// \return Current desktop video mode of this monitor
     ///
     ////////////////////////////////////////////////////////////
     VideoMode getDesktopMode() = delete;
-
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Create a new window depending on the current OS
-    ///
-    /// \param mode  Video mode to use
-    /// \param title Title of the window
-    /// \param style Window style
-    /// \param state Window state
-    /// \param settings Additional settings for the underlying OpenGL context
-    ///
-    /// \return Pointer to the created window
-    ///
-    ////////////////////////////////////////////////////////////
-    static std::unique_ptr<MonitorImpl> getPrimaryMonitor() = delete;
 };
 
 } // namespace priv
