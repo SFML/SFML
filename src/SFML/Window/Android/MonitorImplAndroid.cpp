@@ -37,6 +37,10 @@
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
+MonitorImplAndroid::MonitorImplAndroid() = default;
+
+
+////////////////////////////////////////////////////////////
 std::unique_ptr<MonitorImpl> MonitorImplAndroid::createPrimaryMonitor()
 {
     return std::make_unique<MonitorImplAndroid>();

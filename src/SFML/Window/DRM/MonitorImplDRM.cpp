@@ -35,6 +35,10 @@
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
+MonitorImplDRM::MonitorImplDRM() = default;
+
+
+////////////////////////////////////////////////////////////
 std::unique_ptr<MonitorImpl> MonitorImplDRM::createPrimaryMonitor()
 {
     return std::make_unique<MonitorImplDRM>();

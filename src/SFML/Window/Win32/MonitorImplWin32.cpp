@@ -36,6 +36,10 @@
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
+MonitorImplWin32::MonitorImplWin32() = default;
+
+
+////////////////////////////////////////////////////////////
 std::unique_ptr<MonitorImpl> MonitorImplWin32::createPrimaryMonitor()
 {
     return std::make_unique<MonitorImplWin32>();
