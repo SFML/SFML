@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/macOS/MonitorImplCocoa.hpp>
 #include <SFML/Window/macOS/cg_sf_conversion.hpp>
+#include <SFML/Window/VideoMode.hpp>
 
 #include <SFML/System/Err.hpp>
 

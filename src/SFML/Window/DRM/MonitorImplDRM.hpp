@@ -37,7 +37,7 @@ class VideoMode;
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// \brief Windows implementation of MonitorImpl
+/// \brief DRM implementation of MonitorImpl
 ///
 /// \note Placeholder class. Actual storage of the monitor handle not implemented yet.
 ///
@@ -46,7 +46,7 @@ class MonitorImplDRM : public MonitorImpl
 {
 public:
     ////////////////////////////////////////////////////////////
-    /// \brief Construct the window implementation
+    /// \brief Construct the monitor implementation
     ///
     ////////////////////////////////////////////////////////////
     MonitorImplDRM();
@@ -60,20 +60,18 @@ public:
     ////////////////////////////////////////////////////////////
     static std::unique_ptr<MonitorImpl> getPrimaryMonitor();
 
-
     ////////////////////////////////////////////////////////////
-    /// \brief Get the list of all the supported fullscreen video modes
+    /// \brief Get the list of all the supported fullscreen video modes of this monitor
     ///
-    /// \return Array filled with the fullscreen video modes
+    /// \return Array filled with the fullscreen video modes of this monitor
     ///
     ////////////////////////////////////////////////////////////
     std::vector<VideoMode> getFullscreenModes();
 
-
     ////////////////////////////////////////////////////////////
-    /// \brief Get the current desktop video mode
+    /// \brief Get the current desktop video mode of this monitor
     ///
-    /// \return Current desktop video mode
+    /// \return Current desktop video mode of this monitor
     ///
     ////////////////////////////////////////////////////////////
     VideoMode getDesktopMode();

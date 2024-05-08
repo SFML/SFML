@@ -29,6 +29,7 @@
 #include <SFML/Window/Cursor.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Monitor.hpp>
+#include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/Vulkan.hpp>
 #include <SFML/Window/WindowBase.hpp>
 #include <SFML/Window/WindowEnums.hpp>

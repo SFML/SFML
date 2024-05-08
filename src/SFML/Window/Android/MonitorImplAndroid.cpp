@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Android/MonitorImplAndroid.hpp>
+#include <SFML/Window/VideoMode.hpp>
 
 #include <SFML/System/Android/Activity.hpp>
 #include <SFML/System/Sleep.hpp>
