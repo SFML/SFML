@@ -26,11 +26,11 @@
 // Headers
 ////////////////////////////////////////////////////////////
 
+#include <SFML/Window/Monitor.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/Unix/GlxContext.hpp>
 #include <SFML/Window/Unix/Utils.hpp>
 #include <SFML/Window/Unix/WindowImplX11.hpp>
-#include <SFML/Window/Monitor.hpp>
 
 #include <SFML/System/Err.hpp>
 

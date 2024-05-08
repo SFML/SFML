@@ -26,10 +26,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/Monitor.hpp>
 #include <SFML/Window/macOS/AutoreleasePoolWrapper.hpp>
 #include <SFML/Window/macOS/SFContext.hpp>
 #include <SFML/Window/macOS/WindowImplCocoa.hpp>
-#include <SFML/Window/Monitor.hpp>
 
 #include <SFML/System/Err.hpp>
 

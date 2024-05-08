@@ -25,9 +25,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/iOS/MonitorImplUIKit.hpp>
 #include <SFML/Window/iOS/SFAppDelegate.hpp>
-#include <SFML/Window/VideoMode.hpp>
 
 #include <UIKit/UIKit.h>
 

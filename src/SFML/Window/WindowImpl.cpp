@@ -25,6 +25,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Config.hpp>
+
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/JoystickImpl.hpp>
 #include <SFML/Window/JoystickManager.hpp>
@@ -33,8 +35,6 @@
 
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/Time.hpp>
-
-#include <SFML/Config.hpp>
 
 #include <memory>
 

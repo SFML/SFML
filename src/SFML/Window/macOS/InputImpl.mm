@@ -27,8 +27,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/InputImpl.hpp>
-#include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/Monitor.hpp>
+#include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/Window.hpp>
 #include <SFML/Window/macOS/AutoreleasePoolWrapper.hpp>
 #include <SFML/Window/macOS/HIDInputManager.hpp>

@@ -26,10 +26,10 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/Monitor.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/WindowEnums.hpp>
 #include <SFML/Window/WindowHandle.hpp>
-#include <SFML/Window/Monitor.hpp>
 #import <SFML/Window/macOS/NSImage+raw.h>
 #import <SFML/Window/macOS/SFApplication.h>
 #import <SFML/Window/macOS/SFOpenGLView.h>

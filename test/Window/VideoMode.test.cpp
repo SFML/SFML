@@ -1,5 +1,5 @@
-#include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/Monitor.hpp>
+#include <SFML/Window/VideoMode.hpp>
 
 #include <catch2/catch_test_macros.hpp>
 
