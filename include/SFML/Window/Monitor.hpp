@@ -27,7 +27,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/MonitorImpl.hpp>
 #include <SFML/Window/Export.hpp>
 
 #include <SFML/System/Vector2.hpp>
@@ -39,6 +38,12 @@
 namespace sf
 {
 class VideoMode;
+
+namespace priv
+{
+class MonitorImpl;
+}
+
 ////////////////////////////////////////////////////////////
 /// \brief Monitor represents a monitor made available by the OS
 ///
@@ -110,7 +115,42 @@ private:
 /// \class sf::Monitor
 /// \ingroup window
 ///
-/// TBD
+/// A monitor is an abstraction to represent a display.
+///
+/// A monitor object of the primary can be obtained using
+/// the static function getPrimaryMonitor().
+///
+/// sf::Monitor provides a function for retrieving the list of
+/// all the video modes supported by that monitor and the system:
+/// getFullscreenModes().
+///
+/// A custom video mode can also be checked directly for
+/// fullscreen compatibility with its isValid(sf::VideoMode) function.
+///
+/// Additionally, sf::Monitor provides a function to get the mode
+/// currently used by the desktop for that monitor: getDesktopMode().
+/// This allows to build windows with the same size or pixel
+/// depth as the current resolution.
+///
+/// Usage example:
+/// \code
+/// // Display the list of all the video modes available for fullscreen
+/// std::vector<sf::VideoMode> modes = sf::Monitor::getPrimaryMonitor().getFullscreenModes();
+/// for (std::size_t i = 0; i < modes.size(); ++i)
+/// {
+///     sf::VideoMode mode = modes[i];
+///     std::cout << "Mode #" << i << ": "
+///               << mode.width << "x" << mode.height << " - "
+///               << mode.bitsPerPixel << " bpp" << std::endl;
+/// }
+///
+/// // Create a window with the same pixel depth as the desktop
+/// sf::VideoMode desktop = sf::Monitor::getPrimaryMonitor().getDesktopMode();
+/// window.create(sf::VideoMode({1024, 768}, desktop.bitsPerPixel), "SFML window");
+/// \endcode
+///
+////////////////////////////////////////////////////////////
+
 ///
 /// Usage example:
 /// \code
