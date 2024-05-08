@@ -39,6 +39,8 @@ namespace priv
 ////////////////////////////////////////////////////////////
 /// \brief Linux (X11) implementation of MonitorImpl
 ///
+/// \note Placeholder class. Actual storage of the monitor handle not implemented yet.
+///
 ////////////////////////////////////////////////////////////
 class MonitorImplX11 : public MonitorImpl
 {
@@ -72,6 +74,16 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     VideoMode getDesktopMode();
+<<<<<<< Updated upstream
+=======
+
+private:
+    ////////////////////////////////////////////////////////////
+    // Member data
+    ////////////////////////////////////////////////////////////
+    const std::shared_ptr<Display> m_display;
+    const int m_screen;
+>>>>>>> Stashed changes
 };
 
 } // namespace priv
