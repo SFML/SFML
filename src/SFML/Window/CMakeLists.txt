@@ -27,10 +27,10 @@ set(SRC
     ${SRCROOT}/JoystickManager.hpp
     ${INCROOT}/Keyboard.hpp
     ${SRCROOT}/Keyboard.cpp
-    ${INCROOT}/Mouse.hpp
-    ${SRCROOT}/Mouse.cpp
     ${SRCROOT}/Monitor.cpp
     ${INCROOT}/Monitor.hpp
+    ${INCROOT}/Mouse.hpp
+    ${SRCROOT}/Mouse.cpp
     ${SRCROOT}/MonitorImpl.hpp
     ${INCROOT}/Touch.hpp
     ${SRCROOT}/Touch.cpp
