@@ -82,6 +82,10 @@ Monitor::Monitor(std::unique_ptr<priv::MonitorImpl>&& impl) : m_impl(std::move(i
 }
 
 ////////////////////////////////////////////////////////////
+// Must be in this compilation unit, not inferred from header
+Monitor::~Monitor() = default;
+
+////////////////////////////////////////////////////////////
 Monitor Monitor::getPrimaryMonitor()
 {
     // Directly forward to the OS-specific implementation

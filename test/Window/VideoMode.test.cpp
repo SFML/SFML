@@ -50,7 +50,7 @@ TEST_CASE("[Window] sf::VideoMode", runDisplayTests())
     SECTION("isValid()")
     {
         const sf::VideoMode videoMode;
-        CHECK(!videoMode.isValid());
+        CHECK(!sf::Monitor::getPrimaryMonitor().isValid(videoMode));
     }
 
     SECTION("Operators")
