@@ -93,7 +93,7 @@ Monitor Monitor::getPrimaryMonitor()
 VideoMode Monitor::getDesktopMode()
 {
     // Directly forward to the OS-specific implementation
-    return static_cast<MonitorImplType* const>(m_impl.get())->getDesktopMode();
+    return static_cast<MonitorImplType*>(m_impl.get())->getDesktopMode();
 }
 
 
@@ -111,7 +111,7 @@ const std::vector<VideoMode>& Monitor::getFullscreenModes()
 {
     static const auto modes = [&]
     {
-        std::vector<VideoMode> result = static_cast<MonitorImplType* const>(m_impl.get())->getFullscreenModes();
+        std::vector<VideoMode> result = static_cast<MonitorImplType*>(m_impl.get())->getFullscreenModes();
         std::sort(result.begin(), result.end(), std::greater<>());
         return result;
     }();

@@ -177,7 +177,7 @@ public:
     static GlFunctionPointer getFunction(const char* name);
 
 protected:
-    friend class VideoModeImpl;
+    friend class MonitorImplDRM;
     friend class WindowImplDRM;
 
     ////////////////////////////////////////////////////////////

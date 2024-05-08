@@ -29,6 +29,9 @@ set(SRC
     ${SRCROOT}/Keyboard.cpp
     ${INCROOT}/Mouse.hpp
     ${SRCROOT}/Mouse.cpp
+    ${SRCROOT}/Monitor.cpp
+    ${INCROOT}/Monitor.hpp
+    ${SRCROOT}/MonitorImpl.hpp
     ${INCROOT}/Touch.hpp
     ${SRCROOT}/Touch.cpp
     ${INCROOT}/Sensor.hpp
@@ -38,9 +41,6 @@ set(SRC
     ${SRCROOT}/SensorManager.hpp
     ${SRCROOT}/VideoMode.cpp
     ${INCROOT}/VideoMode.hpp
-    ${SRCROOT}/Monitor.cpp
-    ${INCROOT}/Monitor.hpp
-    ${SRCROOT}/MonitorImpl.hpp
     ${SRCROOT}/Vulkan.cpp
     ${INCROOT}/Vulkan.hpp
     ${SRCROOT}/Window.cpp
@@ -100,8 +100,8 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
             ${SRCROOT}/Unix/SensorImpl.cpp
             ${SRCROOT}/Unix/SensorImpl.hpp
             ${SRCROOT}/DRM/InputImpl.cpp
-			${SRCROOT}/DRM/MonitorImplDRM.cpp
-			${SRCROOT}/DRM/MonitorImplDRM.hpp
+            ${SRCROOT}/DRM/MonitorImplDRM.cpp
+            ${SRCROOT}/DRM/MonitorImplDRM.hpp
             ${SRCROOT}/DRM/DRMContext.cpp
             ${SRCROOT}/DRM/DRMContext.hpp
             ${SRCROOT}/DRM/WindowImplDRM.cpp
@@ -120,8 +120,8 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
             ${SRCROOT}/Unix/KeySymToKeyMapping.cpp
             ${SRCROOT}/Unix/KeySymToUnicodeMapping.hpp
             ${SRCROOT}/Unix/KeySymToUnicodeMapping.cpp
-			${SRCROOT}/Unix/MonitorImplX11.cpp
-			${SRCROOT}/Unix/MonitorImplX11.hpp
+            ${SRCROOT}/Unix/MonitorImplX11.cpp
+            ${SRCROOT}/Unix/MonitorImplX11.hpp
             ${SRCROOT}/Unix/SensorImpl.cpp
             ${SRCROOT}/Unix/SensorImpl.hpp
             ${SRCROOT}/Unix/Display.cpp
@@ -184,8 +184,8 @@ elseif(SFML_OS_MACOS)
         ${SRCROOT}/macOS/HIDJoystickManager.cpp
         ${SRCROOT}/macOS/JoystickImpl.cpp
         ${SRCROOT}/macOS/JoystickImpl.hpp
-		${SRCROOT}/macOS/MonitorImplCocoa.cpp
-		${SRCROOT}/macOS/MonitorImplCocoa.hpp
+        ${SRCROOT}/macOS/MonitorImplCocoa.cpp
+        ${SRCROOT}/macOS/MonitorImplCocoa.hpp
         ${SRCROOT}/macOS/NSImage+raw.h
         ${SRCROOT}/macOS/NSImage+raw.mm
         ${SRCROOT}/macOS/Scaling.h
@@ -232,8 +232,8 @@ elseif(SFML_OS_IOS)
         ${SRCROOT}/iOS/InputImpl.mm
         ${SRCROOT}/iOS/JoystickImpl.mm
         ${SRCROOT}/iOS/JoystickImpl.hpp
-		${SRCROOT}/iOS/MonitorImplUIKit.mm
-		${SRCROOT}/iOS/MonitorImplUIKit.hpp
+        ${SRCROOT}/iOS/MonitorImplUIKit.mm
+        ${SRCROOT}/iOS/MonitorImplUIKit.hpp
         ${SRCROOT}/iOS/SensorImpl.mm
         ${SRCROOT}/iOS/SensorImpl.hpp
         ${SRCROOT}/iOS/WindowImplUIKit.hpp
@@ -259,8 +259,8 @@ elseif(SFML_OS_ANDROID)
         ${SRCROOT}/Android/CursorImpl.cpp
         ${SRCROOT}/Android/ClipboardImpl.hpp
         ${SRCROOT}/Android/ClipboardImpl.cpp
-		${SRCROOT}/Android/MonitorImplAndroid.cpp
-		${SRCROOT}/Android/MonitorImplAndroid.hpp
+        ${SRCROOT}/Android/MonitorImplAndroid.cpp
+        ${SRCROOT}/Android/MonitorImplAndroid.hpp
         ${SRCROOT}/Android/WindowImplAndroid.hpp
         ${SRCROOT}/Android/WindowImplAndroid.cpp
         ${SRCROOT}/Android/InputImpl.cpp
