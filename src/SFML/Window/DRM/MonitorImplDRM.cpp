@@ -25,8 +25,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/DRM/MonitorImplDRM.hpp>
 #include <SFML/Window/DRM/DRMContext.hpp>
+#include <SFML/Window/DRM/MonitorImplDRM.hpp>
 #include <SFML/Window/VideoMode.hpp>
 
 #include <SFML/System/Err.hpp>

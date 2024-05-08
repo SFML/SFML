@@ -31,8 +31,8 @@
 
 #include <SFML/System/Vector2.hpp>
 
-#include <vector>
 #include <memory>
+#include <vector>
 
 
 namespace sf
