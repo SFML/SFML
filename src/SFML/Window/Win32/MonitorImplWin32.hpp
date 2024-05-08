@@ -46,7 +46,7 @@ class MonitorImplWin32 : public MonitorImpl
 {
 public:
     ////////////////////////////////////////////////////////////
-    /// \brief Construct the window implementation
+    /// \brief Construct the monitor implementation
     ///
     ////////////////////////////////////////////////////////////
     MonitorImplWin32();

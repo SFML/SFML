@@ -45,7 +45,7 @@ class MonitorImplX11 : public MonitorImpl
 {
 public:
     ////////////////////////////////////////////////////////////
-    /// \brief Construct the window implementation
+    /// \brief Construct the monitor implementation
     ///
     ////////////////////////////////////////////////////////////
     MonitorImplX11();

@@ -37,7 +37,7 @@ class VideoMode;
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-/// \brief Windows implementation of MonitorImpl
+/// \brief Android implementation of MonitorImpl
 ///
 /// \note Placeholder class. Actual storage of the monitor handle not implemented yet.
 ///
@@ -46,7 +46,7 @@ class MonitorImplAndroid : public MonitorImpl
 {
 public:
     ////////////////////////////////////////////////////////////
-    /// \brief Construct the window implementation
+    /// \brief Construct the monitor implementation
     ///
     ////////////////////////////////////////////////////////////
     MonitorImplAndroid();
