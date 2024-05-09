@@ -347,6 +347,8 @@ Vector2f Text::findCharacterPos(std::size_t index) const
         position.x += m_font->getGlyph(curChar, m_characterSize, isBold).advance + letterSpacing;
     }
 
+    // Aligns the character position with the text's internal bounds
+    position += getLocalBounds().getPosition();
     // Transform the position to global coordinates
     position = getTransform().transformPoint(position);
 
