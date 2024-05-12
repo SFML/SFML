@@ -261,7 +261,7 @@ public:
     /// the \a area rectangle, and to contain 32-bits RGBA pixels.
     ///
     /// No additional check is performed on the size of the pixel
-    /// array, passing invalid arguments will lead to an undefined
+    /// array. Passing invalid arguments will lead to an undefined
     /// behavior.
     ///
     /// This function does nothing if \a pixels is null or if the
@@ -279,7 +279,7 @@ public:
     /// \a height arguments, and it must contain 32-bits RGBA pixels.
     ///
     /// No additional check is performed on the size of the pixel
-    /// array or the bounds of the area to update, passing invalid
+    /// array or the bounds of the area to update. Passing invalid
     /// arguments will lead to an undefined behavior.
     ///
     /// This function does nothing if \a pixels is null or if the
@@ -301,7 +301,7 @@ public:
     /// is more convenient for updating a sub-area of this texture.
     ///
     /// No additional check is performed on the size of the passed
-    /// texture, passing a texture bigger than this texture
+    /// texture. Passing a texture bigger than this texture
     /// will lead to an undefined behavior.
     ///
     /// This function does nothing if either texture was not
@@ -315,8 +315,8 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Update a part of this texture from another texture
     ///
-    /// No additional check is performed on the size of the texture,
-    /// passing an invalid combination of texture size and destination
+    /// No additional check is performed on the size of the texture.
+    /// Passing an invalid combination of texture size and destination
     /// will lead to an undefined behavior.
     ///
     /// This function does nothing if either texture was not
@@ -336,8 +336,8 @@ public:
     /// The other overload, which has (x, y) additional arguments,
     /// is more convenient for updating a sub-area of the texture.
     ///
-    /// No additional check is performed on the size of the image,
-    /// passing an image bigger than the texture will lead to an
+    /// No additional check is performed on the size of the image.
+    /// Passing an image bigger than the texture will lead to an
     /// undefined behavior.
     ///
     /// This function does nothing if the texture was not
@@ -351,8 +351,8 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Update a part of the texture from an image
     ///
-    /// No additional check is performed on the size of the image,
-    /// passing an invalid combination of image size and destination
+    /// No additional check is performed on the size of the image.
+    /// Passing an invalid combination of image size and destination
     /// will lead to an undefined behavior.
     ///
     /// This function does nothing if the texture was not
@@ -372,8 +372,8 @@ public:
     /// The other overload, which has (x, y) additional arguments,
     /// is more convenient for updating a sub-area of the texture.
     ///
-    /// No additional check is performed on the size of the window,
-    /// passing a window bigger than the texture will lead to an
+    /// No additional check is performed on the size of the window.
+    /// Passing a window bigger than the texture will lead to an
     /// undefined behavior.
     ///
     /// This function does nothing if either the texture or the window
@@ -387,8 +387,8 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Update a part of the texture from the contents of a window
     ///
-    /// No additional check is performed on the size of the window,
-    /// passing an invalid combination of window size and destination
+    /// No additional check is performed on the size of the window.
+    /// Passing an invalid combination of window size and destination
     /// will lead to an undefined behavior.
     ///
     /// This function does nothing if either the texture or the window
