@@ -154,7 +154,7 @@ public:
     /// the \a created buffer.
     ///
     /// No additional check is performed on the size of the vertex
-    /// array, passing invalid arguments will lead to undefined
+    /// array. Passing invalid arguments will lead to undefined
     /// behavior.
     ///
     /// This function does nothing if \a vertices is null or if the
@@ -188,7 +188,7 @@ public:
     /// than the size of the currently created buffer, the update fails.
     ///
     /// No additional check is performed on the size of the vertex
-    /// array, passing invalid arguments will lead to undefined
+    /// array. Passing invalid arguments will lead to undefined
     /// behavior.
     ///
     /// \param vertices    Array of vertices to copy to the buffer
