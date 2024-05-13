@@ -231,7 +231,7 @@ private:
         Vector3f       position{0, 0, 0};
         Vector3f       direction{0, 0, -1};
         Vector3f       velocity{0, 0, 0};
-        Listener::Cone cone{degrees(360), degrees(360), 1};
+        Listener::Cone cone{degrees(360.f), degrees(360.f), 1};
         Vector3f       upVector{0, 1, 0};
     };
 

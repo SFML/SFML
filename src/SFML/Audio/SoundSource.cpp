@@ -88,8 +88,8 @@ void SoundSource::setCone(const Cone& cone)
 {
     if (auto* sound = static_cast<ma_sound*>(getSound()))
         ma_sound_set_cone(sound,
-                          std::clamp(cone.innerAngle, degrees(0), degrees(360)).asRadians(),
-                          std::clamp(cone.outerAngle, degrees(0), degrees(360)).asRadians(),
+                          std::clamp(cone.innerAngle, Angle::Zero, degrees(360.f)).asRadians(),
+                          std::clamp(cone.outerAngle, Angle::Zero, degrees(360.f)).asRadians(),
                           cone.outerGain);
 }
 
