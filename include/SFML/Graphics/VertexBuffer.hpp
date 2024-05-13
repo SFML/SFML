@@ -386,7 +386,7 @@ SFML_GRAPHICS_API void swap(VertexBuffer& left, VertexBuffer& right) noexcept;
 /// Simultaneous updates to the vertex buffer are not guaranteed to be
 /// carried out by the driver in any specific order. Updating the same
 /// region of the buffer from multiple threads will not cause undefined
-/// behaviour, however the final state of the buffer will be unpredictable.
+/// behavior, however the final state of the buffer will be unpredictable.
 ///
 /// Simultaneous updates of distinct non-overlapping regions of the buffer
 /// are also not guaranteed to complete in a specific order. However, in
