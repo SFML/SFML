@@ -63,7 +63,7 @@ public:
     /// This function uses its own thread so that it doesn't block
     /// the rest of the program while the capture runs.
     /// Please note that only one capture can happen at the same time.
-    /// You can select which capture device will be used, by passing
+    /// You can select which capture device will be used by passing
     /// the name to the setDevice() method. If none was selected
     /// before, the default capture device will be used. You can get a
     /// list of the names of all available capture devices by calling
