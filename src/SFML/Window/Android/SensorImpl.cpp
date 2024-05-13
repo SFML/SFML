@@ -99,11 +99,8 @@ bool SensorImpl::open(Sensor::Type sensor)
     if (!m_sensor)
         return false;
 
-    // Get the minimum delay allowed between events
-    const Time minimumDelay = microseconds(ASensor_getMinDelay(m_sensor));
-
     // Set the event rate (not to consume too much battery)
-    ASensorEventQueue_setEventRate(sensorEventQueue, m_sensor, static_cast<std::int32_t>(minimumDelay.asMicroseconds()));
+    ASensorEventQueue_setEventRate(sensorEventQueue, m_sensor, ASensor_getMinDelay(m_sensor));
 
     // Save the type of the sensor
     m_type = sensor;
