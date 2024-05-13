@@ -372,8 +372,9 @@ public:
     ///
     /// This function computes the visual position of a character
     /// from its index in the string. The returned position is
-    /// in global coordinates (translation, rotation, scale and
-    /// origin are applied).
+    /// the global coordinates (translation, rotation, scale and
+    /// origin are applied) at the top of the character's text
+    /// line.
     /// If \a index is out of range, the position of the end of
     /// the string is returned.
     ///
