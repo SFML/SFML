@@ -63,8 +63,8 @@ struct SavedSettings
     float          minGain{0.f};
     float          maxGain{1.f};
     float          rollOff{1.f};
-    float          innerAngle{degrees(360).asRadians()};
-    float          outerAngle{degrees(360).asRadians()};
+    float          innerAngle{degrees(360.f).asRadians()};
+    float          outerAngle{degrees(360.f).asRadians()};
     float          outerGain{0.f};
 };
 

@@ -34,11 +34,11 @@ TEST_CASE("[Graphics] sf::Transformable")
         CHECK(transformable.getPosition() == sf::Vector2f(3, 4));
 
         transformable.setRotation(sf::degrees(3.14f));
-        CHECK(transformable.getRotation() == sf::degrees(3.14f));
+        CHECK(transformable.getRotation() == Approx(sf::degrees(3.14f)));
         transformable.setRotation(sf::degrees(540));
-        CHECK(transformable.getRotation() == sf::degrees(180));
+        CHECK(transformable.getRotation() == Approx(sf::degrees(180)));
         transformable.setRotation(sf::degrees(-72));
-        CHECK(transformable.getRotation() == sf::degrees(288));
+        CHECK(transformable.getRotation() == Approx(sf::degrees(288)));
 
         transformable.setScale({5, 6});
         CHECK(transformable.getScale() == sf::Vector2f(5, 6));
@@ -102,15 +102,15 @@ TEST_CASE("[Graphics] sf::Transformable")
         sf::Transformable transformable;
         CHECK(transformable.getRotation() == sf::Angle::Zero);
         transformable.rotate(sf::degrees(15));
-        CHECK(transformable.getRotation() == sf::degrees(15));
+        CHECK(transformable.getRotation() == Approx(sf::degrees(15)));
         transformable.rotate(sf::degrees(360));
-        CHECK(transformable.getRotation() == sf::degrees(15));
+        CHECK(transformable.getRotation() == Approx(sf::degrees(15)));
         transformable.rotate(sf::degrees(-25));
-        CHECK(transformable.getRotation() == sf::degrees(350));
+        CHECK(transformable.getRotation() == Approx(sf::degrees(350)));
         transformable.rotate(sf::degrees(-720));
-        CHECK(transformable.getRotation() == sf::degrees(350));
+        CHECK(transformable.getRotation() == Approx(sf::degrees(350)));
         transformable.rotate(sf::degrees(-370));
-        CHECK(transformable.getRotation() == sf::degrees(340));
+        CHECK(transformable.getRotation() == Approx(sf::degrees(340)));
     }
 
     SECTION("scale()")

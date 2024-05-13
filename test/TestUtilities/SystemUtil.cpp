@@ -77,7 +77,7 @@ bool operator==(const sf::Vector3f& lhs, const Approx<sf::Vector3f>& rhs)
 
 bool operator==(const sf::Angle& lhs, const Approx<sf::Angle>& rhs)
 {
-    return lhs.asDegrees() == Approx(rhs.value.asDegrees());
+    return lhs.asRadians() == Approx(rhs.value.asRadians());
 }
 
 std::vector<std::byte> loadIntoMemory(const std::filesystem::path& path)
