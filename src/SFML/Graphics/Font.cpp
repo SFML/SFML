@@ -473,6 +473,11 @@ bool Font::isSmooth() const
     return m_isSmooth;
 }
 
+////////////////////////////////////////////////////////////
+inline Font::operator bool() const
+{
+	return static_cast<bool>(m_fontHandles);
+}
 
 ////////////////////////////////////////////////////////////
 void Font::cleanup()
