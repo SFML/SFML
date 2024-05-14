@@ -45,6 +45,7 @@
 #include <SFML/System/Vector2.hpp>
 
 #include <algorithm>
+#include <array>
 #include <chrono>
 #include <filesystem>
 #include <iostream>
