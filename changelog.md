@@ -6,6 +6,8 @@
 
 -   Ensure GNUInstallDirs cache vars are included before first used (#2778, #2779)
 -   [macOS] Fix incorrect variable expansion (#2780)
+-   Issue warning when trying to use UCRT MinGW with precompiled MSVCRT depenencies (#2821)
+-   Fix Nix pkg-config support
 
 ### Audio
 
