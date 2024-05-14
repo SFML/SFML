@@ -453,6 +453,7 @@ const Texture& Font::getTexture(unsigned int characterSize) const
     return loadPage(characterSize).texture;
 }
 
+
 ////////////////////////////////////////////////////////////
 void Font::setSmooth(bool smooth)
 {
@@ -467,11 +468,13 @@ void Font::setSmooth(bool smooth)
     }
 }
 
+
 ////////////////////////////////////////////////////////////
 bool Font::isSmooth() const
 {
     return m_isSmooth;
 }
+
 
 ////////////////////////////////////////////////////////////
 void Font::cleanup()
