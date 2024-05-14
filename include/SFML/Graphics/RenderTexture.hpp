@@ -100,10 +100,14 @@ public:
     /// Before calling this function, the render-texture is in
     /// an invalid state, thus it is mandatory to call it before
     /// doing anything with the render-texture.
+    ///
     /// The last parameter, \a settings, is useful if you want to enable
     /// multi-sampling or use the render-texture for OpenGL rendering that
     /// requires a depth or stencil buffer. Otherwise it is unnecessary, and
     /// you should leave this parameter at its default value.
+    ///
+    /// After creation, the contents of the render-texture are undefined.
+    /// Call `RenderTexture::clear` first to ensure a single color fill.
     ///
     /// \param size     Width and height of the render-texture
     /// \param settings Additional settings for the underlying OpenGL texture and context
