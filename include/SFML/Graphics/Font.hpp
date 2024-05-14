@@ -291,7 +291,10 @@ public:
     /// \return Whether a font has been loaded internally
     ///
     ////////////////////////////////////////////////////////////
-    inline operator bool() const;
+    explicit operator bool() const
+	{
+		return static_cast<bool>(m_fontHandles);
+	}
 
 private:
     ////////////////////////////////////////////////////////////

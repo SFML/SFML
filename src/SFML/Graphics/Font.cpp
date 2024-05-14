@@ -474,12 +474,6 @@ bool Font::isSmooth() const
 }
 
 ////////////////////////////////////////////////////////////
-inline Font::operator bool() const
-{
-    return static_cast<bool>(m_fontHandles);
-}
-
-////////////////////////////////////////////////////////////
 void Font::cleanup()
 {
     // Drop ownership of shared FreeType pointers
