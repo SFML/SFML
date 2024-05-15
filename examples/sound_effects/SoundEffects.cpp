@@ -6,6 +6,7 @@
 #include <SFML/Audio.hpp>
 
 #include <algorithm>
+#include <iostream>
 #include <limits>
 #include <memory>
 #include <vector>
@@ -113,7 +114,7 @@ public:
 
         // Load the music file
         if (!m_music.openFromFile(resourcesDir() / "doodle_pop.ogg"))
-            sf::err() << "Failed to load " << (resourcesDir() / "doodle_pop.ogg").string() << std::endl;
+            std::cerr << "Failed to load " << (resourcesDir() / "doodle_pop.ogg").string() << std::endl;
 
         // Set the music to loop
         m_music.setLoop(true);
@@ -172,7 +173,7 @@ public:
     {
         // Load the music file
         if (!m_music.openFromFile(resourcesDir() / "doodle_pop.ogg"))
-            sf::err() << "Failed to load " << (resourcesDir() / "doodle_pop.ogg").string() << std::endl;
+            std::cerr << "Failed to load " << (resourcesDir() / "doodle_pop.ogg").string() << std::endl;
 
         // Set the music to loop
         m_music.setLoop(true);
@@ -275,7 +276,7 @@ public:
 
         // Load the music file
         if (!m_music.openFromFile(resourcesDir() / "doodle_pop.ogg"))
-            sf::err() << "Failed to load " << (resourcesDir() / "doodle_pop.ogg").string() << std::endl;
+            std::cerr << "Failed to load " << (resourcesDir() / "doodle_pop.ogg").string() << std::endl;
 
         // Set the music to loop
         m_music.setLoop(true);
