@@ -129,7 +129,7 @@ void initializeDataSource(ma_data_source_base& dataSourceBase, const ma_data_sou
     config.vtable                = &vtable;
 
     if (const ma_result result = ma_data_source_init(&config, &dataSourceBase); result != MA_SUCCESS)
-        err() << "Failed to initialize audio data source: " << ma_result_description(result) << std::endl;
+        MiniaudioUtils::printErr(result, "Failed to initialize audio data source");
 }
 } // namespace
 
@@ -191,7 +191,7 @@ Time MiniaudioUtils::getPlayingOffset(ma_sound& sound)
 
     if (const ma_result result = ma_sound_get_cursor_in_seconds(&sound, &cursor); result != MA_SUCCESS)
     {
-        err() << "Failed to get sound cursor: " << ma_result_description(result) << std::endl;
+        MiniaudioUtils::printErr(result, "Failed to get sound cursor");
         return {};
     }
 
@@ -206,12 +206,12 @@ ma_uint64 MiniaudioUtils::getFrameIndex(ma_sound& sound, Time timeOffset)
 
     if (const ma_result result = ma_sound_get_data_format(&sound, nullptr, nullptr, &sampleRate, nullptr, 0);
         result != MA_SUCCESS)
-        err() << "Failed to get sound data format: " << ma_result_description(result) << std::endl;
+        MiniaudioUtils::printErr(result, "Failed to get sound data format");
 
     const auto frameIndex = static_cast<ma_uint64>(timeOffset.asSeconds() * static_cast<float>(sampleRate));
 
     if (const ma_result result = ma_sound_seek_to_pcm_frame(&sound, frameIndex); result != MA_SUCCESS)
-        err() << "Failed to seek sound to pcm frame: " << ma_result_description(result) << std::endl;
+        MiniaudioUtils::printErr(result, "Failed to seek sound to pcm frame");
 
     return frameIndex;
 }
@@ -240,6 +240,13 @@ void MiniaudioUtils::initializeSound(const ma_data_source_vtable& vtable,
     // Initialize sound structure and set default settings
     initializeFn();
     applySettings(sound, SavedSettings{});
+}
+
+
+////////////////////////////////////////////////////////////
+void MiniaudioUtils::printErr(ma_result result, const char* msg)
+{
+    err() << msg << ": " << ma_result_description(result) << std::endl;
 }
 
 } // namespace sf::priv

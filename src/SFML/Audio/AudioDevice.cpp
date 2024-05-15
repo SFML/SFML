@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/AudioDevice.hpp>
+#include <SFML/Audio/MiniaudioUtils.hpp>
 
 #include <SFML/System/Err.hpp>
 
@@ -49,7 +50,7 @@ AudioDevice::AudioDevice()
     if (const auto result = ma_log_init(nullptr, &*m_log); result != MA_SUCCESS)
     {
         m_log.reset();
-        err() << "Failed to initialize the audio log: " << ma_result_description(result) << std::endl;
+        MiniaudioUtils::printErr(result, "Failed to initialize the audio log");
         return;
     }
 
@@ -64,7 +65,7 @@ AudioDevice::AudioDevice()
                                                          },
                                                          nullptr));
         result != MA_SUCCESS)
-        err() << "Failed to register audio log callback: " << ma_result_description(result) << std::endl;
+        MiniaudioUtils::printErr(result, "Failed to register audio log callback");
 
     // Create the context
     m_context.emplace();
@@ -81,7 +82,7 @@ AudioDevice::AudioDevice()
         if (const auto result = ma_context_init(backendList, 1, &contextConfig, &*m_context); result != MA_SUCCESS)
         {
             m_context.reset();
-            err() << "Failed to initialize the audio playback context: " << ma_result_description(result) << std::endl;
+            MiniaudioUtils::printErr(result, "Failed to initialize the audio playback context");
             return;
         }
 
@@ -89,7 +90,7 @@ AudioDevice::AudioDevice()
         if (const auto result = ma_context_get_devices(&*m_context, nullptr, &deviceCount, nullptr, nullptr);
             result != MA_SUCCESS)
         {
-            err() << "Failed to get audio playback devices: " << ma_result_description(result) << std::endl;
+            MiniaudioUtils::printErr(result, "Failed to get audio playback devices");
             return;
         }
 
@@ -127,7 +128,7 @@ AudioDevice::AudioDevice()
         {
             if (const auto result = ma_engine_read_pcm_frames(&*audioDevice.m_engine, output, frameCount, nullptr);
                 result != MA_SUCCESS)
-                err() << "Failed to read PCM frames from audio engine: " << ma_result_description(result) << std::endl;
+                MiniaudioUtils::printErr(result, "Failed to read PCM frames from audio engine");
         }
     };
     playbackDeviceConfig.pUserData       = this;
@@ -136,7 +137,7 @@ AudioDevice::AudioDevice()
     if (const auto result = ma_device_init(&*m_context, &playbackDeviceConfig, &*m_playbackDevice); result != MA_SUCCESS)
     {
         m_playbackDevice.reset();
-        err() << "Failed to initialize the audio playback device: " << ma_result_description(result) << std::endl;
+        MiniaudioUtils::printErr(result, "Failed to initialize the audio playback device");
         return;
     }
 
@@ -151,7 +152,7 @@ AudioDevice::AudioDevice()
     if (const auto result = ma_engine_init(&engineConfig, &*m_engine); result != MA_SUCCESS)
     {
         m_engine.reset();
-        err() << "Failed to initialize the audio engine: " << ma_result_description(result) << std::endl;
+        MiniaudioUtils::printErr(result, "Failed to initialize the audio engine");
         return;
     }
 
@@ -159,7 +160,7 @@ AudioDevice::AudioDevice()
     if (const auto result = ma_device_set_master_volume(ma_engine_get_device(&*m_engine),
                                                         getListenerProperties().volume * 0.01f);
         result != MA_SUCCESS)
-        err() << "Failed to set audio device master volume: " << ma_result_description(result) << std::endl;
+        MiniaudioUtils::printErr(result, "Failed to set audio device master volume");
 
     ma_engine_listener_set_position(&*m_engine,
                                     0,
@@ -234,7 +235,7 @@ void AudioDevice::setGlobalVolume(float volume)
 
     if (const auto result = ma_device_set_master_volume(ma_engine_get_device(&*instance->m_engine), volume * 0.01f);
         result != MA_SUCCESS)
-        err() << "Failed to set audio device master volume: " << ma_result_description(result) << std::endl;
+        MiniaudioUtils::printErr(result, "Failed to set audio device master volume");
 }
 
 

@@ -53,5 +53,7 @@ void initializeSound(const ma_data_source_vtable& vtable,
                      ma_data_source_base&         dataSourceBase,
                      ma_sound&                    sound,
                      const std::function<void()>& initializeFn);
+
+void printErr(ma_result result, const char* msg);
 } // namespace priv::MiniaudioUtils
 } // namespace sf

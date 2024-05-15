@@ -25,6 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Audio/MiniaudioUtils.hpp>
 #include <SFML/Audio/SoundRecorder.hpp>
 
 #include <SFML/System/Err.hpp>
@@ -94,7 +95,7 @@ struct SoundRecorder::Impl
                 // If the derived class wants to stop, stop the capture
                 if (const auto result = ma_device_stop(device); result != MA_SUCCESS)
                 {
-                    err() << "Failed to stop audio capture device: " << ma_result_description(result) << std::endl;
+                    priv::MiniaudioUtils::printErr(result, "Failed to stop audio capture device");
                     return;
                 }
             }
@@ -103,7 +104,7 @@ struct SoundRecorder::Impl
         if (const auto result = ma_device_init(&*context, &captureDeviceConfig, &*captureDevice); result != MA_SUCCESS)
         {
             captureDevice.reset();
-            err() << "Failed to initialize the audio capture device: " << ma_result_description(result) << std::endl;
+            priv::MiniaudioUtils::printErr(result, "Failed to initialize the audio capture device");
             return false;
         }
 
@@ -121,7 +122,7 @@ struct SoundRecorder::Impl
 
         if (const auto result = ma_context_init(nullptr, 0, &contextConfig, &context); result != MA_SUCCESS)
         {
-            err() << "Failed to initialize the audio context: " << ma_result_description(result) << std::endl;
+            priv::MiniaudioUtils::printErr(result, "Failed to initialize the audio context");
             return deviceList;
         }
 
@@ -132,7 +133,7 @@ struct SoundRecorder::Impl
         if (const auto result = ma_context_get_devices(&context, nullptr, nullptr, &deviceInfos, &deviceCount);
             result != MA_SUCCESS)
         {
-            err() << "Failed to get audio capture devices: " << ma_result_description(result) << std::endl;
+            priv::MiniaudioUtils::printErr(result, "Failed to get audio capture devices");
             ma_context_uninit(&context);
             return deviceList;
         }
@@ -168,7 +169,7 @@ SoundRecorder::SoundRecorder() : m_impl(std::make_unique<Impl>(this))
     if (const auto result = ma_log_init(nullptr, &*m_impl->log); result != MA_SUCCESS)
     {
         m_impl->log.reset();
-        err() << "Failed to initialize the audio log: " << ma_result_description(result) << std::endl;
+        priv::MiniaudioUtils::printErr(result, "Failed to initialize the audio log");
         return;
     }
 
@@ -183,7 +184,7 @@ SoundRecorder::SoundRecorder() : m_impl(std::make_unique<Impl>(this))
                                                          },
                                                          nullptr));
         result != MA_SUCCESS)
-        err() << "Failed to register audio log callback: " << ma_result_description(result) << std::endl;
+        priv::MiniaudioUtils::printErr(result, "Failed to register audio log callback");
 
     // Create the context
     m_impl->context.emplace();
@@ -200,7 +201,7 @@ SoundRecorder::SoundRecorder() : m_impl(std::make_unique<Impl>(this))
         if (const auto result = ma_context_init(backendList, 1, &contextConfig, &*m_impl->context); result != MA_SUCCESS)
         {
             m_impl->context.reset();
-            err() << "Failed to initialize the audio capture context: " << ma_result_description(result) << std::endl;
+            priv::MiniaudioUtils::printErr(result, "Failed to initialize the audio capture context");
             return;
         }
 
@@ -208,7 +209,7 @@ SoundRecorder::SoundRecorder() : m_impl(std::make_unique<Impl>(this))
         if (const auto result = ma_context_get_devices(&*m_impl->context, nullptr, nullptr, nullptr, &deviceCount);
             result != MA_SUCCESS)
         {
-            err() << "Failed to get audio capture devices: " << ma_result_description(result) << std::endl;
+            priv::MiniaudioUtils::printErr(result, "Failed to get audio capture devices");
             return;
         }
 
@@ -309,7 +310,7 @@ bool SoundRecorder::start(unsigned int sampleRate)
         // Start the capture
         if (const auto result = ma_device_start(&*m_impl->captureDevice); result != MA_SUCCESS)
         {
-            err() << "Failed to start audio capture device: " << ma_result_description(result) << std::endl;
+            priv::MiniaudioUtils::printErr(result, "Failed to start audio capture device");
             return false;
         }
 
@@ -329,7 +330,7 @@ void SoundRecorder::stop()
         // Stop the capture
         if (const auto result = ma_device_stop(&*m_impl->captureDevice); result != MA_SUCCESS)
         {
-            err() << "Failed to stop audio capture device: " << ma_result_description(result) << std::endl;
+            priv::MiniaudioUtils::printErr(result, "Failed to stop audio capture device");
             return;
         }
 

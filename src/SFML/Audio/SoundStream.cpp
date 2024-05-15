@@ -82,12 +82,12 @@ struct SoundStream::Impl
             impl.status    = Status::Stopped;
 
             if (const ma_result result = ma_sound_seek_to_pcm_frame(soundPtr, 0); result != MA_SUCCESS)
-                err() << "Failed to seek sound to frame 0: " << ma_result_description(result) << std::endl;
+                priv::MiniaudioUtils::printErr(result, "Failed to seek sound to frame 0");
         };
 
         if (const ma_result result = ma_sound_init_ex(engine, &soundConfig, &sound); result != MA_SUCCESS)
         {
-            err() << "Failed to initialize sound: " << ma_result_description(result) << std::endl;
+            priv::MiniaudioUtils::printErr(result, "Failed to initialize sound");
             return;
         }
 
@@ -284,7 +284,7 @@ void SoundStream::play()
 
     if (const ma_result result = ma_sound_start(&m_impl->sound); result != MA_SUCCESS)
     {
-        err() << "Failed to start playing sound: " << ma_result_description(result) << std::endl;
+        priv::MiniaudioUtils::printErr(result, "Failed to start playing sound");
     }
     else
     {
@@ -298,7 +298,7 @@ void SoundStream::pause()
 {
     if (const ma_result result = ma_sound_stop(&m_impl->sound); result != MA_SUCCESS)
     {
-        err() << "Failed to stop playing sound: " << ma_result_description(result) << std::endl;
+        priv::MiniaudioUtils::printErr(result, "Failed to stop playing sound");
     }
     else
     {
@@ -313,7 +313,7 @@ void SoundStream::stop()
 {
     if (const ma_result result = ma_sound_stop(&m_impl->sound); result != MA_SUCCESS)
     {
-        err() << "Failed to stop playing sound: " << ma_result_description(result) << std::endl;
+        priv::MiniaudioUtils::printErr(result, "Failed to stop playing sound");
     }
     else
     {
