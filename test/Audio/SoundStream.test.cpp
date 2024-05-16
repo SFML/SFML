@@ -45,7 +45,7 @@ TEST_CASE("[Audio] sf::SoundStream", runAudioDeviceTests())
         const SoundStream soundStream;
         CHECK(soundStream.getChannelCount() == 0);
         CHECK(soundStream.getSampleRate() == 0);
-        CHECK(soundStream.getStatus() == sf::SoundSource::Status::Stopped);
+        CHECK(soundStream.getStatus() == sf::SoundStream::Status::Stopped);
         CHECK(soundStream.getPlayingOffset() == sf::Time::Zero);
         CHECK(!soundStream.getLoop());
     }

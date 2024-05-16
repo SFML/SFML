@@ -34,7 +34,7 @@ TEST_CASE("[Audio] sf::Sound", runAudioDeviceTests())
         CHECK(&sound.getBuffer() == &soundBuffer);
         CHECK(!sound.getLoop());
         CHECK(sound.getPlayingOffset() == sf::Time::Zero);
-        CHECK(sound.getStatus() == sf::SoundSource::Status::Stopped);
+        CHECK(sound.getStatus() == sf::Sound::Status::Stopped);
     }
 
     SECTION("Copy semantics")
@@ -47,7 +47,7 @@ TEST_CASE("[Audio] sf::Sound", runAudioDeviceTests())
             CHECK(&soundCopy.getBuffer() == &soundBuffer);
             CHECK(!soundCopy.getLoop());
             CHECK(soundCopy.getPlayingOffset() == sf::Time::Zero);
-            CHECK(soundCopy.getStatus() == sf::SoundSource::Status::Stopped);
+            CHECK(soundCopy.getStatus() == sf::Sound::Status::Stopped);
         }
 
         SECTION("Assignment")
@@ -58,7 +58,7 @@ TEST_CASE("[Audio] sf::Sound", runAudioDeviceTests())
             CHECK(&soundCopy.getBuffer() == &soundBuffer);
             CHECK(!soundCopy.getLoop());
             CHECK(soundCopy.getPlayingOffset() == sf::Time::Zero);
-            CHECK(soundCopy.getStatus() == sf::SoundSource::Status::Stopped);
+            CHECK(soundCopy.getStatus() == sf::Sound::Status::Stopped);
         }
     }
 
