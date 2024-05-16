@@ -43,7 +43,7 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
         CHECK(length == sf::Time::Zero);
         CHECK(music.getChannelCount() == 0);
         CHECK(music.getSampleRate() == 0);
-        CHECK(music.getStatus() == sf::SoundSource::Status::Stopped);
+        CHECK(music.getStatus() == sf::Music::Status::Stopped);
         CHECK(music.getPlayingOffset() == sf::Time::Zero);
         CHECK(!music.getLoop());
     }
@@ -61,7 +61,7 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
             CHECK(length == sf::Time::Zero);
             CHECK(music.getChannelCount() == 0);
             CHECK(music.getSampleRate() == 0);
-            CHECK(music.getStatus() == sf::SoundSource::Status::Stopped);
+            CHECK(music.getStatus() == sf::Music::Status::Stopped);
             CHECK(music.getPlayingOffset() == sf::Time::Zero);
             CHECK(!music.getLoop());
         }
@@ -75,7 +75,7 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
             CHECK(length == sf::microseconds(1990884));
             CHECK(music.getChannelCount() == 1);
             CHECK(music.getSampleRate() == 44100);
-            CHECK(music.getStatus() == sf::SoundSource::Status::Stopped);
+            CHECK(music.getStatus() == sf::Music::Status::Stopped);
             CHECK(music.getPlayingOffset() == sf::Time::Zero);
             CHECK(!music.getLoop());
         }
@@ -95,7 +95,7 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
             CHECK(length == sf::Time::Zero);
             CHECK(music.getChannelCount() == 0);
             CHECK(music.getSampleRate() == 0);
-            CHECK(music.getStatus() == sf::SoundSource::Status::Stopped);
+            CHECK(music.getStatus() == sf::Music::Status::Stopped);
             CHECK(music.getPlayingOffset() == sf::Time::Zero);
             CHECK(!music.getLoop());
         }
@@ -110,7 +110,7 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
             CHECK(length == sf::microseconds(1990884));
             CHECK(music.getChannelCount() == 1);
             CHECK(music.getSampleRate() == 44100);
-            CHECK(music.getStatus() == sf::SoundSource::Status::Stopped);
+            CHECK(music.getStatus() == sf::Music::Status::Stopped);
             CHECK(music.getPlayingOffset() == sf::Time::Zero);
             CHECK(!music.getLoop());
         }
@@ -130,7 +130,7 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
             CHECK(length == sf::Time::Zero);
             CHECK(music.getChannelCount() == 0);
             CHECK(music.getSampleRate() == 0);
-            CHECK(music.getStatus() == sf::SoundSource::Status::Stopped);
+            CHECK(music.getStatus() == sf::Music::Status::Stopped);
             CHECK(music.getPlayingOffset() == sf::Time::Zero);
             CHECK(!music.getLoop());
         }
@@ -145,7 +145,7 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
             CHECK(length == sf::microseconds(24002176));
             CHECK(music.getChannelCount() == 2);
             CHECK(music.getSampleRate() == 44100);
-            CHECK(music.getStatus() == sf::SoundSource::Status::Stopped);
+            CHECK(music.getStatus() == sf::Music::Status::Stopped);
             CHECK(music.getPlayingOffset() == sf::Time::Zero);
             CHECK(!music.getLoop());
         }
@@ -158,21 +158,21 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
 
         // Wait for background thread to start
         music.play();
-        while (music.getStatus() == sf::SoundSource::Status::Stopped)
+        while (music.getStatus() == sf::Music::Status::Stopped)
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        CHECK(music.getStatus() == sf::SoundSource::Status::Playing);
+        CHECK(music.getStatus() == sf::Music::Status::Playing);
 
         // Wait for background thread to pause
         music.pause();
-        while (music.getStatus() == sf::SoundSource::Status::Playing)
+        while (music.getStatus() == sf::Music::Status::Playing)
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        CHECK(music.getStatus() == sf::SoundSource::Status::Paused);
+        CHECK(music.getStatus() == sf::Music::Status::Paused);
 
         // Wait for background thread to stop
         music.stop();
-        while (music.getStatus() == sf::SoundSource::Status::Paused)
+        while (music.getStatus() == sf::Music::Status::Paused)
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
-        CHECK(music.getStatus() == sf::SoundSource::Status::Stopped);
+        CHECK(music.getStatus() == sf::Music::Status::Stopped);
     }
 
     SECTION("setLoopPoints()")
@@ -187,7 +187,7 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
             CHECK(length == sf::Time::Zero);
             CHECK(music.getChannelCount() == 0);
             CHECK(music.getSampleRate() == 0);
-            CHECK(music.getStatus() == sf::SoundSource::Status::Stopped);
+            CHECK(music.getStatus() == sf::Music::Status::Stopped);
             CHECK(music.getPlayingOffset() == sf::Time::Zero);
             CHECK(!music.getLoop());
         }
@@ -201,7 +201,7 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
             CHECK(length == sf::seconds(2));
             CHECK(music.getChannelCount() == 1);
             CHECK(music.getSampleRate() == 22050);
-            CHECK(music.getStatus() == sf::SoundSource::Status::Stopped);
+            CHECK(music.getStatus() == sf::Music::Status::Stopped);
             CHECK(music.getPlayingOffset() == sf::Time::Zero);
             CHECK(!music.getLoop());
         }
