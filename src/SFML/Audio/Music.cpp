@@ -227,7 +227,7 @@ std::optional<std::uint64_t> Music::onLoop()
         // Looping is enabled, and either we're at the loop end, or we're at the EOF
         // when it's equivalent to the loop end (loop end takes priority). Send us to loop begin
         m_file->seek(m_loopSpan.offset);
-        return static_cast<std::int64_t>(m_file->getSampleOffset());
+        return m_file->getSampleOffset();
     }
     else if (getLoop() && (currentOffset >= m_file->getSampleCount()))
     {

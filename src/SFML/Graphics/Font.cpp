@@ -84,8 +84,7 @@ inline T reinterpret(const U& input)
 // Combine outline thickness, boldness and font glyph index into a single 64-bit key
 std::uint64_t combine(float outlineThickness, bool bold, std::uint32_t index)
 {
-    return (static_cast<std::uint64_t>(reinterpret<std::uint32_t>(outlineThickness)) << 32) |
-           (static_cast<std::uint64_t>(bold) << 31) | index;
+    return (std::uint64_t{reinterpret<std::uint32_t>(outlineThickness)} << 32) | (std::uint64_t{bold} << 31) | index;
 }
 } // namespace
 
@@ -365,8 +364,7 @@ float Font::getKerning(std::uint32_t first, std::uint32_t second, unsigned int c
 
         // Combine kerning with compensation deltas and return the X advance
         // Flooring is required as we use FT_KERNING_UNFITTED flag which is not quantized in 64 based grid
-        return std::floor(
-            (secondLsbDelta - firstRsbDelta + static_cast<float>(kerning.x) + 32) / static_cast<float>(1 << 6));
+        return std::floor((secondLsbDelta - firstRsbDelta + static_cast<float>(kerning.x) + 32) / float{1 << 6});
     }
     else
     {
@@ -385,7 +383,7 @@ float Font::getLineSpacing(unsigned int characterSize) const
 
     if (setCurrentSize(characterSize))
     {
-        return static_cast<float>(face->size->metrics.height) / static_cast<float>(1 << 6);
+        return static_cast<float>(face->size->metrics.height) / float{1 << 6};
     }
     else
     {
@@ -407,8 +405,7 @@ float Font::getUnderlinePosition(unsigned int characterSize) const
         if (!FT_IS_SCALABLE(face))
             return static_cast<float>(characterSize) / 10.f;
 
-        return -static_cast<float>(FT_MulFix(face->underline_position, face->size->metrics.y_scale)) /
-               static_cast<float>(1 << 6);
+        return -static_cast<float>(FT_MulFix(face->underline_position, face->size->metrics.y_scale)) / float{1 << 6};
     }
     else
     {
@@ -430,8 +427,7 @@ float Font::getUnderlineThickness(unsigned int characterSize) const
         if (!FT_IS_SCALABLE(face))
             return static_cast<float>(characterSize) / 14.f;
 
-        return static_cast<float>(FT_MulFix(face->underline_thickness, face->size->metrics.y_scale)) /
-               static_cast<float>(1 << 6);
+        return static_cast<float>(FT_MulFix(face->underline_thickness, face->size->metrics.y_scale)) / float{1 << 6};
     }
     else
     {
@@ -519,7 +515,7 @@ Glyph Font::loadGlyph(std::uint32_t codePoint, unsigned int characterSize, bool 
             FT_Stroker stroker = m_fontHandles->stroker;
 
             FT_Stroker_Set(stroker,
-                           static_cast<FT_Fixed>(outlineThickness * static_cast<float>(1 << 6)),
+                           static_cast<FT_Fixed>(outlineThickness * float{1 << 6}),
                            FT_STROKER_LINECAP_ROUND,
                            FT_STROKER_LINEJOIN_ROUND,
                            0);
@@ -547,7 +543,7 @@ Glyph Font::loadGlyph(std::uint32_t codePoint, unsigned int characterSize, bool 
     // Compute the glyph's advance offset
     glyph.advance = static_cast<float>(bitmapGlyph->root.advance.x >> 16);
     if (bold)
-        glyph.advance += static_cast<float>(weight) / static_cast<float>(1 << 6);
+        glyph.advance += static_cast<float>(weight) / float{1 << 6};
 
     glyph.lsbDelta = static_cast<int>(face->glyph->lsb_delta);
     glyph.rsbDelta = static_cast<int>(face->glyph->rsb_delta);

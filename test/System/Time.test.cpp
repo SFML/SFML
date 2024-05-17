@@ -243,7 +243,7 @@ TEST_CASE("[System] sf::Time")
         SECTION("operator*=")
         {
             sf::Time time = sf::milliseconds(1'000);
-            time *= static_cast<std::int64_t>(10);
+            time *= std::int64_t{10};
             CHECK(time == sf::milliseconds(10'000));
             time *= 0.1f;
             CHECK(time.asMilliseconds() == 1'000);
@@ -262,7 +262,7 @@ TEST_CASE("[System] sf::Time")
         SECTION("operator/=")
         {
             sf::Time time = sf::milliseconds(1'000);
-            time /= static_cast<std::int64_t>(2);
+            time /= std::int64_t{2};
             CHECK(time == sf::milliseconds(500));
             time /= 0.5f;
             CHECK(time.asMilliseconds() == 1'000);

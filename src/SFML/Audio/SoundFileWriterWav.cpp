@@ -252,7 +252,7 @@ void SoundFileWriterWav::writeHeader(unsigned int sampleRate, unsigned int chann
     m_file.write(mainChunkId.data(), mainChunkId.size());
 
     // Write the main chunk header
-    encode(m_file, static_cast<std::uint32_t>(0)); // 0 is a placeholder, will be written later
+    encode(m_file, std::uint32_t{0}); // 0 is a placeholder, will be written later
     std::array mainChunkFormat = {'W', 'A', 'V', 'E'};
     m_file.write(mainChunkFormat.data(), mainChunkFormat.size());
 
