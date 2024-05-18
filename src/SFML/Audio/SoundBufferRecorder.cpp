@@ -48,7 +48,7 @@ SoundBufferRecorder::~SoundBufferRecorder()
 bool SoundBufferRecorder::onStart()
 {
     m_samples.clear();
-    m_buffer = SoundBuffer();
+    m_buffer.reset();
 
     return true;
 }
@@ -69,7 +69,12 @@ void SoundBufferRecorder::onStop()
     if (m_samples.empty())
         return;
 
-    if (!m_buffer.loadFromSamples(m_samples.data(), m_samples.size(), getChannelCount(), getSampleRate(), getChannelMap()))
+    m_buffer = sf::SoundBuffer::loadFromSamples(m_samples.data(),
+                                                m_samples.size(),
+                                                getChannelCount(),
+                                                getSampleRate(),
+                                                getChannelMap());
+    if (!m_buffer)
         err() << "Failed to stop capturing audio data" << std::endl;
 }
 
@@ -77,7 +82,8 @@ void SoundBufferRecorder::onStop()
 ////////////////////////////////////////////////////////////
 const SoundBuffer& SoundBufferRecorder::getBuffer() const
 {
-    return m_buffer;
+    assert(m_buffer && "SoundBufferRecorder::getBuffer() Cannot return reference to null buffer");
+    return *m_buffer;
 }
 
 } // namespace sf

@@ -274,12 +274,7 @@ private:
 ///
 /// Usage example:
 /// \code
-/// sf::SoundBuffer buffer;
-/// if (!buffer.loadFromFile("sound.wav"))
-/// {
-///     // Handle error...
-/// }
-///
+/// const auto buffer = sf::SoundBuffer::loadFromFile("sound.wav").value();
 /// sf::Sound sound(buffer);
 /// sound.play();
 /// \endcode

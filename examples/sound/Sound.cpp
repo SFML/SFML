@@ -13,9 +13,7 @@
 void playSound()
 {
     // Load a sound buffer from a wav file
-    sf::SoundBuffer buffer;
-    if (!buffer.loadFromFile("resources/killdeer.wav"))
-        return;
+    const auto buffer = sf::SoundBuffer::loadFromFile("resources/killdeer.wav").value();
 
     // Display sound information
     std::cout << "killdeer.wav:" << '\n'

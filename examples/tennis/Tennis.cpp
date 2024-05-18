@@ -49,10 +49,8 @@ int main()
     window.setVerticalSyncEnabled(true);
 
     // Load the sounds used in the game
-    sf::SoundBuffer ballSoundBuffer;
-    if (!ballSoundBuffer.loadFromFile(resourcesDir() / "ball.wav"))
-        return EXIT_FAILURE;
-    sf::Sound ballSound(ballSoundBuffer);
+    const auto ballSoundBuffer = sf::SoundBuffer::loadFromFile(resourcesDir() / "ball.wav").value();
+    sf::Sound  ballSound(ballSoundBuffer);
 
     // Create the SFML logo texture:
     sf::Texture sfmlLogoTexture;
