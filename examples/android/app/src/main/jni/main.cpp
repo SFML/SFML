@@ -94,9 +94,7 @@ int main(int argc, char* argv[])
     image.setPosition(sf::Vector2f(screen.size) / 2.f);
     image.setOrigin(sf::Vector2f(texture.getSize()) / 2.f);
 
-    sf::Font font;
-    if (!font.loadFromFile("tuffy.ttf"))
-        return EXIT_FAILURE;
+    const auto font = sf::Font::loadFromFile("tuffy.ttf").value();
 
     sf::Text text(font, "Tap anywhere to move the logo.", 64);
     text.setFillColor(sf::Color::Black);

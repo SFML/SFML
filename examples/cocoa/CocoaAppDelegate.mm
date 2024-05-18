@@ -41,7 +41,6 @@ struct SFMLmainWindow
 {
     SFMLmainWindow(sf::WindowHandle win) : renderWindow(win)
     {
-        const std::filesystem::path resPath = [[[NSBundle mainBundle] resourcePath] tostdstring];
         if (!logo.loadFromFile(resPath / "logo.png"))
             NSLog(@"Couldn't load the logo image");
 
@@ -51,18 +50,16 @@ struct SFMLmainWindow
         sprite.scale({0.3f, 0.3f});
         sprite.setPosition(sf::Vector2f(renderWindow.getSize()) / 2.f);
 
-        if (!font.loadFromFile(resPath / "tuffy.ttf"))
-            NSLog(@"Couldn't load the font");
-
         text.setFillColor(sf::Color::White);
     }
 
-    sf::RenderWindow renderWindow;
-    sf::Font         font;
-    sf::Text         text{font};
-    sf::Texture      logo;
-    sf::Sprite       sprite{logo};
-    sf::Color        background{sf::Color::Blue};
+    std::filesystem::path resPath{[[[NSBundle mainBundle] resourcePath] tostdstring]};
+    sf::RenderWindow      renderWindow;
+    sf::Font              font{sf::Font::loadFromFile(resPath / "tuffy.ttf").value()};
+    sf::Text              text{font};
+    sf::Texture           logo;
+    sf::Sprite            sprite{logo};
+    sf::Color             background{sf::Color::Blue};
 };
 
 // Private stuff

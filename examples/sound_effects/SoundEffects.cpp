@@ -1051,9 +1051,7 @@ int main()
     window.setVerticalSyncEnabled(true);
 
     // Load the application font and pass it to the Effect class
-    sf::Font font;
-    if (!font.loadFromFile(resourcesDir() / "tuffy.ttf"))
-        return EXIT_FAILURE;
+    const auto font = sf::Font::loadFromFile(resourcesDir() / "tuffy.ttf").value();
     Effect::setFont(font);
 
     // Create the effects

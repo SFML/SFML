@@ -14,7 +14,7 @@ int main()
 
     // Graphics
     [[maybe_unused]] const sf::Color          color;
-    [[maybe_unused]] const sf::Font           font;
+    [[maybe_unused]] const sf::IntRect        rect;
     [[maybe_unused]] const sf::RenderWindow   renderWindow;
     [[maybe_unused]] const sf::RectangleShape rectangleShape;
     [[maybe_unused]] const sf::Vertex         vertex;
