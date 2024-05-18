@@ -20,29 +20,10 @@ TEST_CASE("[Graphics] sf::Text", runDisplayTests())
         STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Text>);
     }
 
-    sf::Font font;
-    REQUIRE(font.loadFromFile("Graphics/tuffy.ttf"));
+    const auto font = sf::Font::loadFromFile("Graphics/tuffy.ttf").value();
 
     SECTION("Construction")
     {
-        SECTION("Font constructor with empty font")
-        {
-            const sf::Font emptyFont;
-            const sf::Text text(emptyFont);
-            CHECK(text.getString() == "");
-            CHECK(&text.getFont() == &emptyFont);
-            CHECK(text.getCharacterSize() == 30);
-            CHECK(text.getLetterSpacing() == 1.f);
-            CHECK(text.getLineSpacing() == 1.f);
-            CHECK(text.getStyle() == sf::Text::Regular);
-            CHECK(text.getFillColor() == sf::Color::White);
-            CHECK(text.getOutlineColor() == sf::Color::Black);
-            CHECK(text.getOutlineThickness() == 0);
-            CHECK(text.findCharacterPos(0) == sf::Vector2f());
-            CHECK(text.getLocalBounds() == sf::FloatRect());
-            CHECK(text.getGlobalBounds() == sf::FloatRect());
-        }
-
         SECTION("Font constructor")
         {
             const sf::Text text(font);
@@ -104,8 +85,8 @@ TEST_CASE("[Graphics] sf::Text", runDisplayTests())
 
     SECTION("Set/get font")
     {
-        sf::Text       text(font);
-        const sf::Font otherFont;
+        sf::Text   text(font);
+        const auto otherFont = sf::Font::loadFromFile("Graphics/tuffy.ttf").value();
         text.setFont(otherFont);
         CHECK(&text.getFont() == &otherFont);
     }
