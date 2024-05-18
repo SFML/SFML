@@ -110,15 +110,6 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from a file on disk
     ///
-    /// This function is a shortcut for the following code:
-    /// \code
-    /// sf::Image image;
-    /// if (!image.loadFromFile(filename))
-    ///     return false;
-    /// if (!texture.loadFromImage(image, area))
-    ///     return false;
-    /// \endcode
-    ///
     /// The \a area argument can be used to load only a sub-rectangle
     /// of the whole image. If you want the entire image then leave
     /// the default value (which is an empty IntRect).
@@ -142,15 +133,6 @@ public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from a file in memory
-    ///
-    /// This function is a shortcut for the following code:
-    /// \code
-    /// sf::Image image;
-    /// if (!image.loadFromMemory(data, size))
-    ///     return false;
-    /// if (!texture.loadFromImage(image, area))
-    ///     return false;
-    /// \endcode
     ///
     /// The \a area argument can be used to load only a sub-rectangle
     /// of the whole image. If you want the entire image then leave
@@ -176,15 +158,6 @@ public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from a custom stream
-    ///
-    /// This function is a shortcut for the following code:
-    /// \code
-    /// sf::Image image;
-    /// if (!image.loadFromStream(stream))
-    ///     return false;
-    /// if (!texture.loadFromImage(image, area))
-    ///     return false;
-    /// \endcode
     ///
     /// The \a area argument can be used to load only a sub-rectangle
     /// of the whole image. If you want the entire image then leave
