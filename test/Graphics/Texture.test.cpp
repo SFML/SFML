@@ -121,19 +121,10 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
 
     SECTION("loadFromImage()")
     {
-        SECTION("Empty image")
-        {
-            const sf::Image image;
-            sf::Texture     texture;
-            REQUIRE(!texture.loadFromImage(image));
-            REQUIRE(!texture.loadFromImage(image, {{0, 0}, {1, 1}}));
-        }
-
         SECTION("Subarea of image")
         {
-            sf::Image image;
-            image.create(sf::Vector2u(10, 15));
-            sf::Texture texture;
+            const sf::Image image(sf::Vector2u(10, 15));
+            sf::Texture     texture;
 
             SECTION("Non-truncated area")
             {
@@ -232,8 +223,7 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
         SECTION("Image")
         {
             REQUIRE(texture.create(sf::Vector2u(16, 32)));
-            sf::Image image;
-            image.create(sf::Vector2u(16, 32), sf::Color::Red);
+            const sf::Image image(sf::Vector2u(16, 32), sf::Color::Red);
             texture.update(image);
             CHECK(texture.copyToImage().getPixel(sf::Vector2u(7, 15)) == sf::Color::Red);
         }
@@ -241,11 +231,9 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
         SECTION("Image and destination")
         {
             REQUIRE(texture.create(sf::Vector2u(16, 32)));
-            sf::Image image1;
-            image1.create(sf::Vector2u(16, 16), sf::Color::Red);
+            const sf::Image image1(sf::Vector2u(16, 16), sf::Color::Red);
             texture.update(image1);
-            sf::Image image2;
-            image2.create(sf::Vector2u(16, 16), sf::Color::Green);
+            const sf::Image image2(sf::Vector2u(16, 16), sf::Color::Green);
             texture.update(image1, sf::Vector2u(0, 0));
             texture.update(image2, sf::Vector2u(0, 16));
             CHECK(texture.copyToImage().getPixel(sf::Vector2u(7, 7)) == sf::Color::Red);
