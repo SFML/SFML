@@ -91,9 +91,7 @@ int main()
     sf::RenderWindow window(sf::VideoMode({windowWidth, windowHeight}), "SFML Island", sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
 
-    sf::Font font;
-    if (!font.loadFromFile("resources/tuffy.ttf"))
-        return EXIT_FAILURE;
+    const auto font = sf::Font::loadFromFile("resources/tuffy.ttf").value();
 
     // Create all of our graphics resources
     sf::Text               hudText(font);

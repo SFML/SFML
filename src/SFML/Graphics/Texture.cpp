@@ -265,24 +265,30 @@ bool Texture::create(const Vector2u& size)
 ////////////////////////////////////////////////////////////
 bool Texture::loadFromFile(const std::filesystem::path& filename, const IntRect& area)
 {
-    Image image;
-    return image.loadFromFile(filename) && loadFromImage(image, area);
+    const auto image = sf::Image::loadFromFile(filename);
+    if (!image)
+        return false;
+    return loadFromImage(*image, area);
 }
 
 
 ////////////////////////////////////////////////////////////
 bool Texture::loadFromMemory(const void* data, std::size_t size, const IntRect& area)
 {
-    Image image;
-    return image.loadFromMemory(data, size) && loadFromImage(image, area);
+    const auto image = sf::Image::loadFromMemory(data, size);
+    if (!image)
+        return false;
+    return loadFromImage(*image, area);
 }
 
 
 ////////////////////////////////////////////////////////////
 bool Texture::loadFromStream(InputStream& stream, const IntRect& area)
 {
-    Image image;
-    return image.loadFromStream(stream) && loadFromImage(image, area);
+    const auto image = sf::Image::loadFromStream(stream);
+    if (!image)
+        return false;
+    return loadFromImage(*image, area);
 }
 
 
@@ -364,8 +370,7 @@ Vector2u Texture::getSize() const
 Image Texture::copyToImage() const
 {
     // Easy case: empty texture
-    if (!m_texture)
-        return {};
+    assert(m_texture && "Texture::copyToImage Cannot copy empty texture to image");
 
     const TransientContextLock lock;
 
@@ -456,11 +461,7 @@ Image Texture::copyToImage() const
 
 #endif // SFML_OPENGL_ES
 
-    // Create the image
-    Image image;
-    image.create(m_size, pixels.data());
-
-    return image;
+    return {m_size, pixels.data()};
 }
 
 

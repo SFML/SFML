@@ -34,6 +34,7 @@
 #include <SFML/System/Time.hpp>
 
 #include <filesystem>
+#include <optional>
 #include <unordered_set>
 #include <vector>
 
@@ -54,12 +55,6 @@ class InputStream;
 class SFML_AUDIO_API SoundBuffer
 {
 public:
-    ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    ////////////////////////////////////////////////////////////
-    SoundBuffer() = default;
-
     ////////////////////////////////////////////////////////////
     /// \brief Copy constructor
     ///
@@ -82,12 +77,12 @@ public:
     ///
     /// \param filename Path of the sound file to load
     ///
-    /// \return True if loading succeeded, false if it failed
+    /// \return Sound buffer if loading succeeded, `std::nullopt` if it failed
     ///
     /// \see loadFromMemory, loadFromStream, loadFromSamples, saveToFile
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromFile(const std::filesystem::path& filename);
+    [[nodiscard]] static std::optional<SoundBuffer> loadFromFile(const std::filesystem::path& filename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the sound buffer from a file in memory
@@ -98,12 +93,12 @@ public:
     /// \param data        Pointer to the file data in memory
     /// \param sizeInBytes Size of the data to load, in bytes
     ///
-    /// \return True if loading succeeded, false if it failed
+    /// \return Sound buffer if loading succeeded, `std::nullopt` if it failed
     ///
     /// \see loadFromFile, loadFromStream, loadFromSamples
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromMemory(const void* data, std::size_t sizeInBytes);
+    [[nodiscard]] static std::optional<SoundBuffer> loadFromMemory(const void* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the sound buffer from a custom stream
@@ -113,12 +108,12 @@ public:
     ///
     /// \param stream Source stream to read from
     ///
-    /// \return True if loading succeeded, false if it failed
+    /// \return Sound buffer if loading succeeded, `std::nullopt` if it failed
     ///
     /// \see loadFromFile, loadFromMemory, loadFromSamples
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromStream(InputStream& stream);
+    [[nodiscard]] static std::optional<SoundBuffer> loadFromStream(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the sound buffer from an array of audio samples
@@ -131,16 +126,17 @@ public:
     /// \param sampleRate   Sample rate (number of samples to play per second)
     /// \param channelMap   Map of position in sample frame to sound channel
     ///
-    /// \return True if loading succeeded, false if it failed
+    /// \return Sound buffer if loading succeeded, `std::nullopt` if it failed
     ///
     /// \see loadFromFile, loadFromMemory, saveToFile
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromSamples(const std::int16_t*              samples,
-                                       std::uint64_t                    sampleCount,
-                                       unsigned int                     channelCount,
-                                       unsigned int                     sampleRate,
-                                       const std::vector<SoundChannel>& channelMap);
+    [[nodiscard]] static std::optional<SoundBuffer> loadFromSamples(
+        const std::int16_t*              samples,
+        std::uint64_t                    sampleCount,
+        unsigned int                     channelCount,
+        unsigned int                     sampleRate,
+        const std::vector<SoundChannel>& channelMap);
 
     ////////////////////////////////////////////////////////////
     /// \brief Save the sound buffer to an audio file
@@ -248,6 +244,12 @@ private:
     friend class Sound;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Construct from vector of samples
+    ///
+    ////////////////////////////////////////////////////////////
+    explicit SoundBuffer(std::vector<std::int16_t>&& samples);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Initialize the internal state after loading a new sound
     ///
     /// \param file Sound file providing access to the new loaded sound
@@ -255,7 +257,7 @@ private:
     /// \return True on successful initialization, false on failure
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool initialize(InputSoundFile& file);
+    [[nodiscard]] static std::optional<SoundBuffer> initialize(InputSoundFile& file);
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the internal buffer with the cached audio samples
@@ -341,14 +343,8 @@ private:
 ///
 /// Usage example:
 /// \code
-/// // Declare a new sound buffer
-/// sf::SoundBuffer buffer;
-///
-/// // Load it from a file
-/// if (!buffer.loadFromFile("sound.wav"))
-/// {
-///     // error...
-/// }
+/// // Load a new sound buffer from a file
+/// const auto buffer = sf::SoundBuffer::loadFromFile("sound.wav").value();
 ///
 /// // Create a sound source bound to the buffer
 /// sf::Sound sound1(buffer);

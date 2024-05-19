@@ -68,52 +68,55 @@ SoundBuffer::~SoundBuffer()
 
 
 ////////////////////////////////////////////////////////////
-bool SoundBuffer::loadFromFile(const std::filesystem::path& filename)
+std::optional<SoundBuffer> SoundBuffer::loadFromFile(const std::filesystem::path& filename)
 {
     InputSoundFile file;
     if (file.openFromFile(filename))
         return initialize(file);
     else
-        return false;
+        return std::nullopt;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool SoundBuffer::loadFromMemory(const void* data, std::size_t sizeInBytes)
+std::optional<SoundBuffer> SoundBuffer::loadFromMemory(const void* data, std::size_t sizeInBytes)
 {
     InputSoundFile file;
     if (file.openFromMemory(data, sizeInBytes))
         return initialize(file);
     else
-        return false;
+        return std::nullopt;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool SoundBuffer::loadFromStream(InputStream& stream)
+std::optional<SoundBuffer> SoundBuffer::loadFromStream(InputStream& stream)
 {
     InputSoundFile file;
     if (file.openFromStream(stream))
         return initialize(file);
     else
-        return false;
+        return std::nullopt;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool SoundBuffer::loadFromSamples(const std::int16_t*              samples,
-                                  std::uint64_t                    sampleCount,
-                                  unsigned int                     channelCount,
-                                  unsigned int                     sampleRate,
-                                  const std::vector<SoundChannel>& channelMap)
+std::optional<SoundBuffer> SoundBuffer::loadFromSamples(
+    const std::int16_t*              samples,
+    std::uint64_t                    sampleCount,
+    unsigned int                     channelCount,
+    unsigned int                     sampleRate,
+    const std::vector<SoundChannel>& channelMap)
 {
     if (samples && sampleCount && channelCount && sampleRate && !channelMap.empty())
     {
         // Copy the new audio samples
-        m_samples.assign(samples, samples + sampleCount);
+        SoundBuffer soundBuffer(std::vector<std::int16_t>(samples, samples + sampleCount));
 
         // Update the internal buffer with the new samples
-        return update(channelCount, sampleRate, channelMap);
+        if (!soundBuffer.update(channelCount, sampleRate, channelMap))
+            return std::nullopt;
+        return soundBuffer;
     }
     else
     {
@@ -124,7 +127,7 @@ bool SoundBuffer::loadFromSamples(const std::int16_t*              samples,
               << "channels: " << channelCount << ", "
               << "samplerate: " << sampleRate << ")" << std::endl;
 
-        return false;
+        return std::nullopt;
     }
 }
 
@@ -206,21 +209,30 @@ SoundBuffer& SoundBuffer::operator=(const SoundBuffer& right)
 
 
 ////////////////////////////////////////////////////////////
-bool SoundBuffer::initialize(InputSoundFile& file)
+SoundBuffer::SoundBuffer(std::vector<std::int16_t>&& samples) : m_samples(std::move(samples))
+{
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<SoundBuffer> SoundBuffer::initialize(InputSoundFile& file)
 {
     // Retrieve the sound parameters
     const std::uint64_t sampleCount = file.getSampleCount();
 
     // Read the samples from the provided file
-    m_samples.resize(static_cast<std::size_t>(sampleCount));
-    if (file.read(m_samples.data(), sampleCount) == sampleCount)
+    std::vector<std::int16_t> samples(static_cast<std::size_t>(sampleCount));
+    if (file.read(samples.data(), sampleCount) == sampleCount)
     {
         // Update the internal buffer with the new samples
-        return update(file.getChannelCount(), file.getSampleRate(), file.getChannelMap());
+        SoundBuffer soundBuffer(std::move(samples));
+        if (!soundBuffer.update(file.getChannelCount(), file.getSampleRate(), file.getChannelMap()))
+            return std::nullopt;
+        return soundBuffer;
     }
     else
     {
-        return false;
+        return std::nullopt;
     }
 }
 

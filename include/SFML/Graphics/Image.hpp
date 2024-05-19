@@ -55,16 +55,16 @@ class SFML_GRAPHICS_API Image
 {
 public:
     ////////////////////////////////////////////////////////////
-    /// \brief Create the image and fill it with a unique color
+    /// \brief Construct the image and fill it with a unique color
     ///
     /// \param size  Width and height of the image
     /// \param color Fill color
     ///
     ////////////////////////////////////////////////////////////
-    void create(const Vector2u& size, const Color& color = Color::Black);
+    explicit Image(const Vector2u& size, const Color& color = Color::Black);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Create the image from an array of pixels
+    /// \brief Construct the image from an array of pixels
     ///
     /// The \a pixel array is assumed to contain 32-bits RGBA pixels,
     /// and have the given \a width and \a height. If not, this is
@@ -75,7 +75,7 @@ public:
     /// \param pixels Array of pixels to copy to the image
     ///
     ////////////////////////////////////////////////////////////
-    void create(const Vector2u& size, const std::uint8_t* pixels);
+    Image(const Vector2u& size, const std::uint8_t* pixels);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the image from a file on disk
@@ -87,12 +87,12 @@ public:
     ///
     /// \param filename Path of the image file to load
     ///
-    /// \return True if loading was successful
+    /// \return Image if loading was successful, `std::nullopt` otherwise
     ///
     /// \see loadFromMemory, loadFromStream, saveToFile
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromFile(const std::filesystem::path& filename);
+    [[nodiscard]] static std::optional<Image> loadFromFile(const std::filesystem::path& filename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the image from a file in memory
@@ -105,12 +105,12 @@ public:
     /// \param data Pointer to the file data in memory
     /// \param size Size of the data to load, in bytes
     ///
-    /// \return True if loading was successful
+    /// \return Image if loading was successful, `std::nullopt` otherwise
     ///
     /// \see loadFromFile, loadFromStream
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromMemory(const void* data, std::size_t size);
+    [[nodiscard]] static std::optional<Image> loadFromMemory(const void* data, std::size_t size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the image from a custom stream
@@ -122,12 +122,12 @@ public:
     ///
     /// \param stream Source stream to read from
     ///
-    /// \return True if loading was successful
+    /// \return Image if loading was successful, `std::nullopt` otherwise
     ///
     /// \see loadFromFile, loadFromMemory
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromStream(InputStream& stream);
+    [[nodiscard]] static std::optional<Image> loadFromStream(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Save the image to a file on disk
@@ -282,6 +282,12 @@ public:
 
 private:
     ////////////////////////////////////////////////////////////
+    /// \brief Directly initialize data members
+    ///
+    ////////////////////////////////////////////////////////////
+    Image(Vector2u size, std::vector<std::uint8_t>&& pixels);
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     Vector2u                  m_size;   //!< Image size
@@ -316,13 +322,10 @@ private:
 /// Usage example:
 /// \code
 /// // Load an image file from a file
-/// sf::Image background;
-/// if (!background.loadFromFile("background.jpg"))
-///     return -1;
+/// const auto background = sf::Image::loadFromFile("background.jpg").value();
 ///
 /// // Create a 20x20 image filled with black color
-/// sf::Image image;
-/// image.create({20, 20}, sf::Color::Black);
+/// sf::Image image({20, 20}, sf::Color::Black);
 ///
 /// // Copy background on image at position (10, 10)
 /// if (!image.copy(background, {10, 10}))

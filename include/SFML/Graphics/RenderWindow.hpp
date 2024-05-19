@@ -272,11 +272,7 @@ private:
 ///     // error...
 /// }
 /// sf::Sprite sprite(texture);
-/// sf::Font font;
-/// if (!font.loadFromFile("arial.ttf"))
-/// {
-///     // error...
-/// }
+/// const auto font = sf::Font::loadFromFile("arial.ttf").value();
 /// sf::Text text(font);
 /// ...
 ///

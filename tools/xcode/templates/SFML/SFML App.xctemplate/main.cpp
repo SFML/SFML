@@ -42,12 +42,8 @@ int main()
     sf::Sprite sprite(texture);
 
     // Create a graphical text to display
-    sf::Font font;
-    if (!font.loadFromFile(resourcePath() / "tuffy.ttf"))
-    {
-        return EXIT_FAILURE;
-    }
-    sf::Text text(font, "Hello SFML", 50);
+    const auto font = sf::Font::loadFromFile(resourcePath() / "tuffy.ttf").value();
+    sf::Text   text(font, "Hello SFML", 50);
     text.setFillColor(sf::Color::Black);
 
     // Load a music to play
