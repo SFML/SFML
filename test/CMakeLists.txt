@@ -7,7 +7,7 @@ set(CATCH_CONFIG_FAST_COMPILE ON CACHE BOOL "")
 set(CATCH_CONFIG_NO_EXPERIMENTAL_STATIC_ANALYSIS_SUPPORT ON CACHE BOOL "")
 FetchContent_Declare(Catch2
     GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-    GIT_TAG v3.5.4
+    GIT_TAG v3.6.0
     GIT_SHALLOW ON)
 FetchContent_MakeAvailable(Catch2)
 include(Catch)
@@ -28,6 +28,8 @@ add_library(sfml-test-main STATIC
     TestUtilities/WindowUtil.cpp
     TestUtilities/GraphicsUtil.hpp
     TestUtilities/GraphicsUtil.cpp
+    TestUtilities/AudioUtil.hpp
+    TestUtilities/AudioUtil.cpp
 )
 target_include_directories(sfml-test-main PUBLIC TestUtilities)
 target_link_libraries(sfml-test-main PUBLIC SFML::System Catch2::Catch2WithMain)
@@ -41,6 +43,11 @@ sfml_set_stdlib(sfml-test-main)
 sfml_set_option(SFML_RUN_DISPLAY_TESTS ON BOOL "TRUE to run tests that require a display, FALSE to ignore it")
 if(SFML_RUN_DISPLAY_TESTS)
     target_compile_definitions(sfml-test-main PRIVATE SFML_RUN_DISPLAY_TESTS)
+endif()
+
+sfml_set_option(SFML_RUN_AUDIO_DEVICE_TESTS ON BOOL "TRUE to run tests that require an audio device, FALSE to ignore it")
+if(SFML_RUN_AUDIO_DEVICE_TESTS)
+    target_compile_definitions(sfml-test-main PRIVATE SFML_RUN_AUDIO_DEVICE_TESTS)
 endif()
 
 set(SYSTEM_SRC
@@ -144,6 +151,41 @@ set(AUDIO_SRC
     Audio/SoundStream.test.cpp
 )
 sfml_add_test(test-sfml-audio "${AUDIO_SRC}" SFML::Audio)
+
+if(SFML_OS_ANDROID AND DEFINED ENV{LIBCXX_SHARED_SO})
+    # Because we can only write to the tmp directory on the Android virtual device we will need to build our directory tree under it
+    set(TARGET_DIR "/data/local/tmp/$<TARGET_FILE_DIR:test-sfml-system>")
+
+    # Generate script that copies necessary files over to the Android virtual device
+    file(GENERATE OUTPUT "${PROJECT_BINARY_DIR}/prepare-android-files.sh" CONTENT
+        "#!/bin/bash\n\
+        adb shell \"mkdir -p ${TARGET_DIR}\"\n\
+        adb push $<TARGET_FILE:test-sfml-audio>    ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:test-sfml-graphics> ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:test-sfml-network>  ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:test-sfml-system>   ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:test-sfml-window>   ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:SFML::Audio>        ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:SFML::Graphics>     ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:SFML::Network>      ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:SFML::System>       ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:SFML::Window>       ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:Catch2>             ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:Catch2WithMain>     ${TARGET_DIR}\n\
+        adb push $ENV{LIBCXX_SHARED_SO}            ${TARGET_DIR}\n\
+        adb push ${CMAKE_CURRENT_LIST_DIR}         ${TARGET_DIR}\n\
+        adb shell \"chmod -R 775 ${TARGET_DIR} && ls -la ${TARGET_DIR}\"\n"
+        FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE)
+
+    # Add the target to invoke the file copy script
+    add_custom_target(prepare-android-files COMMAND "${PROJECT_BINARY_DIR}/prepare-android-files.sh")
+
+    # Generate proxy script that translates CTest commands into adb shell commands
+    file(GENERATE OUTPUT "${PROJECT_BINARY_DIR}/run-in-adb-shell.sh" CONTENT
+        "#!/bin/bash\n\
+        adb shell \"cd ${TARGET_DIR}/test; LD_LIBRARY_PATH=${TARGET_DIR} /data/local/tmp/$1 \\\"$2\\\" \\\"$3\\\" \\\"$4\\\" \\\"$5\\\" \\\"$6\\\" \\\"$7\\\" \\\"$8\\\" \\\"$9\\\"\"\n"
+        FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE)
+endif()
 
 if(SFML_ENABLE_COVERAGE AND SFML_OS_WINDOWS AND NOT SFML_COMPILER_GCC)
     # Try to find and use OpenCppCoverage for coverage reporting when building with MSVC

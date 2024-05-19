@@ -147,10 +147,51 @@ div.fragment {
 
     font-family: Consolas, "Liberation Mono", Courier, monospace;
     font-size: 10pt;
+    position: relative;
     padding: 0.5em 1em;
     background-color: #f5f5f5;
     border: 1px solid #bbb;
     border-radius(5px);
+}
+
+.clipboard {
+    width: 24px;
+    height: 24px;
+    right: 5px;
+    top: 5px;
+    opacity: 0;
+    position: absolute;
+    display: inline;
+    overflow: auto;
+    fill: black;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.clipboard.success {
+    border: 1px solid black;
+    border-radius: 4px;
+}
+
+.fragment:hover .clipboard, .clipboard.success {
+    opacity: .28;
+}
+
+.clipboard:hover, .clipboard.success {
+    opacity: 1 !important;
+}
+
+.clipboard:active:not([class~=success]) svg {
+    transform: scale(.91);
+}
+
+.clipboard.success svg {
+    fill: #2EC82E;
+}
+
+.clipboard.success {
+    border-color: #2EC82E;
 }
 
 div.line {
@@ -1254,7 +1295,7 @@ div.contents ul li {
     width: 24px;
     height: 18px;
     margin-bottom: 4px;
-    background-image:url('folderopen.png');
+    background-image:url('folderopen.svg');
     background-position: 0px -4px;
     background-repeat: repeat-y;
     vertical-align:top;
@@ -1265,7 +1306,7 @@ div.contents ul li {
     width: 24px;
     height: 18px;
     margin-bottom: 4px;
-    background-image:url('folderclosed.png');
+    background-image:url('folderclosed.svg');
     background-position: 0px -4px;
     background-repeat: repeat-y;
     vertical-align:top;
@@ -1276,7 +1317,7 @@ div.contents ul li {
     width: 24px;
     height: 18px;
     margin-bottom: 4px;
-    background-image:url('doc.png');
+    background-image:url('doc.svg');
     background-position: 0px -4px;
     background-repeat: repeat-y;
     vertical-align:top;

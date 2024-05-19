@@ -2,11 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <title>SFML - Simple and Fast Multimedia Library</title>
-        <meta http-equiv="Content-Type" content="text/html;"/>
-        <meta charset="utf-8"/>
+        <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
         <link rel="stylesheet" type="text/css" href="doxygen.css" title="default" media="screen,print" />
         <script type="text/javascript" src="jquery.js"></script>
         <script type="text/javascript" src="dynsections.js"></script>
+        <script type="text/javascript" src="clipboard.js"></script>
+        <script type="text/javascript" src="cookie.js"></script>
         <link rel="stylesheet" type="text/css" href="search/search.css" />
         <link rel="stylesheet" type="text/css" href="searchOverrides.css" />
         <script type="text/javascript" src="search/searchdata.js"></script>
@@ -24,3 +25,4 @@
             </div>
         </div>
         <div id="content">
+            <div>

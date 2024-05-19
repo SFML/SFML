@@ -25,33 +25,33 @@ TEST_CASE("[System] sf::Angle")
     SECTION("wrapSigned()")
     {
         STATIC_CHECK(sf::Angle::Zero.wrapSigned() == sf::Angle::Zero);
-        STATIC_CHECK(sf::degrees(0).wrapSigned() == sf::degrees(0));
-        STATIC_CHECK(sf::degrees(1).wrapSigned() == sf::degrees(1));
-        STATIC_CHECK(sf::degrees(-1).wrapSigned() == sf::degrees(-1));
-        STATIC_CHECK(sf::degrees(90).wrapSigned() == sf::degrees(90));
-        STATIC_CHECK(sf::degrees(-90).wrapSigned() == sf::degrees(-90));
-        STATIC_CHECK(sf::degrees(180).wrapSigned() == sf::degrees(-180));
-        STATIC_CHECK(sf::degrees(-180).wrapSigned() == sf::degrees(-180));
-        STATIC_CHECK(sf::degrees(360).wrapSigned() == sf::degrees(0));
-        STATIC_CHECK(sf::degrees(-360).wrapSigned() == sf::degrees(0));
-        STATIC_CHECK(sf::degrees(720).wrapSigned() == sf::degrees(0));
-        STATIC_CHECK(sf::degrees(-720).wrapSigned() == sf::degrees(0));
+        CHECK(sf::degrees(0).wrapSigned() == Approx(sf::degrees(0)));
+        CHECK(sf::degrees(1).wrapSigned() == Approx(sf::degrees(1)));
+        CHECK(sf::degrees(-1).wrapSigned() == Approx(sf::degrees(-1)));
+        CHECK(sf::degrees(90).wrapSigned() == Approx(sf::degrees(90)));
+        CHECK(sf::degrees(-90).wrapSigned() == Approx(sf::degrees(-90)));
+        CHECK(sf::degrees(180).wrapSigned() == Approx(sf::degrees(-180)));
+        CHECK(sf::degrees(-180).wrapSigned() == Approx(sf::degrees(-180)));
+        CHECK(sf::degrees(360).wrapSigned() == Approx(sf::degrees(0)));
+        CHECK(sf::degrees(-360).wrapSigned() == Approx(sf::degrees(0)));
+        CHECK(sf::degrees(720).wrapSigned() == Approx(sf::degrees(0)));
+        CHECK(sf::degrees(-720).wrapSigned() == Approx(sf::degrees(0)));
     }
 
     SECTION("wrapUnsigned()")
     {
         STATIC_CHECK(sf::Angle::Zero.wrapUnsigned() == sf::Angle::Zero);
-        STATIC_CHECK(sf::degrees(0).wrapUnsigned() == sf::degrees(0));
-        STATIC_CHECK(sf::degrees(1).wrapUnsigned() == sf::degrees(1));
-        STATIC_CHECK(sf::degrees(-1).wrapUnsigned() == sf::degrees(359));
-        STATIC_CHECK(sf::degrees(90).wrapUnsigned() == sf::degrees(90));
-        STATIC_CHECK(sf::degrees(-90).wrapUnsigned() == sf::degrees(270));
-        STATIC_CHECK(sf::degrees(180).wrapUnsigned() == sf::degrees(180));
-        STATIC_CHECK(sf::degrees(-180).wrapUnsigned() == sf::degrees(180));
-        STATIC_CHECK(sf::degrees(360).wrapUnsigned() == sf::degrees(0));
-        STATIC_CHECK(sf::degrees(-360).wrapUnsigned() == sf::degrees(0));
-        STATIC_CHECK(sf::degrees(720).wrapUnsigned() == sf::degrees(0));
-        STATIC_CHECK(sf::degrees(-720).wrapUnsigned() == sf::degrees(0));
+        CHECK(sf::degrees(0).wrapUnsigned() == Approx(sf::degrees(0)));
+        CHECK(sf::degrees(1).wrapUnsigned() == Approx(sf::degrees(1)));
+        CHECK(sf::degrees(-1).wrapUnsigned() == Approx(sf::degrees(359)));
+        CHECK(sf::degrees(90).wrapUnsigned() == Approx(sf::degrees(90)));
+        CHECK(sf::degrees(-90).wrapUnsigned() == Approx(sf::degrees(270)));
+        CHECK(sf::degrees(180).wrapUnsigned() == Approx(sf::degrees(180)));
+        CHECK(sf::degrees(-180).wrapUnsigned() == Approx(sf::degrees(180)));
+        CHECK(sf::degrees(360).wrapUnsigned() == Approx(sf::degrees(0)));
+        CHECK(sf::degrees(-360).wrapUnsigned() == Approx(sf::degrees(0)));
+        CHECK(sf::degrees(720).wrapUnsigned() == Approx(sf::degrees(0)));
+        CHECK(sf::degrees(-720).wrapUnsigned() == Approx(sf::degrees(0)));
     }
 
     SECTION("degrees()")
@@ -185,7 +185,7 @@ TEST_CASE("[System] sf::Angle")
         {
             sf::Angle angle = sf::degrees(-15);
             angle += sf::degrees(15);
-            CHECK(angle == sf::degrees(0));
+            CHECK(angle == Approx(sf::degrees(0)));
             angle += sf::radians(10);
             CHECK(angle == sf::radians(10));
         }
@@ -202,7 +202,7 @@ TEST_CASE("[System] sf::Angle")
         {
             sf::Angle angle = sf::degrees(15);
             angle -= sf::degrees(15);
-            CHECK(angle == sf::degrees(0));
+            CHECK(angle == Approx(sf::degrees(0)));
             angle -= sf::radians(10);
             CHECK(angle == sf::radians(-10));
         }
@@ -210,19 +210,19 @@ TEST_CASE("[System] sf::Angle")
         SECTION("operator*")
         {
             STATIC_CHECK(sf::radians(0) * 10 == sf::Angle::Zero);
-            STATIC_CHECK(sf::degrees(10) * 2.5f == sf::degrees(25));
-            STATIC_CHECK(sf::degrees(100) * 10.0f == sf::degrees(1000));
+            CHECK(sf::degrees(10) * 2.5f == Approx(sf::degrees(25)));
+            CHECK(sf::degrees(100) * 10.0f == Approx(sf::degrees(1000)));
 
             STATIC_CHECK(10 * sf::radians(0) == sf::Angle::Zero);
-            STATIC_CHECK(2.5f * sf::degrees(10) == sf::degrees(25));
-            STATIC_CHECK(10.0f * sf::degrees(100) == sf::degrees(1000));
+            CHECK(2.5f * sf::degrees(10) == Approx(sf::degrees(25)));
+            CHECK(10.0f * sf::degrees(100) == Approx(sf::degrees(1000)));
         }
 
         SECTION("operator*=")
         {
             sf::Angle angle = sf::degrees(1);
             angle *= 10;
-            CHECK(angle == sf::degrees(10));
+            CHECK(angle == Approx(sf::degrees(10)));
         }
 
         SECTION("operator/")
@@ -240,24 +240,24 @@ TEST_CASE("[System] sf::Angle")
         {
             sf::Angle angle = sf::degrees(60);
             angle /= 5;
-            CHECK(angle == sf::degrees(12));
+            CHECK(angle == Approx(sf::degrees(12)));
         }
 
         SECTION("operator%")
         {
             STATIC_CHECK(sf::Angle::Zero % sf::radians(0.5f) == sf::Angle::Zero);
             STATIC_CHECK(sf::radians(10) % sf::radians(1) == sf::radians(0));
-            STATIC_CHECK(sf::degrees(90) % sf::degrees(30) == sf::degrees(0));
-            STATIC_CHECK(sf::degrees(90) % sf::degrees(40) == sf::degrees(10));
-            STATIC_CHECK(sf::degrees(-90) % sf::degrees(30) == sf::degrees(0));
-            STATIC_CHECK(sf::degrees(-90) % sf::degrees(40) == sf::degrees(30));
+            CHECK(sf::degrees(90) % sf::degrees(30) == Approx(sf::degrees(0)));
+            CHECK(sf::degrees(90) % sf::degrees(40) == Approx(sf::degrees(10)));
+            CHECK(sf::degrees(-90) % sf::degrees(30) == Approx(sf::degrees(0)));
+            CHECK(sf::degrees(-90) % sf::degrees(40) == Approx(sf::degrees(30)));
         }
 
         SECTION("operator%=")
         {
             sf::Angle angle = sf::degrees(59);
             angle %= sf::degrees(10);
-            CHECK(angle == sf::degrees(9));
+            CHECK(angle == Approx(sf::degrees(9)));
         }
 
         SECTION("operator _deg")

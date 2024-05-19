@@ -41,17 +41,18 @@
 namespace sf
 {
 class Time;
-}
 
-namespace sf::priv::MiniaudioUtils
+namespace priv::MiniaudioUtils
 {
-[[nodiscard]] ma_channel soundChannelToMiniaudioChannel(sf::SoundChannel soundChannel);
-[[nodiscard]] Time       getPlayingOffset(ma_sound& sound);
-[[nodiscard]] ma_uint64  getFrameIndex(ma_sound& sound, Time timeOffset);
+[[nodiscard]] ma_channel   soundChannelToMiniaudioChannel(SoundChannel soundChannel);
+[[nodiscard]] SoundChannel miniaudioChannelToSoundChannel(ma_channel soundChannel);
+[[nodiscard]] Time         getPlayingOffset(ma_sound& sound);
+[[nodiscard]] ma_uint64    getFrameIndex(ma_sound& sound, Time timeOffset);
 
 void reinitializeSound(ma_sound& sound, const std::function<void()>& initializeFn);
 void initializeSound(const ma_data_source_vtable& vtable,
                      ma_data_source_base&         dataSourceBase,
                      ma_sound&                    sound,
                      const std::function<void()>& initializeFn);
-} // namespace sf::priv::MiniaudioUtils
+} // namespace priv::MiniaudioUtils
+} // namespace sf

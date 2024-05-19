@@ -111,7 +111,7 @@ private:
     // Member data
     ////////////////////////////////////////////////////////////
     using Location      = long;
-    using AxisMap       = std::unordered_map<sf::Joystick::Axis, IOHIDElementRef>;
+    using AxisMap       = std::unordered_map<Joystick::Axis, IOHIDElementRef>;
     using ButtonsVector = std::vector<IOHIDElementRef>;
 
     AxisMap                  m_axis;           ///< Axes (but not POV/Hat) of the joystick
@@ -121,7 +121,7 @@ private:
     Joystick::Identification m_identification; ///< Joystick identification
 
     // NOLINTNEXTLINE(readability-identifier-naming)
-    static inline Location m_locationIDs[sf::Joystick::Count]{}; ///< Global Joystick register
+    static inline std::array<Location, Joystick::Count> m_locationIDs{}; ///< Global Joystick register
     /// For a corresponding SFML index, m_locationIDs is either some USB
     /// location or 0 if there isn't currently a connected joystick device
 };

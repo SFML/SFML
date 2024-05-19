@@ -29,6 +29,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFileReader.hpp>
 
+#include <miniaudio.h>
+
 #include <optional>
 
 #include <cstdint>
@@ -59,6 +61,12 @@ public:
     [[nodiscard]] static bool check(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Destructor
+    ///
+    ////////////////////////////////////////////////////////////
+    ~SoundFileReaderWav() override;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Open a sound file for reading
     ///
     /// \param stream Stream to open
@@ -66,7 +74,7 @@ public:
     /// \return Properties of the loaded sound if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] std::optional<Info> open(sf::InputStream& stream) override;
+    [[nodiscard]] std::optional<Info> open(InputStream& stream) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current read position to the given sample offset
@@ -96,22 +104,10 @@ public:
 
 private:
     ////////////////////////////////////////////////////////////
-    /// \brief Read the header of the open file
-    ///
-    /// \param info Attributes of the sound file
-    ///
-    /// \return True on success, false on error
-    ///
-    ////////////////////////////////////////////////////////////
-    std::optional<Info> parseHeader();
-
-    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    InputStream*  m_stream{};         //!< Source stream to read from
-    unsigned int  m_bytesPerSample{}; //!< Size of a sample, in bytes
-    std::uint64_t m_dataStart{};      //!< Starting position of the audio data in the open file
-    std::uint64_t m_dataEnd{};        //!< Position one byte past the end of the audio data in the open file
+    std::optional<ma_decoder> m_decoder;        //!< wav decoder
+    ma_uint32                 m_channelCount{}; //!< Number of channels
 };
 
 } // namespace sf::priv

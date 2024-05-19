@@ -54,10 +54,10 @@ private:
     AudioDevice();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Destructor
+    /// \brief Cleanup function, called via `atexit`
     ///
     ////////////////////////////////////////////////////////////
-    ~AudioDevice();
+    void cleanup();
 
 public:
     ////////////////////////////////////////////////////////////
@@ -227,11 +227,11 @@ private:
     struct ListenerProperties
     {
         float          volume{100.f};
-        sf::Vector3f   position{0, 0, 0};
-        sf::Vector3f   direction{0, 0, -1};
-        sf::Vector3f   velocity{0, 0, 0};
-        Listener::Cone cone{sf::degrees(360), sf::degrees(360), 1};
-        sf::Vector3f   upVector{0, 1, 0};
+        Vector3f       position{0, 0, 0};
+        Vector3f       direction{0, 0, -1};
+        Vector3f       velocity{0, 0, 0};
+        Listener::Cone cone{degrees(360.f), degrees(360.f), 1};
+        Vector3f       upVector{0, 1, 0};
     };
 
     ////////////////////////////////////////////////////////////

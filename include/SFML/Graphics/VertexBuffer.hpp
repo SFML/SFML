@@ -154,7 +154,7 @@ public:
     /// the \a created buffer.
     ///
     /// No additional check is performed on the size of the vertex
-    /// array, passing invalid arguments will lead to undefined
+    /// array. Passing invalid arguments will lead to undefined
     /// behavior.
     ///
     /// This function does nothing if \a vertices is null or if the
@@ -188,7 +188,7 @@ public:
     /// than the size of the currently created buffer, the update fails.
     ///
     /// No additional check is performed on the size of the vertex
-    /// array, passing invalid arguments will lead to undefined
+    /// array. Passing invalid arguments will lead to undefined
     /// behavior.
     ///
     /// \param vertices    Array of vertices to copy to the buffer
@@ -386,7 +386,7 @@ SFML_GRAPHICS_API void swap(VertexBuffer& left, VertexBuffer& right) noexcept;
 /// Simultaneous updates to the vertex buffer are not guaranteed to be
 /// carried out by the driver in any specific order. Updating the same
 /// region of the buffer from multiple threads will not cause undefined
-/// behaviour, however the final state of the buffer will be unpredictable.
+/// behavior, however the final state of the buffer will be unpredictable.
 ///
 /// Simultaneous updates of distinct non-overlapping regions of the buffer
 /// are also not guaranteed to complete in a specific order. However, in

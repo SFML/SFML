@@ -63,8 +63,8 @@ struct SavedSettings
     float          minGain{0.f};
     float          maxGain{1.f};
     float          rollOff{1.f};
-    float          innerAngle{sf::degrees(360).asRadians()};
-    float          outerAngle{sf::degrees(360).asRadians()};
+    float          innerAngle{degrees(360.f).asRadians()};
+    float          outerAngle{degrees(360.f).asRadians()};
     float          outerGain{0.f};
 };
 
@@ -135,7 +135,7 @@ void initializeDataSource(ma_data_source_base& dataSourceBase, const ma_data_sou
 
 
 ////////////////////////////////////////////////////////////
-ma_channel MiniaudioUtils::soundChannelToMiniaudioChannel(sf::SoundChannel soundChannel)
+ma_channel MiniaudioUtils::soundChannelToMiniaudioChannel(SoundChannel soundChannel)
 {
     switch (soundChannel)
     {
@@ -180,6 +180,56 @@ ma_channel MiniaudioUtils::soundChannelToMiniaudioChannel(sf::SoundChannel sound
         default:
             assert(soundChannel == SoundChannel::TopBackCenter);
             return MA_CHANNEL_TOP_BACK_CENTER;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+SoundChannel MiniaudioUtils::miniaudioChannelToSoundChannel(ma_channel soundChannel)
+{
+    switch (soundChannel)
+    {
+        case MA_CHANNEL_NONE:
+            return SoundChannel::Unspecified;
+        case MA_CHANNEL_MONO:
+            return SoundChannel::Mono;
+        case MA_CHANNEL_FRONT_LEFT:
+            return SoundChannel::FrontLeft;
+        case MA_CHANNEL_FRONT_RIGHT:
+            return SoundChannel::FrontRight;
+        case MA_CHANNEL_FRONT_CENTER:
+            return SoundChannel::FrontCenter;
+        case MA_CHANNEL_FRONT_LEFT_CENTER:
+            return SoundChannel::FrontLeftOfCenter;
+        case MA_CHANNEL_FRONT_RIGHT_CENTER:
+            return SoundChannel::FrontRightOfCenter;
+        case MA_CHANNEL_LFE:
+            return SoundChannel::LowFrequencyEffects;
+        case MA_CHANNEL_BACK_LEFT:
+            return SoundChannel::BackLeft;
+        case MA_CHANNEL_BACK_RIGHT:
+            return SoundChannel::BackRight;
+        case MA_CHANNEL_BACK_CENTER:
+            return SoundChannel::BackCenter;
+        case MA_CHANNEL_SIDE_LEFT:
+            return SoundChannel::SideLeft;
+        case MA_CHANNEL_SIDE_RIGHT:
+            return SoundChannel::SideRight;
+        case MA_CHANNEL_TOP_CENTER:
+            return SoundChannel::TopCenter;
+        case MA_CHANNEL_TOP_FRONT_LEFT:
+            return SoundChannel::TopFrontLeft;
+        case MA_CHANNEL_TOP_FRONT_RIGHT:
+            return SoundChannel::TopFrontRight;
+        case MA_CHANNEL_TOP_FRONT_CENTER:
+            return SoundChannel::TopFrontCenter;
+        case MA_CHANNEL_TOP_BACK_LEFT:
+            return SoundChannel::TopBackLeft;
+        case MA_CHANNEL_TOP_BACK_RIGHT:
+            return SoundChannel::TopBackRight;
+        default:
+            assert(soundChannel == MA_CHANNEL_TOP_BACK_CENTER);
+            return SoundChannel::TopBackCenter;
     }
 }
 

@@ -6,6 +6,7 @@
 #include <SFML/Audio.hpp>
 
 #include <algorithm>
+#include <iostream>
 #include <limits>
 #include <memory>
 #include <vector>
@@ -18,6 +19,7 @@ namespace
 constexpr auto windowWidth  = 800u;
 constexpr auto windowHeight = 600u;
 constexpr auto pi           = 3.14159265359f;
+constexpr auto sqrt2        = 2.0f * 0.707106781186547524401f;
 
 std::filesystem::path resourcesDir()
 {
@@ -84,10 +86,10 @@ protected:
 
 private:
     // Virtual functions to be implemented in derived effects
-    virtual void onUpdate(float time, float x, float y)                                 = 0;
-    virtual void onDraw(sf::RenderTarget& target, const sf::RenderStates& states) const = 0;
-    virtual void onStart()                                                              = 0;
-    virtual void onStop()                                                               = 0;
+    virtual void onUpdate(float time, float x, float y)                          = 0;
+    virtual void onDraw(sf::RenderTarget& target, sf::RenderStates states) const = 0;
+    virtual void onStart()                                                       = 0;
+    virtual void onStop()                                                        = 0;
 
     virtual void onKey(sf::Keyboard::Key)
     {
@@ -113,7 +115,7 @@ public:
 
         // Load the music file
         if (!m_music.openFromFile(resourcesDir() / "doodle_pop.ogg"))
-            sf::err() << "Failed to load " << (resourcesDir() / "doodle_pop.ogg").string() << std::endl;
+            std::cerr << "Failed to load " << (resourcesDir() / "doodle_pop.ogg").string() << std::endl;
 
         // Set the music to loop
         m_music.setLoop(true);
@@ -128,7 +130,7 @@ public:
         m_music.setPosition({m_position.x, m_position.y, 0.f});
     }
 
-    void onDraw(sf::RenderTarget& target, const sf::RenderStates& states) const override
+    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
         auto statesCopy(states);
         statesCopy.transform = sf::Transform::Identity;
@@ -172,7 +174,7 @@ public:
     {
         // Load the music file
         if (!m_music.openFromFile(resourcesDir() / "doodle_pop.ogg"))
-            sf::err() << "Failed to load " << (resourcesDir() / "doodle_pop.ogg").string() << std::endl;
+            std::cerr << "Failed to load " << (resourcesDir() / "doodle_pop.ogg").string() << std::endl;
 
         // Set the music to loop
         m_music.setLoop(true);
@@ -202,7 +204,7 @@ public:
         m_volumeText.setString("Volume: " + std::to_string(m_volume));
     }
 
-    void onDraw(sf::RenderTarget& target, const sf::RenderStates& states) const override
+    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
         target.draw(m_pitchText, states);
         target.draw(m_volumeText, states);
@@ -275,7 +277,7 @@ public:
 
         // Load the music file
         if (!m_music.openFromFile(resourcesDir() / "doodle_pop.ogg"))
-            sf::err() << "Failed to load " << (resourcesDir() / "doodle_pop.ogg").string() << std::endl;
+            std::cerr << "Failed to load " << (resourcesDir() / "doodle_pop.ogg").string() << std::endl;
 
         // Set the music to loop
         m_music.setLoop(true);
@@ -305,7 +307,7 @@ public:
         m_music.setPosition({m_position.x, m_position.y, 0.f});
     }
 
-    void onDraw(sf::RenderTarget& target, const sf::RenderStates& states) const override
+    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
         auto statesCopy(states);
 
@@ -375,7 +377,7 @@ public:
         m_currentFrequency.setString("Frequency: " + std::to_string(m_frequency) + " Hz");
     }
 
-    void onDraw(sf::RenderTarget& target, const sf::RenderStates& states) const override
+    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
         target.draw(m_instruction, states);
         target.draw(m_currentType, states);
@@ -547,7 +549,7 @@ public:
         setDopplerFactor(m_factor);
     }
 
-    void onDraw(sf::RenderTarget& target, const sf::RenderStates& states) const override
+    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
         auto statesCopy(states);
         statesCopy.transform = sf::Transform::Identity;
@@ -616,6 +618,425 @@ private:
 
 
 ////////////////////////////////////////////////////////////
+// Processing base class
+////////////////////////////////////////////////////////////
+class Processing : public Effect
+{
+public:
+    void onUpdate([[maybe_unused]] float time, float x, float y) override
+    {
+        m_position = {windowWidth * x - 10.f, windowHeight * y - 10.f};
+        m_music.setPosition({m_position.x, m_position.y, 0.f});
+    }
+
+    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override
+    {
+        auto statesCopy(states);
+        statesCopy.transform = sf::Transform::Identity;
+        statesCopy.transform.translate(m_position);
+
+        target.draw(m_listener, states);
+        target.draw(m_soundShape, statesCopy);
+        target.draw(m_enabledText);
+        target.draw(m_instructions);
+    }
+
+    void onStart() override
+    {
+        // Synchronize listener audio position with graphical position
+        sf::Listener::setPosition({m_listener.getPosition().x, m_listener.getPosition().y, 0.f});
+
+        m_music.play();
+    }
+
+    void onStop() override
+    {
+        m_music.stop();
+    }
+
+protected:
+    Processing(std::string name) :
+    Effect(std::move(name)),
+    m_enabledText(getFont(), "Processing: Enabled"),
+    m_instructions(getFont(), "Press Space to enable/disable processing")
+    {
+        m_listener.setPosition({(windowWidth - 20.f) / 2.f, (windowHeight - 20.f) / 2.f});
+        m_listener.setFillColor(sf::Color::Red);
+
+        m_enabledText.setPosition({windowWidth / 2.f - 120.f, windowHeight * 3.f / 4.f - 50.f});
+        m_instructions.setPosition({windowWidth / 2.f - 250.f, windowHeight * 3.f / 4.f});
+
+        // Load the music file
+        if (!m_music.openFromFile(resourcesDir() / "doodle_pop.ogg"))
+            std::cerr << "Failed to load " << (resourcesDir() / "doodle_pop.ogg").string() << std::endl;
+
+        // Set the music to loop
+        m_music.setLoop(true);
+
+        // Set attenuation to a nice value
+        m_music.setAttenuation(0.0f);
+    }
+
+    sf::Music& getMusic()
+    {
+        return m_music;
+    }
+
+    const std::shared_ptr<bool>& getEnabled() const
+    {
+        return m_enabled;
+    }
+
+private:
+    void onKey(sf::Keyboard::Key key) override
+    {
+        if (key == sf::Keyboard::Key::Space)
+            *m_enabled = !*m_enabled;
+
+        m_enabledText.setString(*m_enabled ? "Processing: Enabled" : "Processing: Disabled");
+    }
+
+    sf::CircleShape       m_listener{20.f};
+    sf::CircleShape       m_soundShape{20.f};
+    sf::Vector2f          m_position;
+    sf::Music             m_music;
+    std::shared_ptr<bool> m_enabled{std::make_shared<bool>(true)};
+    sf::Text              m_enabledText;
+    sf::Text              m_instructions;
+};
+
+
+////////////////////////////////////////////////////////////
+// Biquad Filter (https://github.com/dimtass/DSP-Cpp-filters)
+////////////////////////////////////////////////////////////
+class BiquadFilter : public Processing
+{
+protected:
+    struct Coefficients
+    {
+        float a0{};
+        float a1{};
+        float a2{};
+        float b1{};
+        float b2{};
+        float c0{};
+        float d0{};
+    };
+
+    using Processing::Processing;
+
+    void setCoefficients(const Coefficients& coefficients)
+    {
+        auto& music = getMusic();
+
+        struct State
+        {
+            float xnz1{};
+            float xnz2{};
+            float ynz1{};
+            float ynz2{};
+        };
+
+        // We use a mutable lambda to tie the lifetime of the state and coefficients to the lambda itself
+        // This is necessary since the Echo object will be destroyed before the Music object
+        // While the Music object exists, it is possible that the audio engine will try to call
+        // this lambda hence we need to always have usable coefficients and state until the Music and the
+        // associated lambda are destroyed
+        music.setEffectProcessor(
+            [coefficients,
+             enabled = getEnabled(),
+             state   = std::vector<State>(music.getChannelCount())](const float*  inputFrames,
+                                                                  unsigned int& inputFrameCount,
+                                                                  float*        outputFrames,
+                                                                  unsigned int& outputFrameCount,
+                                                                  unsigned int  frameChannelCount) mutable
+            {
+                for (auto frame = 0u; frame < outputFrameCount; ++frame)
+                {
+                    for (auto channel = 0u; channel < frameChannelCount; ++channel)
+                    {
+                        auto& channelState = state[channel];
+
+                        const auto xn = inputFrames ? inputFrames[channel] : 0.f; // Read silence if no input data available
+                        const auto yn = coefficients.a0 * xn + coefficients.a1 * channelState.xnz1 +
+                                        coefficients.a2 * channelState.xnz2 - coefficients.b1 * channelState.ynz1 -
+                                        coefficients.b2 * channelState.ynz2;
+
+                        channelState.xnz2 = channelState.xnz1;
+                        channelState.xnz1 = xn;
+                        channelState.ynz2 = channelState.ynz1;
+                        channelState.ynz1 = yn;
+
+                        outputFrames[channel] = *enabled ? yn : xn;
+                    }
+
+                    inputFrames += (inputFrames ? frameChannelCount : 0u);
+                    outputFrames += frameChannelCount;
+                }
+
+                // We processed data 1:1
+                inputFrameCount = outputFrameCount;
+            });
+    }
+};
+
+
+////////////////////////////////////////////////////////////
+// High-pass Filter (https://github.com/dimtass/DSP-Cpp-filters)
+////////////////////////////////////////////////////////////
+struct HighPassFilter : BiquadFilter
+{
+    HighPassFilter() : BiquadFilter("High-pass Filter")
+    {
+        static constexpr auto cutoffFrequency = 2000.f;
+
+        const auto c = std::tan(pi * cutoffFrequency / static_cast<float>(getMusic().getSampleRate()));
+
+        Coefficients coefficients;
+
+        coefficients.a0 = 1.f / (1.f + sqrt2 * c + std::pow(c, 2.f));
+        coefficients.a1 = -2.f * coefficients.a0;
+        coefficients.a2 = coefficients.a0;
+        coefficients.b1 = 2.f * coefficients.a0 * (std::pow(c, 2.f) - 1.f);
+        coefficients.b2 = coefficients.a0 * (1.f - sqrt2 * c + std::pow(c, 2.f));
+
+        setCoefficients(coefficients);
+    }
+};
+
+
+////////////////////////////////////////////////////////////
+// Low-pass Filter (https://github.com/dimtass/DSP-Cpp-filters)
+////////////////////////////////////////////////////////////
+struct LowPassFilter : BiquadFilter
+{
+    LowPassFilter() : BiquadFilter("Low-pass Filter")
+    {
+        static constexpr auto cutoffFrequency = 500.f;
+
+        const auto c = 1.f / std::tan(pi * cutoffFrequency / static_cast<float>(getMusic().getSampleRate()));
+
+        Coefficients coefficients;
+
+        coefficients.a0 = 1.f / (1.f + sqrt2 * c + std::pow(c, 2.f));
+        coefficients.a1 = 2.f * coefficients.a0;
+        coefficients.a2 = coefficients.a0;
+        coefficients.b1 = 2.f * coefficients.a0 * (1.f - std::pow(c, 2.f));
+        coefficients.b2 = coefficients.a0 * (1.f - sqrt2 * c + std::pow(c, 2.f));
+
+        setCoefficients(coefficients);
+    }
+};
+
+
+////////////////////////////////////////////////////////////
+// Echo (miniaudio implementation)
+////////////////////////////////////////////////////////////
+struct Echo : Processing
+{
+    Echo() : Processing("Echo")
+    {
+        auto& music = getMusic();
+
+        static constexpr auto delay = 0.2f;
+        static constexpr auto decay = 0.75f;
+        static constexpr auto wet   = 0.8f;
+        static constexpr auto dry   = 1.f;
+
+        const auto channelCount  = music.getChannelCount();
+        const auto sampleRate    = music.getSampleRate();
+        const auto delayInFrames = static_cast<unsigned int>(static_cast<float>(sampleRate) * delay);
+
+        // We use a mutable lambda to tie the lifetime of the state to the lambda itself
+        // This is necessary since the Echo object will be destroyed before the Music object
+        // While the Music object exists, it is possible that the audio engine will try to call
+        // this lambda hence we need to always have a usable state until the Music and the
+        // associated lambda are destroyed
+        music.setEffectProcessor(
+            [delayInFrames,
+             enabled = getEnabled(),
+             buffer  = std::vector<float>(delayInFrames * channelCount, 0.f),
+             cursor  = 0u](const float*  inputFrames,
+                          unsigned int& inputFrameCount,
+                          float*        outputFrames,
+                          unsigned int& outputFrameCount,
+                          unsigned int  frameChannelCount) mutable
+            {
+                for (auto frame = 0u; frame < outputFrameCount; ++frame)
+                {
+                    for (auto channel = 0u; channel < frameChannelCount; ++channel)
+                    {
+                        const auto input = inputFrames ? inputFrames[channel] : 0.f; // Read silence if no input data available
+                        const auto bufferIndex = (cursor * frameChannelCount) + channel;
+                        buffer[bufferIndex]    = (buffer[bufferIndex] * decay) + (input * dry);
+                        outputFrames[channel]  = *enabled ? buffer[bufferIndex] * wet : input;
+                    }
+
+                    cursor = (cursor + 1) % delayInFrames;
+
+                    inputFrames += (inputFrames ? frameChannelCount : 0u);
+                    outputFrames += frameChannelCount;
+                }
+
+                // We processed data 1:1
+                inputFrameCount = outputFrameCount;
+            });
+    }
+};
+
+
+////////////////////////////////////////////////////////////
+// Reverb (https://github.com/sellicott/DSP-FFMpeg-Reverb)
+////////////////////////////////////////////////////////////
+class Reverb : public Processing
+{
+public:
+    Reverb() : Processing("Reverb")
+    {
+        auto& music = getMusic();
+
+        static constexpr auto sustain = 0.7f; // [0.f; 1.f]
+
+        const auto channelCount = music.getChannelCount();
+        const auto sampleRate   = music.getSampleRate();
+
+        std::vector<ReverbFilter<float>> filters;
+        filters.reserve(channelCount);
+
+        for (auto i = 0u; i < channelCount; ++i)
+            filters.emplace_back(sampleRate, sustain);
+
+        // We use a mutable lambda to tie the lifetime of the state to the lambda itself
+        // This is necessary since the Echo object will be destroyed before the Music object
+        // While the Music object exists, it is possible that the audio engine will try to call
+        // this lambda hence we need to always have a usable state until the Music and the
+        // associated lambda are destroyed
+        music.setEffectProcessor(
+            [filters, enabled = getEnabled()](const float*  inputFrames,
+                                              unsigned int& inputFrameCount,
+                                              float*        outputFrames,
+                                              unsigned int& outputFrameCount,
+                                              unsigned int  frameChannelCount) mutable
+            {
+                for (auto frame = 0u; frame < outputFrameCount; ++frame)
+                {
+                    for (auto channel = 0u; channel < frameChannelCount; ++channel)
+                    {
+                        const auto input = inputFrames ? inputFrames[channel] : 0.f; // Read silence if no input data available
+                        outputFrames[channel] = *enabled ? filters[channel](input) : input;
+                    }
+
+                    inputFrames += (inputFrames ? frameChannelCount : 0u);
+                    outputFrames += frameChannelCount;
+                }
+
+                // We processed data 1:1
+                inputFrameCount = outputFrameCount;
+            });
+    }
+
+private:
+    template <typename T>
+    class AllPassFilter
+    {
+    public:
+        AllPassFilter(std::size_t delay, float theGain) : m_buffer(delay, {}), m_gain(theGain)
+        {
+        }
+
+        T operator()(T input)
+        {
+            const auto output  = m_buffer[m_cursor];
+            input              = static_cast<T>(input + m_gain * output);
+            m_buffer[m_cursor] = input;
+            m_cursor           = (m_cursor + 1) % m_buffer.size();
+            return static_cast<T>(-m_gain * input + output);
+        }
+
+    private:
+        std::vector<T> m_buffer;
+        std::size_t    m_cursor{};
+        const float    m_gain{};
+    };
+
+
+    template <typename T>
+    class FIRFilter
+    {
+    public:
+        FIRFilter(std::vector<float> taps) : m_taps(std::move(taps))
+        {
+        }
+
+        T operator()(T input)
+        {
+            m_buffer[m_cursor] = input;
+            m_cursor           = (m_cursor + 1) % m_buffer.size();
+
+            T output{};
+
+            for (auto i = 0u; i < m_taps.size(); ++i)
+                output += static_cast<T>(m_taps[i] * m_buffer[(m_cursor + i) % m_buffer.size()]);
+
+            return output;
+        }
+
+    private:
+        const std::vector<float> m_taps;
+        std::vector<T>           m_buffer = std::vector<T>(m_taps.size(), {});
+        std::size_t              m_cursor{};
+    };
+
+    template <typename T>
+    class ReverbFilter
+    {
+    public:
+        ReverbFilter(unsigned int sampleRate, float feedbackGain) :
+        m_allPass{{sampleRate / 10, 0.6f}, {sampleRate / 30, -0.6f}, {sampleRate / 90, 0.6f}, {sampleRate / 270, -0.6f}},
+        m_fir({0.003369f,  0.002810f,  0.001758f,  0.000340f,  -0.001255f, -0.002793f, -0.004014f, -0.004659f,
+               -0.004516f, -0.003464f, -0.001514f, 0.001148f,  0.004157f,  0.006986f,  0.009003f,  0.009571f,
+               0.008173f,  0.004560f,  -0.001120f, -0.008222f, -0.015581f, -0.021579f, -0.024323f, -0.021933f,
+               -0.012904f, 0.003500f,  0.026890f,  0.055537f,  0.086377f,  0.115331f,  0.137960f,  0.150407f,
+               0.150407f,  0.137960f,  0.115331f,  0.086377f,  0.055537f,  0.026890f,  0.003500f,  -0.012904f,
+               -0.021933f, -0.024323f, -0.021579f, -0.015581f, -0.008222f, -0.001120f, 0.004560f,  0.008173f,
+               0.009571f,  0.009003f,  0.006986f,  0.004157f,  0.001148f,  -0.001514f, -0.003464f, -0.004516f,
+               -0.004659f, -0.004014f, -0.002793f, -0.001255f, 0.000340f,  0.001758f,  0.002810f,  0.003369f}),
+        m_buffer(sampleRate / 5, {}), // sample rate / 5 = 200ms buffer size
+        m_feedbackGain(feedbackGain)
+        {
+        }
+
+        T operator()(T input)
+        {
+            auto output = static_cast<T>(0.7f * input + m_feedbackGain * m_buffer[m_cursor]);
+
+            for (auto& f : m_allPass)
+                output = f(output);
+
+            output = m_fir(output);
+
+            m_buffer[m_cursor] = output;
+            m_cursor           = (m_cursor + 1) % m_buffer.size();
+
+            output += 0.5f * m_buffer[(m_cursor + 1 * m_interval - 1) % m_buffer.size()];
+            output += 0.25f * m_buffer[(m_cursor + 2 * m_interval - 1) % m_buffer.size()];
+            output += 0.125f * m_buffer[(m_cursor + 3 * m_interval - 1) % m_buffer.size()];
+
+            return 0.6f * output + input;
+        }
+
+    private:
+        AllPassFilter<T>  m_allPass[4];
+        FIRFilter<T>      m_fir;
+        std::vector<T>    m_buffer;
+        std::size_t       m_cursor{};
+        const std::size_t m_interval{m_buffer.size() / 3};
+        const float       m_feedbackGain{};
+    };
+};
+
+
+////////////////////////////////////////////////////////////
 /// Entry point of application
 ///
 /// \return Application exit code
@@ -636,19 +1057,25 @@ int main()
     Effect::setFont(font);
 
     // Create the effects
-    Surround    surroundEffect;
-    PitchVolume pitchVolumeEffect;
-    Attenuation attenuationEffect;
-    Tone        toneEffect;
-    Doppler     dopplerEffect;
+    Surround       surroundEffect;
+    PitchVolume    pitchVolumeEffect;
+    Attenuation    attenuationEffect;
+    Tone           toneEffect;
+    Doppler        dopplerEffect;
+    HighPassFilter highPassFilterEffect;
+    LowPassFilter  lowPassFilterEffect;
+    Echo           echoEffect;
+    Reverb         reverbEffect;
 
-    const std::array<Effect*, 5> effects{
-        &surroundEffect,
-        &pitchVolumeEffect,
-        &attenuationEffect,
-        &toneEffect,
-        &dopplerEffect,
-    };
+    const std::array<Effect*, 9> effects{&surroundEffect,
+                                         &pitchVolumeEffect,
+                                         &attenuationEffect,
+                                         &toneEffect,
+                                         &dopplerEffect,
+                                         &highPassFilterEffect,
+                                         &lowPassFilterEffect,
+                                         &echoEffect,
+                                         &reverbEffect};
 
     std::size_t current = 0;
 

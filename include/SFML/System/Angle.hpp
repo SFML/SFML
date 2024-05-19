@@ -144,20 +144,20 @@ private:
     friend constexpr Angle radians(float angle);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Construct from a number of degrees
+    /// \brief Construct from a number of radians
     ///
     /// This function is internal. To construct angle values,
     /// use sf::radians or sf::degrees instead.
     ///
-    /// \param degrees Angle in degrees
+    /// \param radians Angle in radians
     ///
     ////////////////////////////////////////////////////////////
-    constexpr explicit Angle(float degrees);
+    constexpr explicit Angle(float radians);
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    float m_degrees{}; //!< Angle value stored as degrees
+    float m_radians{}; //!< Angle value stored as radians
 };
 
 ////////////////////////////////////////////////////////////
@@ -187,6 +187,7 @@ private:
 ////////////////////////////////////////////////////////////
 /// \relates Angle
 /// \brief Overload of == operator to compare two angle values
+/// \note Does not automatically wrap the angle value
 ///
 /// \param left  Left operand (an angle)
 /// \param right Right operand (an angle)
@@ -199,6 +200,7 @@ private:
 ////////////////////////////////////////////////////////////
 /// \relates Angle
 /// \brief Overload of != operator to compare two angle values
+/// \note Does not automatically wrap the angle value
 ///
 /// \param left  Left operand (an angle)
 /// \param right Right operand (an angle)
@@ -211,6 +213,7 @@ private:
 ////////////////////////////////////////////////////////////
 /// \relates Angle
 /// \brief Overload of < operator to compare two angle values
+/// \note Does not automatically wrap the angle value
 ///
 /// \param left  Left operand (an angle)
 /// \param right Right operand (an angle)
@@ -223,6 +226,7 @@ private:
 ////////////////////////////////////////////////////////////
 /// \relates Angle
 /// \brief Overload of > operator to compare two angle values
+/// \note Does not automatically wrap the angle value
 ///
 /// \param left  Left operand (an angle)
 /// \param right Right operand (an angle)
@@ -235,6 +239,7 @@ private:
 ////////////////////////////////////////////////////////////
 /// \relates Angle
 /// \brief Overload of <= operator to compare two angle values
+/// \note Does not automatically wrap the angle value
 ///
 /// \param left  Left operand (an angle)
 /// \param right Right operand (an angle)
@@ -247,6 +252,7 @@ private:
 ////////////////////////////////////////////////////////////
 /// \relates Angle
 /// \brief Overload of >= operator to compare two angle values
+/// \note Does not automatically wrap the angle value
 ///
 /// \param left  Left operand (an angle)
 /// \param right Right operand (an angle)

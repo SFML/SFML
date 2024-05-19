@@ -105,10 +105,10 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    int                          m_file{-1};                ///< File descriptor of the joystick
-    char                         m_mapping[ABS_MAX + 1]{0}; ///< Axes mapping (index to axis id)
-    JoystickState                m_state;                   ///< Current state of the joystick
-    sf::Joystick::Identification m_identification;          ///< Identification of the joystick
+    int                       m_file{-1};       ///< File descriptor of the joystick
+    std::array<char, ABS_CNT> m_mapping{};      ///< Axes mapping (index to axis id)
+    JoystickState             m_state;          ///< Current state of the joystick
+    Joystick::Identification  m_identification; ///< Identification of the joystick
 };
 
 } // namespace sf::priv

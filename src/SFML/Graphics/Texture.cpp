@@ -37,6 +37,7 @@
 #include <SFML/System/Err.hpp>
 
 #include <algorithm>
+#include <array>
 #include <atomic>
 #include <ostream>
 #include <utility>
@@ -861,10 +862,10 @@ void Texture::bind(const Texture* texture, CoordinateType coordinateType)
         if ((coordinateType == CoordinateType::Pixels) || texture->m_pixelsFlipped)
         {
             // clang-format off
-            GLfloat matrix[16] = {1.f, 0.f, 0.f, 0.f,
-                                  0.f, 1.f, 0.f, 0.f,
-                                  0.f, 0.f, 1.f, 0.f,
-                                  0.f, 0.f, 0.f, 1.f};
+            std::array matrix = {1.f, 0.f, 0.f, 0.f,
+                                 0.f, 1.f, 0.f, 0.f,
+                                 0.f, 0.f, 1.f, 0.f,
+                                 0.f, 0.f, 0.f, 1.f};
             // clang-format on
 
             // If non-normalized coordinates (= pixels) are requested, we need to
@@ -884,7 +885,7 @@ void Texture::bind(const Texture* texture, CoordinateType coordinateType)
 
             // Load the matrix
             glCheck(glMatrixMode(GL_TEXTURE));
-            glCheck(glLoadMatrixf(matrix));
+            glCheck(glLoadMatrixf(matrix.data()));
         }
         else
         {
@@ -921,7 +922,7 @@ unsigned int Texture::getMaximumSize()
         GLint value = 0;
 
         // Make sure that extensions are initialized
-        sf::priv::ensureExtensionsInit();
+        priv::ensureExtensionsInit();
 
         glCheck(glGetIntegerv(GL_MAX_TEXTURE_SIZE, &value));
 

@@ -30,7 +30,11 @@
 #include <SFML/System/Err.hpp>
 
 #include <algorithm>
+#include <array>
 #include <ostream>
+
+#include <cassert>
+#include <cstdlib>
 
 
 namespace sf::priv
@@ -64,32 +68,51 @@ AudioDevice::AudioDevice()
     // Create the context
     m_context.emplace();
 
-    auto contextConfig = ma_context_config_init();
-    contextConfig.pLog = &*m_log;
+    auto contextConfig                                 = ma_context_config_init();
+    contextConfig.pLog                                 = &*m_log;
+    ma_uint32                              deviceCount = 0;
+    const auto                             nullBackend = ma_backend_null;
+    const std::array<const ma_backend*, 2> backendLists{nullptr, &nullBackend};
 
-    if (const auto result = ma_context_init(nullptr, 0, &contextConfig, &*m_context); result != MA_SUCCESS)
+    for (const auto* backendList : backendLists)
     {
-        m_context.reset();
-        err() << "Failed to initialize the audio context: " << ma_result_description(result) << std::endl;
-        return;
+        // We can set backendCount to 1 since it is ignored when backends is set to nullptr
+        if (const auto result = ma_context_init(backendList, 1, &contextConfig, &*m_context); result != MA_SUCCESS)
+        {
+            m_context.reset();
+            err() << "Failed to initialize the audio playback context: " << ma_result_description(result) << std::endl;
+            return;
+        }
+
+        // Count the playback devices
+        if (const auto result = ma_context_get_devices(&*m_context, nullptr, &deviceCount, nullptr, nullptr);
+            result != MA_SUCCESS)
+        {
+            err() << "Failed to get audio playback devices: " << ma_result_description(result) << std::endl;
+            return;
+        }
+
+        // Check if there are audio playback devices available on the system
+        if (deviceCount > 0)
+            break;
+
+        // Warn if no devices were found using the default backend list
+        if (backendList == nullptr)
+            err() << "No audio playback devices available on the system" << std::endl;
+
+        // Clean up the context if we didn't find any devices
+        ma_context_uninit(&*m_context);
     }
 
-    // Count the playback devices
-    ma_uint32 deviceCount = 0;
-
-    if (const auto result = ma_context_get_devices(&*m_context, nullptr, &deviceCount, nullptr, nullptr);
-        result != MA_SUCCESS)
-    {
-        err() << "Failed to get audio playback devices: " << ma_result_description(result) << std::endl;
-        return;
-    }
-
-    // Check if there are audio playback devices available on the system
+    // If the NULL audio backend also doesn't provide a device we give up
     if (deviceCount == 0)
     {
-        err() << "No audio playback devices available on the system" << std::endl;
+        m_context.reset();
         return;
     }
+
+    if (m_context->backend == ma_backend_null)
+        err() << "Using NULL audio backend for playback" << std::endl;
 
     // Create the playback device
     m_playbackDevice.emplace();
@@ -159,11 +182,16 @@ AudioDevice::AudioDevice()
                                     m_listenerProperties.upVector.x,
                                     m_listenerProperties.upVector.y,
                                     m_listenerProperties.upVector.z);
+
+    // Setup cleanup function with `atexit` to work around destruction order issue with
+    // miniaudio internal audio processing threads on Windows
+    const int rc = std::atexit([] { AudioDevice::get().cleanup(); });
+    assert(rc == 0);
 }
 
 
 ////////////////////////////////////////////////////////////
-AudioDevice::~AudioDevice()
+void AudioDevice::cleanup()
 {
     // Destroy the engine
     if (m_engine)
@@ -286,8 +314,8 @@ void AudioDevice::setCone(const Listener::Cone& cone)
 
     ma_engine_listener_set_cone(&*m_engine,
                                 0,
-                                std::clamp(cone.innerAngle.asRadians(), 0.f, sf::degrees(360).asRadians()),
-                                std::clamp(cone.outerAngle.asRadians(), 0.f, sf::degrees(360).asRadians()),
+                                std::clamp(cone.innerAngle, Angle::Zero, degrees(360.f)).asRadians(),
+                                std::clamp(cone.outerAngle, Angle::Zero, degrees(360.f)).asRadians(),
                                 cone.outerGain);
 }
 

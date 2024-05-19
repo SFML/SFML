@@ -33,6 +33,7 @@
 #include <miniaudio.h>
 
 #include <algorithm>
+#include <array>
 #include <optional>
 #include <ostream>
 
@@ -187,15 +188,51 @@ SoundRecorder::SoundRecorder() : m_impl(std::make_unique<Impl>(this))
     // Create the context
     m_impl->context.emplace();
 
-    auto contextConfig = ma_context_config_init();
-    contextConfig.pLog = &*m_impl->log;
+    auto contextConfig                                 = ma_context_config_init();
+    contextConfig.pLog                                 = &*m_impl->log;
+    ma_uint32                              deviceCount = 0;
+    const auto                             nullBackend = ma_backend_null;
+    const std::array<const ma_backend*, 2> backendLists{nullptr, &nullBackend};
 
-    if (const auto result = ma_context_init(nullptr, 0, &contextConfig, &*m_impl->context); result != MA_SUCCESS)
+    for (const auto* backendList : backendLists)
+    {
+        // We can set backendCount to 1 since it is ignored when backends is set to nullptr
+        if (const auto result = ma_context_init(backendList, 1, &contextConfig, &*m_impl->context); result != MA_SUCCESS)
+        {
+            m_impl->context.reset();
+            err() << "Failed to initialize the audio capture context: " << ma_result_description(result) << std::endl;
+            return;
+        }
+
+        // Count the capture devices
+        if (const auto result = ma_context_get_devices(&*m_impl->context, nullptr, nullptr, nullptr, &deviceCount);
+            result != MA_SUCCESS)
+        {
+            err() << "Failed to get audio capture devices: " << ma_result_description(result) << std::endl;
+            return;
+        }
+
+        // Check if there are audio capture devices available on the system
+        if (deviceCount > 0)
+            break;
+
+        // Warn if no devices were found using the default backend list
+        if (backendList == nullptr)
+            err() << "No audio capture devices available on the system" << std::endl;
+
+        // Clean up the context if we didn't find any devices
+        ma_context_uninit(&*m_impl->context);
+    }
+
+    // If the NULL audio backend also doesn't provide a device we give up
+    if (deviceCount == 0)
     {
         m_impl->context.reset();
-        err() << "Failed to initialize the audio context: " << ma_result_description(result) << std::endl;
         return;
     }
+
+    if (m_impl->context->backend == ma_backend_null)
+        err() << "Using NULL audio backend for capture" << std::endl;
 
     // Create the capture device
     m_impl->initialize();

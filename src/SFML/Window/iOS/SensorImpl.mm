@@ -34,11 +34,6 @@
 namespace
 {
 unsigned int deviceMotionEnabledCount = 0;
-
-float toDegrees(float radians)
-{
-    return sf::radians(radians).asDegrees();
-}
 }
 
 
@@ -145,10 +140,10 @@ Vector3f SensorImpl::update()
             break;
 
         case Sensor::Type::Gyroscope:
-            // Rotation rates are given in rad/s, convert to deg/s
-            value.x = toDegrees(static_cast<float>(manager.gyroData.rotationRate.x));
-            value.y = toDegrees(static_cast<float>(manager.gyroData.rotationRate.y));
-            value.z = toDegrees(static_cast<float>(manager.gyroData.rotationRate.z));
+            // Rotation rates are given in rad/s
+            value.x = static_cast<float>(manager.gyroData.rotationRate.x);
+            value.y = static_cast<float>(manager.gyroData.rotationRate.y);
+            value.z = static_cast<float>(manager.gyroData.rotationRate.z);
             break;
 
         case Sensor::Type::Magnetometer:
@@ -166,10 +161,10 @@ Vector3f SensorImpl::update()
             break;
 
         case Sensor::Type::Orientation:
-            // Absolute rotation (Euler) angles are given in radians, convert to degrees
-            value.x = toDegrees(static_cast<float>(manager.deviceMotion.attitude.yaw));
-            value.y = toDegrees(static_cast<float>(manager.deviceMotion.attitude.pitch));
-            value.z = toDegrees(static_cast<float>(manager.deviceMotion.attitude.roll));
+            // Absolute rotation (Euler) angles are given in radians
+            value.x = static_cast<float>(manager.deviceMotion.attitude.yaw);
+            value.y = static_cast<float>(manager.deviceMotion.attitude.pitch);
+            value.z = static_cast<float>(manager.deviceMotion.attitude.roll);
             break;
 
         default:

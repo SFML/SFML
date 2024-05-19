@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFileWriter.hpp>
 
+#include <array>
 #include <filesystem>
 #include <fstream>
 
@@ -105,9 +106,9 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::ofstream m_file;             //!< File stream to write to
-    unsigned int  m_channelCount{};   //!< Channel count of the sound being written
-    std::size_t   m_remapTable[18]{}; //!< Table we use to remap source to target channel order
+    std::ofstream               m_file;           //!< File stream to write to
+    unsigned int                m_channelCount{}; //!< Channel count of the sound being written
+    std::array<std::size_t, 18> m_remapTable{};   //!< Table we use to remap source to target channel order
 };
 
 } // namespace sf::priv

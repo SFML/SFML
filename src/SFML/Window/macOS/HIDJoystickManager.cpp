@@ -29,6 +29,8 @@
 #include <SFML/Window/macOS/HIDInputManager.hpp>
 #include <SFML/Window/macOS/HIDJoystickManager.hpp>
 
+#include <array>
+
 ////////////////////////////////////////////////////////////
 // Private data
 ////////////////////////////////////////////////////////////
@@ -75,11 +77,8 @@ HIDJoystickManager::HIDJoystickManager()
 
     CFDictionaryRef mask1 = HIDInputManager::copyDevicesMask(kHIDPage_GenericDesktop, kHIDUsage_GD_GamePad);
 
-    CFDictionaryRef maskArray[2];
-    maskArray[0] = mask0;
-    maskArray[1] = mask1;
-
-    CFArrayRef mask = CFArrayCreate(nullptr, reinterpret_cast<const void**>(maskArray), 2, nullptr);
+    std::array maskArray = {mask0, mask1};
+    CFArrayRef mask = CFArrayCreate(nullptr, reinterpret_cast<const void**>(maskArray.data()), maskArray.size(), nullptr);
 
     IOHIDManagerSetDeviceMatchingMultiple(m_manager, mask);
     CFRelease(mask);

@@ -88,8 +88,8 @@ void SoundSource::setCone(const Cone& cone)
 {
     if (auto* sound = static_cast<ma_sound*>(getSound()))
         ma_sound_set_cone(sound,
-                          std::clamp(cone.innerAngle, sf::degrees(0), sf::degrees(360)).asRadians(),
-                          std::clamp(cone.outerAngle, sf::degrees(0), sf::degrees(360)).asRadians(),
+                          std::clamp(cone.innerAngle, Angle::Zero, degrees(360.f)).asRadians(),
+                          std::clamp(cone.outerAngle, Angle::Zero, degrees(360.f)).asRadians(),
                           cone.outerGain);
 }
 
@@ -163,6 +163,13 @@ void SoundSource::setAttenuation(float attenuation)
 {
     if (auto* sound = static_cast<ma_sound*>(getSound()))
         ma_sound_set_rolloff(sound, attenuation);
+}
+
+
+////////////////////////////////////////////////////////////
+// NOLINTNEXTLINE(performance-unnecessary-value-param)
+void SoundSource::setEffectProcessor(EffectProcessor)
+{
 }
 
 
@@ -241,12 +248,12 @@ SoundSource::Cone SoundSource::getCone() const
         float outerAngle = 0.f;
         Cone  cone;
         ma_sound_get_cone(sound, &innerAngle, &outerAngle, &cone.outerGain);
-        cone.innerAngle = sf::radians(innerAngle);
-        cone.outerAngle = sf::radians(outerAngle);
+        cone.innerAngle = radians(innerAngle);
+        cone.outerAngle = radians(outerAngle);
         return cone;
     }
 
-    return Cone{sf::radians(0), sf::radians(0), 0.f};
+    return Cone{radians(0), radians(0), 0.f};
 }
 
 

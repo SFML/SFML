@@ -740,7 +740,7 @@ bool Shader::isAvailable()
         const TransientContextLock contextLock;
 
         // Make sure that extensions are initialized
-        sf::priv::ensureExtensionsInit();
+        priv::ensureExtensionsInit();
 
         return GLEXT_multitexture && GLEXT_shading_language_100 && GLEXT_shader_objects && GLEXT_vertex_shader &&
                GLEXT_fragment_shader;
@@ -758,7 +758,7 @@ bool Shader::isGeometryAvailable()
         const TransientContextLock contextLock;
 
         // Make sure that extensions are initialized
-        sf::priv::ensureExtensionsInit();
+        priv::ensureExtensionsInit();
 
         return isAvailable() && (GLEXT_geometry_shader4 || GLEXT_GL_VERSION_3_2);
     }();

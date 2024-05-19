@@ -329,9 +329,9 @@ private:
     static constexpr bool isEventType = isInParameterPack<T>(decltype(m_data)());
 };
 
-#include <SFML/Window/Event.inl>
-
 } // namespace sf
+
+#include <SFML/Window/Event.inl>
 
 
 ////////////////////////////////////////////////////////////

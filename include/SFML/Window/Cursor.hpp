@@ -240,7 +240,7 @@ private:
 /// with either loadFromPixels() or loadFromSystem(), the
 /// cursor can be changed with sf::WindowBase::setMouseCursor().
 ///
-/// The behaviour is undefined if the cursor is destroyed while
+/// The behavior is undefined if the cursor is destroyed while
 /// in use by the window.
 ///
 /// Usage example:

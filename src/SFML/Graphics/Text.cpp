@@ -381,7 +381,7 @@ void Text::ensureGeometryUpdate() const
     const bool  isBold             = m_style & Bold;
     const bool  isUnderlined       = m_style & Underlined;
     const bool  isStrikeThrough    = m_style & StrikeThrough;
-    const float italicShear        = (m_style & Italic) ? sf::degrees(12).asRadians() : 0.f;
+    const float italicShear        = (m_style & Italic) ? degrees(12).asRadians() : 0.f;
     const float underlineOffset    = m_font->getUnderlinePosition(m_characterSize);
     const float underlineThickness = m_font->getUnderlineThickness(m_characterSize);
 
