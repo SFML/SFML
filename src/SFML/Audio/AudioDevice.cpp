@@ -185,7 +185,7 @@ AudioDevice::AudioDevice()
 
     // Setup cleanup function with `atexit` to work around destruction order issue with
     // miniaudio internal audio processing threads on Windows
-    const int rc = std::atexit([] { AudioDevice::get().cleanup(); });
+    [[maybe_unused]] const int rc = std::atexit([] { AudioDevice::get().cleanup(); });
     assert(rc == 0);
 }
 
