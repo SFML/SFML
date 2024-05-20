@@ -252,7 +252,7 @@ TEST_CASE("[Graphics] sf::Glsl")
 
         SECTION("Array constructor")
         {
-            static constexpr std::array<float, 9> data = {1, 2, 3, 4, 5, 6};
+            static constexpr std::array<float, 9> data = {1, 2, 3, 4, 5, 6, 7, 8, 9};
             const sf::Glsl::Mat3                  mat(data.data());
             CHECK(mat.array[0] == 1);
             CHECK(mat.array[1] == 2);
@@ -260,9 +260,9 @@ TEST_CASE("[Graphics] sf::Glsl")
             CHECK(mat.array[3] == 4);
             CHECK(mat.array[4] == 5);
             CHECK(mat.array[5] == 6);
-            CHECK(mat.array[6] == 0);
-            CHECK(mat.array[7] == 0);
-            CHECK(mat.array[8] == 1);
+            CHECK(mat.array[6] == 7);
+            CHECK(mat.array[7] == 8);
+            CHECK(mat.array[8] == 9);
         }
 
         SECTION("Transform constructor")

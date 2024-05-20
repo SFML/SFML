@@ -8,6 +8,7 @@
 #include <sstream>
 #include <type_traits>
 #include <vector>
+#include <iostream>
 
 #include <cassert>
 
@@ -95,9 +96,9 @@ TEST_CASE("[Graphics] sf::Transform")
         sf::Transform transform(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 4.0f);
         CHECK(identity.combine(transform) == transform);
         CHECK(transform.combine(sf::Transform::Identity) == transform);
-        CHECK(transform.combine(transform) == sf::Transform(18.0f, 18.0f, 14.0f, 36.0f, 41.0f, 36.0f));
+        CHECK(transform.combine(transform) == sf::Transform(9.0f, 12.0f, 14.0f, 24.0f, 33.0f, 36.0f));
         CHECK(transform.combine(sf::Transform(10.0f, 2.0f, 3.0f, 4.0f, 50.0f, 40.0f)) ==
-              sf::Transform(672.0f, 1216.0f, 914.0f, 1604.0f, 2842.0f, 2108.0f));
+              sf::Transform(138.0f, 618.0f, 521.0f, 372.0f, 1698.0f, 1428.0f));
     }
 
     SECTION("translate()")
@@ -165,9 +166,9 @@ TEST_CASE("[Graphics] sf::Transform")
             transform *= sf::Transform::Identity;
             CHECK(transform == sf::Transform(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 4.0f));
             transform *= transform;
-            CHECK(transform == sf::Transform(18.0f, 18.0f, 14.0f, 36.0f, 41.0f, 36.0f));
+            CHECK(transform == sf::Transform(9.0f, 12.0f, 14.0f, 24.0f, 33.0f, 36.0f));
             transform *= sf::Transform(10.0f, 2.0f, 3.0f, 4.0f, 50.0f, 40.0f);
-            CHECK(transform == sf::Transform(672.0f, 1216.0f, 914.0f, 1604.0f, 2842.0f, 2108.0f));
+            CHECK(transform == sf::Transform(138.0f, 618.0f, 521.0f, 372.0f, 1698.0f, 1428.0f));
         }
 
         SECTION("operator* with vector")
