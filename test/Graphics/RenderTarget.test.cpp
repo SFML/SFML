@@ -36,12 +36,12 @@ TEST_CASE("[Graphics] sf::RenderTarget")
         CHECK(renderTarget.getView().getSize() == sf::Vector2f(1000, 1000));
         CHECK(renderTarget.getView().getRotation() == sf::Angle::Zero);
         CHECK(renderTarget.getView().getViewport() == sf::FloatRect({0, 0}, {1, 1}));
-        CHECK(renderTarget.getView().getTransform() == sf::Transform(.002f, 0, -1, 0, -.002f, 1, 0, 0, 1));
+        CHECK(renderTarget.getView().getTransform() == sf::Transform(.002f, 0, -1, 0, -.002f, 1));
         CHECK(renderTarget.getDefaultView().getCenter() == sf::Vector2f(500, 500));
         CHECK(renderTarget.getDefaultView().getSize() == sf::Vector2f(1000, 1000));
         CHECK(renderTarget.getDefaultView().getRotation() == sf::Angle::Zero);
         CHECK(renderTarget.getDefaultView().getViewport() == sf::FloatRect({0, 0}, {1, 1}));
-        CHECK(renderTarget.getDefaultView().getTransform() == sf::Transform(.002f, 0, -1, 0, -.002f, 1, 0, 0, 1));
+        CHECK(renderTarget.getDefaultView().getTransform() == sf::Transform(.002f, 0, -1, 0, -.002f, 1));
         CHECK(!renderTarget.isSrgb());
     }
 

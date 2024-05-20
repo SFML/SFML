@@ -136,8 +136,7 @@ const Transform& Transformable::getTransform() const
 
         // clang-format off
         m_transform = Transform( sxc, sys, tx,
-                                -sxs, syc, ty,
-                                 0.f, 0.f, 1.f);
+                                -sxs, syc, ty);
         // clang-format on
         m_transformNeedUpdate = false;
     }

@@ -252,7 +252,7 @@ TEST_CASE("[Graphics] sf::Glsl")
 
         SECTION("Array constructor")
         {
-            static constexpr std::array<float, 9> data = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+            static constexpr std::array<float, 9> data = {1, 2, 3, 4, 5, 6};
             const sf::Glsl::Mat3                  mat(data.data());
             CHECK(mat.array[0] == 1);
             CHECK(mat.array[1] == 2);
@@ -260,24 +260,24 @@ TEST_CASE("[Graphics] sf::Glsl")
             CHECK(mat.array[3] == 4);
             CHECK(mat.array[4] == 5);
             CHECK(mat.array[5] == 6);
-            CHECK(mat.array[6] == 7);
-            CHECK(mat.array[7] == 8);
-            CHECK(mat.array[8] == 9);
+            CHECK(mat.array[6] == 0);
+            CHECK(mat.array[7] == 0);
+            CHECK(mat.array[8] == 1);
         }
 
         SECTION("Transform constructor")
         {
-            constexpr sf::Transform transform(10, 11, 12, 13, 14, 15, 16, 17, 18);
+            constexpr sf::Transform transform(10, 11, 12, 13, 14, 15);
             const sf::Glsl::Mat3    mat = transform;
             CHECK(mat.array[0] == 10);
             CHECK(mat.array[1] == 13);
-            CHECK(mat.array[2] == 16);
+            CHECK(mat.array[2] == 0);
             CHECK(mat.array[3] == 11);
             CHECK(mat.array[4] == 14);
-            CHECK(mat.array[5] == 17);
+            CHECK(mat.array[5] == 0);
             CHECK(mat.array[6] == 12);
             CHECK(mat.array[7] == 15);
-            CHECK(mat.array[8] == 18);
+            CHECK(mat.array[8] == 1);
         }
     }
 
@@ -313,16 +313,16 @@ TEST_CASE("[Graphics] sf::Glsl")
 
     SECTION("Transform constructor")
     {
-        constexpr sf::Transform transform(10, 11, 12, 13, 14, 15, 16, 17, 18);
+        constexpr sf::Transform transform(10, 11, 12, 13, 14, 15);
         const sf::Glsl::Mat4    mat = transform;
         CHECK(mat.array[0] == 10);
         CHECK(mat.array[1] == 13);
         CHECK(mat.array[2] == 0);
-        CHECK(mat.array[3] == 16);
+        CHECK(mat.array[3] == 0);
         CHECK(mat.array[4] == 11);
         CHECK(mat.array[5] == 14);
         CHECK(mat.array[6] == 0);
-        CHECK(mat.array[7] == 17);
+        CHECK(mat.array[7] == 0);
         CHECK(mat.array[8] == 0);
         CHECK(mat.array[9] == 0);
         CHECK(mat.array[10] == 1);
@@ -330,6 +330,6 @@ TEST_CASE("[Graphics] sf::Glsl")
         CHECK(mat.array[12] == 12);
         CHECK(mat.array[13] == 15);
         CHECK(mat.array[14] == 0);
-        CHECK(mat.array[15] == 18);
+        CHECK(mat.array[15] == 1);
     }
 }

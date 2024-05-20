@@ -185,8 +185,7 @@ const Transform& View::getTransform() const
         // Rebuild the projection matrix
         // clang-format off
         m_transform = Transform( a * cosine, a * sine,   a * tx + c,
-                                -b * sine,   b * cosine, b * ty + d,
-                                 0.f,        0.f,        1.f);
+                                -b * sine,   b * cosine, b * ty + d);
         // clang-format on
         m_transformUpdated = true;
     }
