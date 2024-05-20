@@ -182,16 +182,11 @@ AudioDevice::AudioDevice()
                                     m_listenerProperties.upVector.x,
                                     m_listenerProperties.upVector.y,
                                     m_listenerProperties.upVector.z);
-
-    // Setup cleanup function with `atexit` to work around destruction order issue with
-    // miniaudio internal audio processing threads on Windows
-    [[maybe_unused]] const int rc = std::atexit([] { AudioDevice::get().cleanup(); });
-    assert(rc == 0);
 }
 
 
 ////////////////////////////////////////////////////////////
-void AudioDevice::cleanup()
+AudioDevice::~AudioDevice()
 {
     // Destroy the engine
     if (m_engine)

@@ -16187,7 +16187,7 @@ static void ma_thread_wait__posix(ma_thread* pThread)
 static ma_result ma_mutex_init__posix(ma_mutex* pMutex)
 {
     int result;
-    
+
     if (pMutex == NULL) {
         return MA_INVALID_ARGS;
     }
@@ -42402,8 +42402,25 @@ MA_API ma_result ma_device_stop(ma_device* pDevice)
             /*
             We need to wait for the worker thread to become available for work before returning. Note that the worker thread will be
             the one who puts the device into the stopped state. Don't call ma_device__set_state() here.
+
+            When using miniaudio through a shared library on Windows, registering cleanup operations such as `ma_engine_uninit` via
+            `atexit` will result in a deadlock because all threads will be forcefully terminated without any thread-detach notification
+            by the Win32 runtime as part of `ExitProcess`.
+
+            To prevent the deadlock and support `atexit`-based cleanup (e.g. using miniaudio via C++ `static` objects), we only wait
+            for the stop event signal if the thread was not forcefully terminated.
             */
-            ma_event_wait(&pDevice->stopEvent);
+
+        #if defined(MA_WIN32)
+            const ma_bool32 shouldWait = WaitForSingleObject(pDevice->thread, 0) == WAIT_TIMEOUT;
+        #else
+            const ma_bool32 shouldWait = MA_TRUE;
+        #endif
+
+            if (shouldWait) {
+                ma_event_wait(&pDevice->stopEvent);
+            }
+
             result = MA_SUCCESS;
         }
 
