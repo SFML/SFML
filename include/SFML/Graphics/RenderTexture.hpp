@@ -37,6 +37,7 @@
 #include <SFML/System/Vector2.hpp>
 
 #include <memory>
+#include <optional>
 
 
 namespace sf
@@ -53,17 +54,6 @@ class RenderTextureImpl;
 class SFML_GRAPHICS_API RenderTexture : public RenderTarget
 {
 public:
-    ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    /// Constructs an empty, invalid render-texture. You must
-    /// call create to have a valid render-texture.
-    ///
-    /// \see create
-    ///
-    ////////////////////////////////////////////////////////////
-    RenderTexture();
-
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
@@ -97,10 +87,6 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Create the render-texture
     ///
-    /// Before calling this function, the render-texture is in
-    /// an invalid state, thus it is mandatory to call it before
-    /// doing anything with the render-texture.
-    ///
     /// The last parameter, \a settings, is useful if you want to enable
     /// multi-sampling or use the render-texture for OpenGL rendering that
     /// requires a depth or stencil buffer. Otherwise it is unnecessary, and
@@ -112,10 +98,11 @@ public:
     /// \param size     Width and height of the render-texture
     /// \param settings Additional settings for the underlying OpenGL texture and context
     ///
-    /// \return True if creation has been successful
+    /// \return Render texture if creation has been successful, otherwise `std::nullopt`
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool create(const Vector2u& size, const ContextSettings& settings = ContextSettings());
+    [[nodiscard]] static std::optional<RenderTexture> create(const Vector2u&        size,
+                                                             const ContextSettings& settings = ContextSettings());
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the maximum anti-aliasing level supported by the system
@@ -226,7 +213,6 @@ public:
     ////////////////////////////////////////////////////////////
     Vector2u getSize() const override;
 
-
     ////////////////////////////////////////////////////////////
     /// \brief Tell if the render-texture will use sRGB encoding when drawing on it
     ///
@@ -255,6 +241,12 @@ public:
     const Texture& getTexture() const;
 
 private:
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct from texture
+    ///
+    ////////////////////////////////////////////////////////////
+    explicit RenderTexture(Texture&& texture);
+
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
@@ -288,9 +280,7 @@ private:
 /// sf::RenderWindow window(sf::VideoMode({800, 600}), "SFML window");
 ///
 /// // Create a new render-texture
-/// sf::RenderTexture texture;
-/// if (!texture.create({500, 500}))
-///     return -1;
+/// auto texture = sf::RenderTexture::create({500, 500}).value();
 ///
 /// // The main loop
 /// while (window.isOpen())
