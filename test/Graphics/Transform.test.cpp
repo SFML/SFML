@@ -47,8 +47,7 @@ TEST_CASE("[Graphics] sf::Transform")
     SECTION("getInverse()")
     {
         STATIC_CHECK(sf::Transform::Identity.getInverse() == sf::Transform::Identity);
-        STATIC_CHECK(sf::Transform(1.0f, 2.0f, 3.0f, 4.0f, 8.0f, 6.0f).getInverse() ==
-                     sf::Transform::Identity);
+        STATIC_CHECK(sf::Transform(1.0f, 2.0f, 3.0f, 4.0f, 8.0f, 6.0f).getInverse() == sf::Transform::Identity);
         STATIC_CHECK(sf::Transform(1.0f, 2.0f, 3.0f, 5.0f, 2.0f, 4.0f).getInverse() ==
                      sf::Transform(-0.25f, 0.25f, -0.25f, 0.625f, -0.125f, -1.375f));
     }
@@ -153,8 +152,7 @@ TEST_CASE("[Graphics] sf::Transform")
             constexpr sf::Transform transform(1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 4.0f);
             STATIC_CHECK(sf::Transform::Identity * transform == transform);
             STATIC_CHECK(transform * sf::Transform::Identity == transform);
-            STATIC_CHECK(transform * transform ==
-                         sf::Transform(9.0f, 12.0f, 14.0f, 24.0f, 33.0f, 36.0f));
+            STATIC_CHECK(transform * transform == sf::Transform(9.0f, 12.0f, 14.0f, 24.0f, 33.0f, 36.0f));
             STATIC_CHECK(transform * sf::Transform(10.0f, 2.0f, 3.0f, 4.0f, 50.0f, 40.0f) ==
                          sf::Transform(18.0f, 102.0f, 86.0f, 60.0f, 258.0f, 216.0f));
         }
@@ -202,12 +200,10 @@ TEST_CASE("[Graphics] sf::Transform")
             STATIC_CHECK_FALSE(sf::Transform::Identity != sf::Transform::Identity);
             STATIC_CHECK_FALSE(sf::Transform() != sf::Transform());
             STATIC_CHECK_FALSE(sf::Transform(0, 0, 0, 0, 0, 0) != sf::Transform(0, 0, 0, 0, 0, 0));
-            STATIC_CHECK_FALSE(
-                sf::Transform(0.0001f, 0.0001f, 0.0001f, 0.0001f, 0.0001f, 0.0001f) !=
-                sf::Transform(0.0001f, 0.0001f, 0.0001f, 0.0001f, 0.0001f, 0.0001f));
-            STATIC_CHECK_FALSE(
-                sf::Transform(1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f) !=
-                sf::Transform(1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f));
+            STATIC_CHECK_FALSE(sf::Transform(0.0001f, 0.0001f, 0.0001f, 0.0001f, 0.0001f, 0.0001f) !=
+                               sf::Transform(0.0001f, 0.0001f, 0.0001f, 0.0001f, 0.0001f, 0.0001f));
+            STATIC_CHECK_FALSE(sf::Transform(1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f) !=
+                               sf::Transform(1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f, 1000.0f));
 
             STATIC_CHECK(sf::Transform(1, 0, 0, 0, 0, 0) != sf::Transform(0, 0, 0, 0, 0, 0));
             STATIC_CHECK(sf::Transform(0, 1, 0, 0, 0, 0) != sf::Transform(0, 0, 0, 0, 0, 0));

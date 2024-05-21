@@ -79,14 +79,12 @@ TEST_CASE("[Graphics] sf::View")
         CHECK(view.getRotation() == Approx(sf::degrees(15)));
         CHECK(view.getTransform() ==
               Approx(sf::Transform(0.00193185f, 0.000517638f, -1.22474f, 0.000517638f, -0.00193185f, 0.707107f)));
-        CHECK(view.getInverseTransform() ==
-              Approx(sf::Transform(482.963f, 129.41f, 500, 129.41f, -482.963f, 500)));
+        CHECK(view.getInverseTransform() == Approx(sf::Transform(482.963f, 129.41f, 500, 129.41f, -482.963f, 500)));
         view.setRotation(sf::degrees(400));
         CHECK(view.getRotation() == Approx(sf::degrees(40)));
         CHECK(view.getTransform() ==
               Approx(sf::Transform(0.00153209f, 0.00128558f, -1.40883f, 0.00128558f, -0.00153209f, 0.123257f)));
-        CHECK(view.getInverseTransform() ==
-              Approx(sf::Transform(383.022f, 321.394f, 500, 321.394f, -383.022f, 500)));
+        CHECK(view.getInverseTransform() == Approx(sf::Transform(383.022f, 321.394f, 500, 321.394f, -383.022f, 500)));
     }
 
     SECTION("Set/get viewport")

@@ -61,8 +61,7 @@ TEST_CASE("[Graphics] sf::RenderWindow", runDisplayTests())
             CHECK(window.getView().getSize() == sf::Vector2f(240, 300));
             CHECK(window.getView().getRotation() == sf::Angle::Zero);
             CHECK(window.getView().getViewport() == sf::FloatRect({0, 0}, {1, 1}));
-            CHECK(window.getView().getTransform() ==
-                  Approx(sf::Transform(0.00833333f, 0, -1, 0, -0.00666667f, 1)));
+            CHECK(window.getView().getTransform() == Approx(sf::Transform(0.00833333f, 0, -1, 0, -0.00666667f, 1)));
         }
     }
 
