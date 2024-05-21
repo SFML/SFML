@@ -15,6 +15,8 @@ set(SRC
     ${SRCROOT}/MiniaudioUtils.cpp
     ${SRCROOT}/Music.cpp
     ${INCROOT}/Music.hpp
+    ${SRCROOT}/PlaybackDevice.cpp
+    ${INCROOT}/PlaybackDevice.hpp
     ${SRCROOT}/Sound.cpp
     ${INCROOT}/Sound.hpp
     ${SRCROOT}/SoundBuffer.cpp

@@ -22,34 +22,62 @@
 //
 ////////////////////////////////////////////////////////////
 
-#pragma once
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-
-#include <SFML/Audio/InputSoundFile.hpp>
-#include <SFML/Audio/Listener.hpp>
-#include <SFML/Audio/Music.hpp>
-#include <SFML/Audio/OutputSoundFile.hpp>
+#include <SFML/Audio/AudioDevice.hpp>
 #include <SFML/Audio/PlaybackDevice.hpp>
-#include <SFML/Audio/Sound.hpp>
-#include <SFML/Audio/SoundBuffer.hpp>
-#include <SFML/Audio/SoundBufferRecorder.hpp>
-#include <SFML/Audio/SoundFileFactory.hpp>
-#include <SFML/Audio/SoundFileReader.hpp>
-#include <SFML/Audio/SoundFileWriter.hpp>
-#include <SFML/Audio/SoundRecorder.hpp>
-#include <SFML/Audio/SoundSource.hpp>
-#include <SFML/Audio/SoundStream.hpp>
 
-#include <SFML/System.hpp>
+#include <algorithm>
+
+
+namespace sf::PlaybackDevice
+{
+////////////////////////////////////////////////////////////
+std::vector<std::string> getAvailableDevices()
+{
+    const auto devices = priv::AudioDevice::getAvailableDevices();
+
+    std::vector<std::string> deviceNameList;
+    deviceNameList.reserve(devices.size());
+
+    for (const auto& device : devices)
+        deviceNameList.emplace_back(device.name);
+
+    return deviceNameList;
+}
 
 
 ////////////////////////////////////////////////////////////
-/// \defgroup audio Audio module
-///
-/// Sounds, streaming (musics or custom sources), recording,
-/// spatialization.
-///
+std::optional<std::string> getDefaultDevice()
+{
+    for (const auto& device : priv::AudioDevice::getAvailableDevices())
+    {
+        if (device.isDefault)
+            return device.name;
+    }
+
+    return std::nullopt;
+}
+
+
 ////////////////////////////////////////////////////////////
+bool setDevice(const std::string& name)
+{
+    // Perform a sanity check to make sure the user isn't passing us a non-existant device name
+    const auto devices = priv::AudioDevice::getAvailableDevices();
+    if (auto iter = std::find_if(devices.begin(), devices.end(), [&](const auto& device) { return device.name == name; });
+        iter == devices.end())
+        return false;
+
+    return priv::AudioDevice::setDevice(name);
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<std::string> getDevice()
+{
+    return priv::AudioDevice::getDevice();
+}
+
+} // namespace sf::PlaybackDevice

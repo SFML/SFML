@@ -27,11 +27,15 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Audio/AudioDevice.hpp>
 #include <SFML/Audio/SoundChannel.hpp>
+#include <SFML/Audio/SoundSource.hpp>
+
+#include <SFML/System/Angle.hpp>
 
 #include <miniaudio.h>
 
-#include <functional>
+#include <limits>
 
 
 ////////////////////////////////////////////////////////////
@@ -44,15 +48,64 @@ class Time;
 
 namespace priv::MiniaudioUtils
 {
+struct SavedSettings
+{
+    float          pitch{1.f};
+    float          pan{0.f};
+    float          volume{1.f};
+    ma_bool32      spatializationEnabled{MA_TRUE};
+    ma_vec3f       position{0.f, 0.f, 0.f};
+    ma_vec3f       direction{0.f, 0.f, -1.f};
+    float          directionalAttenuationFactor{1.f};
+    ma_vec3f       velocity{0.f, 0.f, 0.f};
+    float          dopplerFactor{1.f};
+    ma_positioning positioning{ma_positioning_absolute};
+    float          minDistance{1.f};
+    float          maxDistance{std::numeric_limits<float>::max()};
+    float          minGain{0.f};
+    float          maxGain{1.f};
+    float          rollOff{1.f};
+    ma_bool32      playing{MA_FALSE};
+    ma_bool32      looping{MA_FALSE};
+    float          innerAngle{degrees(360.f).asRadians()};
+    float          outerAngle{degrees(360.f).asRadians()};
+    float          outerGain{0.f};
+};
+
+struct SoundBase
+{
+    SoundBase(const ma_data_source_vtable& dataSourceVTable, AudioDevice::ResourceEntry::Func reinitializeFunc);
+    ~SoundBase();
+    void initialize(ma_sound_end_proc endCallback);
+    void deinitialize();
+    void processEffect(const float** framesIn, ma_uint32& frameCountIn, float** framesOut, ma_uint32& frameCountOut) const;
+    void connectEffect(bool connect);
+
+    ////////////////////////////////////////////////////////////
+    // Member data
+    ////////////////////////////////////////////////////////////
+    struct EffectNode
+    {
+        ma_node_base base{};
+        SoundBase*   impl{};
+        ma_uint32    channelCount{};
+    };
+
+    ma_data_source_base dataSourceBase{}; //!< The struct that makes this object a miniaudio data source (must be first member)
+    ma_node_vtable          effectNodeVTable{}; //!< Vtable of the effect node
+    EffectNode              effectNode;         //!< The engine node that performs effect processing
+    std::vector<ma_channel> soundChannelMap; //!< The map of position in sample frame to sound channel (miniaudio channels)
+    ma_sound                sound{};         //!< The sound
+    SoundSource::Status     status{SoundSource::Status::Stopped}; //!< The status
+    SoundSource::EffectProcessor         effectProcessor;         //!< The effect processor
+    priv::AudioDevice::ResourceEntryIter resourceEntryIter; //!< Iterator to the resource entry registered with the AudioDevice
+    priv::MiniaudioUtils::SavedSettings savedSettings; //!< Saved settings used to restore ma_sound state in case we need to recreate it
+};
+
 [[nodiscard]] ma_channel   soundChannelToMiniaudioChannel(SoundChannel soundChannel);
 [[nodiscard]] SoundChannel miniaudioChannelToSoundChannel(ma_channel soundChannel);
 [[nodiscard]] Time         getPlayingOffset(ma_sound& sound);
 [[nodiscard]] ma_uint64    getFrameIndex(ma_sound& sound, Time timeOffset);
 
-void reinitializeSound(ma_sound& sound, const std::function<void()>& initializeFn);
-void initializeSound(const ma_data_source_vtable& vtable,
-                     ma_data_source_base&         dataSourceBase,
-                     ma_sound&                    sound,
-                     const std::function<void()>& initializeFn);
 } // namespace priv::MiniaudioUtils
 } // namespace sf
