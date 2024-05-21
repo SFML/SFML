@@ -33,6 +33,7 @@
 
 #include <filesystem>
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include <cstddef>
@@ -64,10 +65,10 @@ public:
     ///
     /// \param filename Path of the sound file to load
     ///
-    /// \return True if the file was successfully opened
+    /// \return Input sound file if the file was successfully opened, otherwise `std::nullopt`
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool openFromFile(const std::filesystem::path& filename);
+    [[nodiscard]] static std::optional<InputSoundFile> openFromFile(const std::filesystem::path& filename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Open a sound file in memory for reading
@@ -78,10 +79,10 @@ public:
     /// \param data        Pointer to the file data in memory
     /// \param sizeInBytes Size of the data to load, in bytes
     ///
-    /// \return True if the file was successfully opened
+    /// \return Input sound file if the file was successfully opened, otherwise `std::nullopt`
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool openFromMemory(const void* data, std::size_t sizeInBytes);
+    [[nodiscard]] static std::optional<InputSoundFile> openFromMemory(const void* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// \brief Open a sound file from a custom stream for reading
@@ -91,10 +92,10 @@ public:
     ///
     /// \param stream Source stream to read from
     ///
-    /// \return True if the file was successfully opened
+    /// \return Input sound file if the file was successfully opened, otherwise `std::nullopt`
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool openFromStream(InputStream& stream);
+    [[nodiscard]] static std::optional<InputSoundFile> openFromStream(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the total number of audio samples in the file
@@ -212,6 +213,14 @@ public:
 
 private:
     ////////////////////////////////////////////////////////////
+    /// \brief Default constructor
+    ///
+    /// Useful for implementing close()
+    ///
+    ////////////////////////////////////////////////////////////
+    InputSoundFile() = default;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Deleter for input streams that only conditionally deletes
     ///
     ////////////////////////////////////////////////////////////
@@ -227,6 +236,16 @@ private:
 
         bool owned{true};
     };
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Constructor from reader, stream, and attributes
+    ///
+    ////////////////////////////////////////////////////////////
+    InputSoundFile(std::unique_ptr<SoundFileReader>&&            reader,
+                   std::unique_ptr<InputStream, StreamDeleter>&& stream,
+                   std::uint64_t                                 sampleCount,
+                   unsigned int                                  sampleRate,
+                   std::vector<SoundChannel>&&                   channelMap);
 
     ////////////////////////////////////////////////////////////
     // Member data

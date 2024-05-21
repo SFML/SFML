@@ -37,7 +37,6 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
     SECTION("Construction")
     {
         const sf::Music music;
-        CHECK(music.getDuration() == sf::Time::Zero);
         const auto [offset, length] = music.getLoopPoints();
         CHECK(offset == sf::Time::Zero);
         CHECK(length == sf::Time::Zero);
@@ -55,7 +54,6 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
         SECTION("Invalid file")
         {
             REQUIRE(!music.openFromFile("does/not/exist.wav"));
-            CHECK(music.getDuration() == sf::Time::Zero);
             const auto [offset, length] = music.getLoopPoints();
             CHECK(offset == sf::Time::Zero);
             CHECK(length == sf::Time::Zero);
@@ -89,7 +87,6 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
         SECTION("Invalid buffer")
         {
             REQUIRE(!music.openFromMemory(memory.data(), memory.size()));
-            CHECK(music.getDuration() == sf::Time::Zero);
             const auto [offset, length] = music.getLoopPoints();
             CHECK(offset == sf::Time::Zero);
             CHECK(length == sf::Time::Zero);
@@ -124,7 +121,6 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
         SECTION("Invalid stream")
         {
             CHECK(!music.openFromStream(stream));
-            CHECK(music.getDuration() == sf::Time::Zero);
             const auto [offset, length] = music.getLoopPoints();
             CHECK(offset == sf::Time::Zero);
             CHECK(length == sf::Time::Zero);
@@ -178,32 +174,15 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
     SECTION("setLoopPoints()")
     {
         sf::Music music;
-
-        SECTION("No file")
-        {
-            music.setLoopPoints({sf::Time::Zero, sf::Time::Zero});
-            const auto [offset, length] = music.getLoopPoints();
-            CHECK(offset == sf::Time::Zero);
-            CHECK(length == sf::Time::Zero);
-            CHECK(music.getChannelCount() == 0);
-            CHECK(music.getSampleRate() == 0);
-            CHECK(music.getStatus() == sf::Music::Status::Stopped);
-            CHECK(music.getPlayingOffset() == sf::Time::Zero);
-            CHECK(!music.getLoop());
-        }
-
-        SECTION("Loaded file")
-        {
-            REQUIRE(music.openFromFile("Audio/killdeer.wav"));
-            music.setLoopPoints({sf::seconds(1), sf::seconds(2)});
-            const auto [offset, length] = music.getLoopPoints();
-            CHECK(offset == sf::seconds(1));
-            CHECK(length == sf::seconds(2));
-            CHECK(music.getChannelCount() == 1);
-            CHECK(music.getSampleRate() == 22050);
-            CHECK(music.getStatus() == sf::Music::Status::Stopped);
-            CHECK(music.getPlayingOffset() == sf::Time::Zero);
-            CHECK(!music.getLoop());
-        }
+        REQUIRE(music.openFromFile("Audio/killdeer.wav"));
+        music.setLoopPoints({sf::seconds(1), sf::seconds(2)});
+        const auto [offset, length] = music.getLoopPoints();
+        CHECK(offset == sf::seconds(1));
+        CHECK(length == sf::seconds(2));
+        CHECK(music.getChannelCount() == 1);
+        CHECK(music.getSampleRate() == 22050);
+        CHECK(music.getStatus() == sf::Music::Status::Stopped);
+        CHECK(music.getPlayingOffset() == sf::Time::Zero);
+        CHECK(!music.getLoop());
     }
 }

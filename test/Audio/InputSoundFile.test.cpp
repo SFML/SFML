@@ -15,37 +15,25 @@ TEST_CASE("[Audio] sf::InputSoundFile")
 {
     SECTION("Type traits")
     {
+        STATIC_CHECK(!std::is_default_constructible_v<sf::InputSoundFile>);
         STATIC_CHECK(!std::is_copy_constructible_v<sf::InputSoundFile>);
         STATIC_CHECK(!std::is_copy_assignable_v<sf::InputSoundFile>);
         STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::InputSoundFile>);
         STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::InputSoundFile>);
     }
 
-    SECTION("Construction")
-    {
-        const sf::InputSoundFile inputSoundFile;
-        CHECK(inputSoundFile.getSampleCount() == 0);
-        CHECK(inputSoundFile.getChannelCount() == 0);
-        CHECK(inputSoundFile.getSampleRate() == 0);
-        CHECK(inputSoundFile.getDuration() == sf::Time::Zero);
-        CHECK(inputSoundFile.getTimeOffset() == sf::Time::Zero);
-        CHECK(inputSoundFile.getSampleOffset() == 0);
-    }
-
     SECTION("openFromFile()")
     {
-        sf::InputSoundFile inputSoundFile;
-
         SECTION("Invalid file")
         {
-            CHECK(!inputSoundFile.openFromFile("does/not/exist.wav"));
+            CHECK(!sf::InputSoundFile::openFromFile("does/not/exist.wav"));
         }
 
         SECTION("Valid file")
         {
             SECTION("flac")
             {
-                REQUIRE(inputSoundFile.openFromFile("Audio/ding.flac"));
+                const auto inputSoundFile = sf::InputSoundFile::openFromFile("Audio/ding.flac").value();
                 CHECK(inputSoundFile.getSampleCount() == 87'798);
                 CHECK(inputSoundFile.getChannelCount() == 1);
                 CHECK(inputSoundFile.getSampleRate() == 44'100);
@@ -56,7 +44,7 @@ TEST_CASE("[Audio] sf::InputSoundFile")
 
             SECTION("mp3")
             {
-                REQUIRE(inputSoundFile.openFromFile("Audio/ding.mp3"));
+                const auto inputSoundFile = sf::InputSoundFile::openFromFile("Audio/ding.mp3").value();
                 CHECK(inputSoundFile.getSampleCount() == 87'798);
                 CHECK(inputSoundFile.getChannelCount() == 1);
                 CHECK(inputSoundFile.getSampleRate() == 44'100);
@@ -67,7 +55,7 @@ TEST_CASE("[Audio] sf::InputSoundFile")
 
             SECTION("ogg")
             {
-                REQUIRE(inputSoundFile.openFromFile("Audio/doodle_pop.ogg"));
+                const auto inputSoundFile = sf::InputSoundFile::openFromFile("Audio/doodle_pop.ogg").value();
                 CHECK(inputSoundFile.getSampleCount() == 2'116'992);
                 CHECK(inputSoundFile.getChannelCount() == 2);
                 CHECK(inputSoundFile.getSampleRate() == 44'100);
@@ -78,7 +66,7 @@ TEST_CASE("[Audio] sf::InputSoundFile")
 
             SECTION("wav")
             {
-                REQUIRE(inputSoundFile.openFromFile("Audio/killdeer.wav"));
+                const auto inputSoundFile = sf::InputSoundFile::openFromFile("Audio/killdeer.wav").value();
                 CHECK(inputSoundFile.getSampleCount() == 112'941);
                 CHECK(inputSoundFile.getChannelCount() == 1);
                 CHECK(inputSoundFile.getSampleRate() == 22'050);
@@ -91,9 +79,8 @@ TEST_CASE("[Audio] sf::InputSoundFile")
 
     SECTION("openFromMemory()")
     {
-        const auto         memory = loadIntoMemory("Audio/killdeer.wav");
-        sf::InputSoundFile inputSoundFile;
-        REQUIRE(inputSoundFile.openFromMemory(memory.data(), memory.size()));
+        const auto memory         = loadIntoMemory("Audio/killdeer.wav");
+        const auto inputSoundFile = sf::InputSoundFile::openFromMemory(memory.data(), memory.size()).value();
         CHECK(inputSoundFile.getSampleCount() == 112'941);
         CHECK(inputSoundFile.getChannelCount() == 1);
         CHECK(inputSoundFile.getSampleRate() == 22'050);
@@ -104,12 +91,11 @@ TEST_CASE("[Audio] sf::InputSoundFile")
 
     SECTION("openFromStream()")
     {
-        sf::InputSoundFile  inputSoundFile;
         sf::FileInputStream stream;
 
         SECTION("Invalid stream")
         {
-            CHECK(!inputSoundFile.openFromStream(stream));
+            CHECK(!sf::InputSoundFile::openFromStream(stream));
         }
 
         SECTION("Valid stream")
@@ -117,7 +103,7 @@ TEST_CASE("[Audio] sf::InputSoundFile")
             SECTION("flac")
             {
                 REQUIRE(stream.open("Audio/ding.flac"));
-                REQUIRE(inputSoundFile.openFromStream(stream));
+                const auto inputSoundFile = sf::InputSoundFile::openFromStream(stream).value();
                 CHECK(inputSoundFile.getSampleCount() == 87'798);
                 CHECK(inputSoundFile.getChannelCount() == 1);
                 CHECK(inputSoundFile.getSampleRate() == 44'100);
@@ -129,7 +115,7 @@ TEST_CASE("[Audio] sf::InputSoundFile")
             SECTION("mp3")
             {
                 REQUIRE(stream.open("Audio/ding.mp3"));
-                REQUIRE(inputSoundFile.openFromStream(stream));
+                const auto inputSoundFile = sf::InputSoundFile::openFromStream(stream).value();
                 CHECK(inputSoundFile.getSampleCount() == 87'798);
                 CHECK(inputSoundFile.getChannelCount() == 1);
                 CHECK(inputSoundFile.getSampleRate() == 44'100);
@@ -141,7 +127,7 @@ TEST_CASE("[Audio] sf::InputSoundFile")
             SECTION("ogg")
             {
                 REQUIRE(stream.open("Audio/doodle_pop.ogg"));
-                REQUIRE(inputSoundFile.openFromStream(stream));
+                const auto inputSoundFile = sf::InputSoundFile::openFromStream(stream).value();
                 CHECK(inputSoundFile.getSampleCount() == 2'116'992);
                 CHECK(inputSoundFile.getChannelCount() == 2);
                 CHECK(inputSoundFile.getSampleRate() == 44'100);
@@ -153,7 +139,7 @@ TEST_CASE("[Audio] sf::InputSoundFile")
             SECTION("wav")
             {
                 REQUIRE(stream.open("Audio/killdeer.wav"));
-                REQUIRE(inputSoundFile.openFromStream(stream));
+                const auto inputSoundFile = sf::InputSoundFile::openFromStream(stream).value();
                 CHECK(inputSoundFile.getSampleCount() == 112'941);
                 CHECK(inputSoundFile.getChannelCount() == 1);
                 CHECK(inputSoundFile.getSampleRate() == 22'050);
@@ -166,11 +152,9 @@ TEST_CASE("[Audio] sf::InputSoundFile")
 
     SECTION("seek(std::uint64_t)")
     {
-        sf::InputSoundFile inputSoundFile;
-
         SECTION("flac")
         {
-            REQUIRE(inputSoundFile.openFromFile("Audio/ding.flac"));
+            auto inputSoundFile = sf::InputSoundFile::openFromFile("Audio/ding.flac").value();
             inputSoundFile.seek(1'000);
             CHECK(inputSoundFile.getTimeOffset() == sf::microseconds(22'675));
             CHECK(inputSoundFile.getSampleOffset() == 1'000);
@@ -178,7 +162,7 @@ TEST_CASE("[Audio] sf::InputSoundFile")
 
         SECTION("mp3")
         {
-            REQUIRE(inputSoundFile.openFromFile("Audio/ding.mp3"));
+            auto inputSoundFile = sf::InputSoundFile::openFromFile("Audio/ding.mp3").value();
             inputSoundFile.seek(1'000);
             CHECK(inputSoundFile.getTimeOffset() == sf::microseconds(22'675));
             CHECK(inputSoundFile.getSampleOffset() == 1'000);
@@ -186,7 +170,7 @@ TEST_CASE("[Audio] sf::InputSoundFile")
 
         SECTION("ogg")
         {
-            REQUIRE(inputSoundFile.openFromFile("Audio/doodle_pop.ogg"));
+            auto inputSoundFile = sf::InputSoundFile::openFromFile("Audio/doodle_pop.ogg").value();
             inputSoundFile.seek(1'000);
             CHECK(inputSoundFile.getTimeOffset() == sf::microseconds(11'337));
             CHECK(inputSoundFile.getSampleOffset() == 1'000);
@@ -194,7 +178,7 @@ TEST_CASE("[Audio] sf::InputSoundFile")
 
         SECTION("wav")
         {
-            REQUIRE(inputSoundFile.openFromFile("Audio/killdeer.wav"));
+            auto inputSoundFile = sf::InputSoundFile::openFromFile("Audio/killdeer.wav").value();
             inputSoundFile.seek(1'000);
             CHECK(inputSoundFile.getTimeOffset() == sf::microseconds(45'351));
             CHECK(inputSoundFile.getSampleOffset() == 1'000);
@@ -203,8 +187,7 @@ TEST_CASE("[Audio] sf::InputSoundFile")
 
     SECTION("seek(Time)")
     {
-        sf::InputSoundFile inputSoundFile;
-        REQUIRE(inputSoundFile.openFromFile("Audio/ding.flac"));
+        auto inputSoundFile = sf::InputSoundFile::openFromFile("Audio/ding.flac").value();
         inputSoundFile.seek(sf::milliseconds(100));
         CHECK(inputSoundFile.getSampleCount() == 87'798);
         CHECK(inputSoundFile.getChannelCount() == 1);
@@ -216,20 +199,14 @@ TEST_CASE("[Audio] sf::InputSoundFile")
 
     SECTION("read()")
     {
-        sf::InputSoundFile          inputSoundFile;
-        std::array<std::int16_t, 4> samples{};
-
-        SECTION("Unloaded file")
-        {
-            CHECK(inputSoundFile.read(samples.data(), samples.size()) == 0);
-        }
-
-        REQUIRE(inputSoundFile.openFromFile("Audio/ding.flac"));
+        auto inputSoundFile = sf::InputSoundFile::openFromFile("Audio/ding.flac").value();
 
         SECTION("Null address")
         {
             CHECK(inputSoundFile.read(nullptr, 10) == 0);
         }
+
+        std::array<std::int16_t, 4> samples{};
 
         SECTION("Zero count")
         {
@@ -240,7 +217,7 @@ TEST_CASE("[Audio] sf::InputSoundFile")
         {
             SECTION("flac")
             {
-                REQUIRE(inputSoundFile.openFromFile("Audio/ding.flac"));
+                inputSoundFile = sf::InputSoundFile::openFromFile("Audio/ding.flac").value();
                 CHECK(inputSoundFile.read(samples.data(), samples.size()) == 4);
                 CHECK(samples == std::array<std::int16_t, 4>{0, 1, -1, 4});
                 CHECK(inputSoundFile.read(samples.data(), samples.size()) == 4);
@@ -249,7 +226,7 @@ TEST_CASE("[Audio] sf::InputSoundFile")
 
             SECTION("mp3")
             {
-                REQUIRE(inputSoundFile.openFromFile("Audio/ding.mp3"));
+                inputSoundFile = sf::InputSoundFile::openFromFile("Audio/ding.mp3").value();
                 CHECK(inputSoundFile.read(samples.data(), samples.size()) == 4);
                 CHECK(samples == std::array<std::int16_t, 4>{0, -2, 0, 2});
                 CHECK(inputSoundFile.read(samples.data(), samples.size()) == 4);
@@ -258,7 +235,7 @@ TEST_CASE("[Audio] sf::InputSoundFile")
 
             SECTION("ogg")
             {
-                REQUIRE(inputSoundFile.openFromFile("Audio/doodle_pop.ogg"));
+                inputSoundFile = sf::InputSoundFile::openFromFile("Audio/doodle_pop.ogg").value();
                 CHECK(inputSoundFile.read(samples.data(), samples.size()) == 4);
                 CHECK(samples == std::array<std::int16_t, 4>{-827, -985, -1168, -1319});
                 CHECK(inputSoundFile.read(samples.data(), samples.size()) == 4);
@@ -274,8 +251,7 @@ TEST_CASE("[Audio] sf::InputSoundFile")
 
     SECTION("close()")
     {
-        sf::InputSoundFile inputSoundFile;
-        REQUIRE(inputSoundFile.openFromFile("Audio/ding.flac"));
+        auto inputSoundFile = sf::InputSoundFile::openFromFile("Audio/ding.flac").value();
         inputSoundFile.close();
         CHECK(inputSoundFile.getSampleCount() == 0);
         CHECK(inputSoundFile.getChannelCount() == 0);

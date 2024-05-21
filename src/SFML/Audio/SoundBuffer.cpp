@@ -70,9 +70,8 @@ SoundBuffer::~SoundBuffer()
 ////////////////////////////////////////////////////////////
 std::optional<SoundBuffer> SoundBuffer::loadFromFile(const std::filesystem::path& filename)
 {
-    InputSoundFile file;
-    if (file.openFromFile(filename))
-        return initialize(file);
+    if (auto file = InputSoundFile::openFromFile(filename))
+        return initialize(*file);
     else
         return std::nullopt;
 }
@@ -81,9 +80,8 @@ std::optional<SoundBuffer> SoundBuffer::loadFromFile(const std::filesystem::path
 ////////////////////////////////////////////////////////////
 std::optional<SoundBuffer> SoundBuffer::loadFromMemory(const void* data, std::size_t sizeInBytes)
 {
-    InputSoundFile file;
-    if (file.openFromMemory(data, sizeInBytes))
-        return initialize(file);
+    if (auto file = InputSoundFile::openFromMemory(data, sizeInBytes))
+        return initialize(*file);
     else
         return std::nullopt;
 }
@@ -92,9 +90,8 @@ std::optional<SoundBuffer> SoundBuffer::loadFromMemory(const void* data, std::si
 ////////////////////////////////////////////////////////////
 std::optional<SoundBuffer> SoundBuffer::loadFromStream(InputStream& stream)
 {
-    InputSoundFile file;
-    if (file.openFromStream(stream))
-        return initialize(file);
+    if (auto file = InputSoundFile::openFromStream(stream))
+        return initialize(*file);
     else
         return std::nullopt;
 }
@@ -136,11 +133,10 @@ std::optional<SoundBuffer> SoundBuffer::loadFromSamples(
 bool SoundBuffer::saveToFile(const std::filesystem::path& filename) const
 {
     // Create the sound file in write mode
-    OutputSoundFile file;
-    if (file.openFromFile(filename, getSampleRate(), getChannelCount(), getChannelMap()))
+    if (auto file = OutputSoundFile::openFromFile(filename, getSampleRate(), getChannelCount(), getChannelMap()))
     {
         // Write the samples to the opened file
-        file.write(m_samples.data(), m_samples.size());
+        file->write(m_samples.data(), m_samples.size());
 
         return true;
     }
