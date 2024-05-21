@@ -37,7 +37,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 AudioResource::AudioResource() :
 m_device(
-    []()
+    []
     {
         // Ensure we only ever create a single instance of an
         // AudioDevice that is shared between all AudioResources

@@ -461,7 +461,7 @@ struct GlContext::Impl
     ////////////////////////////////////////////////////////////
     std::shared_ptr<UnsharedGlObjects> unsharedGlObjects; //!< The current object's handle to unshared objects
     const std::uint64_t                id{
-        []()
+        []
         {
             static std::atomic<std::uint64_t> atomicId(1); // start at 1, zero is "no context"
             return atomicId.fetch_add(1);

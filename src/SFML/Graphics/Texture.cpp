@@ -916,7 +916,7 @@ void Texture::bind(const Texture* texture, CoordinateType coordinateType)
 ////////////////////////////////////////////////////////////
 unsigned int Texture::getMaximumSize()
 {
-    static const unsigned int size = []()
+    static const unsigned int size = []
     {
         const TransientContextLock transientLock;
 

@@ -333,14 +333,14 @@ VertexBuffer::Usage VertexBuffer::getUsage() const
 ////////////////////////////////////////////////////////////
 bool VertexBuffer::isAvailable()
 {
-    static const bool available = []() -> bool
+    static const bool available = []
     {
         const TransientContextLock contextLock;
 
         // Make sure that extensions are initialized
         sf::priv::ensureExtensionsInit();
 
-        return GLEXT_vertex_buffer_object;
+        return GLEXT_vertex_buffer_object != 0;
     }();
 
     return available;
