@@ -1089,13 +1089,24 @@ int main()
 
     // Create the description text
     sf::Text description(font, "Current effect: " + effects[current]->getName(), 20);
-    description.setPosition({10.f, 530.f});
+    description.setPosition({10.f, 522.f});
     description.setFillColor(sf::Color(80, 80, 80));
 
     // Create the instructions text
     sf::Text instructions(font, "Press left and right arrows to change the current effect", 20);
-    instructions.setPosition({280.f, 555.f});
+    instructions.setPosition({280.f, 544.f});
     instructions.setFillColor(sf::Color(80, 80, 80));
+
+    // Create the playback device text
+    auto     playbackDeviceName = sf::PlaybackDevice::getDevice();
+    sf::Text playbackDevice(font, "Current playback device: " + playbackDeviceName.value_or("None"), 20);
+    playbackDevice.setPosition({10.f, 566.f});
+    playbackDevice.setFillColor(sf::Color(80, 80, 80));
+
+    // Create the playback device instructions text
+    sf::Text playbackDeviceInstructions(font, "Press F1 to change device", 20);
+    playbackDeviceInstructions.setPosition({565.f, 566.f});
+    playbackDeviceInstructions.setFillColor(sf::Color(80, 80, 80));
 
     // Start the game loop
     const sf::Clock clock;
@@ -1139,6 +1150,37 @@ int main()
                         description.setString("Current effect: " + effects[current]->getName());
                         break;
 
+                    // F1 key: change playback device
+                    case sf::Keyboard::Key::F1:
+                    {
+                        // We need to query the list every time we want to change
+                        // since new devices could have been added in the mean time
+                        const auto devices       = sf::PlaybackDevice::getAvailableDevices();
+                        const auto currentDevice = sf::PlaybackDevice::getDevice();
+                        auto       next          = currentDevice;
+
+                        for (auto iter = devices.begin(); iter != devices.end(); ++iter)
+                        {
+                            if (*iter == currentDevice)
+                            {
+                                const auto nextIter = std::next(iter);
+                                next                = (nextIter == devices.end()) ? devices.front() : *nextIter;
+                                break;
+                            }
+                        }
+
+                        if (next)
+                        {
+                            if (!sf::PlaybackDevice::setDevice(*next))
+                                std::cerr << "Failed to set the playback device to: " << *next << std::endl;
+
+                            playbackDeviceName = sf::PlaybackDevice::getDevice();
+                            playbackDevice.setString("Current playback device: " + playbackDeviceName.value_or("None"));
+                        }
+
+                        break;
+                    }
+
                     default:
                         effects[current]->handleKey(keyPressed->code);
                         break;
@@ -1160,6 +1202,8 @@ int main()
         window.draw(textBackground);
         window.draw(instructions);
         window.draw(description);
+        window.draw(playbackDevice);
+        window.draw(playbackDeviceInstructions);
 
         // Finally, display the rendered frame on screen
         window.display();

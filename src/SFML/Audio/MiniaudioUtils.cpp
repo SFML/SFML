@@ -25,81 +25,57 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Audio/AudioDevice.hpp>
 #include <SFML/Audio/MiniaudioUtils.hpp>
 #include <SFML/Audio/SoundChannel.hpp>
 
-#include <SFML/System/Angle.hpp>
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Time.hpp>
 
 #include <miniaudio.h>
 
-#include <functional>
-#include <limits>
 #include <ostream>
 
 #include <cassert>
+#include <cstring>
 
 
-namespace sf::priv
-{
 namespace
 {
 ////////////////////////////////////////////////////////////
-struct SavedSettings
-{
-    float          pitch{1.f};
-    float          pan{0.f};
-    float          volume{1.f};
-    ma_bool32      spatializationEnabled{MA_TRUE};
-    ma_vec3f       position{0.f, 0.f, 0.f};
-    ma_vec3f       direction{0.f, 0.f, -1.f};
-    float          directionalAttenuationFactor{1.f};
-    ma_vec3f       velocity{0.f, 0.f, 0.f};
-    float          dopplerFactor{1.f};
-    ma_positioning positioning{ma_positioning_absolute};
-    float          minDistance{1.f};
-    float          maxDistance{std::numeric_limits<float>::max()};
-    float          minGain{0.f};
-    float          maxGain{1.f};
-    float          rollOff{1.f};
-    float          innerAngle{degrees(360.f).asRadians()};
-    float          outerAngle{degrees(360.f).asRadians()};
-    float          outerGain{0.f};
-};
-
-
-////////////////////////////////////////////////////////////
-SavedSettings saveSettings(const ma_sound& sound)
+sf::priv::MiniaudioUtils::SavedSettings saveSettings(const ma_sound& sound)
 {
     float innerAngle = 0;
     float outerAngle = 0;
     float outerGain  = 0;
     ma_sound_get_cone(&sound, &innerAngle, &outerAngle, &outerGain);
 
-    return SavedSettings{ma_sound_get_pitch(&sound),
-                         ma_sound_get_pan(&sound),
-                         ma_sound_get_volume(&sound),
-                         ma_sound_is_spatialization_enabled(&sound),
-                         ma_sound_get_position(&sound),
-                         ma_sound_get_direction(&sound),
-                         ma_sound_get_directional_attenuation_factor(&sound),
-                         ma_sound_get_velocity(&sound),
-                         ma_sound_get_doppler_factor(&sound),
-                         ma_sound_get_positioning(&sound),
-                         ma_sound_get_min_distance(&sound),
-                         ma_sound_get_max_distance(&sound),
-                         ma_sound_get_min_gain(&sound),
-                         ma_sound_get_max_gain(&sound),
-                         ma_sound_get_rolloff(&sound),
-                         innerAngle,
-                         outerAngle,
-                         outerGain};
+    return sf::priv::MiniaudioUtils::
+        SavedSettings{ma_sound_get_pitch(&sound),
+                      ma_sound_get_pan(&sound),
+                      ma_sound_get_volume(&sound),
+                      ma_sound_is_spatialization_enabled(&sound),
+                      ma_sound_get_position(&sound),
+                      ma_sound_get_direction(&sound),
+                      ma_sound_get_directional_attenuation_factor(&sound),
+                      ma_sound_get_velocity(&sound),
+                      ma_sound_get_doppler_factor(&sound),
+                      ma_sound_get_positioning(&sound),
+                      ma_sound_get_min_distance(&sound),
+                      ma_sound_get_max_distance(&sound),
+                      ma_sound_get_min_gain(&sound),
+                      ma_sound_get_max_gain(&sound),
+                      ma_sound_get_rolloff(&sound),
+                      ma_sound_is_playing(&sound),
+                      ma_sound_is_looping(&sound),
+                      innerAngle,
+                      outerAngle,
+                      outerGain};
 }
 
 
 ////////////////////////////////////////////////////////////
-void applySettings(ma_sound& sound, const SavedSettings& savedSettings)
+void applySettings(ma_sound& sound, const sf::priv::MiniaudioUtils::SavedSettings& savedSettings)
 {
     ma_sound_set_pitch(&sound, savedSettings.pitch);
     ma_sound_set_pan(&sound, savedSettings.pan);
@@ -116,22 +92,188 @@ void applySettings(ma_sound& sound, const SavedSettings& savedSettings)
     ma_sound_set_min_gain(&sound, savedSettings.minGain);
     ma_sound_set_max_gain(&sound, savedSettings.maxGain);
     ma_sound_set_rolloff(&sound, savedSettings.rollOff);
+    ma_sound_set_looping(&sound, savedSettings.looping);
 
     ma_sound_set_cone(&sound, savedSettings.innerAngle, savedSettings.outerAngle, savedSettings.outerGain);
+
+    if (savedSettings.playing)
+    {
+        ma_sound_start(&sound);
+    }
+    else
+    {
+        ma_sound_stop(&sound);
+    }
+}
+} // namespace
+
+
+namespace sf::priv
+{
+////////////////////////////////////////////////////////////
+MiniaudioUtils::SoundBase::SoundBase(const ma_data_source_vtable&     dataSourceVTable,
+                                     AudioDevice::ResourceEntry::Func reinitializeFunc)
+{
+    // Set this object up as a miniaudio data source
+    ma_data_source_config config = ma_data_source_config_init();
+    config.vtable                = &dataSourceVTable;
+
+    if (const ma_result result = ma_data_source_init(&config, &dataSourceBase); result != MA_SUCCESS)
+        err() << "Failed to initialize audio data source: " << ma_result_description(result) << std::endl;
+
+    resourceEntryIter = priv::AudioDevice::registerResource(
+        this,
+        [](void* ptr) { static_cast<SoundBase*>(ptr)->deinitialize(); },
+        reinitializeFunc);
 }
 
 
 ////////////////////////////////////////////////////////////
-void initializeDataSource(ma_data_source_base& dataSourceBase, const ma_data_source_vtable& vtable)
+MiniaudioUtils::SoundBase::~SoundBase()
 {
-    // Set this object up as a miniaudio data source
-    ma_data_source_config config = ma_data_source_config_init();
-    config.vtable                = &vtable;
-
-    if (const ma_result result = ma_data_source_init(&config, &dataSourceBase); result != MA_SUCCESS)
-        err() << "Failed to initialize audio data source: " << ma_result_description(result) << std::endl;
+    priv::AudioDevice::unregisterResource(resourceEntryIter);
+    ma_sound_uninit(&sound);
+    ma_node_uninit(&effectNode, nullptr);
+    ma_data_source_uninit(&dataSourceBase);
 }
-} // namespace
+
+
+////////////////////////////////////////////////////////////
+void MiniaudioUtils::SoundBase::initialize(ma_sound_end_proc endCallback)
+{
+    // Initialize the sound
+    auto* engine = priv::AudioDevice::getEngine();
+
+    if (engine == nullptr)
+    {
+        err() << "Failed to initialize sound: No engine available" << std::endl;
+        return;
+    }
+
+    ma_sound_config soundConfig;
+
+    soundConfig                      = ma_sound_config_init();
+    soundConfig.pDataSource          = this;
+    soundConfig.pEndCallbackUserData = this;
+    soundConfig.endCallback          = endCallback;
+
+    if (const ma_result result = ma_sound_init_ex(engine, &soundConfig, &sound); result != MA_SUCCESS)
+    {
+        err() << "Failed to initialize sound: " << ma_result_description(result) << std::endl;
+        return;
+    }
+
+    // Initialize the custom effect node
+    effectNodeVTable.onProcess =
+        [](ma_node* node, const float** framesIn, ma_uint32* frameCountIn, float** framesOut, ma_uint32* frameCountOut)
+    { static_cast<EffectNode*>(node)->impl->processEffect(framesIn, *frameCountIn, framesOut, *frameCountOut); };
+    effectNodeVTable.onGetRequiredInputFrameCount = nullptr;
+    effectNodeVTable.inputBusCount                = 1;
+    effectNodeVTable.outputBusCount               = 1;
+    effectNodeVTable.flags                        = MA_NODE_FLAG_CONTINUOUS_PROCESSING | MA_NODE_FLAG_ALLOW_NULL_INPUT;
+
+    const auto     nodeChannelCount = ma_engine_get_channels(engine);
+    ma_node_config nodeConfig       = ma_node_config_init();
+    nodeConfig.vtable               = &effectNodeVTable;
+    nodeConfig.pInputChannels       = &nodeChannelCount;
+    nodeConfig.pOutputChannels      = &nodeChannelCount;
+
+    if (const ma_result result = ma_node_init(ma_engine_get_node_graph(engine), &nodeConfig, nullptr, &effectNode);
+        result != MA_SUCCESS)
+    {
+        err() << "Failed to initialize effect node: " << ma_result_description(result) << std::endl;
+        return;
+    }
+
+    effectNode.impl         = this;
+    effectNode.channelCount = nodeChannelCount;
+
+    // Route the sound through the effect node depending on whether an effect processor is set
+    connectEffect(bool{effectProcessor});
+
+    applySettings(sound, savedSettings);
+}
+
+
+////////////////////////////////////////////////////////////
+void MiniaudioUtils::SoundBase::deinitialize()
+{
+    savedSettings = saveSettings(sound);
+    ma_sound_uninit(&sound);
+    ma_node_uninit(&effectNode, nullptr);
+}
+
+
+////////////////////////////////////////////////////////////
+void MiniaudioUtils::SoundBase::processEffect(const float** framesIn,
+                                              ma_uint32&    frameCountIn,
+                                              float**       framesOut,
+                                              ma_uint32&    frameCountOut) const
+{
+    // If a processor is set, call it
+    if (effectProcessor)
+    {
+        if (!framesIn)
+            frameCountIn = 0;
+
+        effectProcessor(framesIn ? framesIn[0] : nullptr, frameCountIn, framesOut[0], frameCountOut, effectNode.channelCount);
+        return;
+    }
+
+    // Otherwise just pass the data through 1:1
+    if (framesIn == nullptr)
+    {
+        frameCountIn  = 0;
+        frameCountOut = 0;
+        return;
+    }
+
+    const auto toProcess = std::min(frameCountIn, frameCountOut);
+    std::memcpy(framesOut[0], framesIn[0], toProcess * effectNode.channelCount * sizeof(float));
+    frameCountIn  = toProcess;
+    frameCountOut = toProcess;
+}
+
+
+////////////////////////////////////////////////////////////
+void MiniaudioUtils::SoundBase::connectEffect(bool connect)
+{
+    auto* engine = AudioDevice::getEngine();
+
+    if (engine == nullptr)
+    {
+        err() << "Failed to connect effect: No engine available" << std::endl;
+        return;
+    }
+
+    if (connect)
+    {
+        // Attach the custom effect node output to our engine endpoint
+        if (const ma_result result = ma_node_attach_output_bus(&effectNode, 0, ma_engine_get_endpoint(engine), 0);
+            result != MA_SUCCESS)
+        {
+            err() << "Failed to attach effect node output to endpoint: " << ma_result_description(result) << std::endl;
+            return;
+        }
+    }
+    else
+    {
+        // Detach the custom effect node output from our engine endpoint
+        if (const ma_result result = ma_node_detach_output_bus(&effectNode, 0); result != MA_SUCCESS)
+        {
+            err() << "Failed to detach effect node output from endpoint: " << ma_result_description(result) << std::endl;
+            return;
+        }
+    }
+
+    // Attach the sound output to the custom effect node or the engine endpoint
+    if (const ma_result result = ma_node_attach_output_bus(&sound, 0, connect ? &effectNode : ma_engine_get_endpoint(engine), 0);
+        result != MA_SUCCESS)
+    {
+        err() << "Failed to attach sound node output to effect node: " << ma_result_description(result) << std::endl;
+        return;
+    }
+}
 
 
 ////////////////////////////////////////////////////////////
@@ -264,32 +406,6 @@ ma_uint64 MiniaudioUtils::getFrameIndex(ma_sound& sound, Time timeOffset)
         err() << "Failed to seek sound to pcm frame: " << ma_result_description(result) << std::endl;
 
     return frameIndex;
-}
-
-
-////////////////////////////////////////////////////////////
-void MiniaudioUtils::reinitializeSound(ma_sound& sound, const std::function<void()>& initializeFn)
-{
-    const SavedSettings savedSettings = saveSettings(sound);
-    ma_sound_uninit(&sound);
-
-    initializeFn();
-
-    applySettings(sound, savedSettings);
-}
-
-
-////////////////////////////////////////////////////////////
-void MiniaudioUtils::initializeSound(const ma_data_source_vtable& vtable,
-                                     ma_data_source_base&         dataSourceBase,
-                                     ma_sound&                    sound,
-                                     const std::function<void()>& initializeFn)
-{
-    initializeDataSource(dataSourceBase, vtable);
-
-    // Initialize sound structure and set default settings
-    initializeFn();
-    applySettings(sound, SavedSettings{});
 }
 
 } // namespace sf::priv
