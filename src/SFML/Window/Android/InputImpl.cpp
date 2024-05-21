@@ -87,7 +87,7 @@ void setVirtualKeyboardVisible(bool visible)
     const std::lock_guard lock(states.mutex);
 
     // Initializes JNI
-    jint lFlags = 0;
+    const jint lFlags = 0;
 
     JavaVM* lJavaVM = states.activity->vm;
     JNIEnv* lJNIEnv = states.activity->env;
@@ -97,7 +97,7 @@ void setVirtualKeyboardVisible(bool visible)
     lJavaVMAttachArgs.name    = "NativeThread";
     lJavaVMAttachArgs.group   = nullptr;
 
-    jint lResult = lJavaVM->AttachCurrentThread(&lJNIEnv, &lJavaVMAttachArgs);
+    const jint lResult = lJavaVM->AttachCurrentThread(&lJNIEnv, &lJavaVMAttachArgs);
 
     if (lResult == JNI_ERR)
         err() << "Failed to initialize JNI, couldn't switch the keyboard visibility" << std::endl;

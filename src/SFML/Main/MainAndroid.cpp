@@ -56,8 +56,46 @@
 
 extern int main(int argc, char* argv[]);
 
-namespace sf::priv
+namespace
 {
+////////////////////////////////////////////////////////////
+void initializeMain(sf::priv::ActivityStates& states)
+{
+    // Protect from concurrent access
+    const std::lock_guard lock(states.mutex);
+
+    // Prepare and share the looper to be read later
+    ALooper* looper = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);
+    states.looper   = looper;
+
+    /**
+     * Acquire increments a reference counter on the looper. This keeps android
+     * from collecting it before the activity thread has a chance to detach its
+     * input queue.
+     */
+    ALooper_acquire(states.looper);
+    ALooper_wake(states.looper);
+
+    // Get the default configuration
+    states.config = AConfiguration_new();
+    AConfiguration_fromAssetManager(states.config, states.activity->assetManager);
+}
+
+////////////////////////////////////////////////////////////
+void terminateMain(sf::priv::ActivityStates& states)
+{
+    // Protect from concurrent access
+    const std::lock_guard lock(states.mutex);
+
+    // The main thread has finished, we must explicitly ask the activity to finish
+    states.mainOver = true;
+    ANativeActivity_finish(states.activity);
+}
+
+////////////////////////////////////////////////////////////
+void onStart(ANativeActivity* /* activity */)
+{
+}
 
 ////////////////////////////////////////////////////////////
 int getAndroidApiLevel(ANativeActivity* activity)
@@ -78,82 +116,20 @@ int getAndroidApiLevel(ANativeActivity* activity)
     return sdkInt;
 }
 
-
 ////////////////////////////////////////////////////////////
-ActivityStates* retrieveStates(ANativeActivity* activity)
+sf::priv::ActivityStates* retrieveStates(ANativeActivity* activity)
 {
     assert(activity != nullptr && "Activity cannot be null");
 
     // Hide the ugly cast we find in each callback function
-    return static_cast<ActivityStates*>(activity->instance);
+    return static_cast<sf::priv::ActivityStates*>(activity->instance);
 }
-
-
-////////////////////////////////////////////////////////////
-static void initializeMain(ActivityStates* states)
-{
-    // Protect from concurrent access
-    const std::lock_guard lock(states->mutex);
-
-    // Prepare and share the looper to be read later
-    ALooper* looper = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);
-    states->looper  = looper;
-
-    /**
-     * Acquire increments a reference counter on the looper. This keeps android
-     * from collecting it before the activity thread has a chance to detach its
-     * input queue.
-     */
-    ALooper_acquire(states->looper);
-    ALooper_wake(states->looper);
-
-    // Get the default configuration
-    states->config = AConfiguration_new();
-    AConfiguration_fromAssetManager(states->config, states->activity->assetManager);
-}
-
-
-////////////////////////////////////////////////////////////
-static void terminateMain(ActivityStates* states)
-{
-    // Protect from concurrent access
-    const std::lock_guard lock(states->mutex);
-
-    // The main thread has finished, we must explicitly ask the activity to finish
-    states->mainOver = true;
-    ANativeActivity_finish(states->activity);
-}
-
-
-////////////////////////////////////////////////////////////
-void* main(ActivityStates* states)
-{
-    // Initialize the thread before giving the hand
-    initializeMain(states);
-
-    sleep(seconds(0.5));
-    ::main(0, nullptr);
-
-    // Terminate properly the main thread and wait until it's done
-    terminateMain(states);
-
-    {
-        const std::lock_guard lock(states->mutex);
-
-        states->terminated = true;
-    }
-
-    return nullptr;
-}
-
-} // namespace sf::priv
-
 
 ////////////////////////////////////////////////////////////
 void goToFullscreenMode(ANativeActivity* activity)
 {
     // Get the current Android API level.
-    int apiLevel = sf::priv::getAndroidApiLevel(activity);
+    const int apiLevel = getAndroidApiLevel(activity);
 
     // Hide the status bar
     ANativeActivity_setWindowFlags(activity, AWINDOW_FLAG_FULLSCREEN, AWINDOW_FLAG_FULLSCREEN);
@@ -179,28 +155,28 @@ void goToFullscreenMode(ANativeActivity* activity)
     // API Level 14
     if (apiLevel >= 14)
     {
-        jfieldID fieldSystemUiFlagLowProfile = lJNIEnv->GetStaticFieldID(classView,
+        jfieldID   fieldSystemUiFlagLowProfile = lJNIEnv->GetStaticFieldID(classView,
                                                                          "SYSTEM_UI_FLAG_HIDE_NAVIGATION",
                                                                          "I");
-        jint     systemUiFlagLowProfile      = lJNIEnv->GetStaticIntField(classView, fieldSystemUiFlagLowProfile);
+        const jint systemUiFlagLowProfile      = lJNIEnv->GetStaticIntField(classView, fieldSystemUiFlagLowProfile);
         flags |= systemUiFlagLowProfile;
     }
 
     // API Level 16
     if (apiLevel >= 16)
     {
-        jfieldID fieldSystemUiFlagFullscreen = lJNIEnv->GetStaticFieldID(classView, "SYSTEM_UI_FLAG_FULLSCREEN", "I");
-        jint     systemUiFlagFullscreen      = lJNIEnv->GetStaticIntField(classView, fieldSystemUiFlagFullscreen);
+        jfieldID   fieldSystemUiFlagFullscreen = lJNIEnv->GetStaticFieldID(classView, "SYSTEM_UI_FLAG_FULLSCREEN", "I");
+        const jint systemUiFlagFullscreen      = lJNIEnv->GetStaticIntField(classView, fieldSystemUiFlagFullscreen);
         flags |= systemUiFlagFullscreen;
     }
 
     // API Level 19
     if (apiLevel >= 19)
     {
-        jfieldID fieldSystemUiFlagImmersiveSticky = lJNIEnv->GetStaticFieldID(classView,
+        jfieldID   fieldSystemUiFlagImmersiveSticky = lJNIEnv->GetStaticFieldID(classView,
                                                                               "SYSTEM_UI_FLAG_IMMERSIVE_STICKY",
                                                                               "I");
-        jint     systemUiFlagImmersiveSticky = lJNIEnv->GetStaticIntField(classView, fieldSystemUiFlagImmersiveSticky);
+        const jint systemUiFlagImmersiveSticky = lJNIEnv->GetStaticIntField(classView, fieldSystemUiFlagImmersiveSticky);
         flags |= systemUiFlagImmersiveSticky;
     }
 
@@ -209,7 +185,6 @@ void goToFullscreenMode(ANativeActivity* activity)
 }
 
 ////////////////////////////////////////////////////////////
-
 void getScreenSizeInPixels(ANativeActivity* activity, int* width, int* height)
 {
     // Perform the following Java code:
@@ -248,18 +223,11 @@ void getScreenSizeInPixels(ANativeActivity* activity, int* width, int* height)
     *height = lJNIEnv->GetIntField(objectDisplayMetrics, fieldHeightPixels);
 }
 
-
 ////////////////////////////////////////////////////////////
-static void onStart(ANativeActivity* /* activity */)
-{
-}
-
-
-////////////////////////////////////////////////////////////
-static void onResume(ANativeActivity* activity)
+void onResume(ANativeActivity* activity)
 {
     // Retrieve our activity states from the activity instance
-    sf::priv::ActivityStates* states = sf::priv::retrieveStates(activity);
+    sf::priv::ActivityStates* states = retrieveStates(activity);
     const std::lock_guard     lock(states->mutex);
 
     if (states->fullscreen)
@@ -269,30 +237,27 @@ static void onResume(ANativeActivity* activity)
     states->forwardEvent(sf::Event::MouseEntered{});
 }
 
-
 ////////////////////////////////////////////////////////////
-static void onPause(ANativeActivity* activity)
+void onPause(ANativeActivity* activity)
 {
     // Retrieve our activity states from the activity instance
-    sf::priv::ActivityStates* states = sf::priv::retrieveStates(activity);
+    sf::priv::ActivityStates* states = retrieveStates(activity);
     const std::lock_guard     lock(states->mutex);
 
     // Send an event to warn people the activity has been paused
     states->forwardEvent(sf::Event::MouseLeft{});
 }
 
-
 ////////////////////////////////////////////////////////////
-static void onStop(ANativeActivity* /* activity */)
+void onStop(ANativeActivity* /* activity */)
 {
 }
 
-
 ////////////////////////////////////////////////////////////
-static void onDestroy(ANativeActivity* activity)
+void onDestroy(ANativeActivity* activity)
 {
     // Retrieve our activity states from the activity instance
-    sf::priv::ActivityStates* states = sf::priv::retrieveStates(activity);
+    sf::priv::ActivityStates* states = retrieveStates(activity);
 
     // Send an event to warn people the activity is being destroyed
     {
@@ -328,11 +293,10 @@ static void onDestroy(ANativeActivity* activity)
     // The application should now terminate
 }
 
-
 ////////////////////////////////////////////////////////////
-static void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* window)
+void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* window)
 {
-    sf::priv::ActivityStates* states = sf::priv::retrieveStates(activity);
+    sf::priv::ActivityStates* states = retrieveStates(activity);
     const std::lock_guard     lock(states->mutex);
 
     // Update the activity states
@@ -351,11 +315,10 @@ static void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* wind
     }
 }
 
-
 ////////////////////////////////////////////////////////////
-static void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* /* window */)
+void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* /* window */)
 {
-    sf::priv::ActivityStates* states = sf::priv::retrieveStates(activity);
+    sf::priv::ActivityStates* states = retrieveStates(activity);
     const std::lock_guard     lock(states->mutex);
 
     // Update the activity states
@@ -374,24 +337,21 @@ static void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* /*
     }
 }
 
-
 ////////////////////////////////////////////////////////////
-static void onNativeWindowRedrawNeeded(ANativeActivity* /* activity */, ANativeWindow* /* window */)
+void onNativeWindowRedrawNeeded(ANativeActivity* /* activity */, ANativeWindow* /* window */)
 {
 }
 
-
 ////////////////////////////////////////////////////////////
-static void onNativeWindowResized(ANativeActivity* /* activity */, ANativeWindow* /* window */)
+void onNativeWindowResized(ANativeActivity* /* activity */, ANativeWindow* /* window */)
 {
 }
 
-
 ////////////////////////////////////////////////////////////
-static void onInputQueueCreated(ANativeActivity* activity, AInputQueue* queue)
+void onInputQueueCreated(ANativeActivity* activity, AInputQueue* queue)
 {
     // Retrieve our activity states from the activity instance
-    sf::priv::ActivityStates* states = sf::priv::retrieveStates(activity);
+    sf::priv::ActivityStates* states = retrieveStates(activity);
 
     // Attach the input queue
     {
@@ -402,12 +362,11 @@ static void onInputQueueCreated(ANativeActivity* activity, AInputQueue* queue)
     }
 }
 
-
 ////////////////////////////////////////////////////////////
-static void onInputQueueDestroyed(ANativeActivity* activity, AInputQueue* queue)
+void onInputQueueDestroyed(ANativeActivity* activity, AInputQueue* queue)
 {
     // Retrieve our activity states from the activity instance
-    sf::priv::ActivityStates* states = sf::priv::retrieveStates(activity);
+    sf::priv::ActivityStates* states = retrieveStates(activity);
 
     // Detach the input queue
     {
@@ -420,18 +379,16 @@ static void onInputQueueDestroyed(ANativeActivity* activity, AInputQueue* queue)
     }
 }
 
-
 ////////////////////////////////////////////////////////////
-static void onWindowFocusChanged(ANativeActivity* /* activity */, int /* focused */)
+void onWindowFocusChanged(ANativeActivity* /* activity */, int /* focused */)
 {
 }
 
-
 ////////////////////////////////////////////////////////////
-static void onContentRectChanged(ANativeActivity* activity, const ARect* /* rect */)
+void onContentRectChanged(ANativeActivity* activity, const ARect* /* rect */)
 {
     // Retrieve our activity states from the activity instance
-    sf::priv::ActivityStates* states = sf::priv::retrieveStates(activity);
+    sf::priv::ActivityStates* states = retrieveStates(activity);
     const std::lock_guard     lock(states->mutex);
 
     // Make sure the window still exists before we access the dimensions on it
@@ -444,26 +401,47 @@ static void onContentRectChanged(ANativeActivity* activity, const ARect* /* rect
     }
 }
 
-
 ////////////////////////////////////////////////////////////
-static void onConfigurationChanged(ANativeActivity* /* activity */)
+void onConfigurationChanged(ANativeActivity* /* activity */)
 {
 }
 
-
 ////////////////////////////////////////////////////////////
-static void* onSaveInstanceState(ANativeActivity* /* activity */, std::size_t* outLen)
+void* onSaveInstanceState(ANativeActivity* /* activity */, std::size_t* outLen)
 {
     *outLen = 0;
-
     return nullptr;
 }
 
-
 ////////////////////////////////////////////////////////////
-static void onLowMemory(ANativeActivity* /* activity */)
+void onLowMemory(ANativeActivity* /* activity */)
 {
 }
+} // namespace
+
+
+namespace sf::priv
+{
+////////////////////////////////////////////////////////////
+void* main(ActivityStates* states)
+{
+    // Initialize the thread before giving the hand
+    initializeMain(*states);
+
+    sleep(seconds(0.5));
+    ::main(0, nullptr);
+
+    // Terminate properly the main thread and wait until it's done
+    terminateMain(*states);
+
+    {
+        const std::lock_guard lock(states->mutex);
+        states->terminated = true;
+    }
+
+    return nullptr;
+}
+} // namespace sf::priv
 
 
 ////////////////////////////////////////////////////////////

@@ -232,7 +232,7 @@ void WindowImplAndroid::forwardEvent(const Event& event)
 {
     if (WindowImplAndroid::singleInstance != nullptr)
     {
-        ActivityStates& states = getActivity();
+        const ActivityStates& states = getActivity();
 
         if (event.is<Event::FocusGained>())
         {
@@ -267,12 +267,12 @@ int WindowImplAndroid::processEvent(int /* fd */, int /* events */, void* /* dat
 
         int handled = 0;
 
-        std::int32_t type = AInputEvent_getType(inputEvent);
+        const std::int32_t type = AInputEvent_getType(inputEvent);
 
         if (type == AINPUT_EVENT_TYPE_KEY)
         {
-            std::int32_t action = AKeyEvent_getAction(inputEvent);
-            std::int32_t key    = AKeyEvent_getKeyCode(inputEvent);
+            const std::int32_t action = AKeyEvent_getAction(inputEvent);
+            const std::int32_t key    = AKeyEvent_getKeyCode(inputEvent);
 
             if ((action == AKEY_EVENT_ACTION_DOWN || action == AKEY_EVENT_ACTION_UP || action == AKEY_EVENT_ACTION_MULTIPLE) &&
                 key != AKEYCODE_VOLUME_UP && key != AKEYCODE_VOLUME_DOWN)
@@ -282,7 +282,7 @@ int WindowImplAndroid::processEvent(int /* fd */, int /* events */, void* /* dat
         }
         else if (type == AINPUT_EVENT_TYPE_MOTION)
         {
-            std::int32_t action = AMotionEvent_getAction(inputEvent);
+            const std::int32_t action = AMotionEvent_getAction(inputEvent);
 
             switch (action & AMOTION_EVENT_ACTION_MASK)
             {
@@ -348,18 +348,18 @@ int WindowImplAndroid::processScrollEvent(AInputEvent* inputEvent, ActivityState
     }
 
     // Retrieve everything we need to create this MotionEvent in Java
-    std::int64_t downTime   = AMotionEvent_getDownTime(inputEvent);
-    std::int64_t eventTime  = AMotionEvent_getEventTime(inputEvent);
-    std::int32_t action     = AMotionEvent_getAction(inputEvent);
-    float        x          = AMotionEvent_getX(inputEvent, 0);
-    float        y          = AMotionEvent_getY(inputEvent, 0);
-    float        pressure   = AMotionEvent_getPressure(inputEvent, 0);
-    float        size       = AMotionEvent_getSize(inputEvent, 0);
-    std::int32_t metaState  = AMotionEvent_getMetaState(inputEvent);
-    float        xPrecision = AMotionEvent_getXPrecision(inputEvent);
-    float        yPrecision = AMotionEvent_getYPrecision(inputEvent);
-    std::int32_t deviceId   = AInputEvent_getDeviceId(inputEvent);
-    std::int32_t edgeFlags  = AMotionEvent_getEdgeFlags(inputEvent);
+    const std::int64_t downTime   = AMotionEvent_getDownTime(inputEvent);
+    const std::int64_t eventTime  = AMotionEvent_getEventTime(inputEvent);
+    const std::int32_t action     = AMotionEvent_getAction(inputEvent);
+    const float        x          = AMotionEvent_getX(inputEvent, 0);
+    const float        y          = AMotionEvent_getY(inputEvent, 0);
+    const float        pressure   = AMotionEvent_getPressure(inputEvent, 0);
+    const float        size       = AMotionEvent_getSize(inputEvent, 0);
+    const std::int32_t metaState  = AMotionEvent_getMetaState(inputEvent);
+    const float        xPrecision = AMotionEvent_getXPrecision(inputEvent);
+    const float        yPrecision = AMotionEvent_getYPrecision(inputEvent);
+    const std::int32_t deviceId   = AInputEvent_getDeviceId(inputEvent);
+    const std::int32_t edgeFlags  = AMotionEvent_getEdgeFlags(inputEvent);
 
     // Create the MotionEvent object in Java through its static constructor obtain()
     jclass    classMotionEvent   = lJNIEnv->FindClass("android/view/MotionEvent");
@@ -385,8 +385,8 @@ int WindowImplAndroid::processScrollEvent(AInputEvent* inputEvent, ActivityState
                                                                 edgeFlags);
 
     // Call its getAxisValue() method to get the delta value of our wheel move event
-    jmethodID methodGetAxisValue = lJNIEnv->GetMethodID(classMotionEvent, "getAxisValue", "(I)F");
-    jfloat    delta              = lJNIEnv->CallFloatMethod(objectMotionEvent, methodGetAxisValue, 0x00000001);
+    jmethodID    methodGetAxisValue = lJNIEnv->GetMethodID(classMotionEvent, "getAxisValue", "(I)F");
+    const jfloat delta              = lJNIEnv->CallFloatMethod(objectMotionEvent, methodGetAxisValue, 0x00000001);
 
     lJNIEnv->DeleteLocalRef(classMotionEvent);
     lJNIEnv->DeleteLocalRef(objectMotionEvent);
@@ -408,10 +408,10 @@ int WindowImplAndroid::processScrollEvent(AInputEvent* inputEvent, ActivityState
 ////////////////////////////////////////////////////////////
 int WindowImplAndroid::processKeyEvent(AInputEvent* inputEvent, ActivityStates& /* states */)
 {
-    std::int32_t action = AKeyEvent_getAction(inputEvent);
+    const std::int32_t action = AKeyEvent_getAction(inputEvent);
 
-    std::int32_t key     = AKeyEvent_getKeyCode(inputEvent);
-    std::int32_t metakey = AKeyEvent_getMetaState(inputEvent);
+    const std::int32_t key     = AKeyEvent_getKeyCode(inputEvent);
+    const std::int32_t metakey = AKeyEvent_getMetaState(inputEvent);
 
     Event::KeyChanged keyChanged;
     keyChanged.code    = androidKeyToSF(key);
@@ -448,7 +448,7 @@ int WindowImplAndroid::processKeyEvent(AInputEvent* inputEvent, ActivityStates& 
             {
                 const Event event(Event::TextEntered{static_cast<std::uint32_t>(unicode)});
 
-                std::int32_t repeats = AKeyEvent_getRepeatCount(inputEvent);
+                const std::int32_t repeats = AKeyEvent_getRepeatCount(inputEvent);
                 for (std::int32_t i = 0; i < repeats; ++i)
                     forwardEvent(event);
                 return 1;
@@ -462,7 +462,7 @@ int WindowImplAndroid::processKeyEvent(AInputEvent* inputEvent, ActivityStates& 
 ////////////////////////////////////////////////////////////
 int WindowImplAndroid::processMotionEvent(AInputEvent* inputEvent, ActivityStates& states)
 {
-    std::int32_t device = AInputEvent_getSource(inputEvent);
+    const std::int32_t device = AInputEvent_getSource(inputEvent);
 
     Event event;
 
@@ -471,11 +471,11 @@ int WindowImplAndroid::processMotionEvent(AInputEvent* inputEvent, ActivityState
     else if (static_cast<std::uint32_t>(device) & AINPUT_SOURCE_TOUCHSCREEN)
         event = Event::TouchMoved{};
 
-    std::size_t pointerCount = AMotionEvent_getPointerCount(inputEvent);
+    const std::size_t pointerCount = AMotionEvent_getPointerCount(inputEvent);
 
     for (std::size_t p = 0; p < pointerCount; ++p)
     {
-        std::int32_t id = AMotionEvent_getPointerId(inputEvent, p);
+        const std::int32_t id = AMotionEvent_getPointerId(inputEvent, p);
 
         int x = static_cast<int>(AMotionEvent_getX(inputEvent, p));
         int y = static_cast<int>(AMotionEvent_getY(inputEvent, p));
@@ -507,12 +507,12 @@ int WindowImplAndroid::processMotionEvent(AInputEvent* inputEvent, ActivityState
 ////////////////////////////////////////////////////////////
 int WindowImplAndroid::processPointerEvent(bool isDown, AInputEvent* inputEvent, ActivityStates& states)
 {
-    std::int32_t device = AInputEvent_getSource(inputEvent);
-    std::int32_t action = AMotionEvent_getAction(inputEvent);
+    const std::int32_t device = AInputEvent_getSource(inputEvent);
+    const std::int32_t action = AMotionEvent_getAction(inputEvent);
 
-    std::size_t  index = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
-    std::int32_t id    = AMotionEvent_getPointerId(inputEvent, index);
-    const auto   button = static_cast<Mouse::Button>(id);
+    const std::size_t index = (action & AMOTION_EVENT_ACTION_POINTER_INDEX_MASK) >> AMOTION_EVENT_ACTION_POINTER_INDEX_SHIFT;
+    const std::int32_t id     = AMotionEvent_getPointerId(inputEvent, index);
+    const auto         button = static_cast<Mouse::Button>(id);
 
     int x = static_cast<int>(AMotionEvent_getX(inputEvent, index));
     int y = static_cast<int>(AMotionEvent_getY(inputEvent, index));
@@ -708,16 +708,16 @@ int WindowImplAndroid::getUnicode(AInputEvent* event)
         err() << "Failed to initialize JNI, couldn't get the Unicode value" << std::endl;
 
     // Retrieve key data from the input event
-    jlong downTime  = AKeyEvent_getDownTime(event);
-    jlong eventTime = AKeyEvent_getEventTime(event);
-    jint  action    = AKeyEvent_getAction(event);
-    jint  code      = AKeyEvent_getKeyCode(event);
-    jint  repeat    = AKeyEvent_getRepeatCount(event); // not sure!
-    jint  metaState = AKeyEvent_getMetaState(event);
-    jint  deviceId  = AInputEvent_getDeviceId(event);
-    jint  scancode  = AKeyEvent_getScanCode(event);
-    jint  flags     = AKeyEvent_getFlags(event);
-    jint  source    = AInputEvent_getSource(event);
+    const jlong downTime  = AKeyEvent_getDownTime(event);
+    const jlong eventTime = AKeyEvent_getEventTime(event);
+    const jint  action    = AKeyEvent_getAction(event);
+    const jint  code      = AKeyEvent_getKeyCode(event);
+    const jint  repeat    = AKeyEvent_getRepeatCount(event); // not sure!
+    const jint  metaState = AKeyEvent_getMetaState(event);
+    const jint  deviceId  = AInputEvent_getDeviceId(event);
+    const jint  scancode  = AKeyEvent_getScanCode(event);
+    const jint  flags     = AKeyEvent_getFlags(event);
+    const jint  source    = AInputEvent_getSource(event);
 
     // Construct a KeyEvent object from the event data
     jclass    classKeyEvent       = lJNIEnv->FindClass("android/view/KeyEvent");
@@ -737,7 +737,7 @@ int WindowImplAndroid::getUnicode(AInputEvent* event)
 
     // Call its getUnicodeChar() method to get the Unicode value
     jmethodID methodGetUnicode = lJNIEnv->GetMethodID(classKeyEvent, "getUnicodeChar", "(I)I");
-    int       unicode          = lJNIEnv->CallIntMethod(objectKeyEvent, methodGetUnicode, metaState);
+    const int unicode          = lJNIEnv->CallIntMethod(objectKeyEvent, methodGetUnicode, metaState);
 
     lJNIEnv->DeleteLocalRef(classKeyEvent);
     lJNIEnv->DeleteLocalRef(objectKeyEvent);
