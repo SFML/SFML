@@ -182,9 +182,6 @@ public:
 
     bool onLoad() override
     {
-        // Create the off-screen surface
-        if (!m_surface.create({800, 600}))
-            return false;
         m_surface.setSmooth(true);
 
         // Load the textures
@@ -242,7 +239,7 @@ public:
     }
 
 private:
-    sf::RenderTexture         m_surface;
+    sf::RenderTexture         m_surface{sf::RenderTexture::create({800, 600}).value()};
     sf::Texture               m_backgroundTexture;
     sf::Texture               m_entityTexture;
     std::optional<sf::Sprite> m_backgroundSprite;
