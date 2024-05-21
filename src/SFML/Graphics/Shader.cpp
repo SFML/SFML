@@ -66,7 +66,7 @@ namespace
 // Retrieve the maximum number of texture units available
 std::size_t getMaxTextureUnits()
 {
-    static const GLint maxUnits = []()
+    static const GLint maxUnits = []
     {
         GLint value = 0;
         glCheck(glGetIntegerv(GLEXT_GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS, &value));
@@ -739,7 +739,7 @@ void Shader::bind(const Shader* shader)
 ////////////////////////////////////////////////////////////
 bool Shader::isAvailable()
 {
-    static const bool available = []()
+    static const bool available = []
     {
         const TransientContextLock contextLock;
 
@@ -757,7 +757,7 @@ bool Shader::isAvailable()
 ////////////////////////////////////////////////////////////
 bool Shader::isGeometryAvailable()
 {
-    static const bool available = []()
+    static const bool available = []
     {
         const TransientContextLock contextLock;
 

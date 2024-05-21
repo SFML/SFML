@@ -87,7 +87,7 @@ void ensureInit()
     static std::once_flag flag;
 
     std::call_once(flag,
-                   []()
+                   []
                    {
                        if (!gladLoaderLoadEGL(EGL_NO_DISPLAY))
                        {

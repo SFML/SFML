@@ -210,7 +210,7 @@ void WindowBase::setMinimumSize(const std::optional<Vector2u>& minimumSize)
 {
     if (m_impl)
     {
-        [[maybe_unused]] const auto validateMinimumSize = [this, minimumSize]()
+        [[maybe_unused]] const auto validateMinimumSize = [this, minimumSize]
         {
             if (!minimumSize.has_value() || !m_impl->getMaximumSize().has_value())
                 return true;
@@ -229,7 +229,7 @@ void WindowBase::setMaximumSize(const std::optional<Vector2u>& maximumSize)
 {
     if (m_impl)
     {
-        [[maybe_unused]] const auto validateMaxiumSize = [this, maximumSize]()
+        [[maybe_unused]] const auto validateMaxiumSize = [this, maximumSize]
         {
             if (!maximumSize.has_value() || !m_impl->getMinimumSize().has_value())
                 return true;
