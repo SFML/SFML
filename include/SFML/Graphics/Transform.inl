@@ -131,11 +131,11 @@ constexpr Transform& Transform::combine(const Transform& transform)
     const auto& b = transform.m_matrix;
 
     // clang-format off
-    *this = Transform(a[0] * b[0]  + a[4] * b[1]         ,
-                      a[0] * b[4]  + a[4] * b[5]         ,
+    *this = Transform(a[0] * b[0]  + a[4] * b[1],
+                      a[0] * b[4]  + a[4] * b[5],
                       a[0] * b[12] + a[4] * b[13] + a[12],
-                      a[1] * b[0]  + a[5] * b[1]         ,
-                      a[1] * b[4]  + a[5] * b[5]         ,
+                      a[1] * b[0]  + a[5] * b[1],
+                      a[1] * b[4]  + a[5] * b[5],
                       a[1] * b[12] + a[5] * b[13] + a[13]);
     // clang-format on
 
