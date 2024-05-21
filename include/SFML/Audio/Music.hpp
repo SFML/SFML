@@ -248,10 +248,10 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    InputSoundFile            m_file;     //!< The streamed music file
-    std::vector<std::int16_t> m_samples;  //!< Temporary buffer of samples
-    std::recursive_mutex      m_mutex;    //!< Mutex protecting the data
-    Span<std::uint64_t>       m_loopSpan; //!< Loop Range Specifier
+    std::optional<InputSoundFile> m_file;     //!< The streamed music file
+    std::vector<std::int16_t>     m_samples;  //!< Temporary buffer of samples
+    std::recursive_mutex          m_mutex;    //!< Mutex protecting the data
+    Span<std::uint64_t>           m_loopSpan; //!< Loop Range Specifier
 };
 
 } // namespace sf

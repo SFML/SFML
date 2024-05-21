@@ -34,6 +34,8 @@
 #include <mutex>
 #include <ostream>
 
+#include <cassert>
+
 
 namespace sf
 {
@@ -52,7 +54,8 @@ bool Music::openFromFile(const std::filesystem::path& filename)
     stop();
 
     // Open the underlying sound file
-    if (!m_file.openFromFile(filename))
+    m_file = sf::InputSoundFile::openFromFile(filename);
+    if (!m_file)
         return false;
 
     // Perform common initializations
@@ -69,7 +72,8 @@ bool Music::openFromMemory(const void* data, std::size_t sizeInBytes)
     stop();
 
     // Open the underlying sound file
-    if (!m_file.openFromMemory(data, sizeInBytes))
+    m_file = sf::InputSoundFile::openFromMemory(data, sizeInBytes);
+    if (!m_file)
         return false;
 
     // Perform common initializations
@@ -86,7 +90,8 @@ bool Music::openFromStream(InputStream& stream)
     stop();
 
     // Open the underlying sound file
-    if (!m_file.openFromStream(stream))
+    m_file = sf::InputSoundFile::openFromStream(stream);
+    if (!m_file)
         return false;
 
     // Perform common initializations
@@ -99,7 +104,8 @@ bool Music::openFromStream(InputStream& stream)
 ////////////////////////////////////////////////////////////
 Time Music::getDuration() const
 {
-    return m_file.getDuration();
+    assert(m_file && "Music::getDuration() Cannot get duration until music is opened");
+    return m_file->getDuration();
 }
 
 
@@ -116,7 +122,8 @@ void Music::setLoopPoints(TimeSpan timePoints)
     Span<std::uint64_t> samplePoints{timeToSamples(timePoints.offset), timeToSamples(timePoints.length)};
 
     // Check our state. This averts a divide-by-zero. GetChannelCount() is cheap enough to use often
-    if (getChannelCount() == 0 || m_file.getSampleCount() == 0)
+    assert(m_file && "Music::setLoopPoints() Cannot set loop points unit music is opened");
+    if (getChannelCount() == 0 || m_file->getSampleCount() == 0)
     {
         err() << "Music is not in a valid state to assign Loop Points." << std::endl;
         return;
@@ -129,7 +136,7 @@ void Music::setLoopPoints(TimeSpan timePoints)
     samplePoints.length -= (samplePoints.length % getChannelCount());
 
     // Validate
-    if (samplePoints.offset >= m_file.getSampleCount())
+    if (samplePoints.offset >= m_file->getSampleCount())
     {
         err() << "LoopPoints offset val must be in range [0, Duration)." << std::endl;
         return;
@@ -141,7 +148,7 @@ void Music::setLoopPoints(TimeSpan timePoints)
     }
 
     // Clamp End Point
-    samplePoints.length = std::min(samplePoints.length, m_file.getSampleCount() - samplePoints.offset);
+    samplePoints.length = std::min(samplePoints.length, m_file->getSampleCount() - samplePoints.offset);
 
     // If this change has no effect, we can return without touching anything
     if (samplePoints.offset == m_loopSpan.offset && samplePoints.length == m_loopSpan.length)
@@ -172,10 +179,12 @@ void Music::setLoopPoints(TimeSpan timePoints)
 ////////////////////////////////////////////////////////////
 bool Music::onGetData(SoundStream::Chunk& data)
 {
+    assert(m_file && "Music::onGetData() Cannot perform operation until music is opened");
+
     const std::lock_guard lock(m_mutex);
 
     std::size_t         toFill        = m_samples.size();
-    std::uint64_t       currentOffset = m_file.getSampleOffset();
+    std::uint64_t       currentOffset = m_file->getSampleOffset();
     const std::uint64_t loopEnd       = m_loopSpan.offset + m_loopSpan.length;
 
     // If the loop end is enabled and imminent, request less data.
@@ -186,11 +195,11 @@ bool Music::onGetData(SoundStream::Chunk& data)
 
     // Fill the chunk parameters
     data.samples     = m_samples.data();
-    data.sampleCount = static_cast<std::size_t>(m_file.read(m_samples.data(), toFill));
+    data.sampleCount = static_cast<std::size_t>(m_file->read(m_samples.data(), toFill));
     currentOffset += data.sampleCount;
 
     // Check if we have stopped obtaining samples or reached either the EOF or the loop end point
-    return (data.sampleCount != 0) && (currentOffset < m_file.getSampleCount()) &&
+    return (data.sampleCount != 0) && (currentOffset < m_file->getSampleCount()) &&
            (currentOffset != loopEnd || m_loopSpan.length == 0);
 }
 
@@ -198,28 +207,32 @@ bool Music::onGetData(SoundStream::Chunk& data)
 ////////////////////////////////////////////////////////////
 void Music::onSeek(Time timeOffset)
 {
+    assert(m_file && "Music::onSeek() Cannot perform operation until music is opened");
+
     const std::lock_guard lock(m_mutex);
-    m_file.seek(timeOffset);
+    m_file->seek(timeOffset);
 }
 
 
 ////////////////////////////////////////////////////////////
 std::optional<std::uint64_t> Music::onLoop()
 {
+    assert(m_file && "Music::onLoop() Cannot perform operation until music is opened");
+
     // Called by underlying SoundStream so we can determine where to loop.
     const std::lock_guard lock(m_mutex);
-    const std::uint64_t   currentOffset = m_file.getSampleOffset();
+    const std::uint64_t   currentOffset = m_file->getSampleOffset();
     if (getLoop() && (m_loopSpan.length != 0) && (currentOffset == m_loopSpan.offset + m_loopSpan.length))
     {
         // Looping is enabled, and either we're at the loop end, or we're at the EOF
         // when it's equivalent to the loop end (loop end takes priority). Send us to loop begin
-        m_file.seek(m_loopSpan.offset);
-        return static_cast<std::int64_t>(m_file.getSampleOffset());
+        m_file->seek(m_loopSpan.offset);
+        return static_cast<std::int64_t>(m_file->getSampleOffset());
     }
-    else if (getLoop() && (currentOffset >= m_file.getSampleCount()))
+    else if (getLoop() && (currentOffset >= m_file->getSampleCount()))
     {
         // If we're at the EOF, reset to 0
-        m_file.seek(0);
+        m_file->seek(0);
         return 0;
     }
     return std::nullopt;
@@ -231,13 +244,13 @@ void Music::initialize()
 {
     // Compute the music positions
     m_loopSpan.offset = 0;
-    m_loopSpan.length = m_file.getSampleCount();
+    m_loopSpan.length = m_file->getSampleCount();
 
     // Resize the internal buffer so that it can contain 1 second of audio samples
-    m_samples.resize(m_file.getSampleRate() * m_file.getChannelCount());
+    m_samples.resize(m_file->getSampleRate() * m_file->getChannelCount());
 
     // Initialize the stream
-    SoundStream::initialize(m_file.getChannelCount(), m_file.getSampleRate(), m_file.getChannelMap());
+    SoundStream::initialize(m_file->getChannelCount(), m_file->getSampleRate(), m_file->getChannelMap());
 }
 
 ////////////////////////////////////////////////////////////

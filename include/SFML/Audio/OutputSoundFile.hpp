@@ -34,6 +34,7 @@
 
 #include <filesystem>
 #include <memory>
+#include <optional>
 #include <vector>
 
 #include <cstdint>
@@ -58,13 +59,14 @@ public:
     /// \param channelCount Number of channels in the sound
     /// \param channelMap   Map of position in sample frame to sound channel
     ///
-    /// \return True if the file was successfully opened
+    /// \return Output sound file if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool openFromFile(const std::filesystem::path&     filename,
-                                    unsigned int                     sampleRate,
-                                    unsigned int                     channelCount,
-                                    const std::vector<SoundChannel>& channelMap);
+    [[nodiscard]] static std::optional<OutputSoundFile> openFromFile(
+        const std::filesystem::path&     filename,
+        unsigned int                     sampleRate,
+        unsigned int                     channelCount,
+        const std::vector<SoundChannel>& channelMap);
 
     ////////////////////////////////////////////////////////////
     /// \brief Write audio samples to the file
@@ -82,6 +84,12 @@ public:
     void close();
 
 private:
+    ////////////////////////////////////////////////////////////
+    /// \brief Constructor from writer
+    ///
+    ////////////////////////////////////////////////////////////
+    explicit OutputSoundFile(std::unique_ptr<SoundFileWriter>&& writer);
+
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
