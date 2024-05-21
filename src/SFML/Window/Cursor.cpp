@@ -54,19 +54,27 @@ Cursor& Cursor::operator=(Cursor&&) noexcept = default;
 
 
 ////////////////////////////////////////////////////////////
-bool Cursor::loadFromPixels(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot)
+std::optional<Cursor> Cursor::loadFromPixels(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot)
 {
     if ((pixels == nullptr) || (size.x == 0) || (size.y == 0))
-        return false;
-    else
-        return m_impl->loadFromPixels(pixels, size, hotspot);
+        return std::nullopt;
+
+    Cursor cursor;
+    if (!cursor.m_impl->loadFromPixels(pixels, size, hotspot))
+        return std::nullopt;
+
+    return cursor;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool Cursor::loadFromSystem(Type type)
+std::optional<Cursor> Cursor::loadFromSystem(Type type)
 {
-    return m_impl->loadFromSystem(type);
+    Cursor cursor;
+    if (!cursor.m_impl->loadFromSystem(type))
+        return std::nullopt;
+
+    return cursor;
 }
 
 

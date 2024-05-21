@@ -32,6 +32,7 @@
 #include <SFML/System/Vector2.hpp>
 
 #include <memory>
+#include <optional>
 
 #include <cstdint>
 
@@ -111,17 +112,6 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    /// This constructor doesn't actually create the cursor;
-    /// initially the new instance is invalid and must not be
-    /// used until either loadFromPixels() or loadFromSystem()
-    /// is called and successfully created a cursor.
-    ///
-    ////////////////////////////////////////////////////////////
-    Cursor();
-
-    ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
     /// This destructor releases the system resources
@@ -180,11 +170,11 @@ public:
     /// \param pixels   Array of pixels of the image
     /// \param size     Width and height of the image
     /// \param hotspot  (x,y) location of the hotspot
-    /// \return true if the cursor was successfully loaded;
-    ///         false otherwise
+    /// \return Cursor if the cursor was successfully loaded;
+    ///         `std::nullopt` otherwise
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromPixels(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot);
+    [[nodiscard]] static std::optional<Cursor> loadFromPixels(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a native system cursor
@@ -195,15 +185,21 @@ public:
     /// the operating system.
     ///
     /// \param type Native system cursor type
-    /// \return true if and only if the corresponding cursor is
+    /// \return Cursor if and only if the corresponding cursor is
     ///         natively supported by the operating system;
-    ///         false otherwise
+    ///         `std::nullopt` otherwise
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromSystem(Type type);
+    [[nodiscard]] static std::optional<Cursor> loadFromSystem(Type type);
 
 private:
     friend class WindowBase;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Default constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    Cursor();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get access to the underlying implementation
