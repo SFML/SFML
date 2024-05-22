@@ -217,10 +217,7 @@ public:
     /// \return True if the operation was successful, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool copy(const Image&    source,
-                            const Vector2u& dest,
-                            const IntRect&  sourceRect = IntRect({0, 0}, {0, 0}),
-                            bool            applyAlpha = false);
+    [[nodiscard]] bool copy(const Image& source, const Vector2u& dest, const IntRect& sourceRect = {}, bool applyAlpha = false);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the color of a pixel
