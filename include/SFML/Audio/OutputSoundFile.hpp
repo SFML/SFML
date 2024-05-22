@@ -111,9 +111,7 @@ private:
 /// Usage example:
 /// \code
 /// // Create a sound file, ogg/vorbis format, 44100 Hz, stereo
-/// sf::OutputSoundFile file;
-/// if (!file.openFromFile("music.ogg", 44100, 2))
-///     /* error */;
+/// auto file = sf::OutputSoundFile::openFromFile("music.ogg", 44100, 2).value();
 ///
 /// while (...)
 /// {

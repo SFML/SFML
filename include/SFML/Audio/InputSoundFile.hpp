@@ -275,9 +275,7 @@ private:
 /// Usage example:
 /// \code
 /// // Open a sound file
-/// sf::InputSoundFile file;
-/// if (!file.openFromFile("music.ogg"))
-///     /* error */;
+/// auto file = sf::InputSoundFile::openFromFile("music.ogg").value();
 ///
 /// // Print the sound attributes
 /// std::cout << "duration: " << file.getDuration().asSeconds() << '\n'
