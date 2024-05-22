@@ -120,7 +120,7 @@ public:
     /// \param locale   Locale to use for conversion
     ///
     ////////////////////////////////////////////////////////////
-    String(char ansiChar, const std::locale& locale = std::locale());
+    String(char ansiChar, const std::locale& locale = {});
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct from single wide character
@@ -148,7 +148,7 @@ public:
     /// \param locale     Locale to use for conversion
     ///
     ////////////////////////////////////////////////////////////
-    String(const char* ansiString, const std::locale& locale = std::locale());
+    String(const char* ansiString, const std::locale& locale = {});
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct from an ANSI string and a locale
@@ -160,7 +160,7 @@ public:
     /// \param locale     Locale to use for conversion
     ///
     ////////////////////////////////////////////////////////////
-    String(const std::string& ansiString, const std::locale& locale = std::locale());
+    String(const std::string& ansiString, const std::locale& locale = {});
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct from null-terminated C-style wide string
@@ -287,7 +287,7 @@ public:
     /// \see toWideString, operator std::string
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] std::string toAnsiString(const std::locale& locale = std::locale()) const;
+    [[nodiscard]] std::string toAnsiString(const std::locale& locale = {}) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert the Unicode string to a wide string
