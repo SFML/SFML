@@ -36,6 +36,7 @@
 #include <filesystem>
 #include <optional>
 #include <string>
+#include <string_view>
 #include <unordered_map>
 
 #include <cstddef>
@@ -200,7 +201,7 @@ public:
     /// \see loadFromFile, loadFromStream
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Shader> loadFromMemory(const std::string& shader, Type type);
+    [[nodiscard]] static std::optional<Shader> loadFromMemory(std::string_view shader, Type type);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load both the vertex and fragment shaders from source codes in memory
@@ -221,8 +222,7 @@ public:
     /// \see loadFromFile, loadFromStream
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Shader> loadFromMemory(const std::string& vertexShader,
-                                                              const std::string& fragmentShader);
+    [[nodiscard]] static std::optional<Shader> loadFromMemory(std::string_view vertexShader, std::string_view fragmentShader);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the vertex, geometry and fragment shaders from source codes in memory
@@ -244,9 +244,9 @@ public:
     /// \see loadFromFile, loadFromStream
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Shader> loadFromMemory(const std::string& vertexShader,
-                                                              const std::string& geometryShader,
-                                                              const std::string& fragmentShader);
+    [[nodiscard]] static std::optional<Shader> loadFromMemory(std::string_view vertexShader,
+                                                              std::string_view geometryShader,
+                                                              std::string_view fragmentShader);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the vertex, geometry or fragment shader from a custom stream
@@ -664,9 +664,9 @@ private:
     /// \return Shader on success, `std::nullopt` if any error happened
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Shader> compile(const char* vertexShaderCode,
-                                                       const char* geometryShaderCode,
-                                                       const char* fragmentShaderCode);
+    [[nodiscard]] static std::optional<Shader> compile(std::string_view vertexShaderCode,
+                                                       std::string_view geometryShaderCode,
+                                                       std::string_view fragmentShaderCode);
 
     ////////////////////////////////////////////////////////////
     /// \brief Bind all the textures used by the shader
