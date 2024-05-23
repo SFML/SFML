@@ -126,7 +126,7 @@ std::uint64_t Context::getActiveContextId()
 
 
 ////////////////////////////////////////////////////////////
-bool Context::isExtensionAvailable(const char* name)
+bool Context::isExtensionAvailable(std::string_view name)
 {
     return priv::GlContext::isExtensionAvailable(name);
 }

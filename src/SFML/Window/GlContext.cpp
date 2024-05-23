@@ -665,7 +665,7 @@ std::unique_ptr<GlContext> GlContext::create(const ContextSettings& settings, co
 
 
 ////////////////////////////////////////////////////////////
-bool GlContext::isExtensionAvailable(const char* name)
+bool GlContext::isExtensionAvailable(std::string_view name)
 {
     // If this function is called before any context is available,
     // the shared context will be created for the duration of this call

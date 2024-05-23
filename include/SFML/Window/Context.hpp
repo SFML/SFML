@@ -34,6 +34,7 @@
 #include <SFML/System/Vector2.hpp>
 
 #include <memory>
+#include <string_view>
 
 #include <cstdint>
 
@@ -126,7 +127,7 @@ public:
     /// \return True if available, false if unavailable
     ///
     ////////////////////////////////////////////////////////////
-    static bool isExtensionAvailable(const char* name);
+    static bool isExtensionAvailable(std::string_view name);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the address of an OpenGL function
