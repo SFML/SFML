@@ -45,6 +45,7 @@
 #include <utility>
 #include <vector>
 
+#include <cassert>
 #include <cstdint>
 
 #ifndef SFML_OPENGL_ES
@@ -256,8 +257,8 @@ Shader& Shader::operator=(Shader&& right) noexcept
     {
         // Destroy effect program
         const TransientContextLock lock;
-        if (m_shaderProgram)
-            glCheck(GLEXT_glDeleteObject(castToGlHandle(m_shaderProgram)));
+        assert(m_shaderProgram);
+        glCheck(GLEXT_glDeleteObject(castToGlHandle(m_shaderProgram)));
     }
 
     // Move the contents of right.
@@ -579,33 +580,32 @@ void Shader::setUniform(const std::string& name, const Glsl::Mat4& matrix)
 ////////////////////////////////////////////////////////////
 void Shader::setUniform(const std::string& name, const Texture& texture)
 {
-    if (m_shaderProgram)
+    assert(m_shaderProgram);
+
+    const TransientContextLock lock;
+
+    // Find the location of the variable in the shader
+    const int location = getUniformLocation(name);
+    if (location != -1)
     {
-        const TransientContextLock lock;
-
-        // Find the location of the variable in the shader
-        const int location = getUniformLocation(name);
-        if (location != -1)
+        // Store the location -> texture mapping
+        const auto it = m_textures.find(location);
+        if (it == m_textures.end())
         {
-            // Store the location -> texture mapping
-            const auto it = m_textures.find(location);
-            if (it == m_textures.end())
+            // New entry, make sure there are enough texture units
+            if (m_textures.size() + 1 >= getMaxTextureUnits())
             {
-                // New entry, make sure there are enough texture units
-                if (m_textures.size() + 1 >= getMaxTextureUnits())
-                {
-                    err() << "Impossible to use texture " << std::quoted(name)
-                          << " for shader: all available texture units are used" << std::endl;
-                    return;
-                }
+                err() << "Impossible to use texture " << std::quoted(name)
+                      << " for shader: all available texture units are used" << std::endl;
+                return;
+            }
 
-                m_textures[location] = &texture;
-            }
-            else
-            {
-                // Location already used, just replace the texture
-                it->second = &texture;
-            }
+            m_textures[location] = &texture;
+        }
+        else
+        {
+            // Location already used, just replace the texture
+            it->second = &texture;
         }
     }
 }
@@ -614,13 +614,12 @@ void Shader::setUniform(const std::string& name, const Texture& texture)
 ////////////////////////////////////////////////////////////
 void Shader::setUniform(const std::string& name, CurrentTextureType)
 {
-    if (m_shaderProgram)
-    {
-        const TransientContextLock lock;
+    assert(m_shaderProgram);
 
-        // Find the location of the variable in the shader
-        m_currentTexture = getUniformLocation(name);
-    }
+    const TransientContextLock lock;
+
+    // Find the location of the variable in the shader
+    m_currentTexture = getUniformLocation(name);
 }
 
 

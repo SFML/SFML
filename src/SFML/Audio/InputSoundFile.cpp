@@ -38,6 +38,7 @@
 #include <ostream>
 #include <utility>
 
+#include <cassert>
 #include <cstdint>
 
 
@@ -197,7 +198,9 @@ std::uint64_t InputSoundFile::getSampleOffset() const
 ////////////////////////////////////////////////////////////
 void InputSoundFile::seek(std::uint64_t sampleOffset)
 {
-    if (m_reader && !m_channelMap.empty())
+    assert(m_reader);
+
+    if (!m_channelMap.empty())
     {
         // The reader handles an overrun gracefully, but we
         // pre-check to keep our known position consistent
@@ -217,8 +220,10 @@ void InputSoundFile::seek(Time timeOffset)
 ////////////////////////////////////////////////////////////
 std::uint64_t InputSoundFile::read(std::int16_t* samples, std::uint64_t maxCount)
 {
+    assert(m_reader);
+
     std::uint64_t readSamples = 0;
-    if (m_reader && samples && maxCount)
+    if (samples && maxCount)
         readSamples = m_reader->read(samples, maxCount);
     m_sampleOffset += readSamples;
     return readSamples;

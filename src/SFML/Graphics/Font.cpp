@@ -301,13 +301,13 @@ const Font::Info& Font::getInfo() const
 ////////////////////////////////////////////////////////////
 const Glyph& Font::getGlyph(std::uint32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness) const
 {
+    assert(m_fontHandles);
+
     // Get the page corresponding to the character size
     GlyphTable& glyphs = loadPage(characterSize).glyphs;
 
     // Build the key by combining the glyph index (based on code point), bold flag, and outline thickness
-    const std::uint64_t key = combine(outlineThickness,
-                                      bold,
-                                      FT_Get_Char_Index(m_fontHandles ? m_fontHandles->face : nullptr, codePoint));
+    const std::uint64_t key = combine(outlineThickness, bold, FT_Get_Char_Index(m_fontHandles->face, codePoint));
 
     // Search the glyph into the cache
     if (const auto it = glyphs.find(key); it != glyphs.end())
@@ -327,18 +327,21 @@ const Glyph& Font::getGlyph(std::uint32_t codePoint, unsigned int characterSize,
 ////////////////////////////////////////////////////////////
 bool Font::hasGlyph(std::uint32_t codePoint) const
 {
-    return FT_Get_Char_Index(m_fontHandles ? m_fontHandles->face : nullptr, codePoint) != 0;
+    assert(m_fontHandles);
+    return FT_Get_Char_Index(m_fontHandles->face, codePoint) != 0;
 }
 
 
 ////////////////////////////////////////////////////////////
 float Font::getKerning(std::uint32_t first, std::uint32_t second, unsigned int characterSize, bool bold) const
 {
+    assert(m_fontHandles);
+
     // Special case where first or second is 0 (null character)
     if (first == 0 || second == 0)
         return 0.f;
 
-    FT_Face face = m_fontHandles ? m_fontHandles->face : nullptr;
+    FT_Face face = m_fontHandles->face;
 
     if (face && setCurrentSize(characterSize))
     {
@@ -375,9 +378,11 @@ float Font::getKerning(std::uint32_t first, std::uint32_t second, unsigned int c
 ////////////////////////////////////////////////////////////
 float Font::getLineSpacing(unsigned int characterSize) const
 {
-    FT_Face face = m_fontHandles ? m_fontHandles->face : nullptr;
+    assert(m_fontHandles);
 
-    if (face && setCurrentSize(characterSize))
+    FT_Face face = m_fontHandles->face;
+
+    if (setCurrentSize(characterSize))
     {
         return static_cast<float>(face->size->metrics.height) / static_cast<float>(1 << 6);
     }
@@ -391,9 +396,11 @@ float Font::getLineSpacing(unsigned int characterSize) const
 ////////////////////////////////////////////////////////////
 float Font::getUnderlinePosition(unsigned int characterSize) const
 {
-    FT_Face face = m_fontHandles ? m_fontHandles->face : nullptr;
+    assert(m_fontHandles);
 
-    if (face && setCurrentSize(characterSize))
+    FT_Face face = m_fontHandles->face;
+
+    if (setCurrentSize(characterSize))
     {
         // Return a fixed position if font is a bitmap font
         if (!FT_IS_SCALABLE(face))
@@ -412,7 +419,9 @@ float Font::getUnderlinePosition(unsigned int characterSize) const
 ////////////////////////////////////////////////////////////
 float Font::getUnderlineThickness(unsigned int characterSize) const
 {
-    FT_Face face = m_fontHandles ? m_fontHandles->face : nullptr;
+    assert(m_fontHandles);
+
+    FT_Face face = m_fontHandles->face;
 
     if (face && setCurrentSize(characterSize))
     {
@@ -469,10 +478,6 @@ Glyph Font::loadGlyph(std::uint32_t codePoint, unsigned int characterSize, bool 
 {
     // The glyph to return
     Glyph glyph;
-
-    // Stop if no font is loaded
-    if (!m_fontHandles)
-        return glyph;
 
     // Get our FT_Face
     FT_Face face = m_fontHandles->face;

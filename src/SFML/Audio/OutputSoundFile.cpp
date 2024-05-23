@@ -29,6 +29,8 @@
 #include <SFML/Audio/SoundFileFactory.hpp>
 #include <SFML/Audio/SoundFileWriter.hpp>
 
+#include <cassert>
+
 
 namespace sf
 {
@@ -57,7 +59,9 @@ std::optional<OutputSoundFile> OutputSoundFile::openFromFile(
 ////////////////////////////////////////////////////////////
 void OutputSoundFile::write(const std::int16_t* samples, std::uint64_t count)
 {
-    if (m_writer && samples && count)
+    assert(m_writer);
+
+    if (samples && count)
         m_writer->write(samples, count);
 }
 
