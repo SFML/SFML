@@ -24,11 +24,7 @@ int main()
     sf::RenderWindow window(sf::VideoMode({800, 600}), "SFML window");
 
     // Set the Icon
-    sf::Image icon;
-    if (!icon.loadFromFile("icon.png"))
-    {
-        return EXIT_FAILURE;
-    }
+    const auto icon = sf::Image::loadFromFile("icon.png").value();
     window.setIcon(icon);
 
     // Load a sprite to display
