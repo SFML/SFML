@@ -12,7 +12,9 @@ TEST_CASE("[Graphics] Render Tests", runDisplayTests())
 {
     SECTION("Stencil Tests")
     {
-        auto renderTexture = sf::RenderTexture::create({100, 100}, sf::ContextSettings(0, 8)).value();
+        auto renderTexture = sf::RenderTexture::create({100, 100}, sf::ContextSettings{0 /* depthBits */, 8 /* stencilBits */})
+                                 .value();
+
         renderTexture.clear(sf::Color::Red, 127);
 
         sf::RectangleShape shape1({100, 100});

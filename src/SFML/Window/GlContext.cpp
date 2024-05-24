@@ -206,7 +206,7 @@ struct GlContext::SharedContext
         const std::lock_guard lock(mutex);
 
         context.emplace(nullptr);
-        context->initialize(sf::ContextSettings());
+        context->initialize(ContextSettings{});
 
         loadExtensions();
 
@@ -572,7 +572,7 @@ std::unique_ptr<GlContext> GlContext::create()
 
     sharedContext->context->setActive(false);
 
-    context->initialize(ContextSettings());
+    context->initialize(ContextSettings{});
 
     return context;
 }
@@ -594,7 +594,12 @@ std::unique_ptr<GlContext> GlContext::create(const ContextSettings& settings, co
         !(sharedContext->context->m_settings.attributeFlags & ContextSettings::Core))
     {
         // Re-create our shared context as a core context
-        const ContextSettings sharedSettings(0, 0, 0, settings.majorVersion, settings.minorVersion, settings.attributeFlags);
+        const ContextSettings sharedSettings{/* depthBits */ 0,
+                                             /* stencilBits */ 0,
+                                             /* antialiasingLevel */ 0,
+                                             settings.majorVersion,
+                                             settings.minorVersion,
+                                             settings.attributeFlags};
 
         sharedContext->context.emplace(nullptr, sharedSettings, Vector2u(1, 1));
         sharedContext->context->initialize(sharedSettings);
@@ -638,7 +643,12 @@ std::unique_ptr<GlContext> GlContext::create(const ContextSettings& settings, co
         !(sharedContext->context->m_settings.attributeFlags & ContextSettings::Core))
     {
         // Re-create our shared context as a core context
-        const ContextSettings sharedSettings(0, 0, 0, settings.majorVersion, settings.minorVersion, settings.attributeFlags);
+        const ContextSettings sharedSettings{/* depthBits */ 0,
+                                             /* stencilBits */ 0,
+                                             /* antialiasingLevel */ 0,
+                                             settings.majorVersion,
+                                             settings.minorVersion,
+                                             settings.attributeFlags};
 
         sharedContext->context.emplace(nullptr, sharedSettings, Vector2u(1, 1));
         sharedContext->context->initialize(sharedSettings);

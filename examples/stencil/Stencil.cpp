@@ -19,7 +19,7 @@ int main()
                             "SFML Stencil",
                             sf::Style::Titlebar | sf::Style::Close,
                             sf::State::Windowed,
-                            sf::ContextSettings(0, 8));
+                            sf::ContextSettings{0 /* depthBits */, 8 /* stencilBits */});
     window.setVerticalSyncEnabled(true);
 
     sf::RectangleShape red({500, 50});

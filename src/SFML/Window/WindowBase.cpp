@@ -95,7 +95,17 @@ void WindowBase::create(VideoMode mode, const String& title, std::uint32_t style
     WindowBase::create(mode, style, state);
 
     // Recreate the window implementation
-    m_impl = priv::WindowImpl::create(mode, title, style, state, ContextSettings(0, 0, 0, 0, 0, 0xFFFFFFFF, false));
+    m_impl = priv::WindowImpl::create(mode,
+                                      title,
+                                      style,
+                                      state,
+                                      ContextSettings{/* depthBits */ 0,
+                                                      /* stencilBits */ 0,
+                                                      /* antialiasingLevel */ 0,
+                                                      /* majorVersion */ 0,
+                                                      /* minorVersion */ 0,
+                                                      /* attributeFlags */ 0xFFFFFFFF,
+                                                      /* sRgbCapable */ false});
 
     // Perform common initializations
     initialize();

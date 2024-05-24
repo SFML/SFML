@@ -20,14 +20,15 @@ TEST_CASE("[Graphics] sf::RenderTexture", runDisplayTests())
     {
         CHECK(!sf::RenderTexture::create({1'000'000, 1'000'000}));
 
-        CHECK(sf::RenderTexture::create({100, 100}, sf::ContextSettings(8, 0)));
-        CHECK(sf::RenderTexture::create({100, 100}, sf::ContextSettings(0, 8)));
+        CHECK(sf::RenderTexture::create({100, 100}, sf::ContextSettings{8 /* depthBits */, 0 /* stencilBits */}));
+        CHECK(sf::RenderTexture::create({100, 100}, sf::ContextSettings{0 /* depthBits */, 8 /* stencilBits */}));
 
         const auto renderTexture = sf::RenderTexture::create({360, 480}).value();
         CHECK(renderTexture.getSize() == sf::Vector2u(360, 480));
         CHECK(!renderTexture.isSmooth());
         CHECK(!renderTexture.isRepeated());
         CHECK(!renderTexture.isSrgb());
+
         const auto& texture = renderTexture.getTexture();
         CHECK(texture.getSize() == sf::Vector2u(360, 480));
         CHECK(!texture.isSmooth());

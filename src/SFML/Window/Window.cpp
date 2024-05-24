@@ -72,7 +72,7 @@ Window::~Window()
 ////////////////////////////////////////////////////////////
 void Window::create(VideoMode mode, const String& title, std::uint32_t style, State state)
 {
-    Window::create(mode, title, style, state, ContextSettings());
+    Window::create(mode, title, style, state, ContextSettings{});
 }
 
 
@@ -96,7 +96,7 @@ void Window::create(VideoMode mode, const String& title, std::uint32_t style, St
 ////////////////////////////////////////////////////////////
 void Window::create(WindowHandle handle)
 {
-    Window::create(handle, ContextSettings());
+    Window::create(handle, ContextSettings{});
 }
 
 
@@ -131,7 +131,7 @@ void Window::close()
 ////////////////////////////////////////////////////////////
 const ContextSettings& Window::getSettings() const
 {
-    static constexpr ContextSettings empty(0, 0, 0);
+    static constexpr ContextSettings empty{/* depthBits */ 0, /* stencilBits */ 0, /* antialiasingLevel */ 0};
 
     return m_context ? m_context->getSettings() : empty;
 }
