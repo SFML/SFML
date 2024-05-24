@@ -52,19 +52,15 @@ RenderTexture& RenderTexture::operator=(RenderTexture&&) noexcept = default;
 ////////////////////////////////////////////////////////////
 std::optional<RenderTexture> RenderTexture::create(const Vector2u& size, const ContextSettings& settings)
 {
-    sf::Texture texture;
-
-    // Set texture to be in sRGB scale if requested
-    texture.setSrgb(settings.sRgbCapable);
-
     // Create the texture
-    if (!texture.create(size))
+    auto texture = sf::Texture::create(size, settings.sRgbCapable);
+    if (!texture)
     {
         err() << "Impossible to create render texture (failed to create the target texture)" << std::endl;
         return std::nullopt;
     }
 
-    RenderTexture renderTexture(std::move(texture));
+    RenderTexture renderTexture(std::move(*texture));
 
     // We disable smoothing by default for render textures
     renderTexture.setSmooth(false);

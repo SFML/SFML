@@ -41,9 +41,6 @@ struct SFMLmainWindow
 {
     SFMLmainWindow(sf::WindowHandle win) : renderWindow(win)
     {
-        if (!logo.loadFromFile(resPath / "logo.png"))
-            NSLog(@"Couldn't load the logo image");
-
         logo.setSmooth(true);
 
         sprite.setOrigin(sprite.getLocalBounds().getCenter());
@@ -57,7 +54,7 @@ struct SFMLmainWindow
     sf::RenderWindow      renderWindow;
     sf::Font              font{sf::Font::loadFromFile(resPath / "tuffy.ttf").value()};
     sf::Text              text{font};
-    sf::Texture           logo;
+    sf::Texture           logo{sf::Texture::loadFromFile(resPath / "logo.png").value()};
     sf::Sprite            sprite{logo};
     sf::Color             background{sf::Color::Blue};
 };

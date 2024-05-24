@@ -19,7 +19,7 @@ TEST_CASE("[Graphics] sf::Sprite", runDisplayTests())
         STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Sprite>);
     }
 
-    const sf::Texture texture;
+    const auto texture = sf::Texture::create({64, 64}).value();
 
     SECTION("Construction")
     {
@@ -27,10 +27,10 @@ TEST_CASE("[Graphics] sf::Sprite", runDisplayTests())
         {
             const sf::Sprite sprite(texture);
             CHECK(&sprite.getTexture() == &texture);
-            CHECK(sprite.getTextureRect() == sf::IntRect());
+            CHECK(sprite.getTextureRect() == sf::IntRect({}, {64, 64}));
             CHECK(sprite.getColor() == sf::Color::White);
-            CHECK(sprite.getLocalBounds() == sf::FloatRect());
-            CHECK(sprite.getGlobalBounds() == sf::FloatRect());
+            CHECK(sprite.getLocalBounds() == sf::FloatRect({}, {64, 64}));
+            CHECK(sprite.getGlobalBounds() == sf::FloatRect({}, {64, 64}));
         }
 
         SECTION("Texture and rectangle constructor")
@@ -47,7 +47,7 @@ TEST_CASE("[Graphics] sf::Sprite", runDisplayTests())
     SECTION("Set/get texture")
     {
         sf::Sprite        sprite(texture);
-        const sf::Texture otherTexture;
+        const sf::Texture otherTexture = sf::Texture::create({64, 64}).value();
         sprite.setTexture(otherTexture);
         CHECK(&sprite.getTexture() == &otherTexture);
     }

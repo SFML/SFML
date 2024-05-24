@@ -53,9 +53,7 @@ int main()
     sf::Sound  ballSound(ballSoundBuffer);
 
     // Create the SFML logo texture:
-    sf::Texture sfmlLogoTexture;
-    if (!sfmlLogoTexture.loadFromFile(resourcesDir() / "sfml_logo.png"))
-        return EXIT_FAILURE;
+    const auto sfmlLogoTexture = sf::Texture::loadFromFile(resourcesDir() / "sfml_logo.png").value();
     sf::Sprite sfmlLogo(sfmlLogoTexture);
     sfmlLogo.setPosition({170.f, 50.f});
 

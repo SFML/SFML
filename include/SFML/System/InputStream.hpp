@@ -133,7 +133,6 @@ public:
 /// };
 ///
 /// // now you can load textures...
-/// sf::Texture texture;
 /// ZipStream stream("resources.zip");
 ///
 /// if (!stream.open("images/img.png"))
@@ -141,10 +140,7 @@ public:
 ///     // Handle error...
 /// }
 ///
-/// if (!texture.loadFromStream(stream))
-/// {
-///     // Handle error...
-/// }
+/// const auto texture = sf::Texture::loadFromStream(stream).value();
 ///
 /// // musics...
 /// sf::Music music;
