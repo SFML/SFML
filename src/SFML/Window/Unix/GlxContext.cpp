@@ -110,7 +110,7 @@ namespace sf::priv
 GlxContext::GlxContext(GlxContext* shared)
 {
     // Save the creation settings
-    m_settings = ContextSettings();
+    m_settings = ContextSettings{};
 
     // Open the connection with the X server
     m_display = openDisplay();

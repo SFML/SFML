@@ -33,7 +33,7 @@ TEST_CASE("[Graphics] sf::RenderWindow", runDisplayTests())
                                           "Window Title",
                                           sf::Style::Default,
                                           sf::State::Windowed,
-                                          sf::ContextSettings());
+                                          sf::ContextSettings{});
             CHECK(window.isOpen());
             CHECK(window.getSize() == sf::Vector2u(256, 256));
             CHECK(window.getNativeHandle() != sf::WindowHandle());
@@ -51,7 +51,7 @@ TEST_CASE("[Graphics] sf::RenderWindow", runDisplayTests())
             const sf::RenderWindow window(sf::VideoMode(sf::Vector2u(240, 300), 24),
                                           "Window Title",
                                           sf::State::Windowed,
-                                          sf::ContextSettings());
+                                          sf::ContextSettings{});
             CHECK(window.isOpen());
             CHECK(window.getSize() == sf::Vector2u(240, 300));
             CHECK(window.getNativeHandle() != sf::WindowHandle());
@@ -72,7 +72,7 @@ TEST_CASE("[Graphics] sf::RenderWindow", runDisplayTests())
                                 "Window Title",
                                 sf::Style::Default,
                                 sf::State::Windowed,
-                                sf::ContextSettings());
+                                sf::ContextSettings{});
         REQUIRE(window.getSize() == sf::Vector2u(256, 256));
 
         sf::Texture texture;

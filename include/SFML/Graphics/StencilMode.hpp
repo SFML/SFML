@@ -214,7 +214,7 @@ SFML_GRAPHICS_API bool operator!=(const StencilMode& left, const StencilMode& ri
 /// Usage example:
 /// \code
 /// // Make sure we create a RenderTarget with a stencil buffer by specifying it via the context settings
-/// sf::RenderWindow window(sf::VideoMode({250, 200}), "Stencil Window", sf::Style::Default, sf::ContextSettings(0, 8));
+/// sf::RenderWindow window(sf::VideoMode({250, 200}), "Stencil Window", sf::Style::Default, sf::ContextSettings{0, 8});
 ///
 /// ...
 ///

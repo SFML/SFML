@@ -16,7 +16,7 @@ TEST_CASE("[Window] sf::ContextSettings")
 
     SECTION("Construction")
     {
-        SECTION("Default constructor")
+        SECTION("Aggregate initialization -- Nothing")
         {
             constexpr sf::ContextSettings contextSettings;
             STATIC_CHECK(contextSettings.depthBits == 0);
@@ -28,9 +28,9 @@ TEST_CASE("[Window] sf::ContextSettings")
             STATIC_CHECK(contextSettings.sRgbCapable == false);
         }
 
-        SECTION("Verbose constructor")
+        SECTION("Aggregate initialization -- Everything")
         {
-            constexpr sf::ContextSettings contextSettings(1, 1, 2, 3, 5, sf::ContextSettings::Core, true);
+            constexpr sf::ContextSettings contextSettings{1, 1, 2, 3, 5, sf::ContextSettings::Core, true};
             STATIC_CHECK(contextSettings.depthBits == 1);
             STATIC_CHECK(contextSettings.stencilBits == 1);
             STATIC_CHECK(contextSettings.antialiasingLevel == 2);

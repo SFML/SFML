@@ -48,46 +48,17 @@ struct ContextSettings
         Debug   = 1 << 2  //!< Debug attribute
     };
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    /// \param depth        Depth buffer bits
-    /// \param stencil      Stencil buffer bits
-    /// \param antialiasing Antialiasing level
-    /// \param major        Major number of the context version
-    /// \param minor        Minor number of the context version
-    /// \param attributes   Attribute flags of the context
-    /// \param sRgb         sRGB capable framebuffer
-    ///
-    ////////////////////////////////////////////////////////////
-    constexpr explicit ContextSettings(
-        unsigned int depth        = 0,
-        unsigned int stencil      = 0,
-        unsigned int antialiasing = 0,
-        unsigned int major        = 1,
-        unsigned int minor        = 1,
-        unsigned int attributes   = Default,
-        bool         sRgb         = false) :
-    depthBits(depth),
-    stencilBits(stencil),
-    antialiasingLevel(antialiasing),
-    majorVersion(major),
-    minorVersion(minor),
-    attributeFlags(attributes),
-    sRgbCapable(sRgb)
-    {
-    }
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int  depthBits;         //!< Bits of the depth buffer
-    unsigned int  stencilBits;       //!< Bits of the stencil buffer
-    unsigned int  antialiasingLevel; //!< Level of antialiasing
-    unsigned int  majorVersion;      //!< Major number of the context version to create
-    unsigned int  minorVersion;      //!< Minor number of the context version to create
-    std::uint32_t attributeFlags;    //!< The attribute flags to create the context with
-    bool          sRgbCapable;       //!< Whether the context framebuffer is sRGB capable
+    unsigned int  depthBits{};                        //!< Bits of the depth buffer
+    unsigned int  stencilBits{};                      //!< Bits of the stencil buffer
+    unsigned int  antialiasingLevel{};                //!< Level of antialiasing
+    unsigned int  majorVersion{1};                    //!< Major number of the context version to create
+    unsigned int  minorVersion{1};                    //!< Minor number of the context version to create
+    std::uint32_t attributeFlags{Attribute::Default}; //!< The attribute flags to create the context with
+    bool          sRgbCapable{};                      //!< Whether the context framebuffer is sRGB capable
 };
 
 } // namespace sf

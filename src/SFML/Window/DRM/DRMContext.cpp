@@ -521,7 +521,7 @@ DRMContext::DRMContext(DRMContext* shared)
     m_display = getInitializedDisplay();
 
     // Get the best EGL config matching the default video settings
-    m_config = getBestConfig(m_display, VideoMode::getDesktopMode().bitsPerPixel, ContextSettings());
+    m_config = getBestConfig(m_display, VideoMode::getDesktopMode().bitsPerPixel, ContextSettings{});
     updateSettings();
 
     // Create EGL context

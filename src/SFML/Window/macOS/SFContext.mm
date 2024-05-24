@@ -45,7 +45,9 @@ SFContext::SFContext(SFContext* shared)
 {
     const AutoreleasePool pool;
     // Create the context
-    createContext(shared, VideoMode::getDesktopMode().bitsPerPixel, ContextSettings(0, 0, 0));
+    createContext(shared,
+                  VideoMode::getDesktopMode().bitsPerPixel,
+                  ContextSettings{0 /* depthBits */, 0 /* stencilBits */, 0 /* antialiasingLevel */});
 }
 
 

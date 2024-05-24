@@ -101,8 +101,7 @@ public:
     /// \return Render texture if creation has been successful, otherwise `std::nullopt`
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<RenderTexture> create(const Vector2u&        size,
-                                                             const ContextSettings& settings = ContextSettings());
+    [[nodiscard]] static std::optional<RenderTexture> create(const Vector2u& size, const ContextSettings& settings = {});
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the maximum anti-aliasing level supported by the system
