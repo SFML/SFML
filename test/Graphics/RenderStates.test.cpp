@@ -58,7 +58,7 @@ TEST_CASE("[Graphics] sf::RenderStates")
 
         SECTION("Transform constructor")
         {
-            const sf::Transform    transform(10, 9, 8, 7, 6, 5, 4, 3, 2);
+            const sf::Transform    transform(10, 9, 8, 7, 6, 5);
             const sf::RenderStates renderStates(transform);
             CHECK(renderStates.blendMode == sf::BlendMode());
             CHECK(renderStates.stencilMode == sf::StencilMode{});
@@ -101,7 +101,7 @@ TEST_CASE("[Graphics] sf::RenderStates")
                                           sf::BlendMode::Factor::DstAlpha,
                                           sf::BlendMode::Equation::Max);
             const sf::StencilMode stencilMode{sf::StencilComparison::Equal, sf::StencilUpdateOperation::Replace, 1, 0u, true};
-            const sf::Transform transform(10, 2, 3, 4, 50, 40, 30, 20, 10);
+            const sf::Transform transform(10, 2, 3, 4, 50, 40);
             const sf::RenderStates renderStates(blendMode, stencilMode, transform, sf::CoordinateType::Normalized, nullptr, nullptr);
             CHECK(renderStates.blendMode == blendMode);
             CHECK(renderStates.stencilMode == stencilMode);

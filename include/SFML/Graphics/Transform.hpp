@@ -57,6 +57,7 @@ public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct a transform from a 3x3 matrix
+    ///        The bottom row is always 0 0 1.
     ///
     /// \param a00 Element (0, 0) of the matrix
     /// \param a01 Element (0, 1) of the matrix
@@ -64,12 +65,9 @@ public:
     /// \param a10 Element (1, 0) of the matrix
     /// \param a11 Element (1, 1) of the matrix
     /// \param a12 Element (1, 2) of the matrix
-    /// \param a20 Element (2, 0) of the matrix
-    /// \param a21 Element (2, 1) of the matrix
-    /// \param a22 Element (2, 2) of the matrix
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Transform(float a00, float a01, float a02, float a10, float a11, float a12, float a20, float a21, float a22);
+    constexpr Transform(float a00, float a01, float a02, float a10, float a11, float a12);
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the transform as a 4x4 matrix

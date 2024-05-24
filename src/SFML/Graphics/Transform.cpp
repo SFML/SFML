@@ -43,8 +43,7 @@ Transform& Transform::rotate(Angle angle)
 
     // clang-format off
     const Transform rotation(cos, -sin, 0,
-                             sin,  cos, 0,
-                             0,    0,   1);
+                             sin,  cos, 0);
     // clang-format on
 
     return combine(rotation);
@@ -60,8 +59,7 @@ Transform& Transform::rotate(Angle angle, const Vector2f& center)
 
     // clang-format off
     const Transform rotation(cos, -sin, center.x * (1 - cos) + center.y * sin,
-                             sin,  cos, center.y * (1 - cos) - center.x * sin,
-                             0,    0,   1);
+                             sin,  cos, center.y * (1 - cos) - center.x * sin);
     // clang-format on
 
     return combine(rotation);
