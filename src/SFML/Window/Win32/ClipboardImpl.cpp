@@ -81,6 +81,7 @@ void ClipboardImpl::setString(const String& text)
     if (!EmptyClipboard())
     {
         std::cerr << "Failed to empty the Win32 clipboard." << std::endl;
+        CloseClipboard();
         return;
     }
 
