@@ -33,6 +33,7 @@
 
 #include <SFML/System/Err.hpp>
 
+#include <algorithm>
 #include <ostream>
 
 

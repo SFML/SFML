@@ -30,6 +30,8 @@
 #import <SFML/Window/macOS/SFOpenGLView.h>
 #include <SFML/Window/macOS/WindowImplCocoa.hpp>
 
+#include <algorithm>
+
 #include <cmath>
 
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
