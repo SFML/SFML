@@ -166,7 +166,7 @@ String::String(const char* ansiString, const std::locale& locale)
 {
     if (ansiString)
     {
-        const std::size_t length = strlen(ansiString);
+        const std::size_t length = std::strlen(ansiString);
         if (length > 0)
         {
             m_string.reserve(length + 1);
