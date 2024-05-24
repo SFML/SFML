@@ -86,9 +86,7 @@ int main(int argc, char* argv[])
     sf::RenderWindow window(screen, "");
     window.setFramerateLimit(30);
 
-    sf::Texture texture;
-    if (!texture.loadFromFile("image.png"))
-        return EXIT_FAILURE;
+    const auto texture = sf::Texture::loadFromFile("image.png").value();
 
     sf::Sprite image(texture);
     image.setPosition(sf::Vector2f(screen.size) / 2.f);

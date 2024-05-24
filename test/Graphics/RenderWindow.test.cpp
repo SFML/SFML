@@ -75,8 +75,7 @@ TEST_CASE("[Graphics] sf::RenderWindow", runDisplayTests())
                                 sf::ContextSettings{});
         REQUIRE(window.getSize() == sf::Vector2u(256, 256));
 
-        sf::Texture texture;
-        REQUIRE(texture.create(window.getSize()));
+        auto texture = sf::Texture::create(window.getSize()).value();
 
         window.clear(sf::Color::Red);
         texture.update(window);

@@ -37,6 +37,7 @@
 #include <SFML/System/Vector2.hpp>
 
 #include <filesystem>
+#include <optional>
 
 #include <cstddef>
 #include <cstdint>
@@ -55,14 +56,6 @@ class Image;
 class SFML_GRAPHICS_API Texture : GlResource
 {
 public:
-    ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    /// Creates an empty texture.
-    ///
-    ////////////////////////////////////////////////////////////
-    Texture();
-
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
@@ -101,11 +94,12 @@ public:
     /// If this function fails, the texture is left unchanged.
     ///
     /// \param size Width and height of the texture
+    /// \param sRgb True to enable sRGB conversion, false to disable it
     ///
-    /// \return True if creation was successful
+    /// \return Texture if creation was successful, otherwise `std::nullopt`
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool create(const Vector2u& size);
+    [[nodiscard]] static std::optional<Texture> create(const Vector2u& size, bool sRgb = false);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from a file on disk
@@ -122,14 +116,17 @@ public:
     /// If this function fails, the texture is left unchanged.
     ///
     /// \param filename Path of the image file to load
+    /// \param sRgb     True to enable sRGB conversion, false to disable it
     /// \param area     Area of the image to load
     ///
-    /// \return True if loading was successful
+    /// \return Texture if loading was successful, otherwise `std::nullopt`
     ///
     /// \see loadFromMemory, loadFromStream, loadFromImage
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromFile(const std::filesystem::path& filename, const IntRect& area = {});
+    [[nodiscard]] static std::optional<Texture> loadFromFile(const std::filesystem::path& filename,
+                                                             bool                         sRgb = false,
+                                                             const IntRect&               area = {});
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from a file in memory
@@ -147,14 +144,19 @@ public:
     ///
     /// \param data Pointer to the file data in memory
     /// \param size Size of the data to load, in bytes
+    /// \param sRgb True to enable sRGB conversion, false to disable it
     /// \param area Area of the image to load
     ///
-    /// \return True if loading was successful
+    /// \return Texture if loading was successful, otherwise `std::nullopt`
     ///
     /// \see loadFromFile, loadFromStream, loadFromImage
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromMemory(const void* data, std::size_t size, const IntRect& area = {});
+    [[nodiscard]] static std::optional<Texture> loadFromMemory(
+        const void*    data,
+        std::size_t    size,
+        bool           sRgb = false,
+        const IntRect& area = {});
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from a custom stream
@@ -171,14 +173,15 @@ public:
     /// If this function fails, the texture is left unchanged.
     ///
     /// \param stream Source stream to read from
+    /// \param sRgb   True to enable sRGB conversion, false to disable it
     /// \param area   Area of the image to load
     ///
-    /// \return True if loading was successful
+    /// \return Texture if loading was successful, otherwise `std::nullopt`
     ///
     /// \see loadFromFile, loadFromMemory, loadFromImage
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromStream(InputStream& stream, const IntRect& area = {});
+    [[nodiscard]] static std::optional<Texture> loadFromStream(InputStream& stream, bool sRgb = false, const IntRect& area = {});
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from an image
@@ -195,14 +198,15 @@ public:
     /// If this function fails, the texture is left unchanged.
     ///
     /// \param image Image to load into the texture
+    /// \param sRgb   True to enable sRGB conversion, false to disable it
     /// \param area  Area of the image to load
     ///
-    /// \return True if loading was successful
+    /// \return Texture if loading was successful, otherwise `std::nullopt`
     ///
     /// \see loadFromFile, loadFromMemory
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromImage(const Image& image, const IntRect& area = {});
+    [[nodiscard]] static std::optional<Texture> loadFromImage(const Image& image, bool sRgb = false, const IntRect& area = {});
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the size of the texture
@@ -403,31 +407,6 @@ public:
     bool isSmooth() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Enable or disable conversion from sRGB
-    ///
-    /// When providing texture data from an image file or memory, it can
-    /// either be stored in a linear color space or an sRGB color space.
-    /// Most digital images account for gamma correction already, so they
-    /// would need to be "uncorrected" back to linear color space before
-    /// being processed by the hardware. The hardware can automatically
-    /// convert it from the sRGB color space to a linear color space when
-    /// it gets sampled. When the rendered image gets output to the final
-    /// framebuffer, it gets converted back to sRGB.
-    ///
-    /// After enabling or disabling sRGB conversion, make sure to reload
-    /// the texture data in order for the setting to take effect.
-    ///
-    /// This option is only useful in conjunction with an sRGB capable
-    /// framebuffer. This can be requested during window creation.
-    ///
-    /// \param sRgb True to enable sRGB conversion, false to disable it
-    ///
-    /// \see isSrgb
-    ///
-    ////////////////////////////////////////////////////////////
-    void setSrgb(bool sRgb);
-
-    ////////////////////////////////////////////////////////////
     /// \brief Tell whether the texture source is converted from sRGB or not
     ///
     /// \return True if the texture source is converted from sRGB, false if not
@@ -567,6 +546,14 @@ private:
     friend class RenderTarget;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Default constructor
+    ///
+    /// Creates an empty texture.
+    ///
+    ////////////////////////////////////////////////////////////
+    Texture(const Vector2u& size, const Vector2u& actualSize, unsigned int texture, bool sRgb);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Get a valid image size according to hardware support
     ///
     /// This function checks whether the graphics driver supports
@@ -657,15 +644,25 @@ SFML_GRAPHICS_API void swap(Texture& left, Texture& right) noexcept;
 /// that a pixel must be composed of 8 bits red, green, blue and
 /// alpha channels -- just like a sf::Color.
 ///
+/// When providing texture data from an image file or memory, it can
+/// either be stored in a linear color space or an sRGB color space.
+/// Most digital images account for gamma correction already, so they
+/// would need to be "uncorrected" back to linear color space before
+/// being processed by the hardware. The hardware can automatically
+/// convert it from the sRGB color space to a linear color space when
+/// it gets sampled. When the rendered image gets output to the final
+/// framebuffer, it gets converted back to sRGB.
+///
+/// This option is only useful in conjunction with an sRGB capable
+/// framebuffer. This can be requested during window creation.
+///
 /// Usage example:
 /// \code
 /// // This example shows the most common use of sf::Texture:
 /// // drawing a sprite
 ///
 /// // Load a texture from a file
-/// sf::Texture texture;
-/// if (!texture.loadFromFile("texture.png"))
-///     return -1;
+/// const auto texture = sf::Texture::loadFromFile("texture.png").value();
 ///
 /// // Assign it to a sprite
 /// sf::Sprite sprite(texture);
@@ -679,9 +676,7 @@ SFML_GRAPHICS_API void swap(Texture& left, Texture& right) noexcept;
 /// // streaming real-time data, like video frames
 ///
 /// // Create an empty texture
-/// sf::Texture texture;
-/// if (!texture.create({640, 480}))
-///     return -1;
+/// auto texture = sf::Texture::create({640, 480}).value();
 ///
 /// // Create a sprite that will display the texture
 /// sf::Sprite sprite(texture);

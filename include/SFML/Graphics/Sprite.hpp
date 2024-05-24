@@ -266,12 +266,8 @@ private:
 ///
 /// Usage example:
 /// \code
-/// // Declare and load a texture
-/// sf::Texture texture;
-/// if (!texture.loadFromFile("texture.png"))
-/// {
-///     // Handle error...
-/// }
+/// // Load a texture
+/// const auto texture = sf::Texture::loadFromFile("texture.png").value();
 ///
 /// // Create a sprite
 /// sf::Sprite sprite(texture);

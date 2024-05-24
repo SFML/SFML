@@ -21,9 +21,7 @@
 ///     sf::RenderWindow window(sf::VideoMode({800, 600}), "SFML window");
 ///
 ///     // Load a sprite to display
-///     sf::Texture texture;
-///     if (!texture.loadFromFile("cute_image.jpg"))
-///         return EXIT_FAILURE;
+///     const auto texture = sf::Texture::loadFromFile("cute_image.jpg").value();
 ///     sf::Sprite sprite(texture);
 ///
 ///     // Create a graphical text to display

@@ -28,11 +28,7 @@ int main()
     window.setIcon(icon);
 
     // Load a sprite to display
-    sf::Texture texture;
-    if (!texture.loadFromFile("background.jpg"))
-    {
-        return EXIT_FAILURE;
-    }
+    const auto texture = sf::Texture::loadFromFile("background.jpg").value();
     sf::Sprite sprite(texture);
 
     // Create a graphical text to display

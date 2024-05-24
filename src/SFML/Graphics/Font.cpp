@@ -45,6 +45,7 @@
 #include <ostream>
 #include <utility>
 
+#include <cassert>
 #include <cmath>
 #include <cstring>
 
@@ -469,7 +470,9 @@ bool Font::isSmooth() const
 ////////////////////////////////////////////////////////////
 Font::Page& Font::loadPage(unsigned int characterSize) const
 {
-    return m_pages.try_emplace(characterSize, m_isSmooth).first->second;
+    auto page = Page::make(m_isSmooth);
+    assert(page && "Font::loadPage() Failed to load page");
+    return m_pages.try_emplace(characterSize, std::move(*page)).first->second;
 }
 
 
@@ -679,16 +682,16 @@ IntRect Font::findGlyphRect(Page& page, const Vector2u& size) const
             if ((textureSize.x * 2 <= Texture::getMaximumSize()) && (textureSize.y * 2 <= Texture::getMaximumSize()))
             {
                 // Make the texture 2 times bigger
-                Texture newTexture;
-                if (!newTexture.create(textureSize * 2u))
+                auto newTexture = sf::Texture::create(textureSize * 2u);
+                if (!newTexture)
                 {
                     err() << "Failed to create new page texture" << std::endl;
                     return {{0, 0}, {2, 2}};
                 }
 
-                newTexture.setSmooth(m_isSmooth);
-                newTexture.update(page.texture);
-                page.texture.swap(newTexture);
+                newTexture->setSmooth(m_isSmooth);
+                newTexture->update(page.texture);
+                page.texture.swap(*newTexture);
             }
             else
             {
@@ -757,7 +760,7 @@ bool Font::setCurrentSize(unsigned int characterSize) const
 
 
 ////////////////////////////////////////////////////////////
-Font::Page::Page(bool smooth)
+std::optional<Font::Page> Font::Page::make(bool smooth)
 {
     // Make sure that the texture is initialized by default
     Image image({128, 128}, Color::Transparent);
@@ -768,12 +771,21 @@ Font::Page::Page(bool smooth)
             image.setPixel({x, y}, Color::White);
 
     // Create the texture
-    if (!texture.loadFromImage(image))
+    auto texture = sf::Texture::loadFromImage(image);
+    if (!texture)
     {
         err() << "Failed to load font page texture" << std::endl;
+        return std::nullopt;
     }
 
-    texture.setSmooth(smooth);
+    texture->setSmooth(smooth);
+    return Page(std::move(*texture));
+}
+
+
+////////////////////////////////////////////////////////////
+Font::Page::Page(Texture&& theTexture) : texture(std::move(theTexture))
+{
 }
 
 } // namespace sf
