@@ -927,8 +927,7 @@ void WindowImplX11::setTitle(const String& title)
                     utf8Title.c_str(),
                     static_cast<int>(utf8Title.size()));
 
-// Set the non-Unicode title as a fallback for window managers who don't support _NET_WM_NAME.
-#ifdef X_HAVE_UTF8_STRING
+    // Set the non-Unicode title as a fallback for window managers who don't support _NET_WM_NAME.
     Xutf8SetWMProperties(m_display.get(),
                          m_window,
                          title.toAnsiString().c_str(),
@@ -938,17 +937,6 @@ void WindowImplX11::setTitle(const String& title)
                          nullptr,
                          nullptr,
                          nullptr);
-#else
-    XmbSetWMProperties(m_display.get(),
-                       m_window,
-                       title.toAnsiString().c_str(),
-                       title.toAnsiString().c_str(),
-                       nullptr,
-                       0,
-                       nullptr,
-                       nullptr,
-                       nullptr);
-#endif
 }
 
 
@@ -1816,7 +1804,6 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             // Generate TextEntered events if needed
             if (!filtered)
             {
-#ifdef X_HAVE_UTF8_STRING
                 if (m_inputContext)
                 {
                     Status       status = 0;
@@ -1849,7 +1836,6 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                     }
                 }
                 else
-#endif
                 {
                     static XComposeStatus status;
                     char                  keyBuffer[16];
