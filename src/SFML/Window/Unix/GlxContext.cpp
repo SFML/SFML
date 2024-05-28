@@ -107,22 +107,8 @@ private:
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-GlxContext::GlxContext(GlxContext* shared)
+GlxContext::GlxContext(GlxContext* shared) : GlxContext(shared, {}, {1, 1})
 {
-    // Save the creation settings
-    m_settings = ContextSettings{};
-
-    // Open the connection with the X server
-    m_display = openDisplay();
-
-    // Make sure that extensions are initialized
-    ensureExtensionsInit(m_display.get(), DefaultScreen(m_display.get()));
-
-    // Create the rendering surface (window or pbuffer if supported)
-    createSurface(shared, {1, 1}, VideoMode::getDesktopMode().bitsPerPixel);
-
-    // Create the context
-    createContext(shared);
 }
 
 
