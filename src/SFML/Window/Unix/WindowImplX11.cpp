@@ -1274,9 +1274,7 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
         return;
 
     // Check if the XRandR extension is present
-    int xRandRMajor = 0;
-    int xRandRMinor = 0;
-    if (!checkXRandR(xRandRMajor, xRandRMinor))
+    if (!checkXRandR())
     {
         // XRandR extension is not supported: we cannot use fullscreen mode
         err() << "Fullscreen is not supported, switching to window mode" << std::endl;
@@ -1294,7 +1292,7 @@ void WindowImplX11::setVideoMode(const VideoMode& mode)
         return;
     }
 
-    RROutput output = getOutputPrimary(rootWindow, res.get(), xRandRMajor, xRandRMinor);
+    RROutput output = getOutputPrimary(rootWindow, res.get());
 
     // Get output info from output
     const auto outputInfo = X11Ptr<XRROutputInfo>(XRRGetOutputInfo(m_display.get(), res.get(), output));
@@ -1365,9 +1363,7 @@ void WindowImplX11::resetVideoMode()
     {
         // Try to set old configuration
         // Check if the XRandR extension
-        int xRandRMajor = 0;
-        int xRandRMinor = 0;
-        if (checkXRandR(xRandRMajor, xRandRMinor))
+        if (checkXRandR())
         {
             const auto res = X11Ptr<XRRScreenResources>(
                 XRRGetScreenResources(m_display.get(), DefaultRootWindow(m_display.get())));
@@ -1385,21 +1381,12 @@ void WindowImplX11::resetVideoMode()
                 return;
             }
 
-            RROutput output = 0;
+            // Get the primary screen
+            RROutput output = XRRGetOutputPrimary(m_display.get(), DefaultRootWindow(m_display.get()));
 
-            // if version >= 1.3 get the primary screen else take the first screen
-            if ((xRandRMajor == 1 && xRandRMinor >= 3) || xRandRMajor > 1)
-            {
-                output = XRRGetOutputPrimary(m_display.get(), DefaultRootWindow(m_display.get()));
-
-                // Check if returned output is valid, otherwise use the first screen
-                if (output == None)
-                    output = res->outputs[0];
-            }
-            else
-            {
+            // Check if returned output is valid, otherwise use the first screen
+            if (output == None)
                 output = res->outputs[0];
-            }
 
             XRRSetCrtcConfig(m_display.get(),
                              res.get(),
@@ -2045,7 +2032,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
 
 
 ////////////////////////////////////////////////////////////
-bool WindowImplX11::checkXRandR(int& xRandRMajor, int& xRandRMinor)
+bool WindowImplX11::checkXRandR()
 {
     // Check if the XRandR extension is present
     int version = 0;
@@ -2055,35 +2042,20 @@ bool WindowImplX11::checkXRandR(int& xRandRMajor, int& xRandRMinor)
         return false;
     }
 
-    // Check XRandR version, 1.2 required
-    if (!XRRQueryVersion(m_display.get(), &xRandRMajor, &xRandRMinor) || xRandRMajor < 1 ||
-        (xRandRMajor == 1 && xRandRMinor < 2))
-    {
-        err() << "XRandR is too old" << std::endl;
-        return false;
-    }
-
     return true;
 }
 
 
 ////////////////////////////////////////////////////////////
-RROutput WindowImplX11::getOutputPrimary(::Window& rootWindow, XRRScreenResources* res, int xRandRMajor, int xRandRMinor)
+RROutput WindowImplX11::getOutputPrimary(::Window& rootWindow, XRRScreenResources* res)
 {
-    // if xRandR version >= 1.3 get the primary screen else take the first screen
-    if ((xRandRMajor == 1 && xRandRMinor >= 3) || xRandRMajor > 1)
-    {
-        const RROutput output = XRRGetOutputPrimary(m_display.get(), rootWindow);
+    const RROutput output = XRRGetOutputPrimary(m_display.get(), rootWindow);
 
-        // Check if returned output is valid, otherwise use the first screen
-        if (output == None)
-            return res->outputs[0];
-        else
-            return output;
-    }
-
-    // xRandr version can't get the primary screen, use the first screen
-    return res->outputs[0];
+    // Check if returned output is valid, otherwise use the first screen
+    if (output == None)
+        return res->outputs[0];
+    else
+        return output;
 }
 
 
@@ -2103,13 +2075,7 @@ Vector2i WindowImplX11::getPrimaryMonitorPosition()
         return monitorPosition;
     }
 
-    // Get xRandr version
-    int xRandRMajor = 0;
-    int xRandRMinor = 0;
-    if (!checkXRandR(xRandRMajor, xRandRMinor))
-        xRandRMajor = xRandRMinor = 0;
-
-    const RROutput output = getOutputPrimary(rootWindow, res.get(), xRandRMajor, xRandRMinor);
+    const RROutput output = getOutputPrimary(rootWindow, res.get());
 
     // Get output info from output
     const auto outputInfo = X11Ptr<XRROutputInfo>(XRRGetOutputInfo(m_display.get(), res.get(), output));

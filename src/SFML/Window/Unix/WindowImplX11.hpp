@@ -284,26 +284,21 @@ private:
     ////////////////////////////////////////////////////////////
     /// \brief Check if a valid version of XRandR extension is present
     ///
-    /// \param xRandRMajor XRandR major version
-    /// \param xRandRMinor XRandR minor version
-    ///
     /// \return True if a valid XRandR version found, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool checkXRandR(int& xRandRMajor, int& xRandRMinor);
+    bool checkXRandR();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the RROutput of the primary monitor
     ///
     /// \param rootWindow the root window
     /// \param res screen resources
-    /// \param xRandRMajor XRandR major version
-    /// \param xRandRMinor XRandR minor version
     ///
     /// \return RROutput of the primary monitor
     ///
     ////////////////////////////////////////////////////////////
-    RROutput getOutputPrimary(::Window& rootWindow, XRRScreenResources* res, int xRandRMajor, int xRandRMinor);
+    RROutput getOutputPrimary(::Window& rootWindow, XRRScreenResources* res);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get coordinates of the primary monitor
