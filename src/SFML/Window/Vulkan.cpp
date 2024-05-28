@@ -31,8 +31,7 @@
 
 #if defined(SFML_SYSTEM_WINDOWS)
 
-#include <SFML/Window/Win32/VulkanImplWin32.hpp>
-using VulkanImplType = sf::priv::VulkanImplWin32;
+#include <SFML/Window/VulkanImpl.hpp>
 
 #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || \
     defined(SFML_SYSTEM_NETBSD)
@@ -43,8 +42,7 @@ using VulkanImplType = sf::priv::VulkanImplWin32;
 
 #else
 
-#include <SFML/Window/Unix/VulkanImplX11.hpp>
-using VulkanImplType = sf::priv::VulkanImplX11;
+#include <SFML/Window/VulkanImpl.hpp>
 
 #endif
 
@@ -66,7 +64,7 @@ bool Vulkan::isAvailable([[maybe_unused]] bool requireGraphics)
 
 #else
 
-    return VulkanImplType::isAvailable(requireGraphics);
+    return priv::VulkanImpl::isAvailable(requireGraphics);
 
 #endif
 }
@@ -83,7 +81,7 @@ VulkanFunctionPointer Vulkan::getFunction([[maybe_unused]] const char* name)
 
 #else
 
-    return VulkanImplType::getFunction(name);
+    return priv::VulkanImpl::getFunction(name);
 
 #endif
 }
@@ -100,7 +98,7 @@ const std::vector<const char*>& Vulkan::getGraphicsRequiredInstanceExtensions()
 
 #else
 
-    return VulkanImplType::getGraphicsRequiredInstanceExtensions();
+    return priv::VulkanImpl::getGraphicsRequiredInstanceExtensions();
 
 #endif
 }

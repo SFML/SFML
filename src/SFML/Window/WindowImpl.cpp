@@ -44,8 +44,7 @@
 #include <SFML/Window/Win32/WindowImplWin32.hpp>
 using WindowImplType = sf::priv::WindowImplWin32;
 
-#include <SFML/Window/Win32/VulkanImplWin32.hpp>
-using VulkanImplType = sf::priv::VulkanImplWin32;
+#include <SFML/Window/VulkanImpl.hpp>
 
 #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || \
     defined(SFML_SYSTEM_NETBSD)
@@ -62,8 +61,7 @@ using WindowImplType = sf::priv::WindowImplDRM;
 #include <SFML/Window/Unix/WindowImplX11.hpp>
 using WindowImplType = sf::priv::WindowImplX11;
 
-#include <SFML/Window/Unix/VulkanImplX11.hpp>
-using VulkanImplType = sf::priv::VulkanImplX11;
+#include <SFML/Window/VulkanImpl.hpp>
 
 #endif
 
@@ -324,7 +322,7 @@ bool WindowImpl::createVulkanSurface([[maybe_unused]] const VkInstance&         
 
 #else
 
-    return VulkanImplType::createVulkanSurface(instance, getNativeHandle(), surface, allocator);
+    return VulkanImpl::createVulkanSurface(instance, getNativeHandle(), surface, allocator);
 
 #endif
 }

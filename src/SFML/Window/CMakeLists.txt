@@ -41,6 +41,7 @@ set(SRC
     ${SRCROOT}/VideoModeImpl.hpp
     ${SRCROOT}/Vulkan.cpp
     ${INCROOT}/Vulkan.hpp
+    ${SRCROOT}/VulkanImpl.hpp
     ${SRCROOT}/Window.cpp
     ${INCROOT}/Window.hpp
     ${SRCROOT}/WindowBase.cpp
@@ -66,7 +67,6 @@ if(SFML_OS_WINDOWS)
         ${SRCROOT}/Win32/SensorImpl.cpp
         ${SRCROOT}/Win32/VideoModeImpl.cpp
         ${SRCROOT}/Win32/VulkanImplWin32.cpp
-        ${SRCROOT}/Win32/VulkanImplWin32.hpp
         ${SRCROOT}/Win32/WindowImplWin32.cpp
         ${SRCROOT}/Win32/WindowImplWin32.hpp
     )
@@ -123,7 +123,6 @@ elseif(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
             ${SRCROOT}/Unix/Utils.hpp
             ${SRCROOT}/Unix/VideoModeImpl.cpp
             ${SRCROOT}/Unix/VulkanImplX11.cpp
-            ${SRCROOT}/Unix/VulkanImplX11.hpp
             ${SRCROOT}/Unix/WindowImplX11.cpp
             ${SRCROOT}/Unix/WindowImplX11.hpp
         )
