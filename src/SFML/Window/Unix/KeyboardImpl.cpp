@@ -473,7 +473,6 @@ void ensureMapping()
     XkbGetNames(display.get(), XkbKeyNamesMask, descriptor);
 
     std::unordered_map<std::string, sf::Keyboard::Scancode> nameScancodeMap = getNameScancodeMap();
-    sf::Keyboard::Scancode                                  scancode        = sf::Keyboard::Scan::Unknown;
 
     for (int keycode = descriptor->min_key_code; keycode <= descriptor->max_key_code; ++keycode)
     {
@@ -486,7 +485,7 @@ void ensureMapping()
         name[XkbKeyNameLength] = '\0';
 
         const auto mappedScancode = nameScancodeMap.find(std::string(name));
-        scancode                  = sf::Keyboard::Scan::Unknown;
+        auto       scancode       = sf::Keyboard::Scan::Unknown;
 
         if (mappedScancode != nameScancodeMap.end())
             scancode = mappedScancode->second;
@@ -505,7 +504,7 @@ void ensureMapping()
     {
         if (keycodeToScancode[static_cast<KeyCode>(keycode)] == sf::Keyboard::Scan::Unknown)
         {
-            scancode = translateKeyCode(display.get(), static_cast<KeyCode>(keycode));
+            const auto scancode = translateKeyCode(display.get(), static_cast<KeyCode>(keycode));
 
             if (scancode != sf::Keyboard::Scan::Unknown && scancodeToKeycode[scancode] == nullKeyCode)
                 scancodeToKeycode[scancode] = static_cast<KeyCode>(keycode);

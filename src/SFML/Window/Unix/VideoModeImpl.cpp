@@ -57,8 +57,7 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
     std::vector<VideoMode> modes;
 
     // Open a connection with the X server
-    const auto display = openDisplay();
-    if (display)
+    if (const auto display = openDisplay())
     {
         // Retrieve the default screen number
         const int screen = DefaultScreen(display.get());
@@ -135,8 +134,7 @@ VideoMode VideoModeImpl::getDesktopMode()
     VideoMode desktopMode;
 
     // Open a connection with the X server
-    const auto display = openDisplay();
-    if (display)
+    if (const auto display = openDisplay())
     {
         // Retrieve the default screen number
         const int screen = DefaultScreen(display.get());
