@@ -26,7 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Unix/Display.hpp>
-#include <SFML/Window/Unix/VulkanImplX11.hpp>
+#include <SFML/Window/VulkanImpl.hpp>
 
 #include <dlfcn.h>
 #include <string_view>
@@ -106,7 +106,7 @@ VulkanLibraryWrapper wrapper;
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-bool VulkanImplX11::isAvailable(bool requireGraphics)
+bool VulkanImpl::isAvailable(bool requireGraphics)
 {
     static bool checked           = false;
     static bool computeAvailable  = false;
@@ -164,7 +164,7 @@ bool VulkanImplX11::isAvailable(bool requireGraphics)
 
 
 ////////////////////////////////////////////////////////////
-VulkanFunctionPointer VulkanImplX11::getFunction(const char* name)
+VulkanFunctionPointer VulkanImpl::getFunction(const char* name)
 {
     if (!isAvailable(false))
         return nullptr;
@@ -174,7 +174,7 @@ VulkanFunctionPointer VulkanImplX11::getFunction(const char* name)
 
 
 ////////////////////////////////////////////////////////////
-const std::vector<const char*>& VulkanImplX11::getGraphicsRequiredInstanceExtensions()
+const std::vector<const char*>& VulkanImpl::getGraphicsRequiredInstanceExtensions()
 {
     static const std::vector<const char*> extensions{VK_KHR_SURFACE_EXTENSION_NAME, VK_KHR_XLIB_SURFACE_EXTENSION_NAME};
     return extensions;
@@ -182,10 +182,10 @@ const std::vector<const char*>& VulkanImplX11::getGraphicsRequiredInstanceExtens
 
 
 ////////////////////////////////////////////////////////////
-bool VulkanImplX11::createVulkanSurface(const VkInstance&            instance,
-                                        WindowHandle                 windowHandle,
-                                        VkSurfaceKHR&                surface,
-                                        const VkAllocationCallbacks* allocator)
+bool VulkanImpl::createVulkanSurface(const VkInstance&            instance,
+                                     WindowHandle                 windowHandle,
+                                     VkSurfaceKHR&                surface,
+                                     const VkAllocationCallbacks* allocator)
 {
     if (!isAvailable())
         return false;
