@@ -110,7 +110,6 @@ struct ConnectionCache
     bool      connected{};
     sf::Clock timer;
 };
-const sf::Time connectionRefreshDelay = sf::milliseconds(500);
 
 ConnectionCache connectionCache[sf::Joystick::Count];
 
@@ -251,7 +250,8 @@ bool JoystickImpl::isConnected(unsigned int index)
     if (directInput)
         return isConnectedDInput(index);
 
-    ConnectionCache& cache = connectionCache[index];
+    ConnectionCache&   cache                  = connectionCache[index];
+    constexpr sf::Time connectionRefreshDelay = sf::milliseconds(500);
     if (!lazyUpdates && cache.timer.getElapsedTime() > connectionRefreshDelay)
     {
         JOYINFOEX joyInfo;
