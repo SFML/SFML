@@ -38,26 +38,29 @@ public:
             return false;
         m_sprite.emplace(m_texture);
 
-        m_shader.setUniform("texture", sf::Shader::CurrentTexture);
+        // Load the shader
+        if (!(m_shader = sf::Shader::loadFromFile("resources/pixelate.frag", sf::Shader::Type::Fragment)))
+            return false;
+        m_shader->setUniform("texture", sf::Shader::CurrentTexture);
 
         return true;
     }
 
     void onUpdate(float, float x, float y) override
     {
-        m_shader.setUniform("pixel_threshold", (x + y) / 30);
+        m_shader->setUniform("pixel_threshold", (x + y) / 30);
     }
 
     void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
-        states.shader = &m_shader;
+        states.shader = &*m_shader;
         target.draw(*m_sprite, states);
     }
 
 private:
     sf::Texture               m_texture;
     std::optional<sf::Sprite> m_sprite;
-    sf::Shader m_shader{sf::Shader::loadFromFile("resources/pixelate.frag", sf::Shader::Type::Fragment).value()};
+    std::optional<sf::Shader> m_shader;
 };
 
 
@@ -96,25 +99,26 @@ public:
         m_text.setCharacterSize(22);
         m_text.setPosition({30.f, 20.f});
 
-        return true;
+        // Load the shader
+        return (m_shader = sf::Shader::loadFromFile("resources/wave.vert", "resources/blur.frag")).has_value();
     }
 
     void onUpdate(float time, float x, float y) override
     {
-        m_shader.setUniform("wave_phase", time);
-        m_shader.setUniform("wave_amplitude", sf::Vector2f(x * 40, y * 40));
-        m_shader.setUniform("blur_radius", (x + y) * 0.008f);
+        m_shader->setUniform("wave_phase", time);
+        m_shader->setUniform("wave_amplitude", sf::Vector2f(x * 40, y * 40));
+        m_shader->setUniform("blur_radius", (x + y) * 0.008f);
     }
 
     void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
-        states.shader = &m_shader;
+        states.shader = &*m_shader;
         target.draw(m_text, states);
     }
 
 private:
-    sf::Text   m_text;
-    sf::Shader m_shader{sf::Shader::loadFromFile("resources/wave.vert", "resources/blur.frag").value()};
+    sf::Text                  m_text;
+    std::optional<sf::Shader> m_shader;
 };
 
 
@@ -146,27 +150,28 @@ public:
             m_points.append({{x, y}, {r, g, b}});
         }
 
-        return true;
+        // Load the shader
+        return (m_shader = sf::Shader::loadFromFile("resources/storm.vert", "resources/blink.frag")).has_value();
     }
 
     void onUpdate(float time, float x, float y) override
     {
         const float radius = 200 + std::cos(time) * 150;
-        m_shader.setUniform("storm_position", sf::Vector2f(x * 800, y * 600));
-        m_shader.setUniform("storm_inner_radius", radius / 3);
-        m_shader.setUniform("storm_total_radius", radius);
-        m_shader.setUniform("blink_alpha", 0.5f + std::cos(time * 3) * 0.25f);
+        m_shader->setUniform("storm_position", sf::Vector2f(x * 800, y * 600));
+        m_shader->setUniform("storm_inner_radius", radius / 3);
+        m_shader->setUniform("storm_total_radius", radius);
+        m_shader->setUniform("blink_alpha", 0.5f + std::cos(time * 3) * 0.25f);
     }
 
     void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
-        states.shader = &m_shader;
+        states.shader = &*m_shader;
         target.draw(m_points, states);
     }
 
 private:
-    sf::VertexArray m_points;
-    sf::Shader      m_shader{sf::Shader::loadFromFile("resources/storm.vert", "resources/blink.frag").value()};
+    sf::VertexArray           m_points;
+    std::optional<sf::Shader> m_shader;
 };
 
 
@@ -182,7 +187,10 @@ public:
 
     bool onLoad() override
     {
-        m_surface.setSmooth(true);
+        // Create the off-screen surface
+        if (!(m_surface = sf::RenderTexture::create({800, 600})))
+            return false;
+        m_surface->setSmooth(true);
 
         // Load the textures
         if (!m_backgroundTexture.loadFromFile("resources/sfml.png"))
@@ -203,15 +211,17 @@ public:
             m_entities.push_back(entity);
         }
 
-        // Set the shader uniform
-        m_shader.setUniform("texture", sf::Shader::CurrentTexture);
+        // Load the shader
+        if (!(m_shader = sf::Shader::loadFromFile("resources/edge.frag", sf::Shader::Type::Fragment)))
+            return false;
+        m_shader->setUniform("texture", sf::Shader::CurrentTexture);
 
         return true;
     }
 
     void onUpdate(float time, float x, float y) override
     {
-        m_shader.setUniform("edge_threshold", 1 - (x + y) / 2);
+        m_shader->setUniform("edge_threshold", 1 - (x + y) / 2);
 
         // Update the position of the moving entities
         for (std::size_t i = 0; i < m_entities.size(); ++i)
@@ -225,26 +235,26 @@ public:
         }
 
         // Render the updated scene to the off-screen surface
-        m_surface.clear(sf::Color::White);
-        m_surface.draw(*m_backgroundSprite);
+        m_surface->clear(sf::Color::White);
+        m_surface->draw(*m_backgroundSprite);
         for (const sf::Sprite& entity : m_entities)
-            m_surface.draw(entity);
-        m_surface.display();
+            m_surface->draw(entity);
+        m_surface->display();
     }
 
     void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
-        states.shader = &m_shader;
-        target.draw(sf::Sprite(m_surface.getTexture()), states);
+        states.shader = &*m_shader;
+        target.draw(sf::Sprite(m_surface->getTexture()), states);
     }
 
 private:
-    sf::RenderTexture         m_surface{sf::RenderTexture::create({800, 600}).value()};
-    sf::Texture               m_backgroundTexture;
-    sf::Texture               m_entityTexture;
-    std::optional<sf::Sprite> m_backgroundSprite;
-    std::vector<sf::Sprite>   m_entities;
-    sf::Shader m_shader{sf::Shader::loadFromFile("resources/edge.frag", sf::Shader::Type::Fragment).value()};
+    std::optional<sf::RenderTexture> m_surface;
+    sf::Texture                      m_backgroundTexture;
+    sf::Texture                      m_entityTexture;
+    std::optional<sf::Sprite>        m_backgroundSprite;
+    std::vector<sf::Sprite>          m_entities;
+    std::optional<sf::Shader>        m_shader;
 };
 
 
@@ -278,10 +288,9 @@ public:
             return false;
 
         // Load the shader
-        m_shader = sf::Shader::loadFromFile("resources/billboard.vert",
-                                            "resources/billboard.geom",
-                                            "resources/billboard.frag");
-        if (!m_shader)
+        if (!(m_shader = sf::Shader::loadFromFile("resources/billboard.vert",
+                                                  "resources/billboard.geom",
+                                                  "resources/billboard.frag")))
             return false;
         m_shader->setUniform("texture", sf::Shader::CurrentTexture);
 

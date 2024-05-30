@@ -46,6 +46,8 @@ public:
         }
         else
         {
+            // Clear the target to grey to make sure the text is always readable
+            target.clear(sf::Color(50, 50, 50));
             sf::Text error(getFont(), "Shader not\nsupported");
             error.setPosition({320.f, 200.f});
             error.setCharacterSize(36);
