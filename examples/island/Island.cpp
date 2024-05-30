@@ -97,6 +97,7 @@ int main()
     sf::Text                  hudText(font);
     sf::Text                  statusText(font);
     std::optional<sf::Shader> terrainShader;
+    sf::RenderStates          terrainStates;
     sf::VertexBuffer          terrain(sf::PrimitiveType::Triangles, sf::VertexBuffer::Usage::Static);
 
     // Set up our text drawables
@@ -145,6 +146,9 @@ int main()
         generateTerrain(terrainStagingBuffer.data());
 
         statusText.setString("Generating Terrain...");
+
+        // Set up the render states
+        terrainStates = sf::RenderStates(&*terrainShader);
     }
 
     // Center the status text
@@ -233,7 +237,7 @@ int main()
                     }
 
                     terrainShader->setUniform("lightFactor", lightFactor);
-                    window.draw(terrain, sf::RenderStates(&*terrainShader));
+                    window.draw(terrain, terrainStates);
                 }
             }
 
