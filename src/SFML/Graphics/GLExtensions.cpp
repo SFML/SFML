@@ -53,6 +53,38 @@
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
+void extensionSanityCheck()
+{
+    static const auto check = [](int& flag, auto... entryPoints)
+    {
+        // If a required entry point is missing, flag the whole extension as unavailable
+        if (!(entryPoints && ...))
+            flag = 0;
+    };
+#ifdef SFML_OPENGL_ES
+    check(GLEXT_multitexture_dependencies);
+    check(GLEXT_vertex_buffer_object_dependencies);
+    check(GLEXT_OES_blend_subtract_dependencies);
+    check(GLEXT_blend_func_separate_dependencies);
+    check(GLEXT_blend_equation_separate_dependencies);
+    check(GLEXT_framebuffer_object_dependencies);
+    check(GLEXT_EXT_blend_minmax_dependencies);
+#else
+    check(GLEXT_blend_minmax_dependencies);
+    check(GLEXT_multitexture_dependencies);
+    check(GLEXT_blend_func_separate_dependencies);
+    check(GLEXT_vertex_buffer_object_dependencies);
+    check(GLEXT_shader_objects_dependencies);
+    check(GLEXT_blend_equation_separate_dependencies);
+    check(GLEXT_framebuffer_object_dependencies);
+    check(GLEXT_framebuffer_blit_dependencies);
+    check(GLEXT_framebuffer_multisample_dependencies);
+    check(GLEXT_copy_buffer_dependencies);
+#endif
+}
+
+
+////////////////////////////////////////////////////////////
 void ensureExtensionsInit()
 {
     static bool initialized = false;
@@ -65,6 +97,13 @@ void ensureExtensionsInit()
 #else
         gladLoadGL(Context::getFunction);
 #endif
+        // Some GL implementations don't fully follow extension specifications
+        // and advertise support for extensions although not providing the
+        // entry points specified for the corresponding extension.
+        // In order to protect ourselves from such implementations, we perform
+        // a sanity check to ensure an extension is _really_ supported, even
+        // from an entry point perspective.
+        extensionSanityCheck();
 
         // Retrieve the context version number
         int majorVersion = 0;
