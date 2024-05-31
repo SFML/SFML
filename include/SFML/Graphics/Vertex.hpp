@@ -45,9 +45,9 @@ struct Vertex
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Vector2f position{};          //!< 2D position of the vertex
+    Vector2f position;            //!< 2D position of the vertex
     Color    color{Color::White}; //!< Color of the vertex
-    Vector2f texCoords{};         //!< Coordinates of the texture's pixel to map to the vertex
+    Vector2f texCoords{}; //!< Coordinates of the texture's pixel to map to the vertex NOLINT(readability-redundant-member-init)
 };
 
 } // namespace sf

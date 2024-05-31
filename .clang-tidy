@@ -71,7 +71,6 @@ Checks: >
   -readability-magic-numbers,
   -readability-named-parameter,
   -readability-redundant-casting,
-  -readability-redundant-member-init,
   -readability-uppercase-literal-suffix,
 CheckOptions:
   - { key: readability-identifier-naming.ClassCase,           value: CamelCase }
