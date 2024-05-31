@@ -217,7 +217,7 @@ struct SoundStream::Impl : priv::MiniaudioUtils::SoundBase
     std::uint64_t             samplesProcessed{};        //!< Number of samples processed since beginning of the stream
     unsigned int              channelCount{};            //!< Number of channels (1 = mono, 2 = stereo, ...)
     unsigned int              sampleRate{};              //!< Frequency (samples / second)
-    std::vector<SoundChannel> channelMap{};              //!< The map of position in sample frame to sound channel
+    std::vector<SoundChannel> channelMap;                //!< The map of position in sample frame to sound channel
     bool                      loop{};                    //!< Loop flag (true to loop, false to play once)
     bool                      streaming{true};           //!< True if we are still streaming samples from the source
 };
