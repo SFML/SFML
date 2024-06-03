@@ -59,7 +59,7 @@ endfunction()
 macro(sfml_add_library module)
 
     # parse the arguments
-    cmake_parse_arguments(THIS "STATIC" "" "SOURCES" ${ARGN})
+    cmake_parse_arguments(THIS "STATIC" "DEPENDENCIES" "SOURCES" ${ARGN})
     if(NOT "${THIS_UNPARSED_ARGUMENTS}" STREQUAL "")
         message(FATAL_ERROR "Extra unparsed arguments when calling sfml_add_library: ${THIS_UNPARSED_ARGUMENTS}")
     endif()
@@ -218,12 +218,41 @@ macro(sfml_add_library module)
         set_target_properties(${target} PROPERTIES POSITION_INDEPENDENT_CODE ON)
     endif()
 
-    # add the install rule
-    install(TARGETS ${target} EXPORT SFMLConfigExport
+    if(BUILD_SHARED_LIBS)
+        set(config_name "Shared")
+    else()
+        set(config_name "Static")
+    endif()
+
+    # install the target and create export-set
+    install(TARGETS ${target} EXPORT SFML${module}${config_name}Targets
             RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT bin
             LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT bin
             ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT devel
             FRAMEWORK DESTINATION "." COMPONENT bin)
+
+    # because the frameworks directory hierarchy has to be set up before any target files
+    # are installed we can't call install(EXPORT ...Targets) here
+    # this is because frameworks are only set up after all modules directories have already been added
+    # sfml_export_targets() is called after the frameworks are set up so we will have to
+    # save all modules to a global property and read it out to call install(EXPORT ...Targets)
+    # for each module in sfml_export_targets(), see below
+    get_property(SFML_ADD_LIBRARY_MODULES GLOBAL PROPERTY SFML_ADD_LIBRARY_MODULES_PROPERTY)
+    list(APPEND SFML_ADD_LIBRARY_MODULES ${module})
+    set_property(GLOBAL PROPERTY SFML_ADD_LIBRARY_MODULES_PROPERTY "${SFML_ADD_LIBRARY_MODULES}")
+
+    # when static linking, generate and install dependency configuration
+    if(NOT BUILD_SHARED_LIBS AND THIS_DEPENDENCIES)
+        # if we are building static libraries, generate and install dependencies config file
+        include(CMakePackageConfigHelpers)
+
+        configure_package_config_file("${THIS_DEPENDENCIES}" "${CMAKE_CURRENT_BINARY_DIR}/SFML${module}Dependencies.cmake"
+            INSTALL_DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/SFML")
+
+        install(FILES "${CMAKE_CURRENT_BINARY_DIR}/SFML${module}Dependencies.cmake"
+                DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/SFML
+                COMPONENT devel)
+    endif()
 
     # add <project>/include as public include directory
     target_include_directories(${target}
@@ -379,8 +408,8 @@ function(sfml_add_test target SOURCES DEPENDS)
     catch_discover_tests(${target} WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 endfunction()
 
-# Generate a SFMLConfig.cmake file (and associated files) from the targets registered against
-# the EXPORT name "SFMLConfigExport" (EXPORT parameter of install(TARGETS))
+# Generate a SFMLConfig.cmake file (and associated files) from the targets registered
+# in SFML_ADD_LIBRARY_MODULES_PROPERTY (EXPORT parameter of install(TARGETS))
 function(sfml_export_targets)
     # CMAKE_CURRENT_LIST_DIR or CMAKE_CURRENT_SOURCE_DIR not usable for files that are to be included like this one
     set(CURRENT_DIR "${PROJECT_SOURCE_DIR}/cmake")
@@ -390,13 +419,6 @@ function(sfml_export_targets)
                                      VERSION ${PROJECT_VERSION}
                                      COMPATIBILITY SameMajorVersion)
 
-    if(BUILD_SHARED_LIBS)
-        set(config_name "Shared")
-    else()
-        set(config_name "Static")
-    endif()
-    set(targets_config_filename "SFML${config_name}Targets.cmake")
-
     if(SFML_BUILD_FRAMEWORKS)
         set(config_package_location "SFML.framework/Resources/CMake")
     else()
@@ -404,15 +426,21 @@ function(sfml_export_targets)
     endif()
     configure_package_config_file("${CURRENT_DIR}/SFMLConfig.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/SFMLConfig.cmake"
         INSTALL_DESTINATION "${config_package_location}")
-    configure_package_config_file("${CURRENT_DIR}/SFMLConfigDependencies.cmake.in" "${CMAKE_CURRENT_BINARY_DIR}/SFMLConfigDependencies.cmake"
-        INSTALL_DESTINATION "${config_package_location}")
 
-    install(EXPORT SFMLConfigExport
-            FILE ${targets_config_filename}
-            DESTINATION ${config_package_location})
+    # generate and install export files for all modules that were added to the list in sfml_add_library()
+    if(BUILD_SHARED_LIBS)
+        set(config_name "Shared")
+    else()
+        set(config_name "Static")
+    endif()
+    get_property(SFML_ADD_LIBRARY_MODULES GLOBAL PROPERTY SFML_ADD_LIBRARY_MODULES_PROPERTY)
+    foreach(module ${SFML_ADD_LIBRARY_MODULES})
+        install(EXPORT SFML${module}${config_name}Targets
+                FILE SFML${module}${config_name}Targets.cmake
+                DESTINATION ${config_package_location})
+    endforeach()
 
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/SFMLConfig.cmake"
-                  "${CMAKE_CURRENT_BINARY_DIR}/SFMLConfigDependencies.cmake"
                   "${CMAKE_CURRENT_BINARY_DIR}/SFMLConfigVersion.cmake"
             DESTINATION ${config_package_location}
             COMPONENT devel)

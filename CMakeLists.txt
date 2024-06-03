@@ -106,37 +106,16 @@ if(SFML_BUILD_GRAPHICS AND NOT SFML_BUILD_WINDOW)
     set(SFML_BUILD_WINDOW ON)
 endif()
 
-# allow not using bundled dependencies with a switch
-# (except for stb_image)
-# yes this is horrible, but GLOB_RECURSE sucks
-sfml_set_option(SFML_USE_SYSTEM_DEPS OFF BOOL "ON to use system dependencies, OFF to use the bundled ones.")
-if(SFML_USE_SYSTEM_DEPS)
-    if(SFML_INSTALL_XCODE_TEMPLATES)
-        message(FATAL_ERROR "XCode templates installation cannot be used with the SFML_USE_SYSTEM_DEPS option (the bundled frameworks are required.)")
-    endif()
+# use bundled dependencies by default on these systems and system dependencies by default on all others (maintains old behavior)
+if(SFML_OS_WINDOWS OR SFML_OS_MACOS OR SFML_OS_IOS OR SFML_OS_ANDROID)
+    set(SFML_USE_SYSTEM_DEPS_DEFAULT OFF)
+else()
+    set(SFML_USE_SYSTEM_DEPS_DEFAULT ON)
+endif()
 
-    file(GLOB_RECURSE DEP_LIBS    "${PROJECT_SOURCE_DIR}/extlibs/libs*/*")
-    file(GLOB_RECURSE DEP_BINS    "${PROJECT_SOURCE_DIR}/extlibs/bin*/*")
-    file(GLOB_RECURSE DEP_HEADERS "${PROJECT_SOURCE_DIR}/extlibs/headers/*")
-
-    foreach(DEP_FILE ${DEP_LIBS} ${DEP_BINS} ${DEP_HEADERS})
-        get_filename_component(DEP_DIR ${DEP_FILE} PATH)
-
-        if(NOT DEP_DIR MATCHES "/(stb_image|minimp3)(/|$)")
-            list(APPEND CMAKE_IGNORE_PATH "${DEP_DIR}")
-        endif()
-
-        get_filename_component(DEP_PARENT_DIR ${DEP_DIR} PATH)
-        while(NOT DEP_PARENT_DIR STREQUAL "${PROJECT_SOURCE_DIR}/extlibs")
-            if(NOT DEP_DIR MATCHES "/(stb_image|minimp3)(/|$)")
-                list(APPEND CMAKE_IGNORE_PATH "${DEP_PARENT_DIR}")
-            endif()
-
-            get_filename_component(DEP_PARENT_DIR ${DEP_PARENT_DIR} PATH)
-        endwhile()
-    endforeach()
-
-    list(REMOVE_DUPLICATES CMAKE_IGNORE_PATH)
+sfml_set_option(SFML_USE_SYSTEM_DEPS ${SFML_USE_SYSTEM_DEPS_DEFAULT} BOOL "ON to use system dependencies, OFF to use the bundled ones.")
+if(SFML_USE_SYSTEM_DEPS AND SFML_INSTALL_XCODE_TEMPLATES)
+    message(FATAL_ERROR "XCode templates installation cannot be used with the SFML_USE_SYSTEM_DEPS option (the bundled frameworks are required.)")
 endif()
 
 if(SFML_COMPILER_MSVC)
@@ -380,97 +359,19 @@ endif()
 install(FILES license.md DESTINATION ${CMAKE_INSTALL_DOCDIR})
 install(FILES readme.md DESTINATION ${CMAKE_INSTALL_DOCDIR})
 
-# install 3rd-party libraries and tools
-if(SFML_OS_WINDOWS)
-
-    if(NOT SFML_USE_SYSTEM_DEPS)
-        # install the binaries of SFML dependencies
-        if(ARCH_ARM64)
-            install(DIRECTORY extlibs/libs-msvc-universal/ARM64/ DESTINATION ${CMAKE_INSTALL_LIBDIR})
-        elseif(ARCH_X86)
-            if(SFML_COMPILER_MSVC OR (SFML_COMPILER_CLANG AND NOT MINGW))
-                install(DIRECTORY extlibs/libs-msvc-universal/x86/ DESTINATION ${CMAKE_INSTALL_LIBDIR})
-            else()
-                install(DIRECTORY extlibs/libs-mingw/x86/ DESTINATION ${CMAKE_INSTALL_LIBDIR})
-            endif()
-        elseif(ARCH_X64)
-            if(SFML_COMPILER_MSVC OR (SFML_COMPILER_CLANG AND NOT MINGW))
-                install(DIRECTORY extlibs/libs-msvc-universal/x64/ DESTINATION ${CMAKE_INSTALL_LIBDIR})
-            else()
-                install(DIRECTORY extlibs/libs-mingw/x64/ DESTINATION ${CMAKE_INSTALL_LIBDIR})
-            endif()
-        endif()
-    endif()
-
-elseif(SFML_OS_MACOS)
-    # install extlibs dependencies only when used
-    if(SFML_BUILD_GRAPHICS)
-        if(FREETYPE_LIBRARY STREQUAL "${PROJECT_SOURCE_DIR}/extlibs/libs-macos/Frameworks/freetype.framework")
-            install(DIRECTORY extlibs/libs-macos/Frameworks/freetype.framework DESTINATION ${CMAKE_INSTALL_LIBDIR})
-        endif()
-    endif()
-
-    if(SFML_BUILD_AUDIO)
-        if(FLAC_LIBRARY STREQUAL "${PROJECT_SOURCE_DIR}/extlibs/libs-macos/Frameworks/FLAC.framework")
-            install(DIRECTORY extlibs/libs-macos/Frameworks/FLAC.framework DESTINATION ${CMAKE_INSTALL_LIBDIR})
-        endif()
-
-        if(OGG_LIBRARY STREQUAL "${PROJECT_SOURCE_DIR}/extlibs/libs-macos/Frameworks/ogg.framework")
-            install(DIRECTORY extlibs/libs-macos/Frameworks/ogg.framework DESTINATION ${CMAKE_INSTALL_LIBDIR})
-        endif()
-
-        if(VORBIS_LIBRARY STREQUAL "${PROJECT_SOURCE_DIR}/extlibs/libs-macos/Frameworks/vorbis.framework")
-            install(DIRECTORY extlibs/libs-macos/Frameworks/vorbis.framework DESTINATION ${CMAKE_INSTALL_LIBDIR})
-        endif()
-
-        if(VORBISENC_LIBRARY STREQUAL "${PROJECT_SOURCE_DIR}/extlibs/libs-macos/Frameworks/vorbisenc.framework")
-            install(DIRECTORY extlibs/libs-macos/Frameworks/vorbisenc.framework DESTINATION ${CMAKE_INSTALL_LIBDIR})
-        endif()
-
-        if(VORBISFILE_LIBRARY STREQUAL "${PROJECT_SOURCE_DIR}/extlibs/libs-macos/Frameworks/vorbisfile.framework")
-            install(DIRECTORY extlibs/libs-macos/Frameworks/vorbisfile.framework DESTINATION ${CMAKE_INSTALL_LIBDIR})
-        endif()
-    endif()
-
-    # install the Xcode templates if requested
-    if(SFML_INSTALL_XCODE_TEMPLATES)
-        # configure the templates plist files
-        foreach(TEMPLATE "SFML Compiler" "SFML App")
-            configure_file(
-                        "tools/xcode/templates/SFML/${TEMPLATE}.xctemplate/TemplateInfo.plist.in"
-                        "${CMAKE_CURRENT_BINARY_DIR}/tools/xcode/templates/SFML/${TEMPLATE}.xctemplate/TemplateInfo.plist"
-                        @ONLY)
-        endforeach()
-        install(DIRECTORY "tools/xcode/templates/SFML" "${CMAKE_CURRENT_BINARY_DIR}/tools/xcode/templates/SFML"
-                DESTINATION /Library/Developer/Xcode/Templates
-                PATTERN "*.in" EXCLUDE
-                PATTERN ".DS_Store" EXCLUDE)
-    endif()
-
-elseif(SFML_OS_IOS)
-
-    if(NOT SFML_USE_SYSTEM_DEPS)
-        # since the iOS libraries are built as static, we must install the SFML dependencies
-        # too so that the end user can easily link them to its final application
-        if(SFML_BUILD_GRAPHICS)
-            install(FILES extlibs/libs-ios/libfreetype.a DESTINATION lib)
-        endif()
-
-        if(SFML_BUILD_AUDIO)
-            install(FILES extlibs/libs-ios/libflac.a
-                          extlibs/libs-ios/libvorbis.a
-                          extlibs/libs-ios/libogg.a
-                          DESTINATION lib)
-        endif()
-    endif()
-
-elseif(SFML_OS_ANDROID)
-
-    if(NOT SFML_USE_SYSTEM_DEPS)
-        # install extlibs
-        install(DIRECTORY extlibs/libs-android/${CMAKE_ANDROID_ARCH_ABI} DESTINATION extlibs/lib)
-    endif()
-
+# install the Xcode templates if requested
+if(SFML_INSTALL_XCODE_TEMPLATES)
+    # configure the templates plist files
+    foreach(TEMPLATE "SFML Compiler" "SFML App")
+        configure_file(
+                    "tools/xcode/templates/SFML/${TEMPLATE}.xctemplate/TemplateInfo.plist.in"
+                    "${CMAKE_CURRENT_BINARY_DIR}/tools/xcode/templates/SFML/${TEMPLATE}.xctemplate/TemplateInfo.plist"
+                    @ONLY)
+    endforeach()
+    install(DIRECTORY "tools/xcode/templates/SFML" "${CMAKE_CURRENT_BINARY_DIR}/tools/xcode/templates/SFML"
+            DESTINATION /Library/Developer/Xcode/Templates
+            PATTERN "*.in" EXCLUDE
+            PATTERN ".DS_Store" EXCLUDE)
 endif()
 
 sfml_export_targets()

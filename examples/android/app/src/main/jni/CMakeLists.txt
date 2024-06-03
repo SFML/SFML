@@ -7,7 +7,7 @@ set(SFML_ROOT "${CMAKE_ANDROID_NDK}/sources/third_party/sfml/lib/${CMAKE_ANDROID
 add_library(sfml-example SHARED main.cpp)
 
 # Find and link SFML
-find_package(SFML 3 REQUIRED COMPONENTS Graphics)
+find_package(SFML 3 REQUIRED COMPONENTS Graphics Main)
 target_link_libraries(sfml-example PRIVATE SFML::Graphics android log)
 
 # The ANativeActivity_onCreate function from SFML::Main needs to be exposed in
