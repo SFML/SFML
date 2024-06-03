@@ -47,13 +47,6 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "^NetBSD$")
     set(OPENGL_ES 0)
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "iOS")
     set(SFML_OS_IOS 1)
-
-    # As we want to find packages in our extlibs folder too
-    # we need to tell CMake we want to search there instead
-    set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY NEVER)
-    set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE NEVER)
-    set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE NEVER)
-    set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
     
     # use the OpenGL ES implementation on iOS
     set(OPENGL_ES 1)

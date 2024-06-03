@@ -148,12 +148,16 @@ find_package_handle_standard_args(Freetype DEFAULT_MSG FREETYPE_LIBRARY FREETYPE
 
 mark_as_advanced(FREETYPE_LIBRARY FREETYPE_INCLUDE_DIR_freetype2 FREETYPE_INCLUDE_DIR_ft2build)
 
-if(NOT TARGET Freetype::Freetype)
-  add_library(Freetype::Freetype IMPORTED UNKNOWN)
-  set_target_properties(Freetype::Freetype PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${FREETYPE_INCLUDE_DIRS}")
+if(NOT TARGET freetype)
+  add_library(freetype IMPORTED UNKNOWN)
+  set_target_properties(freetype PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${FREETYPE_INCLUDE_DIRS}")
   if(FREETYPE_LIBRARY MATCHES "/([^/]+)\\.framework$")
-    set_target_properties(Freetype::Freetype PROPERTIES IMPORTED_LOCATION ${FREETYPE_LIBRARY}/${CMAKE_MATCH_1})
+    set_target_properties(freetype PROPERTIES IMPORTED_LOCATION ${FREETYPE_LIBRARY}/${CMAKE_MATCH_1})
   else()
-    set_target_properties(Freetype::Freetype PROPERTIES IMPORTED_LOCATION ${FREETYPE_LIBRARY})
+    set_target_properties(freetype PROPERTIES IMPORTED_LOCATION ${FREETYPE_LIBRARY})
   endif()
+endif()
+
+if(NOT TARGET Freetype::Freetype)
+  add_library(Freetype::Freetype ALIAS freetype)
 endif()

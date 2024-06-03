@@ -70,7 +70,8 @@ find_package(Threads REQUIRED)
 
 # define the sfml-system target
 sfml_add_library(System
-                 SOURCES ${SRC} ${PLATFORM_SRC})
+                 SOURCES ${SRC} ${PLATFORM_SRC}
+                 DEPENDENCIES "Dependencies.cmake.in")
 
 # enable precompiled headers
 if (SFML_ENABLE_PCH)
