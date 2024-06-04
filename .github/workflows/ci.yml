@@ -67,7 +67,7 @@ jobs:
           config: { name: Frameworks, flags: -GNinja -DSFML_BUILD_FRAMEWORKS=TRUE -DBUILD_SHARED_LIBS=TRUE }
         - platform: { name: macOS , os: macos-12 }
           config: { name: System Deps, flags: -GNinja -DBUILD_SHARED_LIBS=TRUE -DSFML_USE_SYSTEM_DEPS=TRUE }
-        - platform: { name: Android, os: ubuntu-latest }
+        - platform: { name: Android, os: ubuntu-22.04 }
           config:
             name: x86 (API 21)
             flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=x86 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=21 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF
@@ -77,7 +77,7 @@ jobs:
             emuarch: x86
             # emuapi: 29 # Removing this causes the tests to not run. This works around an issue that causes the test step to hang indefinitely.
           type: { name: Release }
-        - platform: { name: Android, os: ubuntu-latest }
+        - platform: { name: Android, os: ubuntu-22.04 }
           config:
             name: x86_64 (API 24)
             flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=x86_64 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=24 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF
@@ -87,7 +87,7 @@ jobs:
             emuarch: x86_64
             # emuapi: 34 # Removing this causes the tests to not run. This works around an issue that causes the Network module tests to fail.
           type: { name: Release }
-        - platform: { name: Android, os: ubuntu-latest }
+        - platform: { name: Android, os: ubuntu-22.04 }
           config:
             name: armeabi-v7a (API 29)
             flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=29 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared
@@ -95,7 +95,7 @@ jobs:
             api: 29
             # There are no emulators available for armeabi-v7a so we skip running the tests (we still build them) by not specifying emuapi
           type: { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug }
-        - platform: { name: Android, os: ubuntu-latest }
+        - platform: { name: Android, os: ubuntu-22.04 }
           config:
             name: arm64-v8a (API 33)
             flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=33 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF
