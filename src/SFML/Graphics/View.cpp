@@ -34,7 +34,7 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-View::View(const FloatRect& rectangle) : m_center(rectangle.getCenter()), m_size(rectangle.getSize())
+View::View(const FloatRect& rectangle) : m_center(rectangle.getCenter()), m_size(rectangle.size)
 {
 }
 

@@ -330,7 +330,7 @@ std::optional<Texture> Texture::loadFromImage(const Image& image, bool sRgb, con
         rectangle.size.y     = std::min(rectangle.size.y, height - rectangle.position.y);
 
         // Create the texture and upload the pixels
-        if (auto texture = sf::Texture::create(Vector2u(rectangle.getSize()), sRgb))
+        if (auto texture = sf::Texture::create(Vector2u(rectangle.size), sRgb))
         {
             const TransientContextLock lock;
 
