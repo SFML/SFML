@@ -211,22 +211,16 @@ private:
     void draw(RenderTarget& target, RenderStates states) const override;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Update the vertices' positions
+    /// \brief Update the vertices' positions and texture coordinates
     ///
     ////////////////////////////////////////////////////////////
-    void updatePositions();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Update the vertices' texture coordinates
-    ///
-    ////////////////////////////////////////////////////////////
-    void updateTexCoords();
+    void updateVertices();
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     std::array<Vertex, 4> m_vertices;    //!< Vertices defining the sprite's geometry
-    const Texture*        m_texture{};   //!< Texture of the sprite
+    const Texture*        m_texture;     //!< Texture of the sprite
     IntRect               m_textureRect; //!< Rectangle defining the area of the source texture to display
 };
 
