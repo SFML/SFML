@@ -701,12 +701,12 @@ public:
 
             if ((queueFamilyProperties[i].queueFlags & VK_QUEUE_GRAPHICS_BIT) && (surfaceSupported == VK_TRUE))
             {
-                queueFamilyIndex = static_cast<int>(i);
+                queueFamilyIndex = static_cast<std::uint32_t>(i);
                 break;
             }
         }
 
-        if (queueFamilyIndex < 0)
+        if (!queueFamilyIndex.has_value())
         {
             vulkanAvailable = false;
             return;
@@ -717,7 +717,7 @@ public:
         VkDeviceQueueCreateInfo deviceQueueCreateInfo = VkDeviceQueueCreateInfo();
         deviceQueueCreateInfo.sType                   = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
         deviceQueueCreateInfo.queueCount              = 1;
-        deviceQueueCreateInfo.queueFamilyIndex        = static_cast<std::uint32_t>(queueFamilyIndex);
+        deviceQueueCreateInfo.queueFamilyIndex        = *queueFamilyIndex;
         deviceQueueCreateInfo.pQueuePriorities        = &queuePriority;
 
         // Enable the swapchain extension
@@ -743,7 +743,7 @@ public:
         }
 
         // Retrieve a handle to the logical device command queue
-        vkGetDeviceQueue(device, static_cast<std::uint32_t>(queueFamilyIndex), 0, &queue);
+        vkGetDeviceQueue(device, *queueFamilyIndex, 0, &queue);
     }
 
     // Query surface formats and set up swapchain
@@ -1277,7 +1277,7 @@ public:
         // We want to be able to reset command buffers after submitting them
         VkCommandPoolCreateInfo commandPoolCreateInfo = VkCommandPoolCreateInfo();
         commandPoolCreateInfo.sType                   = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-        commandPoolCreateInfo.queueFamilyIndex        = static_cast<std::uint32_t>(queueFamilyIndex);
+        commandPoolCreateInfo.queueFamilyIndex        = *queueFamilyIndex;
         commandPoolCreateInfo.flags                   = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
 
         // Create our command pool
@@ -2586,7 +2586,7 @@ private:
     VkDebugReportCallbackEXT        debugReportCallback{};
     VkSurfaceKHR                    surface{};
     VkPhysicalDevice                gpu{};
-    int                             queueFamilyIndex{-1};
+    std::optional<std::uint32_t>    queueFamilyIndex;
     VkDevice                        device{};
     VkQueue                         queue{};
     VkSurfaceFormatKHR              swapchainFormat{};

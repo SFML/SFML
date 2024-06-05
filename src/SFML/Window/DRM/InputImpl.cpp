@@ -53,9 +53,9 @@ namespace
 {
 struct TouchSlot
 {
-    int          oldId{-1};
-    int          id{-1};
-    sf::Vector2i pos;
+    std::optional<unsigned int> oldId;
+    std::optional<unsigned int> id;
+    sf::Vector2i                pos;
 };
 
 std::recursive_mutex inputMutex; // threadsafe? maybe...
@@ -327,14 +327,14 @@ void processSlots()
     {
         if (slot.oldId == slot.id)
         {
-            pushEvent(sf::Event::TouchMoved{static_cast<unsigned int>(slot.id), slot.pos});
+            pushEvent(sf::Event::TouchMoved{*slot.id, slot.pos});
         }
         else
         {
-            if (slot.oldId != -1)
-                pushEvent(sf::Event::TouchEnded{static_cast<unsigned int>(slot.oldId), slot.pos});
-            if (slot.id != -1)
-                pushEvent(sf::Event::TouchBegan{static_cast<unsigned int>(slot.id), slot.pos});
+            if (slot.oldId.has_value())
+                pushEvent(sf::Event::TouchEnded{*slot.oldId, slot.pos});
+            if (slot.id.has_value())
+                pushEvent(sf::Event::TouchBegan{*slot.id, slot.pos});
 
             slot.oldId = slot.id;
         }
