@@ -67,4 +67,12 @@ const T* Event::getIf() const
         return std::get_if<T>(&m_data);
 }
 
+
+////////////////////////////////////////////////////////////
+template <typename Visitor>
+decltype(auto) Event::visit(Visitor&& visitor)
+{
+    return std::visit(std::forward<Visitor>(visitor), m_data);
+}
+
 } // namespace sf

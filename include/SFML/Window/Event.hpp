@@ -320,6 +320,15 @@ public:
         return !is<Empty>();
     }
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Applies the specified `visitor` to the event
+    ///
+    /// \return Transparently forwards whatever `visitor` returns
+    ///
+    ////////////////////////////////////////////////////////////
+    template <typename Visitor>
+    decltype(auto) visit(Visitor&& visitor);
+
 private:
     ////////////////////////////////////////////////////////////
     // Member data

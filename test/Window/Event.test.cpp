@@ -4,6 +4,40 @@
 
 #include <type_traits>
 
+namespace
+{
+////////////////////////////////////////////////////////////
+struct
+{
+    int operator()(sf::Event::Closed) const
+    {
+        return 0;
+    }
+
+    int operator()(sf::Event::Resized) const
+    {
+        return 1;
+    }
+
+    int operator()(sf::Event::FocusLost) const
+    {
+        return 2;
+    }
+
+    int operator()(sf::Event::FocusGained) const
+    {
+        return 3;
+    }
+
+    template <typename T>
+    int operator()(T) const
+    {
+        return 4;
+    }
+} visitor;
+
+} // namespace
+
 TEST_CASE("[Window] sf::Event")
 {
     SECTION("Type traits")
@@ -298,5 +332,26 @@ TEST_CASE("[Window] sf::Event")
         const sf::Event::SensorChanged sensorChanged;
         CHECK(sensorChanged.type == sf::Sensor::Type{});
         CHECK(sensorChanged.value == sf::Vector3f());
+    }
+
+    SECTION("Visit")
+    {
+        sf::Event event = sf::Event::Closed{};
+        CHECK(event.visit(visitor) == 0);
+
+        event = sf::Event::Resized{{1, 2}};
+        CHECK(event.visit(visitor) == 1);
+
+        event = sf::Event::FocusLost{};
+        CHECK(event.visit(visitor) == 2);
+
+        event = sf::Event::FocusGained{};
+        CHECK(event.visit(visitor) == 3);
+
+        event = sf::Event::MouseLeft{};
+        CHECK(event.visit(visitor) == 4);
+
+        event = {};
+        CHECK(event.visit(visitor) == 4);
     }
 }
