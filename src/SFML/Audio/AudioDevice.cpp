@@ -508,7 +508,7 @@ bool AudioDevice::initialize()
     // Update the current device string from the the device we just initialized
     {
         std::array<char, MA_MAX_DEVICE_NAME_LENGTH + 1> deviceName{};
-        size_t                                          deviceNameLength{};
+        std::size_t                                     deviceNameLength{};
 
         if (const auto result = ma_device_get_name(&*m_playbackDevice,
                                                    ma_device_type_playback,
