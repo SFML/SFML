@@ -214,7 +214,7 @@ GlFunctionPointer WglContext::getFunction(const char* name)
         if (address)
         {
             // Test whether the returned value is a valid error code
-            auto errorCode = reinterpret_cast<ptrdiff_t>(address);
+            auto errorCode = reinterpret_cast<std::ptrdiff_t>(address);
 
             if ((errorCode != -1) && (errorCode != 1) && (errorCode != 2) && (errorCode != 3))
                 return address;
