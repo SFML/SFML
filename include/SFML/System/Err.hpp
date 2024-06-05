@@ -29,16 +29,68 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Export.hpp>
 
-#include <iosfwd>
+#include <mutex>
+#include <ostream>
+#include <utility>
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
+class SFML_SYSTEM_API ErrStream
+{
+private:
+    class SFML_SYSTEM_API Guard
+    {
+    public:
+        explicit Guard(std::ostream& stream, std::unique_lock<std::mutex>&& lockGuard);
+
+        Guard(const Guard&)            = delete;
+        Guard& operator=(const Guard&) = delete;
+
+        Guard(Guard&&)            = delete;
+        Guard& operator=(Guard&&) = delete;
+
+        Guard& operator<<(std::ostream& (*func)(std::ostream&));
+
+        template <typename T>
+        Guard& operator<<(const T& value)
+        {
+            m_stream << value;
+            return *this;
+        }
+
+    private:
+        std::ostream&                m_stream;
+        std::unique_lock<std::mutex> m_lockGuard;
+    };
+
+    std::ostream m_stream;
+    std::mutex   m_mutex;
+
+public:
+    explicit ErrStream(std::streambuf* sbuf);
+
+    Guard operator<<(std::ostream& (*func)(std::ostream&));
+
+    std::streambuf* rdbuf();
+    void            rdbuf(std::streambuf* sbuf);
+
+    template <typename T>
+    Guard operator<<(const T& value)
+    {
+        std::unique_lock lockGuard(m_mutex);
+        m_stream << value;
+
+        return Guard{m_stream, std::move(lockGuard)};
+    }
+};
+
+////////////////////////////////////////////////////////////
 /// \brief Standard stream used by SFML to output warnings and errors
 ///
 ////////////////////////////////////////////////////////////
-SFML_SYSTEM_API std::ostream& err();
+SFML_SYSTEM_API ErrStream& err();
 
 } // namespace sf
 
