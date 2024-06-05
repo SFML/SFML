@@ -112,25 +112,9 @@ constexpr std::optional<Rect<T>> Rect<T>::findIntersection(const Rect<T>& rectan
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Vector2<T> Rect<T>::getPosition() const
-{
-    return Vector2<T>(position.x, position.y);
-}
-
-
-////////////////////////////////////////////////////////////
-template <typename T>
-constexpr Vector2<T> Rect<T>::getSize() const
-{
-    return Vector2<T>(size.x, size.y);
-}
-
-
-////////////////////////////////////////////////////////////
-template <typename T>
 constexpr Vector2<T> Rect<T>::getCenter() const
 {
-    return getPosition() + getSize() / T{2};
+    return position + size / T{2};
 }
 
 

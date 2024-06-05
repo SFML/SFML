@@ -105,26 +105,6 @@ public:
     constexpr std::optional<Rect<T>> findIntersection(const Rect<T>& rectangle) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the position of the rectangle's top-left corner
-    ///
-    /// \return Position of rectangle
-    ///
-    /// \see getSize, getCenter
-    ///
-    ////////////////////////////////////////////////////////////
-    constexpr Vector2<T> getPosition() const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the size of the rectangle
-    ///
-    /// \return Size of rectangle
-    ///
-    /// \see getPosition, getCenter
-    ///
-    ////////////////////////////////////////////////////////////
-    constexpr Vector2<T> getSize() const;
-
-    ////////////////////////////////////////////////////////////
     /// \brief Get the position of the center of the rectangle
     ///
     /// \return Center of rectangle

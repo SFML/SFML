@@ -91,18 +91,6 @@ TEMPLATE_TEST_CASE("[Graphics] sf::Rect", "", int, float)
         STATIC_CHECK_FALSE(rectangle.findIntersection(nonIntersectingRectangle).has_value());
     }
 
-    SECTION("getPosition()")
-    {
-        STATIC_CHECK(sf::Rect<TestType>({}, {}).getPosition() == sf::Vector2<TestType>());
-        STATIC_CHECK(sf::Rect<TestType>({1, 2}, {3, 4}).getPosition() == sf::Vector2<TestType>(1, 2));
-    }
-
-    SECTION("getSize()")
-    {
-        STATIC_CHECK(sf::Rect<TestType>({}, {}).getSize() == sf::Vector2<TestType>());
-        STATIC_CHECK(sf::Rect<TestType>({1, 2}, {3, 4}).getSize() == sf::Vector2<TestType>(3, 4));
-    }
-
     SECTION("getCenter()")
     {
         STATIC_CHECK(sf::Rect<TestType>({}, {}).getCenter() == sf::Vector2<TestType>());

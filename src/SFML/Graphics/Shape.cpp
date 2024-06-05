@@ -273,8 +273,7 @@ void Shape::updateTexCoords()
         const float yratio      = m_insideBounds.size.y > 0
                                       ? (m_vertices[i].position.y - m_insideBounds.position.y) / m_insideBounds.size.y
                                       : 0;
-        m_vertices[i].texCoords = convertedTextureRect.getPosition() +
-                                  convertedTextureRect.getSize().cwiseMul({xratio, yratio});
+        m_vertices[i].texCoords = convertedTextureRect.position + convertedTextureRect.size.cwiseMul({xratio, yratio});
     }
 }
 
