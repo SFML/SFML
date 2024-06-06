@@ -36,19 +36,15 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Sprite::Sprite(const Texture& texture)
+Sprite::Sprite(const Texture& texture) : Sprite(texture, IntRect({0, 0}, Vector2i(texture.getSize())))
 {
-    setTexture(texture, true);
 }
 
 
 ////////////////////////////////////////////////////////////
-Sprite::Sprite(const Texture& texture, const IntRect& rectangle)
+Sprite::Sprite(const Texture& texture, const IntRect& rectangle) : m_texture(&texture), m_textureRect(rectangle)
 {
-    // Compute the texture area
-    setTextureRect(rectangle);
-    // Assign texture
-    setTexture(texture, false);
+    updateVertices();
 }
 
 
@@ -72,8 +68,7 @@ void Sprite::setTextureRect(const IntRect& rectangle)
     if (rectangle != m_textureRect)
     {
         m_textureRect = rectangle;
-        updatePositions();
-        updateTexCoords();
+        updateVertices();
     }
 }
 
@@ -81,8 +76,7 @@ void Sprite::setTextureRect(const IntRect& rectangle)
 ////////////////////////////////////////////////////////////
 void Sprite::setColor(const Color& color)
 {
-    // Update the vertices' color
-    for (auto& vertex : m_vertices)
+    for (Vertex& vertex : m_vertices)
         vertex.color = color;
 }
 
@@ -136,20 +130,17 @@ void Sprite::draw(RenderTarget& target, RenderStates states) const
 
 
 ////////////////////////////////////////////////////////////
-void Sprite::updatePositions()
+void Sprite::updateVertices()
 {
+    // Update positions
     const FloatRect bounds = getLocalBounds();
 
     m_vertices[0].position = Vector2f(0, 0);
     m_vertices[1].position = Vector2f(0, bounds.height);
     m_vertices[2].position = Vector2f(bounds.width, 0);
     m_vertices[3].position = Vector2f(bounds.width, bounds.height);
-}
 
-
-////////////////////////////////////////////////////////////
-void Sprite::updateTexCoords()
-{
+    // Update texture coordinates
     const FloatRect convertedTextureRect(m_textureRect);
 
     const float left   = convertedTextureRect.left;
