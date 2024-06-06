@@ -29,6 +29,7 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
+#include <cassert>
 #include <cmath>
 #include <cstdlib>
 
@@ -128,6 +129,8 @@ FloatRect Sprite::getGlobalBounds() const
 ////////////////////////////////////////////////////////////
 void Sprite::draw(RenderTarget& target, RenderStates states) const
 {
+    assert(m_texture->getNativeHandle() != 0 && "Sprite::draw() Cannot draw sprite when texture is not initialized");
+
     states.transform *= getTransform();
     states.texture        = m_texture;
     states.coordinateType = CoordinateType::Pixels;
