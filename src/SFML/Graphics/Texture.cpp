@@ -117,7 +117,9 @@ m_texture(std::exchange(right.m_texture, 0)),
 m_isSmooth(std::exchange(right.m_isSmooth, false)),
 m_sRgb(std::exchange(right.m_sRgb, false)),
 m_isRepeated(std::exchange(right.m_isRepeated, false)),
+m_pixelsFlipped(std::exchange(right.m_pixelsFlipped, false)),
 m_fboAttachment(std::exchange(right.m_fboAttachment, false)),
+m_hasMipmap(std::exchange(right.m_hasMipmap, false)),
 m_cacheId(std::exchange(right.m_cacheId, 0))
 {
 }
@@ -147,7 +149,9 @@ Texture& Texture::operator=(Texture&& right) noexcept
     m_isSmooth      = std::exchange(right.m_isSmooth, false);
     m_sRgb          = std::exchange(right.m_sRgb, false);
     m_isRepeated    = std::exchange(right.m_isRepeated, false);
+    m_pixelsFlipped = std::exchange(right.m_pixelsFlipped, false);
     m_fboAttachment = std::exchange(right.m_fboAttachment, false);
+    m_hasMipmap     = std::exchange(right.m_hasMipmap, false);
     m_cacheId       = std::exchange(right.m_cacheId, 0);
     return *this;
 }
@@ -947,9 +951,7 @@ void Texture::swap(Texture& right) noexcept
     std::swap(m_pixelsFlipped, right.m_pixelsFlipped);
     std::swap(m_fboAttachment, right.m_fboAttachment);
     std::swap(m_hasMipmap, right.m_hasMipmap);
-
-    m_cacheId       = TextureImpl::getUniqueId();
-    right.m_cacheId = TextureImpl::getUniqueId();
+    std::swap(m_cacheId, right.m_cacheId);
 }
 
 
