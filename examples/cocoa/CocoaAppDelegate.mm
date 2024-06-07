@@ -24,7 +24,6 @@
 ////////////////////////////////////////////////////////////
 
 #import "CocoaAppDelegate.h"
-#include "SFML/Graphics/RenderStates.hpp"
 
 #import "NSString+stdstring.h"
 

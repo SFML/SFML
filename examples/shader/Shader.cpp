@@ -2,9 +2,6 @@
 // Headers
 ////////////////////////////////////////////////////////////
 
-#include "SFML/Graphics/RenderStates.hpp"
-#include "SFML/Graphics/RenderTexture.hpp"
-
 #include <SFML/Graphics.hpp>
 
 #include <array>

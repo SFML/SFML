@@ -14,7 +14,6 @@
 // - Click OK.
 //
 
-#include "SFML/Graphics/RenderStates.hpp"
 #include <SFML/Graphics.hpp>
 
 #include <SFML/Audio.hpp>
