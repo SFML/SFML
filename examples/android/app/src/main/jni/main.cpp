@@ -160,7 +160,7 @@ int main(int argc, char* argv[])
         if (active)
         {
             window.clear(background);
-            window.draw(image);
+            window.draw(image, sf::RenderStates{&texture});
             window.draw(text);
             window.display();
         }

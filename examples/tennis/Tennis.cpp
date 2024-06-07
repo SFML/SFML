@@ -275,7 +275,7 @@ int main()
         {
             // Draw the pause message
             window.draw(pauseMessage);
-            window.draw(sfmlLogo);
+            window.draw(sfmlLogo, sf::RenderStates{&sfmlLogoTexture});
         }
 
         // Display things on screen

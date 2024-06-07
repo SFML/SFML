@@ -97,6 +97,7 @@ protected:
 ///     void draw(sf::RenderTarget& target, sf::RenderStates states) const override
 ///     {
 ///         // You can draw other high-level objects
+///         states.texture = &m_texture;
 ///         target.draw(m_sprite, states);
 ///
 ///         // ... or use the low-level API

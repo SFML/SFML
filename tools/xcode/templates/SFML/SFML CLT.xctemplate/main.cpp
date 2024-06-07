@@ -14,6 +14,7 @@
 // - Click OK.
 //
 
+#include "SFML/Graphics/RenderStates.hpp"
 #include <SFML/Graphics.hpp>
 
 #include <SFML/Audio.hpp>
@@ -70,7 +71,7 @@ int main()
         window.clear();
 
         // Draw the sprite
-        window.draw(sprite);
+        window.draw(sprite, sf::RenderStates{&texture});
 
         // Draw the string
         window.draw(text);

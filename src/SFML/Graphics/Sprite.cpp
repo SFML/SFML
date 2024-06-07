@@ -25,6 +25,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include "SFML/Graphics/Rect.hpp"
+
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -36,31 +38,15 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Sprite::Sprite(const Texture& texture) : Sprite(texture, IntRect({0, 0}, Vector2i(texture.getSize())))
-{
-}
-
-
-////////////////////////////////////////////////////////////
-Sprite::Sprite(const Texture& texture, const IntRect& rectangle) : m_texture(&texture), m_textureRect(rectangle)
+Sprite::Sprite(const IntRect& rectangle) : m_textureRect(rectangle)
 {
     updateVertices();
 }
 
-
 ////////////////////////////////////////////////////////////
-void Sprite::setTexture(const Texture& texture, bool resetRect)
+Sprite::Sprite(const Texture& texture) : Sprite({{0, 0}, Vector2i(texture.getSize())})
 {
-    // Recompute the texture area if requested
-    if (resetRect)
-    {
-        setTextureRect(IntRect({0, 0}, Vector2i(texture.getSize())));
-    }
-
-    // Assign the new texture
-    m_texture = &texture;
 }
-
 
 ////////////////////////////////////////////////////////////
 void Sprite::setTextureRect(const IntRect& rectangle)
@@ -78,13 +64,6 @@ void Sprite::setColor(const Color& color)
 {
     for (Vertex& vertex : m_vertices)
         vertex.color = color;
-}
-
-
-////////////////////////////////////////////////////////////
-const Texture& Sprite::getTexture() const
-{
-    return *m_texture;
 }
 
 
@@ -123,7 +102,6 @@ FloatRect Sprite::getGlobalBounds() const
 void Sprite::draw(RenderTarget& target, RenderStates states) const
 {
     states.transform *= getTransform();
-    states.texture        = m_texture;
     states.coordinateType = CoordinateType::Pixels;
     target.draw(m_vertices.data(), m_vertices.size(), PrimitiveType::TriangleStrip, states);
 }

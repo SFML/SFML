@@ -279,7 +279,7 @@ private:
 /// sf::RenderWindow window(sf::VideoMode({800, 600}), "SFML window");
 ///
 /// // Create a new render-texture
-/// auto texture = sf::RenderTexture::create({500, 500}).value();
+/// auto renderTexture = sf::RenderTexture::create({500, 500}).value();
 ///
 /// // The main loop
 /// while (window.isOpen())
@@ -288,22 +288,23 @@ private:
 ///    // ...
 ///
 ///    // Clear the whole texture with red color
-///    texture.clear(sf::Color::Red);
+///    renderTexture.clear(sf::Color::Red);
 ///
 ///    // Draw stuff to the texture
-///    texture.draw(sprite);  // sprite is a sf::Sprite
-///    texture.draw(shape);   // shape is a sf::Shape
-///    texture.draw(text);    // text is a sf::Text
+///    renderTexture.draw(sprite);  // sprite is a sf::Sprite
+///    renderTexture.draw(shape);   // shape is a sf::Shape
+///    renderTexture.draw(text);    // text is a sf::Text
 ///
 ///    // We're done drawing to the texture
-///    texture.display();
+///    renderTexture.display();
 ///
 ///    // Now we start rendering to the window, clear it first
 ///    window.clear();
 ///
 ///    // Draw the texture
-///    sf::Sprite sprite(texture.getTexture());
-///    window.draw(sprite);
+///    const sf::Texture& texture = renderTexture.getTexture();
+///    sf::Sprite sprite(texture);
+///    window.draw(sprite, sf::RenderStates{&texture});
 ///
 ///    // End the current frame and display its contents on screen
 ///    window.display();

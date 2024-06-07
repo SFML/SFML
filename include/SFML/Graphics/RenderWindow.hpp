@@ -284,7 +284,7 @@ private:
 ///
 ///     // Draw a background sprite
 ///     window.pushGLStates();
-///     window.draw(sprite);
+///     window.draw(sprite, sf::RenderStates{&texture});
 ///     window.popGLStates();
 ///
 ///     // Draw a 3D object using OpenGL

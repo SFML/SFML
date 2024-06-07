@@ -1197,7 +1197,7 @@ int main()
         window.draw(*effects[current]);
 
         // Draw the text
-        window.draw(textBackground);
+        window.draw(textBackground, sf::RenderStates{&textBackgroundTexture});
         window.draw(instructions);
         window.draw(description);
         window.draw(playbackDevice);

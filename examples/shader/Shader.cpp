@@ -2,6 +2,9 @@
 // Headers
 ////////////////////////////////////////////////////////////
 
+#include "SFML/Graphics/RenderStates.hpp"
+#include "SFML/Graphics/RenderTexture.hpp"
+
 #include <SFML/Graphics.hpp>
 
 #include <array>
@@ -64,7 +67,8 @@ private:
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
-        states.shader = &m_shader;
+        states.texture = &m_texture;
+        states.shader  = &m_shader;
         target.draw(sf::Sprite{m_texture}, states);
     }
 
@@ -240,20 +244,20 @@ public:
 
         sf::Sprite backgroundSprite{m_backgroundTexture};
         backgroundSprite.setPosition({135.f, 100.f});
-        m_surface.draw(backgroundSprite);
+        m_surface.draw(backgroundSprite, sf::RenderStates{&m_backgroundTexture});
 
         // Update the position of the moving entities
         constexpr int numEntities = 6;
 
         for (int i = 0; i < 6; ++i)
         {
-            sf::Sprite entity{m_entityTexture, sf::IntRect({96 * i, 0}, {96, 96})};
+            sf::Sprite entity{{{96 * i, 0}, {96, 96}}};
 
             entity.setPosition(
                 {std::cos(0.25f * (time * static_cast<float>(i) + static_cast<float>(numEntities - i))) * 300 + 350,
                  std::sin(0.25f * (time * static_cast<float>(numEntities - i) + static_cast<float>(i))) * 200 + 250});
 
-            m_surface.draw(entity);
+            m_surface.draw(entity, sf::RenderStates{&m_entityTexture});
         }
 
         m_surface.display();
@@ -261,8 +265,11 @@ public:
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
-        states.shader = &m_shader;
-        target.draw(sf::Sprite{m_surface.getTexture()}, states);
+        const sf::Texture& texture = m_surface.getTexture();
+
+        states.texture = &texture;
+        states.shader  = &m_shader;
+        target.draw(sf::Sprite{texture}, states);
     }
 
 private:

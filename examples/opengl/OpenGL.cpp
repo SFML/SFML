@@ -282,7 +282,7 @@ int main()
 
             // Draw the background
             window.pushGLStates();
-            window.draw(background);
+            window.draw(background, sf::RenderStates{&backgroundTexture});
             window.popGLStates();
 
             // Make the window the active window for OpenGL calls

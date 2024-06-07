@@ -1,6 +1,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include "SFML/Graphics/RenderStates.hpp"
 #include <SFML/Graphics.hpp>
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
@@ -142,11 +143,11 @@ int main()
 
             // Draw sprite 1 on view 1
             sprite1.setRotation(sf::degrees(time * 100));
-            sfmlView1.draw(sprite1);
+            sfmlView1.draw(sprite1, sf::RenderStates{&texture1});
 
             // Draw sprite 2 on view 2
             sprite2.setPosition({std::cos(time) * 100.f, 0.f});
-            sfmlView2.draw(sprite2);
+            sfmlView2.draw(sprite2, sf::RenderStates{&texture2});
 
             // Display each view on screen
             sfmlView1.display();
