@@ -299,13 +299,21 @@ public:
     Vector2i mapCoordsToPixel(const Vector2f& point, const View& view) const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Draw a drawable object to the render target with default render states
+    ///
+    /// \param drawable Object to draw
+    ///
+    ////////////////////////////////////////////////////////////
+    void draw(const Drawable& drawable);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Draw a drawable object to the render target
     ///
     /// \param drawable Object to draw
     /// \param states   Render states to use for drawing
     ///
     ////////////////////////////////////////////////////////////
-    void draw(const Drawable& drawable, const RenderStates& states = RenderStates::Default);
+    void draw(const Drawable& drawable, RenderStates states);
 
     ////////////////////////////////////////////////////////////
     /// \brief Draw primitives defined by an array of vertices

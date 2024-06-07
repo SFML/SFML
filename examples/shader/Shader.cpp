@@ -62,7 +62,7 @@ private:
         m_shader.setUniform("pixel_threshold", (x + y) / 30);
     }
 
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const override
+    void draw(sf::RenderTarget& target, sf::RenderStates& states) const override
     {
         states.shader = &m_shader;
         target.draw(sf::Sprite{m_texture}, states);
@@ -95,7 +95,7 @@ public:
         m_shader.setUniform("blur_radius", (x + y) * 0.008f);
     }
 
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const override
+    void draw(sf::RenderTarget& target, sf::RenderStates& states) const override
     {
         states.shader = &m_shader;
         target.draw(m_text, states);
@@ -158,7 +158,7 @@ public:
         m_shader.setUniform("blink_alpha", 0.5f + std::cos(time * 3) * 0.25f);
     }
 
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const override
+    void draw(sf::RenderTarget& target, sf::RenderStates& states) const override
     {
         states.shader = &m_shader;
         target.draw(m_points, states);
@@ -259,7 +259,7 @@ public:
         m_surface.display();
     }
 
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const override
+    void draw(sf::RenderTarget& target, sf::RenderStates& states) const override
     {
         states.shader = &m_shader;
         target.draw(sf::Sprite{m_surface.getTexture()}, states);
@@ -333,7 +333,7 @@ public:
         m_shader.setUniform("size", sf::Vector2f{size, size});
     }
 
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const override
+    void draw(sf::RenderTarget& target, sf::RenderStates& states) const override
     {
         // Prepare the render state
         states.shader    = &m_shader;

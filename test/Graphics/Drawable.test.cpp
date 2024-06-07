@@ -16,7 +16,7 @@ public:
     }
 
 private:
-    void draw(sf::RenderTarget&, sf::RenderStates) const override
+    void draw(sf::RenderTarget&, sf::RenderStates&) const override
     {
         ++m_callCount;
     }

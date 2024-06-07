@@ -288,7 +288,7 @@ private:
 /// \code
 /// class MyEntity : public sf::Transformable, public sf::Drawable
 /// {
-///     void draw(sf::RenderTarget& target, sf::RenderStates states) const override
+///     void draw(sf::RenderTarget& target, sf::RenderStates& states) const override
 ///     {
 ///         states.transform *= getTransform();
 ///         target.draw(..., states);

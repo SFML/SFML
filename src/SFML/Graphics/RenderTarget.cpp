@@ -336,7 +336,14 @@ Vector2i RenderTarget::mapCoordsToPixel(const Vector2f& point, const View& view)
 
 
 ////////////////////////////////////////////////////////////
-void RenderTarget::draw(const Drawable& drawable, const RenderStates& states)
+void RenderTarget::draw(const Drawable& drawable)
+{
+    draw(drawable, RenderStates::Default);
+}
+
+
+////////////////////////////////////////////////////////////
+void RenderTarget::draw(const Drawable& drawable, RenderStates states)
 {
     drawable.draw(*this, states);
 }

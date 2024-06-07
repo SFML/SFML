@@ -126,7 +126,7 @@ FloatRect Sprite::getGlobalBounds() const
 
 
 ////////////////////////////////////////////////////////////
-void Sprite::draw(RenderTarget& target, RenderStates states) const
+void Sprite::draw(RenderTarget& target, RenderStates& states) const
 {
     states.transform *= getTransform();
     states.texture        = m_texture;

@@ -234,7 +234,7 @@ void Shape::update()
 
 
 ////////////////////////////////////////////////////////////
-void Shape::draw(RenderTarget& target, RenderStates states) const
+void Shape::draw(RenderTarget& target, RenderStates& states) const
 {
     states.transform *= getTransform();
     states.coordinateType = CoordinateType::Pixels;

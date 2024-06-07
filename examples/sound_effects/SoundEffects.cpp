@@ -53,7 +53,7 @@ public:
         onUpdate(time, x, y);
     }
 
-    void draw(sf::RenderTarget& target, sf::RenderStates states) const override
+    void draw(sf::RenderTarget& target, sf::RenderStates& states) const override
     {
         onDraw(target, states);
     }
@@ -86,10 +86,10 @@ protected:
 
 private:
     // Virtual functions to be implemented in derived effects
-    virtual void onUpdate(float time, float x, float y)                          = 0;
-    virtual void onDraw(sf::RenderTarget& target, sf::RenderStates states) const = 0;
-    virtual void onStart()                                                       = 0;
-    virtual void onStop()                                                        = 0;
+    virtual void onUpdate(float time, float x, float y)                           = 0;
+    virtual void onDraw(sf::RenderTarget& target, sf::RenderStates& states) const = 0;
+    virtual void onStart()                                                        = 0;
+    virtual void onStop()                                                         = 0;
 
     virtual void onKey(sf::Keyboard::Key)
     {
@@ -130,14 +130,14 @@ public:
         m_music.setPosition({m_position.x, m_position.y, 0.f});
     }
 
-    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override
+    void onDraw(sf::RenderTarget& target, sf::RenderStates& states) const override
     {
-        auto statesCopy(states);
-        statesCopy.transform = sf::Transform::Identity;
-        statesCopy.transform.translate(m_position);
-
         target.draw(m_listener, states);
-        target.draw(m_soundShape, statesCopy);
+
+        states.transform = sf::Transform::Identity;
+        states.transform.translate(m_position);
+
+        target.draw(m_soundShape, states);
     }
 
     void onStart() override
@@ -204,7 +204,7 @@ public:
         m_volumeText.setString("Volume: " + std::to_string(m_volume));
     }
 
-    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override
+    void onDraw(sf::RenderTarget& target, sf::RenderStates& states) const override
     {
         target.draw(m_pitchText, states);
         target.draw(m_volumeText, states);
@@ -307,7 +307,7 @@ public:
         m_music.setPosition({m_position.x, m_position.y, 0.f});
     }
 
-    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override
+    void onDraw(sf::RenderTarget& target, sf::RenderStates& states) const override
     {
         auto statesCopy(states);
 
@@ -377,7 +377,7 @@ public:
         m_currentFrequency.setString("Frequency: " + std::to_string(m_frequency) + " Hz");
     }
 
-    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override
+    void onDraw(sf::RenderTarget& target, sf::RenderStates& states) const override
     {
         target.draw(m_instruction, states);
         target.draw(m_currentType, states);
@@ -549,7 +549,7 @@ public:
         setDopplerFactor(m_factor);
     }
 
-    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override
+    void onDraw(sf::RenderTarget& target, sf::RenderStates& states) const override
     {
         auto statesCopy(states);
         statesCopy.transform = sf::Transform::Identity;
@@ -629,7 +629,7 @@ public:
         m_music.setPosition({m_position.x, m_position.y, 0.f});
     }
 
-    void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override
+    void onDraw(sf::RenderTarget& target, sf::RenderStates& states) const override
     {
         auto statesCopy(states);
         statesCopy.transform = sf::Transform::Identity;

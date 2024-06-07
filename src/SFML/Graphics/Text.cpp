@@ -339,7 +339,7 @@ FloatRect Text::getGlobalBounds() const
 
 
 ////////////////////////////////////////////////////////////
-void Text::draw(RenderTarget& target, RenderStates states) const
+void Text::draw(RenderTarget& target, RenderStates& states) const
 {
     ensureGeometryUpdate();
 
