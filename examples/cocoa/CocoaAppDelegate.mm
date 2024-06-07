@@ -162,7 +162,7 @@ struct SFMLmainWindow
     self.mainWindow->renderWindow.clear(self.mainWindow->background);
 
     if (self.visible)
-        self.mainWindow->renderWindow.draw(self.mainWindow->sprite, sf::RenderStates{&self.mainWindow.logo});
+        self.mainWindow->renderWindow.draw(self.mainWindow->sprite, self.mainWindow.logo);
 
     self.mainWindow->renderWindow.draw(self.mainWindow->text);
 

@@ -54,7 +54,7 @@ int main()
 
     // Create the SFML logo texture:
     const auto sfmlLogoTexture = sf::Texture::loadFromFile(resourcesDir() / "sfml_logo.png").value();
-    sf::Sprite sfmlLogo(sfmlLogoTexture);
+    sf::Sprite sfmlLogo(sfmlLogoTexture.getRect());
     sfmlLogo.setPosition({170.f, 50.f});
 
     // Create the left paddle
@@ -275,7 +275,7 @@ int main()
         {
             // Draw the pause message
             window.draw(pauseMessage);
-            window.draw(sfmlLogo, sf::RenderStates{&sfmlLogoTexture});
+            window.draw(sfmlLogo, sfmlLogoTexture);
         }
 
         // Display things on screen

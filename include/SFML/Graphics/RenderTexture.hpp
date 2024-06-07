@@ -303,8 +303,8 @@ private:
 ///
 ///    // Draw the texture
 ///    const sf::Texture& texture = renderTexture.getTexture();
-///    sf::Sprite sprite(texture);
-///    window.draw(sprite, sf::RenderStates{&texture});
+///    sf::Sprite sprite(texture.getRect());
+///    window.draw(sprite, texture);
 ///
 ///    // End the current frame and display its contents on screen
 ///    window.display();

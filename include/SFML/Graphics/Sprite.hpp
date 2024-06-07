@@ -40,8 +40,6 @@
 
 namespace sf
 {
-class Texture;
-
 ////////////////////////////////////////////////////////////
 /// \brief Drawable representation of a texture, with its
 ///        own transformations, color, etc.
@@ -59,21 +57,6 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     explicit Sprite(const IntRect& rectangle);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Construct the sprite from the intended eventual source texture
-    ///
-    /// The texture is not stored nor used in the sprite, it will need to be specified
-    /// via `sf::RenderStates` while the sprite is being drawn. This constructor exists
-    /// purely as a convenience function to initialize the sprite's sub-rectangle to
-    /// the entirety of the intended source texture that will be provided during drawing.
-    ///
-    /// \param texture Intended source texture (specified during drawing)
-    ///
-    /// \see setTextureRect
-    ///
-    ////////////////////////////////////////////////////////////
-    explicit Sprite(const Texture& texture);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the sub-rectangle of the texture that the sprite will display
@@ -219,7 +202,7 @@ private:
 /// sprite.setPosition({100, 25});
 ///
 /// // Draw it
-/// window.draw(sprite, sf::RenderStates{&texture});
+/// window.draw(sprite, texture);
 /// \endcode
 ///
 /// \see sf::Texture, sf::Transformable

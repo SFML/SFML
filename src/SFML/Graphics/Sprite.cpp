@@ -29,7 +29,6 @@
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Sprite.hpp>
-#include <SFML/Graphics/Texture.hpp>
 
 #include <cmath>
 #include <cstdlib>
@@ -43,10 +42,6 @@ Sprite::Sprite(const IntRect& rectangle) : m_textureRect(rectangle)
     updateVertices();
 }
 
-////////////////////////////////////////////////////////////
-Sprite::Sprite(const Texture& texture) : Sprite({{0, 0}, Vector2i(texture.getSize())})
-{
-}
 
 ////////////////////////////////////////////////////////////
 void Sprite::setTextureRect(const IntRect& rectangle)

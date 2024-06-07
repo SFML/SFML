@@ -436,10 +436,10 @@ Image Texture::copyToImage() const
         glCheck(glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, allPixels.data()));
 
         // Then we copy the useful pixels from the temporary array to the final one
-        const std::uint8_t* src = allPixels.data();
-        std::uint8_t* dst = pixels.data();
-        int srcPitch = static_cast<int>(m_actualSize.x * 4);
-        const unsigned int dstPitch = m_size.x * 4;
+        const std::uint8_t* src      = allPixels.data();
+        std::uint8_t*       dst      = pixels.data();
+        int                 srcPitch = static_cast<int>(m_actualSize.x * 4);
+        const unsigned int  dstPitch = m_size.x * 4;
 
         // Handle the case where source pixels are flipped vertically
         if (m_pixelsFlipped)
@@ -957,6 +957,13 @@ void Texture::swap(Texture& right) noexcept
 unsigned int Texture::getNativeHandle() const
 {
     return m_texture;
+}
+
+
+////////////////////////////////////////////////////////////
+IntRect Texture::getRect() const
+{
+    return {{0, 0}, Vector2i(getSize())};
 }
 
 

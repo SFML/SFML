@@ -59,7 +59,7 @@ int main()
 
         // Create a sprite for the background
         const auto       backgroundTexture = sf::Texture::loadFromFile(resourcesDir() / "background.jpg", sRgb).value();
-        const sf::Sprite background(backgroundTexture);
+        const sf::Sprite background(backgroundTexture.getRect());
 
         // Create some text to draw on top of our OpenGL object
         const auto font = sf::Font::loadFromFile(resourcesDir() / "tuffy.ttf").value();
@@ -282,7 +282,7 @@ int main()
 
             // Draw the background
             window.pushGLStates();
-            window.draw(background, sf::RenderStates{&backgroundTexture});
+            window.draw(background, backgroundTexture);
             window.popGLStates();
 
             // Make the window the active window for OpenGL calls

@@ -54,6 +54,7 @@ class Shader;
 class Texture;
 class Transform;
 class VertexBuffer;
+class Sprite;
 
 ////////////////////////////////////////////////////////////
 /// \brief Base class for all render targets (window, texture, ...)
@@ -306,6 +307,25 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     void draw(const Drawable& drawable, const RenderStates& states = RenderStates::Default);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Draw a sprite object to the render target
+    ///
+    /// The texture associated with a sprite must be passed while drawing.
+    ///
+    /// \param sprite  Sprite to draw
+    /// \param texture Texture associated with the sprite
+    ///
+    ////////////////////////////////////////////////////////////
+    void draw(const Sprite& sprite, const Texture& texture);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted overload of `draw` for sprites without a texture
+    ///
+    /// The texture associated with a sprite must be passed while drawing.
+    ///
+    ////////////////////////////////////////////////////////////
+    void draw(const Sprite&) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Draw primitives defined by an array of vertices

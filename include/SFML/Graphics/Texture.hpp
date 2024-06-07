@@ -496,6 +496,16 @@ public:
     unsigned int getNativeHandle() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get a rectangle covering the entire texture
+    ///
+    /// This function is useful to conveniently initialize `sf::Sprite`
+    /// objects that are intended to be used with this texture.
+    ///
+    /// \return Rectangle covering the entire texture, from {0, 0} to {width, height}
+    ////////////////////////////////////////////////////////////
+    IntRect getRect() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Bind a texture for rendering
     ///
     /// This function is not part of the graphics API, it mustn't be
@@ -664,11 +674,11 @@ SFML_GRAPHICS_API void swap(Texture& left, Texture& right) noexcept;
 /// // Load a texture from a file
 /// const auto texture = sf::Texture::loadFromFile("texture.png").value();
 ///
-/// // Create a sprite with the texture's size
-/// sf::Sprite sprite(texture);
+/// // Create a sprite covering the entirety of the texture
+/// sf::Sprite sprite(texture.getRect());
 ///
 /// // Draw the sprite with the intended texture
-/// window.draw(sprite, sf::RenderStates{&texture});
+/// window.draw(sprite, texture);
 /// \endcode
 ///
 /// \code
@@ -678,8 +688,8 @@ SFML_GRAPHICS_API void swap(Texture& left, Texture& right) noexcept;
 /// // Create an empty texture
 /// auto texture = sf::Texture::create({640, 480}).value();
 ///
-/// // Create a sprite with the texture's size
-/// sf::Sprite sprite(texture);
+/// // Create a sprite covering the entirety of the texture
+/// sf::Sprite sprite(texture.getRect());
 ///
 /// while (...) // the main loop
 /// {
@@ -690,7 +700,7 @@ SFML_GRAPHICS_API void swap(Texture& left, Texture& right) noexcept;
 ///     texture.update(pixels);
 ///
 ///     // draw the sprite with the intended texture
-///     window.draw(sprite, sf::RenderStates{&texture});
+///     window.draw(sprite, texture);
 ///
 ///     ...
 /// }
