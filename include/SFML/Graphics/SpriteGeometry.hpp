@@ -148,7 +148,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::array<Vertex, 4> m_vertices;    //!< Vertices defining the sprite's geometry
+    std::array<Vertex, 4> m_vertices; //!< Vertices defining the sprite's geometry
 };
 
 } // namespace sf
