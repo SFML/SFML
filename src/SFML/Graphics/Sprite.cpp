@@ -45,7 +45,7 @@ void Sprite::draw(RenderTarget& target, RenderStates states) const
     states.texture        = &m_texture;
     states.coordinateType = CoordinateType::Pixels;
 
-    target.draw(m_geometry.getVertices().data(), m_geometry.getVertices().size(), PrimitiveType::TriangleStrip, states);
+    target.draw(m_geometry.getVertices().data(), 4, PrimitiveType::TriangleStrip, states);
 }
 
 } // namespace sf

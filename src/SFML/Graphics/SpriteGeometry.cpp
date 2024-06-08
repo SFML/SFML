@@ -71,8 +71,10 @@ const Color& SpriteGeometry::getColor() const
 ////////////////////////////////////////////////////////////
 FloatRect SpriteGeometry::getLocalBounds() const
 {
-    const auto width  = static_cast<float>(std::abs(getTextureRect().width));
-    const auto height = static_cast<float>(std::abs(getTextureRect().height));
+    const Vector2f size = m_vertices[3].texCoords - m_vertices[0].texCoords;
+
+    const auto width  = static_cast<float>(std::abs(size.x));
+    const auto height = static_cast<float>(std::abs(size.y));
 
     return {{0.f, 0.f}, {width, height}};
 }
@@ -94,12 +96,10 @@ const std::array<Vertex, 4>& SpriteGeometry::getVertices() const
 void SpriteGeometry::updateVertices(const IntRect& rectangle)
 {
     // Update positions
-    const FloatRect bounds = getLocalBounds();
-
     m_vertices[0].position = Vector2f(0, 0);
-    m_vertices[1].position = Vector2f(0, bounds.height);
-    m_vertices[2].position = Vector2f(bounds.width, 0);
-    m_vertices[3].position = Vector2f(bounds.width, bounds.height);
+    m_vertices[1].position = Vector2f(0, static_cast<float>(rectangle.height));
+    m_vertices[2].position = Vector2f(static_cast<float>(rectangle.width), 0);
+    m_vertices[3].position = Vector2f(static_cast<float>(rectangle.width), static_cast<float>(rectangle.height));
 
     // Update texture coordinates
     const FloatRect convertedTextureRect(rectangle);

@@ -471,7 +471,7 @@ void RenderTarget::draw(const VertexBuffer& vertexBuffer, std::size_t firstVerte
 ////////////////////////////////////////////////////////////
 void RenderTarget::draw(Sprite&& sprite, const RenderStates& states)
 {
-    draw(static_cast<Drawable&>(sprite), states);
+    draw(static_cast<const Drawable&>(sprite), states);
 }
 
 
