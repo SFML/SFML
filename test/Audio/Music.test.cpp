@@ -7,8 +7,6 @@
 
 #include <AudioUtil.hpp>
 #include <SystemUtil.hpp>
-#include <array>
-#include <fstream>
 #include <thread>
 #include <type_traits>
 
@@ -18,8 +16,8 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
     {
         STATIC_CHECK(!std::is_copy_constructible_v<sf::Music>);
         STATIC_CHECK(!std::is_copy_assignable_v<sf::Music>);
-        STATIC_CHECK(!std::is_nothrow_move_constructible_v<sf::Music>);
-        STATIC_CHECK(!std::is_nothrow_move_assignable_v<sf::Music>);
+        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Music>);
+        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Music>);
         STATIC_CHECK(std::has_virtual_destructor_v<sf::Music>);
     }
 
@@ -34,39 +32,16 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
         CHECK(timeSpan.length == sf::Time::Zero);
     }
 
-    SECTION("Construction")
-    {
-        const sf::Music music;
-        const auto [offset, length] = music.getLoopPoints();
-        CHECK(offset == sf::Time::Zero);
-        CHECK(length == sf::Time::Zero);
-        CHECK(music.getChannelCount() == 0);
-        CHECK(music.getSampleRate() == 0);
-        CHECK(music.getStatus() == sf::Music::Status::Stopped);
-        CHECK(music.getPlayingOffset() == sf::Time::Zero);
-        CHECK(!music.getLoop());
-    }
-
     SECTION("openFromFile()")
     {
-        sf::Music music;
-
         SECTION("Invalid file")
         {
-            REQUIRE(!music.openFromFile("does/not/exist.wav"));
-            const auto [offset, length] = music.getLoopPoints();
-            CHECK(offset == sf::Time::Zero);
-            CHECK(length == sf::Time::Zero);
-            CHECK(music.getChannelCount() == 0);
-            CHECK(music.getSampleRate() == 0);
-            CHECK(music.getStatus() == sf::Music::Status::Stopped);
-            CHECK(music.getPlayingOffset() == sf::Time::Zero);
-            CHECK(!music.getLoop());
+            CHECK(!sf::Music::openFromFile("does/not/exist.wav"));
         }
 
         SECTION("Valid file")
         {
-            REQUIRE(music.openFromFile("Audio/ding.mp3"));
+            const auto music = sf::Music::openFromFile("Audio/ding.mp3").value();
             CHECK(music.getDuration() == sf::microseconds(1990884));
             const auto [offset, length] = music.getLoopPoints();
             CHECK(offset == sf::Time::Zero);
@@ -82,25 +57,17 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
     SECTION("openFromMemory()")
     {
         std::vector<std::byte> memory;
-        sf::Music              music;
 
         SECTION("Invalid buffer")
         {
-            REQUIRE(!music.openFromMemory(memory.data(), memory.size()));
-            const auto [offset, length] = music.getLoopPoints();
-            CHECK(offset == sf::Time::Zero);
-            CHECK(length == sf::Time::Zero);
-            CHECK(music.getChannelCount() == 0);
-            CHECK(music.getSampleRate() == 0);
-            CHECK(music.getStatus() == sf::Music::Status::Stopped);
-            CHECK(music.getPlayingOffset() == sf::Time::Zero);
-            CHECK(!music.getLoop());
+            CHECK(!sf::Music::openFromMemory(memory.data(), memory.size()));
         }
 
         SECTION("Valid buffer")
         {
             memory = loadIntoMemory("Audio/ding.flac");
-            REQUIRE(music.openFromMemory(memory.data(), memory.size()));
+
+            const auto music = sf::Music::openFromMemory(memory.data(), memory.size()).value();
             CHECK(music.getDuration() == sf::microseconds(1990884));
             const auto [offset, length] = music.getLoopPoints();
             CHECK(offset == sf::Time::Zero);
@@ -116,25 +83,17 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
     SECTION("openFromStream()")
     {
         sf::FileInputStream stream;
-        sf::Music           music;
 
         SECTION("Invalid stream")
         {
-            CHECK(!music.openFromStream(stream));
-            const auto [offset, length] = music.getLoopPoints();
-            CHECK(offset == sf::Time::Zero);
-            CHECK(length == sf::Time::Zero);
-            CHECK(music.getChannelCount() == 0);
-            CHECK(music.getSampleRate() == 0);
-            CHECK(music.getStatus() == sf::Music::Status::Stopped);
-            CHECK(music.getPlayingOffset() == sf::Time::Zero);
-            CHECK(!music.getLoop());
+            CHECK(!sf::Music::openFromStream(stream));
         }
 
         SECTION("Valid stream")
         {
             REQUIRE(stream.open("Audio/doodle_pop.ogg"));
-            REQUIRE(music.openFromStream(stream));
+
+            const auto music = sf::Music::openFromStream(stream).value();
             CHECK(music.getDuration() == sf::microseconds(24002176));
             const auto [offset, length] = music.getLoopPoints();
             CHECK(offset == sf::Time::Zero);
@@ -149,8 +108,7 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
 
     SECTION("play/pause/stop")
     {
-        sf::Music music;
-        REQUIRE(music.openFromFile("Audio/ding.mp3"));
+        auto music = sf::Music::openFromFile("Audio/ding.mp3").value();
 
         // Wait for background thread to start
         music.play();
@@ -173,8 +131,7 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
 
     SECTION("setLoopPoints()")
     {
-        sf::Music music;
-        REQUIRE(music.openFromFile("Audio/killdeer.wav"));
+        auto music = sf::Music::openFromFile("Audio/killdeer.wav").value();
         music.setLoopPoints({sf::seconds(1), sf::seconds(2)});
         const auto [offset, length] = music.getLoopPoints();
         CHECK(offset == sf::seconds(1));

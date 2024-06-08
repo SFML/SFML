@@ -234,6 +234,14 @@ SoundStream::~SoundStream() = default;
 
 
 ////////////////////////////////////////////////////////////
+SoundStream::SoundStream(SoundStream&&) noexcept = default;
+
+
+////////////////////////////////////////////////////////////
+SoundStream& SoundStream::operator=(SoundStream&&) noexcept = default;
+
+
+////////////////////////////////////////////////////////////
 void SoundStream::initialize(unsigned int channelCount, unsigned int sampleRate, const std::vector<SoundChannel>& channelMap)
 {
     m_impl->channelCount     = channelCount;
