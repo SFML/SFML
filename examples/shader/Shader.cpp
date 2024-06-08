@@ -36,6 +36,7 @@ class Pixelate : public Effect
 {
 public:
     explicit Pixelate(sf::Texture&& texture, sf::Shader&& shader) :
+    m_geometry(texture.getRect()),
     m_texture(std::move(texture)),
     m_shader(std::move(shader))
     {
@@ -50,12 +51,13 @@ public:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
         states.shader = &m_shader;
-        target.draw(sf::Sprite{m_texture}, states);
+        target.draw(sf::Sprite{m_geometry, m_texture}, states);
     }
 
 private:
-    sf::Texture m_texture;
-    sf::Shader  m_shader;
+    sf::SpriteGeometry m_geometry;
+    sf::Texture        m_texture;
+    sf::Shader         m_shader;
 };
 
 
@@ -173,22 +175,21 @@ public:
         // Render the updated scene to the off-screen surface
         m_surface.clear(sf::Color::White);
 
-        sf::Sprite backgroundSprite{m_backgroundTexture};
-        backgroundSprite.setPosition({135.f, 100.f});
-        m_surface.draw(backgroundSprite);
+        m_backgroundGeometry.setPosition({135.f, 100.f});
+        m_surface.draw(sf::Sprite(m_backgroundGeometry, m_backgroundTexture));
 
         // Update the position of the moving entities
         constexpr int numEntities = 6;
 
         for (int i = 0; i < 6; ++i)
         {
-            sf::Sprite entity{m_entityTexture, sf::IntRect({96 * i, 0}, {96, 96})};
+            sf::SpriteGeometry entityGeometry{sf::IntRect({96 * i, 0}, {96, 96})};
 
-            entity.setPosition(
+            entityGeometry.setPosition(
                 {std::cos(0.25f * (time * static_cast<float>(i) + static_cast<float>(numEntities - i))) * 300 + 350,
                  std::sin(0.25f * (time * static_cast<float>(numEntities - i) + static_cast<float>(i))) * 200 + 250});
 
-            m_surface.draw(entity);
+            m_surface.draw(sf::Sprite(entityGeometry, m_entityTexture));
         }
 
         m_surface.display();
@@ -196,12 +197,16 @@ public:
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
+        const sf::Texture&       surfaceTexture = m_surface.getTexture();
+        const sf::SpriteGeometry surfaceGeometry{surfaceTexture.getRect()};
+
         states.shader = &m_shader;
-        target.draw(sf::Sprite{m_surface.getTexture()}, states);
+        target.draw(sf::Sprite{surfaceGeometry, surfaceTexture}, states);
     }
 
     explicit Edge(sf::RenderTexture&& surface, sf::Texture&& backgroundTexture, sf::Texture&& entityTexture, sf::Shader&& shader) :
     m_surface(std::move(surface)),
+    m_backgroundGeometry(backgroundTexture.getRect()),
     m_backgroundTexture(std::move(backgroundTexture)),
     m_entityTexture(std::move(entityTexture)),
     m_shader(std::move(shader))
@@ -209,10 +214,11 @@ public:
     }
 
 private:
-    sf::RenderTexture m_surface;
-    sf::Texture       m_backgroundTexture;
-    sf::Texture       m_entityTexture;
-    sf::Shader        m_shader;
+    sf::RenderTexture  m_surface;
+    sf::SpriteGeometry m_backgroundGeometry;
+    sf::Texture        m_backgroundTexture;
+    sf::Texture        m_entityTexture;
+    sf::Shader         m_shader;
 };
 
 
@@ -418,10 +424,10 @@ int main()
     std::size_t current = 0;
 
     // Create the messages background
-    const auto textBackgroundTexture = sf::Texture::loadFromFile("resources/text-background.png").value();
-    sf::Sprite textBackground(textBackgroundTexture);
-    textBackground.setPosition({0.f, 520.f});
-    textBackground.setColor(sf::Color(255, 255, 255, 200));
+    const auto         textBackgroundTexture = sf::Texture::loadFromFile("resources/text-background.png").value();
+    sf::SpriteGeometry textBackgroundGeometry(textBackgroundTexture.getRect());
+    textBackgroundGeometry.setPosition({0.f, 520.f});
+    textBackgroundGeometry.setColor(sf::Color(255, 255, 255, 200));
 
     // Create the description text
     sf::Text description(font, "Current effect: " + effectNames[current], 20);
@@ -513,7 +519,7 @@ int main()
         }
 
         // Draw the text
-        window.draw(textBackground);
+        window.draw(sf::Sprite(textBackgroundGeometry, textBackgroundTexture));
         window.draw(instructions);
         window.draw(description);
 

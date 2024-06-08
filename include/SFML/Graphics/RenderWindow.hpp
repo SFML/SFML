@@ -265,10 +265,14 @@ private:
 /// // Create the render window
 /// sf::RenderWindow window(sf::VideoMode({800, 600}), "SFML OpenGL");
 ///
-/// // Create a sprite and a text to display
+/// // Load required resources for the sprite and the text
 /// const auto texture = sf::Texture::loadFromFile("circle.png").value();
-/// sf::Sprite sprite(texture);
 /// const auto font = sf::Font::loadFromFile("arial.ttf").value();
+///
+/// // Create geometry for the sprite that will display the texture
+/// sf::SpriteGeometry geometry(texture.getRect());
+///
+/// // Create text object
 /// sf::Text text(font);
 /// ...
 ///
@@ -282,9 +286,9 @@ private:
 ///     // Process events
 ///     ...
 ///
-///     // Draw a background sprite
+///     // Create and draw a background sprite
 ///     window.pushGLStates();
-///     window.draw(sprite);
+///     window.draw(sf::Sprite(geometry, texture));
 ///     window.popGLStates();
 ///
 ///     // Draw a 3D object using OpenGL

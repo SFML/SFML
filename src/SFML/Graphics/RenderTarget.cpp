@@ -30,6 +30,7 @@
 #include <SFML/Graphics/GLExtensions.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Shader.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/VertexBuffer.hpp>
 
@@ -465,6 +466,12 @@ void RenderTarget::draw(const VertexBuffer& vertexBuffer, std::size_t firstVerte
         m_cache.useVertexCache        = false;
         m_cache.texCoordsArrayEnabled = true;
     }
+}
+
+////////////////////////////////////////////////////////////
+void RenderTarget::draw(Sprite&& sprite, const RenderStates& states)
+{
+    draw(static_cast<Drawable&>(sprite), states);
 }
 
 

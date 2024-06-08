@@ -58,8 +58,8 @@ int main()
         window.setMaximumSize(sf::Vector2u(1200, 900));
 
         // Create a sprite for the background
-        const auto       backgroundTexture = sf::Texture::loadFromFile(resourcesDir() / "background.jpg", sRgb).value();
-        const sf::Sprite background(backgroundTexture);
+        const auto backgroundTexture = sf::Texture::loadFromFile(resourcesDir() / "background.jpg", sRgb).value();
+        const sf::SpriteGeometry backgroundGeometry(backgroundTexture.getRect());
 
         // Create some text to draw on top of our OpenGL object
         const auto font = sf::Font::loadFromFile(resourcesDir() / "tuffy.ttf").value();
@@ -282,7 +282,7 @@ int main()
 
             // Draw the background
             window.pushGLStates();
-            window.draw(background);
+            window.draw(sf::Sprite(backgroundGeometry, backgroundTexture));
             window.popGLStates();
 
             // Make the window the active window for OpenGL calls

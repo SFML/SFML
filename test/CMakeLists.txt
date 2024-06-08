@@ -108,6 +108,7 @@ set(GRAPHICS_SRC
     Graphics/Shader.test.cpp
     Graphics/Shape.test.cpp
     Graphics/Sprite.test.cpp
+    Graphics/SpriteGeometry.test.cpp
     Graphics/StencilMode.test.cpp
     Graphics/Text.test.cpp
     Graphics/Texture.test.cpp

@@ -20,9 +20,11 @@
 ///     // Create the main window
 ///     sf::RenderWindow window(sf::VideoMode({800, 600}), "SFML window");
 ///
-///     // Load a sprite to display
+///     // Load a texture to display
 ///     const auto texture = sf::Texture::loadFromFile("cute_image.jpg").value();
-///     sf::Sprite sprite(texture);
+///
+///     // Create geometry for the sprite that will display the texture
+///     sf::SpriteGeometry geometry(texture.getRect());
 ///
 ///     // Create a graphical text to display
 ///     const auto font = sf::Font::loadFromFile("arial.ttf").value();
@@ -50,8 +52,8 @@
 ///         // Clear screen
 ///         window.clear();
 ///
-///         // Draw the sprite
-///         window.draw(sprite);
+///         // Create and draw the sprite
+///         window.draw(sf::Sprite(geometry, texture));
 ///
 ///         // Draw the string
 ///         window.draw(text);

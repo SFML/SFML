@@ -54,6 +54,7 @@ class Shader;
 class Texture;
 class Transform;
 class VertexBuffer;
+class Sprite;
 
 ////////////////////////////////////////////////////////////
 /// \brief Base class for all render targets (window, texture, ...)
@@ -343,6 +344,30 @@ public:
               std::size_t         firstVertex,
               std::size_t         vertexCount,
               const RenderStates& states = RenderStates::Default);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Prevent drawing a const non-temporary sprite to avoid lifetime issues
+    ///
+    /// If you are really sure about the lifetime of your sprite dependencies, you can draw
+    /// your sprite by casting it to an rvalue via `std::move`.
+    ///
+    ////////////////////////////////////////////////////////////
+    void draw(const Sprite& sprite, const RenderStates& states = RenderStates::Default) = delete;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Prevent drawing a non-const non-temporary sprite to avoid lifetime issues
+    ///
+    /// If you are really sure about the lifetime of your sprite dependencies, you can draw
+    /// your sprite by casting it to an rvalue via `std::move`.
+    ///
+    ////////////////////////////////////////////////////////////
+    void draw(Sprite& sprite, const RenderStates& states = RenderStates::Default) = delete;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Draw a temporary sprite
+    ///
+    ////////////////////////////////////////////////////////////
+    void draw(Sprite&& sprite, const RenderStates& states = RenderStates::Default);
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the size of the rendering region of the target

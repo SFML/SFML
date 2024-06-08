@@ -1081,9 +1081,9 @@ int main()
 
     // Create the messages background
     const auto textBackgroundTexture = sf::Texture::loadFromFile(resourcesDir() / "text-background.png").value();
-    sf::Sprite textBackground(textBackgroundTexture);
-    textBackground.setPosition({0.f, 520.f});
-    textBackground.setColor(sf::Color(255, 255, 255, 200));
+    sf::SpriteGeometry textBackgroundGeometry(textBackgroundTexture.getRect());
+    textBackgroundGeometry.setPosition({0.f, 520.f});
+    textBackgroundGeometry.setColor(sf::Color(255, 255, 255, 200));
 
     // Create the description text
     sf::Text description(font, "Current effect: " + effects[current]->getName(), 20);
@@ -1197,7 +1197,7 @@ int main()
         window.draw(*effects[current]);
 
         // Draw the text
-        window.draw(textBackground);
+        window.draw(sf::Sprite(textBackgroundGeometry, textBackgroundTexture));
         window.draw(instructions);
         window.draw(description);
         window.draw(playbackDevice);

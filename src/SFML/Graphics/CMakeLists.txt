@@ -64,6 +64,8 @@ set(DRAWABLES_SRC
     ${INCROOT}/ConvexShape.hpp
     ${SRCROOT}/Sprite.cpp
     ${INCROOT}/Sprite.hpp
+    ${SRCROOT}/SpriteGeometry.cpp
+    ${INCROOT}/SpriteGeometry.hpp
     ${SRCROOT}/Text.cpp
     ${INCROOT}/Text.hpp
     ${SRCROOT}/VertexArray.cpp

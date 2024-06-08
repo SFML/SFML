@@ -302,8 +302,8 @@ private:
 ///    window.clear();
 ///
 ///    // Draw the texture
-///    sf::Sprite sprite(texture.getTexture());
-///    window.draw(sprite);
+///    sf::SpriteGeometry geometry(texture.getTexture().getRect());
+///    window.draw(sf::Sprite(geometry, texture));
 ///
 ///    // End the current frame and display its contents on screen
 ///    window.display();

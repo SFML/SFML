@@ -27,131 +27,25 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Sprite.hpp>
-#include <SFML/Graphics/Texture.hpp>
-
-#include <cmath>
-#include <cstdlib>
+#include <SFML/Graphics/SpriteGeometry.hpp>
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Sprite::Sprite(const Texture& texture) : Sprite(texture, IntRect({0, 0}, Vector2i(texture.getSize())))
+Sprite::Sprite(const SpriteGeometry& geometry, const Texture& texture) : m_geometry(geometry), m_texture(texture)
 {
-}
-
-
-////////////////////////////////////////////////////////////
-Sprite::Sprite(const Texture& texture, const IntRect& rectangle) : m_texture(&texture), m_textureRect(rectangle)
-{
-    updateVertices();
-}
-
-
-////////////////////////////////////////////////////////////
-void Sprite::setTexture(const Texture& texture, bool resetRect)
-{
-    // Recompute the texture area if requested
-    if (resetRect)
-    {
-        setTextureRect(IntRect({0, 0}, Vector2i(texture.getSize())));
-    }
-
-    // Assign the new texture
-    m_texture = &texture;
-}
-
-
-////////////////////////////////////////////////////////////
-void Sprite::setTextureRect(const IntRect& rectangle)
-{
-    if (rectangle != m_textureRect)
-    {
-        m_textureRect = rectangle;
-        updateVertices();
-    }
-}
-
-
-////////////////////////////////////////////////////////////
-void Sprite::setColor(const Color& color)
-{
-    for (Vertex& vertex : m_vertices)
-        vertex.color = color;
-}
-
-
-////////////////////////////////////////////////////////////
-const Texture& Sprite::getTexture() const
-{
-    return *m_texture;
-}
-
-
-////////////////////////////////////////////////////////////
-const IntRect& Sprite::getTextureRect() const
-{
-    return m_textureRect;
-}
-
-
-////////////////////////////////////////////////////////////
-const Color& Sprite::getColor() const
-{
-    return m_vertices[0].color;
-}
-
-
-////////////////////////////////////////////////////////////
-FloatRect Sprite::getLocalBounds() const
-{
-    const auto width  = static_cast<float>(std::abs(m_textureRect.width));
-    const auto height = static_cast<float>(std::abs(m_textureRect.height));
-
-    return {{0.f, 0.f}, {width, height}};
-}
-
-
-////////////////////////////////////////////////////////////
-FloatRect Sprite::getGlobalBounds() const
-{
-    return getTransform().transformRect(getLocalBounds());
 }
 
 
 ////////////////////////////////////////////////////////////
 void Sprite::draw(RenderTarget& target, RenderStates states) const
 {
-    states.transform *= getTransform();
-    states.texture        = m_texture;
+    states.transform *= m_geometry.getTransform();
+    states.texture        = &m_texture;
     states.coordinateType = CoordinateType::Pixels;
-    target.draw(m_vertices.data(), m_vertices.size(), PrimitiveType::TriangleStrip, states);
-}
 
-
-////////////////////////////////////////////////////////////
-void Sprite::updateVertices()
-{
-    // Update positions
-    const FloatRect bounds = getLocalBounds();
-
-    m_vertices[0].position = Vector2f(0, 0);
-    m_vertices[1].position = Vector2f(0, bounds.height);
-    m_vertices[2].position = Vector2f(bounds.width, 0);
-    m_vertices[3].position = Vector2f(bounds.width, bounds.height);
-
-    // Update texture coordinates
-    const FloatRect convertedTextureRect(m_textureRect);
-
-    const float left   = convertedTextureRect.left;
-    const float right  = left + convertedTextureRect.width;
-    const float top    = convertedTextureRect.top;
-    const float bottom = top + convertedTextureRect.height;
-
-    m_vertices[0].texCoords = Vector2f(left, top);
-    m_vertices[1].texCoords = Vector2f(left, bottom);
-    m_vertices[2].texCoords = Vector2f(right, top);
-    m_vertices[3].texCoords = Vector2f(right, bottom);
+    target.draw(m_geometry.getVertices().data(), m_geometry.getVertices().size(), PrimitiveType::TriangleStrip, states);
 }
 
 } // namespace sf
