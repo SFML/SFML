@@ -68,6 +68,18 @@ public:
     ~SoundStream() override;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Move constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    SoundStream(SoundStream&&) noexcept;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Move assignment
+    ///
+    ////////////////////////////////////////////////////////////
+    SoundStream& operator=(SoundStream&&) noexcept;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Start or resume playing the audio stream
     ///
     /// This function starts the stream if it was stopped, resumes
@@ -286,7 +298,7 @@ private:
     // Member data
     ////////////////////////////////////////////////////////////
     struct Impl;
-    const std::unique_ptr<Impl> m_impl; //!< Implementation details
+    std::unique_ptr<Impl> m_impl; //!< Implementation details
 };
 
 } // namespace sf

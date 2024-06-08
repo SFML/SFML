@@ -9,7 +9,6 @@ int main()
 {
     // Audio
     [[maybe_unused]] const sf::SoundBufferRecorder soundBufferRecorder;
-    [[maybe_unused]] const sf::Music               music;
 
     // Graphics
     [[maybe_unused]] const sf::Color          color;
