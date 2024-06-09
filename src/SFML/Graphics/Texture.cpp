@@ -259,7 +259,7 @@ std::optional<Texture> Texture::create(const Vector2u& size, bool sRgb)
 
     texture.m_hasMipmap = false;
 
-    return texture;
+    return std::make_optional(std::move(texture));
 }
 
 

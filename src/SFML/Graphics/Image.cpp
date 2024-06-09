@@ -77,6 +77,8 @@ void bufferFromCallback(void* context, void* data, int size)
 {
     const auto* source = static_cast<std::uint8_t*>(data);
     auto*       dest   = static_cast<std::vector<std::uint8_t>*>(context);
+
+    dest->reserve(static_cast<std::size_t>(size));
     std::copy(source, source + size, std::back_inserter(*dest));
 }
 
@@ -321,30 +323,30 @@ std::optional<std::vector<std::uint8_t>> Image::saveToMemory(std::string_view fo
         const std::string specified     = toLower(std::string(format));
         const Vector2i    convertedSize = Vector2i(m_size);
 
-        std::vector<std::uint8_t> buffer;
+        auto buffer = std::make_optional<std::vector<std::uint8_t>>();
 
         if (specified == "bmp")
         {
             // BMP format
-            if (stbi_write_bmp_to_func(bufferFromCallback, &buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data()))
+            if (stbi_write_bmp_to_func(bufferFromCallback, &*buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data()))
                 return buffer;
         }
         else if (specified == "tga")
         {
             // TGA format
-            if (stbi_write_tga_to_func(bufferFromCallback, &buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data()))
+            if (stbi_write_tga_to_func(bufferFromCallback, &*buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data()))
                 return buffer;
         }
         else if (specified == "png")
         {
             // PNG format
-            if (stbi_write_png_to_func(bufferFromCallback, &buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data(), 0))
+            if (stbi_write_png_to_func(bufferFromCallback, &*buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data(), 0))
                 return buffer;
         }
         else if (specified == "jpg" || specified == "jpeg")
         {
             // JPG format
-            if (stbi_write_jpg_to_func(bufferFromCallback, &buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data(), 90))
+            if (stbi_write_jpg_to_func(bufferFromCallback, &*buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data(), 90))
                 return buffer;
         }
     }

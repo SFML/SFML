@@ -133,7 +133,9 @@ std::optional<SoundFileReader::Info> SoundFileReaderMp3::open(InputStream& strea
         return std::nullopt;
 
     // Retrieve the music attributes
-    Info info;
+    auto result = std::make_optional<Info>();
+
+    Info& info        = *result;
     info.channelCount = static_cast<unsigned int>(m_decoder.info.channels);
     info.sampleRate   = static_cast<unsigned int>(m_decoder.info.hz);
     info.sampleCount  = m_decoder.samples;
@@ -157,7 +159,7 @@ std::optional<SoundFileReader::Info> SoundFileReaderMp3::open(InputStream& strea
     }
 
     m_numSamples = info.sampleCount;
-    return info;
+    return result;
 }
 
 

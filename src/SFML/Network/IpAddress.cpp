@@ -55,15 +55,15 @@ std::optional<IpAddress> IpAddress::resolve(std::string_view address)
     {
         // The broadcast address needs to be handled explicitly,
         // because it is also the value returned by inet_addr on error
-        return Broadcast;
+        return std::make_optional(Broadcast);
     }
 
     if (address == "0.0.0.0"sv)
-        return Any;
+        return std::make_optional(Any);
 
     // Try to convert the address as a byte representation ("xxx.xxx.xxx.xxx")
     if (const std::uint32_t ip = inet_addr(address.data()); ip != INADDR_NONE)
-        return IpAddress(ntohl(ip));
+        return std::make_optional<IpAddress>(ntohl(ip));
 
     // Not a valid address, try to convert it as a host name
     addrinfo hints{}; // Zero-initialize
@@ -78,7 +78,7 @@ std::optional<IpAddress> IpAddress::resolve(std::string_view address)
         const std::uint32_t ip = sin.sin_addr.s_addr;
         freeaddrinfo(result);
 
-        return IpAddress(ntohl(ip));
+        return std::make_optional<IpAddress>(ntohl(ip));
     }
 
     return std::nullopt;
@@ -147,7 +147,7 @@ std::optional<IpAddress> IpAddress::getLocalAddress()
     priv::SocketImpl::close(sock);
 
     // Finally build the IP address
-    return IpAddress(ntohl(address.sin_addr.s_addr));
+    return std::make_optional<IpAddress>(ntohl(address.sin_addr.s_addr));
 }
 
 

@@ -171,7 +171,7 @@ std::optional<SoundFileReader::Info> SoundFileReaderWav::open(InputStream& strea
     for (auto i = 0u; i < m_channelCount; ++i)
         soundChannels.emplace_back(priv::MiniaudioUtils::miniaudioChannelToSoundChannel(channelMap[i]));
 
-    return Info{frameCount * m_channelCount, m_channelCount, sampleRate, std::move(soundChannels)};
+    return std::make_optional<Info>({frameCount * m_channelCount, m_channelCount, sampleRate, std::move(soundChannels)});
 }
 
 

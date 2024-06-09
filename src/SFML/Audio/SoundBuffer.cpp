@@ -113,7 +113,7 @@ std::optional<SoundBuffer> SoundBuffer::loadFromSamples(
         // Update the internal buffer with the new samples
         if (!soundBuffer.update(channelCount, sampleRate, channelMap))
             return std::nullopt;
-        return soundBuffer;
+        return std::make_optional(std::move(soundBuffer));
     }
     else
     {
@@ -224,7 +224,7 @@ std::optional<SoundBuffer> SoundBuffer::initialize(InputSoundFile& file)
         SoundBuffer soundBuffer(std::move(samples));
         if (!soundBuffer.update(file.getChannelCount(), file.getSampleRate(), file.getChannelMap()))
             return std::nullopt;
-        return soundBuffer;
+        return std::make_optional(std::move(soundBuffer));
     }
     else
     {

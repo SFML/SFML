@@ -775,7 +775,7 @@ std::optional<Font::Page> Font::Page::make(bool smooth)
     }
 
     texture->setSmooth(smooth);
-    return Page(std::move(*texture));
+    return std::make_optional<Page>(std::move(*texture));
 }
 
 

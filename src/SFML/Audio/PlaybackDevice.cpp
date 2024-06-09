@@ -54,7 +54,7 @@ std::optional<std::string> getDefaultDevice()
     for (const auto& device : priv::AudioDevice::getAvailableDevices())
     {
         if (device.isDefault)
-            return device.name;
+            return std::make_optional(device.name);
     }
 
     return std::nullopt;

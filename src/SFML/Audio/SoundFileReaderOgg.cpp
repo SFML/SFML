@@ -107,7 +107,10 @@ std::optional<SoundFileReader::Info> SoundFileReaderOgg::open(InputStream& strea
 
     // Retrieve the music attributes
     vorbis_info* vorbisInfo = ov_info(&m_vorbis, -1);
-    Info         info;
+
+    auto result = std::make_optional<Info>();
+
+    Info& info        = *result;
     info.channelCount = static_cast<unsigned int>(vorbisInfo->channels);
     info.sampleRate   = static_cast<unsigned int>(vorbisInfo->rate);
     info.sampleCount  = static_cast<std::size_t>(ov_pcm_total(&m_vorbis, -1) * vorbisInfo->channels);
@@ -173,7 +176,7 @@ std::optional<SoundFileReader::Info> SoundFileReaderOgg::open(InputStream& strea
     // We must keep the channel count for the seek function
     m_channelCount = info.channelCount;
 
-    return info;
+    return result;
 }
 
 

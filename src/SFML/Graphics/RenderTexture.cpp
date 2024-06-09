@@ -88,7 +88,7 @@ std::optional<RenderTexture> RenderTexture::create(const Vector2u& size, const C
     // We can now initialize the render target part
     renderTexture.initialize();
 
-    return renderTexture;
+    return std::make_optional(std::move(renderTexture));
 }
 
 
