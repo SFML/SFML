@@ -216,6 +216,8 @@ std::vector<AudioDevice::DeviceEntry> AudioDevice::getAvailableDevices()
 {
     const auto getDevices = [](auto& context)
     {
+        std::vector<DeviceEntry> deviceList; // Use a single local variable for NRVO
+
         ma_device_info* deviceInfos{};
         ma_uint32       deviceCount{};
 
@@ -224,10 +226,9 @@ std::vector<AudioDevice::DeviceEntry> AudioDevice::getAvailableDevices()
             result != MA_SUCCESS)
         {
             err() << "Failed to get audio playback devices: " << ma_result_description(result) << std::endl;
-            return std::vector<DeviceEntry>{};
+            return deviceList; // Empty device list
         }
 
-        std::vector<DeviceEntry> deviceList;
         deviceList.reserve(deviceCount);
 
         // In order to report devices with identical names and still allow

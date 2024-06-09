@@ -156,7 +156,9 @@ Image::Image(const Vector2u& size, const std::uint8_t* pixels)
 
 
 ////////////////////////////////////////////////////////////
-Image::Image(Vector2u size, std::vector<std::uint8_t>&& pixels) : m_size(size), m_pixels(std::move(pixels))
+Image::Image(priv::PassKey<Image>&&, Vector2u size, std::vector<std::uint8_t>&& pixels) :
+m_size(size),
+m_pixels(std::move(pixels))
 {
 }
 
@@ -182,7 +184,9 @@ std::optional<Image> Image::loadFromFile(const std::filesystem::path& filename)
 
     if (ptr)
     {
-        return Image(Vector2u(Vector2i(width, height)), {ptr.get(), ptr.get() + width * height * 4});
+        return std::make_optional<Image>(priv::PassKey<Image>{},
+                                         Vector2u(Vector2i(width, height)),
+                                         std::vector<std::uint8_t>{ptr.get(), ptr.get() + width * height * 4});
     }
     else
     {
@@ -211,7 +215,9 @@ std::optional<Image> Image::loadFromMemory(const void* data, std::size_t size)
 
         if (ptr)
         {
-            return Image(Vector2u(Vector2i(width, height)), {ptr.get(), ptr.get() + width * height * 4});
+            return std::make_optional<Image>(priv::PassKey<Image>{},
+                                             Vector2u(Vector2i(width, height)),
+                                             std::vector<std::uint8_t>{ptr.get(), ptr.get() + width * height * 4});
         }
         else
         {
@@ -253,7 +259,9 @@ std::optional<Image> Image::loadFromStream(InputStream& stream)
 
     if (ptr)
     {
-        return Image(Vector2u(Vector2i(width, height)), {ptr.get(), ptr.get() + width * height * 4});
+        return std::make_optional<Image>(priv::PassKey<Image>{},
+                                         Vector2u(Vector2i(width, height)),
+                                         std::vector<std::uint8_t>{ptr.get(), ptr.get() + width * height * 4});
     }
     else
     {

@@ -321,23 +321,41 @@ void JoystickImpl::close()
 ////////////////////////////////////////////////////////////
 JoystickCaps JoystickImpl::getCapabilities() const
 {
+    JoystickCaps caps; // Use a single local variable for NRVO
+
     if (directInput)
-        return getCapabilitiesDInput();
+    {
+        // Count how many buttons have valid offsets
+        caps.buttonCount = 0;
 
-    JoystickCaps caps;
+        for (const int button : m_buttons)
+        {
+            if (button != -1)
+                ++caps.buttonCount;
+        }
 
-    caps.buttonCount = m_caps.wNumButtons;
-    if (caps.buttonCount > Joystick::ButtonCount)
-        caps.buttonCount = Joystick::ButtonCount;
+        // Check which axes have valid offsets
+        for (unsigned int i = 0; i < Joystick::AxisCount; ++i)
+        {
+            const auto axis = static_cast<Joystick::Axis>(i);
+            caps.axes[axis] = (m_axes[axis] != -1);
+        }
+    }
+    else
+    {
+        caps.buttonCount = m_caps.wNumButtons;
+        if (caps.buttonCount > Joystick::ButtonCount)
+            caps.buttonCount = Joystick::ButtonCount;
 
-    caps.axes[Joystick::Axis::X]    = true;
-    caps.axes[Joystick::Axis::Y]    = true;
-    caps.axes[Joystick::Axis::Z]    = (m_caps.wCaps & JOYCAPS_HASZ) != 0;
-    caps.axes[Joystick::Axis::R]    = (m_caps.wCaps & JOYCAPS_HASR) != 0;
-    caps.axes[Joystick::Axis::U]    = (m_caps.wCaps & JOYCAPS_HASU) != 0;
-    caps.axes[Joystick::Axis::V]    = (m_caps.wCaps & JOYCAPS_HASV) != 0;
-    caps.axes[Joystick::Axis::PovX] = (m_caps.wCaps & JOYCAPS_HASPOV) != 0;
-    caps.axes[Joystick::Axis::PovY] = (m_caps.wCaps & JOYCAPS_HASPOV) != 0;
+        caps.axes[Joystick::Axis::X]    = true;
+        caps.axes[Joystick::Axis::Y]    = true;
+        caps.axes[Joystick::Axis::Z]    = (m_caps.wCaps & JOYCAPS_HASZ) != 0;
+        caps.axes[Joystick::Axis::R]    = (m_caps.wCaps & JOYCAPS_HASR) != 0;
+        caps.axes[Joystick::Axis::U]    = (m_caps.wCaps & JOYCAPS_HASU) != 0;
+        caps.axes[Joystick::Axis::V]    = (m_caps.wCaps & JOYCAPS_HASV) != 0;
+        caps.axes[Joystick::Axis::PovX] = (m_caps.wCaps & JOYCAPS_HASPOV) != 0;
+        caps.axes[Joystick::Axis::PovY] = (m_caps.wCaps & JOYCAPS_HASPOV) != 0;
+    }
 
     return caps;
 }
@@ -857,31 +875,6 @@ void JoystickImpl::closeDInput()
         m_device->Release();
         m_device = nullptr;
     }
-}
-
-
-////////////////////////////////////////////////////////////
-JoystickCaps JoystickImpl::getCapabilitiesDInput() const
-{
-    JoystickCaps caps;
-
-    // Count how many buttons have valid offsets
-    caps.buttonCount = 0;
-
-    for (const int button : m_buttons)
-    {
-        if (button != -1)
-            ++caps.buttonCount;
-    }
-
-    // Check which axes have valid offsets
-    for (unsigned int i = 0; i < Joystick::AxisCount; ++i)
-    {
-        const auto axis = static_cast<Joystick::Axis>(i);
-        caps.axes[axis] = (m_axes[axis] != -1);
-    }
-
-    return caps;
 }
 
 

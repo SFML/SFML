@@ -33,6 +33,7 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
+#include <SFML/System/PassKey.hpp>
 #include <SFML/System/Vector2.hpp>
 
 #include <filesystem>
@@ -374,12 +375,16 @@ private:
     struct FontHandles;
     using PageTable = std::unordered_map<unsigned int, Page>; //!< Table mapping a character size to its page (texture)
 
+public:
     ////////////////////////////////////////////////////////////
+    /// \private
+    ///
     /// \brief Create a font from font handles and a family name
     ///
     ////////////////////////////////////////////////////////////
-    Font(std::shared_ptr<FontHandles>&& fontHandles, std::string&& familyName);
+    Font(priv::PassKey<Font>&&, std::shared_ptr<FontHandles>&& fontHandles, std::string&& familyName);
 
+private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////

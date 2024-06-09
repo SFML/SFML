@@ -31,6 +31,8 @@
 
 #include <SFML/Audio/SoundStream.hpp>
 
+#include <SFML/System/PassKey.hpp>
+
 #include <filesystem>
 #include <memory>
 #include <optional>
@@ -237,12 +239,14 @@ private:
     ////////////////////////////////////////////////////////////
     [[nodiscard]] static std::optional<Music> tryOpenFromFile(std::optional<InputSoundFile>&& optFile);
 
+public:
     ////////////////////////////////////////////////////////////
     /// \brief Initialize the internal state after loading a new music
     ///
     ////////////////////////////////////////////////////////////
-    explicit Music(InputSoundFile&& file);
+    explicit Music(priv::PassKey<Music>&&, InputSoundFile&& file);
 
+private:
     ////////////////////////////////////////////////////////////
     /// \brief Helper to convert an sf::Time to a sample position
     ///

@@ -33,6 +33,8 @@
 
 #include <SFML/Window/GlResource.hpp>
 
+#include <SFML/System/PassKey.hpp>
+
 #include <filesystem>
 #include <optional>
 #include <string>
@@ -114,7 +116,6 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     Shader& operator=(Shader&& right) noexcept;
-
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the vertex, geometry or fragment shader from a file
@@ -644,13 +645,13 @@ public:
     ////////////////////////////////////////////////////////////
     static bool isGeometryAvailable();
 
-private:
     ////////////////////////////////////////////////////////////
     /// \brief Construct from shader program
     ///
     ////////////////////////////////////////////////////////////
-    explicit Shader(unsigned int shaderProgram);
+    explicit Shader(priv::PassKey<Shader>&&, unsigned int shaderProgram);
 
+private:
     ////////////////////////////////////////////////////////////
     /// \brief Compile the shader(s) and create the program
     ///

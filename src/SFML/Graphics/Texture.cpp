@@ -66,7 +66,7 @@ std::uint64_t getUniqueId() noexcept
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Texture::Texture(const Vector2u& size, const Vector2u& actualSize, unsigned int texture, bool sRgb) :
+Texture::Texture(priv::PassKey<Texture>&&, const Vector2u& size, const Vector2u& actualSize, unsigned int texture, bool sRgb) :
 m_size(size),
 m_actualSize(actualSize),
 m_texture(texture),
@@ -160,11 +160,15 @@ Texture& Texture::operator=(Texture&& right) noexcept
 ////////////////////////////////////////////////////////////
 std::optional<Texture> Texture::create(const Vector2u& size, bool sRgb)
 {
+    std::optional<Texture> result; // Use a single local variable for NRVO
+
     // Check if texture parameters are valid before creating it
     if ((size.x == 0) || (size.y == 0))
     {
         err() << "Failed to create texture, invalid size (" << size.x << "x" << size.y << ")" << std::endl;
-        return std::nullopt;
+
+        assert(!result.has_value());
+        return result;
     }
 
     const TransientContextLock lock;
@@ -182,7 +186,9 @@ std::optional<Texture> Texture::create(const Vector2u& size, bool sRgb)
         err() << "Failed to create texture, its internal size is too high "
               << "(" << actualSize.x << "x" << actualSize.y << ", "
               << "maximum is " << maxSize << "x" << maxSize << ")" << std::endl;
-        return std::nullopt;
+
+        assert(!result.has_value());
+        return result;
     }
 
     // Create the OpenGL texture
@@ -191,7 +197,8 @@ std::optional<Texture> Texture::create(const Vector2u& size, bool sRgb)
     assert(glTexture);
 
     // All the validity checks passed, we can store the new texture settings
-    Texture texture(size, actualSize, glTexture, sRgb);
+    result.emplace(priv::PassKey<Texture>{}, size, actualSize, glTexture, sRgb);
+    Texture& texture = *result;
 
     // Make sure that the current texture binding will be preserved
     const priv::TextureSaver save;
@@ -259,7 +266,7 @@ std::optional<Texture> Texture::create(const Vector2u& size, bool sRgb)
 
     texture.m_hasMipmap = false;
 
-    return texture;
+    return result;
 }
 
 
@@ -296,6 +303,8 @@ std::optional<Texture> Texture::loadFromStream(InputStream& stream, bool sRgb, c
 ////////////////////////////////////////////////////////////
 std::optional<Texture> Texture::loadFromImage(const Image& image, bool sRgb, const IntRect& area)
 {
+    std::optional<Texture> result; // Use a single local variable for NRVO
+
     // Retrieve the image size
     const auto [width, height] = Vector2i(image.getSize());
 
@@ -304,16 +313,12 @@ std::optional<Texture> Texture::loadFromImage(const Image& image, bool sRgb, con
         ((area.left <= 0) && (area.top <= 0) && (area.width >= width) && (area.height >= height)))
     {
         // Load the entire image
-        if (auto texture = sf::Texture::create(image.getSize(), sRgb))
+        if ((result = sf::Texture::create(image.getSize(), sRgb)))
         {
-            texture->update(image);
+            result->update(image);
+        }
 
-            return texture;
-        }
-        else
-        {
-            return std::nullopt;
-        }
+        return result;
     }
     else
     {
@@ -327,7 +332,7 @@ std::optional<Texture> Texture::loadFromImage(const Image& image, bool sRgb, con
         rectangle.height  = std::min(rectangle.height, height - rectangle.top);
 
         // Create the texture and upload the pixels
-        if (auto texture = sf::Texture::create(Vector2u(rectangle.getSize()), sRgb))
+        if ((result = sf::Texture::create(Vector2u(rectangle.getSize()), sRgb)))
         {
             const TransientContextLock lock;
 
@@ -336,7 +341,7 @@ std::optional<Texture> Texture::loadFromImage(const Image& image, bool sRgb, con
 
             // Copy the pixels to the texture, row by row
             const std::uint8_t* pixels = image.getPixelsPtr() + 4 * (rectangle.left + (width * rectangle.top));
-            glCheck(glBindTexture(GL_TEXTURE_2D, texture->m_texture));
+            glCheck(glBindTexture(GL_TEXTURE_2D, result->m_texture));
             for (int i = 0; i < rectangle.height; ++i)
             {
                 glCheck(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, i, rectangle.width, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
@@ -344,17 +349,18 @@ std::optional<Texture> Texture::loadFromImage(const Image& image, bool sRgb, con
             }
 
             glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
-            texture->m_hasMipmap = false;
+            result->m_hasMipmap = false;
 
             // Force an OpenGL flush, so that the texture will appear updated
             // in all contexts immediately (solves problems in multi-threaded apps)
             glCheck(glFlush());
 
-            return texture;
+            return result;
         }
         else
         {
-            return std::nullopt;
+            assert(!result.has_value());
+            return result;
         }
     }
 }

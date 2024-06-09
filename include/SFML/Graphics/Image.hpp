@@ -32,6 +32,7 @@
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Rect.hpp>
 
+#include <SFML/System/PassKey.hpp>
 #include <SFML/System/Vector2.hpp>
 
 #include <filesystem>
@@ -277,13 +278,15 @@ public:
     ////////////////////////////////////////////////////////////
     void flipVertically();
 
-private:
     ////////////////////////////////////////////////////////////
+    /// \private
+    ///
     /// \brief Directly initialize data members
     ///
     ////////////////////////////////////////////////////////////
-    Image(Vector2u size, std::vector<std::uint8_t>&& pixels);
+    Image(priv::PassKey<Image>&&, Vector2u size, std::vector<std::uint8_t>&& pixels);
 
+private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
