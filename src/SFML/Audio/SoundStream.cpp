@@ -211,7 +211,7 @@ struct SoundStream::Impl : priv::MiniaudioUtils::SoundBase
     // Member data
     ////////////////////////////////////////////////////////////
     static constexpr ma_data_source_vtable vtable{read, seek, getFormat, getCursor, getLength, setLooping, /* flags */ 0};
-    SoundStream* const                     owner;        //!< Owning SoundStream object
+    SoundStream*                           owner;        //!< Owning SoundStream object
     std::vector<std::int16_t>              sampleBuffer; //!< Our temporary sample buffer
     std::size_t               sampleBufferCursor{};      //!< The current read position in the temporary sample buffer
     std::uint64_t             samplesProcessed{};        //!< Number of samples processed since beginning of the stream
@@ -234,11 +234,26 @@ SoundStream::~SoundStream() = default;
 
 
 ////////////////////////////////////////////////////////////
-SoundStream::SoundStream(SoundStream&&) noexcept = default;
+SoundStream::SoundStream(SoundStream&& rhs) noexcept : m_impl(std::move(rhs.m_impl))
+{
+    // Update self-referential owner pointer.
+    m_impl->owner = this;
+}
 
 
 ////////////////////////////////////////////////////////////
-SoundStream& SoundStream::operator=(SoundStream&&) noexcept = default;
+SoundStream& SoundStream::operator=(SoundStream&& rhs) noexcept
+{
+    if (this != &rhs)
+    {
+        m_impl = std::move(rhs.m_impl);
+
+        // Update self-referential owner pointer.
+        m_impl->owner = this;
+    }
+
+    return *this;
+}
 
 
 ////////////////////////////////////////////////////////////
