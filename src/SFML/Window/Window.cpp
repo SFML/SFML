@@ -187,7 +187,8 @@ void Window::display()
     // Limit the framerate if needed
     if (m_frameTimeLimit != Time::Zero)
     {
-        sleep(m_frameTimeLimit - m_clock.restart());
+        sleep(m_frameTimeLimit - m_clock.getElapsedTime());
+        m_clock.restart();
     }
 }
 

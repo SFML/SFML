@@ -26,11 +26,10 @@ auto select(const std::basic_string<T>& string16, const std::basic_string<T>& st
         return string32;
 }
 
-template <typename CharT>
-auto toHex(const CharT character)
+auto toHex(const std::uint32_t character)
 {
     std::ostringstream stream;
-    stream << "[\\x" << std::uppercase << std::hex << static_cast<std::uint32_t>(character) << ']';
+    stream << "[\\x" << std::uppercase << std::hex << character << ']';
     return stream.str();
 }
 } // namespace

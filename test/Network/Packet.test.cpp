@@ -22,7 +22,7 @@
         CHECK(packet.getData() != nullptr);                  \
         CHECK(packet.getDataSize() == sizeof(expected));     \
         CHECK(!packet.endOfPacket());                        \
-        CHECK(static_cast<bool>(packet));                    \
+        CHECK(bool{packet});                                 \
                                                              \
         decltype(expected) received;                         \
         packet >> received;                                  \
@@ -30,7 +30,7 @@
         CHECK(packet.getData() != nullptr);                  \
         CHECK(packet.getDataSize() == sizeof(expected));     \
         CHECK(packet.endOfPacket());                         \
-        CHECK(static_cast<bool>(packet));                    \
+        CHECK(bool{packet});                                 \
         CHECK((expected) == received);                       \
     } while (false)
 
@@ -43,7 +43,7 @@
         CHECK(packet.getData() != nullptr);                  \
         CHECK(packet.getDataSize() == (size));               \
         CHECK(!packet.endOfPacket());                        \
-        CHECK(static_cast<bool>(packet));                    \
+        CHECK(bool{packet});                                 \
                                                              \
         std::remove_const_t<decltype(expected)> received;    \
         packet >> received;                                  \
@@ -51,7 +51,7 @@
         CHECK(packet.getData() != nullptr);                  \
         CHECK(packet.getDataSize() == (size));               \
         CHECK(packet.endOfPacket());                         \
-        CHECK(static_cast<bool>(packet));                    \
+        CHECK(bool{packet});                                 \
         CHECK(sf::String(expected) == sf::String(received)); \
     } while (false)
 
@@ -78,7 +78,7 @@ TEST_CASE("[Network] sf::Packet")
         CHECK(packet.getData() == nullptr);
         CHECK(packet.getDataSize() == 0);
         CHECK(packet.endOfPacket());
-        CHECK(static_cast<bool>(packet));
+        CHECK(bool{packet});
     }
 
     static constexpr std::array data = {1, 2, 3, 4, 5, 6};
@@ -91,14 +91,14 @@ TEST_CASE("[Network] sf::Packet")
         CHECK(packet.getData() != nullptr);
         CHECK(packet.getDataSize() == data.size());
         CHECK(!packet.endOfPacket());
-        CHECK(static_cast<bool>(packet));
+        CHECK(bool{packet});
 
         packet.clear();
         CHECK(packet.getReadPosition() == 0);
         CHECK(packet.getData() == nullptr);
         CHECK(packet.getDataSize() == 0);
         CHECK(packet.endOfPacket());
-        CHECK(static_cast<bool>(packet));
+        CHECK(bool{packet});
     }
 
     SECTION("Network ordering")

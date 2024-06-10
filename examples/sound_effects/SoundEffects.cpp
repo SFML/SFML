@@ -494,7 +494,7 @@ private:
 
     static constexpr unsigned int sampleRate{44100};
     static constexpr std::size_t  chunkSize{sampleRate / 100};
-    static constexpr float        timePerSample{1.f / static_cast<float>(sampleRate)};
+    static constexpr float        timePerSample{1.f / float{sampleRate}};
 
     std::vector<std::int16_t> m_sampleBuffer = std::vector<std::int16_t>(chunkSize, 0);
     Type                      m_type{Type::Triangle};
@@ -600,7 +600,7 @@ private:
 
     static constexpr unsigned int sampleRate{44100};
     static constexpr std::size_t  chunkSize{sampleRate / 100};
-    static constexpr float        timePerSample{1.f / static_cast<float>(sampleRate)};
+    static constexpr float        timePerSample{1.f / float{sampleRate}};
 
     std::vector<std::int16_t> m_sampleBuffer = std::vector<std::int16_t>(chunkSize, 0);
     float                     m_amplitude{0.05f};

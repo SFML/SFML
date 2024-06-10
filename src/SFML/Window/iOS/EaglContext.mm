@@ -258,7 +258,8 @@ void EaglContext::display()
     if (m_vsyncEnabled)
     {
         constexpr Time frameDuration = seconds(1.f / 60.f);
-        sleep(frameDuration - m_clock.restart());
+        sleep(frameDuration - m_clock.getElapsedTime());
+        m_clock.restart();
     }
 }
 

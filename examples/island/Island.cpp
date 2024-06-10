@@ -474,8 +474,8 @@ void processWorkItem(std::vector<sf::Vertex>& vertices, const WorkItem& workItem
     const unsigned int rowEnd   = std::min(rowStart + rowBlockSize, resolutionY);
     const unsigned int rowCount = rowEnd - rowStart;
 
-    const float scalingFactorX = static_cast<float>(windowWidth) / static_cast<float>(resolutionX);
-    const float scalingFactorY = static_cast<float>(windowHeight) / static_cast<float>(resolutionY);
+    const float scalingFactorX = float{windowWidth} / float{resolutionX};
+    const float scalingFactorY = float{windowHeight} / float{resolutionY};
 
     for (unsigned int y = rowStart; y < rowEnd; ++y)
     {
