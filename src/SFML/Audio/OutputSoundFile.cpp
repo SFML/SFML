@@ -29,6 +29,8 @@
 #include <SFML/Audio/SoundFileFactory.hpp>
 #include <SFML/Audio/SoundFileWriter.hpp>
 
+#include <SFML/System/Err.hpp>
+
 #include <cassert>
 
 
@@ -44,11 +46,15 @@ std::optional<OutputSoundFile> OutputSoundFile::openFromFile(
     // Find a suitable writer for the file type
     auto writer = SoundFileFactory::createWriterFromFilename(filename);
     if (!writer)
+    {
+        // Error message generated in called function.
         return std::nullopt;
+    }
 
     // Pass the stream to the reader
     if (!writer->open(filename, sampleRate, channelCount, channelMap))
     {
+        err() << "Failed to open output sound file from file (writer open failure)" << std::endl;
         return std::nullopt;
     }
 

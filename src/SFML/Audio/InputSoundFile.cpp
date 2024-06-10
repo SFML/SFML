@@ -34,6 +34,7 @@
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/MemoryInputStream.hpp>
 #include <SFML/System/Time.hpp>
+#include <SFML/System/Utils.hpp>
 
 #include <ostream>
 #include <utility>
@@ -71,19 +72,32 @@ std::optional<InputSoundFile> InputSoundFile::openFromFile(const std::filesystem
     // Find a suitable reader for the file type
     auto reader = SoundFileFactory::createReaderFromFilename(filename);
     if (!reader)
+    {
+        // Error message generated in called function.
         return std::nullopt;
+    }
 
     // Wrap the file into a stream
     auto file = std::make_unique<FileInputStream>();
 
     // Open it
     if (!file->open(filename))
+    {
+        err() << "Failed to open input sound file from file (couldn't open file input stream)\n"
+              << formatDebugPathInfo(filename) << std::endl;
+
         return std::nullopt;
+    }
 
     // Pass the stream to the reader
     auto info = reader->open(*file);
     if (!info)
+    {
+        err() << "Failed to open input sound file from file (reader open failure)\n"
+              << formatDebugPathInfo(filename) << std::endl;
+
         return std::nullopt;
+    }
 
     return InputSoundFile(std::move(reader), std::move(file), info->sampleCount, info->sampleRate, std::move(info->channelMap));
 }
@@ -95,7 +109,10 @@ std::optional<InputSoundFile> InputSoundFile::openFromMemory(const void* data, s
     // Find a suitable reader for the file type
     auto reader = SoundFileFactory::createReaderFromMemory(data, sizeInBytes);
     if (!reader)
+    {
+        // Error message generated in called function.
         return std::nullopt;
+    }
 
     // Wrap the memory file into a stream
     auto memory = std::make_unique<MemoryInputStream>(data, sizeInBytes);
@@ -103,7 +120,10 @@ std::optional<InputSoundFile> InputSoundFile::openFromMemory(const void* data, s
     // Pass the stream to the reader
     auto info = reader->open(*memory);
     if (!info)
+    {
+        err() << "Failed to open input sound file from memory (reader open failure)" << std::endl;
         return std::nullopt;
+    }
 
     return InputSoundFile(std::move(reader), std::move(memory), info->sampleCount, info->sampleRate, std::move(info->channelMap));
 }
@@ -115,7 +135,10 @@ std::optional<InputSoundFile> InputSoundFile::openFromStream(InputStream& stream
     // Find a suitable reader for the file type
     auto reader = SoundFileFactory::createReaderFromStream(stream);
     if (!reader)
+    {
+        // Error message generated in called function.
         return std::nullopt;
+    }
 
     // Don't forget to reset the stream to its beginning before re-opening it
     if (stream.seek(0) != 0)
@@ -127,7 +150,10 @@ std::optional<InputSoundFile> InputSoundFile::openFromStream(InputStream& stream
     // Pass the stream to the reader
     auto info = reader->open(stream);
     if (!info)
+    {
+        err() << "Failed to open input sound file from stream (reader open failure)" << std::endl;
         return std::nullopt;
+    }
 
     return InputSoundFile(std::move(reader), {&stream, false}, info->sampleCount, info->sampleRate, std::move(info->channelMap));
 }
