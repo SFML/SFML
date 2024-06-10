@@ -29,6 +29,8 @@
 #include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/SocketImpl.hpp>
 
+#include <SFML/System/Err.hpp>
+
 #include <istream>
 #include <ostream>
 
@@ -49,7 +51,10 @@ std::optional<IpAddress> IpAddress::resolve(std::string_view address)
     using namespace std::string_view_literals;
 
     if (address.empty())
+    {
+        // Not generating en error message here as resolution failure is a valid outcome.
         return std::nullopt;
+    }
 
     if (address == "255.255.255.255"sv)
     {
@@ -81,6 +86,7 @@ std::optional<IpAddress> IpAddress::resolve(std::string_view address)
         return IpAddress(ntohl(ip));
     }
 
+    // Not generating en error message here as resolution failure is a valid outcome.
     return std::nullopt;
 }
 
@@ -125,13 +131,18 @@ std::optional<IpAddress> IpAddress::getLocalAddress()
     // Create the socket
     const SocketHandle sock = socket(PF_INET, SOCK_DGRAM, 0);
     if (sock == priv::SocketImpl::invalidSocket())
+    {
+        err() << "Failed to retrieve local address (invalid socket)" << std::endl;
         return std::nullopt;
+    }
 
     // Connect the socket to localhost on any port
     sockaddr_in address = priv::SocketImpl::createAddress(ntohl(INADDR_LOOPBACK), 9);
     if (connect(sock, reinterpret_cast<sockaddr*>(&address), sizeof(address)) == -1)
     {
         priv::SocketImpl::close(sock);
+
+        err() << "Failed to retrieve local address (socket connection failure)" << std::endl;
         return std::nullopt;
     }
 
@@ -140,6 +151,8 @@ std::optional<IpAddress> IpAddress::getLocalAddress()
     if (getsockname(sock, reinterpret_cast<sockaddr*>(&address), &size) == -1)
     {
         priv::SocketImpl::close(sock);
+
+        err() << "Failed to retrieve local address (socket local address retrieval failure)" << std::endl;
         return std::nullopt;
     }
 
@@ -163,10 +176,15 @@ std::optional<IpAddress> IpAddress::getPublicAddress(Time timeout)
     Http                 server("www.sfml-dev.org");
     const Http::Request  request("/ip-provider.php", Http::Request::Method::Get);
     const Http::Response page = server.sendRequest(request, timeout);
-    if (page.getStatus() == Http::Response::Status::Ok)
+
+    const Http::Response::Status status = page.getStatus();
+
+    if (status == Http::Response::Status::Ok)
         return IpAddress::resolve(page.getBody());
 
-    // Something failed: return an invalid address
+    err() << "Failed to retrieve public address from external IP resolution server (HTTP response status "
+          << static_cast<int>(status) << ")" << std::endl;
+
     return std::nullopt;
 }
 

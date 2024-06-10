@@ -235,7 +235,8 @@ private:
     /// \brief Try opening the music file from an optional input sound file
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Music> tryOpenFromFile(std::optional<InputSoundFile>&& optFile);
+    [[nodiscard]] static std::optional<Music> tryOpenFromInputSoundFile(std::optional<InputSoundFile>&& optFile,
+                                                                        const char*                     errorContext);
 
     ////////////////////////////////////////////////////////////
     /// \brief Initialize the internal state after loading a new music

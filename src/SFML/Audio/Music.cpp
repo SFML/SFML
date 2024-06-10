@@ -79,10 +79,13 @@ Music& Music::operator=(Music&&) noexcept = default;
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Music> Music::tryOpenFromFile(std::optional<InputSoundFile>&& optFile)
+std::optional<Music> Music::tryOpenFromInputSoundFile(std::optional<InputSoundFile>&& optFile, const char* errorContext)
 {
     if (!optFile.has_value())
+    {
+        err() << "Failed to open music from " << errorContext << std::endl;
         return std::nullopt;
+    }
 
     // TODO: apply RVO here via passkey idiom
     return Music(std::move(*optFile));
@@ -92,21 +95,21 @@ std::optional<Music> Music::tryOpenFromFile(std::optional<InputSoundFile>&& optF
 ////////////////////////////////////////////////////////////
 std::optional<Music> Music::openFromFile(const std::filesystem::path& filename)
 {
-    return tryOpenFromFile(InputSoundFile::openFromFile(filename));
+    return tryOpenFromInputSoundFile(InputSoundFile::openFromFile(filename), "file");
 }
 
 
 ////////////////////////////////////////////////////////////
 std::optional<Music> Music::openFromMemory(const void* data, std::size_t sizeInBytes)
 {
-    return tryOpenFromFile(InputSoundFile::openFromMemory(data, sizeInBytes));
+    return tryOpenFromInputSoundFile(InputSoundFile::openFromMemory(data, sizeInBytes), "memory");
 }
 
 
 ////////////////////////////////////////////////////////////
 std::optional<Music> Music::openFromStream(InputStream& stream)
 {
-    return tryOpenFromFile(InputSoundFile::openFromStream(stream));
+    return tryOpenFromInputSoundFile(InputSoundFile::openFromStream(stream), "stream");
 }
 
 

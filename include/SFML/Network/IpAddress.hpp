@@ -56,6 +56,8 @@ public:
     ///
     /// \param address IP address or network name
     ///
+    /// \return Address if provided argument was valid, otherwise `std::nullopt`
+    ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] static std::optional<IpAddress> resolve(std::string_view address);
 
@@ -128,7 +130,7 @@ public:
     /// Unlike getPublicAddress, this function is fast and may be
     /// used safely anywhere.
     ///
-    /// \return Local IP address of the computer
+    /// \return Local IP address of the computer on success, `std::nullopt` otherwise
     ///
     /// \see getPublicAddress
     ///
@@ -152,7 +154,7 @@ public:
     ///
     /// \param timeout Maximum time to wait
     ///
-    /// \return Public IP address of the computer
+    /// \return Public IP address of the computer on success, `std::nullopt` otherwise
     ///
     /// \see getLocalAddress
     ///
