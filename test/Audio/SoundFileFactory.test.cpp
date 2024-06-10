@@ -110,37 +110,30 @@ TEST_CASE("[Audio] sf::SoundFileFactory")
 
     SECTION("createReaderFromStream()")
     {
-        sf::FileInputStream stream;
+        std::optional<sf::FileInputStream> stream;
 
-        SECTION("Invalid stream")
+        SECTION("flac")
         {
-            CHECK(!sf::SoundFileFactory::createReaderFromStream(stream));
+            stream = sf::FileInputStream::open("Audio/ding.flac");
         }
 
-        SECTION("Valid file")
+        SECTION("mp3")
         {
-            SECTION("flac")
-            {
-                REQUIRE(stream.open("Audio/ding.flac"));
-            }
-
-            SECTION("mp3")
-            {
-                REQUIRE(stream.open("Audio/ding.mp3"));
-            }
-
-            SECTION("ogg")
-            {
-                REQUIRE(stream.open("Audio/doodle_pop.ogg"));
-            }
-
-            SECTION("wav")
-            {
-                REQUIRE(stream.open("Audio/killdeer.wav"));
-            }
-
-            CHECK(sf::SoundFileFactory::createReaderFromStream(stream));
+            stream = sf::FileInputStream::open("Audio/ding.mp3");
         }
+
+        SECTION("ogg")
+        {
+            stream = sf::FileInputStream::open("Audio/doodle_pop.ogg");
+        }
+
+        SECTION("wav")
+        {
+            stream = sf::FileInputStream::open("Audio/killdeer.wav");
+        }
+
+        REQUIRE(stream);
+        CHECK(sf::SoundFileFactory::createReaderFromStream(*stream));
     }
 
     SECTION("createWriterFromFilename()")

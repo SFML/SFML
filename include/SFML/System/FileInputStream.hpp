@@ -57,12 +57,6 @@ class SFML_SYSTEM_API FileInputStream : public InputStream
 {
 public:
     ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    ////////////////////////////////////////////////////////////
-    FileInputStream();
-
-    ////////////////////////////////////////////////////////////
     /// \brief Default destructor
     ///
     ////////////////////////////////////////////////////////////
@@ -97,10 +91,10 @@ public:
     ///
     /// \param filename Name of the file to open
     ///
-    /// \return True on success, false on error
+    /// \return File input stream on success, `std::nullopt` on error
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool open(const std::filesystem::path& filename);
+    [[nodiscard]] static std::optional<FileInputStream> open(const std::filesystem::path& filename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Read data from the stream
@@ -144,12 +138,6 @@ public:
 
 private:
     ////////////////////////////////////////////////////////////
-    // Member data
-    ////////////////////////////////////////////////////////////
-#ifdef SFML_SYSTEM_ANDROID
-    std::unique_ptr<priv::ResourceStream> m_androidFile;
-#endif
-    ////////////////////////////////////////////////////////////
     /// \brief Deleter for stdio file stream that closes the file stream
     ///
     ////////////////////////////////////////////////////////////
@@ -157,6 +145,27 @@ private:
     {
         void operator()(std::FILE* file);
     };
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct from file
+    ///
+    ////////////////////////////////////////////////////////////
+    explicit FileInputStream(std::unique_ptr<std::FILE, FileCloser>&& file);
+
+#ifdef SFML_SYSTEM_ANDROID
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct from resource stream
+    ///
+    ////////////////////////////////////////////////////////////
+    explicit FileInputStream(std::unique_ptr<priv::ResourceStream>&& androidFile);
+#endif
+
+    ////////////////////////////////////////////////////////////
+    // Member data
+    ////////////////////////////////////////////////////////////
+#ifdef SFML_SYSTEM_ANDROID
+    std::unique_ptr<priv::ResourceStream> m_androidFile;
+#endif
 
     std::unique_ptr<std::FILE, FileCloser> m_file; //!< stdio file stream
 };
@@ -188,9 +197,9 @@ private:
 /// \code
 /// void process(InputStream& stream);
 ///
-/// FileInputStream stream;
-/// if (stream.open("some_file.dat"))
-///    process(stream);
+/// std::optional stream = sf::FileInputStream::open("some_file.dat");
+/// if (stream)
+///    process(*stream);
 /// \endcode
 ///
 /// InputStream, MemoryInputStream

@@ -91,62 +91,52 @@ TEST_CASE("[Audio] sf::InputSoundFile")
 
     SECTION("openFromStream()")
     {
-        sf::FileInputStream stream;
-
-        SECTION("Invalid stream")
+        SECTION("flac")
         {
-            CHECK(!sf::InputSoundFile::openFromStream(stream));
+            auto       stream         = sf::FileInputStream::open("Audio/ding.flac").value();
+            const auto inputSoundFile = sf::InputSoundFile::openFromStream(stream).value();
+            CHECK(inputSoundFile.getSampleCount() == 87'798);
+            CHECK(inputSoundFile.getChannelCount() == 1);
+            CHECK(inputSoundFile.getSampleRate() == 44'100);
+            CHECK(inputSoundFile.getDuration() == sf::microseconds(1'990'884));
+            CHECK(inputSoundFile.getTimeOffset() == sf::Time::Zero);
+            CHECK(inputSoundFile.getSampleOffset() == 0);
         }
 
-        SECTION("Valid stream")
+        SECTION("mp3")
         {
-            SECTION("flac")
-            {
-                REQUIRE(stream.open("Audio/ding.flac"));
-                const auto inputSoundFile = sf::InputSoundFile::openFromStream(stream).value();
-                CHECK(inputSoundFile.getSampleCount() == 87'798);
-                CHECK(inputSoundFile.getChannelCount() == 1);
-                CHECK(inputSoundFile.getSampleRate() == 44'100);
-                CHECK(inputSoundFile.getDuration() == sf::microseconds(1'990'884));
-                CHECK(inputSoundFile.getTimeOffset() == sf::Time::Zero);
-                CHECK(inputSoundFile.getSampleOffset() == 0);
-            }
+            auto       stream         = sf::FileInputStream::open("Audio/ding.mp3").value();
+            const auto inputSoundFile = sf::InputSoundFile::openFromStream(stream).value();
+            CHECK(inputSoundFile.getSampleCount() == 87'798);
+            CHECK(inputSoundFile.getChannelCount() == 1);
+            CHECK(inputSoundFile.getSampleRate() == 44'100);
+            CHECK(inputSoundFile.getDuration() == sf::microseconds(1'990'884));
+            CHECK(inputSoundFile.getTimeOffset() == sf::Time::Zero);
+            CHECK(inputSoundFile.getSampleOffset() == 0);
+        }
 
-            SECTION("mp3")
-            {
-                REQUIRE(stream.open("Audio/ding.mp3"));
-                const auto inputSoundFile = sf::InputSoundFile::openFromStream(stream).value();
-                CHECK(inputSoundFile.getSampleCount() == 87'798);
-                CHECK(inputSoundFile.getChannelCount() == 1);
-                CHECK(inputSoundFile.getSampleRate() == 44'100);
-                CHECK(inputSoundFile.getDuration() == sf::microseconds(1'990'884));
-                CHECK(inputSoundFile.getTimeOffset() == sf::Time::Zero);
-                CHECK(inputSoundFile.getSampleOffset() == 0);
-            }
+        SECTION("ogg")
+        {
+            auto       stream         = sf::FileInputStream::open("Audio/doodle_pop.ogg").value();
+            const auto inputSoundFile = sf::InputSoundFile::openFromStream(stream).value();
+            CHECK(inputSoundFile.getSampleCount() == 2'116'992);
+            CHECK(inputSoundFile.getChannelCount() == 2);
+            CHECK(inputSoundFile.getSampleRate() == 44'100);
+            CHECK(inputSoundFile.getDuration() == sf::microseconds(24'002'176));
+            CHECK(inputSoundFile.getTimeOffset() == sf::Time::Zero);
+            CHECK(inputSoundFile.getSampleOffset() == 0);
+        }
 
-            SECTION("ogg")
-            {
-                REQUIRE(stream.open("Audio/doodle_pop.ogg"));
-                const auto inputSoundFile = sf::InputSoundFile::openFromStream(stream).value();
-                CHECK(inputSoundFile.getSampleCount() == 2'116'992);
-                CHECK(inputSoundFile.getChannelCount() == 2);
-                CHECK(inputSoundFile.getSampleRate() == 44'100);
-                CHECK(inputSoundFile.getDuration() == sf::microseconds(24'002'176));
-                CHECK(inputSoundFile.getTimeOffset() == sf::Time::Zero);
-                CHECK(inputSoundFile.getSampleOffset() == 0);
-            }
-
-            SECTION("wav")
-            {
-                REQUIRE(stream.open("Audio/killdeer.wav"));
-                const auto inputSoundFile = sf::InputSoundFile::openFromStream(stream).value();
-                CHECK(inputSoundFile.getSampleCount() == 112'941);
-                CHECK(inputSoundFile.getChannelCount() == 1);
-                CHECK(inputSoundFile.getSampleRate() == 22'050);
-                CHECK(inputSoundFile.getDuration() == sf::microseconds(5'122'040));
-                CHECK(inputSoundFile.getTimeOffset() == sf::Time::Zero);
-                CHECK(inputSoundFile.getSampleOffset() == 0);
-            }
+        SECTION("wav")
+        {
+            auto       stream         = sf::FileInputStream::open("Audio/killdeer.wav").value();
+            const auto inputSoundFile = sf::InputSoundFile::openFromStream(stream).value();
+            CHECK(inputSoundFile.getSampleCount() == 112'941);
+            CHECK(inputSoundFile.getChannelCount() == 1);
+            CHECK(inputSoundFile.getSampleRate() == 22'050);
+            CHECK(inputSoundFile.getDuration() == sf::microseconds(5'122'040));
+            CHECK(inputSoundFile.getTimeOffset() == sf::Time::Zero);
+            CHECK(inputSoundFile.getSampleOffset() == 0);
         }
     }
 

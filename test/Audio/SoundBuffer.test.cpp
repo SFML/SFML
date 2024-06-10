@@ -89,23 +89,13 @@ TEST_CASE("[Audio] sf::SoundBuffer", runAudioDeviceTests())
 
     SECTION("loadFromStream()")
     {
-        sf::FileInputStream stream;
-
-        SECTION("Invalid stream")
-        {
-            CHECK(!sf::SoundBuffer::loadFromStream(stream));
-        }
-
-        SECTION("Valid stream")
-        {
-            REQUIRE(stream.open("Audio/ding.flac"));
-            const auto soundBuffer = sf::SoundBuffer::loadFromStream(stream).value();
-            CHECK(soundBuffer.getSamples() != nullptr);
-            CHECK(soundBuffer.getSampleCount() == 87798);
-            CHECK(soundBuffer.getSampleRate() == 44100);
-            CHECK(soundBuffer.getChannelCount() == 1);
-            CHECK(soundBuffer.getDuration() == sf::microseconds(1990884));
-        }
+        auto       stream      = sf::FileInputStream::open("Audio/ding.flac").value();
+        const auto soundBuffer = sf::SoundBuffer::loadFromStream(stream).value();
+        CHECK(soundBuffer.getSamples() != nullptr);
+        CHECK(soundBuffer.getSampleCount() == 87798);
+        CHECK(soundBuffer.getSampleRate() == 44100);
+        CHECK(soundBuffer.getChannelCount() == 1);
+        CHECK(soundBuffer.getDuration() == sf::microseconds(1990884));
     }
 
     SECTION("saveToFile()")

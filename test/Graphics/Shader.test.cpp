@@ -243,16 +243,11 @@ TEST_CASE("[Graphics] sf::Shader", skipShaderFullTests())
 
     SECTION("loadFromStream()")
     {
-        sf::FileInputStream vertexShaderStream;
-        REQUIRE(vertexShaderStream.open("Graphics/shader.vert"));
+        auto vertexShaderStream   = sf::FileInputStream::open("Graphics/shader.vert").value();
+        auto fragmentShaderStream = sf::FileInputStream::open("Graphics/shader.frag").value();
+        auto geometryShaderStream = sf::FileInputStream::open("Graphics/shader.geom").value();
 
-        sf::FileInputStream fragmentShaderStream;
-        REQUIRE(fragmentShaderStream.open("Graphics/shader.frag"));
-
-        sf::FileInputStream geometryShaderStream;
-        REQUIRE(geometryShaderStream.open("Graphics/shader.geom"));
-
-        sf::FileInputStream emptyStream;
+        auto emptyStream = sf::FileInputStream::open("Graphics/invalid_shader.vert").value();
 
         SECTION("One shader")
         {
