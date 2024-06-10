@@ -104,20 +104,20 @@ bool getFileContents(const std::filesystem::path& filename, std::vector<char>& b
 // Read the contents of a stream into an array of char
 bool getStreamContents(sf::InputStream& stream, std::vector<char>& buffer)
 {
-    bool               success = false;
-    const std::int64_t size    = stream.getSize();
-    if (size > 0)
+    bool                success = false;
+    const std::optional size    = stream.getSize();
+    if (size > std::size_t{0})
     {
-        buffer.resize(static_cast<std::size_t>(size));
+        buffer.resize(*size);
 
-        if (stream.seek(0) == -1)
+        if (!stream.seek(0).has_value())
         {
             sf::err() << "Failed to seek shader stream" << std::endl;
             return false;
         }
 
-        const std::int64_t read = stream.read(buffer.data(), size);
-        success                 = (read == size);
+        const std::optional read = stream.read(buffer.data(), *size);
+        success                  = (read == size);
     }
     buffer.push_back('\0');
     return success;

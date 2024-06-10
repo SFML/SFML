@@ -31,6 +31,8 @@
 
 #include <SFML/System/Export.hpp>
 
+#include <optional>
+
 #include <cstdint>
 
 
@@ -58,36 +60,36 @@ public:
     /// \param data Buffer where to copy the read data
     /// \param size Desired number of bytes to read
     ///
-    /// \return The number of bytes actually read, or -1 on error
+    /// \return The number of bytes actually read, or `std::nullopt` on error
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] virtual std::int64_t read(void* data, std::int64_t size) = 0;
+    [[nodiscard]] virtual std::optional<std::size_t> read(void* data, std::size_t size) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current reading position
     ///
     /// \param position The position to seek to, from the beginning
     ///
-    /// \return The position actually sought to, or -1 on error
+    /// \return The position actually sought to, or `std::nullopt` on error
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] virtual std::int64_t seek(std::int64_t position) = 0;
+    [[nodiscard]] virtual std::optional<std::size_t> seek(std::size_t position) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current reading position in the stream
     ///
-    /// \return The current position, or -1 on error.
+    /// \return The current position, or `std::nullopt` on error.
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] virtual std::int64_t tell() = 0;
+    [[nodiscard]] virtual std::optional<std::size_t> tell() = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the size of the stream
     ///
-    /// \return The total number of bytes available in the stream, or -1 on error
+    /// \return The total number of bytes available in the stream, or `std::nullopt` on error
     ///
     ////////////////////////////////////////////////////////////
-    virtual std::int64_t getSize() = 0;
+    virtual std::optional<std::size_t> getSize() = 0;
 };
 
 } // namespace sf
@@ -119,13 +121,13 @@ public:
 ///
 ///     [[nodiscard]] bool open(const std::filesystem::path& filename);
 ///
-///     [[nodiscard]] std::int64_t read(void* data, std::int64_t size);
+///     [[nodiscard]] std::optional<std::size_t> read(void* data, std::size_t size);
 ///
-///     [[nodiscard]] std::int64_t seek(std::int64_t position);
+///     [[nodiscard]] std::optional<std::size_t> seek(std::size_t position);
 ///
-///     [[nodiscard]] std::int64_t tell();
+///     [[nodiscard]] std::optional<std::size_t> tell();
 ///
-///     std::int64_t getSize();
+///     std::optional<std::size_t> getSize();
 ///
 /// private:
 ///

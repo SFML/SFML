@@ -213,7 +213,7 @@ void InputSoundFile::seek(std::uint64_t sampleOffset)
 ////////////////////////////////////////////////////////////
 void InputSoundFile::seek(Time timeOffset)
 {
-    seek(static_cast<std::uint64_t>(timeOffset.asSeconds() * static_cast<float>(m_sampleRate)) * m_channelMap.size());
+    seek(static_cast<std::size_t>(timeOffset.asSeconds() * static_cast<float>(m_sampleRate)) * m_channelMap.size());
 }
 
 

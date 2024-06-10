@@ -46,9 +46,7 @@ void playSound()
 void playMusic(const std::filesystem::path& filename)
 {
     // Load an ogg music file
-    sf::Music music;
-    if (!music.openFromFile("resources" / filename))
-        return;
+    auto music = sf::Music::openFromFile("resources" / filename).value();
 
     // Display music information
     std::cout << filename << ":" << '\n'

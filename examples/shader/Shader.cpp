@@ -18,7 +18,6 @@ namespace
 {
 std::random_device rd;
 std::mt19937       rng(rd());
-} // namespace
 
 
 ////////////////////////////////////////////////////////////
@@ -36,20 +35,6 @@ struct Effect : sf::Drawable
 class Pixelate : public Effect
 {
 public:
-    static std::optional<Pixelate> tryLoad()
-    {
-        auto texture = sf::Texture::loadFromFile("resources/background.jpg");
-        if (!texture.has_value())
-            return std::nullopt;
-
-        auto shader = sf::Shader::loadFromFile("resources/pixelate.frag", sf::Shader::Type::Fragment);
-        if (!shader.has_value())
-            return std::nullopt;
-
-        return Pixelate{std::move(*texture), std::move(*shader)};
-    }
-
-private:
     explicit Pixelate(sf::Texture&& texture, sf::Shader&& shader) :
     m_texture(std::move(texture)),
     m_shader(std::move(shader))
@@ -68,6 +53,7 @@ private:
         target.draw(sf::Sprite{m_texture}, states);
     }
 
+private:
     sf::Texture m_texture;
     sf::Shader  m_shader;
 };
@@ -79,15 +65,6 @@ private:
 class WaveBlur : public Effect
 {
 public:
-    static std::optional<WaveBlur> tryLoad(const sf::Font& font)
-    {
-        auto shader = sf::Shader::loadFromFile("resources/wave.vert", "resources/blur.frag");
-        if (!shader.has_value())
-            return std::nullopt;
-
-        return WaveBlur{font, std::move(*shader)};
-    }
-
     void update(float time, float x, float y) override
     {
         m_shader.setUniform("wave_phase", time);
@@ -101,7 +78,6 @@ public:
         target.draw(m_text, states);
     }
 
-private:
     explicit WaveBlur(const sf::Font& font, sf::Shader&& shader) :
     m_text(font,
            "Praesent suscipit augue in velit pulvinar hendrerit varius purus aliquam.\n"
@@ -128,6 +104,7 @@ private:
         m_text.setPosition({30.f, 20.f});
     }
 
+private:
     sf::Text   m_text;
     sf::Shader m_shader;
 };
@@ -139,15 +116,6 @@ private:
 class StormBlink : public Effect
 {
 public:
-    static std::optional<StormBlink> tryLoad()
-    {
-        auto shader = sf::Shader::loadFromFile("resources/storm.vert", "resources/blink.frag");
-        if (!shader.has_value())
-            return std::nullopt;
-
-        return StormBlink{std::move(*shader)};
-    }
-
     void update(float time, float x, float y) override
     {
         const float radius = 200 + std::cos(time) * 150;
@@ -164,7 +132,6 @@ public:
         target.draw(m_points, states);
     }
 
-private:
     explicit StormBlink(sf::Shader&& shader) : m_shader(std::move(shader))
     {
         std::uniform_real_distribution<float>        xDistribution(0, 800);
@@ -187,6 +154,7 @@ private:
         }
     }
 
+private:
     sf::VertexArray m_points;
     sf::Shader      m_shader;
 };
@@ -198,39 +166,6 @@ private:
 class Edge : public Effect
 {
 public:
-    static std::optional<Edge> tryLoad()
-    {
-        // Create the off-screen surface
-        auto surface = sf::RenderTexture::create({800, 600});
-        if (!surface.has_value())
-            return std::nullopt;
-
-        surface->setSmooth(true);
-
-        // Load the background texture
-        auto backgroundTexture = sf::Texture::loadFromFile("resources/sfml.png");
-        if (!backgroundTexture.has_value())
-            return std::nullopt;
-
-        backgroundTexture->setSmooth(true);
-
-        // Load the entity texture
-        auto entityTexture = sf::Texture::loadFromFile("resources/devices.png");
-        if (!entityTexture.has_value())
-            return std::nullopt;
-
-        entityTexture->setSmooth(true);
-
-        // Load the shader
-        auto shader = sf::Shader::loadFromFile("resources/edge.frag", sf::Shader::Type::Fragment);
-        if (!shader.has_value())
-            return std::nullopt;
-
-        shader->setUniform("texture", sf::Shader::CurrentTexture);
-
-        return Edge{std::move(*surface), std::move(*backgroundTexture), std::move(*entityTexture), std::move(*shader)};
-    }
-
     void update(float time, float x, float y) override
     {
         m_shader.setUniform("edge_threshold", 1 - (x + y) / 2);
@@ -265,7 +200,6 @@ public:
         target.draw(sf::Sprite{m_surface.getTexture()}, states);
     }
 
-private:
     explicit Edge(sf::RenderTexture&& surface, sf::Texture&& backgroundTexture, sf::Texture&& entityTexture, sf::Shader&& shader) :
     m_surface(std::move(surface)),
     m_backgroundTexture(std::move(backgroundTexture)),
@@ -274,6 +208,7 @@ private:
     {
     }
 
+private:
     sf::RenderTexture m_surface;
     sf::Texture       m_backgroundTexture;
     sf::Texture       m_entityTexture;
@@ -287,34 +222,6 @@ private:
 class Geometry : public Effect
 {
 public:
-    static std::optional<Geometry> tryLoad()
-    {
-        // Check if geometry shaders are supported
-        if (!sf::Shader::isGeometryAvailable())
-            return std::nullopt;
-
-        // Load the logo texture
-        auto logoTexture = sf::Texture::loadFromFile("resources/logo.png");
-        if (!logoTexture.has_value())
-            return std::nullopt;
-
-        logoTexture->setSmooth(true);
-
-        // Load the shader
-        auto shader = sf::Shader::loadFromFile("resources/billboard.vert",
-                                               "resources/billboard.geom",
-                                               "resources/billboard.frag");
-        if (!shader.has_value())
-            return std::nullopt;
-
-        shader->setUniform("texture", sf::Shader::CurrentTexture);
-
-        // Set the render resolution (used for proper scaling)
-        shader->setUniform("resolution", sf::Vector2f(800, 600));
-
-        return Geometry{std::move(*logoTexture), std::move(*shader)};
-    }
-
     void update(float /* time */, float x, float y) override
     {
         // Reset our transformation matrix
@@ -344,7 +251,6 @@ public:
         target.draw(m_pointCloud, states);
     }
 
-private:
     explicit Geometry(sf::Texture&& logoTexture, sf::Shader&& shader) :
     m_logoTexture(std::move(logoTexture)),
     m_shader(std::move(shader)),
@@ -359,11 +265,113 @@ private:
         }
     }
 
+private:
     sf::Texture     m_logoTexture;
     sf::Transform   m_transform;
     sf::Shader      m_shader;
     sf::VertexArray m_pointCloud;
 };
+
+
+////////////////////////////////////////////////////////////
+// Effect loading factory functions
+////////////////////////////////////////////////////////////
+std::optional<Pixelate> tryLoadPixelate()
+{
+    auto texture = sf::Texture::loadFromFile("resources/background.jpg");
+    if (!texture.has_value())
+        return std::nullopt;
+
+    auto shader = sf::Shader::loadFromFile("resources/pixelate.frag", sf::Shader::Type::Fragment);
+    if (!shader.has_value())
+        return std::nullopt;
+
+    return std::make_optional<Pixelate>(std::move(*texture), std::move(*shader));
+}
+
+std::optional<WaveBlur> tryLoadWaveBlur(const sf::Font& font)
+{
+    auto shader = sf::Shader::loadFromFile("resources/wave.vert", "resources/blur.frag");
+    if (!shader.has_value())
+        return std::nullopt;
+
+    return std::make_optional<WaveBlur>(font, std::move(*shader));
+}
+
+std::optional<StormBlink> tryLoadStormBlink()
+{
+    auto shader = sf::Shader::loadFromFile("resources/storm.vert", "resources/blink.frag");
+    if (!shader.has_value())
+        return std::nullopt;
+
+    return std::make_optional<StormBlink>(std::move(*shader));
+}
+
+std::optional<Edge> tryLoadEdge()
+{
+    // Create the off-screen surface
+    auto surface = sf::RenderTexture::create({800, 600});
+    if (!surface.has_value())
+        return std::nullopt;
+
+    surface->setSmooth(true);
+
+    // Load the background texture
+    auto backgroundTexture = sf::Texture::loadFromFile("resources/sfml.png");
+    if (!backgroundTexture.has_value())
+        return std::nullopt;
+
+    backgroundTexture->setSmooth(true);
+
+    // Load the entity texture
+    auto entityTexture = sf::Texture::loadFromFile("resources/devices.png");
+    if (!entityTexture.has_value())
+        return std::nullopt;
+
+    entityTexture->setSmooth(true);
+
+    // Load the shader
+    auto shader = sf::Shader::loadFromFile("resources/edge.frag", sf::Shader::Type::Fragment);
+    if (!shader.has_value())
+        return std::nullopt;
+
+    shader->setUniform("texture", sf::Shader::CurrentTexture);
+
+    return std::make_optional<Edge>(std::move(*surface),
+                                    std::move(*backgroundTexture),
+                                    std::move(*entityTexture),
+                                    std::move(*shader));
+}
+
+std::optional<Geometry> tryLoadGeometry()
+{
+    // Check if geometry shaders are supported
+    if (!sf::Shader::isGeometryAvailable())
+        return std::nullopt;
+
+    // Load the logo texture
+    auto logoTexture = sf::Texture::loadFromFile("resources/logo.png");
+    if (!logoTexture.has_value())
+        return std::nullopt;
+
+    logoTexture->setSmooth(true);
+
+    // Load the shader
+    auto shader = sf::Shader::loadFromFile("resources/billboard.vert",
+                                           "resources/billboard.geom",
+                                           "resources/billboard.frag");
+    if (!shader.has_value())
+        return std::nullopt;
+
+    shader->setUniform("texture", sf::Shader::CurrentTexture);
+
+    // Set the render resolution (used for proper scaling)
+    shader->setUniform("resolution", sf::Vector2f(800, 600));
+
+    return std::make_optional<Geometry>(std::move(*logoTexture), std::move(*shader));
+}
+
+} // namespace
 
 
 ////////////////////////////////////////////////////////////
@@ -389,11 +397,11 @@ int main()
     const auto font = sf::Font::loadFromFile("resources/tuffy.ttf").value();
 
     // Create the effects
-    std::optional pixelateEffect   = Pixelate::tryLoad();
-    std::optional waveBlurEffect   = WaveBlur::tryLoad(font);
-    std::optional stormBlinkEffect = StormBlink::tryLoad();
-    std::optional edgeEffect       = Edge::tryLoad();
-    std::optional geometryEffect   = Geometry::tryLoad();
+    std::optional pixelateEffect   = tryLoadPixelate();
+    std::optional waveBlurEffect   = tryLoadWaveBlur(font);
+    std::optional stormBlinkEffect = tryLoadStormBlink();
+    std::optional edgeEffect       = tryLoadEdge();
+    std::optional geometryEffect   = tryLoadGeometry();
 
     const auto optionalToPtr = [&](auto& effect) -> Effect* { return effect.has_value() ? &*effect : nullptr; };
 
@@ -481,26 +489,25 @@ int main()
         }
 
         // If the current example was loaded successfully...
-        if (effects[current] != nullptr)
+        if (Effect* currentEffect = effects[current])
         {
             // Update the current example
             const auto [x, y] = sf::Vector2f(sf::Mouse::getPosition(window)).cwiseDiv(sf::Vector2f(window.getSize()));
-            effects[current]->update(clock.getElapsedTime().asSeconds(), x, y);
+            currentEffect->update(clock.getElapsedTime().asSeconds(), x, y);
 
             // Clear the window
-            window.clear(effectNames[current] == "Edge Post-effect" ? sf::Color::White : sf::Color(50, 50, 50));
+            window.clear(currentEffect == &*edgeEffect ? sf::Color::White : sf::Color(50, 50, 50));
 
             // Draw the current example
-            window.draw(*effects[current]);
+            window.draw(*currentEffect);
         }
         else
         {
             // Clear the window to grey to make sure the text is always readable
             window.clear(sf::Color(50, 50, 50));
 
-            sf::Text error(font, "Shader not\nsupported");
+            sf::Text error(font, "Shader not\nsupported", 36);
             error.setPosition({320.f, 200.f});
-            error.setCharacterSize(36);
 
             window.draw(error);
         }

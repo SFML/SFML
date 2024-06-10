@@ -12,6 +12,7 @@
 #include <vector>
 
 #include <cmath>
+#include <cstdlib>
 
 
 namespace
@@ -114,20 +115,23 @@ public:
         m_listener.setFillColor(sf::Color::Red);
 
         // Load the music file
-        if (!m_music.openFromFile(resourcesDir() / "doodle_pop.ogg"))
+        if (!(m_music = sf::Music::openFromFile(resourcesDir() / "doodle_pop.ogg")))
+        {
             std::cerr << "Failed to load " << (resourcesDir() / "doodle_pop.ogg").string() << std::endl;
+            std::abort();
+        }
 
         // Set the music to loop
-        m_music.setLoop(true);
+        m_music->setLoop(true);
 
         // Set attenuation to a nice value
-        m_music.setAttenuation(0.04f);
+        m_music->setAttenuation(0.04f);
     }
 
     void onUpdate(float /*time*/, float x, float y) override
     {
         m_position = {windowWidth * x - 10.f, windowHeight * y - 10.f};
-        m_music.setPosition({m_position.x, m_position.y, 0.f});
+        m_music->setPosition({m_position.x, m_position.y, 0.f});
     }
 
     void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override
@@ -145,19 +149,19 @@ public:
         // Synchronize listener audio position with graphical position
         sf::Listener::setPosition({m_listener.getPosition().x, m_listener.getPosition().y, 0.f});
 
-        m_music.play();
+        m_music->play();
     }
 
     void onStop() override
     {
-        m_music.stop();
+        m_music->stop();
     }
 
 private:
-    sf::CircleShape m_listener{20.f};
-    sf::CircleShape m_soundShape{20.f};
-    sf::Vector2f    m_position;
-    sf::Music       m_music;
+    sf::CircleShape          m_listener{20.f};
+    sf::CircleShape          m_soundShape{20.f};
+    sf::Vector2f             m_position;
+    std::optional<sf::Music> m_music;
 };
 
 
@@ -173,20 +177,23 @@ public:
     m_volumeText(getFont(), "Volume: " + std::to_string(m_volume))
     {
         // Load the music file
-        if (!m_music.openFromFile(resourcesDir() / "doodle_pop.ogg"))
+        if (!(m_music = sf::Music::openFromFile(resourcesDir() / "doodle_pop.ogg")))
+        {
             std::cerr << "Failed to load " << (resourcesDir() / "doodle_pop.ogg").string() << std::endl;
+            std::abort();
+        }
 
         // Set the music to loop
-        m_music.setLoop(true);
+        m_music->setLoop(true);
 
         // We don't care about attenuation in this effect
-        m_music.setAttenuation(0.f);
+        m_music->setAttenuation(0.f);
 
         // Set initial pitch
-        m_music.setPitch(m_pitch);
+        m_music->setPitch(m_pitch);
 
         // Set initial volume
-        m_music.setVolume(m_volume);
+        m_music->setVolume(m_volume);
 
         m_pitchText.setPosition({windowWidth / 2.f - 120.f, windowHeight / 2.f - 80.f});
         m_volumeText.setPosition({windowWidth / 2.f - 120.f, windowHeight / 2.f - 30.f});
@@ -197,8 +204,8 @@ public:
         m_pitch  = std::clamp(2.f * x, 0.f, 2.f);
         m_volume = std::clamp(100.f * (1.f - y), 0.f, 100.f);
 
-        m_music.setPitch(m_pitch);
-        m_music.setVolume(m_volume);
+        m_music->setPitch(m_pitch);
+        m_music->setVolume(m_volume);
 
         m_pitchText.setString("Pitch: " + std::to_string(m_pitch));
         m_volumeText.setString("Volume: " + std::to_string(m_volume));
@@ -216,20 +223,20 @@ public:
         // so that the music is right on top of the listener
         sf::Listener::setPosition({0.f, 0.f, 0.f});
 
-        m_music.play();
+        m_music->play();
     }
 
     void onStop() override
     {
-        m_music.stop();
+        m_music->stop();
     }
 
 private:
-    float     m_pitch{1.f};
-    float     m_volume{100.f};
-    sf::Text  m_pitchText;
-    sf::Text  m_volumeText;
-    sf::Music m_music;
+    float                    m_pitch{1.f};
+    float                    m_volume{100.f};
+    sf::Text                 m_pitchText;
+    sf::Text                 m_volumeText;
+    std::optional<sf::Music> m_music;
 };
 
 
@@ -276,20 +283,23 @@ public:
         makeCone(m_soundConeInner, innerConeAngle);
 
         // Load the music file
-        if (!m_music.openFromFile(resourcesDir() / "doodle_pop.ogg"))
+        if (!(m_music = sf::Music::openFromFile(resourcesDir() / "doodle_pop.ogg")))
+        {
             std::cerr << "Failed to load " << (resourcesDir() / "doodle_pop.ogg").string() << std::endl;
+            std::abort();
+        }
 
         // Set the music to loop
-        m_music.setLoop(true);
+        m_music->setLoop(true);
 
         // Set attenuation factor
-        m_music.setAttenuation(m_attenuation);
+        m_music->setAttenuation(m_attenuation);
 
         // Set direction to face "downwards"
-        m_music.setDirection({0.f, 1.f, 0.f});
+        m_music->setDirection({0.f, 1.f, 0.f});
 
         // Set cone
-        m_music.setCone({innerConeAngle, outerConeAngle, 0.f});
+        m_music->setCone({innerConeAngle, outerConeAngle, 0.f});
 
         m_text.setString(
             "Attenuation factor dampens full volume of sound while within inner cone based on distance to "
@@ -304,7 +314,7 @@ public:
     void onUpdate(float /*time*/, float x, float y) override
     {
         m_position = {windowWidth * x - 10.f, windowHeight * y - 10.f};
-        m_music.setPosition({m_position.x, m_position.y, 0.f});
+        m_music->setPosition({m_position.x, m_position.y, 0.f});
     }
 
     void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override
@@ -326,22 +336,22 @@ public:
         // Synchronize listener audio position with graphical position
         sf::Listener::setPosition({m_listener.getPosition().x, m_listener.getPosition().y, 0.f});
 
-        m_music.play();
+        m_music->play();
     }
 
     void onStop() override
     {
-        m_music.stop();
+        m_music->stop();
     }
 
 private:
-    sf::CircleShape m_listener{20.f};
-    sf::CircleShape m_soundShape{20.f};
-    sf::ConvexShape m_soundConeOuter;
-    sf::ConvexShape m_soundConeInner;
-    sf::Text        m_text;
-    sf::Vector2f    m_position;
-    sf::Music       m_music;
+    sf::CircleShape          m_listener{20.f};
+    sf::CircleShape          m_soundShape{20.f};
+    sf::ConvexShape          m_soundConeOuter;
+    sf::ConvexShape          m_soundConeInner;
+    sf::Text                 m_text;
+    sf::Vector2f             m_position;
+    std::optional<sf::Music> m_music;
 
     float m_attenuation{0.01f};
 };
@@ -626,7 +636,7 @@ public:
     void onUpdate([[maybe_unused]] float time, float x, float y) override
     {
         m_position = {windowWidth * x - 10.f, windowHeight * y - 10.f};
-        m_music.setPosition({m_position.x, m_position.y, 0.f});
+        m_music->setPosition({m_position.x, m_position.y, 0.f});
     }
 
     void onDraw(sf::RenderTarget& target, sf::RenderStates states) const override
@@ -646,12 +656,12 @@ public:
         // Synchronize listener audio position with graphical position
         sf::Listener::setPosition({m_listener.getPosition().x, m_listener.getPosition().y, 0.f});
 
-        m_music.play();
+        m_music->play();
     }
 
     void onStop() override
     {
-        m_music.stop();
+        m_music->stop();
     }
 
 protected:
@@ -667,19 +677,22 @@ protected:
         m_instructions.setPosition({windowWidth / 2.f - 250.f, windowHeight * 3.f / 4.f});
 
         // Load the music file
-        if (!m_music.openFromFile(resourcesDir() / "doodle_pop.ogg"))
+        if (!(m_music = sf::Music::openFromFile(resourcesDir() / "doodle_pop.ogg")))
+        {
             std::cerr << "Failed to load " << (resourcesDir() / "doodle_pop.ogg").string() << std::endl;
+            std::abort();
+        }
 
         // Set the music to loop
-        m_music.setLoop(true);
+        m_music->setLoop(true);
 
         // Set attenuation to a nice value
-        m_music.setAttenuation(0.0f);
+        m_music->setAttenuation(0.0f);
     }
 
     sf::Music& getMusic()
     {
-        return m_music;
+        return *m_music;
     }
 
     const std::shared_ptr<bool>& getEnabled() const
@@ -696,13 +709,13 @@ private:
         m_enabledText.setString(*m_enabled ? "Processing: Enabled" : "Processing: Disabled");
     }
 
-    sf::CircleShape       m_listener{20.f};
-    sf::CircleShape       m_soundShape{20.f};
-    sf::Vector2f          m_position;
-    sf::Music             m_music;
-    std::shared_ptr<bool> m_enabled{std::make_shared<bool>(true)};
-    sf::Text              m_enabledText;
-    sf::Text              m_instructions;
+    sf::CircleShape          m_listener{20.f};
+    sf::CircleShape          m_soundShape{20.f};
+    sf::Vector2f             m_position;
+    std::optional<sf::Music> m_music;
+    std::shared_ptr<bool>    m_enabled{std::make_shared<bool>(true)};
+    sf::Text                 m_enabledText;
+    sf::Text                 m_instructions;
 };
 
 

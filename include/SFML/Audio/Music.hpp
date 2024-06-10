@@ -29,12 +29,11 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
 
-#include <SFML/Audio/InputSoundFile.hpp>
 #include <SFML/Audio/SoundStream.hpp>
 
 #include <filesystem>
-#include <mutex>
-#include <vector>
+#include <memory>
+#include <optional>
 
 #include <cstddef>
 #include <cstdint>
@@ -44,6 +43,7 @@ namespace sf
 {
 class Time;
 class InputStream;
+class InputSoundFile;
 
 ////////////////////////////////////////////////////////////
 /// \brief Streamed music played from an audio file
@@ -73,6 +73,18 @@ public:
     ~Music() override;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Move constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    Music(Music&&) noexcept;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Move assignment
+    ///
+    ////////////////////////////////////////////////////////////
+    Music& operator=(Music&&) noexcept;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Open a music from an audio file
     ///
     /// This function doesn't start playing the music (call play()
@@ -86,12 +98,12 @@ public:
     ///
     /// \param filename Path of the music file to open
     ///
-    /// \return True if loading succeeded, false if it failed
+    /// \return Music if loading succeeded, `std::nullopt` if it failed
     ///
     /// \see openFromMemory, openFromStream
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool openFromFile(const std::filesystem::path& filename);
+    [[nodiscard]] static std::optional<Music> openFromFile(const std::filesystem::path& filename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Open a music from an audio file in memory
@@ -109,12 +121,12 @@ public:
     /// \param data        Pointer to the file data in memory
     /// \param sizeInBytes Size of the data to load, in bytes
     ///
-    /// \return True if loading succeeded, false if it failed
+    /// \return Music if loading succeeded, `std::nullopt` if it failed
     ///
     /// \see openFromFile, openFromStream
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool openFromMemory(const void* data, std::size_t sizeInBytes);
+    [[nodiscard]] static std::optional<Music> openFromMemory(const void* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// \brief Open a music from an audio file in a custom stream
@@ -130,12 +142,12 @@ public:
     ///
     /// \param stream Source stream to read from
     ///
-    /// \return True if loading succeeded, false if it failed
+    /// \return Music if loading succeeded, `std::nullopt` if it failed
     ///
     /// \see openFromFile, openFromMemory
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool openFromStream(InputStream& stream);
+    [[nodiscard]] static std::optional<Music> openFromStream(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the total duration of the music
@@ -220,10 +232,16 @@ protected:
 
 private:
     ////////////////////////////////////////////////////////////
+    /// \brief Try opening the music file from an optional input sound file
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] static std::optional<Music> tryOpenFromFile(std::optional<InputSoundFile>&& optFile);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Initialize the internal state after loading a new music
     ///
     ////////////////////////////////////////////////////////////
-    void initialize();
+    explicit Music(InputSoundFile&& file);
 
     ////////////////////////////////////////////////////////////
     /// \brief Helper to convert an sf::Time to a sample position
@@ -248,10 +266,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::optional<InputSoundFile> m_file;     //!< The streamed music file
-    std::vector<std::int16_t>     m_samples;  //!< Temporary buffer of samples
-    std::recursive_mutex          m_mutex;    //!< Mutex protecting the data
-    Span<std::uint64_t>           m_loopSpan; //!< Loop Range Specifier
+    struct Impl;
+    std::unique_ptr<Impl> m_impl; //!< Implementation details
 };
 
 } // namespace sf
