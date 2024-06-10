@@ -210,18 +210,6 @@ jobs:
         echo "Using $(which ccache)"
         ccache --version
 
-    - name: Cache LLVM
-      if: matrix.platform.name == 'Windows'
-      id: llvm-cache
-      uses: actions/cache@v4
-      with:
-        path: "C:\\Program Files\\LLVM"
-        key: llvm-17.0.6
-        
-    - name: Update LLVM on Windows
-      if: runner.os == 'Windows' && steps.llvm-cache.outputs.cache-hit != 'true'
-      run: choco upgrade llvm --version=17.0.6
-
     - name: Configure CMake
       run: cmake --preset dev -DCMAKE_VERBOSE_MAKEFILE=ON ${{matrix.platform.flags}} ${{matrix.config.flags}} ${{matrix.type.flags}}
 
@@ -376,18 +364,6 @@ jobs:
       if: runner.os == 'Windows'
       run: |
         curl.exe -o run-clang-tidy https://raw.githubusercontent.com/llvm/llvm-project/llvmorg-15.0.7/clang-tools-extra/clang-tidy/tool/run-clang-tidy.py
-
-    - name: Cache LLVM
-      if: matrix.platform.name == 'Windows'
-      id: llvm-cache
-      uses: actions/cache@v4
-      with:
-        path: "C:\\Program Files\\LLVM"
-        key: llvm-17.0.6
-        
-    - name: Update LLVM on Windows
-      if: runner.os == 'Windows' && steps.llvm-cache.outputs.cache-hit != 'true'
-      run: choco upgrade llvm --version=17.0.6
 
     - name: Install Linux Dependencies
       if: runner.os == 'Linux'
