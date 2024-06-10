@@ -31,12 +31,6 @@ function(sfml_set_stdlib target)
             if(SFML_USE_STATIC_STD_LIBS)
                 set_property(TARGET ${target} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
             endif()
-
-            # Workaround for runtime issue on Windows: https://github.com/actions/runner-images/issues/10004
-            target_compile_definitions(${target} PRIVATE _DISABLE_CONSTEXPR_MUTEX_CONSTRUCTOR)
-        elseif(SFML_COMPILER_CLANG AND NOT MINGW)
-            # Workaround for runtime issue on Windows: https://github.com/actions/runner-images/issues/10004
-            target_compile_definitions(${target} PRIVATE _DISABLE_CONSTEXPR_MUTEX_CONSTRUCTOR)
         endif()
     endif()
 endfunction()
