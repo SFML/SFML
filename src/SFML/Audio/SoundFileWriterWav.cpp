@@ -108,27 +108,25 @@ bool SoundFileWriterWav::open(const std::filesystem::path&     filename,
     }
     else
     {
-        // NOLINTBEGIN(readability-identifier-naming)
         // For WAVE channel mapping refer to: https://learn.microsoft.com/en-us/previous-versions/windows/hardware/design/dn653308(v=vs.85)#default-channel-ordering
-        static constexpr auto SPEAKER_FRONT_LEFT            = 0x1u;
-        static constexpr auto SPEAKER_FRONT_RIGHT           = 0x2u;
-        static constexpr auto SPEAKER_FRONT_CENTER          = 0x4u;
-        static constexpr auto SPEAKER_LOW_FREQUENCY         = 0x8u;
-        static constexpr auto SPEAKER_BACK_LEFT             = 0x10u;
-        static constexpr auto SPEAKER_BACK_RIGHT            = 0x20u;
-        static constexpr auto SPEAKER_FRONT_LEFT_OF_CENTER  = 0x40u;
-        static constexpr auto SPEAKER_FRONT_RIGHT_OF_CENTER = 0x80u;
-        static constexpr auto SPEAKER_BACK_CENTER           = 0x100u;
-        static constexpr auto SPEAKER_SIDE_LEFT             = 0x200u;
-        static constexpr auto SPEAKER_SIDE_RIGHT            = 0x400u;
-        static constexpr auto SPEAKER_TOP_CENTER            = 0x800u;
-        static constexpr auto SPEAKER_TOP_FRONT_LEFT        = 0x1000u;
-        static constexpr auto SPEAKER_TOP_FRONT_CENTER      = 0x2000u;
-        static constexpr auto SPEAKER_TOP_FRONT_RIGHT       = 0x4000u;
-        static constexpr auto SPEAKER_TOP_BACK_LEFT         = 0x8000u;
-        static constexpr auto SPEAKER_TOP_BACK_CENTER       = 0x10000u;
-        static constexpr auto SPEAKER_TOP_BACK_RIGHT        = 0x20000u;
-        // NOLINTEND(readability-identifier-naming)
+        static constexpr auto speakerFrontLeft          = 0x1u;
+        static constexpr auto speakerFrontRight         = 0x2u;
+        static constexpr auto speakerFrontCenter        = 0x4u;
+        static constexpr auto speakerLowFrequency       = 0x8u;
+        static constexpr auto speakerBackLeft           = 0x10u;
+        static constexpr auto speakerBackRight          = 0x20u;
+        static constexpr auto speakerFrontLeftOfCenter  = 0x40u;
+        static constexpr auto speakerFrontRightOfCenter = 0x80u;
+        static constexpr auto speakerBackCenter         = 0x100u;
+        static constexpr auto speakerSideLeft           = 0x200u;
+        static constexpr auto speakerSideRight          = 0x400u;
+        static constexpr auto speakerTopCenter          = 0x800u;
+        static constexpr auto speakerTopFrontLeft       = 0x1000u;
+        static constexpr auto speakerTopFrontCenter     = 0x2000u;
+        static constexpr auto speakerTopFrontRight      = 0x4000u;
+        static constexpr auto speakerTopBackLeft        = 0x8000u;
+        static constexpr auto speakerTopBackCenter      = 0x10000u;
+        static constexpr auto speakerTopBackRight       = 0x20000u;
 
         struct SupportedChannel
         {
@@ -137,24 +135,24 @@ bool SoundFileWriterWav::open(const std::filesystem::path&     filename,
         };
 
         std::vector<SupportedChannel>
-            targetChannelMap{{SPEAKER_FRONT_LEFT, SoundChannel::FrontLeft},
-                             {SPEAKER_FRONT_RIGHT, SoundChannel::FrontRight},
-                             {SPEAKER_FRONT_CENTER, SoundChannel::FrontCenter},
-                             {SPEAKER_LOW_FREQUENCY, SoundChannel::LowFrequencyEffects},
-                             {SPEAKER_BACK_LEFT, SoundChannel::BackLeft},
-                             {SPEAKER_BACK_RIGHT, SoundChannel::BackRight},
-                             {SPEAKER_FRONT_LEFT_OF_CENTER, SoundChannel::FrontLeftOfCenter},
-                             {SPEAKER_FRONT_RIGHT_OF_CENTER, SoundChannel::FrontRightOfCenter},
-                             {SPEAKER_BACK_CENTER, SoundChannel::BackCenter},
-                             {SPEAKER_SIDE_LEFT, SoundChannel::SideLeft},
-                             {SPEAKER_SIDE_RIGHT, SoundChannel::SideRight},
-                             {SPEAKER_TOP_CENTER, SoundChannel::TopCenter},
-                             {SPEAKER_TOP_FRONT_LEFT, SoundChannel::TopFrontLeft},
-                             {SPEAKER_TOP_FRONT_CENTER, SoundChannel::TopFrontCenter},
-                             {SPEAKER_TOP_FRONT_RIGHT, SoundChannel::TopFrontRight},
-                             {SPEAKER_TOP_BACK_LEFT, SoundChannel::TopBackLeft},
-                             {SPEAKER_TOP_BACK_CENTER, SoundChannel::TopBackCenter},
-                             {SPEAKER_TOP_BACK_RIGHT, SoundChannel::TopBackRight}};
+            targetChannelMap{{speakerFrontLeft, SoundChannel::FrontLeft},
+                             {speakerFrontRight, SoundChannel::FrontRight},
+                             {speakerFrontCenter, SoundChannel::FrontCenter},
+                             {speakerLowFrequency, SoundChannel::LowFrequencyEffects},
+                             {speakerBackLeft, SoundChannel::BackLeft},
+                             {speakerBackRight, SoundChannel::BackRight},
+                             {speakerFrontLeftOfCenter, SoundChannel::FrontLeftOfCenter},
+                             {speakerFrontRightOfCenter, SoundChannel::FrontRightOfCenter},
+                             {speakerBackCenter, SoundChannel::BackCenter},
+                             {speakerSideLeft, SoundChannel::SideLeft},
+                             {speakerSideRight, SoundChannel::SideRight},
+                             {speakerTopCenter, SoundChannel::TopCenter},
+                             {speakerTopFrontLeft, SoundChannel::TopFrontLeft},
+                             {speakerTopFrontCenter, SoundChannel::TopFrontCenter},
+                             {speakerTopFrontRight, SoundChannel::TopFrontRight},
+                             {speakerTopBackLeft, SoundChannel::TopBackLeft},
+                             {speakerTopBackCenter, SoundChannel::TopBackCenter},
+                             {speakerTopBackRight, SoundChannel::TopBackRight}};
 
         // Check for duplicate channel entries
         {
