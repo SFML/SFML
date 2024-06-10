@@ -212,6 +212,7 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake")
 
 # add the subdirectories
+add_subdirectory(vendor)
 add_subdirectory(src/SFML)
 
 # on Linux and BSD-like OS, install pkg-config files by default

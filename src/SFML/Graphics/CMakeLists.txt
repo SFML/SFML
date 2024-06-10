@@ -116,8 +116,8 @@ elseif(SFML_OS_IOS)
     target_link_libraries(sfml-graphics PRIVATE z bz2)
 endif()
 
-find_package(Freetype REQUIRED)
-target_link_libraries(sfml-graphics PRIVATE Freetype::Freetype)
+# find_package(Freetype REQUIRED)
+target_link_libraries(sfml-graphics PRIVATE freetype)
 
 # add preprocessor symbols
 target_compile_definitions(sfml-graphics PRIVATE "STBI_FAILURE_USERMSG")
