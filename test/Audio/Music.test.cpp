@@ -82,28 +82,17 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
 
     SECTION("openFromStream()")
     {
-        sf::FileInputStream stream;
-
-        SECTION("Invalid stream")
-        {
-            CHECK(!sf::Music::openFromStream(stream));
-        }
-
-        SECTION("Valid stream")
-        {
-            REQUIRE(stream.open("Audio/doodle_pop.ogg"));
-
-            const auto music = sf::Music::openFromStream(stream).value();
-            CHECK(music.getDuration() == sf::microseconds(24002176));
-            const auto [offset, length] = music.getLoopPoints();
-            CHECK(offset == sf::Time::Zero);
-            CHECK(length == sf::microseconds(24002176));
-            CHECK(music.getChannelCount() == 2);
-            CHECK(music.getSampleRate() == 44100);
-            CHECK(music.getStatus() == sf::Music::Status::Stopped);
-            CHECK(music.getPlayingOffset() == sf::Time::Zero);
-            CHECK(!music.getLoop());
-        }
+        auto       stream = sf::FileInputStream::open("Audio/doodle_pop.ogg").value();
+        const auto music  = sf::Music::openFromStream(stream).value();
+        CHECK(music.getDuration() == sf::microseconds(24002176));
+        const auto [offset, length] = music.getLoopPoints();
+        CHECK(offset == sf::Time::Zero);
+        CHECK(length == sf::microseconds(24002176));
+        CHECK(music.getChannelCount() == 2);
+        CHECK(music.getSampleRate() == 44100);
+        CHECK(music.getStatus() == sf::Music::Status::Stopped);
+        CHECK(music.getPlayingOffset() == sf::Time::Zero);
+        CHECK(!music.getLoop());
     }
 
     SECTION("play/pause/stop")

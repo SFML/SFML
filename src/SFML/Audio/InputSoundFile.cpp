@@ -77,17 +77,18 @@ std::optional<InputSoundFile> InputSoundFile::openFromFile(const std::filesystem
         return std::nullopt;
     }
 
-    // Wrap the file into a stream
-    auto file = std::make_unique<FileInputStream>();
-
-    // Open it
-    if (!file->open(filename))
+    // Open the file
+    auto fileInputStream = FileInputStream::open(filename);
+    if (!fileInputStream)
     {
         err() << "Failed to open input sound file from file (couldn't open file input stream)\n"
               << formatDebugPathInfo(filename) << std::endl;
 
         return std::nullopt;
     }
+
+    // Wrap the file into a stream
+    auto file = std::make_unique<FileInputStream>(std::move(*fileInputStream));
 
     // Pass the stream to the reader
     auto info = reader->open(*file);

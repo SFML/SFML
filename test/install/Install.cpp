@@ -24,10 +24,9 @@ int main()
     [[maybe_unused]] const sf::UdpSocket udpSocket;
 
     // System
-    [[maybe_unused]] const sf::Angle           angle;
-    [[maybe_unused]] const sf::FileInputStream fileInputStream;
-    [[maybe_unused]] const sf::String          string;
-    [[maybe_unused]] const sf::Time            time;
+    [[maybe_unused]] const sf::Angle  angle;
+    [[maybe_unused]] const sf::String string;
+    [[maybe_unused]] const sf::Time   time;
 
     // Window
     [[maybe_unused]] const sf::Context   context;

@@ -923,18 +923,17 @@ public:
 
         // Use the vertex shader SPIR-V code to create a vertex shader module
         {
-            sf::FileInputStream file;
-
-            if (!file.open("resources/shader.vert.spv"))
+            auto file = sf::FileInputStream::open("resources/shader.vert.spv");
+            if (!file)
             {
                 vulkanAvailable = false;
                 return;
             }
 
-            const auto                 fileSize = file.getSize().value();
+            const auto                 fileSize = file->getSize().value();
             std::vector<std::uint32_t> buffer(fileSize / sizeof(std::uint32_t));
 
-            if (file.read(buffer.data(), fileSize) != file.getSize())
+            if (file->read(buffer.data(), fileSize) != file->getSize())
             {
                 vulkanAvailable = false;
                 return;
@@ -952,18 +951,17 @@ public:
 
         // Use the fragment shader SPIR-V code to create a fragment shader module
         {
-            sf::FileInputStream file;
-
-            if (!file.open("resources/shader.frag.spv"))
+            auto file = sf::FileInputStream::open("resources/shader.frag.spv");
+            if (!file)
             {
                 vulkanAvailable = false;
                 return;
             }
 
-            const auto                 fileSize = file.getSize().value();
+            const auto                 fileSize = file->getSize().value();
             std::vector<std::uint32_t> buffer(fileSize / sizeof(std::uint32_t));
 
-            if (file.read(buffer.data(), fileSize) != file.getSize())
+            if (file->read(buffer.data(), fileSize) != file->getSize())
             {
                 vulkanAvailable = false;
                 return;

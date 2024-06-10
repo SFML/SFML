@@ -178,22 +178,12 @@ TEST_CASE("[Graphics] sf::Image")
 
     SECTION("loadFromStream()")
     {
-        sf::FileInputStream stream;
-
-        SECTION("Invalid stream")
-        {
-            CHECK(!sf::Image::loadFromStream(stream));
-        }
-
-        SECTION("Successful load")
-        {
-            CHECK(stream.open("Graphics/sfml-logo-big.png"));
-            const auto image = sf::Image::loadFromStream(stream).value();
-            CHECK(image.getSize() == sf::Vector2u(1001, 304));
-            CHECK(image.getPixelsPtr() != nullptr);
-            CHECK(image.getPixel({0, 0}) == sf::Color(255, 255, 255, 0));
-            CHECK(image.getPixel({200, 150}) == sf::Color(144, 208, 62));
-        }
+        auto       stream = sf::FileInputStream::open("Graphics/sfml-logo-big.png").value();
+        const auto image  = sf::Image::loadFromStream(stream).value();
+        CHECK(image.getSize() == sf::Vector2u(1001, 304));
+        CHECK(image.getPixelsPtr() != nullptr);
+        CHECK(image.getPixel({0, 0}) == sf::Color(255, 255, 255, 0));
+        CHECK(image.getPixel({200, 150}) == sf::Color(144, 208, 62));
     }
 
     SECTION("saveToFile()")

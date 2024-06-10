@@ -48,8 +48,8 @@ namespace sf
 std::unique_ptr<SoundFileReader> SoundFileFactory::createReaderFromFilename(const std::filesystem::path& filename)
 {
     // Wrap the input file into a file stream
-    FileInputStream stream;
-    if (!stream.open(filename))
+    auto stream = FileInputStream::open(filename);
+    if (!stream)
     {
         err() << "Failed to open sound file (couldn't open stream)\n" << formatDebugPathInfo(filename) << std::endl;
         return nullptr;
@@ -58,13 +58,13 @@ std::unique_ptr<SoundFileReader> SoundFileFactory::createReaderFromFilename(cons
     // Test the filename in all the registered factories
     for (const auto& [fpCreate, fpCheck] : getReaderFactoryMap())
     {
-        if (!stream.seek(0).has_value())
+        if (!stream->seek(0).has_value())
         {
             err() << "Failed to seek sound stream" << std::endl;
             return nullptr;
         }
 
-        if (fpCheck(stream))
+        if (fpCheck(*stream))
             return fpCreate();
     }
 
