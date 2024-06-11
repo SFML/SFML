@@ -245,9 +245,8 @@ private:
 ///
 /// // ... create window as usual ...
 ///
-/// sf::Cursor cursor;
-/// if (cursor.loadFromSystem(sf::Cursor::Type::Hand))
-///     window.setMouseCursor(cursor);
+/// const auto cursor = sf::Cursor::loadFromSystem(sf::Cursor::Type::Hand).value();
+/// window.setMouseCursor(cursor);
 /// \endcode
 ///
 /// \see sf::WindowBase::setMouseCursor
