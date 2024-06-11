@@ -29,9 +29,7 @@
 ///     sf::Text text(font, "Hello SFML", 50);
 ///
 ///     // Load a music to play
-///     sf::Music music;
-///     if (!music.openFromFile("nice_music.ogg"))
-///         return EXIT_FAILURE;
+///     auto music = sf::Music::openFromFile("nice_music.ogg").value();
 ///
 ///     // Play the music
 ///     music.play();

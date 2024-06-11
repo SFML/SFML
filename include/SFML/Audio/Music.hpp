@@ -299,14 +299,8 @@ private:
 ///
 /// Usage example:
 /// \code
-/// // Declare a new music
-/// sf::Music music;
-///
-/// // Open it from an audio file
-/// if (!music.openFromFile("music.ogg"))
-/// {
-///     // error...
-/// }
+/// // Open a music from an audio file
+/// auto music = sf::Music::openFromFile("music.ogg").value();
 ///
 /// // Change some parameters
 /// music.setPosition(0, 1, 10); // change its 3D position
