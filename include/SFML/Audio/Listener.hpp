@@ -222,10 +222,10 @@ SFML_AUDIO_API Vector3f getUpVector();
 /// Usage example:
 /// \code
 /// // Move the listener to the position (1, 0, -5)
-/// sf::Listener::setPosition(1, 0, -5);
+/// sf::Listener::setPosition({1, 0, -5});
 ///
 /// // Make it face the right axis (1, 0, 0)
-/// sf::Listener::setDirection(1, 0, 0);
+/// sf::Listener::setDirection({1, 0, 0});
 ///
 /// // Reduce the global volume
 /// sf::Listener::setGlobalVolume(50);

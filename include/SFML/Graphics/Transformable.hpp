@@ -296,8 +296,8 @@ private:
 /// };
 ///
 /// MyEntity entity;
-/// entity.setPosition(10, 20);
-/// entity.setRotation(45);
+/// entity.setPosition({10, 20});
+/// entity.setRotation(sf::degrees(45));
 /// window.draw(entity);
 /// \endcode
 ///
