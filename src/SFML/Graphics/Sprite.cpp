@@ -30,25 +30,20 @@
 #include <SFML/Graphics/Texture.hpp>
 
 #include <cmath>
-#include <cstdlib>
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Sprite::Sprite(const Texture& texture)
+Sprite::Sprite(const Texture& texture) : Sprite(texture, IntRect({0, 0}, Vector2i(texture.getSize())))
 {
-    setTexture(texture, true);
 }
 
 
 ////////////////////////////////////////////////////////////
-Sprite::Sprite(const Texture& texture, const IntRect& rectangle)
+Sprite::Sprite(const Texture& texture, const IntRect& rectangle) : m_texture(&texture), m_textureRect(rectangle)
 {
-    // Compute the texture area
-    setTextureRect(rectangle);
-    // Assign texture
-    setTexture(texture, false);
+    updateVertices();
 }
 
 
@@ -57,9 +52,7 @@ void Sprite::setTexture(const Texture& texture, bool resetRect)
 {
     // Recompute the texture area if requested
     if (resetRect)
-    {
         setTextureRect(IntRect({0, 0}, Vector2i(texture.getSize())));
-    }
 
     // Assign the new texture
     m_texture = &texture;
@@ -72,8 +65,7 @@ void Sprite::setTextureRect(const IntRect& rectangle)
     if (rectangle != m_textureRect)
     {
         m_textureRect = rectangle;
-        updatePositions();
-        updateTexCoords();
+        updateVertices();
     }
 }
 
@@ -81,8 +73,7 @@ void Sprite::setTextureRect(const IntRect& rectangle)
 ////////////////////////////////////////////////////////////
 void Sprite::setColor(const Color& color)
 {
-    // Update the vertices' color
-    for (auto& vertex : m_vertices)
+    for (Vertex& vertex : m_vertices)
         vertex.color = color;
 }
 
@@ -111,10 +102,8 @@ const Color& Sprite::getColor() const
 ////////////////////////////////////////////////////////////
 FloatRect Sprite::getLocalBounds() const
 {
-    const auto width  = static_cast<float>(std::abs(m_textureRect.width));
-    const auto height = static_cast<float>(std::abs(m_textureRect.height));
-
-    return {{0.f, 0.f}, {width, height}};
+    // Last vertex posiion is equal to texture rect size absolute value
+    return {{0.f, 0.f}, m_vertices[3].position};
 }
 
 
@@ -131,36 +120,36 @@ void Sprite::draw(RenderTarget& target, RenderStates states) const
     states.transform *= getTransform();
     states.texture        = m_texture;
     states.coordinateType = CoordinateType::Pixels;
+
     target.draw(m_vertices.data(), m_vertices.size(), PrimitiveType::TriangleStrip, states);
 }
 
 
 ////////////////////////////////////////////////////////////
-void Sprite::updatePositions()
+void Sprite::updateVertices()
 {
-    const FloatRect bounds = getLocalBounds();
+    const auto left   = static_cast<float>(m_textureRect.left);
+    const auto top    = static_cast<float>(m_textureRect.top);
+    const auto width  = static_cast<float>(m_textureRect.width);
+    const auto height = static_cast<float>(m_textureRect.height);
+    const auto right  = float{left + width};
+    const auto bottom = float{top + height};
 
-    m_vertices[0].position = Vector2f(0, 0);
-    m_vertices[1].position = Vector2f(0, bounds.height);
-    m_vertices[2].position = Vector2f(bounds.width, 0);
-    m_vertices[3].position = Vector2f(bounds.width, bounds.height);
-}
+    // Absolute value is used to support negative texture rect sizes
+    const auto absWidth  = float{std::abs(width)};
+    const auto absHeight = float{std::abs(height)};
 
+    // Update positions
+    m_vertices[0].position = {0.f, 0.f};
+    m_vertices[1].position = {0.f, absHeight};
+    m_vertices[2].position = {absWidth, 0.f};
+    m_vertices[3].position = {absWidth, absHeight};
 
-////////////////////////////////////////////////////////////
-void Sprite::updateTexCoords()
-{
-    const FloatRect convertedTextureRect(m_textureRect);
-
-    const float left   = convertedTextureRect.left;
-    const float right  = left + convertedTextureRect.width;
-    const float top    = convertedTextureRect.top;
-    const float bottom = top + convertedTextureRect.height;
-
-    m_vertices[0].texCoords = Vector2f(left, top);
-    m_vertices[1].texCoords = Vector2f(left, bottom);
-    m_vertices[2].texCoords = Vector2f(right, top);
-    m_vertices[3].texCoords = Vector2f(right, bottom);
+    // Update texture coordinates
+    m_vertices[0].texCoords = {left, top};
+    m_vertices[1].texCoords = {left, bottom};
+    m_vertices[2].texCoords = {right, top};
+    m_vertices[3].texCoords = {right, bottom};
 }
 
 } // namespace sf

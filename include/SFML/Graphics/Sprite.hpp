@@ -211,22 +211,16 @@ private:
     void draw(RenderTarget& target, RenderStates states) const override;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Update the vertices' positions
+    /// \brief Update the vertices' positions and texture coordinates
     ///
     ////////////////////////////////////////////////////////////
-    void updatePositions();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Update the vertices' texture coordinates
-    ///
-    ////////////////////////////////////////////////////////////
-    void updateTexCoords();
+    void updateVertices();
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     std::array<Vertex, 4> m_vertices;    //!< Vertices defining the sprite's geometry
-    const Texture*        m_texture{};   //!< Texture of the sprite
+    const Texture*        m_texture;     //!< Texture of the sprite
     IntRect               m_textureRect; //!< Rectangle defining the area of the source texture to display
 };
 
@@ -271,9 +265,9 @@ private:
 ///
 /// // Create a sprite
 /// sf::Sprite sprite(texture);
-/// sprite.setTextureRect(sf::IntRect({10, 10}, {50, 30}));
-/// sprite.setColor(sf::Color(255, 255, 255, 200));
-/// sprite.setPosition({100, 25});
+/// sprite.setTextureRect({{10, 10}, {50, 30}});
+/// sprite.setColor({255, 255, 255, 200});
+/// sprite.setPosition({100.f, 25.f});
 ///
 /// // Draw it
 /// window.draw(sprite);
