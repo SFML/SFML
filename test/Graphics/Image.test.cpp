@@ -4,6 +4,7 @@
 #include <SFML/System/FileInputStream.hpp>
 
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_string.hpp>
 
 #include <GraphicsUtil.hpp>
 #include <array>
@@ -78,12 +79,21 @@ TEST_CASE("[Graphics] sf::Image")
         }
     }
 
+    ErrReader errReader;
+
     SECTION("loadFromFile()")
     {
-        SECTION("Invalid file")
+        SECTION("Invalid path")
         {
             CHECK(!sf::Image::loadFromFile("."));
+            CHECK_THAT(errReader.get(), Catch::Matchers::StartsWith("Failed to load image"));
+        }
+
+        SECTION("Nonexistent file")
+        {
             CHECK(!sf::Image::loadFromFile("this/does/not/exist.jpg"));
+            CHECK_THAT(errReader.get(), Catch::Matchers::StartsWith("Failed to load image"));
+            CHECK_THAT(errReader.get(), Catch::Matchers::ContainsSubstring("this/does/not/exist.jpg"));
         }
 
         SECTION("Successful load")
@@ -132,6 +142,7 @@ TEST_CASE("[Graphics] sf::Image")
 
             CHECK(image->getSize() == sf::Vector2u(1001, 304));
             CHECK(image->getPixelsPtr() != nullptr);
+            CHECK(errReader.get().empty());
         }
     }
 
@@ -140,12 +151,14 @@ TEST_CASE("[Graphics] sf::Image")
         SECTION("Invalid pointer")
         {
             CHECK(!sf::Image::loadFromMemory(nullptr, 1));
+            CHECK_THAT(errReader.get(), Catch::Matchers::StartsWith("Failed to load image from memory, no data provided"));
         }
 
         SECTION("Invalid size")
         {
             const std::byte testByte{0xAB};
             CHECK(!sf::Image::loadFromMemory(&testByte, 0));
+            CHECK_THAT(errReader.get(), Catch::Matchers::StartsWith("Failed to load image from memory, no data provided"));
         }
 
         SECTION("Failed load")
@@ -154,15 +167,19 @@ TEST_CASE("[Graphics] sf::Image")
 
             SECTION("Empty")
             {
-                memory.clear();
+                CHECK(!sf::Image::loadFromMemory(memory.data(), memory.size()));
+                CHECK_THAT(errReader.get(),
+                           Catch::Matchers::StartsWith("Failed to load image from memory, no data provided"));
             }
 
             SECTION("Junk data")
             {
                 memory = {1, 2, 3, 4};
+                CHECK(!sf::Image::loadFromMemory(memory.data(), memory.size()));
+                CHECK_THAT(errReader.get(),
+                           Catch::Matchers::StartsWith("Failed to load image from memory. Reason: Image not of any "
+                                                       "known type, or corrupt"));
             }
-
-            CHECK(!sf::Image::loadFromMemory(memory.data(), memory.size()));
         }
 
         SECTION("Successful load")
@@ -173,6 +190,7 @@ TEST_CASE("[Graphics] sf::Image")
             CHECK(image.getPixelsPtr() != nullptr);
             CHECK(image.getPixel({0, 0}) == sf::Color::Green);
             CHECK(image.getPixel({23, 23}) == sf::Color::Green);
+            CHECK(errReader.get().empty());
         }
     }
 
@@ -184,6 +202,7 @@ TEST_CASE("[Graphics] sf::Image")
         CHECK(image.getPixelsPtr() != nullptr);
         CHECK(image.getPixel({0, 0}) == sf::Color(255, 255, 255, 0));
         CHECK(image.getPixel({200, 150}) == sf::Color(144, 208, 62));
+        CHECK(errReader.get().empty());
     }
 
     SECTION("saveToFile()")
@@ -191,6 +210,9 @@ TEST_CASE("[Graphics] sf::Image")
         SECTION("Invalid size")
         {
             CHECK(!sf::Image({10, 0}, sf::Color::Magenta).saveToFile("test.jpg"));
+            CHECK_THAT(errReader.get(), Catch::Matchers::StartsWith("Failed to save image"));
+            CHECK_THAT(errReader.get(), Catch::Matchers::ContainsSubstring("test.jpg"));
+
             CHECK(!sf::Image({0, 10}, sf::Color::Magenta).saveToFile("test.jpg"));
         }
 
@@ -199,12 +221,19 @@ TEST_CASE("[Graphics] sf::Image")
         SECTION("No extension")
         {
             CHECK(!image.saveToFile("wheresmyextension"));
+            CHECK_THAT(errReader.get(), Catch::Matchers::StartsWith("Image file extension \"\" not supported"));
+            CHECK_THAT(errReader.get(), Catch::Matchers::ContainsSubstring("wheresmyextension"));
+
             CHECK(!image.saveToFile("pls/add/extension"));
+            CHECK_THAT(errReader.get(), Catch::Matchers::ContainsSubstring("pls/add/extension"));
         }
 
         SECTION("Invalid extension")
         {
             CHECK(!image.saveToFile("test.ps"));
+            CHECK_THAT(errReader.get(), Catch::Matchers::StartsWith("Image file extension \".ps\" not supported"));
+            CHECK_THAT(errReader.get(), Catch::Matchers::ContainsSubstring("test.ps"));
+
             CHECK(!image.saveToFile("test.foo"));
         }
 
@@ -235,6 +264,7 @@ TEST_CASE("[Graphics] sf::Image")
             const auto loadedImage = sf::Image::loadFromFile(filename).value();
             CHECK(loadedImage.getSize() == sf::Vector2u(256, 256));
             CHECK(loadedImage.getPixelsPtr() != nullptr);
+            CHECK(errReader.get().empty());
 
             CHECK(std::filesystem::remove(filename));
         }
@@ -245,6 +275,9 @@ TEST_CASE("[Graphics] sf::Image")
         SECTION("Invalid size")
         {
             CHECK(!sf::Image({10, 0}, sf::Color::Magenta).saveToMemory("test.jpg"));
+            CHECK_THAT(errReader.get(), Catch::Matchers::StartsWith("Failed to save image with format \"test.jpg\""));
+            CHECK_THAT(errReader.get(), Catch::Matchers::ContainsSubstring("test.jpg"));
+
             CHECK(!sf::Image({0, 10}, sf::Color::Magenta).saveToMemory("test.jpg"));
         }
 
@@ -253,24 +286,23 @@ TEST_CASE("[Graphics] sf::Image")
         SECTION("No extension")
         {
             CHECK(!image.saveToMemory(""));
+            CHECK_THAT(errReader.get(), Catch::Matchers::StartsWith("Failed to save image with format \"\""));
         }
 
         SECTION("Invalid extension")
         {
             CHECK(!image.saveToMemory("."));
+            CHECK_THAT(errReader.get(), Catch::Matchers::StartsWith("Failed to save image with format \".\""));
+
             CHECK(!image.saveToMemory("gif"));
             CHECK(!image.saveToMemory(".jpg")); // Supposed to be "jpg"
         }
 
         SECTION("Successful save")
         {
-            std::optional<std::vector<std::uint8_t>> maybeOutput;
-
             SECTION("To bmp")
             {
-                maybeOutput = image.saveToMemory("bmp");
-                REQUIRE(maybeOutput.has_value());
-                const auto& output = *maybeOutput;
+                const auto output = image.saveToMemory("bmp").value();
                 REQUIRE(output.size() == 1146);
                 CHECK(output[0] == 66);
                 CHECK(output[1] == 77);
@@ -284,9 +316,7 @@ TEST_CASE("[Graphics] sf::Image")
 
             SECTION("To tga")
             {
-                maybeOutput = image.saveToMemory("tga");
-                REQUIRE(maybeOutput.has_value());
-                const auto& output = *maybeOutput;
+                const auto output = image.saveToMemory("tga").value();
                 REQUIRE(output.size() == 98);
                 CHECK(output[0] == 0);
                 CHECK(output[1] == 0);
@@ -296,15 +326,15 @@ TEST_CASE("[Graphics] sf::Image")
 
             SECTION("To png")
             {
-                maybeOutput = image.saveToMemory("png");
-                REQUIRE(maybeOutput.has_value());
-                const auto& output = *maybeOutput;
+                const auto output = image.saveToMemory("png").value();
                 REQUIRE(output.size() == 92);
                 CHECK(output[0] == 137);
                 CHECK(output[1] == 80);
                 CHECK(output[2] == 78);
                 CHECK(output[3] == 71);
             }
+
+            CHECK(errReader.get().empty());
 
             // Cannot test JPEG encoding due to it triggering UB in stbiw__jpg_writeBits
         }

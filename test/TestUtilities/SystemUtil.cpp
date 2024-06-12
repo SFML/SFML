@@ -1,4 +1,5 @@
 #include <SFML/System/Angle.hpp>
+#include <SFML/System/Err.hpp>
 #include <SFML/System/String.hpp>
 #include <SFML/System/Time.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -91,4 +92,19 @@ std::vector<std::byte> loadIntoMemory(const std::filesystem::path& path)
                                                     static_cast<std::streamsize>(size));
     assert(result);
     return buffer;
+}
+
+ErrReader::ErrReader() : m_stringBuffer(sf::err().rdbuf())
+{
+    sf::err().rdbuf(m_stream.rdbuf());
+}
+
+ErrReader::~ErrReader()
+{
+    sf::err().rdbuf(m_stringBuffer);
+}
+
+std::string ErrReader::get()
+{
+    return m_stream.str();
 }

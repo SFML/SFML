@@ -7,6 +7,7 @@
 
 #include <filesystem>
 #include <iosfwd>
+#include <sstream>
 #include <vector>
 
 #include <cstddef>
@@ -64,3 +65,15 @@ std::ostream& operator<<(std::ostream& os, const Approx<T>& approx)
 }
 
 [[nodiscard]] std::vector<std::byte> loadIntoMemory(const std::filesystem::path& path);
+
+class ErrReader
+{
+public:
+    ErrReader();
+    ~ErrReader();
+    std::string get();
+
+private:
+    std::streambuf*   m_stringBuffer;
+    std::stringstream m_stream;
+};
