@@ -273,7 +273,7 @@ private:
 /// sf::Sprite sprite(texture);
 /// sprite.setTextureRect(sf::IntRect({10, 10}, {50, 30}));
 /// sprite.setColor(sf::Color(255, 255, 255, 200));
-/// sprite.setPosition(100, 25);
+/// sprite.setPosition({100, 25});
 ///
 /// // Draw it
 /// window.draw(sprite);

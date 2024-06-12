@@ -54,7 +54,7 @@ TEST_CASE("[Graphics] sf::Image")
 
         SECTION("Vector2 and std::uint8_t* constructor")
         {
-            // 10 x 10, with 4 colour channels array
+            // 10 x 10, with 4 color channels array
             std::array<std::uint8_t, 400> pixels{};
             for (std::size_t i = 0; i < pixels.size(); i += 4)
             {
@@ -359,7 +359,7 @@ TEST_CASE("[Graphics] sf::Image")
             const sf::Color dest(255, 0, 0, 255);
             const sf::Color source(5, 255, 78, 232);
 
-            // Create the composited colour for via the alpha composite over operation
+            // Create the composited color for via the alpha composite over operation
             const auto a = static_cast<std::uint8_t>(source.a + (dest.a * (255 - source.a)) / 255);
             const auto r = static_cast<std::uint8_t>(
                 ((source.r * source.a) + ((dest.r * dest.a) * (255 - source.a)) / 255) / a);
