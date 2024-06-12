@@ -42,6 +42,16 @@ TEST_CASE("[Graphics] sf::Sprite", runDisplayTests())
             CHECK(sprite.getLocalBounds() == sf::FloatRect({0, 0}, {40, 60}));
             CHECK(sprite.getGlobalBounds() == sf::FloatRect({0, 0}, {40, 60}));
         }
+
+        SECTION("Negative-size texture rectangle")
+        {
+            const sf::Sprite sprite(texture, {{0, 0}, {-40, -60}});
+            CHECK(&sprite.getTexture() == &texture);
+            CHECK(sprite.getTextureRect() == sf::IntRect({0, 0}, {-40, -60}));
+            CHECK(sprite.getColor() == sf::Color::White);
+            CHECK(sprite.getLocalBounds() == sf::FloatRect({0, 0}, {40, 60}));
+            CHECK(sprite.getGlobalBounds() == sf::FloatRect({0, 0}, {40, 60}));
+        }
     }
 
     SECTION("Set/get texture")
