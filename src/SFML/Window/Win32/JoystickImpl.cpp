@@ -274,7 +274,10 @@ void JoystickImpl::setLazyUpdates(bool status)
 void JoystickImpl::updateConnections()
 {
     if (directInput)
-        return updateConnectionsDInput();
+    {
+        updateConnectionsDInput();
+        return;
+    }
 
     for (unsigned int i = 0; i < Joystick::Count; ++i)
     {
