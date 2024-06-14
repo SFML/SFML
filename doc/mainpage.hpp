@@ -42,7 +42,10 @@
 ///         {
 ///             // Close window: exit
 ///             if (event.is<sf::Event::Closed>())
+///             {
 ///                 window.close();
+///                 break;
+///             }
 ///         }
 ///
 ///         // Clear screen

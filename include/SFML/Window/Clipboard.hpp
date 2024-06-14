@@ -94,7 +94,11 @@ SFML_WINDOW_API void setString(const String& text);
 /// while (const auto event = window.pollEvent())
 /// {
 ///     if(event.is<sf::Event::Closed>())
+///     {
 ///         window.close();
+///         break;
+///     }
+///
 ///     if(const auto* keyPressed = event.getIf<sf::Event::KeyPressed>())
 ///     {
 ///         // Using Ctrl + V to paste a string into SFML

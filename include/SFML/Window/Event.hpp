@@ -392,14 +392,14 @@ private:
 /// \code
 /// while (const auto event = window.pollEvent())
 /// {
-///     // Request for closing the window
-///     if (event.is<sf::Event::Closed>())
+///     // Window closed or escape key pressed: exit
+///     if (event.is<sf::Event::Closed>() ||
+///         (event.is<sf::Event::KeyPressed>() &&
+///          event.getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Escape))
+///     {
 ///         window.close();
-///
-///     // The escape key was pressed
-///     if (const auto* keyPressed = event.getIf<sf::Event::KeyPressed>())
-///         if (keyPressed->code == sf::Keyboard::Key::Escape)
-///             window.close();
+///         break;
+///     }
 ///
 ///     // The window was resized
 ///     if (const auto* resized = event.getIf<sf::Event::Resized>())

@@ -241,7 +241,10 @@ private:
 ///    {
 ///        // Request for closing the window
 ///        if (event.is<sf::Event::Closed>())
+///        {
 ///            window.close();
+///            break;
+///        }
 ///    }
 ///
 ///    // Clear the whole window before rendering a new frame

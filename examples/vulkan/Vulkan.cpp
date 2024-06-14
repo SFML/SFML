@@ -2546,14 +2546,14 @@ public:
             // Process events
             while (const auto event = window.pollEvent())
             {
-                // Close window: exit
-                if (event.is<sf::Event::Closed>())
+                // Window closed or escape key pressed: exit
+                if (event.is<sf::Event::Closed>() ||
+                    (event.is<sf::Event::KeyPressed>() &&
+                     event.getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Escape))
+                {
                     window.close();
-
-                // Escape key: exit
-                if (event.is<sf::Event::KeyPressed>() &&
-                    event.getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Escape)
-                    window.close();
+                    break;
+                }
 
                 // Re-create the swapchain when the window is resized
                 if (event.is<sf::Event::Resized>())

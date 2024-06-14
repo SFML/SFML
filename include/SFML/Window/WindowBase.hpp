@@ -565,7 +565,10 @@ private:
 ///    {
 ///        // Request for closing the window
 ///        if (event.is<sf::Event::Closed>())
+///        {
 ///            window.close();
+///            break;
+///        }
 ///    }
 ///
 ///    // Do things with the window here...

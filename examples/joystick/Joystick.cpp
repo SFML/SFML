@@ -165,7 +165,8 @@ int main()
                 window.close();
                 break;
             }
-            else if (const auto* joystickButtonPressed = event.getIf<sf::Event::JoystickButtonPressed>())
+
+            if (const auto* joystickButtonPressed = event.getIf<sf::Event::JoystickButtonPressed>())
             {
                 // Update displayed joystick values
                 updateValues(joystickButtonPressed->joystickId);

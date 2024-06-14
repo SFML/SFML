@@ -111,16 +111,14 @@ int main(int argc, char* argv[])
     {
         while (const auto event = active ? window.pollEvent() : window.waitEvent())
         {
-            if (event.is<sf::Event::Closed>())
+            if (event.is<sf::Event::Closed>() || (event.is<sf::Event::KeyPressed>() &&
+                                                  event.getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Escape))
             {
                 window.close();
+                break;
             }
-            else if (const auto* keyPressed = event.getIf<sf::Event::KeyPressed>())
-            {
-                if (keyPressed->code == sf::Keyboard::Key::Escape)
-                    window.close();
-            }
-            else if (const auto* resized = event.getIf<sf::Event::Resized>())
+
+            if (const auto* resized = event.getIf<sf::Event::Resized>())
             {
                 const auto size = sf::Vector2f(resized->size);
                 view.setSize(size);
