@@ -35,6 +35,7 @@
 #include <SFML/System/Time.hpp>
 
 #include <array>
+#include <chrono>
 #include <memory>
 
 #include <cmath>
@@ -175,35 +176,46 @@ void WindowImpl::setMaximumSize(const std::optional<Vector2u>& maximumSize)
 
 
 ////////////////////////////////////////////////////////////
-Event WindowImpl::popEvent(bool block)
+Event WindowImpl::waitEvent(Time timeout)
+{
+    const auto timedOut = [&, startTime = std::chrono::steady_clock::now()]
+    {
+        const bool infiniteTimeout = timeout == Time::Zero;
+        return !infiniteTimeout && (std::chrono::steady_clock::now() - startTime) >= timeout.toDuration();
+    };
+
+    // If the event queue is empty, let's first check if new events are available from the OS
+    if (m_events.empty())
+        populateEventQueue();
+
+    // Here we use a manual wait loop instead of the optimized wait-event provided by the OS,
+    // so that we don't skip joystick events (which require polling)
+    while (m_events.empty() && !timedOut())
+    {
+        sleep(milliseconds(10));
+        populateEventQueue();
+    }
+
+    return popEvent();
+}
+
+
+////////////////////////////////////////////////////////////
+Event WindowImpl::pollEvent()
 {
     // If the event queue is empty, let's first check if new events are available from the OS
     if (m_events.empty())
-    {
-        // Get events from the system
-        processJoystickEvents();
-        processSensorEvents();
-        processEvents();
+        populateEventQueue();
 
-        // In blocking mode, we must process events until one is triggered
-        if (block)
-        {
-            // Here we use a manual wait loop instead of the optimized
-            // wait-event provided by the OS, so that we don't skip joystick
-            // events (which require polling)
-            while (m_events.empty())
-            {
-                sleep(milliseconds(10));
-                processJoystickEvents();
-                processSensorEvents();
-                processEvents();
-            }
-        }
-    }
+    return popEvent();
+}
 
+
+////////////////////////////////////////////////////////////
+Event WindowImpl::popEvent()
+{
     Event event;
 
-    // Pop the first event of the queue, if it is not empty
     if (!m_events.empty())
     {
         event = m_events.front();
@@ -308,6 +320,15 @@ void WindowImpl::processSensorEvents()
                 pushEvent(Event::SensorChanged{sensor, m_sensorValue[sensor]});
         }
     }
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImpl::populateEventQueue()
+{
+    processJoystickEvents();
+    processSensorEvents();
+    processEvents();
 }
 
 
