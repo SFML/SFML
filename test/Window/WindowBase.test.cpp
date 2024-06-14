@@ -9,6 +9,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <WindowUtil.hpp>
+#include <chrono>
 #include <type_traits>
 
 TEST_CASE("[Window] sf::WindowBase", runDisplayTests())
@@ -104,14 +105,38 @@ TEST_CASE("[Window] sf::WindowBase", runDisplayTests())
 
     SECTION("pollEvent()")
     {
-        sf::WindowBase windowBase;
-        CHECK(!windowBase.pollEvent());
+        SECTION("Uninitialized window")
+        {
+            sf::WindowBase windowBase;
+            CHECK(!windowBase.pollEvent());
+        }
     }
 
     SECTION("waitEvent()")
     {
-        sf::WindowBase windowBase;
-        CHECK(!windowBase.waitEvent());
+        SECTION("Uninitialized window")
+        {
+            sf::WindowBase windowBase;
+            CHECK(!windowBase.waitEvent());
+        }
+
+        SECTION("Initialized window")
+        {
+            sf::WindowBase windowBase(sf::VideoMode({360, 240}), "WindowBase Tests");
+
+            constexpr auto timeout = sf::milliseconds(100);
+
+            const auto startTime = std::chrono::steady_clock::now();
+            const auto event     = windowBase.waitEvent(timeout);
+            const auto elapsed   = std::chrono::steady_clock::now() - startTime;
+
+            REQUIRE(elapsed < (timeout + sf::milliseconds(50)).toDuration());
+
+            if (elapsed <= timeout.toDuration())
+                CHECK(event);
+            else
+                CHECK(!event);
+        }
     }
 
     SECTION("Set/get position")

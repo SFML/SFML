@@ -55,6 +55,7 @@
 namespace sf
 {
 class String;
+class Time;
 
 namespace priv
 {
@@ -121,21 +122,28 @@ public:
     void setJoystickThreshold(float threshold);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Return the next window event available
+    /// \brief Wait for and return the next available window event
     ///
     /// If there's no event available, this function calls the
     /// window's internal event processing function.
-    /// The \a block parameter controls the behavior of the function
-    /// if no event is available: if it is true then the function
-    /// doesn't return until a new event is triggered; otherwise it
-    /// returns an empty event to indicate that no event is available.
     ///
-    /// \param block Use true to block the thread until an event arrives
+    /// \param timeout Maximum time to wait (`Time::Zero` for infinite)
     ///
-    /// \return The event; can be `Empty` (convertible to `false`) if not blocking
+    /// \return The event on success, `Event::Empty` otherwise
     ///
     ////////////////////////////////////////////////////////////
-    Event popEvent(bool block);
+    [[nodiscard]] Event waitEvent(Time timeout);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Return the next window event, if available
+    ///
+    /// If there's no event available, this function calls the
+    /// window's internal event processing function.
+    ///
+    /// \return The event if available, `Event::Empty` otherwise
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] Event pollEvent();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the OS-specific handle of the window
@@ -326,6 +334,12 @@ private:
     struct JoystickStatesImpl;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Pop the first event of the queue if available, otherwise an empty event
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] Event popEvent();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Read the joysticks state and generate the appropriate events
     ///
     ////////////////////////////////////////////////////////////
@@ -336,6 +350,12 @@ private:
     ///
     ////////////////////////////////////////////////////////////
     void processSensorEvents();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Read joystick, sensors, and OS state and populate event queue
+    ///
+    ////////////////////////////////////////////////////////////
+    void populateEventQueue();
 
     ////////////////////////////////////////////////////////////
     // Member data

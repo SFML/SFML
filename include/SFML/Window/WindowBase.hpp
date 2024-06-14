@@ -33,6 +33,7 @@
 #include <SFML/Window/WindowEnums.hpp>
 #include <SFML/Window/WindowHandle.hpp>
 
+#include <SFML/System/Time.hpp>
 #include <SFML/System/Vector2.hpp>
 
 #include <memory>
@@ -202,11 +203,12 @@ public:
     /// \brief Wait for an event and return it
     ///
     /// This function is blocking: if there's no pending event then
-    /// it will wait until an event is received. After this function
-    /// returns if no error occurred, the returned event will not be
-    /// empty. This function is typically used when you have a thread
-    /// that is dedicated to events handling: you want to make this
-    /// thread sleep as long as no new event is received.
+    /// it will wait until an event is received or until the provided
+    /// timeout elapses. After this function returns if no error nor
+    /// timeout occurred, the returned event will not be empty.
+    /// This function is typically used when you have a thread that is
+    /// dedicated to events handling: you want to make this thread sleep
+    /// as long as no new event is received.
     /// \code
     /// if (const auto event = window.waitEvent())
     /// {
@@ -214,12 +216,14 @@ public:
     /// }
     /// \endcode
     ///
-    /// \return The event
+    /// \param timeout Maximum time to wait (`Time::Zero` for infinite)
+    ///
+    /// \return The event; will be `Empty` (convertible to `false`) on timeout or if window was closed
     ///
     /// \see pollEvent
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Event waitEvent();
+    [[nodiscard]] Event waitEvent(Time timeout = Time::Zero);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of the window

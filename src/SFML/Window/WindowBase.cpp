@@ -149,17 +149,17 @@ bool WindowBase::isOpen() const
 Event WindowBase::pollEvent()
 {
     Event event;
-    if (m_impl && (event = m_impl->popEvent(false)))
+    if (m_impl && (event = m_impl->pollEvent()))
         filterEvent(event);
     return event;
 }
 
 
 ////////////////////////////////////////////////////////////
-Event WindowBase::waitEvent()
+Event WindowBase::waitEvent(Time timeout)
 {
     Event event;
-    if (m_impl && (event = m_impl->popEvent(true)))
+    if (m_impl && (event = m_impl->waitEvent(timeout)))
         filterEvent(event);
     return event;
 }
