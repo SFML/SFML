@@ -65,15 +65,15 @@ void addGlyphQuad(sf::VertexArray& vertices, sf::Vector2f position, const sf::Co
 {
     const float padding = 1.0;
 
-    const float left   = glyph.bounds.left - padding;
-    const float top    = glyph.bounds.top - padding;
-    const float right  = glyph.bounds.left + glyph.bounds.width + padding;
-    const float bottom = glyph.bounds.top + glyph.bounds.height + padding;
+    const float left   = glyph.bounds.position.x - padding;
+    const float top    = glyph.bounds.position.y - padding;
+    const float right  = glyph.bounds.position.x + glyph.bounds.size.x + padding;
+    const float bottom = glyph.bounds.position.y + glyph.bounds.size.y + padding;
 
-    const float u1 = static_cast<float>(glyph.textureRect.left) - padding;
-    const float v1 = static_cast<float>(glyph.textureRect.top) - padding;
-    const float u2 = static_cast<float>(glyph.textureRect.left + glyph.textureRect.width) + padding;
-    const float v2 = static_cast<float>(glyph.textureRect.top + glyph.textureRect.height) + padding;
+    const float u1 = static_cast<float>(glyph.textureRect.position.x) - padding;
+    const float v1 = static_cast<float>(glyph.textureRect.position.y) - padding;
+    const float u2 = static_cast<float>(glyph.textureRect.position.x + glyph.textureRect.size.x) + padding;
+    const float v2 = static_cast<float>(glyph.textureRect.position.y + glyph.textureRect.size.y) + padding;
 
     vertices.append({{position.x + left - italicShear * top, position.y + top}, color, {u1, v1}});
     vertices.append({{position.x + right - italicShear * top, position.y + top}, color, {u2, v1}});
@@ -478,10 +478,10 @@ void Text::ensureGeometryUpdate() const
         addGlyphQuad(m_vertices, Vector2f(x, y), m_fillColor, glyph, italicShear);
 
         // Update the current bounds
-        const float left   = glyph.bounds.left;
-        const float top    = glyph.bounds.top;
-        const float right  = glyph.bounds.left + glyph.bounds.width;
-        const float bottom = glyph.bounds.top + glyph.bounds.height;
+        const float left   = glyph.bounds.position.x;
+        const float top    = glyph.bounds.position.y;
+        const float right  = glyph.bounds.position.x + glyph.bounds.size.x;
+        const float bottom = glyph.bounds.position.y + glyph.bounds.size.y;
 
         minX = std::min(minX, x + left - italicShear * bottom);
         maxX = std::max(maxX, x + right - italicShear * top);
@@ -521,10 +521,10 @@ void Text::ensureGeometryUpdate() const
     }
 
     // Update the bounding rectangle
-    m_bounds.left   = minX;
-    m_bounds.top    = minY;
-    m_bounds.width  = maxX - minX;
-    m_bounds.height = maxY - minY;
+    m_bounds.position.x = minX;
+    m_bounds.position.y = minY;
+    m_bounds.size.x     = maxX - minX;
+    m_bounds.size.y     = maxY - minY;
 }
 
 } // namespace sf

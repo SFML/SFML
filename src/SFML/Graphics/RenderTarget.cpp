@@ -279,8 +279,8 @@ IntRect RenderTarget::getViewport(const View& view) const
     const auto [width, height] = Vector2f(getSize());
     const FloatRect& viewport  = view.getViewport();
 
-    return IntRect(Rect<long>({std::lround(width * viewport.left), std::lround(height * viewport.top)},
-                              {std::lround(width * viewport.width), std::lround(height * viewport.height)}));
+    return IntRect(Rect<long>({std::lround(width * viewport.position.x), std::lround(height * viewport.position.y)},
+                              {std::lround(width * viewport.size.x), std::lround(height * viewport.size.y)}));
 }
 
 
@@ -290,8 +290,8 @@ IntRect RenderTarget::getScissor(const View& view) const
     const auto [width, height] = Vector2f(getSize());
     const FloatRect& scissor   = view.getScissor();
 
-    return IntRect(Rect<long>({std::lround(width * scissor.left), std::lround(height * scissor.top)},
-                              {std::lround(width * scissor.width), std::lround(height * scissor.height)}));
+    return IntRect(Rect<long>({std::lround(width * scissor.position.x), std::lround(height * scissor.position.y)},
+                              {std::lround(width * scissor.size.x), std::lround(height * scissor.size.y)}));
 }
 
 
@@ -656,8 +656,8 @@ void RenderTarget::applyCurrentView()
 {
     // Set the viewport
     const IntRect viewport    = getViewport(m_view);
-    const int     viewportTop = static_cast<int>(getSize().y) - (viewport.top + viewport.height);
-    glCheck(glViewport(viewport.left, viewportTop, viewport.width, viewport.height));
+    const int     viewportTop = static_cast<int>(getSize().y) - (viewport.position.y + viewport.size.y);
+    glCheck(glViewport(viewport.position.x, viewportTop, viewport.size.x, viewport.size.y));
 
     // Set the scissor rectangle and enable/disable scissor testing
     if (m_view.getScissor() == FloatRect({0, 0}, {1, 1}))
@@ -671,8 +671,8 @@ void RenderTarget::applyCurrentView()
     else
     {
         const IntRect pixelScissor = getScissor(m_view);
-        const int     scissorTop   = static_cast<int>(getSize().y) - (pixelScissor.top + pixelScissor.height);
-        glCheck(glScissor(pixelScissor.left, scissorTop, pixelScissor.width, pixelScissor.height));
+        const int     scissorTop   = static_cast<int>(getSize().y) - (pixelScissor.position.y + pixelScissor.size.y);
+        glCheck(glScissor(pixelScissor.position.x, scissorTop, pixelScissor.size.x, pixelScissor.size.y));
 
         if (!m_cache.scissorEnabled)
         {

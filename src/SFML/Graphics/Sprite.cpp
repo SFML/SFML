@@ -128,10 +128,10 @@ void Sprite::draw(RenderTarget& target, RenderStates states) const
 ////////////////////////////////////////////////////////////
 void Sprite::updateVertices()
 {
-    const auto left   = static_cast<float>(m_textureRect.left);
-    const auto top    = static_cast<float>(m_textureRect.top);
-    const auto width  = static_cast<float>(m_textureRect.width);
-    const auto height = static_cast<float>(m_textureRect.height);
+    const auto left   = static_cast<float>(m_textureRect.position.x);
+    const auto top    = static_cast<float>(m_textureRect.position.y);
+    const auto width  = static_cast<float>(m_textureRect.size.x);
+    const auto height = static_cast<float>(m_textureRect.size.y);
     const auto right  = float{left + width};
     const auto bottom = float{top + height};
 

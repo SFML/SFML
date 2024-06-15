@@ -37,11 +37,7 @@ constexpr Rect<T>::Rect() = default;
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Rect<T>::Rect(const Vector2<T>& position, const Vector2<T>& size) :
-left(position.x),
-top(position.y),
-width(size.x),
-height(size.y)
+constexpr Rect<T>::Rect(const Vector2<T>& thePosition, const Vector2<T>& theSize) : position(thePosition), size(theSize)
 {
 }
 
@@ -49,11 +45,7 @@ height(size.y)
 ////////////////////////////////////////////////////////////
 template <typename T>
 template <typename U>
-constexpr Rect<T>::Rect(const Rect<U>& rectangle) :
-left(static_cast<T>(rectangle.left)),
-top(static_cast<T>(rectangle.top)),
-width(static_cast<T>(rectangle.width)),
-height(static_cast<T>(rectangle.height))
+constexpr Rect<T>::Rect(const Rect<U>& rectangle) : position(rectangle.position), size(rectangle.size)
 {
 }
 
@@ -69,10 +61,10 @@ constexpr bool Rect<T>::contains(const Vector2<T>& point) const
     // Rectangles with negative dimensions are allowed, so we must handle them correctly
 
     // Compute the real min and max of the rectangle on both axes
-    const T minX = min(left, static_cast<T>(left + width));
-    const T maxX = max(left, static_cast<T>(left + width));
-    const T minY = min(top, static_cast<T>(top + height));
-    const T maxY = max(top, static_cast<T>(top + height));
+    const T minX = min(position.x, static_cast<T>(position.x + size.x));
+    const T maxX = max(position.x, static_cast<T>(position.x + size.x));
+    const T minY = min(position.y, static_cast<T>(position.y + size.y));
+    const T maxY = max(position.y, static_cast<T>(position.y + size.y));
 
     return (point.x >= minX) && (point.x < maxX) && (point.y >= minY) && (point.y < maxY);
 }
@@ -89,16 +81,16 @@ constexpr std::optional<Rect<T>> Rect<T>::findIntersection(const Rect<T>& rectan
     // Rectangles with negative dimensions are allowed, so we must handle them correctly
 
     // Compute the min and max of the first rectangle on both axes
-    const T r1MinX = min(left, static_cast<T>(left + width));
-    const T r1MaxX = max(left, static_cast<T>(left + width));
-    const T r1MinY = min(top, static_cast<T>(top + height));
-    const T r1MaxY = max(top, static_cast<T>(top + height));
+    const T r1MinX = min(position.x, static_cast<T>(position.x + size.x));
+    const T r1MaxX = max(position.x, static_cast<T>(position.x + size.x));
+    const T r1MinY = min(position.y, static_cast<T>(position.y + size.y));
+    const T r1MaxY = max(position.y, static_cast<T>(position.y + size.y));
 
     // Compute the min and max of the second rectangle on both axes
-    const T r2MinX = min(rectangle.left, static_cast<T>(rectangle.left + rectangle.width));
-    const T r2MaxX = max(rectangle.left, static_cast<T>(rectangle.left + rectangle.width));
-    const T r2MinY = min(rectangle.top, static_cast<T>(rectangle.top + rectangle.height));
-    const T r2MaxY = max(rectangle.top, static_cast<T>(rectangle.top + rectangle.height));
+    const T r2MinX = min(rectangle.position.x, static_cast<T>(rectangle.position.x + rectangle.size.x));
+    const T r2MaxX = max(rectangle.position.x, static_cast<T>(rectangle.position.x + rectangle.size.x));
+    const T r2MinY = min(rectangle.position.y, static_cast<T>(rectangle.position.y + rectangle.size.y));
+    const T r2MaxY = max(rectangle.position.y, static_cast<T>(rectangle.position.y + rectangle.size.y));
 
     // Compute the intersection boundaries
     const T interLeft   = max(r1MinX, r2MinX);
@@ -122,7 +114,7 @@ constexpr std::optional<Rect<T>> Rect<T>::findIntersection(const Rect<T>& rectan
 template <typename T>
 constexpr Vector2<T> Rect<T>::getPosition() const
 {
-    return Vector2<T>(left, top);
+    return Vector2<T>(position.x, position.y);
 }
 
 
@@ -130,7 +122,7 @@ constexpr Vector2<T> Rect<T>::getPosition() const
 template <typename T>
 constexpr Vector2<T> Rect<T>::getSize() const
 {
-    return Vector2<T>(width, height);
+    return Vector2<T>(size.x, size.y);
 }
 
 
@@ -146,8 +138,7 @@ constexpr Vector2<T> Rect<T>::getCenter() const
 template <typename T>
 constexpr bool operator==(const Rect<T>& left, const Rect<T>& right)
 {
-    return (left.left == right.left) && (left.width == right.width) && (left.top == right.top) &&
-           (left.height == right.height);
+    return (left.position == right.position) && (left.size == right.size);
 }
 
 

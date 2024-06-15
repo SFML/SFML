@@ -389,13 +389,13 @@ void Image::createMaskFromColor(const Color& color, std::uint8_t alpha)
         return false;
 
     // Make sure the sourceRect components are non-negative before casting them to unsigned values
-    if (sourceRect.left < 0 || sourceRect.top < 0 || sourceRect.width < 0 || sourceRect.height < 0)
+    if (sourceRect.position.x < 0 || sourceRect.position.y < 0 || sourceRect.size.x < 0 || sourceRect.size.y < 0)
         return false;
 
     Rect<unsigned int> srcRect(sourceRect);
 
     // Use the whole source image as srcRect if the provided source rectangle is empty
-    if (srcRect.width == 0 || srcRect.height == 0)
+    if (srcRect.size.x == 0 || srcRect.size.y == 0)
     {
         srcRect = Rect<unsigned int>({0, 0}, source.m_size);
     }
@@ -404,7 +404,7 @@ void Image::createMaskFromColor(const Color& color, std::uint8_t alpha)
     {
         // Checking the bottom right corner is enough because
         // left and top are non-negative and width and height are positive.
-        if (source.m_size.x < srcRect.left + srcRect.width || source.m_size.y < srcRect.top + srcRect.height)
+        if (source.m_size.x < srcRect.position.x + srcRect.size.x || source.m_size.y < srcRect.position.y + srcRect.size.y)
             return false;
     }
 
@@ -413,14 +413,14 @@ void Image::createMaskFromColor(const Color& color, std::uint8_t alpha)
         return false;
 
     // Then find the valid size of the destination rectangle
-    const Vector2u dstSize(std::min(m_size.x - dest.x, srcRect.width), std::min(m_size.y - dest.y, srcRect.height));
+    const Vector2u dstSize(std::min(m_size.x - dest.x, srcRect.size.x), std::min(m_size.y - dest.y, srcRect.size.y));
 
     // Precompute as much as possible
     const std::size_t  pitch     = static_cast<std::size_t>(dstSize.x) * 4;
     const unsigned int srcStride = source.m_size.x * 4;
     const unsigned int dstStride = m_size.x * 4;
 
-    const std::uint8_t* srcPixels = source.m_pixels.data() + (srcRect.left + srcRect.top * source.m_size.x) * 4;
+    const std::uint8_t* srcPixels = source.m_pixels.data() + (srcRect.position.x + srcRect.position.y * source.m_size.x) * 4;
     std::uint8_t*       dstPixels = m_pixels.data() + (dest.x + dest.y * m_size.x) * 4;
 
     // Copy the pixels

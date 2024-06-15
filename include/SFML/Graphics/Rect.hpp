@@ -137,10 +137,8 @@ public:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    T left{};   //!< Left coordinate of the rectangle
-    T top{};    //!< Top coordinate of the rectangle
-    T width{};  //!< Width of the rectangle
-    T height{}; //!< Height of the rectangle
+    Vector2<T> position{}; //!< Position of the top-left corner of the rectangle
+    Vector2<T> size{};     //!< Size of the rectangle
 };
 
 ////////////////////////////////////////////////////////////

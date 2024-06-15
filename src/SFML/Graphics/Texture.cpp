@@ -303,8 +303,8 @@ std::optional<Texture> Texture::loadFromImage(const Image& image, bool sRgb, con
     const auto [width, height] = Vector2i(image.getSize());
 
     // Load the entire image if the source area is either empty or contains the whole image
-    if (area.width == 0 || (area.height == 0) ||
-        ((area.left <= 0) && (area.top <= 0) && (area.width >= width) && (area.height >= height)))
+    if (area.size.x == 0 || (area.size.y == 0) ||
+        ((area.position.x <= 0) && (area.position.y <= 0) && (area.size.x >= width) && (area.size.y >= height)))
     {
         // Load the entire image
         if (auto texture = sf::Texture::create(image.getSize(), sRgb))
@@ -323,11 +323,11 @@ std::optional<Texture> Texture::loadFromImage(const Image& image, bool sRgb, con
         // Load a sub-area of the image
 
         // Adjust the rectangle to the size of the image
-        IntRect rectangle = area;
-        rectangle.left    = std::max(rectangle.left, 0);
-        rectangle.top     = std::max(rectangle.top, 0);
-        rectangle.width   = std::min(rectangle.width, width - rectangle.left);
-        rectangle.height  = std::min(rectangle.height, height - rectangle.top);
+        IntRect rectangle    = area;
+        rectangle.position.x = std::max(rectangle.position.x, 0);
+        rectangle.position.y = std::max(rectangle.position.y, 0);
+        rectangle.size.x     = std::min(rectangle.size.x, width - rectangle.position.x);
+        rectangle.size.y     = std::min(rectangle.size.y, height - rectangle.position.y);
 
         // Create the texture and upload the pixels
         if (auto texture = sf::Texture::create(Vector2u(rectangle.getSize()), sRgb))
@@ -338,11 +338,11 @@ std::optional<Texture> Texture::loadFromImage(const Image& image, bool sRgb, con
             const priv::TextureSaver save;
 
             // Copy the pixels to the texture, row by row
-            const std::uint8_t* pixels = image.getPixelsPtr() + 4 * (rectangle.left + (width * rectangle.top));
+            const std::uint8_t* pixels = image.getPixelsPtr() + 4 * (rectangle.position.x + (width * rectangle.position.y));
             glCheck(glBindTexture(GL_TEXTURE_2D, texture->m_texture));
-            for (int i = 0; i < rectangle.height; ++i)
+            for (int i = 0; i < rectangle.size.y; ++i)
             {
-                glCheck(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, i, rectangle.width, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
+                glCheck(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, i, rectangle.size.x, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
                 pixels += 4 * width;
             }
 
