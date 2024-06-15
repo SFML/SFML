@@ -128,28 +128,22 @@ void Sprite::draw(RenderTarget& target, RenderStates states) const
 ////////////////////////////////////////////////////////////
 void Sprite::updateVertices()
 {
-    const auto left   = static_cast<float>(m_textureRect.position.x);
-    const auto top    = static_cast<float>(m_textureRect.position.y);
-    const auto width  = static_cast<float>(m_textureRect.size.x);
-    const auto height = static_cast<float>(m_textureRect.size.y);
-    const auto right  = float{left + width};
-    const auto bottom = float{top + height};
+    const auto [position, size] = FloatRect(m_textureRect);
 
     // Absolute value is used to support negative texture rect sizes
-    const auto absWidth  = float{std::abs(width)};
-    const auto absHeight = float{std::abs(height)};
+    const Vector2f absSize(std::abs(size.x), std::abs(size.y));
 
     // Update positions
     m_vertices[0].position = {0.f, 0.f};
-    m_vertices[1].position = {0.f, absHeight};
-    m_vertices[2].position = {absWidth, 0.f};
-    m_vertices[3].position = {absWidth, absHeight};
+    m_vertices[1].position = {0.f, absSize.y};
+    m_vertices[2].position = {absSize.x, 0.f};
+    m_vertices[3].position = absSize;
 
     // Update texture coordinates
-    m_vertices[0].texCoords = {left, top};
-    m_vertices[1].texCoords = {left, bottom};
-    m_vertices[2].texCoords = {right, top};
-    m_vertices[3].texCoords = {right, bottom};
+    m_vertices[0].texCoords = position;
+    m_vertices[1].texCoords = position + Vector2f(0.f, size.y);
+    m_vertices[2].texCoords = position + Vector2f(size.x, 0.f);
+    m_vertices[3].texCoords = position + size;
 }
 
 } // namespace sf
