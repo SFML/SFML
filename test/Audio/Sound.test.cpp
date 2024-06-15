@@ -9,6 +9,7 @@
 
 #include <AudioUtil.hpp>
 #include <SystemUtil.hpp>
+#include <optional>
 #include <type_traits>
 
 TEST_CASE("[Audio] sf::Sound", runAudioDeviceTests())
@@ -82,4 +83,47 @@ TEST_CASE("[Audio] sf::Sound", runAudioDeviceTests())
         sound.setPlayingOffset(sf::seconds(10));
         CHECK(sound.getPlayingOffset() == sf::seconds(10));
     }
+
+#ifdef SFML_ENABLE_LIFETIME_TRACKING
+    SECTION("Lifetime tracking")
+    {
+        SECTION("Return local from function")
+        {
+            const auto badFunction = []
+            {
+                const auto localSoundBuffer = sf::SoundBuffer::loadFromFile("Audio/ding.flac").value();
+                return sf::Sound(localSoundBuffer);
+            };
+
+            const sf::priv::LifetimeDependee::TestingModeGuard guard;
+            CHECK(!guard.fatalErrorTriggered());
+
+            badFunction();
+
+            CHECK(guard.fatalErrorTriggered());
+        }
+
+        SECTION("Move struct holding both dependee and dependant")
+        {
+            struct BadStruct
+            {
+                sf::SoundBuffer memberSoundBuffer{sf::SoundBuffer::loadFromFile("Audio/ding.flac").value()};
+                sf::Sound       membeSound{memberSoundBuffer};
+            };
+
+            const sf::priv::LifetimeDependee::TestingModeGuard guard;
+            CHECK(!guard.fatalErrorTriggered());
+
+            std::optional<BadStruct> badStruct0;
+            badStruct0.emplace();
+            CHECK(!guard.fatalErrorTriggered());
+
+            const BadStruct badStruct1 = std::move(badStruct0.value());
+            CHECK(!guard.fatalErrorTriggered());
+
+            badStruct0.reset();
+            CHECK(guard.fatalErrorTriggered());
+        }
+    }
+#endif
 }

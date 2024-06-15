@@ -33,6 +33,7 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
+#include <SFML/System/LifetimeTracking.hpp>
 #include <SFML/System/Vector2.hpp>
 
 #include <filesystem>
@@ -56,6 +57,7 @@ class ResourceStream;
 namespace sf
 {
 class InputStream;
+class Text;
 
 ////////////////////////////////////////////////////////////
 /// \brief Class for loading and manipulating character fonts
@@ -391,6 +393,11 @@ private:
 #ifdef SFML_SYSTEM_ANDROID
     std::shared_ptr<priv::ResourceStream> m_stream; //!< Asset file streamer (if loaded from file)
 #endif
+
+    ////////////////////////////////////////////////////////////
+    // Lifetime tracking
+    ////////////////////////////////////////////////////////////
+    SFML_DEFINE_LIFETIME_DEPENDEE(Font, Text);
 };
 
 } // namespace sf

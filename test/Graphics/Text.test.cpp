@@ -3,10 +3,13 @@
 // Other 1st party headers
 #include <SFML/Graphics/Font.hpp>
 
+#include <SFML/System/LifetimeTracking.hpp>
+
 #include <catch2/catch_test_macros.hpp>
 
 #include <GraphicsUtil.hpp>
 #include <WindowUtil.hpp>
+#include <optional>
 #include <type_traits>
 
 TEST_CASE("[Graphics] sf::Text", runDisplayTests())
@@ -182,4 +185,47 @@ TEST_CASE("[Graphics] sf::Text", runDisplayTests())
             CHECK(text.getGlobalBounds() == Approx(sf::FloatRect({66, 182}, {33, 13})));
         }
     }
+
+#ifdef SFML_ENABLE_LIFETIME_TRACKING
+    SECTION("Lifetime tracking")
+    {
+        SECTION("Return local from function")
+        {
+            const auto badFunction = []
+            {
+                const auto localFont = sf::Font::loadFromFile("Graphics/tuffy.ttf").value();
+                return sf::Text(localFont);
+            };
+
+            const sf::priv::LifetimeDependee::TestingModeGuard guard;
+            CHECK(!guard.fatalErrorTriggered());
+
+            badFunction();
+
+            CHECK(guard.fatalErrorTriggered());
+        }
+
+        SECTION("Move struct holding both dependee and dependant")
+        {
+            struct BadStruct
+            {
+                sf::Font memberFont{sf::Font::loadFromFile("Graphics/tuffy.ttf").value()};
+                sf::Text memberText{memberFont};
+            };
+
+            const sf::priv::LifetimeDependee::TestingModeGuard guard;
+            CHECK(!guard.fatalErrorTriggered());
+
+            std::optional<BadStruct> badStruct0;
+            badStruct0.emplace();
+            CHECK(!guard.fatalErrorTriggered());
+
+            const BadStruct badStruct1 = std::move(badStruct0.value());
+            CHECK(!guard.fatalErrorTriggered());
+
+            badStruct0.reset();
+            CHECK(guard.fatalErrorTriggered());
+        }
+    }
+#endif
 }

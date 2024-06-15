@@ -49,7 +49,7 @@ jobs:
         - { name: Shared, flags: -DBUILD_SHARED_LIBS=TRUE }
         - { name: Static, flags: -DBUILD_SHARED_LIBS=FALSE }
         type:
-        - { name: Release }
+        - { name: Release, flags: -DSFML_ENABLE_LIFETIME_TRACKING=TRUE }
         - { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug -DSFML_ENABLE_COVERAGE=TRUE }
 
         include:

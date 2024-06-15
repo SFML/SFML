@@ -44,6 +44,8 @@ Sprite::Sprite(const Texture& texture) : Sprite(texture, IntRect({0, 0}, Vector2
 Sprite::Sprite(const Texture& texture, const IntRect& rectangle) : m_texture(&texture), m_textureRect(rectangle)
 {
     updateVertices();
+
+    SFML_UPDATE_LIFETIME_DEPENDANT(Texture, Sprite, m_texture);
 }
 
 
@@ -56,6 +58,8 @@ void Sprite::setTexture(const Texture& texture, bool resetRect)
 
     // Assign the new texture
     m_texture = &texture;
+
+    SFML_UPDATE_LIFETIME_DEPENDANT(Texture, Sprite, m_texture);
 }
 
 

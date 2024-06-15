@@ -46,6 +46,12 @@ if(SFML_OS_ANDROID)
     set(BUILD_SHARED_LIBS TRUE)
 endif()
 
+# add an option to enable lifetime tracking
+sfml_set_option(SFML_ENABLE_LIFETIME_TRACKING $<CONFIG:Debug> BOOL "TRUE to enable lifetime tracking, FALSE to disable it")
+if(SFML_ENABLE_LIFETIME_TRACKING)
+    add_definitions(-DSFML_ENABLE_LIFETIME_TRACKING)
+endif()
+
 # add options to select which modules to build
 sfml_set_option(SFML_BUILD_WINDOW TRUE BOOL "TRUE to build SFML's Window module. This setting is ignored, if the graphics module is built.")
 sfml_set_option(SFML_BUILD_GRAPHICS TRUE BOOL "TRUE to build SFML's Graphics module.")

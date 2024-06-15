@@ -37,6 +37,7 @@
 #include <SFML/Graphics/Transformable.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
 
+#include <SFML/System/LifetimeTracking.hpp>
 #include <SFML/System/String.hpp>
 #include <SFML/System/Vector2.hpp>
 
@@ -426,6 +427,11 @@ private:
     mutable FloatRect     m_bounds;               //!< Bounding rectangle of the text (in local coordinates)
     mutable bool          m_geometryNeedUpdate{}; //!< Does the geometry need to be recomputed?
     mutable std::uint64_t m_fontTextureId{};      //!< The font texture id
+
+    ////////////////////////////////////////////////////////////
+    // Lifetime tracking
+    ////////////////////////////////////////////////////////////
+    SFML_DEFINE_LIFETIME_DEPENDANT(Font);
 };
 
 } // namespace sf

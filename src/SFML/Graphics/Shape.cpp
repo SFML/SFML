@@ -62,6 +62,8 @@ void Shape::setTexture(const Texture* texture, bool resetRect)
 
     // Assign the new texture
     m_texture = texture;
+
+    SFML_UPDATE_LIFETIME_DEPENDANT(Texture, Shape, m_texture);
 }
 
 

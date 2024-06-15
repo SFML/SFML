@@ -93,6 +93,7 @@ m_string(std::move(string)),
 m_font(&font),
 m_characterSize(characterSize)
 {
+    SFML_UPDATE_LIFETIME_DEPENDANT(Font, Text, m_font);
 }
 
 

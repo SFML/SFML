@@ -1,11 +1,14 @@
 #include <SFML/Graphics/Sprite.hpp>
 
+#include <SFML/System/LifetimeTracking.hpp>
+
 // Other 1st party headers
 #include <SFML/Graphics/Texture.hpp>
 
 #include <catch2/catch_test_macros.hpp>
 
 #include <WindowUtil.hpp>
+#include <optional>
 #include <type_traits>
 
 TEST_CASE("[Graphics] sf::Sprite", runDisplayTests())
@@ -56,8 +59,9 @@ TEST_CASE("[Graphics] sf::Sprite", runDisplayTests())
 
     SECTION("Set/get texture")
     {
-        sf::Sprite        sprite(texture);
         const sf::Texture otherTexture = sf::Texture::create({64, 64}).value();
+
+        sf::Sprite sprite(texture);
         sprite.setTexture(otherTexture);
         CHECK(&sprite.getTexture() == &otherTexture);
     }
@@ -75,4 +79,47 @@ TEST_CASE("[Graphics] sf::Sprite", runDisplayTests())
         sprite.setColor(sf::Color::Red);
         CHECK(sprite.getColor() == sf::Color::Red);
     }
+
+#ifdef SFML_ENABLE_LIFETIME_TRACKING
+    SECTION("Lifetime tracking")
+    {
+        SECTION("Return local from function")
+        {
+            const auto badFunction = []
+            {
+                const auto localTexture = sf::Texture::create({64, 64}).value();
+                return sf::Sprite(localTexture);
+            };
+
+            const sf::priv::LifetimeDependee::TestingModeGuard guard;
+            CHECK(!guard.fatalErrorTriggered());
+
+            badFunction();
+
+            CHECK(guard.fatalErrorTriggered());
+        }
+
+        SECTION("Move struct holding both dependee and dependant")
+        {
+            struct BadStruct
+            {
+                sf::Texture memberTexture{sf::Texture::create({64, 64}).value()};
+                sf::Sprite  memberSprite{memberTexture};
+            };
+
+            const sf::priv::LifetimeDependee::TestingModeGuard guard;
+            CHECK(!guard.fatalErrorTriggered());
+
+            std::optional<BadStruct> badStruct0;
+            badStruct0.emplace();
+            CHECK(!guard.fatalErrorTriggered());
+
+            const BadStruct badStruct1 = std::move(badStruct0.value());
+            CHECK(!guard.fatalErrorTriggered());
+
+            badStruct0.reset();
+            CHECK(guard.fatalErrorTriggered());
+        }
+    }
+#endif
 }
