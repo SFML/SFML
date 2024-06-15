@@ -152,8 +152,7 @@ int main()
     }
 
     // Center the status text
-    statusText.setPosition({(windowWidth - statusText.getLocalBounds().size.x) / 2.f,
-                            (windowHeight - statusText.getLocalBounds().size.y) / 2.f});
+    statusText.setPosition((sf::Vector2f(windowWidth, windowHeight) - statusText.getLocalBounds().size) / 2.f);
 
     // Set up an array of pointers to our settings for arrow navigation
     constexpr std::array<Setting, 9> settings = {

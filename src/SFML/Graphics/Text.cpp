@@ -63,24 +63,20 @@ void addLine(sf::VertexArray& vertices,
 // Add a glyph quad to the vertex array
 void addGlyphQuad(sf::VertexArray& vertices, sf::Vector2f position, const sf::Color& color, const sf::Glyph& glyph, float italicShear)
 {
-    const float padding = 1.0;
+    const sf::Vector2f padding(1.f, 1.f);
 
-    const float left   = glyph.bounds.position.x - padding;
-    const float top    = glyph.bounds.position.y - padding;
-    const float right  = glyph.bounds.position.x + glyph.bounds.size.x + padding;
-    const float bottom = glyph.bounds.position.y + glyph.bounds.size.y + padding;
+    const sf::Vector2f p1 = glyph.bounds.position - padding;
+    const sf::Vector2f p2 = glyph.bounds.position + glyph.bounds.size + padding;
 
-    const float u1 = static_cast<float>(glyph.textureRect.position.x) - padding;
-    const float v1 = static_cast<float>(glyph.textureRect.position.y) - padding;
-    const float u2 = static_cast<float>(glyph.textureRect.position.x + glyph.textureRect.size.x) + padding;
-    const float v2 = static_cast<float>(glyph.textureRect.position.y + glyph.textureRect.size.y) + padding;
+    const auto uv1 = sf::Vector2f(glyph.textureRect.position) - padding;
+    const auto uv2 = sf::Vector2f(glyph.textureRect.position + glyph.textureRect.size) + padding;
 
-    vertices.append({{position.x + left - italicShear * top, position.y + top}, color, {u1, v1}});
-    vertices.append({{position.x + right - italicShear * top, position.y + top}, color, {u2, v1}});
-    vertices.append({{position.x + left - italicShear * bottom, position.y + bottom}, color, {u1, v2}});
-    vertices.append({{position.x + left - italicShear * bottom, position.y + bottom}, color, {u1, v2}});
-    vertices.append({{position.x + right - italicShear * top, position.y + top}, color, {u2, v1}});
-    vertices.append({{position.x + right - italicShear * bottom, position.y + bottom}, color, {u2, v2}});
+    vertices.append({position + sf::Vector2f(p1.x - italicShear * p1.y, p1.y), color, {uv1.x, uv1.y}});
+    vertices.append({position + sf::Vector2f(p2.x - italicShear * p1.y, p1.y), color, {uv2.x, uv1.y}});
+    vertices.append({position + sf::Vector2f(p1.x - italicShear * p2.y, p2.y), color, {uv1.x, uv2.y}});
+    vertices.append({position + sf::Vector2f(p1.x - italicShear * p2.y, p2.y), color, {uv1.x, uv2.y}});
+    vertices.append({position + sf::Vector2f(p2.x - italicShear * p1.y, p1.y), color, {uv2.x, uv1.y}});
+    vertices.append({position + sf::Vector2f(p2.x - italicShear * p2.y, p2.y), color, {uv2.x, uv2.y}});
 }
 } // namespace
 
@@ -478,15 +474,13 @@ void Text::ensureGeometryUpdate() const
         addGlyphQuad(m_vertices, Vector2f(x, y), m_fillColor, glyph, italicShear);
 
         // Update the current bounds
-        const float left   = glyph.bounds.position.x;
-        const float top    = glyph.bounds.position.y;
-        const float right  = glyph.bounds.position.x + glyph.bounds.size.x;
-        const float bottom = glyph.bounds.position.y + glyph.bounds.size.y;
+        const Vector2f p1 = glyph.bounds.position;
+        const Vector2f p2 = glyph.bounds.position + glyph.bounds.size;
 
-        minX = std::min(minX, x + left - italicShear * bottom);
-        maxX = std::max(maxX, x + right - italicShear * top);
-        minY = std::min(minY, y + top);
-        maxY = std::max(maxY, y + bottom);
+        minX = std::min(minX, x + p1.x - italicShear * p2.y);
+        maxX = std::max(maxX, x + p2.x - italicShear * p1.y);
+        minY = std::min(minY, y + p1.y);
+        maxY = std::max(maxY, y + p2.y);
 
         // Advance to the next character
         x += glyph.advance + letterSpacing;
@@ -521,10 +515,8 @@ void Text::ensureGeometryUpdate() const
     }
 
     // Update the bounding rectangle
-    m_bounds.position.x = minX;
-    m_bounds.position.y = minY;
-    m_bounds.size.x     = maxX - minX;
-    m_bounds.size.y     = maxY - minY;
+    m_bounds.position = Vector2f(minX, minY);
+    m_bounds.size     = Vector2f(maxX, maxY) - Vector2f(minX, minY);
 }
 
 } // namespace sf

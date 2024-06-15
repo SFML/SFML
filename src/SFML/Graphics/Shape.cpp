@@ -265,15 +265,14 @@ void Shape::updateTexCoords()
 {
     const FloatRect convertedTextureRect(m_textureRect);
 
+    // Make sure not to divide by zero when the points are aligned on a vertical or horizontal line
+    const Vector2f safeInsideSize(m_insideBounds.size.x > 0 ? m_insideBounds.size.x : 1.f,
+                                  m_insideBounds.size.y > 0 ? m_insideBounds.size.y : 1.f);
+
     for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i)
     {
-        const float xratio      = m_insideBounds.size.x > 0
-                                      ? (m_vertices[i].position.x - m_insideBounds.position.x) / m_insideBounds.size.x
-                                      : 0;
-        const float yratio      = m_insideBounds.size.y > 0
-                                      ? (m_vertices[i].position.y - m_insideBounds.position.y) / m_insideBounds.size.y
-                                      : 0;
-        m_vertices[i].texCoords = convertedTextureRect.position + convertedTextureRect.size.cwiseMul({xratio, yratio});
+        const Vector2f ratio    = (m_vertices[i].position - m_insideBounds.position).cwiseDiv(safeInsideSize);
+        m_vertices[i].texCoords = convertedTextureRect.position + convertedTextureRect.size.cwiseMul(ratio);
     }
 }
 

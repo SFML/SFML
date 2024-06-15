@@ -104,30 +104,27 @@ constexpr Vector2f Transform::transformPoint(const Vector2f& point) const
 constexpr FloatRect Transform::transformRect(const FloatRect& rectangle) const
 {
     // Transform the 4 corners of the rectangle
-    const std::array points = {transformPoint({rectangle.position.x, rectangle.position.y}),
-                               transformPoint({rectangle.position.x, rectangle.position.y + rectangle.size.y}),
-                               transformPoint({rectangle.position.x + rectangle.size.x, rectangle.position.y}),
-                               transformPoint(
-                                   {rectangle.position.x + rectangle.size.x, rectangle.position.y + rectangle.size.y})};
+    const std::array points = {transformPoint(rectangle.position),
+                               transformPoint(rectangle.position + Vector2f(0.f, rectangle.size.y)),
+                               transformPoint(rectangle.position + Vector2f(rectangle.size.x, 0.f)),
+                               transformPoint(rectangle.position + rectangle.size)};
 
     // Compute the bounding rectangle of the transformed points
-    float left   = points[0].x;
-    float top    = points[0].y;
-    float right  = points[0].x;
-    float bottom = points[0].y;
+    Vector2f pmin = points[0];
+    Vector2f pmax = points[0];
 
     for (std::size_t i = 1; i < points.size(); ++i)
     {
         // clang-format off
-        if      (points[i].x < left)   left   = points[i].x;
-        else if (points[i].x > right)  right  = points[i].x;
+        if      (points[i].x < pmin.x) pmin.x = points[i].x;
+        else if (points[i].x > pmax.x) pmax.x = points[i].x;
 
-        if      (points[i].y < top)    top    = points[i].y;
-        else if (points[i].y > bottom) bottom = points[i].y;
+        if      (points[i].y < pmin.y) pmin.y = points[i].y;
+        else if (points[i].y > pmax.y) pmax.y = points[i].y;
         // clang-format on
     }
 
-    return {{left, top}, {right - left, bottom - top}};
+    return {pmin, pmax - pmin};
 }
 
 
