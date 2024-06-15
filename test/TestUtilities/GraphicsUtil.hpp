@@ -32,6 +32,5 @@ bool operator==(const sf::Transform& lhs, const Approx<sf::Transform>& rhs);
 template <typename T>
 bool operator==(const sf::Rect<T>& lhs, const Approx<sf::Rect<T>>& rhs)
 {
-    return lhs.left == Approx(rhs.value.left) && lhs.top == Approx(rhs.value.top) &&
-           lhs.width == Approx(rhs.value.width) && lhs.height == Approx(rhs.value.height);
+    return lhs.position == Approx(rhs.value.position) && lhs.size == Approx(rhs.value.size);
 }

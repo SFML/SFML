@@ -267,11 +267,11 @@ void Shape::updateTexCoords()
 
     for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i)
     {
-        const float xratio      = m_insideBounds.width > 0
-                                      ? (m_vertices[i].position.x - m_insideBounds.left) / m_insideBounds.width
+        const float xratio      = m_insideBounds.size.x > 0
+                                      ? (m_vertices[i].position.x - m_insideBounds.position.x) / m_insideBounds.size.x
                                       : 0;
-        const float yratio      = m_insideBounds.height > 0
-                                      ? (m_vertices[i].position.y - m_insideBounds.top) / m_insideBounds.height
+        const float yratio      = m_insideBounds.size.y > 0
+                                      ? (m_vertices[i].position.y - m_insideBounds.position.y) / m_insideBounds.size.y
                                       : 0;
         m_vertices[i].texCoords = convertedTextureRect.getPosition() +
                                   convertedTextureRect.getSize().cwiseMul({xratio, yratio});

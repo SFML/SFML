@@ -566,16 +566,16 @@ Glyph Font::loadGlyph(std::uint32_t codePoint, unsigned int characterSize, bool 
 
         // Make sure the texture data is positioned in the center
         // of the allocated texture rectangle
-        glyph.textureRect.left += static_cast<int>(padding);
-        glyph.textureRect.top += static_cast<int>(padding);
-        glyph.textureRect.width -= static_cast<int>(2 * padding);
-        glyph.textureRect.height -= static_cast<int>(2 * padding);
+        glyph.textureRect.position.x += static_cast<int>(padding);
+        glyph.textureRect.position.y += static_cast<int>(padding);
+        glyph.textureRect.size.x -= static_cast<int>(2 * padding);
+        glyph.textureRect.size.y -= static_cast<int>(2 * padding);
 
         // Compute the glyph's bounding box
-        glyph.bounds.left   = static_cast<float>(bitmapGlyph->left);
-        glyph.bounds.top    = static_cast<float>(-bitmapGlyph->top);
-        glyph.bounds.width  = static_cast<float>(bitmap.width);
-        glyph.bounds.height = static_cast<float>(bitmap.rows);
+        glyph.bounds.position.x = static_cast<float>(bitmapGlyph->left);
+        glyph.bounds.position.y = static_cast<float>(-bitmapGlyph->top);
+        glyph.bounds.size.x     = static_cast<float>(bitmap.width);
+        glyph.bounds.size.y     = static_cast<float>(bitmap.rows);
 
         // Resize the pixel buffer to the new size and fill it with transparent white pixels
         m_pixelBuffer.resize(static_cast<std::size_t>(width) * static_cast<std::size_t>(height) * 4);
@@ -623,10 +623,10 @@ Glyph Font::loadGlyph(std::uint32_t codePoint, unsigned int characterSize, bool 
         }
 
         // Write the pixels to the texture
-        const unsigned int x = static_cast<unsigned int>(glyph.textureRect.left) - padding;
-        const unsigned int y = static_cast<unsigned int>(glyph.textureRect.top) - padding;
-        const unsigned int w = static_cast<unsigned int>(glyph.textureRect.width) + 2 * padding;
-        const unsigned int h = static_cast<unsigned int>(glyph.textureRect.height) + 2 * padding;
+        const unsigned int x = static_cast<unsigned int>(glyph.textureRect.position.x) - padding;
+        const unsigned int y = static_cast<unsigned int>(glyph.textureRect.position.y) - padding;
+        const unsigned int w = static_cast<unsigned int>(glyph.textureRect.size.x) + 2 * padding;
+        const unsigned int h = static_cast<unsigned int>(glyph.textureRect.size.y) + 2 * padding;
         page.texture.update(m_pixelBuffer.data(), {w, h}, {x, y});
     }
 

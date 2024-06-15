@@ -104,10 +104,11 @@ constexpr Vector2f Transform::transformPoint(const Vector2f& point) const
 constexpr FloatRect Transform::transformRect(const FloatRect& rectangle) const
 {
     // Transform the 4 corners of the rectangle
-    const std::array points = {transformPoint({rectangle.left, rectangle.top}),
-                               transformPoint({rectangle.left, rectangle.top + rectangle.height}),
-                               transformPoint({rectangle.left + rectangle.width, rectangle.top}),
-                               transformPoint({rectangle.left + rectangle.width, rectangle.top + rectangle.height})};
+    const std::array points = {transformPoint({rectangle.position.x, rectangle.position.y}),
+                               transformPoint({rectangle.position.x, rectangle.position.y + rectangle.size.y}),
+                               transformPoint({rectangle.position.x + rectangle.size.x, rectangle.position.y}),
+                               transformPoint(
+                                   {rectangle.position.x + rectangle.size.x, rectangle.position.y + rectangle.size.y})};
 
     // Compute the bounding rectangle of the transformed points
     float left   = points[0].x;
