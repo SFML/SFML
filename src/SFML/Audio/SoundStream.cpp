@@ -158,7 +158,7 @@ struct SoundStream::Impl : priv::MiniaudioUtils::SoundBase
 
         if (impl.sampleRate != 0)
         {
-            owner->onSeek(seconds(static_cast<float>(frameIndex / impl.sampleRate)));
+            owner->onSeek(seconds(static_cast<float>(frameIndex) / static_cast<float>(impl.sampleRate)));
         }
         else
         {
@@ -360,7 +360,7 @@ void SoundStream::setPlayingOffset(Time timeOffset)
     m_impl->sampleBufferCursor = 0;
     m_impl->samplesProcessed   = frameIndex * m_impl->channelCount;
 
-    onSeek(seconds(static_cast<float>(frameIndex / m_impl->sampleRate)));
+    onSeek(seconds(static_cast<float>(frameIndex) / static_cast<float>(m_impl->sampleRate)));
 }
 
 
