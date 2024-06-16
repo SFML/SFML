@@ -78,6 +78,8 @@ void bufferFromCallback(void* context, void* data, int size)
 {
     const auto* source = static_cast<std::uint8_t*>(data);
     auto*       dest   = static_cast<std::vector<std::uint8_t>*>(context);
+
+    dest->reserve(static_cast<std::size_t>(size));
     std::copy(source, source + size, std::back_inserter(*dest));
 }
 
@@ -157,7 +159,9 @@ Image::Image(const Vector2u& size, const std::uint8_t* pixels)
 
 
 ////////////////////////////////////////////////////////////
-Image::Image(Vector2u size, std::vector<std::uint8_t>&& pixels) : m_size(size), m_pixels(std::move(pixels))
+Image::Image(priv::PassKey<Image>&&, Vector2u size, std::vector<std::uint8_t>&& pixels) :
+m_size(size),
+m_pixels(std::move(pixels))
 {
 }
 
@@ -183,7 +187,9 @@ std::optional<Image> Image::loadFromFile(const std::filesystem::path& filename)
 
     if (ptr)
     {
-        return Image(Vector2u(Vector2i(width, height)), {ptr.get(), ptr.get() + width * height * 4});
+        return std::make_optional<Image>(priv::PassKey<Image>{},
+                                         Vector2u(Vector2i(width, height)),
+                                         std::vector<std::uint8_t>{ptr.get(), ptr.get() + width * height * 4});
     }
     else
     {
@@ -212,7 +218,9 @@ std::optional<Image> Image::loadFromMemory(const void* data, std::size_t size)
 
         if (ptr)
         {
-            return Image(Vector2u(Vector2i(width, height)), {ptr.get(), ptr.get() + width * height * 4});
+            return std::make_optional<Image>(priv::PassKey<Image>{},
+                                             Vector2u(Vector2i(width, height)),
+                                             std::vector<std::uint8_t>{ptr.get(), ptr.get() + width * height * 4});
         }
         else
         {
@@ -254,7 +262,9 @@ std::optional<Image> Image::loadFromStream(InputStream& stream)
 
     if (ptr)
     {
-        return Image(Vector2u(Vector2i(width, height)), {ptr.get(), ptr.get() + width * height * 4});
+        return std::make_optional<Image>(priv::PassKey<Image>{},
+                                         Vector2u(Vector2i(width, height)),
+                                         std::vector<std::uint8_t>{ptr.get(), ptr.get() + width * height * 4});
     }
     else
     {
@@ -322,30 +332,30 @@ std::optional<std::vector<std::uint8_t>> Image::saveToMemory(std::string_view fo
         const std::string specified     = toLower(std::string(format));
         const Vector2i    convertedSize = Vector2i(m_size);
 
-        std::vector<std::uint8_t> buffer;
+        auto buffer = std::make_optional<std::vector<std::uint8_t>>();
 
         if (specified == "bmp")
         {
             // BMP format
-            if (stbi_write_bmp_to_func(bufferFromCallback, &buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data()))
+            if (stbi_write_bmp_to_func(bufferFromCallback, &*buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data()))
                 return buffer;
         }
         else if (specified == "tga")
         {
             // TGA format
-            if (stbi_write_tga_to_func(bufferFromCallback, &buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data()))
+            if (stbi_write_tga_to_func(bufferFromCallback, &*buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data()))
                 return buffer;
         }
         else if (specified == "png")
         {
             // PNG format
-            if (stbi_write_png_to_func(bufferFromCallback, &buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data(), 0))
+            if (stbi_write_png_to_func(bufferFromCallback, &*buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data(), 0))
                 return buffer;
         }
         else if (specified == "jpg" || specified == "jpeg")
         {
             // JPG format
-            if (stbi_write_jpg_to_func(bufferFromCallback, &buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data(), 90))
+            if (stbi_write_jpg_to_func(bufferFromCallback, &*buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data(), 90))
                 return buffer;
         }
     }

@@ -164,14 +164,6 @@ public:
     void closeDInput();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the joystick capabilities (DInput)
-    ///
-    /// \return Joystick capabilities
-    ///
-    ////////////////////////////////////////////////////////////
-    JoystickCaps getCapabilitiesDInput() const;
-
-    ////////////////////////////////////////////////////////////
     /// \brief Update the joystick and get its new state (DInput, Buffered)
     ///
     /// \return Joystick state

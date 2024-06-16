@@ -31,6 +31,8 @@
 
 #include <SFML/Audio/SoundFileReader.hpp>
 
+#include <SFML/System/PassKey.hpp>
+
 #include <filesystem>
 #include <memory>
 #include <optional>
@@ -237,16 +239,21 @@ private:
         bool owned{true};
     };
 
+public:
     ////////////////////////////////////////////////////////////
+    /// \private
+    ///
     /// \brief Constructor from reader, stream, and attributes
     ///
     ////////////////////////////////////////////////////////////
-    InputSoundFile(std::unique_ptr<SoundFileReader>&&            reader,
+    InputSoundFile(priv::PassKey<InputSoundFile>&&,
+                   std::unique_ptr<SoundFileReader>&&            reader,
                    std::unique_ptr<InputStream, StreamDeleter>&& stream,
                    std::uint64_t                                 sampleCount,
                    unsigned int                                  sampleRate,
                    std::vector<SoundChannel>&&                   channelMap);
 
+private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////

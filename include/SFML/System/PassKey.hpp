@@ -22,62 +22,42 @@
 //
 ////////////////////////////////////////////////////////////
 
+#pragma once
+
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Audio/AudioDevice.hpp>
-#include <SFML/Audio/PlaybackDevice.hpp>
-
-#include <algorithm>
+#include <SFML/System/Export.hpp>
 
 
-namespace sf::PlaybackDevice
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-std::vector<std::string> getAvailableDevices()
-{
-    const auto devices = priv::AudioDevice::getAvailableDevices();
-
-    std::vector<std::string> deviceNameList;
-    deviceNameList.reserve(devices.size());
-
-    for (const auto& device : devices)
-        deviceNameList.emplace_back(device.name);
-
-    return deviceNameList;
-}
-
-
+/// \private
+///
+/// \brief Generic implementation of the PassKey idiom
+///
 ////////////////////////////////////////////////////////////
-std::optional<std::string> getDefaultDevice()
+template <typename T>
+class PassKey
 {
-    for (const auto& device : priv::AudioDevice::getAvailableDevices())
+    friend T;
+
+private:
+    // NOLINTBEGIN(modernize-use-equals-delete)
+    // Intentionally not using `= default` here as it would make `PassKey` an aggregate
+    // and thus constructible from anyone
+    explicit PassKey() noexcept
     {
-        if (device.isDefault)
-            return std::make_optional(device.name);
     }
+    //NOLINTEND(modernize-use-equals-delete)
 
-    return std::nullopt;
-}
+public:
+    PassKey(const PassKey&) = delete;
+    PassKey(PassKey&&)      = delete;
 
+    PassKey& operator=(const PassKey&) = delete;
+    PassKey& operator=(PassKey&&)      = delete;
+};
 
-////////////////////////////////////////////////////////////
-bool setDevice(const std::string& name)
-{
-    // Perform a sanity check to make sure the user isn't passing us a non-existant device name
-    const auto devices = priv::AudioDevice::getAvailableDevices();
-    if (auto iter = std::find_if(devices.begin(), devices.end(), [&](const auto& device) { return device.name == name; });
-        iter == devices.end())
-        return false;
-
-    return priv::AudioDevice::setDevice(name);
-}
-
-
-////////////////////////////////////////////////////////////
-std::optional<std::string> getDevice()
-{
-    return priv::AudioDevice::getDevice();
-}
-
-} // namespace sf::PlaybackDevice
+} // namespace sf::priv

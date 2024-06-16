@@ -87,8 +87,7 @@ std::optional<Music> Music::tryOpenFromInputSoundFile(std::optional<InputSoundFi
         return std::nullopt;
     }
 
-    // TODO: apply RVO here via passkey idiom
-    return Music(std::move(*optFile));
+    return std::make_optional<Music>(priv::PassKey<Music>{}, std::move(*optFile));
 }
 
 
@@ -248,7 +247,7 @@ std::optional<std::uint64_t> Music::onLoop()
 
 
 ////////////////////////////////////////////////////////////
-Music::Music(InputSoundFile&& file) : m_impl(std::make_unique<Impl>(std::move(file)))
+Music::Music(priv::PassKey<Music>&&, InputSoundFile&& file) : m_impl(std::make_unique<Impl>(std::move(file)))
 {
     // Initialize the stream
     SoundStream::initialize(m_impl->file.getChannelCount(), m_impl->file.getSampleRate(), m_impl->file.getChannelMap());

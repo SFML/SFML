@@ -32,7 +32,7 @@
 
 #include <SFML/System/Err.hpp>
 
-#include <exception>
+#include <optional>
 #include <ostream>
 #include <utility>
 
@@ -101,6 +101,37 @@ std::optional<SoundBuffer> SoundBuffer::loadFromStream(InputStream& stream)
 
 
 ////////////////////////////////////////////////////////////
+std::optional<SoundBuffer> SoundBuffer::loadFromSamplesImpl(
+    std::vector<std::int16_t>&&      samples,
+    unsigned int                     channelCount,
+    unsigned int                     sampleRate,
+    const std::vector<SoundChannel>& channelMap)
+{
+    std::optional<SoundBuffer> soundBuffer; // Use a single local variable for NRVO
+
+    if (channelCount == 0 || sampleRate == 0 || channelMap.empty())
+    {
+        err() << "Failed to load sound buffer from samples ("
+              << "array: " << samples.data() << ", "
+              << "count: " << samples.size() << ", "
+              << "channels: " << channelCount << ", "
+              << "samplerate: " << sampleRate << ")" << std::endl;
+
+        return soundBuffer; // Empty optional
+    }
+
+    // Take ownership of the audio samples
+    soundBuffer.emplace(priv::PassKey<SoundBuffer>{}, std::move(samples));
+
+    // Update the internal buffer with the new samples
+    if (!soundBuffer->update(channelCount, sampleRate, channelMap))
+        soundBuffer.reset();
+
+    return soundBuffer;
+}
+
+
+////////////////////////////////////////////////////////////
 std::optional<SoundBuffer> SoundBuffer::loadFromSamples(
     const std::int16_t*              samples,
     std::uint64_t                    sampleCount,
@@ -108,27 +139,7 @@ std::optional<SoundBuffer> SoundBuffer::loadFromSamples(
     unsigned int                     sampleRate,
     const std::vector<SoundChannel>& channelMap)
 {
-    if (samples && sampleCount && channelCount && sampleRate && !channelMap.empty())
-    {
-        // Copy the new audio samples
-        SoundBuffer soundBuffer(std::vector<std::int16_t>(samples, samples + sampleCount));
-
-        // Update the internal buffer with the new samples
-        if (!soundBuffer.update(channelCount, sampleRate, channelMap))
-            return std::nullopt;
-        return soundBuffer;
-    }
-    else
-    {
-        // Error...
-        err() << "Failed to load sound buffer from samples ("
-              << "array: " << samples << ", "
-              << "count: " << sampleCount << ", "
-              << "channels: " << channelCount << ", "
-              << "samplerate: " << sampleRate << ")" << std::endl;
-
-        return std::nullopt;
-    }
+    return loadFromSamplesImpl(std::vector<std::int16_t>(samples, samples + sampleCount), channelCount, sampleRate, channelMap);
 }
 
 
@@ -208,7 +219,8 @@ SoundBuffer& SoundBuffer::operator=(const SoundBuffer& right)
 
 
 ////////////////////////////////////////////////////////////
-SoundBuffer::SoundBuffer(std::vector<std::int16_t>&& samples) : m_samples(std::move(samples))
+SoundBuffer::SoundBuffer(priv::PassKey<SoundBuffer>&&, std::vector<std::int16_t>&& samples) :
+m_samples(std::move(samples))
 {
 }
 
@@ -216,27 +228,16 @@ SoundBuffer::SoundBuffer(std::vector<std::int16_t>&& samples) : m_samples(std::m
 ////////////////////////////////////////////////////////////
 std::optional<SoundBuffer> SoundBuffer::initialize(InputSoundFile& file)
 {
-    // Retrieve the sound parameters
-    const std::uint64_t sampleCount = file.getSampleCount();
-
     // Read the samples from the provided file
+    const std::uint64_t       sampleCount = file.getSampleCount();
     std::vector<std::int16_t> samples(static_cast<std::size_t>(sampleCount));
-    if (file.read(samples.data(), sampleCount) == sampleCount)
-    {
-        // Update the internal buffer with the new samples
-        SoundBuffer soundBuffer(std::move(samples));
-        if (!soundBuffer.update(file.getChannelCount(), file.getSampleRate(), file.getChannelMap()))
-        {
-            err() << "Failed to initialize sound buffer (internal update failure)" << std::endl;
-            return std::nullopt;
-        }
 
-        return soundBuffer;
-    }
-    else
+    if (file.read(samples.data(), sampleCount) != sampleCount)
     {
         return std::nullopt;
     }
+
+    return loadFromSamplesImpl(std::move(samples), file.getChannelCount(), file.getSampleRate(), file.getChannelMap());
 }
 
 

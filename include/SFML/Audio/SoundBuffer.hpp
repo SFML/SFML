@@ -31,6 +31,7 @@
 
 #include <SFML/Audio/SoundChannel.hpp>
 
+#include <SFML/System/PassKey.hpp>
 #include <SFML/System/Time.hpp>
 
 #include <filesystem>
@@ -243,11 +244,25 @@ public:
 private:
     friend class Sound;
 
+public:
     ////////////////////////////////////////////////////////////
+    /// \private
+    ///
     /// \brief Construct from vector of samples
     ///
     ////////////////////////////////////////////////////////////
-    explicit SoundBuffer(std::vector<std::int16_t>&& samples);
+    explicit SoundBuffer(priv::PassKey<SoundBuffer>&&, std::vector<std::int16_t>&& samples);
+
+private:
+    ////////////////////////////////////////////////////////////
+    /// \brief Load the sound buffer taking ownership of a vector of audio samples
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] static std::optional<SoundBuffer> loadFromSamplesImpl(
+        std::vector<std::int16_t>&&      samples,
+        unsigned int                     channelCount,
+        unsigned int                     sampleRate,
+        const std::vector<SoundChannel>& channelMap);
 
     ////////////////////////////////////////////////////////////
     /// \brief Initialize the internal state after loading a new sound

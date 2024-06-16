@@ -101,7 +101,8 @@ constexpr std::optional<Rect<T>> Rect<T>::findIntersection(const Rect<T>& rectan
     // If the intersection is valid (positive non zero area), then there is an intersection
     if ((interLeft < interRight) && (interTop < interBottom))
     {
-        return Rect<T>({interLeft, interTop}, {interRight - interLeft, interBottom - interTop});
+        return std::make_optional<Rect<T>>(Vector2<T>{interLeft, interTop},
+                                           Vector2<T>{interRight - interLeft, interBottom - interTop});
     }
     else
     {

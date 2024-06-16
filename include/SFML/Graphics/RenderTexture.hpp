@@ -34,6 +34,7 @@
 
 #include <SFML/Window/ContextSettings.hpp>
 
+#include <SFML/System/PassKey.hpp>
 #include <SFML/System/Vector2.hpp>
 
 #include <memory>
@@ -239,13 +240,15 @@ public:
     ////////////////////////////////////////////////////////////
     const Texture& getTexture() const;
 
-private:
     ////////////////////////////////////////////////////////////
+    /// \private
+    ///
     /// \brief Construct from texture
     ///
     ////////////////////////////////////////////////////////////
-    explicit RenderTexture(Texture&& texture);
+    explicit RenderTexture(priv::PassKey<RenderTexture>&&, Texture&& texture);
 
+private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////

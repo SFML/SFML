@@ -100,17 +100,20 @@ SoundFileReaderOgg::~SoundFileReaderOgg()
 ////////////////////////////////////////////////////////////
 std::optional<SoundFileReader::Info> SoundFileReaderOgg::open(InputStream& stream)
 {
+    std::optional<Info> result; // Use a single local variable for NRVO
+
     // Open the Vorbis stream
     const int status = ov_open_callbacks(&stream, &m_vorbis, nullptr, 0, callbacks);
     if (status < 0)
     {
         err() << "Failed to open Vorbis file for reading" << std::endl;
-        return std::nullopt;
+        return result; // Empty optional
     }
 
     // Retrieve the music attributes
     vorbis_info* vorbisInfo = ov_info(&m_vorbis, -1);
-    Info         info;
+
+    Info& info        = result.emplace();
     info.channelCount = static_cast<unsigned int>(vorbisInfo->channels);
     info.sampleRate   = static_cast<unsigned int>(vorbisInfo->rate);
     info.sampleCount  = static_cast<std::size_t>(ov_pcm_total(&m_vorbis, -1) * vorbisInfo->channels);
@@ -176,7 +179,7 @@ std::optional<SoundFileReader::Info> SoundFileReaderOgg::open(InputStream& strea
     // We must keep the channel count for the seek function
     m_channelCount = info.channelCount;
 
-    return info;
+    return result;
 }
 
 

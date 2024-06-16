@@ -58,7 +58,7 @@ std::optional<OutputSoundFile> OutputSoundFile::openFromFile(
         return std::nullopt;
     }
 
-    return OutputSoundFile(std::move(writer));
+    return std::make_optional<OutputSoundFile>(priv::PassKey<OutputSoundFile>{}, std::move(writer));
 }
 
 
@@ -81,7 +81,8 @@ void OutputSoundFile::close()
 
 
 ////////////////////////////////////////////////////////////
-OutputSoundFile::OutputSoundFile(std::unique_ptr<SoundFileWriter>&& writer) : m_writer(std::move(writer))
+OutputSoundFile::OutputSoundFile(priv::PassKey<OutputSoundFile>&&, std::unique_ptr<SoundFileWriter>&& writer) :
+m_writer(std::move(writer))
 {
 }
 

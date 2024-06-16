@@ -324,7 +324,7 @@ std::optional<SoundFileReader::Info> SoundFileReaderFlac::open(InputStream& stre
     }
 
     // Retrieve the sound properties
-    return m_clientData.info; // was filled in the "metadata" callback
+    return std::make_optional(m_clientData.info); // was filled in the "metadata" callback
 }
 
 
