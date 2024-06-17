@@ -467,7 +467,7 @@ Font::Page& Font::loadPage(unsigned int characterSize) const
     if (const auto it = m_pages.find(characterSize); it != m_pages.end())
         return it->second;
 
-    auto page = Page::make(m_isSmooth);
+    auto page = Page::create(m_isSmooth);
     assert(page && "Font::loadPage() Failed to load page");
     return m_pages.emplace(characterSize, std::move(*page)).first->second;
 }
@@ -749,7 +749,7 @@ bool Font::setCurrentSize(unsigned int characterSize) const
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Font::Page> Font::Page::make(bool smooth)
+std::optional<Font::Page> Font::Page::create(bool smooth)
 {
     // Make sure that the texture is initialized by default
     Image image({128, 128}, Color::Transparent);
