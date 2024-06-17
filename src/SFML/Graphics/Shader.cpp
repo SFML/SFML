@@ -236,7 +236,7 @@ Shader::~Shader()
 
 ////////////////////////////////////////////////////////////
 Shader::Shader(Shader&& source) noexcept :
-m_shaderProgram(std::exchange(source.m_shaderProgram, 0U)),
+m_shaderProgram(std::exchange(source.m_shaderProgram, 0u)),
 m_currentTexture(std::exchange(source.m_currentTexture, -1)),
 m_textures(std::move(source.m_textures)),
 m_uniforms(std::move(source.m_uniforms))
@@ -260,7 +260,7 @@ Shader& Shader::operator=(Shader&& right) noexcept
     }
 
     // Move the contents of right.
-    m_shaderProgram  = std::exchange(right.m_shaderProgram, 0U);
+    m_shaderProgram  = std::exchange(right.m_shaderProgram, 0u);
     m_currentTexture = std::exchange(right.m_currentTexture, -1);
     m_textures       = std::move(right.m_textures);
     m_uniforms       = std::move(right.m_uniforms);

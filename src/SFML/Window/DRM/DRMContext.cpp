@@ -209,7 +209,7 @@ std::uint32_t findCrtcForEncoder(const drmModeRes& resources, const drmModeEncod
     {
         // Possible_crtcs is a bitmask as described here:
         // https://dvdhrm.wordpress.com/2012/09/13/linux-drm-mode-setting-api
-        const std::uint32_t crtcMask = 1U << i;
+        const std::uint32_t crtcMask = 1u << i;
         const std::uint32_t crtcId   = resources.crtcs[i];
         if (encoder.possible_crtcs & crtcMask)
         {
