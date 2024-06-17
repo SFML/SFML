@@ -315,7 +315,7 @@ private:
     ////////////////////////////////////////////////////////////
     struct Page
     {
-        [[nodiscard]] static std::optional<Page> make(bool smooth);
+        [[nodiscard]] static std::optional<Page> create(bool smooth);
         explicit Page(Texture&& texture);
 
         GlyphTable       glyphs;     //!< Table mapping code points to their corresponding glyph
