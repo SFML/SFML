@@ -127,51 +127,42 @@ void SensorImpl::close()
 ////////////////////////////////////////////////////////////
 Vector3f SensorImpl::update()
 {
-    Vector3f               value;
     CMMotionManager* const manager = [SFAppDelegate getInstance].motionManager;
 
     switch (m_sensor)
     {
         case Sensor::Type::Accelerometer:
             // Acceleration is given in G, convert to m/s^2
-            value.x = static_cast<float>(manager.accelerometerData.acceleration.x * 9.81);
-            value.y = static_cast<float>(manager.accelerometerData.acceleration.y * 9.81);
-            value.z = static_cast<float>(manager.accelerometerData.acceleration.z * 9.81);
-            break;
+            return Vector3f(9.81 * Vector3(manager.accelerometerData.acceleration.x,
+                                           manager.accelerometerData.acceleration.y,
+                                           manager.accelerometerData.acceleration.z));
 
         case Sensor::Type::Gyroscope:
             // Rotation rates are given in rad/s
-            value.x = static_cast<float>(manager.gyroData.rotationRate.x);
-            value.y = static_cast<float>(manager.gyroData.rotationRate.y);
-            value.z = static_cast<float>(manager.gyroData.rotationRate.z);
-            break;
+            return Vector3f(
+                Vector3(manager.gyroData.rotationRate.x, manager.gyroData.rotationRate.y, manager.gyroData.rotationRate.z));
 
         case Sensor::Type::Magnetometer:
             // Magnetic field is given in microteslas
-            value.x = static_cast<float>(manager.magnetometerData.magneticField.x);
-            value.y = static_cast<float>(manager.magnetometerData.magneticField.y);
-            value.z = static_cast<float>(manager.magnetometerData.magneticField.z);
-            break;
+            return Vector3f(Vector3(manager.magnetometerData.magneticField.x,
+                                    manager.magnetometerData.magneticField.y,
+                                    manager.magnetometerData.magneticField.z));
 
         case Sensor::Type::UserAcceleration:
             // User acceleration is given in G, convert to m/s^2
-            value.x = static_cast<float>(manager.deviceMotion.userAcceleration.x * 9.81);
-            value.y = static_cast<float>(manager.deviceMotion.userAcceleration.y * 9.81);
-            value.z = static_cast<float>(manager.deviceMotion.userAcceleration.z * 9.81);
-            break;
+            return Vector3f(9.81 * Vector3(manager.deviceMotion.userAcceleration.x,
+                                           manager.deviceMotion.userAcceleration.y,
+                                           manager.deviceMotion.userAcceleration.z));
 
         case Sensor::Type::Orientation:
             // Absolute rotation (Euler) angles are given in radians
-            value.x = static_cast<float>(manager.deviceMotion.attitude.yaw);
-            value.y = static_cast<float>(manager.deviceMotion.attitude.pitch);
-            value.z = static_cast<float>(manager.deviceMotion.attitude.roll);
-            break;
+            return Vector3f(Vector3<double>(manager.deviceMotion.attitude.yaw,
+                                            manager.deviceMotion.attitude.pitch,
+                                            manager.deviceMotion.attitude.roll));
 
         default:
-            break;
+            return {};
     }
-
-    return value;
 }
 
 
