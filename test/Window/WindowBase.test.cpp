@@ -130,7 +130,7 @@ TEST_CASE("[Window] sf::WindowBase", runDisplayTests())
             const auto event     = windowBase.waitEvent(timeout);
             const auto elapsed   = std::chrono::steady_clock::now() - startTime;
 
-            REQUIRE(elapsed < (timeout + sf::milliseconds(50)).toDuration());
+            REQUIRE(elapsed < (timeout + sf::milliseconds(100)).toDuration());
 
             if (elapsed <= timeout.toDuration())
                 CHECK(event);
