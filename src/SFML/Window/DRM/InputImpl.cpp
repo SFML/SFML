@@ -462,7 +462,7 @@ bool eventProcess(sf::Event& event)
                         touchFd     = fileDescriptor;
                         break;
                     case ABS_MT_TRACKING_ID:
-                        atSlot(currentSlot).id = inputEvent.value;
+                        atSlot(currentSlot).id = inputEvent.value >= 0 ? std::optional(inputEvent.value) : std::nullopt;
                         touchFd                = fileDescriptor;
                         break;
                     case ABS_MT_POSITION_X:
@@ -657,7 +657,7 @@ bool isTouchDown(unsigned int finger)
 {
     return std::any_of(touchSlots.cbegin(),
                        touchSlots.cend(),
-                       [finger](const TouchSlot& slot) { return slot.id == static_cast<int>(finger); });
+                       [finger](const TouchSlot& slot) { return slot.id == finger; });
 }
 
 
@@ -666,7 +666,7 @@ Vector2i getTouchPosition(unsigned int finger)
 {
     for (const auto& slot : touchSlots)
     {
-        if (slot.id == static_cast<int>(finger))
+        if (slot.id == finger)
             return slot.pos;
     }
 
