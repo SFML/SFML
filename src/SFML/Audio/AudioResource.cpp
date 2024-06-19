@@ -28,34 +28,58 @@
 #include <SFML/Audio/AudioDevice.hpp>
 #include <SFML/Audio/AudioResource.hpp>
 
-#include <memory>
 #include <mutex>
+#include <optional>
 
+
+namespace
+{
+////////////////////////////////////////////////////////////
+struct DeviceState
+{
+    std::mutex                           mutex;
+    std::optional<sf::priv::AudioDevice> device;
+    unsigned int                         referenceCounter{};
+};
+
+////////////////////////////////////////////////////////////
+DeviceState& getDeviceState()
+{
+    static DeviceState deviceState;
+    return deviceState;
+}
+
+} // namespace
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-AudioResource::AudioResource() :
-m_device(
-    []
-    {
-        // Ensure we only ever create a single instance of an
-        // AudioDevice that is shared between all AudioResources
-        static std::mutex                       mutex;
-        static std::weak_ptr<priv::AudioDevice> weakAudioDevice;
+AudioResource::AudioResource()
+{
+    auto& [mutex, device, referenceCounter] = getDeviceState();
+    const std::lock_guard guard{mutex};
 
-        const std::lock_guard lock(mutex);
+    if (referenceCounter++ == 0u)
+        device.emplace();
+}
 
-        auto audioDevice = weakAudioDevice.lock();
+////////////////////////////////////////////////////////////
+AudioResource::~AudioResource()
+{
+    auto& [mutex, device, referenceCounter] = getDeviceState();
+    const std::lock_guard guard{mutex};
 
-        if (audioDevice == nullptr)
-        {
-            audioDevice     = std::make_shared<priv::AudioDevice>();
-            weakAudioDevice = audioDevice;
-        }
+    if (--referenceCounter == 0u)
+        device.reset();
+}
 
-        return audioDevice;
-    }())
+////////////////////////////////////////////////////////////
+AudioResource::AudioResource(const AudioResource&) : AudioResource{}
+{
+}
+
+////////////////////////////////////////////////////////////
+AudioResource::AudioResource(AudioResource&&) noexcept : AudioResource{}
 {
 }
 
