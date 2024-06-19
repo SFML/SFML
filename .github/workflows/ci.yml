@@ -11,35 +11,36 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-        - { name: Windows VS2019, os: windows-2019 }
-        - { name: Windows VS2022, os: windows-2022 }
+        - { name: Windows VS2019,       os: windows-2019 }
+        - { name: Windows VS2022,       os: windows-2022 }
         - { name: Windows VS2022 Clang, os: windows-2022, flags: -T ClangCL }
-        - { name: Linux GCC,      os: ubuntu-20.04  }
-        - { name: Linux Clang,    os: ubuntu-20.04, flags: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ }
-        - { name: Linux GCC OpenGL ES, os: ubuntu-20.04, flags: -DSFML_OPENGL_ES=ON }
-        - { name: MacOS XCode,    os: macos-11   }
+        - { name: Linux GCC,            os: ubuntu-20.04 }
+        - { name: Linux Clang,          os: ubuntu-20.04, flags: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ }
+        - { name: Linux GCC OpenGL ES,  os: ubuntu-20.04, flags: -DSFML_OPENGL_ES=ON }
+        - { name: macOS x64,            os: macos-12 }
+        - { name: macOS arm64,          os: macos-14 }
         config:
-        - { name: Shared,       flags: -DBUILD_SHARED_LIBS=TRUE }
-        - { name: Static,       flags: -DBUILD_SHARED_LIBS=FALSE }
+        - { name: Shared, flags: -DBUILD_SHARED_LIBS=TRUE }
+        - { name: Static, flags: -DBUILD_SHARED_LIBS=FALSE }
 
         include:
         - platform: { name: Windows VS2022, os: windows-2022 }
           config: { name: Unity, flags: -DBUILD_SHARED_LIBS=TRUE -DCMAKE_UNITY_BUILD=ON }
-        - platform: { name: MacOS XCode, os: macos-11 }
+        - platform: { name: macOS, os: macos-12 }
           config: { name: Frameworks, flags: -DSFML_BUILD_FRAMEWORKS=TRUE }
-        - platform: { name: MacOS XCode, os: macos-11 }
+        - platform: { name: macOS, os: macos-12 }
           config: { name: iOS, flags: -DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/cmake/toolchains/iOS.toolchain.cmake -DIOS_PLATFORM=SIMULATOR }
         - platform: { name: Android, os: ubuntu-20.04 }
           config: { name: x86, flags: -DCMAKE_ANDROID_ARCH_ABI=x86 -DCMAKE_SYSTEM_NAME=Android -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_ANDROID_NDK=$GITHUB_WORKSPACE/android-ndk-r18b -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_ANDROID_STL_TYPE=c++_shared -DCMAKE_ANDROID_API=26 }
         - platform: { name: Android, os: ubuntu-20.04 }
           config: { name: armeabi-v7a, flags: -DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a -DCMAKE_SYSTEM_NAME=Android -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_ANDROID_NDK=$GITHUB_WORKSPACE/android-ndk-r18b -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_ANDROID_STL_TYPE=c++_shared -DCMAKE_ANDROID_API=26 }
-        - platform: { name: Android, os: ubuntu-20.04  }
+        - platform: { name: Android, os: ubuntu-20.04 }
           config: { name: arm64-v8a, flags: -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a -DCMAKE_SYSTEM_NAME=Android -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/android-ndk-r18b/build/cmake/android.toolchain.cmake -DCMAKE_ANDROID_NDK=$GITHUB_WORKSPACE/android-ndk-r18b -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_ANDROID_STL_TYPE=c++_shared -DCMAKE_ANDROID_API=26 }
-        - platform: { name: Android, os: ubuntu-20.04  }
+        - platform: { name: Android, os: ubuntu-20.04 }
           config: { name: x86_64, flags: -DCMAKE_ANDROID_ARCH_ABI=x86_64 -DCMAKE_SYSTEM_NAME=Android -DSFML_BUILD_TEST_SUITE=FALSE -DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/android-ndk-r18b/build/cmake/android.toolchain.cmake -DCMAKE_ANDROID_NDK=$GITHUB_WORKSPACE/android-ndk-r18b -DCMAKE_ANDROID_NDK_TOOLCHAIN_VERSION=clang -DCMAKE_ANDROID_STL_TYPE=c++_shared -DCMAKE_ANDROID_API=26 }
-        - platform: { name: Linux GCC, os: ubuntu-20.04  }
+        - platform: { name: Linux GCC, os: ubuntu-20.04 }
           config: { name: Static DRM, flags: -DBUILD_SHARED_LIBS=FALSE -DSFML_USE_DRM=TRUE }
-        - platform: { name: Linux GCC, os: ubuntu-20.04  }
+        - platform: { name: Linux GCC, os: ubuntu-20.04 }
           config: { name: Shared DRM, flags: -DBUILD_SHARED_LIBS=TRUE -DSFML_USE_DRM=TRUE }
     steps:
     - name: Checkout Code
