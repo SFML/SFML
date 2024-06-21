@@ -662,7 +662,7 @@ void RenderTarget::applyCurrentView()
     // Set the scissor rectangle and enable/disable scissor testing
     if (m_view.getScissor() == FloatRect({0, 0}, {1, 1}))
     {
-        if (m_cache.scissorEnabled)
+        if (!m_cache.enable || m_cache.scissorEnabled)
         {
             glCheck(glDisable(GL_SCISSOR_TEST));
             m_cache.scissorEnabled = false;
@@ -674,7 +674,7 @@ void RenderTarget::applyCurrentView()
         const int     scissorTop   = static_cast<int>(getSize().y) - (pixelScissor.position.y + pixelScissor.size.y);
         glCheck(glScissor(pixelScissor.position.x, scissorTop, pixelScissor.size.x, pixelScissor.size.y));
 
-        if (!m_cache.scissorEnabled)
+        if (!m_cache.enable || !m_cache.scissorEnabled)
         {
             glCheck(glEnable(GL_SCISSOR_TEST));
             m_cache.scissorEnabled = true;
@@ -754,7 +754,7 @@ void RenderTarget::applyStencilMode(const StencilMode& mode)
     // Fast path if we have a default (disabled) stencil mode
     if (mode == StencilMode())
     {
-        if (m_cache.stencilEnabled)
+        if (!m_cache.enable || m_cache.stencilEnabled)
         {
             glCheck(glDisable(GL_STENCIL_TEST));
             glCheck(glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE));
@@ -765,7 +765,7 @@ void RenderTarget::applyStencilMode(const StencilMode& mode)
     else
     {
         // Apply the stencil mode
-        if (!m_cache.stencilEnabled)
+        if (!m_cache.enable || !m_cache.stencilEnabled)
             glCheck(glEnable(GL_STENCIL_TEST));
 
         glCheck(glStencilOp(GL_KEEP,
