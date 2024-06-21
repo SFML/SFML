@@ -26,7 +26,7 @@ TEST_CASE("[Graphics] sf::Sprite", runDisplayTests())
         SECTION("Texture constructor")
         {
             const sf::Sprite sprite(texture);
-            CHECK(&sprite.getTexture() == &texture);
+            CHECK(sprite.getTexture().getNativeHandle() == texture.getNativeHandle());
             CHECK(sprite.getTextureRect() == sf::IntRect({}, {64, 64}));
             CHECK(sprite.getColor() == sf::Color::White);
             CHECK(sprite.getLocalBounds() == sf::FloatRect({}, {64, 64}));
@@ -36,7 +36,7 @@ TEST_CASE("[Graphics] sf::Sprite", runDisplayTests())
         SECTION("Texture and rectangle constructor")
         {
             const sf::Sprite sprite(texture, {{0, 0}, {40, 60}});
-            CHECK(&sprite.getTexture() == &texture);
+            CHECK(sprite.getTexture().getNativeHandle() == texture.getNativeHandle());
             CHECK(sprite.getTextureRect() == sf::IntRect({0, 0}, {40, 60}));
             CHECK(sprite.getColor() == sf::Color::White);
             CHECK(sprite.getLocalBounds() == sf::FloatRect({0, 0}, {40, 60}));
@@ -46,7 +46,7 @@ TEST_CASE("[Graphics] sf::Sprite", runDisplayTests())
         SECTION("Negative-size texture rectangle")
         {
             const sf::Sprite sprite(texture, {{0, 0}, {-40, -60}});
-            CHECK(&sprite.getTexture() == &texture);
+            CHECK(sprite.getTexture().getNativeHandle() == texture.getNativeHandle());
             CHECK(sprite.getTextureRect() == sf::IntRect({0, 0}, {-40, -60}));
             CHECK(sprite.getColor() == sf::Color::White);
             CHECK(sprite.getLocalBounds() == sf::FloatRect({0, 0}, {40, 60}));
@@ -59,7 +59,7 @@ TEST_CASE("[Graphics] sf::Sprite", runDisplayTests())
         sf::Sprite        sprite(texture);
         const sf::Texture otherTexture = sf::Texture::create({64, 64}).value();
         sprite.setTexture(otherTexture);
-        CHECK(&sprite.getTexture() == &otherTexture);
+        CHECK(sprite.getTexture().getNativeHandle() == otherTexture.getNativeHandle());
     }
 
     SECTION("Set/get texture rect")

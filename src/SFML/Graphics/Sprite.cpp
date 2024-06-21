@@ -41,7 +41,7 @@ Sprite::Sprite(const Texture& texture) : Sprite(texture, IntRect({0, 0}, Vector2
 
 
 ////////////////////////////////////////////////////////////
-Sprite::Sprite(const Texture& texture, const IntRect& rectangle) : m_texture(&texture), m_textureRect(rectangle)
+Sprite::Sprite(const Texture& texture, const IntRect& rectangle) : m_texture(texture.m_data), m_textureRect(rectangle)
 {
     updateVertices();
 }
@@ -55,7 +55,7 @@ void Sprite::setTexture(const Texture& texture, bool resetRect)
         setTextureRect(IntRect({0, 0}, Vector2i(texture.getSize())));
 
     // Assign the new texture
-    m_texture = &texture;
+    m_texture = Texture(texture.m_data);
 }
 
 
@@ -81,7 +81,7 @@ void Sprite::setColor(const Color& color)
 ////////////////////////////////////////////////////////////
 const Texture& Sprite::getTexture() const
 {
-    return *m_texture;
+    return m_texture;
 }
 
 
@@ -118,7 +118,7 @@ FloatRect Sprite::getGlobalBounds() const
 void Sprite::draw(RenderTarget& target, RenderStates states) const
 {
     states.transform *= getTransform();
-    states.texture        = m_texture;
+    states.texture        = &m_texture;
     states.coordinateType = CoordinateType::Pixels;
 
     target.draw(m_vertices.data(), m_vertices.size(), PrimitiveType::TriangleStrip, states);

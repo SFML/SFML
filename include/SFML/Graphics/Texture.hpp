@@ -37,6 +37,7 @@
 #include <SFML/System/Vector2.hpp>
 
 #include <filesystem>
+#include <memory>
 #include <optional>
 
 #include <cstddef>
@@ -56,12 +57,6 @@ class Image;
 class SFML_GRAPHICS_API Texture : GlResource
 {
 public:
-    ////////////////////////////////////////////////////////////
-    /// \brief Destructor
-    ///
-    ////////////////////////////////////////////////////////////
-    ~Texture();
-
     ////////////////////////////////////////////////////////////
     /// \brief Copy constructor
     ///
@@ -541,9 +536,30 @@ public:
     static unsigned int getMaximumSize();
 
 private:
+    friend class Sprite;
     friend class Text;
     friend class RenderTexture;
     friend class RenderTarget;
+
+    struct Data
+    {
+        ////////////////////////////////////////////////////////////
+        /// \brief Destructor
+        ///
+        ////////////////////////////////////////////////////////////
+        ~Data();
+
+        Vector2u      size;            //!< Public texture size
+        Vector2u      actualSize;      //!< Actual texture size (can be greater than public size because of padding)
+        unsigned int  texture{};       //!< Internal texture identifier
+        bool          isSmooth{};      //!< Status of the smooth filter
+        bool          sRgb{};          //!< Should the texture source be converted from sRGB?
+        bool          isRepeated{};    //!< Is the texture in repeat mode?
+        mutable bool  pixelsFlipped{}; //!< To work around the inconsistency in Y orientation
+        bool          fboAttachment{}; //!< Is this texture owned by a framebuffer object?
+        bool          hasMipmap{};     //!< Has the mipmap been generated?
+        std::uint64_t cacheId{};       //!< Unique number that identifies the texture to the render target's cache
+    };
 
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
@@ -552,6 +568,16 @@ private:
     ///
     ////////////////////////////////////////////////////////////
     Texture(const Vector2u& size, const Vector2u& actualSize, unsigned int texture, bool sRgb);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Shared data constructor
+    ///
+    /// Create a texture that shares data with another texture.
+    ///
+    /// \param data data to share
+    ///
+    ////////////////////////////////////////////////////////////
+    Texture(std::shared_ptr<Data> data);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a valid image size according to hardware support
@@ -580,16 +606,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Vector2u      m_size;            //!< Public texture size
-    Vector2u      m_actualSize;      //!< Actual texture size (can be greater than public size because of padding)
-    unsigned int  m_texture{};       //!< Internal texture identifier
-    bool          m_isSmooth{};      //!< Status of the smooth filter
-    bool          m_sRgb{};          //!< Should the texture source be converted from sRGB?
-    bool          m_isRepeated{};    //!< Is the texture in repeat mode?
-    mutable bool  m_pixelsFlipped{}; //!< To work around the inconsistency in Y orientation
-    bool          m_fboAttachment{}; //!< Is this texture owned by a framebuffer object?
-    bool          m_hasMipmap{};     //!< Has the mipmap been generated?
-    std::uint64_t m_cacheId;         //!< Unique number that identifies the texture to the render target's cache
+    std::shared_ptr<Data> m_data; //!< Texture data
 };
 
 ////////////////////////////////////////////////////////////

@@ -72,7 +72,7 @@ std::optional<RenderTexture> RenderTexture::create(const Vector2u& size, const C
         renderTexture.m_impl = std::make_unique<priv::RenderTextureImplFBO>();
 
         // Mark the texture as being a framebuffer object attachment
-        renderTexture.m_texture.m_fboAttachment = true;
+        renderTexture.m_texture.m_data->fboAttachment = true;
     }
     else
     {
@@ -82,7 +82,7 @@ std::optional<RenderTexture> RenderTexture::create(const Vector2u& size, const C
 
     // Initialize the render texture
     // We pass the actual size of our texture since OpenGL ES requires that all attachments have identical sizes
-    if (!renderTexture.m_impl->create(renderTexture.m_texture.m_actualSize, renderTexture.m_texture.m_texture, settings))
+    if (!renderTexture.m_impl->create(renderTexture.m_texture.m_data->actualSize, renderTexture.m_texture.m_data->texture, settings))
         return std::nullopt;
 
     // We can now initialize the render target part
@@ -169,8 +169,8 @@ void RenderTexture::display()
     }
 
     // Update the target texture
-    m_impl->updateTexture(m_texture.m_texture);
-    m_texture.m_pixelsFlipped = true;
+    m_impl->updateTexture(m_texture.m_data->texture);
+    m_texture.m_data->pixelsFlipped = true;
     m_texture.invalidateMipmap();
 }
 

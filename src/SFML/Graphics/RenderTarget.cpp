@@ -799,7 +799,7 @@ void RenderTarget::applyTexture(const Texture* texture, CoordinateType coordinat
 {
     Texture::bind(texture, coordinateType);
 
-    m_cache.lastTextureId      = texture ? texture->m_cacheId : 0;
+    m_cache.lastTextureId      = texture ? texture->m_data->cacheId : 0;
     m_cache.lastCoordinateType = coordinateType;
 }
 
@@ -860,7 +860,7 @@ void RenderTarget::setupDraw(bool useVertexCache, const RenderStates& states)
         glCheck(glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE));
 
     // Apply the texture
-    if (!m_cache.enable || (states.texture && states.texture->m_fboAttachment))
+    if (!m_cache.enable || (states.texture && states.texture->m_data->fboAttachment))
     {
         // If the texture is an FBO attachment, always rebind it
         // in order to inform the OpenGL driver that we want changes
@@ -872,7 +872,7 @@ void RenderTarget::setupDraw(bool useVertexCache, const RenderStates& states)
     }
     else
     {
-        const std::uint64_t textureId = states.texture ? states.texture->m_cacheId : 0;
+        const std::uint64_t textureId = states.texture ? states.texture->m_data->cacheId : 0;
         if (textureId != m_cache.lastTextureId || states.coordinateType != m_cache.lastCoordinateType)
             applyTexture(states.texture, states.coordinateType);
     }
@@ -904,7 +904,7 @@ void RenderTarget::cleanupDraw(const RenderStates& states)
 
     // If the texture we used to draw belonged to a RenderTexture, then forcibly unbind that texture.
     // This prevents a bug where some drivers do not clear RenderTextures properly.
-    if (states.texture && states.texture->m_fboAttachment)
+    if (states.texture && states.texture->m_data->fboAttachment)
         applyTexture(nullptr);
 
     // Mask the color buffer back on if necessary
