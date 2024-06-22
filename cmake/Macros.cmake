@@ -152,7 +152,7 @@ macro(sfml_add_library target)
     endif()
 
     # build frameworks or dylibs
-    if(SFML_OS_MACOSX AND BUILD_SHARED_LIBS AND NOT THIS_STATIC)
+    if((SFML_OS_MACOSX OR SFML_OS_IOS) AND BUILD_SHARED_LIBS AND NOT THIS_STATIC)
         if(SFML_BUILD_FRAMEWORKS)
             # adapt target to build frameworks instead of dylibs
             set_target_properties(${target} PROPERTIES
@@ -380,11 +380,7 @@ function(sfml_find_package)
     endif()
 
     list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules/")
-    if (SFML_OS_IOS)
-        find_host_package(${target} REQUIRED)
-    else()
-        find_package(${target} REQUIRED)
-    endif()
+    find_package(${target} REQUIRED)
 
     # Make sure to interpret the items in INCLUDE and LINK parameters. sfml_add_external()
     # does not interpret given items in order to also accept parameters that must not be interpreted

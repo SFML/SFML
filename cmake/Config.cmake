@@ -46,30 +46,22 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "^NetBSD$")
 
     # don't use the OpenGL ES implementation on NetBSD
     set(OPENGL_ES 0)
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "iOS")
+    set(SFML_OS_IOS 1)
+    # As we want to find packages in our extlibs folder too
+    # we need to tell CMake we want to search there instead
+    set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY NEVER)
+    set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE NEVER)
+    set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE NEVER)
+    set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+    # use the OpenGL ES implementation on iOS
+    set(OPENGL_ES 1)
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
-    if(IOS)
-        set(SFML_OS_IOS 1)
-
-        # use the OpenGL ES implementation on iOS
-        set(OPENGL_ES 1)
-    else()
-        set(SFML_OS_MACOSX 1)
-
-        # don't use the OpenGL ES implementation on Mac OS X
-        set(OPENGL_ES 0)
-
-        # detect OS X version. (use '/usr/bin/sw_vers -productVersion' to extract V from '10.V.x'.)
-        execute_process(COMMAND /usr/bin/sw_vers -productVersion OUTPUT_VARIABLE MACOSX_VERSION_RAW)
-        STRING(REGEX REPLACE "10\\.([0-9]+).*" "\\1" MACOSX_VERSION "${MACOSX_VERSION_RAW}")
-
-        if(${MACOSX_VERSION} LESS 7)
-            message(FATAL_ERROR "Unsupported version of OS X: ${MACOSX_VERSION_RAW}")
-            return()
-        endif()
-    endif()
+    set(SFML_OS_MACOSX 1)
+    # don't use the OpenGL ES implementation on Mac OS X
+    set(OPENGL_ES 0)
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Android")
     set(SFML_OS_ANDROID 1)
-
     # use the OpenGL ES implementation on Android
     set(OPENGL_ES 1)
 
