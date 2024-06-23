@@ -107,6 +107,13 @@ Texture::~Texture()
         const GLuint texture = m_texture;
         glCheck(glDeleteTextures(1, &texture));
     }
+
+#ifndef NDEBUG
+    // Set m_texture and m_cacheId to an invalid value to help the assert and glIsTexture in bind detect trying
+    // to bind this texture in cases where it has already been destroyed but its memory not yet deallocated
+    m_texture = 0xFFFFFFFFu;
+    m_cacheId = 0xFFFFFFFFFFFFFFFFull;
+#endif
 }
 
 ////////////////////////////////////////////////////////////
@@ -854,6 +861,10 @@ void Texture::bind(const Texture* texture, CoordinateType coordinateType)
 
     if (texture && texture->m_texture)
     {
+        // When debugging, ensure that the texture name is valid
+        assert((glIsTexture(texture->m_texture) == GL_TRUE) &&
+               "Texture to be bound is invalid, check if the texture is still being used after it has been destroyed");
+
         // Bind the texture
         glCheck(glBindTexture(GL_TEXTURE_2D, texture->m_texture));
 
