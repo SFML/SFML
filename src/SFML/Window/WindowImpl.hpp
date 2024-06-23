@@ -129,10 +129,10 @@ public:
     ///
     /// \param timeout Maximum time to wait (`Time::Zero` for infinite)
     ///
-    /// \return The event on success, `Event::Empty` otherwise
+    /// \return The event on success, `std::nullopt` otherwise
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Event waitEvent(Time timeout);
+    [[nodiscard]] std::optional<Event> waitEvent(Time timeout);
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the next window event, if available
@@ -140,10 +140,10 @@ public:
     /// If there's no event available, this function calls the
     /// window's internal event processing function.
     ///
-    /// \return The event if available, `Event::Empty` otherwise
+    /// \return The event if available, `std::nullopt` otherwise
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Event pollEvent();
+    [[nodiscard]] std::optional<Event> pollEvent();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the OS-specific handle of the window
@@ -334,10 +334,10 @@ private:
     struct JoystickStatesImpl;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Pop the first event of the queue if available, otherwise an empty event
+    /// \return First event of the queue if available, `std::nullopt` otherwise
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Event popEvent();
+    [[nodiscard]] std::optional<Event> popEvent();
 
     ////////////////////////////////////////////////////////////
     /// \brief Read the joysticks state and generate the appropriate events

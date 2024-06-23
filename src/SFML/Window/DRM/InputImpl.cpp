@@ -191,7 +191,7 @@ sf::Keyboard::Key toKey(int code)
 {
     switch (code)
     {
-        // clang-format off
+            // clang-format off
         case KEY_ESC:           return sf::Keyboard::Key::Escape;
         case KEY_1:             return sf::Keyboard::Key::Num1;
         case KEY_2:             return sf::Keyboard::Key::Num2;
@@ -341,7 +341,7 @@ void processSlots()
     }
 }
 
-bool eventProcess(sf::Event& event)
+std::optional<sf::Event> eventProcess()
 {
     const std::lock_guard lock(inputMutex);
 
@@ -353,9 +353,10 @@ bool eventProcess(sf::Event& event)
     static unsigned int doDeferredText = 0;
     if (doDeferredText)
     {
-        event          = sf::Event::TextEntered{doDeferredText};
+        const auto event = sf::Event::TextEntered{doDeferredText};
+
         doDeferredText = 0;
-        return true;
+        return event;
     }
 
     ssize_t bytesRead = 0;
@@ -372,13 +373,12 @@ bool eventProcess(sf::Event& event)
             {
                 if (const std::optional<sf::Mouse::Button> mb = toMouseButton(inputEvent.code))
                 {
-                    if (inputEvent.value)
-                        event = sf::Event::MouseButtonPressed{*mb, mousePos};
-                    else
-                        event = sf::Event::MouseButtonReleased{*mb, mousePos};
-
                     mouseMap[*mb] = inputEvent.value;
-                    return true;
+
+                    if (inputEvent.value)
+                        return sf::Event::MouseButtonPressed{*mb, mousePos};
+                    else
+                        return sf::Event::MouseButtonReleased{*mb, mousePos};
                 }
                 else
                 {
@@ -394,8 +394,7 @@ bool eventProcess(sf::Event& event)
                         //
                         if (special)
                         {
-                            event = sf::Event::TextEntered{special};
-                            return true;
+                            return sf::Event::TextEntered{special};
                         }
                     }
                     else if (kb != sf::Keyboard::Key::Unknown)
@@ -410,17 +409,15 @@ bool eventProcess(sf::Event& event)
                         keyChanged.shift    = shiftDown();
                         keyChanged.system   = systemDown();
 
-                        if (inputEvent.value)
-                            event = sf::Event::KeyPressed{keyChanged};
-                        else
-                            event = sf::Event::KeyReleased{keyChanged};
-
                         keyMap[kb] = inputEvent.value;
 
                         if (special && inputEvent.value)
                             doDeferredText = special;
 
-                        return true;
+                        if (inputEvent.value)
+                            return sf::Event::KeyPressed{keyChanged};
+                        else
+                            return sf::Event::KeyReleased{keyChanged};
                     }
                 }
             }
@@ -443,14 +440,11 @@ bool eventProcess(sf::Event& event)
                         sf::Event::MouseWheelScrolled mouseWheelScrolled;
                         mouseWheelScrolled.delta    = static_cast<float>(inputEvent.value);
                         mouseWheelScrolled.position = mousePos;
-                        event                       = mouseWheelScrolled;
-                        return true;
+                        return mouseWheelScrolled;
                 }
-
                 if (posChange)
                 {
-                    event = sf::Event::MouseMoved{mousePos};
-                    return true;
+                    return sf::Event::MouseMoved{mousePos};
                 }
             }
             else if (inputEvent.type == EV_ABS)
@@ -488,7 +482,6 @@ bool eventProcess(sf::Event& event)
         if ((bytesRead < 0) && (errno != EAGAIN))
             sf::err() << " Error: " << std::strerror(errno) << std::endl;
     }
-
     // Finally check if there is a Text event on stdin
     //
     // We only clear the ICANON flag for the time of reading
@@ -510,7 +503,7 @@ bool eventProcess(sf::Event& event)
     if (ready > 0 && FD_ISSET(STDIN_FILENO, &readFDSet))
         bytesRead = read(STDIN_FILENO, &code, 1);
 
-    if ((code == 127) || (code == 8)) // Suppress 127 (DEL) to 8 (BACKSPACE)
+    if ((code == 127) || (code == 8)) // Suppress127 (DEL) to 8 (BACKSPACE)
         code = 0;
     else if (code == 27) // ESC
     {
@@ -534,22 +527,18 @@ bool eventProcess(sf::Event& event)
     if (code > 0)
     {
         // TODO: Proper unicode handling
-        event = sf::Event::TextEntered{code};
-        return true;
+        return sf::Event::TextEntered{code};
     }
 
     // No events available
-    return false;
+    return std::nullopt;
 }
 
 // assumes inputMutex is locked
 void update()
 {
-    sf::Event event;
-    while (eventProcess(event))
-    {
-        pushEvent(event);
-    }
+    while (const std::optional event = eventProcess())
+        pushEvent(*event);
 }
 } // namespace
 
@@ -603,7 +592,7 @@ String getDescription(Keyboard::Scancode /* code */)
 }
 
 
-////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
 void setVirtualKeyboardVisible(bool /*visible*/)
 {
     // Not applicable
@@ -682,36 +671,35 @@ Vector2i getTouchPosition(unsigned int finger, const WindowBase& /*relativeTo*/)
 
 
 ////////////////////////////////////////////////////////////
-bool checkEvent(Event& event)
+std::optional<Event> checkEvent()
 {
     const std::lock_guard lock(inputMutex);
+
     if (!eventQueue.empty())
     {
-        event = eventQueue.front();
+        auto event = std::make_optional(eventQueue.front());
         eventQueue.pop();
 
-        return true;
+        return event;
     }
 
-    if (eventProcess(event))
+    if (const std::optional event = eventProcess())
     {
-        return true;
+        return event;
     }
-    else
+
+    // In the case of multitouch, eventProcess() could have returned false
+    // but added events directly to the queue.  (This is ugly, but I'm not
+    // sure of a good way to handle generating multiple events at once.)
+    if (!eventQueue.empty())
     {
-        // In the case of multitouch, eventProcess() could have returned false
-        // but added events directly to the queue.  (This is ugly, but I'm not
-        // sure of a good way to handle generating multiple events at once.)
-        if (!eventQueue.empty())
-        {
-            event = eventQueue.front();
-            eventQueue.pop();
+        auto event = std::make_optional(eventQueue.front());
+        eventQueue.pop();
 
-            return true;
-        }
+        return event;
     }
 
-    return false;
+    return std::nullopt;
 }
 
 

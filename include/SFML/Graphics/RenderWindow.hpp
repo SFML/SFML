@@ -237,10 +237,10 @@ private:
 /// while (window.isOpen())
 /// {
 ///    // Event processing
-///    while (const auto event = window.pollEvent())
+///    while (const std::optional event = window.pollEvent())
 ///    {
 ///        // Request for closing the window
-///        if (event.is<sf::Event::Closed>())
+///        if (event->is<sf::Event::Closed>())
 ///            window.close();
 ///    }
 ///

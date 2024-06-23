@@ -462,28 +462,20 @@ int WindowImplAndroid::processKeyEvent(AInputEvent* inputEvent, ActivityStates& 
 ////////////////////////////////////////////////////////////
 int WindowImplAndroid::processMotionEvent(AInputEvent* inputEvent, ActivityStates& states)
 {
-    const std::int32_t device = AInputEvent_getSource(inputEvent);
-
-    Event event;
-
-    if (device == AINPUT_SOURCE_MOUSE)
-        event = Event::MouseMoved{};
-    else if (static_cast<std::uint32_t>(device) & AINPUT_SOURCE_TOUCHSCREEN)
-        event = Event::TouchMoved{};
-
-    const std::size_t pointerCount = AMotionEvent_getPointerCount(inputEvent);
+    const std::int32_t device       = AInputEvent_getSource(inputEvent);
+    const std::size_t  pointerCount = AMotionEvent_getPointerCount(inputEvent);
 
     for (std::size_t p = 0; p < pointerCount; ++p)
     {
         const std::int32_t id = AMotionEvent_getPointerId(inputEvent, p);
 
-        int x = static_cast<int>(AMotionEvent_getX(inputEvent, p));
-        int y = static_cast<int>(AMotionEvent_getY(inputEvent, p));
+        const int x = static_cast<int>(AMotionEvent_getX(inputEvent, p));
+        const int y = static_cast<int>(AMotionEvent_getY(inputEvent, p));
 
         if (device == AINPUT_SOURCE_MOUSE)
         {
             const Event::MouseMoved mouseMoved{{x, y}};
-            event = mouseMoved;
+            forwardEvent(mouseMoved);
 
             states.mousePosition = mouseMoved.position;
         }
@@ -493,13 +485,12 @@ int WindowImplAndroid::processMotionEvent(AInputEvent* inputEvent, ActivityState
                 continue;
 
             const Event::TouchMoved touchMoved{static_cast<unsigned int>(id), {x, y}};
-            event = touchMoved;
+            forwardEvent(touchMoved);
 
             states.touchEvents[id] = touchMoved.position;
         }
-
-        forwardEvent(event);
     }
+
     return 1;
 }
 
@@ -517,45 +508,42 @@ int WindowImplAndroid::processPointerEvent(bool isDown, AInputEvent* inputEvent,
     int x = static_cast<int>(AMotionEvent_getX(inputEvent, index));
     int y = static_cast<int>(AMotionEvent_getY(inputEvent, index));
 
-    Event event;
-
     if (isDown)
     {
         if (device == AINPUT_SOURCE_MOUSE)
         {
-            event = Event::MouseButtonPressed{button, {x, y}};
-
             if (id >= 0 && id < static_cast<int>(Mouse::ButtonCount))
                 states.isButtonPressed[button] = true;
+
+            forwardEvent(Event::MouseButtonPressed{button, {x, y}});
         }
         else if (static_cast<unsigned int>(device) & AINPUT_SOURCE_TOUCHSCREEN)
         {
             Event::TouchBegan touchBegan;
             touchBegan.finger   = static_cast<unsigned int>(id);
             touchBegan.position = {x, y};
-            event               = touchBegan;
 
             states.touchEvents[id] = touchBegan.position;
+
+            forwardEvent(touchBegan);
         }
     }
     else
     {
         if (device == AINPUT_SOURCE_MOUSE)
         {
-            event = Event::MouseButtonReleased{button, {x, y}};
-
             if (id >= 0 && id < static_cast<int>(Mouse::ButtonCount))
                 states.isButtonPressed[button] = false;
+
+            forwardEvent(Event::MouseButtonReleased{button, {x, y}});
         }
         else if (static_cast<std::uint32_t>(device) & AINPUT_SOURCE_TOUCHSCREEN)
         {
-            event = Event::TouchEnded{static_cast<unsigned int>(id), {x, y}};
-
             states.touchEvents.erase(id);
+            forwardEvent(Event::TouchEnded{static_cast<unsigned int>(id), {x, y}});
         }
     }
 
-    forwardEvent(event);
     return 1;
 }
 

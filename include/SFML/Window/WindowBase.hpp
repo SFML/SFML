@@ -181,36 +181,36 @@ public:
     /// \brief Pop the next event from the front of the FIFO event queue, if any, and return it
     ///
     /// This function is not blocking: if there's no pending event then
-    /// it will return an empty event. Note that more than one event
+    /// it will return a `std::nullopt`. Note that more than one event
     /// may be present in the event queue, thus you should always call
     /// this function in a loop to make sure that you process every
     /// pending event.
     /// \code
-    /// while (const auto event = window.pollEvent())
+    /// while (const std::optional event = window.pollEvent())
     /// {
     ///    // process event...
     /// }
     /// \endcode
     ///
-    /// \return The event; will be `Empty` (convertible to `false`) if no events are pending
+    /// \return The event, otherwise `std::nullopt` if no events are pending
     ///
     /// \see waitEvent
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Event pollEvent();
+    [[nodiscard]] std::optional<Event> pollEvent();
 
     ////////////////////////////////////////////////////////////
     /// \brief Wait for an event and return it
     ///
     /// This function is blocking: if there's no pending event then
     /// it will wait until an event is received or until the provided
-    /// timeout elapses. After this function returns if no error nor
-    /// timeout occurred, the returned event will not be empty.
+    /// timeout elapses. Only if an error or a timeout occurs the
+    /// returned event will be `std::nullopt`.
     /// This function is typically used when you have a thread that is
     /// dedicated to events handling: you want to make this thread sleep
     /// as long as no new event is received.
     /// \code
-    /// if (const auto event = window.waitEvent())
+    /// while (const std::optional event = window.waitEvent())
     /// {
     ///    // process event...
     /// }
@@ -218,12 +218,12 @@ public:
     ///
     /// \param timeout Maximum time to wait (`Time::Zero` for infinite)
     ///
-    /// \return The event; will be `Empty` (convertible to `false`) on timeout or if window was closed
+    /// \return The event, otherwise `std::nullopt` on timeout or if window was closed
     ///
     /// \see pollEvent
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Event waitEvent(Time timeout = Time::Zero);
+    [[nodiscard]] std::optional<Event> waitEvent(Time timeout = Time::Zero);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of the window
@@ -561,10 +561,10 @@ private:
 /// while (window.isOpen())
 /// {
 ///    // Event processing
-///    while (const auto event = window.pollEvent())
+///    while (const std::optional event = window.pollEvent())
 ///    {
 ///        // Request for closing the window
-///        if (event.is<sf::Event::Closed>())
+///        if (event->is<sf::Event::Closed>())
 ///            window.close();
 ///    }
 ///

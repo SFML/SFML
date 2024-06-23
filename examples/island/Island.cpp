@@ -174,20 +174,21 @@ int main()
     while (window.isOpen())
     {
         // Handle events
-        while (const auto event = window.pollEvent())
+        while (const std::optional event = window.pollEvent())
         {
             // Window closed or escape key pressed: exit
-            if (event.is<sf::Event::Closed>() || (event.is<sf::Event::KeyPressed>() &&
-                                                  event.getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Escape))
+            if (event->is<sf::Event::Closed>() ||
+                (event->is<sf::Event::KeyPressed>() &&
+                 event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Escape))
             {
                 window.close();
                 break;
             }
 
             // Arrow key pressed:
-            if (terrainShader.has_value() && event.is<sf::Event::KeyPressed>())
+            if (terrainShader.has_value() && event->is<sf::Event::KeyPressed>())
             {
-                switch (event.getIf<sf::Event::KeyPressed>()->code)
+                switch (event->getIf<sf::Event::KeyPressed>()->code)
                 {
                     case sf::Keyboard::Key::Enter:
                         generateTerrain(terrainStagingBuffer.data());

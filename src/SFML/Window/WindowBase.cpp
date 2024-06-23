@@ -43,6 +43,7 @@
 #include <vector>
 
 #include <cassert>
+#include <cstdlib>
 
 
 namespace
@@ -71,7 +72,7 @@ WindowBase::WindowBase(VideoMode mode, const String& title, std::uint32_t style,
 ////////////////////////////////////////////////////////////
 WindowBase::WindowBase(VideoMode mode, const String& title, State state)
 {
-    WindowBase::create(mode, title, sf::Style::Default, state);
+    WindowBase::create(mode, title, Style::Default, state);
 }
 
 
@@ -146,21 +147,35 @@ bool WindowBase::isOpen() const
 
 
 ////////////////////////////////////////////////////////////
-Event WindowBase::pollEvent()
+std::optional<Event> WindowBase::pollEvent()
 {
-    Event event;
-    if (m_impl && (event = m_impl->pollEvent()))
-        filterEvent(event);
+    std::optional<sf::Event> event; // Use a single local variable for NRVO
+
+    if (m_impl == nullptr)
+        return event; // Empty optional
+
+    event = m_impl->pollEvent();
+
+    if (event.has_value())
+        filterEvent(*event);
+
     return event;
 }
 
 
 ////////////////////////////////////////////////////////////
-Event WindowBase::waitEvent(Time timeout)
+std::optional<Event> WindowBase::waitEvent(Time timeout)
 {
-    Event event;
-    if (m_impl && (event = m_impl->waitEvent(timeout)))
-        filterEvent(event);
+    std::optional<sf::Event> event; // Use a single local variable for NRVO
+
+    if (m_impl == nullptr)
+        return event; // Empty optional
+
+    event = m_impl->waitEvent(timeout);
+
+    if (event.has_value())
+        filterEvent(*event);
+
     return event;
 }
 

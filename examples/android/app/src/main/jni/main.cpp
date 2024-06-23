@@ -109,43 +109,41 @@ int main(int argc, char* argv[])
 
     while (window.isOpen())
     {
-        while (const auto event = active ? window.pollEvent() : window.waitEvent())
+        while (const std::optional event = active ? window.pollEvent() : window.waitEvent())
         {
-            if (event.is<sf::Event::Closed>())
+            if (event->is<sf::Event::Closed>() ||
+                (event->is<sf::Event::KeyPressed>() &&
+                 event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Escape))
             {
                 window.close();
             }
-            else if (const auto* keyPressed = event.getIf<sf::Event::KeyPressed>())
-            {
-                if (keyPressed->code == sf::Keyboard::Key::Escape)
-                    window.close();
-            }
-            else if (const auto* resized = event.getIf<sf::Event::Resized>())
+
+            else if (const auto* resized = event->getIf<sf::Event::Resized>())
             {
                 const auto size = sf::Vector2f(resized->size);
                 view.setSize(size);
                 view.setCenter(size / 2.f);
                 window.setView(view);
             }
-            else if (event.is<sf::Event::FocusLost>())
+            else if (event->is<sf::Event::FocusLost>())
             {
                 background = sf::Color::Black;
             }
-            else if (event.is<sf::Event::FocusGained>())
+            else if (event->is<sf::Event::FocusGained>())
             {
                 background = sf::Color::White;
             }
             // On Android MouseLeft/MouseEntered are (for now) triggered,
             // whenever the app loses or gains focus.
-            else if (event.is<sf::Event::MouseLeft>())
+            else if (event->is<sf::Event::MouseLeft>())
             {
                 active = false;
             }
-            else if (event.is<sf::Event::MouseEntered>())
+            else if (event->is<sf::Event::MouseEntered>())
             {
                 active = true;
             }
-            else if (const auto* touchBegan = event.getIf<sf::Event::TouchBegan>())
+            else if (const auto* touchBegan = event->getIf<sf::Event::TouchBegan>())
             {
                 if (touchBegan->finger == 0)
                 {

@@ -176,7 +176,7 @@ void WindowImpl::setMaximumSize(const std::optional<Vector2u>& maximumSize)
 
 
 ////////////////////////////////////////////////////////////
-Event WindowImpl::waitEvent(Time timeout)
+std::optional<Event> WindowImpl::waitEvent(Time timeout)
 {
     const auto timedOut = [&, startTime = std::chrono::steady_clock::now()]
     {
@@ -201,7 +201,7 @@ Event WindowImpl::waitEvent(Time timeout)
 
 
 ////////////////////////////////////////////////////////////
-Event WindowImpl::pollEvent()
+std::optional<Event> WindowImpl::pollEvent()
 {
     // If the event queue is empty, let's first check if new events are available from the OS
     if (m_events.empty())
@@ -212,13 +212,13 @@ Event WindowImpl::pollEvent()
 
 
 ////////////////////////////////////////////////////////////
-Event WindowImpl::popEvent()
+std::optional<Event> WindowImpl::popEvent()
 {
-    Event event;
+    std::optional<Event> event; // Use a single local variable for NRVO
 
     if (!m_events.empty())
     {
-        event = m_events.front();
+        event.emplace(m_events.front());
         m_events.pop();
     }
 
