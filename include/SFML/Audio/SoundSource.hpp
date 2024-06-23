@@ -108,6 +108,14 @@ public:
     /// count or write more frames than the output frame count
     /// will result in undefined behaviour.
     ///
+    /// It is important to note that the channel count of the
+    /// audio engine currently sourcing data from this sound
+    /// will always be provided in frameChannelCount. This can
+    /// be different from the channel count of the sound source
+    /// so make sure to size necessary processing buffers
+    /// according to the engine channel count and not the sound
+    /// source channel count.
+    ///
     /// When done processing the frames, the input and output
     /// frame counts must be updated to reflect the actual
     /// number of frames that were read from the input and
