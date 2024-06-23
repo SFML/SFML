@@ -63,7 +63,7 @@ jobs:
         - platform: { name: Windows MinGW, os: windows-2022 }
           config: { name: Static Standard Libraries, flags: -GNinja -DSFML_USE_MESA3D=TRUE -DCMAKE_CXX_COMPILER=g++ -DSFML_USE_STATIC_STD_LIBS=TRUE }
         - platform: { name: Windows MinGW, os: windows-2022 }
-          config: { name: Static with PCH (GCC), flags: -GNinja -DSFML_USE_MESA3D=TRUE -DCMAKE_CXX_COMPILER=g++ -DBUILD_SHARED_LIBS=FALSE -DSFML_ENABLE_PCH=1 }
+          config: { name: Static with PCH (GCC), flags: -GNinja -DSFML_USE_MESA3D=TRUE -DCMAKE_CXX_COMPILER=g++ -DBUILD_SHARED_LIBS=FALSE -DSFML_ENABLE_PCH=1 -DSFML_ENABLE_STDLIB_ASSERTIONS=FALSE } # disabling stdlib assertions due to false positive
         - platform: { name: macOS, os: macos-12 }
           config: { name: Frameworks, flags: -GNinja -DSFML_BUILD_FRAMEWORKS=TRUE -DBUILD_SHARED_LIBS=TRUE }
         - platform: { name: macOS , os: macos-12 }

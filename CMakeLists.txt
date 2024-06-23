@@ -204,6 +204,13 @@ if(SFML_ENABLE_SANITIZERS)
     string(APPEND CMAKE_CXX_FLAGS " -fno-omit-frame-pointer -fno-sanitize-recover=all -fsanitize=undefined")
 endif()
 
+option(SFML_ENABLE_STDLIB_ASSERTIONS "Enable standard library assertions" OFF)
+if(SFML_ENABLE_STDLIB_ASSERTIONS)
+    # intentionally using `add_definitions` here to propagate defines to subdirectories
+    add_definitions(-D_GLIBCXX_ASSERTIONS=1)                                   # see https://gcc.gnu.org/wiki/LibstdcxxDebugMode
+    add_definitions(-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_EXTENSIVE) # see https://libcxx.llvm.org/Hardening.html
+endif()
+
 # set the output directory for SFML DLLs and executables
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
