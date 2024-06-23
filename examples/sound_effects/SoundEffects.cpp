@@ -758,12 +758,19 @@ protected:
         music.setEffectProcessor(
             [coefficients,
              enabled = getEnabled(),
-             state   = std::vector<State>(music.getChannelCount())](const float*  inputFrames,
-                                                                  unsigned int& inputFrameCount,
-                                                                  float*        outputFrames,
-                                                                  unsigned int& outputFrameCount,
-                                                                  unsigned int  frameChannelCount) mutable
+             state   = std::vector<State>()](const float*  inputFrames,
+                                           unsigned int& inputFrameCount,
+                                           float*        outputFrames,
+                                           unsigned int& outputFrameCount,
+                                           unsigned int  frameChannelCount) mutable
             {
+                // IMPORTANT: The channel count of the audio engine currently sourcing data from this sound
+                // will always be provided in frameChannelCount, this can be different from the channel count
+                // of the audio source so make sure to size your buffers according to the engine and not the source
+                // Ensure we have as many state objects as the audio engine has channels
+                if (state.size() < frameChannelCount)
+                    state.resize(frameChannelCount - state.size());
+
                 for (auto frame = 0u; frame < outputFrameCount; ++frame)
                 {
                     for (auto channel = 0u; channel < frameChannelCount; ++channel)
@@ -856,7 +863,6 @@ struct Echo : Processing
         static constexpr auto wet   = 0.8f;
         static constexpr auto dry   = 1.f;
 
-        const auto channelCount  = music.getChannelCount();
         const auto sampleRate    = music.getSampleRate();
         const auto delayInFrames = static_cast<unsigned int>(static_cast<float>(sampleRate) * delay);
 
@@ -868,13 +874,20 @@ struct Echo : Processing
         music.setEffectProcessor(
             [delayInFrames,
              enabled = getEnabled(),
-             buffer  = std::vector<float>(delayInFrames * channelCount, 0.f),
+             buffer  = std::vector<float>(),
              cursor  = 0u](const float*  inputFrames,
                           unsigned int& inputFrameCount,
                           float*        outputFrames,
                           unsigned int& outputFrameCount,
                           unsigned int  frameChannelCount) mutable
             {
+                // IMPORTANT: The channel count of the audio engine currently sourcing data from this sound
+                // will always be provided in frameChannelCount, this can be different from the channel count
+                // of the audio source so make sure to size your buffers according to the engine and not the source
+                // Ensure we have enough space to store the delayed frames for all of the audio engine's channels
+                if (buffer.size() < delayInFrames * frameChannelCount)
+                    buffer.resize(delayInFrames * frameChannelCount - buffer.size(), 0.f);
+
                 for (auto frame = 0u; frame < outputFrameCount; ++frame)
                 {
                     for (auto channel = 0u; channel < frameChannelCount; ++channel)
@@ -910,27 +923,27 @@ public:
 
         static constexpr auto sustain = 0.7f; // [0.f; 1.f]
 
-        const auto channelCount = music.getChannelCount();
-        const auto sampleRate   = music.getSampleRate();
-
-        std::vector<ReverbFilter<float>> filters;
-        filters.reserve(channelCount);
-
-        for (auto i = 0u; i < channelCount; ++i)
-            filters.emplace_back(sampleRate, sustain);
-
         // We use a mutable lambda to tie the lifetime of the state to the lambda itself
         // This is necessary since the Echo object will be destroyed before the Music object
         // While the Music object exists, it is possible that the audio engine will try to call
         // this lambda hence we need to always have a usable state until the Music and the
         // associated lambda are destroyed
         music.setEffectProcessor(
-            [filters, enabled = getEnabled()](const float*  inputFrames,
-                                              unsigned int& inputFrameCount,
-                                              float*        outputFrames,
-                                              unsigned int& outputFrameCount,
-                                              unsigned int  frameChannelCount) mutable
+            [sampleRate = music.getSampleRate(),
+             filters    = std::vector<ReverbFilter<float>>(),
+             enabled    = getEnabled()](const float*  inputFrames,
+                                     unsigned int& inputFrameCount,
+                                     float*        outputFrames,
+                                     unsigned int& outputFrameCount,
+                                     unsigned int  frameChannelCount) mutable
             {
+                // IMPORTANT: The channel count of the audio engine currently sourcing data from this sound
+                // will always be provided in frameChannelCount, this can be different from the channel count
+                // of the audio source so make sure to size your buffers according to the engine and not the source
+                // Ensure we have as many filter objects as the audio engine has channels
+                while (filters.size() < frameChannelCount)
+                    filters.emplace_back(sampleRate, sustain);
+
                 for (auto frame = 0u; frame < outputFrameCount; ++frame)
                 {
                     for (auto channel = 0u; channel < frameChannelCount; ++channel)
