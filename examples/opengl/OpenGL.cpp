@@ -201,25 +201,19 @@ int main()
         while (window.isOpen())
         {
             // Process events
-            while (const auto event = window.pollEvent())
+            while (const std::optional event = window.pollEvent())
             {
-                // Close window: exit
-                if (event.is<sf::Event::Closed>())
-                {
-                    exit = true;
-                    window.close();
-                }
-
-                // Escape key: exit
-                if (const auto* keyPressed = event.getIf<sf::Event::KeyPressed>();
-                    keyPressed && keyPressed->code == sf::Keyboard::Key::Escape)
+                // Window closed or escape key pressed: exit
+                if (event->is<sf::Event::Closed>() ||
+                    (event->is<sf::Event::KeyPressed>() &&
+                     event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Escape))
                 {
                     exit = true;
                     window.close();
                 }
 
                 // Return key: toggle mipmapping
-                if (const auto* keyPressed = event.getIf<sf::Event::KeyPressed>();
+                if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>();
                     keyPressed && keyPressed->code == sf::Keyboard::Key::Enter)
                 {
                     if (mipmapEnabled)
@@ -236,7 +230,7 @@ int main()
                 }
 
                 // Space key: toggle sRGB conversion
-                if (const auto* keyPressed = event.getIf<sf::Event::KeyPressed>();
+                if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>();
                     keyPressed && keyPressed->code == sf::Keyboard::Key::Space)
                 {
                     sRgb = !sRgb;
@@ -244,7 +238,7 @@ int main()
                 }
 
                 // Adjust the viewport when the window is resized
-                if (const auto* resized = event.getIf<sf::Event::Resized>())
+                if (const auto* resized = event->getIf<sf::Event::Resized>())
                 {
                     const sf::Vector2u textureSize = backgroundTexture.getSize();
 

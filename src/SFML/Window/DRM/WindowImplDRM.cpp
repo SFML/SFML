@@ -46,7 +46,7 @@ namespace InputImpl
 /// \return False if event queue is empty
 ///
 ////////////////////////////////////////////////////////////
-bool checkEvent(Event& event);
+std::optional<Event> checkEvent();
 
 ////////////////////////////////////////////////////////////
 /// \brief Backup terminal configuration and disable console feedback
@@ -190,9 +190,8 @@ bool WindowImplDRM::hasFocus() const
 
 void WindowImplDRM::processEvents()
 {
-    Event event;
-    while (InputImpl::checkEvent(event))
-        pushEvent(event);
+    while (const std::optional event = InputImpl::checkEvent())
+        pushEvent(*event);
 }
 
 } // namespace sf::priv

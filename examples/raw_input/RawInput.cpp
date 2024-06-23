@@ -34,9 +34,9 @@ int main()
 
     while (window.isOpen())
     {
-        while (const auto event = window.pollEvent())
+        while (const std::optional event = window.pollEvent())
         {
-            if (event.is<sf::Event::Closed>())
+            if (event->is<sf::Event::Closed>())
             {
                 window.close();
                 break;
@@ -45,10 +45,10 @@ int main()
             static const auto vec2ToString = [](const sf::Vector2i& vec2)
             { return '(' + std::to_string(vec2.x) + ", " + std::to_string(vec2.y) + ')'; };
 
-            if (const auto* const mouseMoved = event.getIf<sf::Event::MouseMoved>())
+            if (const auto* const mouseMoved = event->getIf<sf::Event::MouseMoved>())
                 mousePosition.setString("Mouse Position: " + vec2ToString(mouseMoved->position));
 
-            if (const auto* const mouseMovedRaw = event.getIf<sf::Event::MouseMovedRaw>())
+            if (const auto* const mouseMovedRaw = event->getIf<sf::Event::MouseMovedRaw>())
             {
                 log.emplace_back("Mouse Movement: " + vec2ToString(mouseMovedRaw->delta));
 
