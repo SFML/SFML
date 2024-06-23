@@ -13,6 +13,9 @@ TEST_CASE("[Graphics] sf::Sprite", runDisplayTests())
     SECTION("Type traits")
     {
         STATIC_CHECK(!std::is_constructible_v<sf::Sprite, sf::Texture&&>);
+        STATIC_CHECK(!std::is_constructible_v<sf::Sprite, const sf::Texture&&>);
+        STATIC_CHECK(!std::is_constructible_v<sf::Sprite, sf::Texture&&, const sf::IntRect&>);
+        STATIC_CHECK(!std::is_constructible_v<sf::Sprite, const sf::Texture&&, const sf::IntRect&>);
         STATIC_CHECK(std::is_copy_constructible_v<sf::Sprite>);
         STATIC_CHECK(std::is_copy_assignable_v<sf::Sprite>);
         STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Sprite>);

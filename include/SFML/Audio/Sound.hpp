@@ -59,7 +59,7 @@ public:
     /// \brief Disallow construction from a temporary sound buffer
     ///
     ////////////////////////////////////////////////////////////
-    explicit Sound(SoundBuffer&& buffer) = delete;
+    explicit Sound(const SoundBuffer&& buffer) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Copy constructor
@@ -130,7 +130,7 @@ public:
     /// \brief Disallow setting from a temporary sound buffer
     ///
     ////////////////////////////////////////////////////////////
-    void setBuffer(SoundBuffer&& buffer) = delete;
+    void setBuffer(const SoundBuffer&& buffer) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Set whether or not the sound should loop after reaching the end

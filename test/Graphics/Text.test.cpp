@@ -14,6 +14,7 @@ TEST_CASE("[Graphics] sf::Text", runDisplayTests())
     SECTION("Type traits")
     {
         STATIC_CHECK(!std::is_constructible_v<sf::Text, sf::Font&&, sf::String, unsigned int>);
+        STATIC_CHECK(!std::is_constructible_v<sf::Text, const sf::Font&&, sf::String, unsigned int>);
         STATIC_CHECK(std::is_copy_constructible_v<sf::Text>);
         STATIC_CHECK(std::is_copy_assignable_v<sf::Text>);
         STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Text>);
