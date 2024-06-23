@@ -64,7 +64,7 @@ public:
     /// \brief Disallow construction from a temporary texture
     ///
     ////////////////////////////////////////////////////////////
-    explicit Sprite(Texture&& texture) = delete;
+    explicit Sprite(const Texture&& texture) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the sprite from a sub-rectangle of a source texture
@@ -81,7 +81,7 @@ public:
     /// \brief Disallow construction from a temporary texture
     ///
     ////////////////////////////////////////////////////////////
-    Sprite(Texture&& texture, const IntRect& rectangle) = delete;
+    Sprite(const Texture&& texture, const IntRect& rectangle) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the source texture of the sprite
@@ -108,7 +108,7 @@ public:
     /// \brief Disallow setting from a temporary texture
     ///
     ////////////////////////////////////////////////////////////
-    void setTexture(Texture&& texture, bool resetRect = false) = delete;
+    void setTexture(const Texture&& texture, bool resetRect = false) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the sub-rectangle of the texture that the sprite will display

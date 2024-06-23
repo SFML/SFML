@@ -16,6 +16,7 @@ TEST_CASE("[Audio] sf::Sound", runAudioDeviceTests())
     SECTION("Type traits")
     {
         STATIC_CHECK(!std::is_constructible_v<sf::Sound, sf::SoundBuffer&&>);
+        STATIC_CHECK(!std::is_constructible_v<sf::Sound, const sf::SoundBuffer&&>);
         STATIC_CHECK(std::is_copy_constructible_v<sf::Sound>);
         STATIC_CHECK(std::is_copy_assignable_v<sf::Sound>);
         STATIC_CHECK(std::is_move_constructible_v<sf::Sound>);

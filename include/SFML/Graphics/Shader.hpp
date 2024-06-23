@@ -493,7 +493,7 @@ public:
     /// \brief Disallow setting from a temporary texture
     ///
     ////////////////////////////////////////////////////////////
-    void setUniform(const std::string& name, Texture&& texture) = delete;
+    void setUniform(const std::string& name, const Texture&& texture) = delete;
 
     ////////////////////////////////////////////////////////////
     /// \brief Specify current texture as \p sampler2D uniform
