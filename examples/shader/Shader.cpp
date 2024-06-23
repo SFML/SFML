@@ -9,6 +9,7 @@
 #include <optional>
 #include <random>
 #include <string>
+#include <vector>
 
 #include <cmath>
 #include <cstdint>
@@ -129,7 +130,7 @@ public:
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
         states.shader = &m_shader;
-        target.draw(m_points, states);
+        target.draw(m_points, sf::PrimitiveType::Points, states);
     }
 
     explicit StormBlink(sf::Shader&& shader) : m_shader(std::move(shader))
@@ -139,8 +140,6 @@ public:
         std::uniform_int_distribution<std::uint16_t> colorDistribution(0, 255);
 
         // Create the points
-        m_points.setPrimitiveType(sf::PrimitiveType::Points);
-
         for (int i = 0; i < 40000; ++i)
         {
             const auto x = xDistribution(rng);
@@ -150,13 +149,13 @@ public:
             const auto g = static_cast<std::uint8_t>(colorDistribution(rng));
             const auto b = static_cast<std::uint8_t>(colorDistribution(rng));
 
-            m_points.append({{x, y}, {r, g, b}});
+            m_points.push_back({{x, y}, {r, g, b}});
         }
     }
 
 private:
-    sf::VertexArray m_points;
-    sf::Shader      m_shader;
+    std::vector<sf::Vertex> m_points;
+    sf::Shader              m_shader;
 };
 
 
@@ -248,13 +247,13 @@ public:
         states.transform = m_transform;
 
         // Draw the point cloud
-        target.draw(m_pointCloud, states);
+        target.draw(m_pointCloud, sf::PrimitiveType::Points, states);
     }
 
     explicit Geometry(sf::Texture&& logoTexture, sf::Shader&& shader) :
     m_logoTexture(std::move(logoTexture)),
     m_shader(std::move(shader)),
-    m_pointCloud(sf::PrimitiveType::Points, 10000)
+    m_pointCloud(10000)
     {
         // Move the points in the point cloud to random positions
         for (std::size_t i = 0; i < 10000; ++i)
@@ -266,10 +265,10 @@ public:
     }
 
 private:
-    sf::Texture     m_logoTexture;
-    sf::Transform   m_transform;
-    sf::Shader      m_shader;
-    sf::VertexArray m_pointCloud;
+    sf::Texture             m_logoTexture;
+    sf::Transform           m_transform;
+    sf::Shader              m_shader;
+    std::vector<sf::Vertex> m_pointCloud;
 };
 
 

@@ -322,6 +322,24 @@ public:
               const RenderStates& states = RenderStates::Default);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Draw primitives defined by a contiguous container of vertices
+    ///
+    /// \tparam ContiguousVertexRange Type of the contiguous container,
+    ///         must support `.data()` and `.size()` operations.
+    ///
+    /// \param vertices    Reference to the contiguous vertex container
+    /// \param type        Type of primitives to draw
+    /// \param states      Render states to use for drawing
+    ///
+    ////////////////////////////////////////////////////////////
+    template <typename ContiguousVertexRange>
+    auto draw(const ContiguousVertexRange& vertices, PrimitiveType type, const RenderStates& states = RenderStates::Default)
+        -> decltype(vertices.data(), vertices.size(), void()) // for SFINAE
+    {
+        draw(vertices.data(), vertices.size(), type, states);
+    }
+
+    ////////////////////////////////////////////////////////////
     /// \brief Draw primitives defined by a vertex buffer
     ///
     /// \param vertexBuffer Vertex buffer

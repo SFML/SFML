@@ -66,8 +66,6 @@ set(DRAWABLES_SRC
     ${INCROOT}/Sprite.hpp
     ${SRCROOT}/Text.cpp
     ${INCROOT}/Text.hpp
-    ${SRCROOT}/VertexArray.cpp
-    ${INCROOT}/VertexArray.hpp
     ${SRCROOT}/VertexBuffer.cpp
     ${INCROOT}/VertexBuffer.hpp
 )

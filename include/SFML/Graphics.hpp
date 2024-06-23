@@ -52,7 +52,6 @@
 #include <SFML/Graphics/Transform.hpp>
 #include <SFML/Graphics/Transformable.hpp>
 #include <SFML/Graphics/Vertex.hpp>
-#include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/Graphics/VertexBuffer.hpp>
 #include <SFML/Graphics/View.hpp>
 

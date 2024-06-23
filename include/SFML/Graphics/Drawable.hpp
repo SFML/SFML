@@ -101,7 +101,7 @@ protected:
 ///
 ///         // ... or use the low-level API
 ///         states.texture = &m_texture;
-///         target.draw(m_vertices, states);
+///         target.draw(m_vertices, sf::PrimitiveType::Triangles, states);
 ///
 ///         // ... or draw with OpenGL directly
 ///         glBegin(GL_TRIANGLES);
@@ -111,7 +111,7 @@ protected:
 ///
 ///     sf::Sprite m_sprite;
 ///     sf::Texture m_texture;
-///     sf::VertexArray m_vertices;
+///     std::vector<sf::Vertex> m_vertices;
 /// };
 /// \endcode
 ///

@@ -25,6 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Shape.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -36,6 +37,7 @@
 
 namespace
 {
+////////////////////////////////////////////////////////////
 // Compute the normal of a segment
 sf::Vector2f computeNormal(const sf::Vector2f& p1, const sf::Vector2f& p2)
 {
@@ -45,6 +47,41 @@ sf::Vector2f computeNormal(const sf::Vector2f& p1, const sf::Vector2f& p2)
         normal /= length;
     return normal;
 }
+
+////////////////////////////////////////////////////////////
+// Get bounds of a vertex range
+sf::FloatRect getVertexRangeBounds(const std::vector<sf::Vertex>& data)
+{
+    if (data.empty())
+    {
+        return {};
+    }
+
+    float left   = data[0].position.x;
+    float top    = data[0].position.y;
+    float right  = data[0].position.x;
+    float bottom = data[0].position.y;
+
+    for (std::size_t i = 1; i < data.size(); ++i)
+    {
+        const sf::Vector2f position = data[i].position;
+
+        // Update left and right
+        if (position.x < left)
+            left = position.x;
+        else if (position.x > right)
+            right = position.x;
+
+        // Update top and bottom
+        if (position.y < top)
+            top = position.y;
+        else if (position.y > bottom)
+            bottom = position.y;
+    }
+
+    return {{left, top}, {right - left, bottom - top}};
+}
+
 } // namespace
 
 
@@ -217,7 +254,7 @@ void Shape::update()
 
     // Update the bounding rectangle
     m_vertices[0]  = m_vertices[1]; // so that the result of getBounds() is correct
-    m_insideBounds = m_vertices.getBounds();
+    m_insideBounds = getVertexRangeBounds(m_vertices);
 
     // Compute the center and make it the first vertex
     m_vertices[0].position = m_insideBounds.getCenter();
@@ -241,13 +278,13 @@ void Shape::draw(RenderTarget& target, RenderStates states) const
 
     // Render the inside
     states.texture = m_texture;
-    target.draw(m_vertices, states);
+    target.draw(m_vertices, PrimitiveType::TriangleFan, states);
 
     // Render the outline
     if (m_outlineThickness != 0)
     {
         states.texture = nullptr;
-        target.draw(m_outlineVertices, states);
+        target.draw(m_outlineVertices, PrimitiveType::TriangleStrip, states);
     }
 }
 
@@ -255,8 +292,8 @@ void Shape::draw(RenderTarget& target, RenderStates states) const
 ////////////////////////////////////////////////////////////
 void Shape::updateFillColors()
 {
-    for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i)
-        m_vertices[i].color = m_fillColor;
+    for (Vertex& vertex : m_vertices)
+        vertex.color = m_fillColor;
 }
 
 
@@ -269,10 +306,10 @@ void Shape::updateTexCoords()
     const Vector2f safeInsideSize(m_insideBounds.size.x > 0 ? m_insideBounds.size.x : 1.f,
                                   m_insideBounds.size.y > 0 ? m_insideBounds.size.y : 1.f);
 
-    for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i)
+    for (Vertex& vertex : m_vertices)
     {
-        const Vector2f ratio    = (m_vertices[i].position - m_insideBounds.position).cwiseDiv(safeInsideSize);
-        m_vertices[i].texCoords = convertedTextureRect.position + convertedTextureRect.size.cwiseMul(ratio);
+        const Vector2f ratio = (vertex.position - m_insideBounds.position).cwiseDiv(safeInsideSize);
+        vertex.texCoords     = convertedTextureRect.position + convertedTextureRect.size.cwiseMul(ratio);
     }
 }
 
@@ -288,7 +325,7 @@ void Shape::updateOutline()
         return;
     }
 
-    const std::size_t count = m_vertices.getVertexCount() - 2;
+    const std::size_t count = m_vertices.size() - 2;
     m_outlineVertices.resize((count + 1) * 2);
 
     for (std::size_t i = 0; i < count; ++i)
@@ -328,15 +365,15 @@ void Shape::updateOutline()
     updateOutlineColors();
 
     // Update the shape's bounds
-    m_bounds = m_outlineVertices.getBounds();
+    m_bounds = getVertexRangeBounds(m_outlineVertices);
 }
 
 
 ////////////////////////////////////////////////////////////
 void Shape::updateOutlineColors()
 {
-    for (std::size_t i = 0; i < m_outlineVertices.getVertexCount(); ++i)
-        m_outlineVertices[i].color = m_outlineColor;
+    for (Vertex& outlineVertex : m_outlineVertices)
+        outlineVertex.color = m_outlineColor;
 }
 
 } // namespace sf

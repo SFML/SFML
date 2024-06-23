@@ -121,7 +121,7 @@ void Sprite::draw(RenderTarget& target, RenderStates states) const
     states.texture        = m_texture;
     states.coordinateType = CoordinateType::Pixels;
 
-    target.draw(m_vertices.data(), m_vertices.size(), PrimitiveType::TriangleStrip, states);
+    target.draw(m_vertices, PrimitiveType::TriangleStrip, states);
 }
 
 

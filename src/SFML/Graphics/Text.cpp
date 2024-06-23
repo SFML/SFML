@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -41,27 +42,31 @@
 namespace
 {
 // Add an underline or strikethrough line to the vertex array
-void addLine(sf::VertexArray& vertices,
-             float            lineLength,
-             float            lineTop,
-             const sf::Color& color,
-             float            offset,
-             float            thickness,
-             float            outlineThickness = 0)
+void addLine(std::vector<sf::Vertex>& vertices,
+             float                    lineLength,
+             float                    lineTop,
+             const sf::Color&         color,
+             float                    offset,
+             float                    thickness,
+             float                    outlineThickness = 0)
 {
     const float top    = std::floor(lineTop + offset - (thickness / 2) + 0.5f);
     const float bottom = top + std::floor(thickness + 0.5f);
 
-    vertices.append({{-outlineThickness, top - outlineThickness}, color, {1.0f, 1.0f}});
-    vertices.append({{lineLength + outlineThickness, top - outlineThickness}, color, {1.0f, 1.0f}});
-    vertices.append({{-outlineThickness, bottom + outlineThickness}, color, {1.0f, 1.0f}});
-    vertices.append({{-outlineThickness, bottom + outlineThickness}, color, {1.0f, 1.0f}});
-    vertices.append({{lineLength + outlineThickness, top - outlineThickness}, color, {1.0f, 1.0f}});
-    vertices.append({{lineLength + outlineThickness, bottom + outlineThickness}, color, {1.0f, 1.0f}});
+    vertices.push_back({{-outlineThickness, top - outlineThickness}, color, {1.0f, 1.0f}});
+    vertices.push_back({{lineLength + outlineThickness, top - outlineThickness}, color, {1.0f, 1.0f}});
+    vertices.push_back({{-outlineThickness, bottom + outlineThickness}, color, {1.0f, 1.0f}});
+    vertices.push_back({{-outlineThickness, bottom + outlineThickness}, color, {1.0f, 1.0f}});
+    vertices.push_back({{lineLength + outlineThickness, top - outlineThickness}, color, {1.0f, 1.0f}});
+    vertices.push_back({{lineLength + outlineThickness, bottom + outlineThickness}, color, {1.0f, 1.0f}});
 }
 
 // Add a glyph quad to the vertex array
-void addGlyphQuad(sf::VertexArray& vertices, sf::Vector2f position, const sf::Color& color, const sf::Glyph& glyph, float italicShear)
+void addGlyphQuad(std::vector<sf::Vertex>& vertices,
+                  sf::Vector2f             position,
+                  const sf::Color&         color,
+                  const sf::Glyph&         glyph,
+                  float                    italicShear)
 {
     const sf::Vector2f padding(1.f, 1.f);
 
@@ -71,12 +76,12 @@ void addGlyphQuad(sf::VertexArray& vertices, sf::Vector2f position, const sf::Co
     const auto uv1 = sf::Vector2f(glyph.textureRect.position) - padding;
     const auto uv2 = sf::Vector2f(glyph.textureRect.position + glyph.textureRect.size) + padding;
 
-    vertices.append({position + sf::Vector2f(p1.x - italicShear * p1.y, p1.y), color, {uv1.x, uv1.y}});
-    vertices.append({position + sf::Vector2f(p2.x - italicShear * p1.y, p1.y), color, {uv2.x, uv1.y}});
-    vertices.append({position + sf::Vector2f(p1.x - italicShear * p2.y, p2.y), color, {uv1.x, uv2.y}});
-    vertices.append({position + sf::Vector2f(p1.x - italicShear * p2.y, p2.y), color, {uv1.x, uv2.y}});
-    vertices.append({position + sf::Vector2f(p2.x - italicShear * p1.y, p1.y), color, {uv2.x, uv1.y}});
-    vertices.append({position + sf::Vector2f(p2.x - italicShear * p2.y, p2.y), color, {uv2.x, uv2.y}});
+    vertices.push_back({position + sf::Vector2f(p1.x - italicShear * p1.y, p1.y), color, {uv1.x, uv1.y}});
+    vertices.push_back({position + sf::Vector2f(p2.x - italicShear * p1.y, p1.y), color, {uv2.x, uv1.y}});
+    vertices.push_back({position + sf::Vector2f(p1.x - italicShear * p2.y, p2.y), color, {uv1.x, uv2.y}});
+    vertices.push_back({position + sf::Vector2f(p1.x - italicShear * p2.y, p2.y), color, {uv1.x, uv2.y}});
+    vertices.push_back({position + sf::Vector2f(p2.x - italicShear * p1.y, p1.y), color, {uv2.x, uv1.y}});
+    vertices.push_back({position + sf::Vector2f(p2.x - italicShear * p2.y, p2.y), color, {uv2.x, uv2.y}});
 }
 } // namespace
 
@@ -169,8 +174,8 @@ void Text::setFillColor(const Color& color)
         // (if geometry is updated anyway, we can skip this step)
         if (!m_geometryNeedUpdate)
         {
-            for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i)
-                m_vertices[i].color = m_fillColor;
+            for (Vertex& vertex : m_vertices)
+                vertex.color = m_fillColor;
         }
     }
 }
@@ -187,8 +192,8 @@ void Text::setOutlineColor(const Color& color)
         // (if geometry is updated anyway, we can skip this step)
         if (!m_geometryNeedUpdate)
         {
-            for (std::size_t i = 0; i < m_outlineVertices.getVertexCount(); ++i)
-                m_outlineVertices[i].color = m_outlineColor;
+            for (Vertex& outlineVertex : m_outlineVertices)
+                outlineVertex.color = m_outlineColor;
         }
     }
 }
@@ -345,9 +350,9 @@ void Text::draw(RenderTarget& target, RenderStates states) const
 
     // Only draw the outline if there is something to draw
     if (m_outlineThickness != 0)
-        target.draw(m_outlineVertices, states);
+        target.draw(m_outlineVertices, PrimitiveType::Triangles, states);
 
-    target.draw(m_vertices, states);
+    target.draw(m_vertices, PrimitiveType::Triangles, states);
 }
 
 

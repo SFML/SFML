@@ -359,16 +359,15 @@ SFML_GRAPHICS_API void swap(VertexBuffer& left, VertexBuffer& right) noexcept;
 /// sf::VertexBuffer is a simple wrapper around a dynamic
 /// buffer of vertices and a primitives type.
 ///
-/// Unlike sf::VertexArray, the vertex data is stored in
-/// graphics memory.
+/// The vertex data is stored in graphics memory.
 ///
 /// In situations where a large amount of vertex data would
 /// have to be transferred from system memory to graphics memory
 /// every frame, using sf::VertexBuffer can help. By using a
 /// sf::VertexBuffer, data that has not been changed between frames
 /// does not have to be re-transferred from system to graphics
-/// memory as would be the case with sf::VertexArray. If data transfer
-/// is a bottleneck, this can lead to performance gains.
+/// memory as would be the case with a `std::vector<sf::Vertex>`.
+/// If data transfer is a bottleneck, this can lead to performance gains.
 ///
 /// Using sf::VertexBuffer, the user also has the ability to only modify
 /// a portion of the buffer in graphics memory. This way, a large buffer
@@ -409,6 +408,6 @@ SFML_GRAPHICS_API void swap(VertexBuffer& left, VertexBuffer& right) noexcept;
 /// window.draw(triangles);
 /// \endcode
 ///
-/// \see sf::Vertex, sf::VertexArray
+/// \see sf::Vertex
 ///
 ////////////////////////////////////////////////////////////
