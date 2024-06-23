@@ -49,7 +49,7 @@ class SFML_WINDOW_API Event
 {
 public:
     ////////////////////////////////////////////////////////////
-    /// \brief Closed event
+    /// \brief Closed event subtype
     ///
     ////////////////////////////////////////////////////////////
     struct Closed
@@ -57,7 +57,7 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Resized event
+    /// \brief Resized event subtype
     ///
     ////////////////////////////////////////////////////////////
     struct Resized
@@ -66,7 +66,7 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Lost focus event
+    /// \brief Lost focus event subtype
     ///
     ////////////////////////////////////////////////////////////
     struct FocusLost
@@ -74,7 +74,7 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Gained focus event
+    /// \brief Gained focus event subtype
     ///
     ////////////////////////////////////////////////////////////
     struct FocusGained
@@ -82,7 +82,7 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Text event
+    /// \brief Text event subtype
     ///
     ////////////////////////////////////////////////////////////
     struct TextEntered
@@ -91,7 +91,7 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief KeyChanged events
+    /// \brief KeyChanged event subtypes
     ///
     ////////////////////////////////////////////////////////////
     struct KeyChanged
@@ -111,7 +111,7 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Mouse wheel scrolled event
+    /// \brief Mouse wheel scrolled event subtype
     ///
     ////////////////////////////////////////////////////////////
     struct MouseWheelScrolled
@@ -122,7 +122,7 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Mouse button changed events
+    /// \brief Mouse button changed event subtypes
     ///
     ////////////////////////////////////////////////////////////
     struct MouseButtonChanged
@@ -138,7 +138,7 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Mouse move event
+    /// \brief Mouse move event subtype
     ///
     ////////////////////////////////////////////////////////////
     struct MouseMoved
@@ -147,7 +147,7 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Mouse move raw event
+    /// \brief Mouse move raw event subtype
     ///
     /// Raw mouse input data comes unprocessed from the
     /// operating system hence "raw". While the MouseMoved
@@ -180,7 +180,7 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Mouse entered event
+    /// \brief Mouse entered event subtype
     ///
     ////////////////////////////////////////////////////////////
     struct MouseEntered
@@ -188,7 +188,7 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Mouse left event
+    /// \brief Mouse left event subtype
     ///
     ////////////////////////////////////////////////////////////
     struct MouseLeft
@@ -196,7 +196,7 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Joystick button events
+    /// \brief Joystick button event subtypes
     ///
     ////////////////////////////////////////////////////////////
     struct JoystickButtonChanged
@@ -212,7 +212,7 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Joystick axis move event
+    /// \brief Joystick axis move event subtype
     ///
     ////////////////////////////////////////////////////////////
     struct JoystickMoved
@@ -223,7 +223,7 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Joystick connection events
+    /// \brief Joystick connection event subtypes
     ///
     ////////////////////////////////////////////////////////////
     struct JoystickChanged
@@ -238,7 +238,7 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Touch events
+    /// \brief Touch event subtypes
     ///
     ////////////////////////////////////////////////////////////
     struct TouchChanged
@@ -257,7 +257,7 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Sensor event
+    /// \brief Sensor event subtype
     ///
     ////////////////////////////////////////////////////////////
     struct SensorChanged
@@ -267,31 +267,37 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Construct from a given sf::Event subtype
+    /// \brief Construct from a given `sf::Event` subtype
     ///
-    /// \param t Event subtype
+    /// \tparam TEventSubtype Type of event subtype used to construct the event
+    ///
+    /// \param eventSubtype Event subtype instance used to construct the event
     ///
     ////////////////////////////////////////////////////////////
-    template <typename T>
-    Event(const T& t);
+    template <typename TEventSubtype>
+    Event(const TEventSubtype& eventSubtype);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Check current event type
+    /// \brief Check current event subtype
     ///
-    /// \return True if template parameter is current event type
+    /// \tparam TEventSubtype Type of the event subtype to check against
+    ///
+    /// \return True if the current event subtype matches given template parameter
     ///
     ////////////////////////////////////////////////////////////
-    template <typename T>
+    template <typename TEventSubtype>
     [[nodiscard]] bool is() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get particular event type
+    /// \brief Attempt to get specified event subtype
     ///
-    /// \return Address of current event type, otherwise nullptr
+    /// \tparam TEventSubtype Type of the desired event subtype
+    ///
+    /// \return Address of current event subtype, otherwise `nullptr`
     ///
     ////////////////////////////////////////////////////////////
-    template <typename T>
-    [[nodiscard]] const T* getIf() const;
+    template <typename TEventSubtype>
+    [[nodiscard]] const TEventSubtype* getIf() const;
 
 private:
     ////////////////////////////////////////////////////////////
@@ -332,7 +338,7 @@ private:
     }
 
     template <typename T>
-    static constexpr bool isEventType = isInParameterPack<T>(decltype(m_data)());
+    static constexpr bool isEventSubtype = isInParameterPack<T>(decltype(m_data)());
 };
 
 } // namespace sf
@@ -344,22 +350,26 @@ private:
 /// \class sf::Event
 /// \ingroup window
 ///
-/// sf::Event holds all the information about a system event
+/// `sf::Event` holds all the information about a system event
 /// that just happened. Events are retrieved using the
-/// sf::Window::pollEvent and sf::Window::waitEvent functions.
+/// `sf::Window::pollEvent` and `sf::Window::waitEvent` functions.
 ///
-/// A sf::Event instance contains the type of the event
+/// A `sf::Event` instance contains the subtype of the event
 /// (mouse moved, key pressed, window closed, ...) as well
 /// as the details about this particular event. Each event
-/// corresponds to a different struct which contains the data
-/// required to process that event.
+/// corresponds to a different subtype struct which contains
+/// the data required to process that event.
 ///
-/// The way to access the current active event is via
-/// sf::Event::getIf. This member function returns the address
-/// of the event struct if the event type matches the active
-/// event, otherise it returns nullptr. sf::Event::is is used
-/// to check the active event type without actually reading
-/// any of the corresponding event data.
+/// Event subtypes are event types belonging to `sf::Event`,
+/// such as `sf::Event::Closed` or `sf::Event::MouseMoved`.
+///
+/// The way to access the current active event subtype is via
+/// `sf::Event::getIf`. This member function returns the address
+/// of the event subtype struct if the event subtype matches the
+/// active event, otherise it returns `nullptr`.
+///
+/// `sf::Event::is` is used to check the active event subtype
+/// without actually reading any of the corresponding event data.
 ///
 /// \code
 /// while (const std::optional event = window.pollEvent())

@@ -22,7 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-// Repeating isEventType<T> allows for cleaner compiler errors.
+// Repeating isEventSubtype<T> allows for cleaner compiler errors.
 // It is not strictly necessary but it's useful nonetheless.
 // It works by ensuring that the code within the conditional is
 // only compiled when the condition is met. Otherwise you get
@@ -39,32 +39,32 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-template <typename T>
-Event::Event(const T& t)
+template <typename TEventSubtype>
+Event::Event(const TEventSubtype& eventSubtype)
 {
-    static_assert(isEventType<T>, "T must be a subtype of sf::Event");
-    if constexpr (isEventType<T>)
-        m_data = t;
+    static_assert(isEventSubtype<TEventSubtype>, "TEventSubtype must be a subtype of sf::Event");
+    if constexpr (isEventSubtype<TEventSubtype>)
+        m_data = eventSubtype;
 }
 
 
 ////////////////////////////////////////////////////////////
-template <typename T>
+template <typename TEventSubtype>
 bool Event::is() const
 {
-    static_assert(isEventType<T>, "T must be a subtype of sf::Event");
-    if constexpr (isEventType<T>)
-        return std::holds_alternative<T>(m_data);
+    static_assert(isEventSubtype<TEventSubtype>, "TEventSubtype must be a subtype of sf::Event");
+    if constexpr (isEventSubtype<TEventSubtype>)
+        return std::holds_alternative<TEventSubtype>(m_data);
 }
 
 
 ////////////////////////////////////////////////////////////
-template <typename T>
-const T* Event::getIf() const
+template <typename TEventSubtype>
+const TEventSubtype* Event::getIf() const
 {
-    static_assert(isEventType<T>, "T must be a subtype of sf::Event");
-    if constexpr (isEventType<T>)
-        return std::get_if<T>(&m_data);
+    static_assert(isEventSubtype<TEventSubtype>, "TEventSubtype must be a subtype of sf::Event");
+    if constexpr (isEventSubtype<TEventSubtype>)
+        return std::get_if<TEventSubtype>(&m_data);
 }
 
 } // namespace sf
