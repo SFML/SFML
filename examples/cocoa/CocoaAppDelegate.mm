@@ -52,7 +52,7 @@ struct SFMLmainWindow
 
     std::filesystem::path resPath{[[[NSBundle mainBundle] resourcePath] tostdstring]};
     sf::RenderWindow      renderWindow;
-    sf::Font              font{sf::Font::loadFromFile(resPath / "tuffy.ttf").value()};
+    sf::Font              font{sf::Font::openFromFile(resPath / "tuffy.ttf").value()};
     sf::Text              text{font};
     sf::Texture           logo{sf::Texture::loadFromFile(resPath / "logo.png").value()};
     sf::Sprite            sprite{logo};

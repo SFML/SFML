@@ -1063,8 +1063,8 @@ int main()
                             sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
 
-    // Load the application font and pass it to the Effect class
-    const auto font = sf::Font::loadFromFile(resourcesDir() / "tuffy.ttf").value();
+    // Open the application font and pass it to the Effect class
+    const auto font = sf::Font::openFromFile(resourcesDir() / "tuffy.ttf").value();
     Effect::setFont(font);
 
     // Create the effects

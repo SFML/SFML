@@ -74,7 +74,7 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Load the font from a file
+    /// \brief Open the font from a file
     ///
     /// The supported font formats are: TrueType, Type 1, CFF,
     /// OpenType, SFNT, X11 PCF, Windows FNT, BDF, PFR and Type 42.
@@ -84,59 +84,55 @@ public:
     ///
     /// \warning SFML cannot preload all the font data in this
     /// function, so the file has to remain accessible until
-    /// the sf::Font object loads a new font or is destroyed.
+    /// the sf::Font object is destroyed.
     ///
     /// \param filename Path of the font file to load
     ///
-    /// \return Font if loading succeeded, `std::nullopt` if it failed
+    /// \return Font if opening succeeded, `std::nullopt` if it failed
     ///
-    /// \see loadFromMemory, loadFromStream
+    /// \see openFromMemory, openFromStream
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Font> loadFromFile(const std::filesystem::path& filename);
+    [[nodiscard]] static std::optional<Font> openFromFile(const std::filesystem::path& filename);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Load the font from a file in memory
+    /// \brief Open the font from a file in memory
     ///
     /// The supported font formats are: TrueType, Type 1, CFF,
     /// OpenType, SFNT, X11 PCF, Windows FNT, BDF, PFR and Type 42.
     ///
     /// \warning SFML cannot preload all the font data in this
     /// function, so the buffer pointed by \a data has to remain
-    /// valid until the sf::Font object loads a new font or
-    /// is destroyed.
+    /// valid until the sf::Font object is destroyed.
     ///
     /// \param data        Pointer to the file data in memory
     /// \param sizeInBytes Size of the data to load, in bytes
     ///
-    /// \return Font if loading succeeded, `std::nullopt` if it failed
+    /// \return Font if opening succeeded, `std::nullopt` if it failed
     ///
-    /// \see loadFromFile, loadFromStream
+    /// \see openFromFile, openFromStream
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Font> loadFromMemory(const void* data, std::size_t sizeInBytes);
+    [[nodiscard]] static std::optional<Font> openFromMemory(const void* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Load the font from a custom stream
+    /// \brief Open the font from a custom stream
     ///
     /// The supported font formats are: TrueType, Type 1, CFF,
     /// OpenType, SFNT, X11 PCF, Windows FNT, BDF, PFR and Type 42.
-    /// Warning: SFML cannot preload all the font data in this
-    /// function, so the contents of \a stream have to remain
-    /// valid as long as the font is used.
     ///
     /// \warning SFML cannot preload all the font data in this
     /// function, so the stream has to remain accessible until
-    /// the sf::Font object loads a new font or is destroyed.
+    /// the sf::Font object is destroyed.
     ///
     /// \param stream Source stream to read from
     ///
-    /// \return Font if loading succeeded, `std::nullopt` if it failed
+    /// \return Font if opening succeeded, `std::nullopt` if it failed
     ///
-    /// \see loadFromFile, loadFromMemory
+    /// \see openFromFile, openFromMemory
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Font> loadFromStream(InputStream& stream);
+    [[nodiscard]] static std::optional<Font> openFromStream(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the font information
@@ -401,11 +397,11 @@ private:
 /// \class sf::Font
 /// \ingroup graphics
 ///
-/// Fonts can be loaded from a file, from memory or from a custom
+/// Fonts can be opened from a file, from memory or from a custom
 /// stream, and supports the most common types of fonts. See
-/// the loadFromFile function for the complete list of supported formats.
+/// the openFromFile function for the complete list of supported formats.
 ///
-/// Once it is loaded, a sf::Font instance provides three
+/// Once it is opened, a sf::Font instance provides three
 /// types of information about the font:
 /// \li Global metrics, such as the line spacing
 /// \li Per-glyph metrics, such as bounding box or kerning
@@ -433,8 +429,8 @@ private:
 ///
 /// Usage example:
 /// \code
-/// // Load a new font
-/// const auto font = sf::Font::loadFromFile("arial.ttf").value();
+/// // Open a new font
+/// const auto font = sf::Font::openFromFile("arial.ttf").value();
 ///
 /// // Create a text which uses our font
 /// sf::Text text1(font);
@@ -447,7 +443,7 @@ private:
 /// text2.setStyle(sf::Text::Italic);
 /// \endcode
 ///
-/// Apart from loading font files, and passing them to instances
+/// Apart from opening font files, and passing them to instances
 /// of sf::Text, you should normally not have to deal directly
 /// with this class. However, it may be useful to access the
 /// font metrics or rasterized glyphs for advanced usage.

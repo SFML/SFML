@@ -18,8 +18,8 @@ int main()
     sf::RenderWindow window(sf::VideoMode({800u, 600u}), "SFML Raw Mouse Input", sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
 
-    // Load the application font and pass it to the Effect class
-    const auto font = sf::Font::loadFromFile("resources/tuffy.ttf").value();
+    // Open the application font and pass it to the Effect class
+    const auto font = sf::Font::openFromFile("resources/tuffy.ttf").value();
 
     // Create the mouse position text
     sf::Text mousePosition(font, "", 20);

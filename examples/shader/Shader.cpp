@@ -393,8 +393,8 @@ int main()
     sf::RenderWindow window(sf::VideoMode({800, 600}), "SFML Shader", sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
 
-    // Load the application font
-    const auto font = sf::Font::loadFromFile("resources/tuffy.ttf").value();
+    // Open the application font
+    const auto font = sf::Font::openFromFile("resources/tuffy.ttf").value();
 
     // Create the effects
     std::optional pixelateEffect   = tryLoadPixelate();

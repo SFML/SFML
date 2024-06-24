@@ -32,7 +32,7 @@ int main()
     sf::Sprite sprite(texture);
 
     // Create a graphical text to display
-    const auto font = sf::Font::loadFromFile("tuffy.ttf").value();
+    const auto font = sf::Font::openFromFile("tuffy.ttf").value();
     sf::Text   text(font, "Hello SFML", 50);
     text.setFillColor(sf::Color::Black);
 

@@ -468,8 +468,8 @@ private:
 ///
 /// Usage example:
 /// \code
-/// // Load a font
-/// const auto font = sf::Font::loadFromFile("arial.ttf").value();
+/// // Open a font
+/// const auto font = sf::Font::openFromFile("arial.ttf").value();
 ///
 /// // Create a text
 /// sf::Text text(font, "hello");
