@@ -62,7 +62,7 @@ int main()
         const sf::Sprite background(backgroundTexture);
 
         // Create some text to draw on top of our OpenGL object
-        const auto font = sf::Font::loadFromFile(resourcesDir() / "tuffy.ttf").value();
+        const auto font = sf::Font::openFromFile(resourcesDir() / "tuffy.ttf").value();
 
         sf::Text text(font, "SFML / OpenGL demo");
         sf::Text sRgbInstructions(font, "Press space to toggle sRGB conversion");

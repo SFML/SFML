@@ -81,8 +81,8 @@ int main()
     ball.setFillColor(sf::Color::White);
     ball.setOrigin({ballRadius / 2.f, ballRadius / 2.f});
 
-    // Load the text font
-    const auto font = sf::Font::loadFromFile(resourcesDir() / "tuffy.ttf").value();
+    // Open the text font
+    const auto font = sf::Font::openFromFile(resourcesDir() / "tuffy.ttf").value();
 
     // Initialize the pause message
     sf::Text pauseMessage(font);

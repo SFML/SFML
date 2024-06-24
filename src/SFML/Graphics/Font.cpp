@@ -129,7 +129,7 @@ Font::Font(std::shared_ptr<FontHandles>&& fontHandles, std::string&& familyName)
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Font> Font::loadFromFile(const std::filesystem::path& filename)
+std::optional<Font> Font::openFromFile(const std::filesystem::path& filename)
 {
 #ifndef SFML_SYSTEM_ANDROID
 
@@ -173,7 +173,7 @@ std::optional<Font> Font::loadFromFile(const std::filesystem::path& filename)
 #else
 
     auto stream = std::make_shared<priv::ResourceStream>(filename);
-    auto font   = loadFromStream(*stream);
+    auto font   = openFromStream(*stream);
     if (font)
         font->m_stream = std::move(stream);
     return font;
@@ -183,7 +183,7 @@ std::optional<Font> Font::loadFromFile(const std::filesystem::path& filename)
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Font> Font::loadFromMemory(const void* data, std::size_t sizeInBytes)
+std::optional<Font> Font::openFromMemory(const void* data, std::size_t sizeInBytes)
 {
     auto fontHandles = std::make_shared<FontHandles>();
 
@@ -228,7 +228,7 @@ std::optional<Font> Font::loadFromMemory(const void* data, std::size_t sizeInByt
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Font> Font::loadFromStream(InputStream& stream)
+std::optional<Font> Font::openFromStream(InputStream& stream)
 {
     auto fontHandles = std::make_shared<FontHandles>();
 
