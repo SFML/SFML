@@ -200,6 +200,7 @@ public:
     /// \param first         Unicode code point of the first character
     /// \param second        Unicode code point of the second character
     /// \param characterSize Reference character size
+    /// \param bold          Retrieve the bold version or the regular one?
     ///
     /// \return Kerning value for \a first and \a second, in pixels
     ///
