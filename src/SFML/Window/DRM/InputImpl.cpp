@@ -503,7 +503,7 @@ std::optional<sf::Event> eventProcess()
     if (ready > 0 && FD_ISSET(STDIN_FILENO, &readFDSet))
         bytesRead = read(STDIN_FILENO, &code, 1);
 
-    if ((code == 127) || (code == 8)) // Suppress127 (DEL) to 8 (BACKSPACE)
+    if ((code == 127) || (code == 8)) // Suppress 127 (DEL) to 8 (BACKSPACE)
         code = 0;
     else if (code == 27) // ESC
     {
@@ -592,7 +592,7 @@ String getDescription(Keyboard::Scancode /* code */)
 }
 
 
-///////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
 void setVirtualKeyboardVisible(bool /*visible*/)
 {
     // Not applicable
