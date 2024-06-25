@@ -97,7 +97,8 @@ bool SoundFileWriterWav::open(const std::filesystem::path&     filename,
         err() << "WAV sound file channel count 0" << std::endl;
         return false;
     }
-    else if (channelCount == 1)
+
+    if (channelCount == 1)
     {
         m_remapTable[0] = 0;
     }

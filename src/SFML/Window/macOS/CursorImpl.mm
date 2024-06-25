@@ -41,8 +41,8 @@ NSCursor* loadFromSelector(SEL selector)
     // The caller is responsible for retaining the cursor.
     if ([NSCursor respondsToSelector:selector])
         return [NSCursor performSelector:selector];
-    else
-        return nil;
+
+    return nil;
 }
 
 }

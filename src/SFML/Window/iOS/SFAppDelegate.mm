@@ -235,8 +235,8 @@ std::vector<sf::Vector2i> touchPositions;
 {
     if (index < touchPositions.size())
         return touchPositions[index];
-    else
-        return sf::Vector2i(-1, -1);
+
+    return sf::Vector2i(-1, -1);
 }
 
 

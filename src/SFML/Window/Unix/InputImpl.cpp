@@ -158,10 +158,8 @@ Vector2i getMousePosition(const WindowBase& relativeTo)
 
         return {x, y};
     }
-    else
-    {
-        return {};
-    }
+
+    return {};
 }
 
 

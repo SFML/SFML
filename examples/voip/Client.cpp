@@ -58,10 +58,8 @@ private:
             std::cout << "Connected to server " << m_host << std::endl;
             return true;
         }
-        else
-        {
-            return false;
-        }
+
+        return false;
     }
 
     ////////////////////////////////////////////////////////////

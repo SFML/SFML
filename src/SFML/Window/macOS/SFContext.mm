@@ -128,11 +128,9 @@ bool SFContext::makeCurrent(bool current)
         [m_context makeCurrentContext];
         return m_context == [NSOpenGLContext currentContext]; // Should be true.
     }
-    else
-    {
-        [NSOpenGLContext clearCurrentContext];
-        return m_context != [NSOpenGLContext currentContext]; // Should be true.
-    }
+
+    [NSOpenGLContext clearCurrentContext];
+    return m_context != [NSOpenGLContext currentContext]; // Should be true.
 }
 
 

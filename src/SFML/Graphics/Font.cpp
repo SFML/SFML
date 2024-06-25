@@ -60,11 +60,11 @@ unsigned long read(FT_Stream rec, unsigned long offset, unsigned char* buffer, u
     {
         if (count > 0)
             return static_cast<unsigned long>(stream->read(reinterpret_cast<char*>(buffer), count).value());
-        else
-            return 0;
+
+        return 0;
     }
-    else
-        return count > 0 ? 0 : 1; // error code is 0 if we're reading, or nonzero if we're seeking
+
+    return count > 0 ? 0 : 1; // error code is 0 if we're reading, or nonzero if we're seeking
 }
 void close(FT_Stream)
 {
@@ -313,12 +313,10 @@ const Glyph& Font::getGlyph(std::uint32_t codePoint, unsigned int characterSize,
         // Found: just return it
         return it->second;
     }
-    else
-    {
-        // Not found: we have to load it
-        const Glyph glyph = loadGlyph(codePoint, characterSize, bold, outlineThickness);
-        return glyphs.emplace(key, glyph).first->second;
-    }
+
+    // Not found: we have to load it
+    const Glyph glyph = loadGlyph(codePoint, characterSize, bold, outlineThickness);
+    return glyphs.emplace(key, glyph).first->second;
 }
 
 
@@ -364,11 +362,9 @@ float Font::getKerning(std::uint32_t first, std::uint32_t second, unsigned int c
         // Flooring is required as we use FT_KERNING_UNFITTED flag which is not quantized in 64 based grid
         return std::floor((secondLsbDelta - firstRsbDelta + static_cast<float>(kerning.x) + 32) / float{1 << 6});
     }
-    else
-    {
-        // Invalid font
-        return 0.f;
-    }
+
+    // Invalid font
+    return 0.f;
 }
 
 
@@ -383,10 +379,8 @@ float Font::getLineSpacing(unsigned int characterSize) const
     {
         return static_cast<float>(face->size->metrics.height) / float{1 << 6};
     }
-    else
-    {
-        return 0.f;
-    }
+
+    return 0.f;
 }
 
 
@@ -405,10 +399,8 @@ float Font::getUnderlinePosition(unsigned int characterSize) const
 
         return -static_cast<float>(FT_MulFix(face->underline_position, face->size->metrics.y_scale)) / float{1 << 6};
     }
-    else
-    {
-        return 0.f;
-    }
+
+    return 0.f;
 }
 
 
@@ -427,10 +419,8 @@ float Font::getUnderlineThickness(unsigned int characterSize) const
 
         return static_cast<float>(FT_MulFix(face->underline_thickness, face->size->metrics.y_scale)) / float{1 << 6};
     }
-    else
-    {
-        return 0.f;
-    }
+
+    return 0.f;
 }
 
 

@@ -96,15 +96,11 @@ bool operator<(const VideoMode& left, const VideoMode& right)
         {
             return left.size.y < right.size.y;
         }
-        else
-        {
-            return left.size.x < right.size.x;
-        }
+
+        return left.size.x < right.size.x;
     }
-    else
-    {
-        return left.bitsPerPixel < right.bitsPerPixel;
-    }
+
+    return left.bitsPerPixel < right.bitsPerPixel;
 }
 
 

@@ -126,11 +126,9 @@ FloatRect VertexArray::getBounds() const
 
         return {{left, top}, {right - left, bottom - top}};
     }
-    else
-    {
-        // Array is empty
-        return {};
-    }
+
+    // Array is empty
+    return {};
 }
 
 

@@ -711,10 +711,8 @@ Vector2i getMousePosition(const WindowBase& relativeTo)
         ScreenToClient(handle, &point);
         return {point.x, point.y};
     }
-    else
-    {
-        return {};
-    }
+
+    return {};
 }
 
 

@@ -113,8 +113,8 @@ const Context* Context::getActiveContext()
     // We have to check that the last activated sf::Context is still active (a RenderTarget activation may have deactivated it)
     if (currentContext && currentContext->m_context.get() == priv::GlContext::getActiveContext())
         return currentContext;
-    else
-        return nullptr;
+
+    return nullptr;
 }
 
 

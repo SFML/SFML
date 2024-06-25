@@ -767,22 +767,18 @@ void WindowImplX11::processEvents()
                         event = nextEvent;
                         break;
                     }
-                    else
-                    {
-                        // Ignore both events
-                        processThisEvent = false;
-                        break;
-                    }
+
+                    // Ignore both events
+                    processThisEvent = false;
+                    break;
                 }
-                else
-                {
-                    // This sequence of events does not come from maintaining a key down,
-                    // so process the KeyRelease event normally,
-                    processEvent(event);
-                    // but loop because the next event can be the first half
-                    // of a sequence coming from maintaining a key down.
-                    event = nextEvent;
-                }
+
+                // This sequence of events does not come from maintaining a key down,
+                // so process the KeyRelease event normally,
+                processEvent(event);
+                // but loop because the next event can be the first half
+                // of a sequence coming from maintaining a key down.
+                event = nextEvent;
             }
             else
             {
@@ -2106,8 +2102,8 @@ RROutput WindowImplX11::getOutputPrimary(::Window& rootWindow, XRRScreenResource
     // Check if returned output is valid, otherwise use the first screen
     if (output == None)
         return res->outputs[0];
-    else
-        return output;
+
+    return output;
 }
 
 
