@@ -185,14 +185,13 @@ std::optional<Image> Image::loadFromFile(const std::filesystem::path& filename)
     {
         return Image(Vector2u(Vector2i(width, height)), {ptr.get(), ptr.get() + width * height * 4});
     }
-    else
-    {
-        // Error, failed to load the image
-        err() << "Failed to load image\n"
-              << formatDebugPathInfo(filename) << "\nReason: " << stbi_failure_reason() << std::endl;
 
-        return std::nullopt;
-    }
+
+    // Error, failed to load the image
+    err() << "Failed to load image\n"
+          << formatDebugPathInfo(filename) << "\nReason: " << stbi_failure_reason() << std::endl;
+
+    return std::nullopt;
 }
 
 
@@ -214,19 +213,15 @@ std::optional<Image> Image::loadFromMemory(const void* data, std::size_t size)
         {
             return Image(Vector2u(Vector2i(width, height)), {ptr.get(), ptr.get() + width * height * 4});
         }
-        else
-        {
-            // Error, failed to load the image
-            err() << "Failed to load image from memory. Reason: " << stbi_failure_reason() << std::endl;
 
-            return std::nullopt;
-        }
-    }
-    else
-    {
-        err() << "Failed to load image from memory, no data provided" << std::endl;
+        // Error, failed to load the image
+        err() << "Failed to load image from memory. Reason: " << stbi_failure_reason() << std::endl;
+
         return std::nullopt;
     }
+
+    err() << "Failed to load image from memory, no data provided" << std::endl;
+    return std::nullopt;
 }
 
 
@@ -256,12 +251,11 @@ std::optional<Image> Image::loadFromStream(InputStream& stream)
     {
         return Image(Vector2u(Vector2i(width, height)), {ptr.get(), ptr.get() + width * height * 4});
     }
-    else
-    {
-        // Error, failed to load the image
-        err() << "Failed to load image from stream. Reason: " << stbi_failure_reason() << std::endl;
-        return std::nullopt;
-    }
+
+    // Error, failed to load the image
+    err() << "Failed to load image from stream. Reason: " << stbi_failure_reason() << std::endl;
+
+    return std::nullopt;
 }
 
 
@@ -503,11 +497,9 @@ const std::uint8_t* Image::getPixelsPtr() const
     {
         return m_pixels.data();
     }
-    else
-    {
-        err() << "Trying to access the pixels of an empty image" << std::endl;
-        return nullptr;
-    }
+
+    err() << "Trying to access the pixels of an empty image" << std::endl;
+    return nullptr;
 }
 
 

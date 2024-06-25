@@ -51,15 +51,11 @@ FLAC__StreamDecoderReadStatus streamRead(const FLAC__StreamDecoder*, FLAC__byte 
             *bytes = *count;
             return FLAC__STREAM_DECODER_READ_STATUS_CONTINUE;
         }
-        else
-        {
-            return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
-        }
+
+        return FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM;
     }
-    else
-    {
-        return FLAC__STREAM_DECODER_READ_STATUS_ABORT;
-    }
+
+    return FLAC__STREAM_DECODER_READ_STATUS_ABORT;
 }
 
 FLAC__StreamDecoderSeekStatus streamSeek(const FLAC__StreamDecoder*, FLAC__uint64 absoluteByteOffset, void* clientData)
@@ -68,8 +64,8 @@ FLAC__StreamDecoderSeekStatus streamSeek(const FLAC__StreamDecoder*, FLAC__uint6
 
     if (data->stream->seek(static_cast<std::size_t>(absoluteByteOffset)).has_value())
         return FLAC__STREAM_DECODER_SEEK_STATUS_OK;
-    else
-        return FLAC__STREAM_DECODER_SEEK_STATUS_ERROR;
+
+    return FLAC__STREAM_DECODER_SEEK_STATUS_ERROR;
 }
 
 FLAC__StreamDecoderTellStatus streamTell(const FLAC__StreamDecoder*, FLAC__uint64* absoluteByteOffset, void* clientData)
@@ -81,10 +77,8 @@ FLAC__StreamDecoderTellStatus streamTell(const FLAC__StreamDecoder*, FLAC__uint6
         *absoluteByteOffset = *position;
         return FLAC__STREAM_DECODER_TELL_STATUS_OK;
     }
-    else
-    {
-        return FLAC__STREAM_DECODER_TELL_STATUS_ERROR;
-    }
+
+    return FLAC__STREAM_DECODER_TELL_STATUS_ERROR;
 }
 
 FLAC__StreamDecoderLengthStatus streamLength(const FLAC__StreamDecoder*, FLAC__uint64* streamLength, void* clientData)
@@ -96,10 +90,8 @@ FLAC__StreamDecoderLengthStatus streamLength(const FLAC__StreamDecoder*, FLAC__u
         *streamLength = *count;
         return FLAC__STREAM_DECODER_LENGTH_STATUS_OK;
     }
-    else
-    {
-        return FLAC__STREAM_DECODER_LENGTH_STATUS_ERROR;
-    }
+
+    return FLAC__STREAM_DECODER_LENGTH_STATUS_ERROR;
 }
 
 FLAC__bool streamEof(const FLAC__StreamDecoder*, void* clientData)
@@ -379,11 +371,9 @@ std::uint64_t SoundFileReaderFlac::read(std::int16_t* samples, std::uint64_t max
             m_clientData.leftovers.swap(leftovers);
             return maxCount;
         }
-        else
-        {
-            // We can use all the leftovers and decode new frames
-            std::copy(m_clientData.leftovers.begin(), m_clientData.leftovers.end(), samples);
-        }
+
+        // We can use all the leftovers and decode new frames
+        std::copy(m_clientData.leftovers.begin(), m_clientData.leftovers.end(), samples);
     }
 
     // Reset the data that will be used in the callback

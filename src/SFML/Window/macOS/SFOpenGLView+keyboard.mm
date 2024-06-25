@@ -197,15 +197,13 @@
     {
         return false;
     }
-    else if ([[event characters] length] > 0)
+    if ([[event characters] length] > 0)
     {
         unichar code = [[event characters] characterAtIndex:0];
         return (code < 0xF700) || (code > 0xF8FF);
     }
-    else
-    {
-        return true;
-    }
+
+    return true;
 }
 
 @end

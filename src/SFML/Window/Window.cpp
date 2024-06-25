@@ -164,16 +164,12 @@ bool Window::setActive(bool active) const
         {
             return true;
         }
-        else
-        {
-            err() << "Failed to activate the window's context" << std::endl;
-            return false;
-        }
-    }
-    else
-    {
+
+        err() << "Failed to activate the window's context" << std::endl;
         return false;
     }
+
+    return false;
 }
 
 

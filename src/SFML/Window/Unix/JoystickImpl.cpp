@@ -141,7 +141,7 @@ void updatePluggedList(udev_device* udevDevice = nullptr)
                             recordIt->systemPath = syspath ? syspath : "";
                             break;
                         }
-                        else if (std::strstr(action, "remove"))
+                        if (std::strstr(action, "remove"))
                         {
                             recordIt->plugged = false;
                             break;
@@ -561,10 +561,8 @@ bool JoystickImpl::open(unsigned int index)
 
             return true;
         }
-        else
-        {
-            err() << "Failed to open joystick " << devnode << ": " << errno << std::endl;
-        }
+
+        err() << "Failed to open joystick " << devnode << ": " << errno << std::endl;
     }
 
     return false;

@@ -377,48 +377,46 @@ std::optional<sf::Event> eventProcess()
 
                     if (inputEvent.value)
                         return sf::Event::MouseButtonPressed{*mb, mousePos};
-                    else
-                        return sf::Event::MouseButtonReleased{*mb, mousePos};
+
+                    return sf::Event::MouseButtonReleased{*mb, mousePos};
                 }
-                else
+
+                const sf::Keyboard::Key kb = toKey(inputEvent.code);
+
+                unsigned int special = 0;
+                if ((kb == sf::Keyboard::Key::Delete) || (kb == sf::Keyboard::Key::Backspace))
+                    special = (kb == sf::Keyboard::Key::Delete) ? 127 : 8;
+
+                if (inputEvent.value == 2)
                 {
-                    const sf::Keyboard::Key kb = toKey(inputEvent.code);
-
-                    unsigned int special = 0;
-                    if ((kb == sf::Keyboard::Key::Delete) || (kb == sf::Keyboard::Key::Backspace))
-                        special = (kb == sf::Keyboard::Key::Delete) ? 127 : 8;
-
-                    if (inputEvent.value == 2)
+                    // key repeat events
+                    //
+                    if (special)
                     {
-                        // key repeat events
-                        //
-                        if (special)
-                        {
-                            return sf::Event::TextEntered{special};
-                        }
+                        return sf::Event::TextEntered{special};
                     }
-                    else if (kb != sf::Keyboard::Key::Unknown)
-                    {
-                        // key down and key up events
-                        //
-                        sf::Event::KeyChanged keyChanged;
-                        keyChanged.code     = kb;
-                        keyChanged.scancode = sf::Keyboard::Scan::Unknown; // TODO: not implemented
-                        keyChanged.alt      = altDown();
-                        keyChanged.control  = controlDown();
-                        keyChanged.shift    = shiftDown();
-                        keyChanged.system   = systemDown();
+                }
+                else if (kb != sf::Keyboard::Key::Unknown)
+                {
+                    // key down and key up events
+                    //
+                    sf::Event::KeyChanged keyChanged;
+                    keyChanged.code     = kb;
+                    keyChanged.scancode = sf::Keyboard::Scan::Unknown; // TODO: not implemented
+                    keyChanged.alt      = altDown();
+                    keyChanged.control  = controlDown();
+                    keyChanged.shift    = shiftDown();
+                    keyChanged.system   = systemDown();
 
-                        keyMap[kb] = inputEvent.value;
+                    keyMap[kb] = inputEvent.value;
 
-                        if (special && inputEvent.value)
-                            doDeferredText = special;
+                    if (special && inputEvent.value)
+                        doDeferredText = special;
 
-                        if (inputEvent.value)
-                            return sf::Event::KeyPressed{keyChanged};
-                        else
-                            return sf::Event::KeyReleased{keyChanged};
-                    }
+                    if (inputEvent.value)
+                        return sf::Event::KeyPressed{keyChanged};
+
+                    return sf::Event::KeyReleased{keyChanged};
                 }
             }
             else if (inputEvent.type == EV_REL)

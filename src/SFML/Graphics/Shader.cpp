@@ -95,10 +95,8 @@ bool getFileContents(const std::filesystem::path& filename, std::vector<char>& b
         buffer.push_back('\0');
         return true;
     }
-    else
-    {
-        return false;
-    }
+
+    return false;
 }
 
 // Read the contents of a stream into an array of char
@@ -283,10 +281,11 @@ std::optional<Shader> Shader::loadFromFile(const std::filesystem::path& filename
     // Compile the shader program
     if (type == Type::Vertex)
         return compile(shader.data(), {}, {});
-    else if (type == Type::Geometry)
+
+    if (type == Type::Geometry)
         return compile({}, shader.data(), {});
-    else
-        return compile({}, {}, shader.data());
+
+    return compile({}, {}, shader.data());
 }
 
 
@@ -355,10 +354,11 @@ std::optional<Shader> Shader::loadFromMemory(std::string_view shader, Type type)
     // Compile the shader program
     if (type == Type::Vertex)
         return compile(shader, {}, {});
-    else if (type == Type::Geometry)
+
+    if (type == Type::Geometry)
         return compile({}, shader, {});
-    else
-        return compile({}, {}, shader);
+
+    return compile({}, {}, shader);
 }
 
 
@@ -394,10 +394,11 @@ std::optional<Shader> Shader::loadFromStream(InputStream& stream, Type type)
     // Compile the shader program
     if (type == Type::Vertex)
         return compile(shader.data(), {}, {});
-    else if (type == Type::Geometry)
+
+    if (type == Type::Geometry)
         return compile({}, shader.data(), {});
-    else
-        return compile({}, {}, shader.data());
+
+    return compile({}, {}, shader.data());
 }
 
 
@@ -939,17 +940,15 @@ int Shader::getUniformLocation(const std::string& name)
         // Already in cache, return it
         return it->second;
     }
-    else
-    {
-        // Not in cache, request the location from OpenGL
-        const int location = GLEXT_glGetUniformLocation(castToGlHandle(m_shaderProgram), name.c_str());
-        m_uniforms.emplace(name, location);
 
-        if (location == -1)
-            err() << "Uniform " << std::quoted(name) << " not found in shader" << std::endl;
+    // Not in cache, request the location from OpenGL
+    const int location = GLEXT_glGetUniformLocation(castToGlHandle(m_shaderProgram), name.c_str());
+    m_uniforms.emplace(name, location);
 
-        return location;
-    }
+    if (location == -1)
+        err() << "Uniform " << std::quoted(name) << " not found in shader" << std::endl;
+
+    return location;
 }
 
 } // namespace sf

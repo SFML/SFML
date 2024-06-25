@@ -314,8 +314,8 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
 
                     break;
                 }
-                else if ((selectionRequestEvent.target == XA_STRING) ||
-                         ((m_utf8String == None) && (selectionRequestEvent.target == m_text)))
+                if ((selectionRequestEvent.target == XA_STRING) ||
+                    ((m_utf8String == None) && (selectionRequestEvent.target == m_text)))
                 {
                     // Respond to a request for conversion to a Latin-1 string
                     const std::string data = m_clipboardContents.toAnsiString();
@@ -340,8 +340,8 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
 
                     break;
                 }
-                else if ((m_utf8String != None) &&
-                         ((selectionRequestEvent.target == m_utf8String) || (selectionRequestEvent.target == m_text)))
+                if ((m_utf8String != None) &&
+                    ((selectionRequestEvent.target == m_utf8String) || (selectionRequestEvent.target == m_text)))
                 {
                     // Respond to a request for conversion to a UTF-8 string
                     // or an encoding of our choosing (we always choose UTF-8)

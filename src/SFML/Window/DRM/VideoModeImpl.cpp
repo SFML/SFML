@@ -60,8 +60,8 @@ VideoMode VideoModeImpl::getDesktopMode()
     drmModeModeInfoPtr ptr = drm.mode;
     if (ptr)
         return VideoMode({ptr->hdisplay, ptr->vdisplay});
-    else
-        return VideoMode({0, 0});
+
+    return VideoMode({0, 0});
 }
 
 } // namespace sf::priv

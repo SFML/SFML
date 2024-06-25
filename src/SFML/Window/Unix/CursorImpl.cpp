@@ -70,8 +70,8 @@ bool CursorImpl::loadFromPixels(const std::uint8_t* pixels, Vector2u size, Vecto
 
     if (isColorCursorSupported())
         return loadFromPixelsARGB(pixels, size, hotspot);
-    else
-        return loadFromPixelsMonochrome(pixels, size, hotspot);
+
+    return loadFromPixelsMonochrome(pixels, size, hotspot);
 }
 
 

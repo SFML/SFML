@@ -118,17 +118,15 @@ std::optional<SoundBuffer> SoundBuffer::loadFromSamples(
             return std::nullopt;
         return soundBuffer;
     }
-    else
-    {
-        // Error...
-        err() << "Failed to load sound buffer from samples ("
-              << "array: " << samples << ", "
-              << "count: " << sampleCount << ", "
-              << "channels: " << channelCount << ", "
-              << "samplerate: " << sampleRate << ")" << std::endl;
 
-        return std::nullopt;
-    }
+    // Error...
+    err() << "Failed to load sound buffer from samples ("
+          << "array: " << samples << ", "
+          << "count: " << sampleCount << ", "
+          << "channels: " << channelCount << ", "
+          << "samplerate: " << sampleRate << ")" << std::endl;
+
+    return std::nullopt;
 }
 
 
@@ -143,10 +141,8 @@ bool SoundBuffer::saveToFile(const std::filesystem::path& filename) const
 
         return true;
     }
-    else
-    {
-        return false;
-    }
+
+    return false;
 }
 
 
@@ -233,10 +229,8 @@ std::optional<SoundBuffer> SoundBuffer::initialize(InputSoundFile& file)
 
         return soundBuffer;
     }
-    else
-    {
-        return std::nullopt;
-    }
+
+    return std::nullopt;
 }
 
 

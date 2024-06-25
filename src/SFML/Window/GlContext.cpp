@@ -764,45 +764,35 @@ bool GlContext::setActive(bool active)
                 currentContext.ptr = this;
                 return true;
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
-        else
-        {
-            // This context is already the active one on this thread, don't do anything
-            return true;
-        }
+
+        // This context is already the active one on this thread, don't do anything
+        return true;
     }
-    else
+
+    if (m_impl->id == currentContext.id)
     {
-        if (m_impl->id == currentContext.id)
-        {
-            // We can't and don't need to lock when we are currently creating the shared context
-            std::unique_lock<std::recursive_mutex> lock;
+        // We can't and don't need to lock when we are currently creating the shared context
+        std::unique_lock<std::recursive_mutex> lock;
 
-            if (sharedContext)
-                lock = std::unique_lock(sharedContext->mutex);
+        if (sharedContext)
+            lock = std::unique_lock(sharedContext->mutex);
 
-            // Deactivate the context
-            if (makeCurrent(false))
-            {
-                currentContext.id  = 0;
-                currentContext.ptr = nullptr;
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
-        else
+        // Deactivate the context
+        if (makeCurrent(false))
         {
-            // This context is not the active one on this thread, don't do anything
+            currentContext.id  = 0;
+            currentContext.ptr = nullptr;
             return true;
         }
+
+        return false;
     }
+
+    // This context is not the active one on this thread, don't do anything
+    return true;
 }
 
 

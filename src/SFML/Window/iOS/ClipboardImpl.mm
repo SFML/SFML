@@ -47,10 +47,8 @@ String ClipboardImpl::getString()
 
         return String::fromUtf8(utf8, utf8 + length);
     }
-    else
-    {
-        return {};
-    }
+
+    return {};
 }
 
 

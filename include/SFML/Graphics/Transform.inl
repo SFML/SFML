@@ -85,10 +85,8 @@ constexpr Transform Transform::getInverse() const
                 (m_matrix[5]  * m_matrix[0] - m_matrix[1] * m_matrix[4])  / det};
         // clang-format on
     }
-    else
-    {
-        return Identity;
-    }
+
+    return Identity;
 }
 
 

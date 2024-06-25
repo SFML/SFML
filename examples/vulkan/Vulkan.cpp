@@ -630,7 +630,7 @@ public:
                 gpu = dev;
                 break;
             }
-            else if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU)
+            if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_INTEGRATED_GPU)
             {
                 gpu = dev;
             }
