@@ -219,10 +219,9 @@ if(SFML_OS_WINDOWS)
         foreach(flag
                 CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
                 CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
-            if(${flag} MATCHES "/MD")
-                string(REGEX REPLACE "/MD" "/MT" ${flag} "${${flag}}")
-            endif()
+            string(REGEX REPLACE "/MD|/MDd|/MT|/MTd" "" ${flag} "${${flag}}")
         endforeach()
+        add_compile_options(/MT$<$<CONFIG:Debug>:d>)
     endif()
 endif()
 
