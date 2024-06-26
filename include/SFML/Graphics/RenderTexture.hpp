@@ -55,6 +55,25 @@ class SFML_GRAPHICS_API RenderTexture : public RenderTarget
 {
 public:
     ////////////////////////////////////////////////////////////
+    /// \brief Construct a render-texture
+    ///
+    /// The last parameter, \a settings, is useful if you want to enable
+    /// multi-sampling or use the render-texture for OpenGL rendering that
+    /// requires a depth or stencil buffer. Otherwise it is unnecessary, and
+    /// you should leave this parameter at its default value.
+    ///
+    /// After creation, the contents of the render-texture are undefined.
+    /// Call `RenderTexture::clear` first to ensure a single color fill.
+    ///
+    /// \param size     Width and height of the render-texture
+    /// \param settings Additional settings for the underlying OpenGL texture and context
+    ///
+    /// \throws std::runtime_error if creation was unsuccessful
+    ///
+    ////////////////////////////////////////////////////////////
+    RenderTexture(const Vector2u& size, const ContextSettings& settings = {});
+
+    ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////

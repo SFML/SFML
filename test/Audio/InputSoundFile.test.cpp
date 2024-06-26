@@ -22,6 +22,124 @@ TEST_CASE("[Audio] sf::InputSoundFile")
         STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::InputSoundFile>);
     }
 
+    SECTION("Constructor")
+    {
+        SECTION("Invalid file")
+        {
+            CHECK_THROWS_AS(sf::InputSoundFile("does/not/exist.wav"), std::runtime_error);
+        }
+
+        SECTION("Valid file")
+        {
+            SECTION("flac")
+            {
+                const sf::InputSoundFile inputSoundFile("Audio/ding.flac");
+                CHECK(inputSoundFile.getSampleCount() == 87'798);
+                CHECK(inputSoundFile.getChannelCount() == 1);
+                CHECK(inputSoundFile.getSampleRate() == 44'100);
+                CHECK(inputSoundFile.getDuration() == sf::microseconds(1'990'884));
+                CHECK(inputSoundFile.getTimeOffset() == sf::Time::Zero);
+                CHECK(inputSoundFile.getSampleOffset() == 0);
+            }
+
+            SECTION("mp3")
+            {
+                const sf::InputSoundFile inputSoundFile("Audio/ding.mp3");
+                CHECK(inputSoundFile.getSampleCount() == 87'798);
+                CHECK(inputSoundFile.getChannelCount() == 1);
+                CHECK(inputSoundFile.getSampleRate() == 44'100);
+                CHECK(inputSoundFile.getDuration() == sf::microseconds(1'990'884));
+                CHECK(inputSoundFile.getTimeOffset() == sf::Time::Zero);
+                CHECK(inputSoundFile.getSampleOffset() == 0);
+            }
+
+            SECTION("ogg")
+            {
+                const sf::InputSoundFile inputSoundFile("Audio/doodle_pop.ogg");
+                CHECK(inputSoundFile.getSampleCount() == 2'116'992);
+                CHECK(inputSoundFile.getChannelCount() == 2);
+                CHECK(inputSoundFile.getSampleRate() == 44'100);
+                CHECK(inputSoundFile.getDuration() == sf::microseconds(24'002'176));
+                CHECK(inputSoundFile.getTimeOffset() == sf::Time::Zero);
+                CHECK(inputSoundFile.getSampleOffset() == 0);
+            }
+
+            SECTION("wav")
+            {
+                const sf::InputSoundFile inputSoundFile("Audio/killdeer.wav");
+                CHECK(inputSoundFile.getSampleCount() == 112'941);
+                CHECK(inputSoundFile.getChannelCount() == 1);
+                CHECK(inputSoundFile.getSampleRate() == 22'050);
+                CHECK(inputSoundFile.getDuration() == sf::microseconds(5'122'040));
+                CHECK(inputSoundFile.getTimeOffset() == sf::Time::Zero);
+                CHECK(inputSoundFile.getSampleOffset() == 0);
+            }
+        }
+
+        SECTION("Memory")
+        {
+            const auto               memory = loadIntoMemory("Audio/killdeer.wav");
+            const sf::InputSoundFile inputSoundFile(memory.data(), memory.size());
+            CHECK(inputSoundFile.getSampleCount() == 112'941);
+            CHECK(inputSoundFile.getChannelCount() == 1);
+            CHECK(inputSoundFile.getSampleRate() == 22'050);
+            CHECK(inputSoundFile.getDuration() == sf::microseconds(5'122'040));
+            CHECK(inputSoundFile.getTimeOffset() == sf::Time::Zero);
+            CHECK(inputSoundFile.getSampleOffset() == 0);
+        }
+
+        SECTION("Stream")
+        {
+            SECTION("flac")
+            {
+                sf::FileInputStream      stream("Audio/ding.flac");
+                const sf::InputSoundFile inputSoundFile(stream);
+                CHECK(inputSoundFile.getSampleCount() == 87'798);
+                CHECK(inputSoundFile.getChannelCount() == 1);
+                CHECK(inputSoundFile.getSampleRate() == 44'100);
+                CHECK(inputSoundFile.getDuration() == sf::microseconds(1'990'884));
+                CHECK(inputSoundFile.getTimeOffset() == sf::Time::Zero);
+                CHECK(inputSoundFile.getSampleOffset() == 0);
+            }
+
+            SECTION("mp3")
+            {
+                sf::FileInputStream      stream("Audio/ding.mp3");
+                const sf::InputSoundFile inputSoundFile(stream);
+                CHECK(inputSoundFile.getSampleCount() == 87'798);
+                CHECK(inputSoundFile.getChannelCount() == 1);
+                CHECK(inputSoundFile.getSampleRate() == 44'100);
+                CHECK(inputSoundFile.getDuration() == sf::microseconds(1'990'884));
+                CHECK(inputSoundFile.getTimeOffset() == sf::Time::Zero);
+                CHECK(inputSoundFile.getSampleOffset() == 0);
+            }
+
+            SECTION("ogg")
+            {
+                sf::FileInputStream      stream("Audio/doodle_pop.ogg");
+                const sf::InputSoundFile inputSoundFile(stream);
+                CHECK(inputSoundFile.getSampleCount() == 2'116'992);
+                CHECK(inputSoundFile.getChannelCount() == 2);
+                CHECK(inputSoundFile.getSampleRate() == 44'100);
+                CHECK(inputSoundFile.getDuration() == sf::microseconds(24'002'176));
+                CHECK(inputSoundFile.getTimeOffset() == sf::Time::Zero);
+                CHECK(inputSoundFile.getSampleOffset() == 0);
+            }
+
+            SECTION("wav")
+            {
+                sf::FileInputStream      stream("Audio/killdeer.wav");
+                const sf::InputSoundFile inputSoundFile(stream);
+                CHECK(inputSoundFile.getSampleCount() == 112'941);
+                CHECK(inputSoundFile.getChannelCount() == 1);
+                CHECK(inputSoundFile.getSampleRate() == 22'050);
+                CHECK(inputSoundFile.getDuration() == sf::microseconds(5'122'040));
+                CHECK(inputSoundFile.getTimeOffset() == sf::Time::Zero);
+                CHECK(inputSoundFile.getSampleOffset() == 0);
+            }
+        }
+    }
+
     SECTION("openFromFile()")
     {
         SECTION("Invalid file")

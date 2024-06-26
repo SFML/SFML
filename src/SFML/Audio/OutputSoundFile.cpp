@@ -37,6 +37,28 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
+OutputSoundFile::OutputSoundFile(const std::filesystem::path&     filename,
+                                 unsigned int                     sampleRate,
+                                 unsigned int                     channelCount,
+                                 const std::vector<SoundChannel>& channelMap) :
+m_writer(SoundFileFactory::createWriterFromFilename(filename)) // Find a suitable writer for the file type
+{
+    if (!m_writer)
+    {
+        // Error message generated in called function.
+        throw std::runtime_error("Failed to open file");
+    }
+
+    // Pass the stream to the reader
+    if (!m_writer->open(filename, sampleRate, channelCount, channelMap))
+    {
+        err() << "Failed to open output sound file from file (writer open failure)" << std::endl;
+        throw std::runtime_error("Failed to open output sound file from file (writer open failure)");
+    }
+}
+
+
+////////////////////////////////////////////////////////////
 std::optional<OutputSoundFile> OutputSoundFile::openFromFile(
     const std::filesystem::path&     filename,
     unsigned int                     sampleRate,

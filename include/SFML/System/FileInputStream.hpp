@@ -57,6 +57,16 @@ class SFML_SYSTEM_API FileInputStream : public InputStream
 {
 public:
     ////////////////////////////////////////////////////////////
+    /// \brief Construct the stream from a file path
+    ///
+    /// \param filename Name of the file to open
+    ///
+    /// \throws std::runtime_error on error
+    ///
+    ////////////////////////////////////////////////////////////
+    explicit FileInputStream(const std::filesystem::path& filename);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Default destructor
     ///
     ////////////////////////////////////////////////////////////

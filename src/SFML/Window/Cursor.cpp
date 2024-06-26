@@ -44,6 +44,35 @@ Cursor::Cursor() : m_impl(std::make_unique<priv::CursorImpl>())
 
 
 ////////////////////////////////////////////////////////////
+Cursor::Cursor(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot) :
+m_impl(std::make_unique<priv::CursorImpl>())
+{
+    if ((pixels == nullptr) || (size.x == 0) || (size.y == 0))
+    {
+        err() << "Failed to load cursor from pixels (invalid arguments)" << std::endl;
+        throw std::runtime_error("Failed to load cursor from pixels (invalid arguments)");
+    }
+
+    if (!m_impl->loadFromPixels(pixels, size, hotspot))
+    {
+        // Error message generated in called function.
+        throw std::runtime_error("Failed to load cursor from pixels");
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+Cursor::Cursor(Type type) : m_impl(std::make_unique<priv::CursorImpl>())
+{
+    if (!m_impl->loadFromSystem(type))
+    {
+        // Error message generated in called function.
+        throw std::runtime_error("Failed to load cursor from pixels");
+    }
+}
+
+
+////////////////////////////////////////////////////////////
 Cursor::~Cursor() = default;
 
 

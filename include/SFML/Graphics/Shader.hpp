@@ -86,6 +86,198 @@ public:
     static inline CurrentTextureType CurrentTexture;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Load the vertex, geometry or fragment shader from a file
+    ///
+    /// This function loads a single shader, vertex, geometry or
+    /// fragment, identified by the second argument.
+    /// The source must be a text file containing a valid
+    /// shader in GLSL language. GLSL is a C-like language
+    /// dedicated to OpenGL shaders; you'll probably need to
+    /// read a good documentation for it before writing your
+    /// own shaders.
+    ///
+    /// \param filename Path of the vertex, geometry or fragment shader file to load
+    /// \param type     Type of shader (vertex, geometry or fragment)
+    ///
+    /// \throws std::runtime_error if loading was unsuccessful
+    ///
+    /// \see loadFromMemory, loadFromStream
+    ///
+    ////////////////////////////////////////////////////////////
+    Shader(const std::filesystem::path& filename, Type type);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Load both the vertex and fragment shaders from files
+    ///
+    /// This function loads both the vertex and the fragment
+    /// shaders. If one of them fails to load, the shader is left
+    /// empty (the valid shader is unloaded).
+    /// The sources must be text files containing valid shaders
+    /// in GLSL language. GLSL is a C-like language dedicated to
+    /// OpenGL shaders; you'll probably need to read a good documentation
+    /// for it before writing your own shaders.
+    ///
+    /// \param vertexShaderFilename   Path of the vertex shader file to load
+    /// \param fragmentShaderFilename Path of the fragment shader file to load
+    ///
+    /// \throws std::runtime_error if loading was unsuccessful
+    ///
+    /// \see loadFromMemory, loadFromStream
+    ///
+    ////////////////////////////////////////////////////////////
+    Shader(const std::filesystem::path& vertexShaderFilename, const std::filesystem::path& fragmentShaderFilename);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Load the vertex, geometry and fragment shaders from files
+    ///
+    /// This function loads the vertex, geometry and fragment
+    /// shaders. If one of them fails to load, the shader is left
+    /// empty (the valid shader is unloaded).
+    /// The sources must be text files containing valid shaders
+    /// in GLSL language. GLSL is a C-like language dedicated to
+    /// OpenGL shaders; you'll probably need to read a good documentation
+    /// for it before writing your own shaders.
+    ///
+    /// \param vertexShaderFilename   Path of the vertex shader file to load
+    /// \param geometryShaderFilename Path of the geometry shader file to load
+    /// \param fragmentShaderFilename Path of the fragment shader file to load
+    ///
+    /// \throws std::runtime_error if loading was unsuccessful
+    ///
+    /// \see loadFromMemory, loadFromStream
+    ///
+    ////////////////////////////////////////////////////////////
+    Shader(const std::filesystem::path& vertexShaderFilename,
+           const std::filesystem::path& geometryShaderFilename,
+           const std::filesystem::path& fragmentShaderFilename);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Load the vertex, geometry or fragment shader from a source code in memory
+    ///
+    /// This function loads a single shader, vertex, geometry
+    /// or fragment, identified by the second argument.
+    /// The source code must be a valid shader in GLSL language.
+    /// GLSL is a C-like language dedicated to OpenGL shaders;
+    /// you'll probably need to read a good documentation for
+    /// it before writing your own shaders.
+    ///
+    /// \param shader String containing the source code of the shader
+    /// \param type   Type of shader (vertex, geometry or fragment)
+    ///
+    /// \throws std::runtime_error if loading was unsuccessful
+    ///
+    /// \see loadFromFile, loadFromStream
+    ///
+    ////////////////////////////////////////////////////////////
+    Shader(std::string_view shader, Type type);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Load both the vertex and fragment shaders from source codes in memory
+    ///
+    /// This function loads both the vertex and the fragment
+    /// shaders. If one of them fails to load, the shader is left
+    /// empty (the valid shader is unloaded).
+    /// The sources must be valid shaders in GLSL language. GLSL is
+    /// a C-like language dedicated to OpenGL shaders; you'll
+    /// probably need to read a good documentation for it before
+    /// writing your own shaders.
+    ///
+    /// \param vertexShader   String containing the source code of the vertex shader
+    /// \param fragmentShader String containing the source code of the fragment shader
+    ///
+    /// \throws std::runtime_error if loading was unsuccessful
+    ///
+    /// \see loadFromFile, loadFromStream
+    ///
+    ////////////////////////////////////////////////////////////
+    Shader(std::string_view vertexShader, std::string_view fragmentShader);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Load the vertex, geometry and fragment shaders from source codes in memory
+    ///
+    /// This function loads the vertex, geometry and fragment
+    /// shaders. If one of them fails to load, the shader is left
+    /// empty (the valid shader is unloaded).
+    /// The sources must be valid shaders in GLSL language. GLSL is
+    /// a C-like language dedicated to OpenGL shaders; you'll
+    /// probably need to read a good documentation for it before
+    /// writing your own shaders.
+    ///
+    /// \param vertexShader   String containing the source code of the vertex shader
+    /// \param geometryShader String containing the source code of the geometry shader
+    /// \param fragmentShader String containing the source code of the fragment shader
+    ///
+    /// \throws std::runtime_error if loading was unsuccessful
+    ///
+    /// \see loadFromFile, loadFromStream
+    ///
+    ////////////////////////////////////////////////////////////
+    Shader(std::string_view vertexShader, std::string_view geometryShader, std::string_view fragmentShader);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Load the vertex, geometry or fragment shader from a custom stream
+    ///
+    /// This function loads a single shader, vertex, geometry
+    /// or fragment, identified by the second argument.
+    /// The source code must be a valid shader in GLSL language.
+    /// GLSL is a C-like language dedicated to OpenGL shaders;
+    /// you'll probably need to read a good documentation for it
+    /// before writing your own shaders.
+    ///
+    /// \param stream Source stream to read from
+    /// \param type   Type of shader (vertex, geometry or fragment)
+    ///
+    /// \throws std::runtime_error if loading was unsuccessful
+    ///
+    /// \see loadFromFile, loadFromMemory
+    ///
+    ////////////////////////////////////////////////////////////
+    Shader(InputStream& stream, Type type);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Load both the vertex and fragment shaders from custom streams
+    ///
+    /// This function loads both the vertex and the fragment
+    /// shaders. If one of them fails to load, the shader is left
+    /// empty (the valid shader is unloaded).
+    /// The source codes must be valid shaders in GLSL language.
+    /// GLSL is a C-like language dedicated to OpenGL shaders;
+    /// you'll probably need to read a good documentation for
+    /// it before writing your own shaders.
+    ///
+    /// \param vertexShaderStream   Source stream to read the vertex shader from
+    /// \param fragmentShaderStream Source stream to read the fragment shader from
+    ///
+    /// \throws std::runtime_error if loading was unsuccessful
+    ///
+    /// \see loadFromFile, loadFromMemory
+    ///
+    ////////////////////////////////////////////////////////////
+    Shader(InputStream& vertexShaderStream, InputStream& fragmentShaderStream);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Load the vertex, geometry and fragment shaders from custom streams
+    ///
+    /// This function loads the vertex, geometry and fragment
+    /// shaders. If one of them fails to load, the shader is left
+    /// empty (the valid shader is unloaded).
+    /// The source codes must be valid shaders in GLSL language.
+    /// GLSL is a C-like language dedicated to OpenGL shaders;
+    /// you'll probably need to read a good documentation for
+    /// it before writing your own shaders.
+    ///
+    /// \param vertexShaderStream   Source stream to read the vertex shader from
+    /// \param geometryShaderStream Source stream to read the geometry shader from
+    /// \param fragmentShaderStream Source stream to read the fragment shader from
+    ///
+    /// \throws std::runtime_error if loading was unsuccessful
+    ///
+    /// \see loadFromFile, loadFromMemory
+    ///
+    ////////////////////////////////////////////////////////////
+    Shader(InputStream& vertexShaderStream, InputStream& geometryShaderStream, InputStream& fragmentShaderStream);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
@@ -114,7 +306,6 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     Shader& operator=(Shader&& right) noexcept;
-
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the vertex, geometry or fragment shader from a file
@@ -661,12 +852,12 @@ private:
     /// \param geometryShaderCode Source code of the geometry shader
     /// \param fragmentShaderCode Source code of the fragment shader
     ///
-    /// \return Shader on success, `std::nullopt` if any error happened
+    /// \return shader program object on success, `std::nullopt` if any error happened
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Shader> compile(std::string_view vertexShaderCode,
-                                                       std::string_view geometryShaderCode,
-                                                       std::string_view fragmentShaderCode);
+    [[nodiscard]] static std::optional<unsigned int> compile(std::string_view vertexShaderCode,
+                                                             std::string_view geometryShaderCode,
+                                                             std::string_view fragmentShaderCode);
 
     ////////////////////////////////////////////////////////////
     /// \brief Bind all the textures used by the shader

@@ -60,6 +60,24 @@ struct Music::Impl
 
 
 ////////////////////////////////////////////////////////////
+Music::Music(const std::filesystem::path& filename) : Music(InputSoundFile(filename))
+{
+}
+
+
+////////////////////////////////////////////////////////////
+Music::Music(const void* data, std::size_t sizeInBytes) : Music(InputSoundFile(data, sizeInBytes))
+{
+}
+
+
+////////////////////////////////////////////////////////////
+Music::Music(InputStream& stream) : Music(InputSoundFile(stream))
+{
+}
+
+
+////////////////////////////////////////////////////////////
 Music::~Music()
 {
     // We must stop before destroying the file

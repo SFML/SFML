@@ -16,6 +16,27 @@ TEST_CASE("[Graphics] sf::RenderTexture", runDisplayTests())
         STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::RenderTexture>);
     }
 
+    SECTION("Constructor")
+    {
+        CHECK_THROWS_AS(sf::RenderTexture({1'000'000, 1'000'000}), std::runtime_error);
+
+        CHECK_NOTHROW(sf::RenderTexture({100, 100}, sf::ContextSettings{8 /* depthBits */, 0 /* stencilBits */}));
+        CHECK_NOTHROW(sf::RenderTexture({100, 100}, sf::ContextSettings{0 /* depthBits */, 8 /* stencilBits */}));
+
+        const sf::RenderTexture renderTexture({360, 480});
+        CHECK(renderTexture.getSize() == sf::Vector2u(360, 480));
+        CHECK(!renderTexture.isSmooth());
+        CHECK(!renderTexture.isRepeated());
+        CHECK(!renderTexture.isSrgb());
+
+        const auto& texture = renderTexture.getTexture();
+        CHECK(texture.getSize() == sf::Vector2u(360, 480));
+        CHECK(!texture.isSmooth());
+        CHECK(!texture.isSrgb());
+        CHECK(!texture.isRepeated());
+        CHECK(texture.getNativeHandle() != 0);
+    }
+
     SECTION("create()")
     {
         CHECK(!sf::RenderTexture::create({1'000'000, 1'000'000}));

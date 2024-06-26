@@ -76,6 +76,17 @@ TEST_CASE("[System] sf::FileInputStream")
     const TemporaryFile temporaryFile("Hello world");
     char                buffer[32];
 
+    SECTION("Constructor")
+    {
+        sf::FileInputStream fileInputStream(temporaryFile.getPath());
+        CHECK(fileInputStream.read(buffer, 5) == 5);
+        CHECK(fileInputStream.tell() == 5);
+        CHECK(fileInputStream.getSize() == 11);
+        CHECK(std::string_view(buffer, 5) == "Hello"sv);
+        CHECK(fileInputStream.seek(6) == 6);
+        CHECK(fileInputStream.tell() == 6);
+    }
+
     SECTION("Move semantics")
     {
         SECTION("Move constructor")

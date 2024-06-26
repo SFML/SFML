@@ -50,6 +50,24 @@ class SFML_AUDIO_API OutputSoundFile
 {
 public:
     ////////////////////////////////////////////////////////////
+    /// \brief Construct the sound file from the disk for writing
+    ///
+    /// The supported audio formats are: WAV, OGG/Vorbis, FLAC.
+    ///
+    /// \param filename     Path of the sound file to write
+    /// \param sampleRate   Sample rate of the sound
+    /// \param channelCount Number of channels in the sound
+    /// \param channelMap   Map of position in sample frame to sound channel
+    ///
+    /// \throws std::runtime_error if the file could not be opened successfully
+    ///
+    ////////////////////////////////////////////////////////////
+    OutputSoundFile(const std::filesystem::path&     filename,
+                    unsigned int                     sampleRate,
+                    unsigned int                     channelCount,
+                    const std::vector<SoundChannel>& channelMap);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Open the sound file from the disk for writing
     ///
     /// The supported audio formats are: WAV, OGG/Vorbis, FLAC.

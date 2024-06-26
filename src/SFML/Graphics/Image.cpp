@@ -95,6 +95,145 @@ using StbPtr = std::unique_ptr<stbi_uc, StbDeleter>;
 
 namespace sf
 {
+
+
+////////////////////////////////////////////////////////////
+Image::Image(const std::filesystem::path& filename)
+{
+#ifdef SFML_SYSTEM_ANDROID
+
+    if (priv::getActivityStatesPtr() != nullptr)
+    {
+        priv::ResourceStream stream(filename);
+
+        // Make sure that the stream's reading position is at the beginning
+        if (!stream.seek(0).has_value())
+        {
+            err() << "Failed to seek image stream" << std::endl;
+            throw std::runtime_error("Failed to load image");
+        }
+
+        // Setup the stb_image callbacks
+        stbi_io_callbacks callbacks;
+        callbacks.read = read;
+        callbacks.skip = skip;
+        callbacks.eof  = eof;
+
+        // Load the image and get a pointer to the pixels in memory
+        int        width    = 0;
+        int        height   = 0;
+        int        channels = 0;
+        const auto ptr = StbPtr(stbi_load_from_callbacks(&callbacks, &stream, &width, &height, &channels, STBI_rgb_alpha));
+
+        if (ptr)
+        {
+            m_size   = Vector2u(Vector2i(width, height));
+            m_pixels = std::vector<std::uint8_t>{ptr.get(), ptr.get() + width * height * 4};
+        }
+        else
+        {
+            // Error, failed to load the image
+            err() << "Failed to load image from stream. Reason: " << stbi_failure_reason() << std::endl;
+            throw std::runtime_error("Failed to load image");
+        }
+
+        return;
+    }
+
+#endif
+
+    // Load the image and get a pointer to the pixels in memory
+    int        width    = 0;
+    int        height   = 0;
+    int        channels = 0;
+    const auto ptr      = StbPtr(stbi_load(filename.string().c_str(), &width, &height, &channels, STBI_rgb_alpha));
+
+    if (ptr)
+    {
+        m_size   = Vector2u(Vector2i(width, height));
+        m_pixels = std::vector<std::uint8_t>{ptr.get(), ptr.get() + width * height * 4};
+    }
+    else
+    {
+        // Error, failed to load the image
+        err() << "Failed to load image\n"
+              << formatDebugPathInfo(filename) << "\nReason: " << stbi_failure_reason() << std::endl;
+
+        throw std::runtime_error("Failed to load image");
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+Image::Image(const void* data, std::size_t size)
+{
+    // Check input parameters
+    if (data && size)
+    {
+        // Load the image and get a pointer to the pixels in memory
+        int         width    = 0;
+        int         height   = 0;
+        int         channels = 0;
+        const auto* buffer   = static_cast<const unsigned char*>(data);
+        const auto  ptr      = StbPtr(
+            stbi_load_from_memory(buffer, static_cast<int>(size), &width, &height, &channels, STBI_rgb_alpha));
+
+        if (ptr)
+        {
+            m_size   = Vector2u(Vector2i(width, height));
+            m_pixels = std::vector<std::uint8_t>{ptr.get(), ptr.get() + width * height * 4};
+        }
+        else
+        {
+            // Error, failed to load the image
+            err() << "Failed to load image from memory. Reason: " << stbi_failure_reason() << std::endl;
+            throw std::runtime_error("Failed to load image");
+        }
+    }
+    else
+    {
+        err() << "Failed to load image from memory, no data provided" << std::endl;
+        throw std::runtime_error("Failed to load image");
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+Image::Image(InputStream& stream)
+{
+    // Make sure that the stream's reading position is at the beginning
+    if (!stream.seek(0).has_value())
+    {
+        err() << "Failed to seek image stream" << std::endl;
+        throw std::runtime_error("Failed to load image");
+    }
+
+    // Setup the stb_image callbacks
+    stbi_io_callbacks callbacks;
+    callbacks.read = read;
+    callbacks.skip = skip;
+    callbacks.eof  = eof;
+
+    // Load the image and get a pointer to the pixels in memory
+    int        width    = 0;
+    int        height   = 0;
+    int        channels = 0;
+    const auto ptr = StbPtr(stbi_load_from_callbacks(&callbacks, &stream, &width, &height, &channels, STBI_rgb_alpha));
+
+    if (ptr)
+    {
+        m_size   = Vector2u(Vector2i(width, height));
+        m_pixels = std::vector<std::uint8_t>{ptr.get(), ptr.get() + width * height * 4};
+    }
+    else
+    {
+        // Error, failed to load the image
+        err() << "Failed to load image from stream. Reason: " << stbi_failure_reason() << std::endl;
+        throw std::runtime_error("Failed to load image");
+    }
+}
+
+
 ////////////////////////////////////////////////////////////
 Image::Image(const Vector2u& size, const Color& color)
 {

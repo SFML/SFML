@@ -55,6 +55,58 @@ class SFML_GRAPHICS_API Image
 {
 public:
     ////////////////////////////////////////////////////////////
+    /// \brief Construct the image from a file on disk
+    ///
+    /// The supported image formats are bmp, png, tga, jpg, gif,
+    /// psd, hdr, pic and pnm. Some format options are not supported,
+    /// like jpeg with arithmetic coding or ASCII pnm.
+    /// If this function fails, the image is left unchanged.
+    ///
+    /// \param filename Path of the image file to load
+    ///
+    /// \throws std::runtime_error if loading was unsuccessful
+    ///
+    /// \see loadFromMemory, loadFromStream, saveToFile
+    ///
+    ////////////////////////////////////////////////////////////
+    explicit Image(const std::filesystem::path& filename);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct the image from a file in memory
+    ///
+    /// The supported image formats are bmp, png, tga, jpg, gif,
+    /// psd, hdr, pic and pnm. Some format options are not supported,
+    /// like jpeg with arithmetic coding or ASCII pnm.
+    /// If this function fails, the image is left unchanged.
+    ///
+    /// \param data Pointer to the file data in memory
+    /// \param size Size of the data to load, in bytes
+    ///
+    /// \throws std::runtime_error if loading was unsuccessful
+    ///
+    /// \see loadFromFile, loadFromStream
+    ///
+    ////////////////////////////////////////////////////////////
+    Image(const void* data, std::size_t size);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct the image from a custom stream
+    ///
+    /// The supported image formats are bmp, png, tga, jpg, gif,
+    /// psd, hdr, pic and pnm. Some format options are not supported,
+    /// like jpeg with arithmetic coding or ASCII pnm.
+    /// If this function fails, the image is left unchanged.
+    ///
+    /// \param stream Source stream to read from
+    ///
+    /// \throws std::runtime_error if loading was unsuccessful
+    ///
+    /// \see loadFromFile, loadFromMemory
+    ///
+    ////////////////////////////////////////////////////////////
+    explicit Image(InputStream& stream);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Construct the image and fill it with a unique color
     ///
     /// \param size  Width and height of the image
