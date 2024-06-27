@@ -117,7 +117,7 @@ public:
     /// \return Structure containing the settings
     ///
     ////////////////////////////////////////////////////////////
-    const ContextSettings& getSettings() const;
+    [[nodiscard]] const ContextSettings& getSettings() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check whether a given OpenGL extension is available

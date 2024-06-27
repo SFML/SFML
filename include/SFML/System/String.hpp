@@ -310,7 +310,7 @@ public:
     /// \see toUtf16, toUtf32
     ///
     ////////////////////////////////////////////////////////////
-    sf::U8String toUtf8() const;
+    [[nodiscard]] sf::U8String toUtf8() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert the Unicode string to a UTF-16 string
@@ -320,7 +320,7 @@ public:
     /// \see toUtf8, toUtf32
     ///
     ////////////////////////////////////////////////////////////
-    std::u16string toUtf16() const;
+    [[nodiscard]] std::u16string toUtf16() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert the Unicode string to a UTF-32 string
@@ -333,7 +333,7 @@ public:
     /// \see toUtf8, toUtf16
     ///
     ////////////////////////////////////////////////////////////
-    std::u32string toUtf32() const;
+    [[nodiscard]] std::u32string toUtf32() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Overload of += operator to append an UTF-32 string
@@ -389,7 +389,7 @@ public:
     /// \see isEmpty
     ///
     ////////////////////////////////////////////////////////////
-    std::size_t getSize() const;
+    [[nodiscard]] std::size_t getSize() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check whether the string is empty or not
@@ -399,7 +399,7 @@ public:
     /// \see clear, getSize
     ///
     ////////////////////////////////////////////////////////////
-    bool isEmpty() const;
+    [[nodiscard]] bool isEmpty() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Erase one or more characters from the string
@@ -493,7 +493,7 @@ public:
     /// \return Read-only pointer to the array of characters
     ///
     ////////////////////////////////////////////////////////////
-    const char32_t* getData() const;
+    [[nodiscard]] const char32_t* getData() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return an iterator to the beginning of the string
@@ -513,7 +513,7 @@ public:
     /// \see end
     ///
     ////////////////////////////////////////////////////////////
-    ConstIterator begin() const;
+    [[nodiscard]] ConstIterator begin() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return an iterator to the end of the string
@@ -541,7 +541,7 @@ public:
     /// \see begin
     ///
     ////////////////////////////////////////////////////////////
-    ConstIterator end() const;
+    [[nodiscard]] ConstIterator end() const;
 
 private:
     friend SFML_SYSTEM_API bool operator==(const String& left, const String& right);

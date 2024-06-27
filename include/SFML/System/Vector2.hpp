@@ -93,7 +93,7 @@ public:
     /// If you are not interested in the actual length, but only in comparisons, consider using lengthSq().
     ///
     ////////////////////////////////////////////////////////////
-    SFML_SYSTEM_API T length() const;
+    [[nodiscard]] SFML_SYSTEM_API T length() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Square of vector's length.
@@ -101,7 +101,7 @@ public:
     /// Suitable for comparisons, more efficient than length().
     ///
     ////////////////////////////////////////////////////////////
-    constexpr T lengthSq() const;
+    [[nodiscard]] constexpr T lengthSq() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Vector with same direction but length 1 <i><b>(floating-point)</b></i>.
@@ -120,7 +120,7 @@ public:
     /// \pre Neither \c *this nor \c rhs is a zero vector.
     ///
     ////////////////////////////////////////////////////////////
-    SFML_SYSTEM_API Angle angleTo(const Vector2& rhs) const;
+    [[nodiscard]] SFML_SYSTEM_API Angle angleTo(const Vector2& rhs) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Signed angle from +X or (1,0) vector <i><b>(floating-point)</b></i>.
@@ -131,7 +131,7 @@ public:
     /// \pre This vector is no zero vector.
     ///
     ////////////////////////////////////////////////////////////
-    SFML_SYSTEM_API Angle angle() const;
+    [[nodiscard]] SFML_SYSTEM_API Angle angle() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Rotate by angle \c phi <i><b>(floating-point)</b></i>.
@@ -163,13 +163,13 @@ public:
     /// this amounts to a clockwise rotation.
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Vector2 perpendicular() const;
+    [[nodiscard]] constexpr Vector2 perpendicular() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Dot product of two 2D vectors.
     ///
     ////////////////////////////////////////////////////////////
-    constexpr T dot(const Vector2& rhs) const;
+    [[nodiscard]] constexpr T dot(const Vector2& rhs) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Z component of the cross product of two 2D vectors.
@@ -178,7 +178,7 @@ public:
     /// and returns the result's Z component (X and Y components are always zero).
     ///
     ////////////////////////////////////////////////////////////
-    constexpr T cross(const Vector2& rhs) const;
+    [[nodiscard]] constexpr T cross(const Vector2& rhs) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Component-wise multiplication of \c *this and \c rhs.
@@ -189,7 +189,7 @@ public:
     /// This operation is also known as the Hadamard or Schur product.
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Vector2 cwiseMul(const Vector2& rhs) const;
+    [[nodiscard]] constexpr Vector2 cwiseMul(const Vector2& rhs) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Component-wise division of \c *this and \c rhs.
@@ -201,7 +201,7 @@ public:
     /// \pre Neither component of \c rhs is zero.
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Vector2 cwiseDiv(const Vector2& rhs) const;
+    [[nodiscard]] constexpr Vector2 cwiseDiv(const Vector2& rhs) const;
 
 
     ////////////////////////////////////////////////////////////

@@ -83,7 +83,7 @@ public:
     /// \return Handle of the window
     ///
     ////////////////////////////////////////////////////////////
-    WindowHandle getNativeHandle() const override;
+    [[nodiscard]] WindowHandle getNativeHandle() const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of the window
@@ -91,7 +91,7 @@ public:
     /// \return Position of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    Vector2i getPosition() const override;
+    [[nodiscard]] Vector2i getPosition() const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the position of the window on screen
@@ -107,7 +107,7 @@ public:
     /// \return Size of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    Vector2u getSize() const override;
+    [[nodiscard]] Vector2u getSize() const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the size of the rendering region of the window
@@ -187,7 +187,7 @@ public:
     /// \return True if window has focus, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool hasFocus() const override;
+    [[nodiscard]] bool hasFocus() const override;
 
 protected:
     ////////////////////////////////////////////////////////////

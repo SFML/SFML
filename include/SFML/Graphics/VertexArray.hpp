@@ -74,7 +74,7 @@ public:
     /// \return Number of vertices in the array
     ///
     ////////////////////////////////////////////////////////////
-    std::size_t getVertexCount() const;
+    [[nodiscard]] std::size_t getVertexCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a read-write access to a vertex by its index
@@ -162,7 +162,7 @@ public:
     /// \return Primitive type
     ///
     ////////////////////////////////////////////////////////////
-    PrimitiveType getPrimitiveType() const;
+    [[nodiscard]] PrimitiveType getPrimitiveType() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Compute the bounding rectangle of the vertex array
@@ -173,7 +173,7 @@ public:
     /// \return Bounding rectangle of the vertex array
     ///
     ////////////////////////////////////////////////////////////
-    FloatRect getBounds() const;
+    [[nodiscard]] FloatRect getBounds() const;
 
 private:
     ////////////////////////////////////////////////////////////

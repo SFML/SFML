@@ -151,7 +151,7 @@ public:
     /// \return Handle of the window
     ///
     ////////////////////////////////////////////////////////////
-    virtual WindowHandle getNativeHandle() const = 0;
+    [[nodiscard]] virtual WindowHandle getNativeHandle() const = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of the window
@@ -159,7 +159,7 @@ public:
     /// \return Position of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual Vector2i getPosition() const = 0;
+    [[nodiscard]] virtual Vector2i getPosition() const = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the minimum window rendering region size
@@ -167,7 +167,7 @@ public:
     /// \return Minimum size
     ///
     ////////////////////////////////////////////////////////////
-    std::optional<Vector2u> getMinimumSize() const;
+    [[nodiscard]] std::optional<Vector2u> getMinimumSize() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the maximum window rendering region size
@@ -175,7 +175,7 @@ public:
     /// \return Maximum size
     ///
     ////////////////////////////////////////////////////////////
-    std::optional<Vector2u> getMaximumSize() const;
+    [[nodiscard]] std::optional<Vector2u> getMaximumSize() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the position of the window on screen
@@ -191,7 +191,7 @@ public:
     /// \return Size of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual Vector2u getSize() const = 0;
+    [[nodiscard]] virtual Vector2u getSize() const = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the size of the rendering region of the window
@@ -291,7 +291,7 @@ public:
     /// \return True if window has focus, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool hasFocus() const = 0;
+    [[nodiscard]] virtual bool hasFocus() const = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a Vulkan rendering surface

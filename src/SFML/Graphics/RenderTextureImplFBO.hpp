@@ -128,7 +128,7 @@ private:
     /// \return True if the render-texture use sRGB encoding, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool isSrgb() const override;
+    [[nodiscard]] bool isSrgb() const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the pixels of the target texture

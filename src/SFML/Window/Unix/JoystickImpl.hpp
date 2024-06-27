@@ -83,7 +83,7 @@ public:
     /// \return Joystick capabilities
     ///
     ////////////////////////////////////////////////////////////
-    JoystickCaps getCapabilities() const;
+    [[nodiscard]] JoystickCaps getCapabilities() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the joystick identification
@@ -91,7 +91,7 @@ public:
     /// \return Joystick identification
     ///
     ////////////////////////////////////////////////////////////
-    Joystick::Identification getIdentification() const;
+    [[nodiscard]] Joystick::Identification getIdentification() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the joystick and get its new state

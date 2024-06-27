@@ -50,7 +50,7 @@ public:
     TemporaryFile& operator=(const TemporaryFile&) = delete;
 
     // Return the randomly generated path.
-    const std::filesystem::path& getPath() const
+    [[nodiscard]] const std::filesystem::path& getPath() const
     {
         return m_path;
     }

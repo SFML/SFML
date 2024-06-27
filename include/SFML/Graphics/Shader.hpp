@@ -588,7 +588,7 @@ public:
     /// \return OpenGL handle of the shader or 0 if not yet loaded
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int getNativeHandle() const;
+    [[nodiscard]] unsigned int getNativeHandle() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Bind a shader for rendering

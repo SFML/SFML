@@ -154,7 +154,7 @@ public:
         /// \return True if the status is a success, false if it is a failure
         ///
         ////////////////////////////////////////////////////////////
-        bool isOk() const;
+        [[nodiscard]] bool isOk() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the status code of the response
@@ -162,7 +162,7 @@ public:
         /// \return Status code
         ///
         ////////////////////////////////////////////////////////////
-        Status getStatus() const;
+        [[nodiscard]] Status getStatus() const;
 
         ////////////////////////////////////////////////////////////
         /// \brief Get the full message contained in the response
@@ -170,7 +170,7 @@ public:
         /// \return The response message
         ///
         ////////////////////////////////////////////////////////////
-        const std::string& getMessage() const;
+        [[nodiscard]] const std::string& getMessage() const;
 
     private:
         ////////////////////////////////////////////////////////////
@@ -201,7 +201,7 @@ public:
         /// \return Directory name
         ///
         ////////////////////////////////////////////////////////////
-        const std::filesystem::path& getDirectory() const;
+        [[nodiscard]] const std::filesystem::path& getDirectory() const;
 
     private:
         ////////////////////////////////////////////////////////////
@@ -233,7 +233,7 @@ public:
         /// \return Array containing the requested listing
         ///
         ////////////////////////////////////////////////////////////
-        const std::vector<std::string>& getListing() const;
+        [[nodiscard]] const std::vector<std::string>& getListing() const;
 
     private:
         ////////////////////////////////////////////////////////////

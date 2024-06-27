@@ -103,7 +103,7 @@ public:
     /// \return Number of samples
     ///
     ////////////////////////////////////////////////////////////
-    std::uint64_t getSampleCount() const;
+    [[nodiscard]] std::uint64_t getSampleCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the number of channels used by the sound
@@ -111,7 +111,7 @@ public:
     /// \return Number of channels (1 = mono, 2 = stereo)
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int getChannelCount() const;
+    [[nodiscard]] unsigned int getChannelCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the sample rate of the sound
@@ -119,7 +119,7 @@ public:
     /// \return Sample rate, in samples per second
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int getSampleRate() const;
+    [[nodiscard]] unsigned int getSampleRate() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the map of position in sample frame to sound channel
@@ -132,7 +132,7 @@ public:
     /// \see getSampleRate, getChannelCount, getDuration
     ///
     ////////////////////////////////////////////////////////////
-    const std::vector<SoundChannel>& getChannelMap() const;
+    [[nodiscard]] const std::vector<SoundChannel>& getChannelMap() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the total duration of the sound file
@@ -143,7 +143,7 @@ public:
     /// \return Duration of the sound file
     ///
     ////////////////////////////////////////////////////////////
-    Time getDuration() const;
+    [[nodiscard]] Time getDuration() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the read offset of the file in time
@@ -151,7 +151,7 @@ public:
     /// \return Time position
     ///
     ////////////////////////////////////////////////////////////
-    Time getTimeOffset() const;
+    [[nodiscard]] Time getTimeOffset() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the read offset of the file in samples
@@ -159,7 +159,7 @@ public:
     /// \return Sample position
     ///
     ////////////////////////////////////////////////////////////
-    std::uint64_t getSampleOffset() const;
+    [[nodiscard]] std::uint64_t getSampleOffset() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current read position to the given sample offset

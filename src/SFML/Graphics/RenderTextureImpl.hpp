@@ -99,7 +99,7 @@ public:
     /// \return True if the render-texture use sRGB encoding, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool isSrgb() const = 0;
+    [[nodiscard]] virtual bool isSrgb() const = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the pixels of the target texture

@@ -90,7 +90,7 @@ public:
     /// \see findIntersection
     ///
     ////////////////////////////////////////////////////////////
-    constexpr bool contains(const Vector2<T>& point) const;
+    [[nodiscard]] constexpr bool contains(const Vector2<T>& point) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check the intersection between two rectangles
@@ -102,7 +102,7 @@ public:
     /// \see contains
     ///
     ////////////////////////////////////////////////////////////
-    constexpr std::optional<Rect<T>> findIntersection(const Rect<T>& rectangle) const;
+    [[nodiscard]] constexpr std::optional<Rect<T>> findIntersection(const Rect<T>& rectangle) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of the center of the rectangle
@@ -110,7 +110,7 @@ public:
     /// \return Center of rectangle
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Vector2<T> getCenter() const;
+    [[nodiscard]] constexpr Vector2<T> getCenter() const;
 
     ////////////////////////////////////////////////////////////
     // Member data

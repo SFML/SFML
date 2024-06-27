@@ -22,13 +22,13 @@ class SoundSource : public sf::SoundSource
     {
     }
 
-    void* getSound() const override
+    [[nodiscard]] void* getSound() const override
     {
         return {};
     }
 
 public:
-    Status getStatus() const override
+    [[nodiscard]] Status getStatus() const override
     {
         return {};
     }

@@ -44,7 +44,7 @@ public:
         s_font = &font;
     }
 
-    const std::string& getName() const
+    [[nodiscard]] const std::string& getName() const
     {
         return m_name;
     }

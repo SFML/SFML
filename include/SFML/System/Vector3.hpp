@@ -76,7 +76,7 @@ public:
     /// If you are not interested in the actual length, but only in comparisons, consider using lengthSq().
     ///
     ////////////////////////////////////////////////////////////
-    SFML_SYSTEM_API T length() const;
+    [[nodiscard]] SFML_SYSTEM_API T length() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Square of vector's length.
@@ -84,7 +84,7 @@ public:
     /// Suitable for comparisons, more efficient than length().
     ///
     ////////////////////////////////////////////////////////////
-    constexpr T lengthSq() const;
+    [[nodiscard]] constexpr T lengthSq() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Vector with same direction but length 1 <i><b>(floating-point)</b></i>.
@@ -98,13 +98,13 @@ public:
     /// \brief Dot product of two 3D vectors.
     ///
     ////////////////////////////////////////////////////////////
-    constexpr T dot(const Vector3& rhs) const;
+    [[nodiscard]] constexpr T dot(const Vector3& rhs) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Cross product of two 3D vectors.
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Vector3 cross(const Vector3& rhs) const;
+    [[nodiscard]] constexpr Vector3 cross(const Vector3& rhs) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Component-wise multiplication of \c *this and \c rhs.
@@ -115,7 +115,7 @@ public:
     /// This operation is also known as the Hadamard or Schur product.
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Vector3 cwiseMul(const Vector3& rhs) const;
+    [[nodiscard]] constexpr Vector3 cwiseMul(const Vector3& rhs) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Component-wise division of \c *this and \c rhs.
@@ -127,7 +127,7 @@ public:
     /// \pre Neither component of \c rhs is zero.
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Vector3 cwiseDiv(const Vector3& rhs) const;
+    [[nodiscard]] constexpr Vector3 cwiseDiv(const Vector3& rhs) const;
 
     ////////////////////////////////////////////////////////////
     // Member data

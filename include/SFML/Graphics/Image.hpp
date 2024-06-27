@@ -170,7 +170,7 @@ public:
     /// \return Size of the image, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    Vector2u getSize() const;
+    [[nodiscard]] Vector2u getSize() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a transparency mask from a specified color-key
@@ -248,7 +248,7 @@ public:
     /// \see setPixel
     ///
     ////////////////////////////////////////////////////////////
-    Color getPixel(const Vector2u& coords) const;
+    [[nodiscard]] Color getPixel(const Vector2u& coords) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a read-only pointer to the array of pixels
@@ -263,7 +263,7 @@ public:
     /// \return Read-only pointer to the array of pixels
     ///
     ////////////////////////////////////////////////////////////
-    const std::uint8_t* getPixelsPtr() const;
+    [[nodiscard]] const std::uint8_t* getPixelsPtr() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Flip the image horizontally (left <-> right)

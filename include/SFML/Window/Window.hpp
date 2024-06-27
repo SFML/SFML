@@ -221,7 +221,7 @@ public:
     /// \return Structure containing the OpenGL context settings
     ///
     ////////////////////////////////////////////////////////////
-    const ContextSettings& getSettings() const;
+    [[nodiscard]] const ContextSettings& getSettings() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable vertical synchronization
