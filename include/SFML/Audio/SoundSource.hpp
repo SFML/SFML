@@ -440,7 +440,7 @@ public:
     /// \see setPitch
     ///
     ////////////////////////////////////////////////////////////
-    float getPitch() const;
+    [[nodiscard]] float getPitch() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the pan of the sound
@@ -450,7 +450,7 @@ public:
     /// \see setPan
     ///
     ////////////////////////////////////////////////////////////
-    float getPan() const;
+    [[nodiscard]] float getPan() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the volume of the sound
@@ -460,7 +460,7 @@ public:
     /// \see setVolume
     ///
     ////////////////////////////////////////////////////////////
-    float getVolume() const;
+    [[nodiscard]] float getVolume() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Tell whether spatialization of the sound is enabled
@@ -470,7 +470,7 @@ public:
     /// \see setSpatializationEnabled
     ///
     ////////////////////////////////////////////////////////////
-    bool isSpatializationEnabled() const;
+    [[nodiscard]] bool isSpatializationEnabled() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the 3D position of the sound in the audio scene
@@ -480,7 +480,7 @@ public:
     /// \see setPosition
     ///
     ////////////////////////////////////////////////////////////
-    Vector3f getPosition() const;
+    [[nodiscard]] Vector3f getPosition() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the 3D direction of the sound in the audio scene
@@ -490,7 +490,7 @@ public:
     /// \see setDirection
     ///
     ////////////////////////////////////////////////////////////
-    Vector3f getDirection() const;
+    [[nodiscard]] Vector3f getDirection() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the cone properties of the sound in the audio scene
@@ -500,7 +500,7 @@ public:
     /// \see setCone
     ///
     ////////////////////////////////////////////////////////////
-    Cone getCone() const;
+    [[nodiscard]] Cone getCone() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the 3D velocity of the sound in the audio scene
@@ -510,7 +510,7 @@ public:
     /// \see setVelocity
     ///
     ////////////////////////////////////////////////////////////
-    Vector3f getVelocity() const;
+    [[nodiscard]] Vector3f getVelocity() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the doppler factor of the sound
@@ -520,7 +520,7 @@ public:
     /// \see setDopplerFactor
     ///
     ////////////////////////////////////////////////////////////
-    float getDopplerFactor() const;
+    [[nodiscard]] float getDopplerFactor() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the directional attenuation factor of the sound
@@ -530,7 +530,7 @@ public:
     /// \see setDirectionalAttenuationFactor
     ///
     ////////////////////////////////////////////////////////////
-    float getDirectionalAttenuationFactor() const;
+    [[nodiscard]] float getDirectionalAttenuationFactor() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Tell whether the sound's position is relative to the
@@ -541,7 +541,7 @@ public:
     /// \see setRelativeToListener
     ///
     ////////////////////////////////////////////////////////////
-    bool isRelativeToListener() const;
+    [[nodiscard]] bool isRelativeToListener() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the minimum distance of the sound
@@ -551,7 +551,7 @@ public:
     /// \see setMinDistance, getAttenuation
     ///
     ////////////////////////////////////////////////////////////
-    float getMinDistance() const;
+    [[nodiscard]] float getMinDistance() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the maximum distance of the sound
@@ -561,7 +561,7 @@ public:
     /// \see setMaxDistance, getAttenuation
     ///
     ////////////////////////////////////////////////////////////
-    float getMaxDistance() const;
+    [[nodiscard]] float getMaxDistance() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the minimum gain of the sound
@@ -571,7 +571,7 @@ public:
     /// \see setMinGain, getAttenuation
     ///
     ////////////////////////////////////////////////////////////
-    float getMinGain() const;
+    [[nodiscard]] float getMinGain() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the maximum gain of the sound
@@ -581,7 +581,7 @@ public:
     /// \see setMaxGain, getAttenuation
     ///
     ////////////////////////////////////////////////////////////
-    float getMaxGain() const;
+    [[nodiscard]] float getMaxGain() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the attenuation factor of the sound
@@ -591,7 +591,7 @@ public:
     /// \see setAttenuation, getMinDistance
     ///
     ////////////////////////////////////////////////////////////
-    float getAttenuation() const;
+    [[nodiscard]] float getAttenuation() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Overload of assignment operator
@@ -644,7 +644,7 @@ public:
     /// \return Current status of the sound
     ///
     ////////////////////////////////////////////////////////////
-    virtual Status getStatus() const = 0;
+    [[nodiscard]] virtual Status getStatus() const = 0;
 
 protected:
     ////////////////////////////////////////////////////////////
@@ -662,7 +662,7 @@ private:
     /// \return The sound object
     ///
     ////////////////////////////////////////////////////////////
-    virtual void* getSound() const = 0;
+    [[nodiscard]] virtual void* getSound() const = 0;
 };
 
 // NOLINTEND(readability-make-member-function-const)

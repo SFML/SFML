@@ -96,7 +96,7 @@ public:
     /// \return Sample rate, in samples per second
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int getSampleRate() const;
+    [[nodiscard]] unsigned int getSampleRate() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a list of the names of all available audio capture devices
@@ -144,7 +144,7 @@ public:
     /// \return The name of the current audio capture device
     ///
     ////////////////////////////////////////////////////////////
-    const std::string& getDevice() const;
+    [[nodiscard]] const std::string& getDevice() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the channel count of the audio capture device
@@ -172,7 +172,7 @@ public:
     /// \see setChannelCount
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int getChannelCount() const;
+    [[nodiscard]] unsigned int getChannelCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the map of position in sample frame to sound channel
@@ -183,7 +183,7 @@ public:
     /// \return Map of position in sample frame to sound channel
     ///
     ////////////////////////////////////////////////////////////
-    const std::vector<SoundChannel>& getChannelMap() const;
+    [[nodiscard]] const std::vector<SoundChannel>& getChannelMap() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check if the system supports audio capture

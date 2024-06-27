@@ -118,7 +118,7 @@ public:
     /// \see setBlocking
     ///
     ////////////////////////////////////////////////////////////
-    bool isBlocking() const;
+    [[nodiscard]] bool isBlocking() const;
 
 protected:
     ////////////////////////////////////////////////////////////
@@ -151,7 +151,7 @@ protected:
     /// \return The internal (OS-specific) handle of the socket
     ///
     ////////////////////////////////////////////////////////////
-    SocketHandle getNativeHandle() const;
+    [[nodiscard]] SocketHandle getNativeHandle() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Create the internal representation of the socket

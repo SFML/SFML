@@ -331,7 +331,7 @@ private:
     /// \return The device ID of the currently selected device or `std::nullopt` if none could be found
     ///
     ////////////////////////////////////////////////////////////
-    std::optional<ma_device_id> getSelectedDeviceId() const;
+    [[nodiscard]] std::optional<ma_device_id> getSelectedDeviceId() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Initialize the audio device and engine

@@ -124,7 +124,7 @@ public:
     /// \return Number of channels
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int getChannelCount() const;
+    [[nodiscard]] unsigned int getChannelCount() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the stream sample rate of the stream
@@ -135,7 +135,7 @@ public:
     /// \return Sample rate, in number of samples per second
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int getSampleRate() const;
+    [[nodiscard]] unsigned int getSampleRate() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the map of position in sample frame to sound channel
@@ -146,7 +146,7 @@ public:
     /// \return Map of position in sample frame to sound channel
     ///
     ////////////////////////////////////////////////////////////
-    std::vector<SoundChannel> getChannelMap() const;
+    [[nodiscard]] std::vector<SoundChannel> getChannelMap() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current status of the stream (stopped, paused, playing)
@@ -154,7 +154,7 @@ public:
     /// \return Current status
     ///
     ////////////////////////////////////////////////////////////
-    Status getStatus() const override;
+    [[nodiscard]] Status getStatus() const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current playing position of the stream
@@ -179,7 +179,7 @@ public:
     /// \see setPlayingOffset
     ///
     ////////////////////////////////////////////////////////////
-    Time getPlayingOffset() const;
+    [[nodiscard]] Time getPlayingOffset() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Set whether or not the stream should loop after reaching the end
@@ -204,7 +204,7 @@ public:
     /// \see setLoop
     ///
     ////////////////////////////////////////////////////////////
-    bool getLoop() const;
+    [[nodiscard]] bool getLoop() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the effect processor to be applied to the sound
@@ -292,7 +292,7 @@ private:
     /// \return The sound object
     ///
     ////////////////////////////////////////////////////////////
-    void* getSound() const override;
+    [[nodiscard]] void* getSound() const override;
 
     ////////////////////////////////////////////////////////////
     // Member data

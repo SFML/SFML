@@ -155,7 +155,7 @@ public:
     /// \return Music duration
     ///
     ////////////////////////////////////////////////////////////
-    Time getDuration() const;
+    [[nodiscard]] Time getDuration() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the positions of the of the sound's looping sequence
@@ -172,7 +172,7 @@ public:
     /// \see setLoopPoints
     ///
     ////////////////////////////////////////////////////////////
-    TimeSpan getLoopPoints() const;
+    [[nodiscard]] TimeSpan getLoopPoints() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Sets the beginning and duration of the sound's looping sequence using sf::Time
@@ -252,7 +252,7 @@ private:
     /// \return The number of samples elapsed at the given time
     ///
     ////////////////////////////////////////////////////////////
-    std::uint64_t timeToSamples(Time position) const;
+    [[nodiscard]] std::uint64_t timeToSamples(Time position) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Helper to convert a sample position to an sf::Time
@@ -262,7 +262,7 @@ private:
     /// \return The Time position of the given sample
     ///
     ////////////////////////////////////////////////////////////
-    Time samplesToTime(std::uint64_t samples) const;
+    [[nodiscard]] Time samplesToTime(std::uint64_t samples) const;
 
     ////////////////////////////////////////////////////////////
     // Member data

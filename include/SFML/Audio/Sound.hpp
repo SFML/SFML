@@ -179,7 +179,7 @@ public:
     /// \return Sound buffer attached to the sound
     ///
     ////////////////////////////////////////////////////////////
-    const SoundBuffer& getBuffer() const;
+    [[nodiscard]] const SoundBuffer& getBuffer() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Tell whether or not the sound is in loop mode
@@ -189,7 +189,7 @@ public:
     /// \see setLoop
     ///
     ////////////////////////////////////////////////////////////
-    bool getLoop() const;
+    [[nodiscard]] bool getLoop() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current playing position of the sound
@@ -199,7 +199,7 @@ public:
     /// \see setPlayingOffset
     ///
     ////////////////////////////////////////////////////////////
-    Time getPlayingOffset() const;
+    [[nodiscard]] Time getPlayingOffset() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current status of the sound (stopped, paused, playing)
@@ -207,7 +207,7 @@ public:
     /// \return Current status of the sound
     ///
     ////////////////////////////////////////////////////////////
-    Status getStatus() const override;
+    [[nodiscard]] Status getStatus() const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Overload of assignment operator
@@ -237,7 +237,7 @@ private:
     /// \return The sound object
     ///
     ////////////////////////////////////////////////////////////
-    void* getSound() const override;
+    [[nodiscard]] void* getSound() const override;
 
     ////////////////////////////////////////////////////////////
     // Member data

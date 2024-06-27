@@ -61,7 +61,7 @@ public:
     /// \see listen
     ///
     ////////////////////////////////////////////////////////////
-    unsigned short getLocalPort() const;
+    [[nodiscard]] unsigned short getLocalPort() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Start listening for incoming connection attempts

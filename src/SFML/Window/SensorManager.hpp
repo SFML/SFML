@@ -89,7 +89,7 @@ public:
     /// \return True if the sensor is enabled, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool isEnabled(Sensor::Type sensor) const;
+    [[nodiscard]] bool isEnabled(Sensor::Type sensor) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current value of a sensor
@@ -99,7 +99,7 @@ public:
     /// \return Current value of the sensor
     ///
     ////////////////////////////////////////////////////////////
-    Vector3f getValue(Sensor::Type sensor) const;
+    [[nodiscard]] Vector3f getValue(Sensor::Type sensor) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the state of all the sensors
