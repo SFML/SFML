@@ -122,7 +122,7 @@ public:
     /// \see setPosition
     ///
     ////////////////////////////////////////////////////////////
-    const Vector2f& getPosition() const;
+    [[nodiscard]] const Vector2f& getPosition() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief get the orientation of the object
@@ -134,7 +134,7 @@ public:
     /// \see setRotation
     ///
     ////////////////////////////////////////////////////////////
-    Angle getRotation() const;
+    [[nodiscard]] Angle getRotation() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief get the current scale of the object
@@ -144,7 +144,7 @@ public:
     /// \see setScale
     ///
     ////////////////////////////////////////////////////////////
-    const Vector2f& getScale() const;
+    [[nodiscard]] const Vector2f& getScale() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief get the local origin of the object
@@ -154,7 +154,7 @@ public:
     /// \see setOrigin
     ///
     ////////////////////////////////////////////////////////////
-    const Vector2f& getOrigin() const;
+    [[nodiscard]] const Vector2f& getOrigin() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Move the object by a given offset
@@ -214,7 +214,7 @@ public:
     /// \see getInverseTransform
     ///
     ////////////////////////////////////////////////////////////
-    const Transform& getTransform() const;
+    [[nodiscard]] const Transform& getTransform() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief get the inverse of the combined transform of the object
@@ -224,7 +224,7 @@ public:
     /// \see getTransform
     ///
     ////////////////////////////////////////////////////////////
-    const Transform& getInverseTransform() const;
+    [[nodiscard]] const Transform& getInverseTransform() const;
 
 private:
     ////////////////////////////////////////////////////////////

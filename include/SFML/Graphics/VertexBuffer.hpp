@@ -319,7 +319,7 @@ public:
     /// \return True if vertex buffers are supported, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    static bool isAvailable();
+    [[nodiscard]] static bool isAvailable();
 
 private:
     ////////////////////////////////////////////////////////////

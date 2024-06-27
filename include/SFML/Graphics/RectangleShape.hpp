@@ -71,7 +71,7 @@ public:
     /// \see setSize
     ///
     ////////////////////////////////////////////////////////////
-    const Vector2f& getSize() const;
+    [[nodiscard]] const Vector2f& getSize() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the number of points defining the shape
@@ -80,7 +80,7 @@ public:
     ///         shapes, this number is always 4.
     ///
     ////////////////////////////////////////////////////////////
-    std::size_t getPointCount() const override;
+    [[nodiscard]] std::size_t getPointCount() const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a point of the rectangle
@@ -95,7 +95,7 @@ public:
     /// \return index-th point of the shape
     ///
     ////////////////////////////////////////////////////////////
-    Vector2f getPoint(std::size_t index) const override;
+    [[nodiscard]] Vector2f getPoint(std::size_t index) const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the geometric center of the rectangle
@@ -107,7 +107,7 @@ public:
     /// \return The geometric center of the shape
     ///
     ////////////////////////////////////////////////////////////
-    Vector2f getGeometricCenter() const override;
+    [[nodiscard]] Vector2f getGeometricCenter() const override;
 
 private:
     ////////////////////////////////////////////////////////////

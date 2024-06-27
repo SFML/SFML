@@ -80,7 +80,7 @@ SFML_AUDIO_API void setGlobalVolume(float volume);
 /// \see setGlobalVolume
 ///
 ////////////////////////////////////////////////////////////
-SFML_AUDIO_API float getGlobalVolume();
+[[nodiscard]] SFML_AUDIO_API float getGlobalVolume();
 
 ////////////////////////////////////////////////////////////
 /// \brief Set the position of the listener in the scene
@@ -102,7 +102,7 @@ SFML_AUDIO_API void setPosition(const Vector3f& position);
 /// \see setPosition
 ///
 ////////////////////////////////////////////////////////////
-SFML_AUDIO_API Vector3f getPosition();
+[[nodiscard]] SFML_AUDIO_API Vector3f getPosition();
 
 ////////////////////////////////////////////////////////////
 /// \brief Set the forward vector of the listener in the scene
@@ -129,7 +129,7 @@ SFML_AUDIO_API void setDirection(const Vector3f& direction);
 /// \see setDirection
 ///
 ////////////////////////////////////////////////////////////
-SFML_AUDIO_API Vector3f getDirection();
+[[nodiscard]] SFML_AUDIO_API Vector3f getDirection();
 
 ////////////////////////////////////////////////////////////
 /// \brief Set the velocity of the listener in the scene
@@ -151,7 +151,7 @@ SFML_AUDIO_API void setVelocity(const Vector3f& velocity);
 /// \see setVelocity
 ///
 ////////////////////////////////////////////////////////////
-SFML_AUDIO_API Vector3f getVelocity();
+[[nodiscard]] SFML_AUDIO_API Vector3f getVelocity();
 
 ////////////////////////////////////////////////////////////
 /// \brief Set the cone properties of the listener in the audio scene
@@ -174,7 +174,7 @@ SFML_AUDIO_API void setCone(const Listener::Cone& cone);
 /// \see setCone
 ///
 ////////////////////////////////////////////////////////////
-SFML_AUDIO_API Listener::Cone getCone();
+[[nodiscard]] SFML_AUDIO_API Listener::Cone getCone();
 
 ////////////////////////////////////////////////////////////
 /// \brief Set the upward vector of the listener in the scene
@@ -201,7 +201,7 @@ SFML_AUDIO_API void setUpVector(const Vector3f& upVector);
 /// \see setUpVector
 ///
 ////////////////////////////////////////////////////////////
-SFML_AUDIO_API Vector3f getUpVector();
+[[nodiscard]] SFML_AUDIO_API Vector3f getUpVector();
 } // namespace sf::Listener
 
 

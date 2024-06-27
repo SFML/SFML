@@ -50,7 +50,7 @@ namespace Clipboard
 /// \return Clipboard contents as sf::String object
 ///
 ////////////////////////////////////////////////////////////
-SFML_WINDOW_API String getString();
+[[nodiscard]] SFML_WINDOW_API String getString();
 
 ////////////////////////////////////////////////////////////
 /// \brief Set the content of the clipboard as string data

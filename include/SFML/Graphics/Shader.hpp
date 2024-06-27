@@ -623,7 +623,7 @@ public:
     /// \return True if shaders are supported, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    static bool isAvailable();
+    [[nodiscard]] static bool isAvailable();
 
     ////////////////////////////////////////////////////////////
     /// \brief Tell whether or not the system supports geometry shaders
@@ -642,7 +642,7 @@ public:
     /// \return True if geometry shaders are supported, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    static bool isGeometryAvailable();
+    [[nodiscard]] static bool isGeometryAvailable();
 
 private:
     ////////////////////////////////////////////////////////////

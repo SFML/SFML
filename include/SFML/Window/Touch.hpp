@@ -50,7 +50,7 @@ namespace Touch
 /// \return True if \a finger is currently touching the screen, false otherwise
 ///
 ////////////////////////////////////////////////////////////
-SFML_WINDOW_API bool isDown(unsigned int finger);
+[[nodiscard]] SFML_WINDOW_API bool isDown(unsigned int finger);
 
 ////////////////////////////////////////////////////////////
 /// \brief Get the current position of a touch in desktop coordinates
@@ -63,7 +63,7 @@ SFML_WINDOW_API bool isDown(unsigned int finger);
 /// \return Current position of \a finger, or undefined if it's not down
 ///
 ////////////////////////////////////////////////////////////
-SFML_WINDOW_API Vector2i getPosition(unsigned int finger);
+[[nodiscard]] SFML_WINDOW_API Vector2i getPosition(unsigned int finger);
 
 ////////////////////////////////////////////////////////////
 /// \brief Get the current position of a touch in window coordinates
@@ -77,7 +77,7 @@ SFML_WINDOW_API Vector2i getPosition(unsigned int finger);
 /// \return Current position of \a finger, or undefined if it's not down
 ///
 ////////////////////////////////////////////////////////////
-SFML_WINDOW_API Vector2i getPosition(unsigned int finger, const WindowBase& relativeTo);
+[[nodiscard]] SFML_WINDOW_API Vector2i getPosition(unsigned int finger, const WindowBase& relativeTo);
 } // namespace Touch
 
 } // namespace sf

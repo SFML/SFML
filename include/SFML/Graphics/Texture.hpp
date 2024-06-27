@@ -214,7 +214,7 @@ public:
     /// \return Size in pixels
     ///
     ////////////////////////////////////////////////////////////
-    Vector2u getSize() const;
+    [[nodiscard]] Vector2u getSize() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Copy the texture pixels to an image
@@ -229,7 +229,7 @@ public:
     /// \see loadFromImage
     ///
     ////////////////////////////////////////////////////////////
-    Image copyToImage() const;
+    [[nodiscard]] Image copyToImage() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the whole texture from an array of pixels
@@ -404,7 +404,7 @@ public:
     /// \see setSmooth
     ///
     ////////////////////////////////////////////////////////////
-    bool isSmooth() const;
+    [[nodiscard]] bool isSmooth() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Tell whether the texture source is converted from sRGB or not
@@ -414,7 +414,7 @@ public:
     /// \see setSrgb
     ///
     ////////////////////////////////////////////////////////////
-    bool isSrgb() const;
+    [[nodiscard]] bool isSrgb() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable repeating
@@ -448,7 +448,7 @@ public:
     /// \see setRepeated
     ///
     ////////////////////////////////////////////////////////////
-    bool isRepeated() const;
+    [[nodiscard]] bool isRepeated() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Generate a mipmap using the current texture data
@@ -493,7 +493,7 @@ public:
     /// \return OpenGL handle of the texture or 0 if not yet created
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int getNativeHandle() const;
+    [[nodiscard]] unsigned int getNativeHandle() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Bind a texture for rendering
@@ -538,7 +538,7 @@ public:
     /// \return Maximum size allowed for textures, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    static unsigned int getMaximumSize();
+    [[nodiscard]] static unsigned int getMaximumSize();
 
 private:
     friend class Text;
@@ -566,7 +566,7 @@ private:
     /// \return Valid nearest size (greater than or equal to specified size)
     ///
     ////////////////////////////////////////////////////////////
-    static unsigned int getValidSize(unsigned int size);
+    [[nodiscard]] static unsigned int getValidSize(unsigned int size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Invalidate the mipmap if one exists
