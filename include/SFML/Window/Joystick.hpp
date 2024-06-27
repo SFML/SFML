@@ -82,7 +82,7 @@ struct SFML_WINDOW_API Identification
 /// \return True if the joystick is connected, false otherwise
 ///
 ////////////////////////////////////////////////////////////
-SFML_WINDOW_API bool isConnected(unsigned int joystick);
+[[nodiscard]] SFML_WINDOW_API bool isConnected(unsigned int joystick);
 
 ////////////////////////////////////////////////////////////
 /// \brief Return the number of buttons supported by a joystick
@@ -94,7 +94,7 @@ SFML_WINDOW_API bool isConnected(unsigned int joystick);
 /// \return Number of buttons supported by the joystick
 ///
 ////////////////////////////////////////////////////////////
-SFML_WINDOW_API unsigned int getButtonCount(unsigned int joystick);
+[[nodiscard]] SFML_WINDOW_API unsigned int getButtonCount(unsigned int joystick);
 
 ////////////////////////////////////////////////////////////
 /// \brief Check if a joystick supports a given axis
@@ -107,7 +107,7 @@ SFML_WINDOW_API unsigned int getButtonCount(unsigned int joystick);
 /// \return True if the joystick supports the axis, false otherwise
 ///
 ////////////////////////////////////////////////////////////
-SFML_WINDOW_API bool hasAxis(unsigned int joystick, Axis axis);
+[[nodiscard]] SFML_WINDOW_API bool hasAxis(unsigned int joystick, Axis axis);
 
 ////////////////////////////////////////////////////////////
 /// \brief Check if a joystick button is pressed
@@ -120,7 +120,7 @@ SFML_WINDOW_API bool hasAxis(unsigned int joystick, Axis axis);
 /// \return True if the button is pressed, false otherwise
 ///
 ////////////////////////////////////////////////////////////
-SFML_WINDOW_API bool isButtonPressed(unsigned int joystick, unsigned int button);
+[[nodiscard]] SFML_WINDOW_API bool isButtonPressed(unsigned int joystick, unsigned int button);
 
 ////////////////////////////////////////////////////////////
 /// \brief Get the current position of a joystick axis
@@ -133,7 +133,7 @@ SFML_WINDOW_API bool isButtonPressed(unsigned int joystick, unsigned int button)
 /// \return Current position of the axis, in range [-100 .. 100]
 ///
 ////////////////////////////////////////////////////////////
-SFML_WINDOW_API float getAxisPosition(unsigned int joystick, Axis axis);
+[[nodiscard]] SFML_WINDOW_API float getAxisPosition(unsigned int joystick, Axis axis);
 
 ////////////////////////////////////////////////////////////
 /// \brief Get the joystick information
@@ -143,7 +143,7 @@ SFML_WINDOW_API float getAxisPosition(unsigned int joystick, Axis axis);
 /// \return Structure containing joystick information.
 ///
 ////////////////////////////////////////////////////////////
-SFML_WINDOW_API Identification getIdentification(unsigned int joystick);
+[[nodiscard]] SFML_WINDOW_API Identification getIdentification(unsigned int joystick);
 
 ////////////////////////////////////////////////////////////
 /// \brief Update the states of all joysticks

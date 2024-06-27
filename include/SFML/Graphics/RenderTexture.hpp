@@ -109,7 +109,7 @@ public:
     /// \return The maximum anti-aliasing level supported by the system
     ///
     ////////////////////////////////////////////////////////////
-    static unsigned int getMaximumAntialiasingLevel();
+    [[nodiscard]] static unsigned int getMaximumAntialiasingLevel();
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable texture smoothing
@@ -132,7 +132,7 @@ public:
     /// \see setSmooth
     ///
     ////////////////////////////////////////////////////////////
-    bool isSmooth() const;
+    [[nodiscard]] bool isSmooth() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable texture repeating
@@ -155,7 +155,7 @@ public:
     /// \see setRepeated
     ///
     ////////////////////////////////////////////////////////////
-    bool isRepeated() const;
+    [[nodiscard]] bool isRepeated() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Generate a mipmap using the current texture data
@@ -210,7 +210,7 @@ public:
     /// \return Size in pixels
     ///
     ////////////////////////////////////////////////////////////
-    Vector2u getSize() const override;
+    [[nodiscard]] Vector2u getSize() const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Tell if the render-texture will use sRGB encoding when drawing on it
@@ -221,7 +221,7 @@ public:
     /// \return True if the render-texture use sRGB encoding, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool isSrgb() const override;
+    [[nodiscard]] bool isSrgb() const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a read-only reference to the target texture
@@ -237,7 +237,7 @@ public:
     /// \return Const reference to the texture
     ///
     ////////////////////////////////////////////////////////////
-    const Texture& getTexture() const;
+    [[nodiscard]] const Texture& getTexture() const;
 
 private:
     ////////////////////////////////////////////////////////////

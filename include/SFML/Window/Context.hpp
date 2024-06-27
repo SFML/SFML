@@ -127,7 +127,7 @@ public:
     /// \return True if available, false if unavailable
     ///
     ////////////////////////////////////////////////////////////
-    static bool isExtensionAvailable(std::string_view name);
+    [[nodiscard]] static bool isExtensionAvailable(std::string_view name);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the address of an OpenGL function
@@ -140,7 +140,7 @@ public:
     /// \return Address of the OpenGL function, 0 on failure
     ///
     ////////////////////////////////////////////////////////////
-    static GlFunctionPointer getFunction(const char* name);
+    [[nodiscard]] static GlFunctionPointer getFunction(const char* name);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the currently active context
@@ -152,7 +152,7 @@ public:
     /// \return The currently active context or a null pointer if none is active
     ///
     ////////////////////////////////////////////////////////////
-    static const Context* getActiveContext();
+    [[nodiscard]] static const Context* getActiveContext();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the currently active context's ID
@@ -163,7 +163,7 @@ public:
     /// \return The active context's ID or 0 if no context is currently active
     ///
     ////////////////////////////////////////////////////////////
-    static std::uint64_t getActiveContextId();
+    [[nodiscard]] static std::uint64_t getActiveContextId();
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct a in-memory context

@@ -162,7 +162,7 @@ public:
     /// \see isReady
     ///
     ////////////////////////////////////////////////////////////
-    bool isReady(Socket& socket) const;
+    [[nodiscard]] bool isReady(Socket& socket) const;
 
 private:
     struct SocketSelectorImpl;

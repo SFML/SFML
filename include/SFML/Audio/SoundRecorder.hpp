@@ -107,7 +107,7 @@ public:
     /// \return A vector of strings containing the names
     ///
     ////////////////////////////////////////////////////////////
-    static std::vector<std::string> getAvailableDevices();
+    [[nodiscard]] static std::vector<std::string> getAvailableDevices();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the name of the default audio capture device
@@ -119,7 +119,7 @@ public:
     /// \return The name of the default audio capture device
     ///
     ////////////////////////////////////////////////////////////
-    static std::string getDefaultDevice();
+    [[nodiscard]] static std::string getDefaultDevice();
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the audio capture device
@@ -196,7 +196,7 @@ public:
     /// \return True if audio capture is supported, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    static bool isAvailable();
+    [[nodiscard]] static bool isAvailable();
 
 protected:
     ////////////////////////////////////////////////////////////

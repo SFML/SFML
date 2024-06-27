@@ -332,7 +332,7 @@ private:
     // Helper functions
     ////////////////////////////////////////////////////////////
     template <typename T, typename... Ts>
-    static constexpr bool isInParameterPack(const std::variant<Ts...>&)
+    [[nodiscard]] static constexpr bool isInParameterPack(const std::variant<Ts...>&)
     {
         return (std::is_same_v<T, Ts> || ...);
     }

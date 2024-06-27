@@ -65,7 +65,7 @@ public:
     /// \return Read-only access to the sound buffer
     ///
     ////////////////////////////////////////////////////////////
-    const SoundBuffer& getBuffer() const;
+    [[nodiscard]] const SoundBuffer& getBuffer() const;
 
 protected:
     ////////////////////////////////////////////////////////////

@@ -135,7 +135,7 @@ public:
     /// \see getPublicAddress
     ///
     ////////////////////////////////////////////////////////////
-    static std::optional<IpAddress> getLocalAddress();
+    [[nodiscard]] static std::optional<IpAddress> getLocalAddress();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the computer's public address
@@ -159,7 +159,7 @@ public:
     /// \see getLocalAddress
     ///
     ////////////////////////////////////////////////////////////
-    static std::optional<IpAddress> getPublicAddress(Time timeout = Time::Zero);
+    [[nodiscard]] static std::optional<IpAddress> getPublicAddress(Time timeout = Time::Zero);
 
     ////////////////////////////////////////////////////////////
     // Static member data
@@ -188,7 +188,7 @@ private:
 /// \return True if both addresses are equal
 ///
 ////////////////////////////////////////////////////////////
-SFML_NETWORK_API bool operator==(const IpAddress& left, const IpAddress& right);
+[[nodiscard]] SFML_NETWORK_API bool operator==(const IpAddress& left, const IpAddress& right);
 
 ////////////////////////////////////////////////////////////
 /// \brief Overload of != operator to compare two IP addresses
@@ -199,7 +199,7 @@ SFML_NETWORK_API bool operator==(const IpAddress& left, const IpAddress& right);
 /// \return True if both addresses are different
 ///
 ////////////////////////////////////////////////////////////
-SFML_NETWORK_API bool operator!=(const IpAddress& left, const IpAddress& right);
+[[nodiscard]] SFML_NETWORK_API bool operator!=(const IpAddress& left, const IpAddress& right);
 
 ////////////////////////////////////////////////////////////
 /// \brief Overload of < operator to compare two IP addresses
@@ -210,7 +210,7 @@ SFML_NETWORK_API bool operator!=(const IpAddress& left, const IpAddress& right);
 /// \return True if \a left is lesser than \a right
 ///
 ////////////////////////////////////////////////////////////
-SFML_NETWORK_API bool operator<(const IpAddress& left, const IpAddress& right);
+[[nodiscard]] SFML_NETWORK_API bool operator<(const IpAddress& left, const IpAddress& right);
 
 ////////////////////////////////////////////////////////////
 /// \brief Overload of > operator to compare two IP addresses
@@ -221,7 +221,7 @@ SFML_NETWORK_API bool operator<(const IpAddress& left, const IpAddress& right);
 /// \return True if \a left is greater than \a right
 ///
 ////////////////////////////////////////////////////////////
-SFML_NETWORK_API bool operator>(const IpAddress& left, const IpAddress& right);
+[[nodiscard]] SFML_NETWORK_API bool operator>(const IpAddress& left, const IpAddress& right);
 
 ////////////////////////////////////////////////////////////
 /// \brief Overload of <= operator to compare two IP addresses
@@ -232,7 +232,7 @@ SFML_NETWORK_API bool operator>(const IpAddress& left, const IpAddress& right);
 /// \return True if \a left is lesser or equal than \a right
 ///
 ////////////////////////////////////////////////////////////
-SFML_NETWORK_API bool operator<=(const IpAddress& left, const IpAddress& right);
+[[nodiscard]] SFML_NETWORK_API bool operator<=(const IpAddress& left, const IpAddress& right);
 
 ////////////////////////////////////////////////////////////
 /// \brief Overload of >= operator to compare two IP addresses
@@ -243,7 +243,7 @@ SFML_NETWORK_API bool operator<=(const IpAddress& left, const IpAddress& right);
 /// \return True if \a left is greater or equal than \a right
 ///
 ////////////////////////////////////////////////////////////
-SFML_NETWORK_API bool operator>=(const IpAddress& left, const IpAddress& right);
+[[nodiscard]] SFML_NETWORK_API bool operator>=(const IpAddress& left, const IpAddress& right);
 
 ////////////////////////////////////////////////////////////
 /// \brief Overload of >> operator to extract an IP address from an input stream

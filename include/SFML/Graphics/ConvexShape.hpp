@@ -74,7 +74,7 @@ public:
     /// \see setPointCount
     ///
     ////////////////////////////////////////////////////////////
-    std::size_t getPointCount() const override;
+    [[nodiscard]] std::size_t getPointCount() const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the position of a point
@@ -111,7 +111,7 @@ public:
     /// \see setPoint
     ///
     ////////////////////////////////////////////////////////////
-    Vector2f getPoint(std::size_t index) const override;
+    [[nodiscard]] Vector2f getPoint(std::size_t index) const override;
 
 private:
     ////////////////////////////////////////////////////////////
