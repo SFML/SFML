@@ -113,7 +113,7 @@ public:
     /// \return Transformed point
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] constexpr Vector2f transformPoint(const Vector2f& point) const;
+    [[nodiscard]] constexpr Vector2f transformPoint(Vector2f point) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Transform a rectangle
@@ -168,7 +168,7 @@ public:
     /// \see rotate, scale
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Transform& translate(const Vector2f& offset);
+    constexpr Transform& translate(Vector2f offset);
 
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with a rotation
@@ -212,7 +212,7 @@ public:
     /// \see translate, scale
     ///
     ////////////////////////////////////////////////////////////
-    SFML_GRAPHICS_API Transform& rotate(Angle angle, const Vector2f& center);
+    SFML_GRAPHICS_API Transform& rotate(Angle angle, Vector2f center);
 
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with a scaling
@@ -231,7 +231,7 @@ public:
     /// \see translate, rotate
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Transform& scale(const Vector2f& factors);
+    constexpr Transform& scale(Vector2f factors);
 
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with a scaling
@@ -256,7 +256,7 @@ public:
     /// \see translate, rotate
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Transform& scale(const Vector2f& factors, const Vector2f& center);
+    constexpr Transform& scale(Vector2f factors, Vector2f center);
 
     ////////////////////////////////////////////////////////////
     // Static member data
@@ -316,7 +316,7 @@ constexpr Transform& operator*=(Transform& left, const Transform& right);
 /// \return New transformed point
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Vector2f operator*(const Transform& left, const Vector2f& right);
+[[nodiscard]] constexpr Vector2f operator*(const Transform& left, Vector2f right);
 
 ////////////////////////////////////////////////////////////
 /// \relates sf::Transform

@@ -67,7 +67,7 @@ public:
     /// \see move, getPosition
     ///
     ////////////////////////////////////////////////////////////
-    void setPosition(const Vector2f& position);
+    void setPosition(Vector2f position);
 
     ////////////////////////////////////////////////////////////
     /// \brief set the orientation of the object
@@ -95,7 +95,7 @@ public:
     /// \see scale, getScale
     ///
     ////////////////////////////////////////////////////////////
-    void setScale(const Vector2f& factors);
+    void setScale(Vector2f factors);
 
     ////////////////////////////////////////////////////////////
     /// \brief set the local origin of the object
@@ -112,7 +112,7 @@ public:
     /// \see getOrigin
     ///
     ////////////////////////////////////////////////////////////
-    void setOrigin(const Vector2f& origin);
+    void setOrigin(Vector2f origin);
 
     ////////////////////////////////////////////////////////////
     /// \brief get the position of the object
@@ -122,7 +122,7 @@ public:
     /// \see setPosition
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] const Vector2f& getPosition() const;
+    [[nodiscard]] Vector2f getPosition() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief get the orientation of the object
@@ -144,7 +144,7 @@ public:
     /// \see setScale
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] const Vector2f& getScale() const;
+    [[nodiscard]] Vector2f getScale() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief get the local origin of the object
@@ -154,7 +154,7 @@ public:
     /// \see setOrigin
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] const Vector2f& getOrigin() const;
+    [[nodiscard]] Vector2f getOrigin() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Move the object by a given offset
@@ -171,7 +171,7 @@ public:
     /// \see setPosition
     ///
     ////////////////////////////////////////////////////////////
-    void move(const Vector2f& offset);
+    void move(Vector2f offset);
 
     ////////////////////////////////////////////////////////////
     /// \brief Rotate the object
@@ -204,7 +204,7 @@ public:
     /// \see setScale
     ///
     ////////////////////////////////////////////////////////////
-    void scale(const Vector2f& factor);
+    void scale(Vector2f factor);
 
     ////////////////////////////////////////////////////////////
     /// \brief get the combined transform of the object

@@ -140,8 +140,7 @@ GlFunctionPointer Context::getFunction(const char* name)
 
 
 ////////////////////////////////////////////////////////////
-Context::Context(const ContextSettings& settings, const Vector2u& size) :
-m_context(priv::GlContext::create(settings, size))
+Context::Context(const ContextSettings& settings, Vector2u size) : m_context(priv::GlContext::create(settings, size))
 {
     if (!setActive(true))
         err() << "Failed to set context as active during construction" << std::endl;

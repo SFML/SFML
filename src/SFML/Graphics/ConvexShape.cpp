@@ -55,7 +55,7 @@ std::size_t ConvexShape::getPointCount() const
 
 
 ////////////////////////////////////////////////////////////
-void ConvexShape::setPoint(std::size_t index, const Vector2f& point)
+void ConvexShape::setPoint(std::size_t index, Vector2f point)
 {
     assert(index < m_points.size() && "Index is out of bounds");
     m_points[index] = point;

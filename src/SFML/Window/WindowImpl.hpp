@@ -183,7 +183,7 @@ public:
     /// \param position New position of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setPosition(const Vector2i& position) = 0;
+    virtual void setPosition(Vector2i position) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the client size of the window
@@ -199,7 +199,7 @@ public:
     /// \param size New size, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setSize(const Vector2u& size) = 0;
+    virtual void setSize(Vector2u size) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the minimum window rendering region size
@@ -236,7 +236,7 @@ public:
     /// \param pixels Pointer to the pixels in memory, format must be RGBA 32 bits
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setIcon(const Vector2u& size, const std::uint8_t* pixels) = 0;
+    virtual void setIcon(Vector2u size, const std::uint8_t* pixels) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the window

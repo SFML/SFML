@@ -96,7 +96,7 @@ using StbPtr = std::unique_ptr<stbi_uc, StbDeleter>;
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Image::Image(const Vector2u& size, const Color& color)
+Image::Image(Vector2u size, const Color& color)
 {
     if (size.x && size.y)
     {
@@ -132,7 +132,7 @@ Image::Image(const Vector2u& size, const Color& color)
 
 
 ////////////////////////////////////////////////////////////
-Image::Image(const Vector2u& size, const std::uint8_t* pixels)
+Image::Image(Vector2u size, const std::uint8_t* pixels)
 {
     if (pixels && size.x && size.y)
     {
@@ -376,7 +376,7 @@ void Image::createMaskFromColor(const Color& color, std::uint8_t alpha)
 
 
 ////////////////////////////////////////////////////////////
-[[nodiscard]] bool Image::copy(const Image& source, const Vector2u& dest, const IntRect& sourceRect, bool applyAlpha)
+[[nodiscard]] bool Image::copy(const Image& source, Vector2u dest, const IntRect& sourceRect, bool applyAlpha)
 {
     // Make sure that both images are valid
     if (source.m_size.x == 0 || source.m_size.y == 0 || m_size.x == 0 || m_size.y == 0)
@@ -464,7 +464,7 @@ void Image::createMaskFromColor(const Color& color, std::uint8_t alpha)
 
 
 ////////////////////////////////////////////////////////////
-void Image::setPixel(const Vector2u& coords, const Color& color)
+void Image::setPixel(Vector2u coords, const Color& color)
 {
     assert(coords.x < m_size.x && "Image::setPixel() x coordinate is out of bounds");
     assert(coords.y < m_size.y && "Image::setPixel() y coordinate is out of bounds");
@@ -479,7 +479,7 @@ void Image::setPixel(const Vector2u& coords, const Color& color)
 
 
 ////////////////////////////////////////////////////////////
-Color Image::getPixel(const Vector2u& coords) const
+Color Image::getPixel(Vector2u coords) const
 {
     assert(coords.x < m_size.x && "Image::getPixel() x coordinate is out of bounds");
     assert(coords.y < m_size.y && "Image::getPixel() y coordinate is out of bounds");

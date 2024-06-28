@@ -99,7 +99,7 @@ public:
     /// \return Texture if creation was successful, otherwise `std::nullopt`
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Texture> create(const Vector2u& size, bool sRgb = false);
+    [[nodiscard]] static std::optional<Texture> create(Vector2u size, bool sRgb = false);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from a file on disk
@@ -267,7 +267,7 @@ public:
     /// \param dest   Coordinates of the destination position
     ///
     ////////////////////////////////////////////////////////////
-    void update(const std::uint8_t* pixels, const Vector2u& size, const Vector2u& dest);
+    void update(const std::uint8_t* pixels, Vector2u size, Vector2u dest);
 
     ////////////////////////////////////////////////////////////
     /// \brief Update a part of this texture from another texture
@@ -304,7 +304,7 @@ public:
     /// \param dest    Coordinates of the destination position
     ///
     ////////////////////////////////////////////////////////////
-    void update(const Texture& texture, const Vector2u& dest);
+    void update(const Texture& texture, Vector2u dest);
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the texture from an image
@@ -341,7 +341,7 @@ public:
     /// \param dest  Coordinates of the destination position
     ///
     ////////////////////////////////////////////////////////////
-    void update(const Image& image, const Vector2u& dest);
+    void update(const Image& image, Vector2u dest);
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the texture from the contents of a window
@@ -378,7 +378,7 @@ public:
     /// \param dest   Coordinates of the destination position
     ///
     ////////////////////////////////////////////////////////////
-    void update(const Window& window, const Vector2u& dest);
+    void update(const Window& window, Vector2u dest);
 
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable the smooth filter
@@ -551,7 +551,7 @@ private:
     /// Creates an empty texture.
     ///
     ////////////////////////////////////////////////////////////
-    Texture(const Vector2u& size, const Vector2u& actualSize, unsigned int texture, bool sRgb);
+    Texture(Vector2u size, Vector2u actualSize, unsigned int texture, bool sRgb);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a valid image size according to hardware support

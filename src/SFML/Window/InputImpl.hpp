@@ -121,7 +121,7 @@ Vector2i getMousePosition(const WindowBase& relativeTo);
 /// \param position New position of the mouse
 ///
 ////////////////////////////////////////////////////////////
-void setMousePosition(const Vector2i& position);
+void setMousePosition(Vector2i position);
 
 ////////////////////////////////////////////////////////////
 /// \brief Set the current position of the mouse in window coordinates
@@ -134,7 +134,7 @@ void setMousePosition(const Vector2i& position);
 /// \param relativeTo Reference window
 ///
 ////////////////////////////////////////////////////////////
-void setMousePosition(const Vector2i& position, const WindowBase& relativeTo);
+void setMousePosition(Vector2i position, const WindowBase& relativeTo);
 
 ////////////////////////////////////////////////////////////
 /// \brief Check if a touch event is currently down

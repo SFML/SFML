@@ -33,7 +33,7 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-void Transformable::setPosition(const Vector2f& position)
+void Transformable::setPosition(Vector2f position)
 {
     m_position                   = position;
     m_transformNeedUpdate        = true;
@@ -52,7 +52,7 @@ void Transformable::setRotation(Angle angle)
 
 
 ////////////////////////////////////////////////////////////
-void Transformable::setScale(const Vector2f& factors)
+void Transformable::setScale(Vector2f factors)
 {
     m_scale                      = factors;
     m_transformNeedUpdate        = true;
@@ -61,7 +61,7 @@ void Transformable::setScale(const Vector2f& factors)
 
 
 ////////////////////////////////////////////////////////////
-void Transformable::setOrigin(const Vector2f& origin)
+void Transformable::setOrigin(Vector2f origin)
 {
     m_origin                     = origin;
     m_transformNeedUpdate        = true;
@@ -70,7 +70,7 @@ void Transformable::setOrigin(const Vector2f& origin)
 
 
 ////////////////////////////////////////////////////////////
-const Vector2f& Transformable::getPosition() const
+Vector2f Transformable::getPosition() const
 {
     return m_position;
 }
@@ -84,21 +84,21 @@ Angle Transformable::getRotation() const
 
 
 ////////////////////////////////////////////////////////////
-const Vector2f& Transformable::getScale() const
+Vector2f Transformable::getScale() const
 {
     return m_scale;
 }
 
 
 ////////////////////////////////////////////////////////////
-const Vector2f& Transformable::getOrigin() const
+Vector2f Transformable::getOrigin() const
 {
     return m_origin;
 }
 
 
 ////////////////////////////////////////////////////////////
-void Transformable::move(const Vector2f& offset)
+void Transformable::move(Vector2f offset)
 {
     setPosition(m_position + offset);
 }
@@ -112,7 +112,7 @@ void Transformable::rotate(Angle angle)
 
 
 ////////////////////////////////////////////////////////////
-void Transformable::scale(const Vector2f& factor)
+void Transformable::scale(Vector2f factor)
 {
     setScale({m_scale.x * factor.x, m_scale.y * factor.y});
 }

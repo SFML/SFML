@@ -118,7 +118,7 @@ m_context(nil)
 
 
 ////////////////////////////////////////////////////////////
-EaglContext::EaglContext(EaglContext* /* shared */, const ContextSettings& /* settings */, const Vector2u& /* size */) :
+EaglContext::EaglContext(EaglContext* /* shared */, const ContextSettings& /* settings */, Vector2u /* size */) :
 m_context(nil)
 {
     ensureInit();

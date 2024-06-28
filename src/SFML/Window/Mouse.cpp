@@ -53,14 +53,14 @@ Vector2i Mouse::getPosition(const WindowBase& relativeTo)
 
 
 ////////////////////////////////////////////////////////////
-void Mouse::setPosition(const Vector2i& position)
+void Mouse::setPosition(Vector2i position)
 {
     priv::InputImpl::setMousePosition(position);
 }
 
 
 ////////////////////////////////////////////////////////////
-void Mouse::setPosition(const Vector2i& position, const WindowBase& relativeTo)
+void Mouse::setPosition(Vector2i position, const WindowBase& relativeTo)
 {
     priv::InputImpl::setMousePosition(position, relativeTo);
 }

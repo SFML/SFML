@@ -128,7 +128,7 @@ public:
     /// \return Pointer to the created context
     ///
     ////////////////////////////////////////////////////////////
-    static std::unique_ptr<GlContext> create(const ContextSettings& settings, const Vector2u& size);
+    static std::unique_ptr<GlContext> create(const ContextSettings& settings, Vector2u size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Check whether a given OpenGL extension is available

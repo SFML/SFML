@@ -470,7 +470,7 @@ void Shader::setUniform(const std::string& name, float x)
 
 
 ////////////////////////////////////////////////////////////
-void Shader::setUniform(const std::string& name, const Glsl::Vec2& v)
+void Shader::setUniform(const std::string& name, Glsl::Vec2 v)
 {
     const UniformBinder binder(*this, name);
     if (binder.location != -1)
@@ -506,7 +506,7 @@ void Shader::setUniform(const std::string& name, int x)
 
 
 ////////////////////////////////////////////////////////////
-void Shader::setUniform(const std::string& name, const Glsl::Ivec2& v)
+void Shader::setUniform(const std::string& name, Glsl::Ivec2 v)
 {
     const UniformBinder binder(*this, name);
     if (binder.location != -1)
@@ -540,7 +540,7 @@ void Shader::setUniform(const std::string& name, bool x)
 
 
 ////////////////////////////////////////////////////////////
-void Shader::setUniform(const std::string& name, const Glsl::Bvec2& v)
+void Shader::setUniform(const std::string& name, Glsl::Bvec2 v)
 {
     setUniform(name, Glsl::Ivec2(v));
 }
@@ -1048,7 +1048,7 @@ void Shader::setUniform(const std::string& /* name */, float)
 
 
 ////////////////////////////////////////////////////////////
-void Shader::setUniform(const std::string& /* name */, const Glsl::Vec2&)
+void Shader::setUniform(const std::string& /* name */, Glsl::Vec2)
 {
 }
 
@@ -1072,7 +1072,7 @@ void Shader::setUniform(const std::string& /* name */, int)
 
 
 ////////////////////////////////////////////////////////////
-void Shader::setUniform(const std::string& /* name */, const Glsl::Ivec2&)
+void Shader::setUniform(const std::string& /* name */, Glsl::Ivec2)
 {
 }
 
@@ -1096,7 +1096,7 @@ void Shader::setUniform(const std::string& /* name */, bool)
 
 
 ////////////////////////////////////////////////////////////
-void Shader::setUniform(const std::string& /* name */, const Glsl::Bvec2&)
+void Shader::setUniform(const std::string& /* name */, Glsl::Bvec2)
 {
 }
 

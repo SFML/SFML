@@ -188,7 +188,7 @@ Vector2i WindowBase::getPosition() const
 
 
 ////////////////////////////////////////////////////////////
-void WindowBase::setPosition(const Vector2i& position)
+void WindowBase::setPosition(Vector2i position)
 {
     if (m_impl)
         m_impl->setPosition(position);
@@ -203,7 +203,7 @@ Vector2u WindowBase::getSize() const
 
 
 ////////////////////////////////////////////////////////////
-void WindowBase::setSize(const Vector2u& size)
+void WindowBase::setSize(Vector2u size)
 {
     if (m_impl)
     {
@@ -277,7 +277,7 @@ void WindowBase::setTitle(const String& title)
 
 
 ////////////////////////////////////////////////////////////
-void WindowBase::setIcon(const Vector2u& size, const std::uint8_t* pixels)
+void WindowBase::setIcon(Vector2u size, const std::uint8_t* pixels)
 {
     if (m_impl)
         m_impl->setIcon(size, pixels);

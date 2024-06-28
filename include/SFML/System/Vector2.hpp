@@ -69,7 +69,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     template <typename U>
-    constexpr explicit Vector2(const Vector2<U>& vector);
+    constexpr explicit Vector2(Vector2<U> vector);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the vector from polar coordinates <i><b>(floating-point)</b></i>
@@ -120,7 +120,7 @@ public:
     /// \pre Neither \c *this nor \c rhs is a zero vector.
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] SFML_SYSTEM_API Angle angleTo(const Vector2& rhs) const;
+    [[nodiscard]] SFML_SYSTEM_API Angle angleTo(Vector2 rhs) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Signed angle from +X or (1,0) vector <i><b>(floating-point)</b></i>.
@@ -151,7 +151,7 @@ public:
     /// \pre \c axis must not have length zero.
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] SFML_SYSTEM_API Vector2 projectedOnto(const Vector2& axis) const;
+    [[nodiscard]] SFML_SYSTEM_API Vector2 projectedOnto(Vector2 axis) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Returns a perpendicular vector.
@@ -169,7 +169,7 @@ public:
     /// \brief Dot product of two 2D vectors.
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] constexpr T dot(const Vector2& rhs) const;
+    [[nodiscard]] constexpr T dot(Vector2 rhs) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Z component of the cross product of two 2D vectors.
@@ -178,7 +178,7 @@ public:
     /// and returns the result's Z component (X and Y components are always zero).
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] constexpr T cross(const Vector2& rhs) const;
+    [[nodiscard]] constexpr T cross(Vector2 rhs) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Component-wise multiplication of \c *this and \c rhs.
@@ -189,7 +189,7 @@ public:
     /// This operation is also known as the Hadamard or Schur product.
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] constexpr Vector2 cwiseMul(const Vector2& rhs) const;
+    [[nodiscard]] constexpr Vector2 cwiseMul(Vector2 rhs) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Component-wise division of \c *this and \c rhs.
@@ -201,7 +201,7 @@ public:
     /// \pre Neither component of \c rhs is zero.
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] constexpr Vector2 cwiseDiv(const Vector2& rhs) const;
+    [[nodiscard]] constexpr Vector2 cwiseDiv(Vector2 rhs) const;
 
 
     ////////////////////////////////////////////////////////////
@@ -235,7 +235,7 @@ using Vector2f = Vector2<float>;
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-[[nodiscard]] constexpr Vector2<T> operator-(const Vector2<T>& right);
+[[nodiscard]] constexpr Vector2<T> operator-(Vector2<T> right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -251,7 +251,7 @@ template <typename T>
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Vector2<T>& operator+=(Vector2<T>& left, const Vector2<T>& right);
+constexpr Vector2<T>& operator+=(Vector2<T>& left, Vector2<T> right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -267,7 +267,7 @@ constexpr Vector2<T>& operator+=(Vector2<T>& left, const Vector2<T>& right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Vector2<T>& operator-=(Vector2<T>& left, const Vector2<T>& right);
+constexpr Vector2<T>& operator-=(Vector2<T>& left, Vector2<T> right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -280,7 +280,7 @@ constexpr Vector2<T>& operator-=(Vector2<T>& left, const Vector2<T>& right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-[[nodiscard]] constexpr Vector2<T> operator+(const Vector2<T>& left, const Vector2<T>& right);
+[[nodiscard]] constexpr Vector2<T> operator+(Vector2<T> left, Vector2<T> right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -293,7 +293,7 @@ template <typename T>
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-[[nodiscard]] constexpr Vector2<T> operator-(const Vector2<T>& left, const Vector2<T>& right);
+[[nodiscard]] constexpr Vector2<T> operator-(Vector2<T> left, Vector2<T> right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -306,7 +306,7 @@ template <typename T>
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-[[nodiscard]] constexpr Vector2<T> operator*(const Vector2<T>& left, T right);
+[[nodiscard]] constexpr Vector2<T> operator*(Vector2<T> left, T right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -319,7 +319,7 @@ template <typename T>
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-[[nodiscard]] constexpr Vector2<T> operator*(T left, const Vector2<T>& right);
+[[nodiscard]] constexpr Vector2<T> operator*(T left, Vector2<T> right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -348,7 +348,7 @@ constexpr Vector2<T>& operator*=(Vector2<T>& left, T right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-[[nodiscard]] constexpr Vector2<T> operator/(const Vector2<T>& left, T right);
+[[nodiscard]] constexpr Vector2<T> operator/(Vector2<T> left, T right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -379,7 +379,7 @@ constexpr Vector2<T>& operator/=(Vector2<T>& left, T right);
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-[[nodiscard]] constexpr bool operator==(const Vector2<T>& left, const Vector2<T>& right);
+[[nodiscard]] constexpr bool operator==(Vector2<T> left, Vector2<T> right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
@@ -394,7 +394,7 @@ template <typename T>
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-[[nodiscard]] constexpr bool operator!=(const Vector2<T>& left, const Vector2<T>& right);
+[[nodiscard]] constexpr bool operator!=(Vector2<T> left, Vector2<T> right);
 
 } // namespace sf
 
