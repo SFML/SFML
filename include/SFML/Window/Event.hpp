@@ -299,6 +299,17 @@ public:
     template <typename TEventSubtype>
     [[nodiscard]] const TEventSubtype* getIf() const;
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Apply a visitor to the event
+    ///
+    /// \param visitor The visitor to apply
+    ///
+    /// \return The result of applying the visitor to the event
+    ///
+    ////////////////////////////////////////////////////////////
+    template <typename T>
+    decltype(auto) visit(T&& visitor) const;
+
 private:
     ////////////////////////////////////////////////////////////
     // Member data

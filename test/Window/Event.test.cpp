@@ -2,7 +2,35 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <string_view>
 #include <type_traits>
+
+namespace
+{
+struct
+{
+    std::string_view operator()(const sf::Event::Closed&) const
+    {
+        return "Closed";
+    }
+
+    std::string_view operator()(const sf::Event::Resized&) const
+    {
+        return "Resized";
+    }
+
+    std::string_view operator()(const sf::Event::KeyPressed&) const
+    {
+        return "KeyPressed";
+    }
+
+    template <typename T>
+    std::string_view operator()(const T&) const
+    {
+        return "Other";
+    }
+} visitor;
+} // namespace
 
 TEST_CASE("[Window] sf::Event")
 {
@@ -265,5 +293,14 @@ TEST_CASE("[Window] sf::Event")
         const sf::Event::SensorChanged sensorChanged;
         CHECK(sensorChanged.type == sf::Sensor::Type{});
         CHECK(sensorChanged.value == sf::Vector3f());
+    }
+
+    SECTION("visit()")
+    {
+        CHECK(sf::Event(sf::Event::Closed{}).visit(visitor) == "Closed");
+        CHECK(sf::Event(sf::Event::Resized{}).visit(visitor) == "Resized");
+        CHECK(sf::Event(sf::Event::FocusLost{}).visit(visitor) == "Other");
+        CHECK(sf::Event(sf::Event::FocusGained{}).visit(visitor) == "Other");
+        CHECK(sf::Event(sf::Event::KeyPressed{}).visit(visitor) == "KeyPressed");
     }
 }
