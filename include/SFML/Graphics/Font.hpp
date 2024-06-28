@@ -356,7 +356,7 @@ private:
     /// \return Found rectangle within the texture
     ///
     ////////////////////////////////////////////////////////////
-    IntRect findGlyphRect(Page& page, const Vector2u& size) const;
+    IntRect findGlyphRect(Page& page, Vector2u size) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Make sure that the given size is the current one

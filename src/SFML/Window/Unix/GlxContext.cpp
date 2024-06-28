@@ -133,7 +133,7 @@ GlxContext::GlxContext(GlxContext* shared, const ContextSettings& settings, cons
 
 
 ////////////////////////////////////////////////////////////
-GlxContext::GlxContext(GlxContext* shared, const ContextSettings& settings, const Vector2u& size)
+GlxContext::GlxContext(GlxContext* shared, const ContextSettings& settings, Vector2u size)
 {
     // Save the creation settings
     m_settings = settings;
@@ -453,7 +453,7 @@ void GlxContext::updateSettingsFromWindow()
 
 
 ////////////////////////////////////////////////////////////
-void GlxContext::createSurface(GlxContext* shared, const Vector2u& size, unsigned int bitsPerPixel)
+void GlxContext::createSurface(GlxContext* shared, Vector2u size, unsigned int bitsPerPixel)
 {
     // Choose the visual according to the context settings
     XVisualInfo visualInfo = selectBestVisual(m_display.get(), bitsPerPixel, m_settings);

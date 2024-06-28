@@ -82,7 +82,7 @@ private:
     /// \return True if creation has been successful
     ///
     ////////////////////////////////////////////////////////////
-    bool create(const Vector2u& size, unsigned int textureId, const ContextSettings& settings) override;
+    bool create(Vector2u size, unsigned int textureId, const ContextSettings& settings) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Activate or deactivate the render texture for rendering

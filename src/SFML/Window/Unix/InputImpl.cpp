@@ -164,7 +164,7 @@ Vector2i getMousePosition(const WindowBase& relativeTo)
 
 
 ////////////////////////////////////////////////////////////
-void setMousePosition(const Vector2i& position)
+void setMousePosition(Vector2i position)
 {
     // Open a connection with the X server
     const auto display = openDisplay();
@@ -175,7 +175,7 @@ void setMousePosition(const Vector2i& position)
 
 
 ////////////////////////////////////////////////////////////
-void setMousePosition(const Vector2i& position, const WindowBase& relativeTo)
+void setMousePosition(Vector2i position, const WindowBase& relativeTo)
 {
     // Open a connection with the X server
     const auto display = openDisplay();

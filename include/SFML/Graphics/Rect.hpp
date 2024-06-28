@@ -61,7 +61,7 @@ public:
     /// \param size     Size of the rectangle
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Rect(const Vector2<T>& position, const Vector2<T>& size);
+    constexpr Rect(Vector2<T> position, Vector2<T> size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the rectangle from another type of rectangle
@@ -90,7 +90,7 @@ public:
     /// \see findIntersection
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] constexpr bool contains(const Vector2<T>& point) const;
+    [[nodiscard]] constexpr bool contains(Vector2<T> point) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check the intersection between two rectangles

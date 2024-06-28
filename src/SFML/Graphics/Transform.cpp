@@ -52,7 +52,7 @@ Transform& Transform::rotate(Angle angle)
 
 
 ////////////////////////////////////////////////////////////
-Transform& Transform::rotate(Angle angle, const Vector2f& center)
+Transform& Transform::rotate(Angle angle, Vector2f center)
 {
     const float rad = angle.asRadians();
     const float cos = std::cos(rad);

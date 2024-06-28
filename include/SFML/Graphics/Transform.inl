@@ -87,7 +87,7 @@ constexpr Transform Transform::getInverse() const
 
 
 ////////////////////////////////////////////////////////////
-constexpr Vector2f Transform::transformPoint(const Vector2f& point) const
+constexpr Vector2f Transform::transformPoint(Vector2f point) const
 {
     return {m_matrix[0] * point.x + m_matrix[4] * point.y + m_matrix[12],
             m_matrix[1] * point.x + m_matrix[5] * point.y + m_matrix[13]};
@@ -145,7 +145,7 @@ constexpr Transform& Transform::combine(const Transform& transform)
 
 
 ////////////////////////////////////////////////////////////
-constexpr Transform& Transform::translate(const Vector2f& offset)
+constexpr Transform& Transform::translate(Vector2f offset)
 {
     // clang-format off
     const Transform translation(1, 0, offset.x,
@@ -158,7 +158,7 @@ constexpr Transform& Transform::translate(const Vector2f& offset)
 
 
 ////////////////////////////////////////////////////////////
-constexpr Transform& Transform::scale(const Vector2f& factors)
+constexpr Transform& Transform::scale(Vector2f factors)
 {
     // clang-format off
     const Transform scaling(factors.x, 0,         0,
@@ -171,7 +171,7 @@ constexpr Transform& Transform::scale(const Vector2f& factors)
 
 
 ////////////////////////////////////////////////////////////
-constexpr Transform& Transform::scale(const Vector2f& factors, const Vector2f& center)
+constexpr Transform& Transform::scale(Vector2f factors, Vector2f center)
 {
     // clang-format off
     const Transform scaling(factors.x, 0,         center.x * (1 - factors.x),
@@ -198,7 +198,7 @@ constexpr Transform& operator*=(Transform& left, const Transform& right)
 
 
 ////////////////////////////////////////////////////////////
-constexpr Vector2f operator*(const Transform& left, const Vector2f& right)
+constexpr Vector2f operator*(const Transform& left, Vector2f right)
 {
     return left.transformPoint(right);
 }

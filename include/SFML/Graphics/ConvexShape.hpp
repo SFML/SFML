@@ -94,7 +94,7 @@ public:
     /// \see getPoint
     ///
     ////////////////////////////////////////////////////////////
-    void setPoint(std::size_t index, const Vector2f& point);
+    void setPoint(std::size_t index, Vector2f point);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of a point

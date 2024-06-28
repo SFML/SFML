@@ -624,7 +624,7 @@ Glyph Font::loadGlyph(std::uint32_t codePoint, unsigned int characterSize, bool 
 
 
 ////////////////////////////////////////////////////////////
-IntRect Font::findGlyphRect(Page& page, const Vector2u& size) const
+IntRect Font::findGlyphRect(Page& page, Vector2u size) const
 {
     // Find the line that fits well the glyph
     Row*  row       = nullptr;

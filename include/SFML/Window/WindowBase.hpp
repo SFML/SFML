@@ -337,7 +337,7 @@ public:
     /// \see getPosition
     ///
     ////////////////////////////////////////////////////////////
-    void setPosition(const Vector2i& position);
+    void setPosition(Vector2i position);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the size of the rendering region of the window
@@ -360,7 +360,7 @@ public:
     /// \see getSize
     ///
     ////////////////////////////////////////////////////////////
-    void setSize(const Vector2u& size);
+    void setSize(Vector2u size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the minimum window rendering region size
@@ -408,7 +408,7 @@ public:
     /// \see setTitle
     ///
     ////////////////////////////////////////////////////////////
-    void setIcon(const Vector2u& size, const std::uint8_t* pixels);
+    void setIcon(Vector2u size, const std::uint8_t* pixels);
 
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the window

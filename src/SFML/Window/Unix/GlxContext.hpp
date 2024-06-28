@@ -72,7 +72,7 @@ public:
     /// \param size     Back buffer width and height, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    GlxContext(GlxContext* shared, const ContextSettings& settings, const Vector2u& size);
+    GlxContext(GlxContext* shared, const ContextSettings& settings, Vector2u size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
@@ -154,7 +154,7 @@ private:
     /// \param bitsPerPixel Pixel depth, in bits per pixel
     ///
     ////////////////////////////////////////////////////////////
-    void createSurface(GlxContext* shared, const Vector2u& size, unsigned int bitsPerPixel);
+    void createSurface(GlxContext* shared, Vector2u size, unsigned int bitsPerPixel);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create the context's drawing surface from an existing window

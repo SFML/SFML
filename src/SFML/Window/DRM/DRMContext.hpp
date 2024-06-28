@@ -87,7 +87,7 @@ public:
     /// \param size     Back buffer width and height, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    DRMContext(DRMContext* shared, const ContextSettings& settings, const Vector2u& size);
+    DRMContext(DRMContext* shared, const ContextSettings& settings, Vector2u size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
@@ -143,7 +143,7 @@ public:
     /// \param scanout True to present the surface to the screen
     ///
     ////////////////////////////////////////////////////////////
-    void createSurface(const Vector2u& size, unsigned int bpp, bool scanout);
+    void createSurface(Vector2u size, unsigned int bpp, bool scanout);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destroy the EGL surface

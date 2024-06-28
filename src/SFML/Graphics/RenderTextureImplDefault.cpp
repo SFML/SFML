@@ -57,7 +57,7 @@ unsigned int RenderTextureImplDefault::getMaximumAntialiasingLevel()
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTextureImplDefault::create(const Vector2u& size, unsigned int, const ContextSettings& settings)
+bool RenderTextureImplDefault::create(Vector2u size, unsigned int, const ContextSettings& settings)
 {
     // Store the dimensions
     m_size = size;

@@ -124,7 +124,7 @@ WglContext::WglContext(WglContext* shared, const ContextSettings& settings, cons
 
 
 ////////////////////////////////////////////////////////////
-WglContext::WglContext(WglContext* shared, const ContextSettings& settings, const Vector2u& size)
+WglContext::WglContext(WglContext* shared, const ContextSettings& settings, Vector2u size)
 {
     WglContextImpl::ensureInit();
 
@@ -570,7 +570,7 @@ void WglContext::updateSettingsFromPixelFormat()
 
 
 ////////////////////////////////////////////////////////////
-void WglContext::createSurface(WglContext* shared, const Vector2u& size, unsigned int bitsPerPixel)
+void WglContext::createSurface(WglContext* shared, Vector2u size, unsigned int bitsPerPixel)
 {
     // Check if the shared context already exists and pbuffers are supported
     if (shared && shared->m_deviceContext && SF_GLAD_WGL_ARB_pbuffer)

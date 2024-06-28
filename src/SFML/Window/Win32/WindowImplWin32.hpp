@@ -99,7 +99,7 @@ public:
     /// \param position New position of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    void setPosition(const Vector2i& position) override;
+    void setPosition(Vector2i position) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the client size of the window
@@ -115,7 +115,7 @@ public:
     /// \param size New size, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    void setSize(const Vector2u& size) override;
+    void setSize(Vector2u size) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the title of the window
@@ -132,7 +132,7 @@ public:
     /// \param pixels Pointer to the pixels in memory, format must be RGBA 32 bits
     ///
     ////////////////////////////////////////////////////////////
-    void setIcon(const Vector2u& size, const std::uint8_t* pixels) override;
+    void setIcon(Vector2u size, const std::uint8_t* pixels) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the window
@@ -256,7 +256,7 @@ private:
     /// \return Converted size including window chrome
     ///
     ////////////////////////////////////////////////////////////
-    Vector2i contentSizeToWindowSize(const Vector2u& size);
+    Vector2i contentSizeToWindowSize(Vector2u size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert a Win32 virtual key code to a SFML key code

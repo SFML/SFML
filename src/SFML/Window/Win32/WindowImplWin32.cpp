@@ -331,7 +331,7 @@ Vector2i WindowImplWin32::getPosition() const
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplWin32::setPosition(const Vector2i& position)
+void WindowImplWin32::setPosition(Vector2i position)
 {
     SetWindowPos(m_handle, nullptr, position.x, position.y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
 
@@ -351,7 +351,7 @@ Vector2u WindowImplWin32::getSize() const
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplWin32::setSize(const Vector2u& size)
+void WindowImplWin32::setSize(Vector2u size)
 {
     const auto [width, height] = contentSizeToWindowSize(size);
     SetWindowPos(m_handle, nullptr, 0, 0, width, height, SWP_NOMOVE | SWP_NOZORDER);
@@ -366,7 +366,7 @@ void WindowImplWin32::setTitle(const String& title)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplWin32::setIcon(const Vector2u& size, const std::uint8_t* pixels)
+void WindowImplWin32::setIcon(Vector2u size, const std::uint8_t* pixels)
 {
     // First destroy the previous one
     if (m_icon)
@@ -580,7 +580,7 @@ void WindowImplWin32::grabCursor(bool grabbed)
 
 
 ////////////////////////////////////////////////////////////
-Vector2i WindowImplWin32::contentSizeToWindowSize(const Vector2u& size)
+Vector2i WindowImplWin32::contentSizeToWindowSize(Vector2u size)
 {
     // SetWindowPos wants the total size of the window (including title bar and borders) so we have to compute it
     RECT rectangle = {0, 0, static_cast<long>(size.x), static_cast<long>(size.y)};
