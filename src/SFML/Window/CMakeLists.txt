@@ -46,6 +46,7 @@ set(SRC
     ${INCROOT}/Window.hpp
     ${SRCROOT}/WindowBase.cpp
     ${INCROOT}/WindowBase.hpp
+    ${INCROOT}/WindowBase.inl
     ${INCROOT}/WindowEnums.hpp
     ${INCROOT}/WindowHandle.hpp
     ${SRCROOT}/WindowImpl.cpp
