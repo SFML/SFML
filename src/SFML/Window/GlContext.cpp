@@ -628,7 +628,7 @@ std::unique_ptr<GlContext> GlContext::create(const ContextSettings& settings, co
 
 
 ////////////////////////////////////////////////////////////
-std::unique_ptr<GlContext> GlContext::create(const ContextSettings& settings, const Vector2u& size)
+std::unique_ptr<GlContext> GlContext::create(const ContextSettings& settings, Vector2u size)
 {
     // Make sure that there's an active context (context creation may need extensions, and thus a valid context)
     const auto sharedContext = SharedContext::get();

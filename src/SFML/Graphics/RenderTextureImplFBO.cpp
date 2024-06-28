@@ -139,7 +139,7 @@ void RenderTextureImplFBO::unbind()
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTextureImplFBO::create(const Vector2u& size, unsigned int textureId, const ContextSettings& settings)
+bool RenderTextureImplFBO::create(Vector2u size, unsigned int textureId, const ContextSettings& settings)
 {
     // Store the dimensions
     m_size = size;

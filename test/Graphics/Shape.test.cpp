@@ -12,7 +12,7 @@
 class TriangleShape : public sf::Shape
 {
 public:
-    explicit TriangleShape(const sf::Vector2f& size) : m_size(size)
+    explicit TriangleShape(sf::Vector2f size) : m_size(size)
     {
         update();
     }

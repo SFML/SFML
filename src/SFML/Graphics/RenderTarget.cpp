@@ -296,14 +296,14 @@ IntRect RenderTarget::getScissor(const View& view) const
 
 
 ////////////////////////////////////////////////////////////
-Vector2f RenderTarget::mapPixelToCoords(const Vector2i& point) const
+Vector2f RenderTarget::mapPixelToCoords(Vector2i point) const
 {
     return mapPixelToCoords(point, getView());
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2f RenderTarget::mapPixelToCoords(const Vector2i& point, const View& view) const
+Vector2f RenderTarget::mapPixelToCoords(Vector2i point, const View& view) const
 {
     // First, convert from viewport coordinates to homogeneous coordinates
     const FloatRect viewport   = FloatRect(getViewport(view));
@@ -316,14 +316,14 @@ Vector2f RenderTarget::mapPixelToCoords(const Vector2i& point, const View& view)
 
 
 ////////////////////////////////////////////////////////////
-Vector2i RenderTarget::mapCoordsToPixel(const Vector2f& point) const
+Vector2i RenderTarget::mapCoordsToPixel(Vector2f point) const
 {
     return mapCoordsToPixel(point, getView());
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2i RenderTarget::mapCoordsToPixel(const Vector2f& point, const View& view) const
+Vector2i RenderTarget::mapCoordsToPixel(Vector2f point, const View& view) const
 {
     // First, transform the point by the view matrix
     const Vector2f normalized = view.getTransform().transformPoint(point);

@@ -49,7 +49,7 @@ constexpr Vector2<T>::Vector2(T x, T y) : x(x), y(y)
 ////////////////////////////////////////////////////////////
 template <typename T>
 template <typename U>
-constexpr Vector2<T>::Vector2(const Vector2<U>& vector) : x(static_cast<T>(vector.x)), y(static_cast<T>(vector.y))
+constexpr Vector2<T>::Vector2(Vector2<U> vector) : x(static_cast<T>(vector.x)), y(static_cast<T>(vector.y))
 {
 }
 
@@ -72,7 +72,7 @@ constexpr Vector2<T> Vector2<T>::perpendicular() const
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr T Vector2<T>::dot(const Vector2<T>& rhs) const
+constexpr T Vector2<T>::dot(Vector2<T> rhs) const
 {
     return x * rhs.x + y * rhs.y;
 }
@@ -80,7 +80,7 @@ constexpr T Vector2<T>::dot(const Vector2<T>& rhs) const
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr T Vector2<T>::cross(const Vector2<T>& rhs) const
+constexpr T Vector2<T>::cross(Vector2<T> rhs) const
 {
     return x * rhs.y - y * rhs.x;
 }
@@ -88,7 +88,7 @@ constexpr T Vector2<T>::cross(const Vector2<T>& rhs) const
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Vector2<T> Vector2<T>::cwiseMul(const Vector2<T>& rhs) const
+constexpr Vector2<T> Vector2<T>::cwiseMul(Vector2<T> rhs) const
 {
     return Vector2<T>(x * rhs.x, y * rhs.y);
 }
@@ -96,7 +96,7 @@ constexpr Vector2<T> Vector2<T>::cwiseMul(const Vector2<T>& rhs) const
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Vector2<T> Vector2<T>::cwiseDiv(const Vector2<T>& rhs) const
+constexpr Vector2<T> Vector2<T>::cwiseDiv(Vector2<T> rhs) const
 {
     assert(rhs.x != 0 && "Vector2::cwiseDiv() cannot divide by 0");
     assert(rhs.y != 0 && "Vector2::cwiseDiv() cannot divide by 0");
@@ -106,7 +106,7 @@ constexpr Vector2<T> Vector2<T>::cwiseDiv(const Vector2<T>& rhs) const
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Vector2<T> operator-(const Vector2<T>& right)
+constexpr Vector2<T> operator-(Vector2<T> right)
 {
     return Vector2<T>(-right.x, -right.y);
 }
@@ -114,7 +114,7 @@ constexpr Vector2<T> operator-(const Vector2<T>& right)
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Vector2<T>& operator+=(Vector2<T>& left, const Vector2<T>& right)
+constexpr Vector2<T>& operator+=(Vector2<T>& left, Vector2<T> right)
 {
     left.x += right.x;
     left.y += right.y;
@@ -125,7 +125,7 @@ constexpr Vector2<T>& operator+=(Vector2<T>& left, const Vector2<T>& right)
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Vector2<T>& operator-=(Vector2<T>& left, const Vector2<T>& right)
+constexpr Vector2<T>& operator-=(Vector2<T>& left, Vector2<T> right)
 {
     left.x -= right.x;
     left.y -= right.y;
@@ -136,7 +136,7 @@ constexpr Vector2<T>& operator-=(Vector2<T>& left, const Vector2<T>& right)
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Vector2<T> operator+(const Vector2<T>& left, const Vector2<T>& right)
+constexpr Vector2<T> operator+(Vector2<T> left, Vector2<T> right)
 {
     return Vector2<T>(left.x + right.x, left.y + right.y);
 }
@@ -144,7 +144,7 @@ constexpr Vector2<T> operator+(const Vector2<T>& left, const Vector2<T>& right)
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Vector2<T> operator-(const Vector2<T>& left, const Vector2<T>& right)
+constexpr Vector2<T> operator-(Vector2<T> left, Vector2<T> right)
 {
     return Vector2<T>(left.x - right.x, left.y - right.y);
 }
@@ -152,7 +152,7 @@ constexpr Vector2<T> operator-(const Vector2<T>& left, const Vector2<T>& right)
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Vector2<T> operator*(const Vector2<T>& left, T right)
+constexpr Vector2<T> operator*(Vector2<T> left, T right)
 {
     return Vector2<T>(left.x * right, left.y * right);
 }
@@ -160,7 +160,7 @@ constexpr Vector2<T> operator*(const Vector2<T>& left, T right)
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Vector2<T> operator*(T left, const Vector2<T>& right)
+constexpr Vector2<T> operator*(T left, Vector2<T> right)
 {
     return Vector2<T>(right.x * left, right.y * left);
 }
@@ -179,7 +179,7 @@ constexpr Vector2<T>& operator*=(Vector2<T>& left, T right)
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Vector2<T> operator/(const Vector2<T>& left, T right)
+constexpr Vector2<T> operator/(Vector2<T> left, T right)
 {
     assert(right != 0 && "Vector2::operator/ cannot divide by 0");
     return Vector2<T>(left.x / right, left.y / right);
@@ -200,7 +200,7 @@ constexpr Vector2<T>& operator/=(Vector2<T>& left, T right)
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr bool operator==(const Vector2<T>& left, const Vector2<T>& right)
+constexpr bool operator==(Vector2<T> left, Vector2<T> right)
 {
     return (left.x == right.x) && (left.y == right.y);
 }
@@ -208,7 +208,7 @@ constexpr bool operator==(const Vector2<T>& left, const Vector2<T>& right)
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr bool operator!=(const Vector2<T>& left, const Vector2<T>& right)
+constexpr bool operator!=(Vector2<T> left, Vector2<T> right)
 {
     return (left.x != right.x) || (left.y != right.y);
 }

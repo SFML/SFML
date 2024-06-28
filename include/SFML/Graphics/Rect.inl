@@ -32,7 +32,7 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Rect<T>::Rect(const Vector2<T>& thePosition, const Vector2<T>& theSize) : position(thePosition), size(theSize)
+constexpr Rect<T>::Rect(Vector2<T> thePosition, Vector2<T> theSize) : position(thePosition), size(theSize)
 {
 }
 
@@ -47,7 +47,7 @@ constexpr Rect<T>::Rect(const Rect<U>& rectangle) : position(rectangle.position)
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr bool Rect<T>::contains(const Vector2<T>& point) const
+constexpr bool Rect<T>::contains(Vector2<T> point) const
 {
     // Not using 'std::min' and 'std::max' to avoid depending on '<algorithm>'
     const auto min = [](T a, T b) { return (a < b) ? a : b; };

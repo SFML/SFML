@@ -68,7 +68,7 @@ public:
     /// \param size   Size of zone to display
     ///
     ////////////////////////////////////////////////////////////
-    View(const Vector2f& center, const Vector2f& size);
+    View(Vector2f center, Vector2f size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the center of the view
@@ -78,7 +78,7 @@ public:
     /// \see setSize, getCenter
     ///
     ////////////////////////////////////////////////////////////
-    void setCenter(const Vector2f& center);
+    void setCenter(Vector2f center);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the size of the view
@@ -88,7 +88,7 @@ public:
     /// \see setCenter, getCenter
     ///
     ////////////////////////////////////////////////////////////
-    void setSize(const Vector2f& size);
+    void setSize(Vector2f size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the orientation of the view
@@ -151,7 +151,7 @@ public:
     /// \see getSize, setCenter
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] const Vector2f& getCenter() const;
+    [[nodiscard]] Vector2f getCenter() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the size of the view
@@ -161,7 +161,7 @@ public:
     /// \see getCenter, setSize
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] const Vector2f& getSize() const;
+    [[nodiscard]] Vector2f getSize() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current orientation of the view
@@ -201,7 +201,7 @@ public:
     /// \see setCenter, rotate, zoom
     ///
     ////////////////////////////////////////////////////////////
-    void move(const Vector2f& offset);
+    void move(Vector2f offset);
 
     ////////////////////////////////////////////////////////////
     /// \brief Rotate the view relatively to its current orientation

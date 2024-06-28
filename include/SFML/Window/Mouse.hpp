@@ -114,7 +114,7 @@ enum class Wheel
 /// \param position New position of the mouse
 ///
 ////////////////////////////////////////////////////////////
-SFML_WINDOW_API void setPosition(const Vector2i& position);
+SFML_WINDOW_API void setPosition(Vector2i position);
 
 ////////////////////////////////////////////////////////////
 /// \brief Set the current position of the mouse in window coordinates
@@ -126,7 +126,7 @@ SFML_WINDOW_API void setPosition(const Vector2i& position);
 /// \param relativeTo Reference window
 ///
 ////////////////////////////////////////////////////////////
-SFML_WINDOW_API void setPosition(const Vector2i& position, const WindowBase& relativeTo);
+SFML_WINDOW_API void setPosition(Vector2i position, const WindowBase& relativeTo);
 } // namespace Mouse
 
 } // namespace sf

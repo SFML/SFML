@@ -105,14 +105,14 @@ Vector2i getMousePosition(const WindowBase& /* relativeTo */)
 
 
 ////////////////////////////////////////////////////////////
-void setMousePosition(const Vector2i& /* position */)
+void setMousePosition(Vector2i /* position */)
 {
     // Not applicable
 }
 
 
 ////////////////////////////////////////////////////////////
-void setMousePosition(const Vector2i& /* position */, const WindowBase& /* relativeTo */)
+void setMousePosition(Vector2i /* position */, const WindowBase& /* relativeTo */)
 {
     // Not applicable
 }

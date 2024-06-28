@@ -218,7 +218,7 @@ public:
     /// \see mapCoordsToPixel
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Vector2f mapPixelToCoords(const Vector2i& point) const;
+    [[nodiscard]] Vector2f mapPixelToCoords(Vector2i point) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert a point from target coordinates to world coordinates
@@ -249,7 +249,7 @@ public:
     /// \see mapCoordsToPixel
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Vector2f mapPixelToCoords(const Vector2i& point, const View& view) const;
+    [[nodiscard]] Vector2f mapPixelToCoords(Vector2i point, const View& view) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert a point from world coordinates to target
@@ -269,7 +269,7 @@ public:
     /// \see mapPixelToCoords
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Vector2i mapCoordsToPixel(const Vector2f& point) const;
+    [[nodiscard]] Vector2i mapCoordsToPixel(Vector2f point) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert a point from world coordinates to target coordinates
@@ -296,7 +296,7 @@ public:
     /// \see mapPixelToCoords
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Vector2i mapCoordsToPixel(const Vector2f& point, const View& view) const;
+    [[nodiscard]] Vector2i mapCoordsToPixel(Vector2f point, const View& view) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Draw a drawable object to the render target

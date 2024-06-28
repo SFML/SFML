@@ -50,7 +50,7 @@ RenderTexture& RenderTexture::operator=(RenderTexture&&) noexcept = default;
 
 
 ////////////////////////////////////////////////////////////
-std::optional<RenderTexture> RenderTexture::create(const Vector2u& size, const ContextSettings& settings)
+std::optional<RenderTexture> RenderTexture::create(Vector2u size, const ContextSettings& settings)
 {
     // Create the texture
     auto texture = sf::Texture::create(size, settings.sRgbCapable);

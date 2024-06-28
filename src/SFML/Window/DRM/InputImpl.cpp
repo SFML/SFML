@@ -628,7 +628,7 @@ Vector2i getMousePosition(const WindowBase& /*relativeTo*/)
 
 
 ////////////////////////////////////////////////////////////
-void setMousePosition(const Vector2i& position)
+void setMousePosition(Vector2i position)
 {
     const std::lock_guard lock(inputMutex);
     mousePos = position;
@@ -636,7 +636,7 @@ void setMousePosition(const Vector2i& position)
 
 
 ////////////////////////////////////////////////////////////
-void setMousePosition(const Vector2i& position, const WindowBase& /*relativeTo*/)
+void setMousePosition(Vector2i position, const WindowBase& /*relativeTo*/)
 {
     setMousePosition(position);
 }

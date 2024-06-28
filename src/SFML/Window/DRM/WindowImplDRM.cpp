@@ -103,7 +103,7 @@ Vector2i WindowImplDRM::getPosition() const
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplDRM::setPosition(const Vector2i& /*position*/)
+void WindowImplDRM::setPosition(Vector2i /*position*/)
 {
 }
 
@@ -116,7 +116,7 @@ Vector2u WindowImplDRM::getSize() const
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplDRM::setSize(const Vector2u& /*size*/)
+void WindowImplDRM::setSize(Vector2u /*size*/)
 {
 }
 
@@ -140,7 +140,7 @@ void WindowImplDRM::setTitle(const String& /*title*/)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplDRM::setIcon(const Vector2u& /*size*/, const std::uint8_t* /*pixels*/)
+void WindowImplDRM::setIcon(Vector2u /*size*/, const std::uint8_t* /*pixels*/)
 {
 }
 

@@ -45,7 +45,7 @@ Vector2<T> Vector2<T>::normalized() const
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-Angle Vector2<T>::angleTo(const Vector2<T>& rhs) const
+Angle Vector2<T>::angleTo(Vector2<T> rhs) const
 {
     static_assert(std::is_floating_point_v<T>, "Vector2::angleTo() is only supported for floating point types");
 
@@ -83,7 +83,7 @@ Vector2<T> Vector2<T>::rotatedBy(Angle phi) const
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-Vector2<T> Vector2<T>::projectedOnto(const Vector2<T>& axis) const
+Vector2<T> Vector2<T>::projectedOnto(Vector2<T> axis) const
 {
     static_assert(std::is_floating_point_v<T>, "Vector2::projectedOnto() is only supported for floating point types");
 

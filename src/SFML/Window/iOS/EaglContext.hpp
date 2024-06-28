@@ -79,7 +79,7 @@ public:
     /// \param size     Back buffer width and height, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    EaglContext(EaglContext* shared, const ContextSettings& settings, const Vector2u& size);
+    EaglContext(EaglContext* shared, const ContextSettings& settings, Vector2u size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor

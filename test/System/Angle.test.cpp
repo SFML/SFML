@@ -13,6 +13,7 @@ TEST_CASE("[System] sf::Angle")
         STATIC_CHECK(std::is_copy_assignable_v<sf::Angle>);
         STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Angle>);
         STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Angle>);
+        STATIC_CHECK(std::is_trivially_copyable_v<sf::Angle>);
     }
 
     SECTION("Construction")
