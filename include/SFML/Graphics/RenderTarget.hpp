@@ -101,7 +101,7 @@ public:
     /// \param color Fill color to use to clear the render target
     ///
     ////////////////////////////////////////////////////////////
-    void clear(const Color& color = Color::Black);
+    void clear(Color color = Color::Black);
 
     ////////////////////////////////////////////////////////////
     /// \brief Clear the stencil buffer to a specific value
@@ -124,7 +124,7 @@ public:
     /// \param stencilValue Stencil value to clear to
     ///
     ////////////////////////////////////////////////////////////
-    void clear(const Color& color, StencilValue stencilValue);
+    void clear(Color color, StencilValue stencilValue);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current active view

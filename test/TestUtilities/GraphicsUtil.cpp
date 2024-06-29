@@ -72,7 +72,7 @@ std::ostream& operator<<(std::ostream& os, const StencilMode& stencilMode)
               << stencilMode.stencilOnly << " )";
 }
 
-std::ostream& operator<<(std::ostream& os, const Color& color)
+std::ostream& operator<<(std::ostream& os, Color color)
 {
     return os << "0x" << std::hex << color.toInteger() << std::dec << " (r=" << int{color.r} << ", g=" << int{color.g}
               << ", b=" << int{color.b} << ", a=" << int{color.a} << ")";

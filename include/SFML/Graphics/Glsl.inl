@@ -151,7 +151,7 @@ struct Vector4
     /// \param color Color instance
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Vector4(const Color& color);
+    constexpr Vector4(Color color);
 
     T x{}; //!< 1st component (X) of the 4D vector
     T y{}; //!< 2nd component (Y) of the 4D vector
@@ -162,7 +162,7 @@ struct Vector4
 
 ////////////////////////////////////////////////////////////
 template <>
-constexpr Vector4<float>::Vector4(const Color& color) :
+constexpr Vector4<float>::Vector4(Color color) :
 x(color.r / 255.f),
 y(color.g / 255.f),
 z(color.b / 255.f),
@@ -173,7 +173,7 @@ w(color.a / 255.f)
 
 ////////////////////////////////////////////////////////////
 template <>
-constexpr Vector4<int>::Vector4(const Color& color) : x(color.r), y(color.g), z(color.b), w(color.a)
+constexpr Vector4<int>::Vector4(Color color) : x(color.r), y(color.g), z(color.b), w(color.a)
 {
 }
 

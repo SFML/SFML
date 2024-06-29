@@ -214,7 +214,7 @@ public:
     /// \see getFillColor
     ///
     ////////////////////////////////////////////////////////////
-    void setFillColor(const Color& color);
+    void setFillColor(Color color);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the outline color of the text
@@ -226,7 +226,7 @@ public:
     /// \see getOutlineColor
     ///
     ////////////////////////////////////////////////////////////
-    void setOutlineColor(const Color& color);
+    void setOutlineColor(Color color);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the thickness of the text's outline
@@ -323,7 +323,7 @@ public:
     /// \see setFillColor
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] const Color& getFillColor() const;
+    [[nodiscard]] Color getFillColor() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the outline color of the text
@@ -333,7 +333,7 @@ public:
     /// \see setOutlineColor
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] const Color& getOutlineColor() const;
+    [[nodiscard]] Color getOutlineColor() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the outline thickness of the text

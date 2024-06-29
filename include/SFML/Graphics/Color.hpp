@@ -113,7 +113,7 @@ public:
 /// \return True if colors are equal, false if they are different
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr bool operator==(const Color& left, const Color& right);
+[[nodiscard]] constexpr bool operator==(Color left, Color right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Color
@@ -127,7 +127,7 @@ public:
 /// \return True if colors are different, false if they are equal
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr bool operator!=(const Color& left, const Color& right);
+[[nodiscard]] constexpr bool operator!=(Color left, Color right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Color
@@ -142,7 +142,7 @@ public:
 /// \return Result of \a left + \a right
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Color operator+(const Color& left, const Color& right);
+[[nodiscard]] constexpr Color operator+(Color left, Color right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Color
@@ -157,7 +157,7 @@ public:
 /// \return Result of \a left - \a right
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Color operator-(const Color& left, const Color& right);
+[[nodiscard]] constexpr Color operator-(Color left, Color right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Color
@@ -174,7 +174,7 @@ public:
 /// \return Result of \a left * \a right
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Color operator*(const Color& left, const Color& right);
+[[nodiscard]] constexpr Color operator*(Color left, Color right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Color
@@ -190,7 +190,7 @@ public:
 /// \return Reference to \a left
 ///
 ////////////////////////////////////////////////////////////
-constexpr Color& operator+=(Color& left, const Color& right);
+constexpr Color& operator+=(Color& left, Color right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Color
@@ -206,7 +206,7 @@ constexpr Color& operator+=(Color& left, const Color& right);
 /// \return Reference to \a left
 ///
 ////////////////////////////////////////////////////////////
-constexpr Color& operator-=(Color& left, const Color& right);
+constexpr Color& operator-=(Color& left, Color right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Color
@@ -224,7 +224,7 @@ constexpr Color& operator-=(Color& left, const Color& right);
 /// \return Reference to \a left
 ///
 ////////////////////////////////////////////////////////////
-constexpr Color& operator*=(Color& left, const Color& right);
+constexpr Color& operator*=(Color& left, Color right);
 
 } // namespace sf
 

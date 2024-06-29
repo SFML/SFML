@@ -20,7 +20,7 @@ class Rect;
 
 std::ostream& operator<<(std::ostream& os, const BlendMode& blendMode);
 std::ostream& operator<<(std::ostream& os, const StencilMode& stencilMode);
-std::ostream& operator<<(std::ostream& os, const Color& color);
+std::ostream& operator<<(std::ostream& os, Color color);
 std::ostream& operator<<(std::ostream& os, const Transform& transform);
 
 template <typename T>
