@@ -197,7 +197,7 @@ std::uint32_t stencilFunctionToGlConstant(sf::StencilComparison comparison)
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-void RenderTarget::clear(const Color& color)
+void RenderTarget::clear(Color color)
 {
     if (RenderTargetImpl::isActive(m_id) || setActive(true))
     {
@@ -233,7 +233,7 @@ void RenderTarget::clearStencil(StencilValue stencilValue)
 
 
 ////////////////////////////////////////////////////////////
-void RenderTarget::clear(const Color& color, StencilValue stencilValue)
+void RenderTarget::clear(Color color, StencilValue stencilValue)
 {
     if (RenderTargetImpl::isActive(m_id) || setActive(true))
     {

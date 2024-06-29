@@ -96,7 +96,7 @@ using StbPtr = std::unique_ptr<stbi_uc, StbDeleter>;
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Image::Image(Vector2u size, const Color& color)
+Image::Image(Vector2u size, Color color)
 {
     if (size.x && size.y)
     {
@@ -357,7 +357,7 @@ Vector2u Image::getSize() const
 
 
 ////////////////////////////////////////////////////////////
-void Image::createMaskFromColor(const Color& color, std::uint8_t alpha)
+void Image::createMaskFromColor(Color color, std::uint8_t alpha)
 {
     // Make sure that the image is not empty
     if (!m_pixels.empty())
@@ -464,7 +464,7 @@ bool Image::copy(const Image& source, Vector2u dest, const IntRect& sourceRect, 
 
 
 ////////////////////////////////////////////////////////////
-void Image::setPixel(Vector2u coords, const Color& color)
+void Image::setPixel(Vector2u coords, Color color)
 {
     assert(coords.x < m_size.x && "Image::setPixel() x coordinate is out of bounds");
     assert(coords.y < m_size.y && "Image::setPixel() y coordinate is out of bounds");

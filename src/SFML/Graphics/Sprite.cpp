@@ -71,7 +71,7 @@ void Sprite::setTextureRect(const IntRect& rectangle)
 
 
 ////////////////////////////////////////////////////////////
-void Sprite::setColor(const Color& color)
+void Sprite::setColor(Color color)
 {
     for (Vertex& vertex : m_vertices)
         vertex.color = color;
@@ -93,7 +93,7 @@ const IntRect& Sprite::getTextureRect() const
 
 
 ////////////////////////////////////////////////////////////
-const Color& Sprite::getColor() const
+Color Sprite::getColor() const
 {
     return m_vertices[0].color;
 }

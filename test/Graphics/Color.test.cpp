@@ -14,6 +14,7 @@ TEST_CASE("[Graphics] sf::Color")
         STATIC_CHECK(std::is_copy_assignable_v<sf::Color>);
         STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Color>);
         STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Color>);
+        STATIC_CHECK(std::is_trivially_copyable_v<sf::Color>);
     }
 
     SECTION("Construction")
