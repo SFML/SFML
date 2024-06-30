@@ -555,7 +555,7 @@ DRMContext::DRMContext(DRMContext* shared, const ContextSettings& settings, cons
 
 
 ////////////////////////////////////////////////////////////
-DRMContext::DRMContext(DRMContext* shared, const ContextSettings& settings, const Vector2u& size)
+DRMContext::DRMContext(DRMContext* shared, const ContextSettings& settings, Vector2u size)
 {
     contextCount++;
 
@@ -710,7 +710,7 @@ void DRMContext::createContext(DRMContext* shared)
 
 
 ////////////////////////////////////////////////////////////
-void DRMContext::createSurface(const Vector2u& size, unsigned int /*bpp*/, bool scanout)
+void DRMContext::createSurface(Vector2u size, unsigned int /*bpp*/, bool scanout)
 {
     std::uint32_t flags = GBM_BO_USE_RENDERING;
 

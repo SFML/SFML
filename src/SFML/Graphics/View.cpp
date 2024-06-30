@@ -40,13 +40,13 @@ View::View(const FloatRect& rectangle) : m_center(rectangle.getCenter()), m_size
 
 
 ////////////////////////////////////////////////////////////
-View::View(const Vector2f& center, const Vector2f& size) : m_center(center), m_size(size)
+View::View(Vector2f center, Vector2f size) : m_center(center), m_size(size)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-void View::setCenter(const Vector2f& center)
+void View::setCenter(Vector2f center)
 {
     m_center              = center;
     m_transformUpdated    = false;
@@ -55,7 +55,7 @@ void View::setCenter(const Vector2f& center)
 
 
 ////////////////////////////////////////////////////////////
-void View::setSize(const Vector2f& size)
+void View::setSize(Vector2f size)
 {
     m_size = size;
 
@@ -96,14 +96,14 @@ void View::setScissor(const FloatRect& scissor)
 
 
 ////////////////////////////////////////////////////////////
-const Vector2f& View::getCenter() const
+Vector2f View::getCenter() const
 {
     return m_center;
 }
 
 
 ////////////////////////////////////////////////////////////
-const Vector2f& View::getSize() const
+Vector2f View::getSize() const
 {
     return m_size;
 }
@@ -131,7 +131,7 @@ const FloatRect& View::getScissor() const
 
 
 ////////////////////////////////////////////////////////////
-void View::move(const Vector2f& offset)
+void View::move(Vector2f offset)
 {
     setCenter(m_center + offset);
 }

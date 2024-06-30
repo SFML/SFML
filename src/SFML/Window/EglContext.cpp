@@ -173,7 +173,7 @@ EglContext::EglContext(EglContext*                        shared,
 
 
 ////////////////////////////////////////////////////////////
-EglContext::EglContext(EglContext* /*shared*/, const ContextSettings& /*settings*/, const Vector2u& /*size*/)
+EglContext::EglContext(EglContext* /*shared*/, const ContextSettings& /*settings*/, Vector2u /*size*/)
 {
     EglContextImpl::ensureInit();
 

@@ -66,7 +66,7 @@ std::uint64_t getUniqueId() noexcept
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Texture::Texture(const Vector2u& size, const Vector2u& actualSize, unsigned int texture, bool sRgb) :
+Texture::Texture(Vector2u size, Vector2u actualSize, unsigned int texture, bool sRgb) :
 m_size(size),
 m_actualSize(actualSize),
 m_texture(texture),
@@ -165,7 +165,7 @@ Texture& Texture::operator=(Texture&& right) noexcept
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Texture> Texture::create(const Vector2u& size, bool sRgb)
+std::optional<Texture> Texture::create(Vector2u size, bool sRgb)
 {
     // Check if texture parameters are valid before creating it
     if ((size.x == 0) || (size.y == 0))
@@ -480,7 +480,7 @@ void Texture::update(const std::uint8_t* pixels)
 
 
 ////////////////////////////////////////////////////////////
-void Texture::update(const std::uint8_t* pixels, const Vector2u& size, const Vector2u& dest)
+void Texture::update(const std::uint8_t* pixels, Vector2u size, Vector2u dest)
 {
     assert(dest.x + size.x <= m_size.x && "Destination x coordinate is outside of texture");
     assert(dest.y + size.y <= m_size.y && "Destination y coordinate is outside of texture");
@@ -524,7 +524,7 @@ void Texture::update(const Texture& texture)
 
 
 ////////////////////////////////////////////////////////////
-void Texture::update(const Texture& texture, const Vector2u& dest)
+void Texture::update(const Texture& texture, Vector2u dest)
 {
     assert(dest.x + texture.m_size.x <= m_size.x && "Destination x coordinate is outside of texture");
     assert(dest.y + texture.m_size.y <= m_size.y && "Destination y coordinate is outside of texture");
@@ -655,7 +655,7 @@ void Texture::update(const Image& image)
 
 
 ////////////////////////////////////////////////////////////
-void Texture::update(const Image& image, const Vector2u& dest)
+void Texture::update(const Image& image, Vector2u dest)
 {
     update(image.getPixelsPtr(), image.getSize(), dest);
 }
@@ -669,7 +669,7 @@ void Texture::update(const Window& window)
 
 
 ////////////////////////////////////////////////////////////
-void Texture::update(const Window& window, const Vector2u& dest)
+void Texture::update(const Window& window, Vector2u dest)
 {
     assert(dest.x + window.getSize().x <= m_size.x && "Destination x coordinate is outside of texture");
     assert(dest.y + window.getSize().y <= m_size.y && "Destination y coordinate is outside of texture");

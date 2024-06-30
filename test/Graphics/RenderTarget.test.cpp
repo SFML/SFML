@@ -87,7 +87,7 @@ TEST_CASE("[Graphics] sf::RenderTarget")
               sf::IntRect({0, 0}, {640, 480}));
     }
 
-    SECTION("mapPixelToCoords(const Vector2i&)")
+    SECTION("mapPixelToCoords(Vector2i)")
     {
         sf::View view;
         view.move({5, 5});
@@ -105,7 +105,7 @@ TEST_CASE("[Graphics] sf::RenderTarget")
         CHECK_THAT(y3, Catch::Matchers::WithinRel(505, 1e-5));
     }
 
-    SECTION("mapPixelToCoords(const Vector2i&, const View&)")
+    SECTION("mapPixelToCoords(Vector2i, const View&)")
     {
         sf::View view;
         view.move({5, 5});
@@ -119,7 +119,7 @@ TEST_CASE("[Graphics] sf::RenderTarget")
         CHECK_THAT(y2, Catch::Matchers::WithinRel(505, 1e-5));
     }
 
-    SECTION("mapCoordsToPixel(const Vector2f&)")
+    SECTION("mapCoordsToPixel(Vector2f)")
     {
         sf::View view;
         view.move({5, 5});
@@ -131,7 +131,7 @@ TEST_CASE("[Graphics] sf::RenderTarget")
         CHECK(renderTarget.mapCoordsToPixel({0, -250}) == sf::Vector2i(156, -122));
     }
 
-    SECTION("mapCoordsToPixel(const Vector2f&, const View&)")
+    SECTION("mapCoordsToPixel(Vector2f, const View&)")
     {
         sf::View view;
         view.move({5, 5});

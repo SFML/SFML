@@ -89,7 +89,7 @@ public:
     /// \param size     Back buffer width and height, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    SFContext(SFContext* shared, const ContextSettings& settings, const Vector2u& size);
+    SFContext(SFContext* shared, const ContextSettings& settings, Vector2u size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor

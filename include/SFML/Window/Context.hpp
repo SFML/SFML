@@ -175,7 +175,7 @@ public:
     /// \param size     Back buffer size
     ///
     ////////////////////////////////////////////////////////////
-    Context(const ContextSettings& settings, const Vector2u& size);
+    Context(const ContextSettings& settings, Vector2u size);
 
 private:
     ////////////////////////////////////////////////////////////

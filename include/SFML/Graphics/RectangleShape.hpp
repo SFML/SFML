@@ -51,7 +51,7 @@ public:
     /// \param size Size of the rectangle
     ///
     ////////////////////////////////////////////////////////////
-    explicit RectangleShape(const Vector2f& size = {});
+    explicit RectangleShape(Vector2f size = {});
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the size of the rectangle
@@ -61,7 +61,7 @@ public:
     /// \see getSize
     ///
     ////////////////////////////////////////////////////////////
-    void setSize(const Vector2f& size);
+    void setSize(Vector2f size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the size of the rectangle
@@ -71,7 +71,7 @@ public:
     /// \see setSize
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] const Vector2f& getSize() const;
+    [[nodiscard]] Vector2f getSize() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the number of points defining the shape

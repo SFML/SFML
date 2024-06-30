@@ -65,7 +65,7 @@ SFContext::SFContext(SFContext* shared, const ContextSettings& settings, const W
 
 
 ////////////////////////////////////////////////////////////
-SFContext::SFContext(SFContext* shared, const ContextSettings& settings, const Vector2u& size)
+SFContext::SFContext(SFContext* shared, const ContextSettings& settings, Vector2u size)
 {
     const AutoreleasePool pool;
     // Ensure the process is setup in order to create a valid window.

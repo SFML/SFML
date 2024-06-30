@@ -61,7 +61,7 @@ public:
     /// \param color Fill color
     ///
     ////////////////////////////////////////////////////////////
-    explicit Image(const Vector2u& size, const Color& color = Color::Black);
+    explicit Image(Vector2u size, const Color& color = Color::Black);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the image from an array of pixels
@@ -75,7 +75,7 @@ public:
     /// \param pixels Array of pixels to copy to the image
     ///
     ////////////////////////////////////////////////////////////
-    Image(const Vector2u& size, const std::uint8_t* pixels);
+    Image(Vector2u size, const std::uint8_t* pixels);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the image from a file on disk
@@ -217,7 +217,7 @@ public:
     /// \return True if the operation was successful, false otherwise
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool copy(const Image& source, const Vector2u& dest, const IntRect& sourceRect = {}, bool applyAlpha = false);
+    [[nodiscard]] bool copy(const Image& source, Vector2u dest, const IntRect& sourceRect = {}, bool applyAlpha = false);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the color of a pixel
@@ -232,7 +232,7 @@ public:
     /// \see getPixel
     ///
     ////////////////////////////////////////////////////////////
-    void setPixel(const Vector2u& coords, const Color& color);
+    void setPixel(Vector2u coords, const Color& color);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the color of a pixel
@@ -248,7 +248,7 @@ public:
     /// \see setPixel
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Color getPixel(const Vector2u& coords) const;
+    [[nodiscard]] Color getPixel(Vector2u coords) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a read-only pointer to the array of pixels

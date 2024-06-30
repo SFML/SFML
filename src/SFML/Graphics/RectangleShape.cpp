@@ -31,14 +31,14 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-RectangleShape::RectangleShape(const Vector2f& size)
+RectangleShape::RectangleShape(Vector2f size)
 {
     setSize(size);
 }
 
 
 ////////////////////////////////////////////////////////////
-void RectangleShape::setSize(const Vector2f& size)
+void RectangleShape::setSize(Vector2f size)
 {
     m_size = size;
     update();
@@ -46,7 +46,7 @@ void RectangleShape::setSize(const Vector2f& size)
 
 
 ////////////////////////////////////////////////////////////
-const Vector2f& RectangleShape::getSize() const
+Vector2f RectangleShape::getSize() const
 {
     return m_size;
 }

@@ -872,7 +872,7 @@ Vector2i WindowImplX11::getPosition() const
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::setPosition(const Vector2i& position)
+void WindowImplX11::setPosition(Vector2i position)
 {
     XMoveWindow(m_display.get(), m_window, position.x, position.y);
     XFlush(m_display.get());
@@ -889,7 +889,7 @@ Vector2u WindowImplX11::getSize() const
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::setSize(const Vector2u& size)
+void WindowImplX11::setSize(Vector2u size)
 {
     // If resizing is disable for the window we have to update the size hints (required by some window managers).
     if (m_useSizeHints)
@@ -969,7 +969,7 @@ void WindowImplX11::setTitle(const String& title)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::setIcon(const Vector2u& size, const std::uint8_t* pixels)
+void WindowImplX11::setIcon(Vector2u size, const std::uint8_t* pixels)
 {
     // X11 wants BGRA pixels: swap red and blue channels
     // Note: this memory will be freed by X11Ptr<XImage> deleter

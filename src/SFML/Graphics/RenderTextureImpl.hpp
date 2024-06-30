@@ -78,7 +78,7 @@ public:
     /// \return True if creation has been successful
     ///
     ////////////////////////////////////////////////////////////
-    virtual bool create(const Vector2u& size, unsigned int textureId, const ContextSettings& settings) = 0;
+    virtual bool create(Vector2u size, unsigned int textureId, const ContextSettings& settings) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Activate or deactivate the render texture for rendering
