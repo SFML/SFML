@@ -38,6 +38,42 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
+RenderTexture::RenderTexture(const Vector2u& size, const ContextSettings& settings) :
+m_impl(
+    []() -> std::unique_ptr<priv::RenderTextureImpl>
+    {
+        // Create the implementation
+        if (priv::RenderTextureImplFBO::isAvailable())
+        {
+            // Use frame-buffer object (FBO)
+            return std::make_unique<priv::RenderTextureImplFBO>();
+        }
+
+        // Use default implementation
+        return std::make_unique<priv::RenderTextureImplDefault>();
+    }()),
+m_texture(size, settings.sRgbCapable)
+{
+    if (priv::RenderTextureImplFBO::isAvailable())
+    {
+        // Mark the texture as being a framebuffer object attachment
+        m_texture.m_fboAttachment = true;
+    }
+
+    // We disable smoothing by default for render textures
+    setSmooth(false);
+
+    // Initialize the render texture
+    // We pass the actual size of our texture since OpenGL ES requires that all attachments have identical sizes
+    if (!m_impl->create(m_texture.m_actualSize, m_texture.m_texture, settings))
+        throw std::runtime_error("Failed to create render texture");
+
+    // We can now initialize the render target part
+    initialize();
+}
+
+
+////////////////////////////////////////////////////////////
 RenderTexture::~RenderTexture() = default;
 
 

@@ -53,6 +53,51 @@ class SFML_AUDIO_API InputSoundFile
 {
 public:
     ////////////////////////////////////////////////////////////
+    /// \brief Construct a sound file from the disk for reading
+    ///
+    /// The supported audio formats are: WAV (PCM only), OGG/Vorbis, FLAC, MP3.
+    /// The supported sample sizes for FLAC and WAV are 8, 16, 24 and 32 bit.
+    ///
+    /// Because of minimp3_ex limitation, for MP3 files with big (>16kb) APEv2 tag,
+    /// it may not be properly removed, tag data will be treated as MP3 data
+    /// and there is a low chance of garbage decoded at the end of file.
+    /// See also: https://github.com/lieff/minimp3
+    ///
+    /// \param filename Path of the sound file to load
+    ///
+    /// \throws std::runtime_error if opening the file was unsuccessful
+    ///
+    ////////////////////////////////////////////////////////////
+    InputSoundFile(const std::filesystem::path& filename);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct a sound file in memory for reading
+    ///
+    /// The supported audio formats are: WAV (PCM only), OGG/Vorbis, FLAC.
+    /// The supported sample sizes for FLAC and WAV are 8, 16, 24 and 32 bit.
+    ///
+    /// \param data        Pointer to the file data in memory
+    /// \param sizeInBytes Size of the data to load, in bytes
+    ///
+    /// \throws std::runtime_error if opening the file was unsuccessful
+    ///
+    ////////////////////////////////////////////////////////////
+    InputSoundFile(const void* data, std::size_t sizeInBytes);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct a sound file from a custom stream for reading
+    ///
+    /// The supported audio formats are: WAV (PCM only), OGG/Vorbis, FLAC.
+    /// The supported sample sizes for FLAC and WAV are 8, 16, 24 and 32 bit.
+    ///
+    /// \param stream Source stream to read from
+    ///
+    /// \throws std::runtime_error if opening the file was unsuccessful
+    ///
+    ////////////////////////////////////////////////////////////
+    InputSoundFile(InputStream& stream);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Open a sound file from the disk for reading
     ///
     /// The supported audio formats are: WAV (PCM only), OGG/Vorbis, FLAC, MP3.

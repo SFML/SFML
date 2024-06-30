@@ -45,6 +45,28 @@ void FileInputStream::FileCloser::operator()(std::FILE* file)
 
 
 ////////////////////////////////////////////////////////////
+FileInputStream::FileInputStream(const std::filesystem::path& filename)
+{
+#ifdef SFML_SYSTEM_ANDROID
+    if (priv::getActivityStatesPtr() != nullptr)
+    {
+        m_androidFile = std::make_unique<priv::ResourceStream>(filename);
+        if (!m_androidFile->tell().has_value())
+            throw std::runtime_error("Failed to open file");
+        return;
+    }
+#endif
+#ifdef SFML_SYSTEM_WINDOWS
+    if ((m_file = std::unique_ptr<std::FILE, FileCloser>(_wfopen(filename.c_str(), L"rb"))))
+#else
+    if ((m_file = std::unique_ptr<std::FILE, FileCloser>(std::fopen(filename.c_str(), "rb"))))
+#endif
+        return;
+    throw std::runtime_error("Failed to open file");
+}
+
+
+////////////////////////////////////////////////////////////
 FileInputStream::~FileInputStream() = default;
 
 

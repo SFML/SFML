@@ -23,6 +23,58 @@ TEST_CASE("[Audio] sf::SoundBuffer", runAudioDeviceTests())
         STATIC_CHECK(!std::is_nothrow_move_assignable_v<sf::SoundBuffer>);
     }
 
+    SECTION("Constructor")
+    {
+        SECTION("File")
+        {
+            SECTION("Invalid filename")
+            {
+                CHECK_THROWS_AS(sf::SoundBuffer("does/not/exist.wav"), std::runtime_error);
+            }
+
+            SECTION("Valid file")
+            {
+                const sf::SoundBuffer soundBuffer("Audio/ding.flac");
+                CHECK(soundBuffer.getSamples() != nullptr);
+                CHECK(soundBuffer.getSampleCount() == 87798);
+                CHECK(soundBuffer.getSampleRate() == 44100);
+                CHECK(soundBuffer.getChannelCount() == 1);
+                CHECK(soundBuffer.getDuration() == sf::microseconds(1990884));
+            }
+        }
+
+        SECTION("Memory")
+        {
+            SECTION("Invalid memory")
+            {
+                constexpr std::array<std::byte, 5> memory{};
+                CHECK_THROWS_AS(sf::SoundBuffer(memory.data(), memory.size()), std::runtime_error);
+            }
+
+            SECTION("Valid memory")
+            {
+                const auto            memory = loadIntoMemory("Audio/ding.flac");
+                const sf::SoundBuffer soundBuffer(memory.data(), memory.size());
+                CHECK(soundBuffer.getSamples() != nullptr);
+                CHECK(soundBuffer.getSampleCount() == 87798);
+                CHECK(soundBuffer.getSampleRate() == 44100);
+                CHECK(soundBuffer.getChannelCount() == 1);
+                CHECK(soundBuffer.getDuration() == sf::microseconds(1990884));
+            }
+        }
+
+        SECTION("Stream")
+        {
+            sf::FileInputStream   stream("Audio/ding.flac");
+            const sf::SoundBuffer soundBuffer(stream);
+            CHECK(soundBuffer.getSamples() != nullptr);
+            CHECK(soundBuffer.getSampleCount() == 87798);
+            CHECK(soundBuffer.getSampleRate() == 44100);
+            CHECK(soundBuffer.getChannelCount() == 1);
+            CHECK(soundBuffer.getDuration() == sf::microseconds(1990884));
+        }
+    }
+
     SECTION("Copy semantics")
     {
         const auto soundBuffer = sf::SoundBuffer::loadFromFile("Audio/ding.flac").value();

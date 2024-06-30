@@ -40,6 +40,66 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
+SoundBuffer::SoundBuffer(const std::filesystem::path& filename)
+{
+    InputSoundFile file(filename);
+
+    if (!initialize(file, 0))
+        throw std::runtime_error("Failed to open sound buffer from file");
+}
+
+
+////////////////////////////////////////////////////////////
+SoundBuffer::SoundBuffer(const void* data, std::size_t sizeInBytes)
+{
+    InputSoundFile file(data, sizeInBytes);
+
+    if (!initialize(file, 0))
+        throw std::runtime_error("Failed to open sound buffer from memory");
+}
+
+
+////////////////////////////////////////////////////////////
+SoundBuffer::SoundBuffer(InputStream& stream)
+{
+    InputSoundFile file(stream);
+
+    if (!initialize(file, 0))
+        throw std::runtime_error("Failed to open sound buffer from stream");
+}
+
+
+////////////////////////////////////////////////////////////
+SoundBuffer::SoundBuffer(const std::int16_t*              samples,
+                         std::uint64_t                    sampleCount,
+                         unsigned int                     channelCount,
+                         unsigned int                     sampleRate,
+                         const std::vector<SoundChannel>& channelMap)
+{
+    if (samples && sampleCount && channelCount && sampleRate && !channelMap.empty())
+    {
+        // Copy the new audio samples
+        m_samples = std::vector<std::int16_t>(samples, samples + sampleCount);
+
+        // Update the internal buffer with the new samples
+        if (!update(channelCount, sampleRate, channelMap))
+            throw std::runtime_error("Failed to open sound buffer from samples");
+    }
+    else
+    {
+        // Error...
+        err() << "Failed to load sound buffer from samples ("
+              << "array: " << samples << ", "
+              << "count: " << sampleCount << ", "
+              << "channels: " << channelCount << ", "
+              << "samplerate: " << sampleRate << ")" << std::endl;
+
+        throw std::runtime_error("Failed to open sound buffer from samples");
+    }
+}
+
+
+////////////////////////////////////////////////////////////
 SoundBuffer::SoundBuffer(const SoundBuffer& copy)
 {
     // don't copy the attached sounds
@@ -231,6 +291,30 @@ std::optional<SoundBuffer> SoundBuffer::initialize(InputSoundFile& file)
     }
 
     return std::nullopt;
+}
+
+
+////////////////////////////////////////////////////////////
+bool SoundBuffer::initialize(InputSoundFile& file, int)
+{
+    // Retrieve the sound parameters
+    const std::uint64_t sampleCount = file.getSampleCount();
+
+    // Read the samples from the provided file
+    m_samples.resize(static_cast<std::size_t>(sampleCount));
+    if (file.read(m_samples.data(), sampleCount) == sampleCount)
+    {
+        // Update the internal buffer with the new samples
+        if (!update(file.getChannelCount(), file.getSampleRate(), file.getChannelMap()))
+        {
+            err() << "Failed to initialize sound buffer (internal update failure)" << std::endl;
+            throw std::runtime_error("Failed to initialize sound buffer (internal update failure)");
+        }
+
+        return true;
+    }
+
+    return false;
 }
 
 

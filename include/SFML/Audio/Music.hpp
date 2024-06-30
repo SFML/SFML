@@ -67,6 +67,71 @@ public:
     using TimeSpan = Span<Time>;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Construct a music from an audio file
+    ///
+    /// This function doesn't start playing the music (call play()
+    /// to do so).
+    /// See the documentation of sf::InputSoundFile for the list
+    /// of supported formats.
+    ///
+    /// \warning Since the music is not loaded at once but rather
+    /// streamed continuously, the file must remain accessible until
+    /// the sf::Music object loads a new music or is destroyed.
+    ///
+    /// \param filename Path of the music file to open
+    ///
+    /// \throws std::runtime_error if loading was unsuccessful
+    ///
+    /// \see openFromMemory, openFromStream
+    ///
+    ////////////////////////////////////////////////////////////
+    Music(const std::filesystem::path& filename);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct a music from an audio file in memory
+    ///
+    /// This function doesn't start playing the music (call play()
+    /// to do so).
+    /// See the documentation of sf::InputSoundFile for the list
+    /// of supported formats.
+    ///
+    /// \warning Since the music is not loaded at once but rather streamed
+    /// continuously, the \a data buffer must remain accessible until
+    /// the sf::Music object loads a new music or is destroyed. That is,
+    /// you can't deallocate the buffer right after calling this function.
+    ///
+    /// \param data        Pointer to the file data in memory
+    /// \param sizeInBytes Size of the data to load, in bytes
+    ///
+    /// \throws std::runtime_error if loading was unsuccessful
+    ///
+    /// \see openFromFile, openFromStream
+    ///
+    ////////////////////////////////////////////////////////////
+    Music(const void* data, std::size_t sizeInBytes);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct a music from an audio file in a custom stream
+    ///
+    /// This function doesn't start playing the music (call play()
+    /// to do so).
+    /// See the documentation of sf::InputSoundFile for the list
+    /// of supported formats.
+    ///
+    /// \warning Since the music is not loaded at once but rather
+    /// streamed continuously, the \a stream must remain accessible
+    /// until the sf::Music object loads a new music or is destroyed.
+    ///
+    /// \param stream Source stream to read from
+    ///
+    /// \throws std::runtime_error if loading was unsuccessful
+    ///
+    /// \see openFromFile, openFromMemory
+    ///
+    ////////////////////////////////////////////////////////////
+    Music(InputStream& stream);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////

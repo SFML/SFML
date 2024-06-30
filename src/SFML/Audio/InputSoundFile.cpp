@@ -67,6 +67,89 @@ void InputSoundFile::StreamDeleter::operator()(InputStream* ptr) const
 
 
 ////////////////////////////////////////////////////////////
+InputSoundFile::InputSoundFile(const std::filesystem::path& filename) :
+m_reader(SoundFileFactory::createReaderFromFilename(filename)), // Find a suitable reader for the file type
+m_stream(std::make_unique<FileInputStream>(filename))
+{
+    if (!m_reader)
+    {
+        // Error message generated in called function.
+        throw std::runtime_error("Failed to open file");
+    }
+
+    // Pass the stream to the reader
+    if (auto info = m_reader->open(*m_stream))
+    {
+        m_sampleCount = info->sampleCount;
+        m_sampleRate  = info->sampleRate;
+        m_channelMap  = std::move(info->channelMap);
+        return;
+    }
+
+    err() << "Failed to open input sound file from file (reader open failure)\n"
+          << formatDebugPathInfo(filename) << std::endl;
+    throw std::runtime_error("Failed to open input sound file from file (reader open failure)");
+}
+
+
+////////////////////////////////////////////////////////////
+InputSoundFile::InputSoundFile(const void* data, std::size_t sizeInBytes) :
+m_reader(SoundFileFactory::createReaderFromMemory(data, sizeInBytes)), // Find a suitable reader for the file type
+m_stream(std::make_unique<MemoryInputStream>(data, sizeInBytes))
+{
+    if (!m_reader)
+    {
+        // Error message generated in called function.
+        throw std::runtime_error("Failed to open file");
+    }
+
+    // Pass the stream to the reader
+    if (auto info = m_reader->open(*m_stream))
+    {
+        m_sampleCount = info->sampleCount;
+        m_sampleRate  = info->sampleRate;
+        m_channelMap  = std::move(info->channelMap);
+        return;
+    }
+
+    err() << "Failed to open input sound file from memory (reader open failure)" << std::endl;
+    throw std::runtime_error("Failed to open input sound file from memory (reader open failure)");
+}
+
+
+////////////////////////////////////////////////////////////
+InputSoundFile::InputSoundFile(InputStream& stream) :
+m_reader(SoundFileFactory::createReaderFromStream(stream)), // Find a suitable reader for the file type
+m_stream({&stream, false})
+{
+    if (!m_reader)
+    {
+        // Error message generated in called function.
+        throw std::runtime_error("Failed to open file");
+    }
+
+    // Don't forget to reset the stream to its beginning before re-opening it
+    if (m_stream->seek(0) != 0)
+    {
+        err() << "Failed to open sound file from stream (cannot restart stream)" << std::endl;
+        throw std::runtime_error("Failed to open sound file from stream (cannot restart stream)");
+    }
+
+    // Pass the stream to the reader
+    if (auto info = m_reader->open(*m_stream))
+    {
+        m_sampleCount = info->sampleCount;
+        m_sampleRate  = info->sampleRate;
+        m_channelMap  = std::move(info->channelMap);
+        return;
+    }
+
+    err() << "Failed to open input sound file from stream (reader open failure)" << std::endl;
+    throw std::runtime_error("Failed to open input sound file from stream (reader open failure)");
+}
+
+
+////////////////////////////////////////////////////////////
 std::optional<InputSoundFile> InputSoundFile::openFromFile(const std::filesystem::path& filename)
 {
     // Find a suitable reader for the file type

@@ -56,6 +56,74 @@ class SFML_AUDIO_API SoundBuffer
 {
 public:
     ////////////////////////////////////////////////////////////
+    /// \brief Construct the sound buffer from a file
+    ///
+    /// See the documentation of sf::InputSoundFile for the list
+    /// of supported formats.
+    ///
+    /// \param filename Path of the sound file to load
+    ///
+    /// \throws std::runtime_error if loading was unsuccessful
+    ///
+    /// \see loadFromMemory, loadFromStream, loadFromSamples, saveToFile
+    ///
+    ////////////////////////////////////////////////////////////
+    SoundBuffer(const std::filesystem::path& filename);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct the sound buffer from a file in memory
+    ///
+    /// See the documentation of sf::InputSoundFile for the list
+    /// of supported formats.
+    ///
+    /// \param data        Pointer to the file data in memory
+    /// \param sizeInBytes Size of the data to load, in bytes
+    ///
+    /// \throws std::runtime_error if loading was unsuccessful
+    ///
+    /// \see loadFromFile, loadFromStream, loadFromSamples
+    ///
+    ////////////////////////////////////////////////////////////
+    SoundBuffer(const void* data, std::size_t sizeInBytes);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct the sound buffer from a custom stream
+    ///
+    /// See the documentation of sf::InputSoundFile for the list
+    /// of supported formats.
+    ///
+    /// \param stream Source stream to read from
+    ///
+    /// \throws std::runtime_error if loading was unsuccessful
+    ///
+    /// \see loadFromFile, loadFromMemory, loadFromSamples
+    ///
+    ////////////////////////////////////////////////////////////
+    SoundBuffer(InputStream& stream);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct the sound buffer from an array of audio samples
+    ///
+    /// The assumed format of the audio samples is 16 bits signed integer.
+    ///
+    /// \param samples      Pointer to the array of samples in memory
+    /// \param sampleCount  Number of samples in the array
+    /// \param channelCount Number of channels (1 = mono, 2 = stereo, ...)
+    /// \param sampleRate   Sample rate (number of samples to play per second)
+    /// \param channelMap   Map of position in sample frame to sound channel
+    ///
+    /// \throws std::runtime_error if loading was unsuccessful
+    ///
+    /// \see loadFromFile, loadFromMemory, saveToFile
+    ///
+    ////////////////////////////////////////////////////////////
+    SoundBuffer(const std::int16_t*              samples,
+                std::uint64_t                    sampleCount,
+                unsigned int                     channelCount,
+                unsigned int                     sampleRate,
+                const std::vector<SoundChannel>& channelMap);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Copy constructor
     ///
     /// \param copy Instance to copy
@@ -254,10 +322,22 @@ private:
     ///
     /// \param file Sound file providing access to the new loaded sound
     ///
-    /// \return True on successful initialization, false on failure
+    /// \return Sound buffer on successful initialization, `std::nullopt` if it failed
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] static std::optional<SoundBuffer> initialize(InputSoundFile& file);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Initialize the internal state after loading a new sound
+    ///
+    /// \param file Sound file providing access to the new loaded sound
+    ///
+    /// \return True on success, false initialization was unsuccessful
+    ///
+    /// \throws std::runtime_error if initialization was unsuccessful
+    ///
+    ////////////////////////////////////////////////////////////
+    bool initialize(InputSoundFile& file, int);
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the internal buffer with the cached audio samples

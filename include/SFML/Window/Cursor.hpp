@@ -112,6 +112,55 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
+    /// \brief Construct a cursor with the provided image
+    ///
+    /// \a pixels must be an array of \a width by \a height pixels
+    /// in 32-bit RGBA format. If not, this will cause undefined behavior.
+    ///
+    /// If \a pixels is null or either \a width or \a height are 0,
+    /// the current cursor is left unchanged and the function will
+    /// return false.
+    ///
+    /// In addition to specifying the pixel data, you can also
+    /// specify the location of the hotspot of the cursor. The
+    /// hotspot is the pixel coordinate within the cursor image
+    /// which will be located exactly where the mouse pointer
+    /// position is. Any mouse actions that are performed will
+    /// return the window/screen location of the hotspot.
+    ///
+    /// \warning On Unix platforms which do not support colored
+    ///          cursors, the pixels are mapped into a monochrome
+    ///          bitmap: pixels with an alpha channel to 0 are
+    ///          transparent, black if the RGB channel are close
+    ///          to zero, and white otherwise.
+    ///
+    /// \param pixels  Array of pixels of the image
+    /// \param size    Width and height of the image
+    /// \param hotspot (x,y) location of the hotspot
+    ///
+    /// \throws std::runtime_error if the cursor could not be constructed
+    ///
+    ////////////////////////////////////////////////////////////
+    Cursor(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create a native system cursor
+    ///
+    /// Refer to the list of cursor available on each system
+    /// (see sf::Cursor::Type) to know whether a given cursor is
+    /// expected to load successfully or is not supported by
+    /// the operating system.
+    ///
+    /// \param type Native system cursor type
+    ///
+    /// \throws std::runtime_error if the corresponding cursor
+    ///         is not natively supported by the operating
+    ///         system
+    ///
+    ////////////////////////////////////////////////////////////
+    explicit Cursor(Type type);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
     /// This destructor releases the system resources

@@ -66,6 +66,206 @@ std::uint64_t getUniqueId() noexcept
 namespace sf
 {
 ////////////////////////////////////////////////////////////
+Texture::Texture(const std::filesystem::path& filename, bool sRgb) : Texture(Image(filename), sRgb)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+Texture::Texture(const std::filesystem::path& filename, bool sRgb, const IntRect& area) :
+Texture(Image(filename), sRgb, area)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+Texture::Texture(const void* data, std::size_t size, bool sRgb) : Texture(Image(data, size), sRgb)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+Texture::Texture(const void* data, std::size_t size, bool sRgb, const IntRect& area) :
+Texture(Image(data, size), sRgb, area)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+Texture::Texture(InputStream& stream, bool sRgb) : Texture(Image(stream), sRgb)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+Texture::Texture(InputStream& stream, bool sRgb, const IntRect& area) : Texture(Image(stream), sRgb, area)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+Texture::Texture(const Image& image, bool sRgb) : Texture(image.getSize(), sRgb)
+{
+    // Load the entire image
+    update(image);
+}
+
+
+////////////////////////////////////////////////////////////
+Texture::Texture(const Image& image, bool sRgb, const IntRect& area) :
+Texture(Vector2u(static_cast<unsigned int>(
+                     std::min(area.size.x, static_cast<int>(image.getSize().x) - std::max(area.position.x, 0))),
+                 static_cast<unsigned int>(
+                     std::min(area.size.y, static_cast<int>(image.getSize().y) - std::max(area.position.y, 0)))),
+        sRgb)
+{
+    // Retrieve the image size
+    const auto size = Vector2i(image.getSize());
+
+    // Adjust the rectangle to the size of the image
+    IntRect rectangle    = area;
+    rectangle.position.x = std::max(rectangle.position.x, 0);
+    rectangle.position.y = std::max(rectangle.position.y, 0);
+    rectangle.size.x     = std::min(rectangle.size.x, size.x - rectangle.position.x);
+    rectangle.size.y     = std::min(rectangle.size.y, size.y - rectangle.position.y);
+
+    // Load a sub-area of the image
+    const TransientContextLock lock;
+
+    // Make sure that the current texture binding will be preserved
+    const priv::TextureSaver save;
+
+    // Copy the pixels to the texture, row by row
+    const std::uint8_t* pixels = image.getPixelsPtr() + 4 * (rectangle.position.x + (size.x * rectangle.position.y));
+    glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
+    for (int i = 0; i < rectangle.size.y; ++i)
+    {
+        glCheck(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, i, rectangle.size.x, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
+        pixels += 4 * size.x;
+    }
+
+    glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+
+    // Force an OpenGL flush, so that the texture will appear updated
+    // in all contexts immediately (solves problems in multi-threaded apps)
+    glCheck(glFlush());
+}
+
+
+////////////////////////////////////////////////////////////
+Texture::Texture(const Vector2u& size, bool sRgb) :
+m_size(size),
+m_actualSize(getValidSize(size.x), getValidSize(size.y)),
+m_texture(
+    []
+    {
+        const TransientContextLock lock;
+
+        // Make sure that extensions are initialized
+        priv::ensureExtensionsInit();
+
+        GLuint glTexture = 0;
+        glCheck(glGenTextures(1, &glTexture));
+
+        if (glTexture == 0)
+            throw std::runtime_error("Failed to create texture, could not generate texture name");
+
+        return glTexture;
+    }()),
+m_sRgb(sRgb),
+m_cacheId(TextureImpl::getUniqueId())
+{
+    // Check if texture parameters are valid before creating it
+    if ((size.x == 0) || (size.y == 0))
+    {
+        err() << "Failed to create texture, invalid size (" << size.x << "x" << size.y << ")" << std::endl;
+        throw std::runtime_error("Failed to create texture, invalid size");
+    }
+
+    const TransientContextLock lock;
+
+    // Make sure that extensions are initialized
+    priv::ensureExtensionsInit();
+
+    // Compute the internal texture dimensions depending on NPOT textures support
+    const Vector2u actualSize(getValidSize(size.x), getValidSize(size.y));
+
+    // Check the maximum texture size
+    const unsigned int maxSize = getMaximumSize();
+    if ((actualSize.x > maxSize) || (actualSize.y > maxSize))
+    {
+        err() << "Failed to create texture, its internal size is too high "
+              << "(" << actualSize.x << "x" << actualSize.y << ", "
+              << "maximum is " << maxSize << "x" << maxSize << ")" << std::endl;
+        throw std::runtime_error("Failed to create texture, its internal size is too high");
+    }
+
+    // Make sure that the current texture binding will be preserved
+    const priv::TextureSaver save;
+
+    static const bool textureEdgeClamp = GLEXT_texture_edge_clamp || GLEXT_GL_VERSION_1_2 ||
+                                         Context::isExtensionAvailable("GL_EXT_texture_edge_clamp");
+
+    if (!textureEdgeClamp)
+    {
+        static bool warned = false;
+
+        if (!warned)
+        {
+            err() << "OpenGL extension SGIS_texture_edge_clamp unavailable" << '\n'
+                  << "Artifacts may occur along texture edges" << '\n'
+                  << "Ensure that hardware acceleration is enabled if available" << std::endl;
+
+            warned = true;
+        }
+    }
+
+    static const bool textureSrgb = GLEXT_texture_sRGB;
+
+    if (m_sRgb && !textureSrgb)
+    {
+        static bool warned = false;
+
+        if (!warned)
+        {
+#ifndef SFML_OPENGL_ES
+            err() << "OpenGL extension EXT_texture_sRGB unavailable" << '\n';
+#else
+            err() << "OpenGL ES extension EXT_sRGB unavailable" << '\n';
+#endif
+            err() << "Automatic sRGB to linear conversion disabled" << std::endl;
+
+            warned = true;
+        }
+
+        m_sRgb = false;
+    }
+
+#ifndef SFML_OPENGL_ES
+    const GLint textureWrapParam = textureEdgeClamp ? GLEXT_GL_CLAMP_TO_EDGE : GLEXT_GL_CLAMP;
+#else
+    const GLint textureWrapParam = GLEXT_GL_CLAMP_TO_EDGE;
+#endif
+
+    // Initialize the texture
+    glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
+    glCheck(glTexImage2D(GL_TEXTURE_2D,
+                         0,
+                         (m_sRgb ? GLEXT_GL_SRGB8_ALPHA8 : GL_RGBA),
+                         static_cast<GLsizei>(m_actualSize.x),
+                         static_cast<GLsizei>(m_actualSize.y),
+                         0,
+                         GL_RGBA,
+                         GL_UNSIGNED_BYTE,
+                         nullptr));
+    glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, textureWrapParam));
+    glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, textureWrapParam));
+    glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+    glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+}
+
+
+////////////////////////////////////////////////////////////
 Texture::Texture(const Vector2u& size, const Vector2u& actualSize, unsigned int texture, bool sRgb) :
 m_size(size),
 m_actualSize(actualSize),
@@ -195,7 +395,12 @@ std::optional<Texture> Texture::create(const Vector2u& size, bool sRgb)
     // Create the OpenGL texture
     GLuint glTexture = 0;
     glCheck(glGenTextures(1, &glTexture));
-    assert(glTexture);
+
+    if (glTexture == 0)
+    {
+        err() << "Failed to create texture, could not generate texture name" << std::endl;
+        return std::nullopt;
+    }
 
     // All the validity checks passed, we can store the new texture settings
     Texture texture(size, actualSize, glTexture, sRgb);
@@ -262,9 +467,6 @@ std::optional<Texture> Texture::create(const Vector2u& size, bool sRgb)
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, textureWrapParam));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
-    texture.m_cacheId = TextureImpl::getUniqueId();
-
-    texture.m_hasMipmap = false;
 
     return texture;
 }

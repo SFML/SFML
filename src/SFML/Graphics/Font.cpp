@@ -122,6 +122,187 @@ struct Font::FontHandles
 
 
 ////////////////////////////////////////////////////////////
+Font::Font(const std::filesystem::path& filename) : m_fontHandles(std::make_shared<FontHandles>())
+{
+    // Initialize FreeType
+    // Note: we initialize FreeType for every font instance in order to avoid having a single
+    // global manager that would create a lot of issues regarding creation and destruction order.
+    if (FT_Init_FreeType(&m_fontHandles->library) != 0)
+    {
+        err() << "Failed to load font (failed to initialize FreeType)\n" << formatDebugPathInfo(filename) << std::endl;
+        throw std::runtime_error("Failed to load font (failed to initialize FreeType)");
+    }
+
+    FT_Face face = nullptr;
+
+#ifndef SFML_SYSTEM_ANDROID
+
+    // Load the new font face from the specified file
+    if (FT_New_Face(m_fontHandles->library, filename.string().c_str(), 0, &face) != 0)
+    {
+        err() << "Failed to load font (failed to create the font face)\n" << formatDebugPathInfo(filename) << std::endl;
+        throw std::runtime_error("Failed to load font (failed to create the font face)");
+    }
+
+#else
+
+    m_stream = std::make_shared<priv::ResourceStream>(filename);
+
+    // Make sure that the stream's reading position is at the beginning
+    if (!m_stream->seek(0).has_value())
+    {
+        err() << "Failed to seek font stream" << std::endl;
+        throw std::runtime_error("Failed to seek font stream");
+    }
+
+    // Prepare a wrapper for our stream, that we'll pass to FreeType callbacks
+    m_fontHandles->streamRec.base               = nullptr;
+    m_fontHandles->streamRec.size               = static_cast<unsigned long>(m_stream->getSize().value());
+    m_fontHandles->streamRec.pos                = 0;
+    m_fontHandles->streamRec.descriptor.pointer = m_stream.get();
+    m_fontHandles->streamRec.read               = &read;
+    m_fontHandles->streamRec.close              = &close;
+
+    // Setup the FreeType callbacks that will read our stream
+    FT_Open_Args args;
+    args.flags  = FT_OPEN_STREAM;
+    args.stream = &m_fontHandles->streamRec;
+    args.driver = nullptr;
+
+    // Load the new font face from the specified stream
+    if (FT_Open_Face(m_fontHandles->library, &args, 0, &face) != 0)
+    {
+        err() << "Failed to load font from stream (failed to create the font face)" << std::endl;
+        throw std::runtime_error("Failed to load font from stream (failed to create the font face)");
+    }
+
+#endif
+
+    m_fontHandles->face = face;
+
+    // Load the stroker that will be used to outline the font
+    if (FT_Stroker_New(m_fontHandles->library, &m_fontHandles->stroker) != 0)
+    {
+        err() << "Failed to load font (failed to create the stroker)\n" << formatDebugPathInfo(filename) << std::endl;
+        throw std::runtime_error("Failed to load font (failed to create the stroker)");
+    }
+
+    // Select the unicode character map
+    if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) != 0)
+    {
+        err() << "Failed to load font (failed to set the Unicode character set)\n"
+              << formatDebugPathInfo(filename) << std::endl;
+        throw std::runtime_error("Failed to load font (failed to set the Unicode character set)");
+    }
+
+    m_info.family = std::string(face->family_name ? face->family_name : "");
+}
+
+
+////////////////////////////////////////////////////////////
+Font::Font(const void* data, std::size_t sizeInBytes) : m_fontHandles(std::make_shared<FontHandles>())
+{
+    // Initialize FreeType
+    // Note: we initialize FreeType for every font instance in order to avoid having a single
+    // global manager that would create a lot of issues regarding creation and destruction order.
+    if (FT_Init_FreeType(&m_fontHandles->library) != 0)
+    {
+        err() << "Failed to load font from memory (failed to initialize FreeType)" << std::endl;
+        throw std::runtime_error("Failed to load font from memory (failed to initialize FreeType)");
+    }
+
+    // Load the new font face from the specified file
+    FT_Face face = nullptr;
+    if (FT_New_Memory_Face(m_fontHandles->library,
+                           reinterpret_cast<const FT_Byte*>(data),
+                           static_cast<FT_Long>(sizeInBytes),
+                           0,
+                           &face) != 0)
+    {
+        err() << "Failed to load font from memory (failed to create the font face)" << std::endl;
+        throw std::runtime_error("Failed to load font from memory (failed to create the font face)");
+    }
+    m_fontHandles->face = face;
+
+    // Load the stroker that will be used to outline the font
+    if (FT_Stroker_New(m_fontHandles->library, &m_fontHandles->stroker) != 0)
+    {
+        err() << "Failed to load font from memory (failed to create the stroker)" << std::endl;
+        throw std::runtime_error("Failed to load font from memory (failed to create the stroker)");
+    }
+
+    // Select the Unicode character map
+    if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) != 0)
+    {
+        err() << "Failed to load font from memory (failed to set the Unicode character set)" << std::endl;
+        throw std::runtime_error("Failed to load font from memory (failed to set the Unicode character set)");
+    }
+
+    m_info.family = std::string(face->family_name ? face->family_name : "");
+}
+
+
+////////////////////////////////////////////////////////////
+Font::Font(InputStream& stream) : m_fontHandles(std::make_shared<FontHandles>())
+{
+    // Initialize FreeType
+    // Note: we initialize FreeType for every font instance in order to avoid having a single
+    // global manager that would create a lot of issues regarding creation and destruction order.
+    if (FT_Init_FreeType(&m_fontHandles->library) != 0)
+    {
+        err() << "Failed to load font from stream (failed to initialize FreeType)" << std::endl;
+        throw std::runtime_error("Failed to load font from stream (failed to initialize FreeType)");
+    }
+
+    // Make sure that the stream's reading position is at the beginning
+    if (!stream.seek(0).has_value())
+    {
+        err() << "Failed to seek font stream" << std::endl;
+        throw std::runtime_error("Failed to seek font stream");
+    }
+
+    // Prepare a wrapper for our stream, that we'll pass to FreeType callbacks
+    m_fontHandles->streamRec.base               = nullptr;
+    m_fontHandles->streamRec.size               = static_cast<unsigned long>(stream.getSize().value());
+    m_fontHandles->streamRec.pos                = 0;
+    m_fontHandles->streamRec.descriptor.pointer = &stream;
+    m_fontHandles->streamRec.read               = &read;
+    m_fontHandles->streamRec.close              = &close;
+
+    // Setup the FreeType callbacks that will read our stream
+    FT_Open_Args args;
+    args.flags  = FT_OPEN_STREAM;
+    args.stream = &m_fontHandles->streamRec;
+    args.driver = nullptr;
+
+    // Load the new font face from the specified stream
+    FT_Face face = nullptr;
+    if (FT_Open_Face(m_fontHandles->library, &args, 0, &face) != 0)
+    {
+        err() << "Failed to load font from stream (failed to create the font face)" << std::endl;
+        throw std::runtime_error("Failed to load font from stream (failed to create the font face)");
+    }
+    m_fontHandles->face = face;
+
+    // Load the stroker that will be used to outline the font
+    if (FT_Stroker_New(m_fontHandles->library, &m_fontHandles->stroker) != 0)
+    {
+        err() << "Failed to load font from stream (failed to create the stroker)" << std::endl;
+        throw std::runtime_error("Failed to load font from stream (failed to create the stroker)");
+    }
+
+    // Select the Unicode character map
+    if (FT_Select_Charmap(face, FT_ENCODING_UNICODE) != 0)
+    {
+        err() << "Failed to load font from stream (failed to set the Unicode character set)" << std::endl;
+        throw std::runtime_error("Failed to load font from stream (failed to set the Unicode character set)");
+    }
+
+    m_info.family = std::string(face->family_name ? face->family_name : "");
+}
+
+
+////////////////////////////////////////////////////////////
 Font::Font(std::shared_ptr<FontHandles>&& fontHandles, std::string&& familyName) : m_fontHandles(std::move(fontHandles))
 {
     m_info.family = std::move(familyName);
