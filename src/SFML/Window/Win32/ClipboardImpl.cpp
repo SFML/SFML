@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Win32/ClipboardImpl.hpp>
+#include <SFML/Window/Win32/Utils.hpp>
 
 #include <SFML/System/Err.hpp>
 #include <SFML/System/String.hpp>
@@ -35,26 +36,6 @@
 
 #include <cstring>
 
-namespace
-{
-std::string getErrorString(DWORD error)
-{
-    PTCHAR buffer = nullptr;
-
-    if (FormatMessage(FORMAT_MESSAGE_MAX_WIDTH_MASK | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-                        nullptr,
-                        error,
-                        0,
-                        reinterpret_cast<PTCHAR>(&buffer),
-                        0,
-                        nullptr) == 0)
-        return "Unknown error.";
-
-    sf::String message = buffer;
-    LocalFree(buffer);
-    return message.toAnsiString();
-}
-}
 
 namespace sf::priv
 {

@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/ContextSettings.hpp>
 #include <SFML/Window/VideoMode.hpp>
+#include <SFML/Window/Win32/Utils.hpp>
 #include <SFML/Window/Win32/WglContext.hpp>
 #include <SFML/Window/WindowImpl.hpp>
 
@@ -100,30 +101,6 @@ void ensureExtensionsInit(HDC deviceContext)
 
 namespace sf::priv
 {
-////////////////////////////////////////////////////////////
-String getErrorString(DWORD errorCode)
-{
-    PTCHAR buffer = nullptr;
-    if (FormatMessage(FORMAT_MESSAGE_MAX_WIDTH_MASK | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
-                          FORMAT_MESSAGE_IGNORE_INSERTS,
-                      nullptr,
-                      errorCode,
-                      0,
-                      reinterpret_cast<LPTSTR>(&buffer),
-                      256,
-                      nullptr) != 0)
-    {
-        String errMsg(buffer);
-        LocalFree(buffer);
-        return errMsg;
-    }
-
-    std::ostringstream ss;
-    ss << "Error " << errorCode;
-    return {ss.str()};
-}
-
-
 ////////////////////////////////////////////////////////////
 WglContext::WglContext(WglContext* shared) : WglContext(shared, ContextSettings{}, {1u, 1u})
 {
@@ -234,7 +211,7 @@ bool WglContext::makeCurrent(bool current)
     if (wglMakeCurrent(m_deviceContext, current ? m_context : nullptr) == FALSE)
     {
         err() << "Failed to " << (current ? "activate" : "deactivate")
-              << " OpenGL context: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
+              << " OpenGL context: " << getErrorString(GetLastError()) << std::endl;
         return false;
     }
 
@@ -261,7 +238,7 @@ void WglContext::setVerticalSyncEnabled(bool enabled)
     if (SF_GLAD_WGL_EXT_swap_control)
     {
         if (wglSwapIntervalEXT(enabled ? 1 : 0) == FALSE)
-            err() << "Setting vertical sync failed: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
+            err() << "Setting vertical sync failed: " << getErrorString(GetLastError()) << std::endl;
     }
     else
     {
@@ -335,7 +312,7 @@ int WglContext::selectBestPixelFormat(HDC deviceContext, unsigned int bitsPerPix
         const bool isValid = wglChoosePixelFormatARB(deviceContext, intAttributes, nullptr, 512, formats, &nbFormats) != FALSE;
 
         if (!isValid)
-            err() << "Failed to enumerate pixel formats: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
+            err() << "Failed to enumerate pixel formats: " << getErrorString(GetLastError()) << std::endl;
 
         // Get the best format among the returned ones
         if (isValid && (nbFormats > 0))
@@ -355,8 +332,7 @@ int WglContext::selectBestPixelFormat(HDC deviceContext, unsigned int bitsPerPix
 
                 if (wglGetPixelFormatAttribivARB(deviceContext, formats[i], PFD_MAIN_PLANE, 7, attributes, values) == FALSE)
                 {
-                    err() << "Failed to retrieve pixel format information: "
-                          << getErrorString(GetLastError()).toAnsiString() << std::endl;
+                    err() << "Failed to retrieve pixel format information: " << getErrorString(GetLastError()) << std::endl;
                     break;
                 }
 
@@ -369,7 +345,7 @@ int WglContext::selectBestPixelFormat(HDC deviceContext, unsigned int bitsPerPix
                         FALSE)
                     {
                         err() << "Failed to retrieve pixel format multisampling information: "
-                              << getErrorString(GetLastError()).toAnsiString() << std::endl;
+                              << getErrorString(GetLastError()) << std::endl;
                         break;
                     }
                 }
@@ -383,7 +359,7 @@ int WglContext::selectBestPixelFormat(HDC deviceContext, unsigned int bitsPerPix
                         FALSE)
                     {
                         err() << "Failed to retrieve pixel format sRGB capability information: "
-                              << getErrorString(GetLastError()).toAnsiString() << std::endl;
+                              << getErrorString(GetLastError()) << std::endl;
                         break;
                     }
                 }
@@ -397,8 +373,8 @@ int WglContext::selectBestPixelFormat(HDC deviceContext, unsigned int bitsPerPix
                     if (wglGetPixelFormatAttribivARB(deviceContext, formats[i], PFD_MAIN_PLANE, 1, pbufferAttributes, &pbufferValue) ==
                         FALSE)
                     {
-                        err() << "Failed to retrieve pixel format pbuffer information: "
-                              << getErrorString(GetLastError()).toAnsiString() << std::endl;
+                        err() << "Failed to retrieve pixel format pbuffer information: " << getErrorString(GetLastError())
+                              << std::endl;
                         break;
                     }
 
@@ -467,8 +443,7 @@ void WglContext::setDevicePixelFormat(unsigned int bitsPerPixel)
 
     if (bestFormat == 0)
     {
-        err() << "Failed to find a suitable pixel format for device context: "
-              << getErrorString(GetLastError()).toAnsiString() << '\n'
+        err() << "Failed to find a suitable pixel format for device context: " << getErrorString(GetLastError()) << '\n'
               << "Cannot create OpenGL context" << std::endl;
         return;
     }
@@ -482,7 +457,7 @@ void WglContext::setDevicePixelFormat(unsigned int bitsPerPixel)
     // Set the chosen pixel format
     if (SetPixelFormat(m_deviceContext, bestFormat, &actualFormat) == FALSE)
     {
-        err() << "Failed to set pixel format for device context: " << getErrorString(GetLastError()).toAnsiString() << '\n'
+        err() << "Failed to set pixel format for device context: " << getErrorString(GetLastError()) << '\n'
               << "Cannot create OpenGL context" << std::endl;
         return;
     }
@@ -496,7 +471,7 @@ void WglContext::updateSettingsFromPixelFormat()
 
     if (format == 0)
     {
-        err() << "Failed to get selected pixel format: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
+        err() << "Failed to get selected pixel format: " << getErrorString(GetLastError()) << std::endl;
         return;
     }
 
@@ -506,8 +481,7 @@ void WglContext::updateSettingsFromPixelFormat()
 
     if (DescribePixelFormat(m_deviceContext, format, sizeof(actualFormat), &actualFormat) == 0)
     {
-        err() << "Failed to retrieve pixel format information: " << getErrorString(GetLastError()).toAnsiString()
-              << std::endl;
+        err() << "Failed to retrieve pixel format information: " << getErrorString(GetLastError()) << std::endl;
         return;
     }
 
@@ -537,8 +511,7 @@ void WglContext::updateSettingsFromPixelFormat()
         }
         else
         {
-            err() << "Failed to retrieve pixel format information: " << getErrorString(GetLastError()).toAnsiString()
-                  << std::endl;
+            err() << "Failed to retrieve pixel format information: " << getErrorString(GetLastError()) << std::endl;
             m_settings.depthBits   = actualFormat.cDepthBits;
             m_settings.stencilBits = actualFormat.cStencilBits;
         }
@@ -555,8 +528,8 @@ void WglContext::updateSettingsFromPixelFormat()
             }
             else
             {
-                err() << "Failed to retrieve pixel format multisampling information: "
-                      << getErrorString(GetLastError()).toAnsiString() << std::endl;
+                err() << "Failed to retrieve pixel format multisampling information: " << getErrorString(GetLastError())
+                      << std::endl;
                 m_settings.antialiasingLevel = 0;
             }
         }
@@ -577,8 +550,8 @@ void WglContext::updateSettingsFromPixelFormat()
             }
             else
             {
-                err() << "Failed to retrieve pixel format sRGB capability information: "
-                      << getErrorString(GetLastError()).toAnsiString() << std::endl;
+                err() << "Failed to retrieve pixel format sRGB capability information: " << getErrorString(GetLastError())
+                      << std::endl;
                 m_settings.sRgbCapable = false;
             }
         }
@@ -621,8 +594,8 @@ void WglContext::createSurface(WglContext* shared, const Vector2u& size, unsigne
 
                 if (!m_deviceContext)
                 {
-                    err() << "Failed to retrieve pixel buffer device context: "
-                          << getErrorString(GetLastError()).toAnsiString() << std::endl;
+                    err() << "Failed to retrieve pixel buffer device context: " << getErrorString(GetLastError())
+                          << std::endl;
 
                     wglDestroyPbufferARB(m_pbuffer);
                     m_pbuffer = nullptr;
@@ -630,7 +603,7 @@ void WglContext::createSurface(WglContext* shared, const Vector2u& size, unsigne
             }
             else
             {
-                err() << "Failed to create pixel buffer: " << getErrorString(GetLastError()).toAnsiString() << std::endl;
+                err() << "Failed to create pixel buffer: " << getErrorString(GetLastError()) << std::endl;
             }
         }
     }
@@ -746,8 +719,8 @@ void WglContext::createContext(WglContext* shared)
                 {
                     if (wglMakeCurrent(shared->m_deviceContext, nullptr) == FALSE)
                     {
-                        err() << "Failed to deactivate shared context before sharing: "
-                              << getErrorString(GetLastError()).toAnsiString() << std::endl;
+                        err() << "Failed to deactivate shared context before sharing: " << getErrorString(GetLastError())
+                              << std::endl;
                         return;
                     }
 
@@ -802,8 +775,7 @@ void WglContext::createContext(WglContext* shared)
         m_context = wglCreateContext(m_deviceContext);
         if (!m_context)
         {
-            err() << "Failed to create an OpenGL context for this window: "
-                  << getErrorString(GetLastError()).toAnsiString() << std::endl;
+            err() << "Failed to create an OpenGL context for this window: " << getErrorString(GetLastError()) << std::endl;
             return;
         }
 
@@ -818,8 +790,8 @@ void WglContext::createContext(WglContext* shared)
             {
                 if (wglMakeCurrent(shared->m_deviceContext, nullptr) == FALSE)
                 {
-                    err() << "Failed to deactivate shared context before sharing: "
-                          << getErrorString(GetLastError()).toAnsiString() << std::endl;
+                    err() << "Failed to deactivate shared context before sharing: " << getErrorString(GetLastError())
+                          << std::endl;
                     return;
                 }
 
@@ -827,8 +799,7 @@ void WglContext::createContext(WglContext* shared)
             }
 
             if (wglShareLists(sharedContext, m_context) == FALSE)
-                err() << "Failed to share the OpenGL context: " << getErrorString(GetLastError()).toAnsiString()
-                      << std::endl;
+                err() << "Failed to share the OpenGL context: " << getErrorString(GetLastError()) << std::endl;
         }
     }
 
