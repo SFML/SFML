@@ -10,8 +10,34 @@
 #include <thread>
 #include <type_traits>
 
+namespace
+{
+template <typename T>
+struct Singleton
+{
+    static T& getInstance()
+    {
+        static T instance;
+        return instance;
+    }
+};
+} // namespace
+
 TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
 {
+    // Section must be placed first within this TEST_CASE or else it will always pass
+    SECTION("Construction/destruction order")
+    {
+        struct MusicSingleton : Singleton<MusicSingleton>
+        {
+            std::optional<sf::Music> music;
+        };
+
+        MusicSingleton::getInstance();
+        MusicSingleton::getInstance().music = sf::Music::openFromFile("Audio/ding.flac").value();
+        CHECK(true); // Lack of a crash due to assertion failure signals success
+    }
+
     SECTION("Type traits")
     {
         STATIC_CHECK(!std::is_copy_constructible_v<sf::Music>);
