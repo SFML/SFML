@@ -316,7 +316,7 @@ private:
     // Member data
     ////////////////////////////////////////////////////////////
     sf::RenderWindow m_window{sf::VideoMode({800u, 600u}), "SFML Event Handling", sf::Style::Titlebar | sf::Style::Close};
-    const sf::Font   m_font{sf::Font::openFromFile("resources/tuffy.ttf").value()};
+    const sf::Font   m_font{sf::Font::createFromFile("resources/tuffy.ttf").value()};
     sf::Text         m_logText{m_font, "", 20};
     sf::Text         m_handlerText{m_font, "Current Handler: Classic", 24};
     sf::Text         m_instructions{m_font, "Press Enter to change handler type", 24};

@@ -57,6 +57,14 @@ class SFML_GRAPHICS_API Texture : GlResource
 {
 public:
     ////////////////////////////////////////////////////////////
+    /// \brief Default constructor
+    ///
+    /// Creates a texture with width 0 and height 0.
+    ///
+    ////////////////////////////////////////////////////////////
+    Texture();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
@@ -89,9 +97,148 @@ public:
     Texture& operator=(Texture&&) noexcept;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Create the texture
+    /// \brief Resize the texture
     ///
     /// If this function fails, the texture is left unchanged.
+    ///
+    /// \param size Width and height of the texture
+    /// \param sRgb True to enable sRGB conversion, false to disable it
+    ///
+    /// \return True if resizing was successful
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] bool resize(Vector2u size, bool sRgb = false);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Load the texture from a file on disk
+    ///
+    /// This function is a shortcut for the following code:
+    /// \code
+    /// sf::Image image;
+    /// if (!image.loadFromFile(filename))
+    ///     return false;
+    /// if (!texture.loadFromImage(image, area))
+    ///     return false;
+    /// \endcode
+    ///
+    /// The \a area argument can be used to load only a sub-rectangle
+    /// of the whole image. If you want the entire image then leave
+    /// the default value (which is an empty IntRect).
+    /// If the \a area rectangle crosses the bounds of the image, it
+    /// is adjusted to fit the image size.
+    ///
+    /// The maximum size for a texture depends on the graphics
+    /// driver and can be retrieved with the getMaximumSize function.
+    ///
+    /// If this function fails, the texture is left unchanged.
+    ///
+    /// \param filename Path of the image file to load
+    /// \param sRgb     True to enable sRGB conversion, false to disable it
+    /// \param area     Area of the image to load
+    ///
+    /// \return True if loading was successful
+    ///
+    /// \see loadFromMemory, loadFromStream, loadFromImage
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] bool loadFromFile(const std::filesystem::path& filename, bool sRgb = false, const IntRect& area = IntRect());
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Load the texture from a file in memory
+    ///
+    /// This function is a shortcut for the following code:
+    /// \code
+    /// sf::Image image;
+    /// if (!image.loadFromMemory(data, size))
+    ///     return false;
+    /// if (!texture.loadFromImage(image, area))
+    ///     return false;
+    /// \endcode
+    ///
+    /// The \a area argument can be used to load only a sub-rectangle
+    /// of the whole image. If you want the entire image then leave
+    /// the default value (which is an empty IntRect).
+    /// If the \a area rectangle crosses the bounds of the image, it
+    /// is adjusted to fit the image size.
+    ///
+    /// The maximum size for a texture depends on the graphics
+    /// driver and can be retrieved with the getMaximumSize function.
+    ///
+    /// If this function fails, the texture is left unchanged.
+    ///
+    /// \param data Pointer to the file data in memory
+    /// \param size Size of the data to load, in bytes
+    /// \param sRgb True to enable sRGB conversion, false to disable it
+    /// \param area Area of the image to load
+    ///
+    /// \return True if loading was successful
+    ///
+    /// \see loadFromFile, loadFromStream, loadFromImage
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] bool loadFromMemory(const void* data, std::size_t size, bool sRgb = false, const IntRect& area = IntRect());
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Load the texture from a custom stream
+    ///
+    /// This function is a shortcut for the following code:
+    /// \code
+    /// sf::Image image;
+    /// if (!image.loadFromStream(stream))
+    ///     return false;
+    /// if (!texture.loadFromImage(image, area))
+    ///     return false;
+    /// \endcode
+    ///
+    /// The \a area argument can be used to load only a sub-rectangle
+    /// of the whole image. If you want the entire image then leave
+    /// the default value (which is an empty IntRect).
+    /// If the \a area rectangle crosses the bounds of the image, it
+    /// is adjusted to fit the image size.
+    ///
+    /// The maximum size for a texture depends on the graphics
+    /// driver and can be retrieved with the getMaximumSize function.
+    ///
+    /// If this function fails, the texture is left unchanged.
+    ///
+    /// \param stream Source stream to read from
+    /// \param sRgb   True to enable sRGB conversion, false to disable it
+    /// \param area   Area of the image to load
+    ///
+    /// \return True if loading was successful
+    ///
+    /// \see loadFromFile, loadFromMemory, loadFromImage
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] bool loadFromStream(InputStream& stream, bool sRgb = false, const IntRect& area = IntRect());
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Load the texture from an image
+    ///
+    /// The \a area argument can be used to load only a sub-rectangle
+    /// of the whole image. If you want the entire image then leave
+    /// the default value (which is an empty IntRect).
+    /// If the \a area rectangle crosses the bounds of the image, it
+    /// is adjusted to fit the image size.
+    ///
+    /// The maximum size for a texture depends on the graphics
+    /// driver and can be retrieved with the getMaximumSize function.
+    ///
+    /// If this function fails, the texture is left unchanged.
+    ///
+    /// \param image Image to load into the texture
+    /// \param sRgb  True to enable sRGB conversion, false to disable it
+    /// \param area  Area of the image to load
+    ///
+    /// \return True if loading was successful
+    ///
+    /// \see loadFromFile, loadFromMemory
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] bool loadFromImage(const Image& image, bool sRgb = false, const IntRect& area = IntRect());
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create a texture
     ///
     /// \param size Width and height of the texture
     /// \param sRgb True to enable sRGB conversion, false to disable it
@@ -121,12 +268,12 @@ public:
     ///
     /// \return Texture if loading was successful, otherwise `std::nullopt`
     ///
-    /// \see loadFromMemory, loadFromStream, loadFromImage
+    /// \see createFromMemory, createFromStream, createFromImage
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Texture> loadFromFile(const std::filesystem::path& filename,
-                                                             bool                         sRgb = false,
-                                                             const IntRect&               area = {});
+    [[nodiscard]] static std::optional<Texture> createFromFile(const std::filesystem::path& filename,
+                                                               bool                         sRgb = false,
+                                                               const IntRect&               area = {});
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from a file in memory
@@ -149,10 +296,10 @@ public:
     ///
     /// \return Texture if loading was successful, otherwise `std::nullopt`
     ///
-    /// \see loadFromFile, loadFromStream, loadFromImage
+    /// \see createFromFile, createFromStream, createFromImage
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Texture> loadFromMemory(
+    [[nodiscard]] static std::optional<Texture> createFromMemory(
         const void*    data,
         std::size_t    size,
         bool           sRgb = false,
@@ -178,10 +325,12 @@ public:
     ///
     /// \return Texture if loading was successful, otherwise `std::nullopt`
     ///
-    /// \see loadFromFile, loadFromMemory, loadFromImage
+    /// \see createFromFile, createFromMemory, createFromImage
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Texture> loadFromStream(InputStream& stream, bool sRgb = false, const IntRect& area = {});
+    [[nodiscard]] static std::optional<Texture> createFromStream(InputStream&   stream,
+                                                                 bool           sRgb = false,
+                                                                 const IntRect& area = {});
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from an image
@@ -203,10 +352,10 @@ public:
     ///
     /// \return Texture if loading was successful, otherwise `std::nullopt`
     ///
-    /// \see loadFromFile, loadFromMemory
+    /// \see createFromFile, createFromMemory
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Texture> loadFromImage(const Image& image, bool sRgb = false, const IntRect& area = {});
+    [[nodiscard]] static std::optional<Texture> createFromImage(const Image& image, bool sRgb = false, const IntRect& area = {});
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the size of the texture
@@ -226,7 +375,7 @@ public:
     ///
     /// \return Image containing the texture's pixels
     ///
-    /// \see loadFromImage
+    /// \see createFromImage
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Image copyToImage() const;
@@ -546,14 +695,6 @@ private:
     friend class RenderTarget;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    /// Creates an empty texture.
-    ///
-    ////////////////////////////////////////////////////////////
-    Texture(Vector2u size, Vector2u actualSize, unsigned int texture, bool sRgb);
-
-    ////////////////////////////////////////////////////////////
     /// \brief Get a valid image size according to hardware support
     ///
     /// This function checks whether the graphics driver supports
@@ -630,7 +771,7 @@ SFML_GRAPHICS_API void swap(Texture& left, Texture& right) noexcept;
 /// However, if you want to perform some modifications on the pixels
 /// before creating the final texture, you can load your file to a
 /// sf::Image, do whatever you need with the pixels, and then call
-/// Texture::loadFromImage.
+/// Texture::createFromImage.
 ///
 /// Since they live in the graphics card memory, the pixels of a texture
 /// cannot be accessed without a slow copy first. And they cannot be
@@ -662,7 +803,7 @@ SFML_GRAPHICS_API void swap(Texture& left, Texture& right) noexcept;
 /// // drawing a sprite
 ///
 /// // Load a texture from a file
-/// const auto texture = sf::Texture::loadFromFile("texture.png").value();
+/// const auto texture = sf::Texture::createFromFile("texture.png").value();
 ///
 /// // Assign it to a sprite
 /// sf::Sprite sprite(texture);

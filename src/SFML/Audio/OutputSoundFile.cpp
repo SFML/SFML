@@ -37,28 +37,47 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-std::optional<OutputSoundFile> OutputSoundFile::openFromFile(
+bool OutputSoundFile::openFromFile(const std::filesystem::path&     filename,
+                                   unsigned int                     sampleRate,
+                                   unsigned int                     channelCount,
+                                   const std::vector<SoundChannel>& channelMap)
+{
+    // If the file is already open, first close it
+    close();
+
+    // Find a suitable writer for the file type
+    m_writer = SoundFileFactory::createWriterFromFilename(filename);
+    if (!m_writer)
+    {
+        // Error message generated in called function.
+        return false;
+    }
+
+    // Pass the stream to the reader
+    if (!m_writer->open(filename, sampleRate, channelCount, channelMap))
+    {
+        err() << "Failed to open output sound file from file (writer open failure)" << std::endl;
+        close();
+        return false;
+    }
+
+    return true;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<OutputSoundFile> OutputSoundFile::createFromFile(
     const std::filesystem::path&     filename,
     unsigned int                     sampleRate,
     unsigned int                     channelCount,
     const std::vector<SoundChannel>& channelMap)
 {
-    // Find a suitable writer for the file type
-    auto writer = SoundFileFactory::createWriterFromFilename(filename);
-    if (!writer)
-    {
-        // Error message generated in called function.
-        return std::nullopt;
-    }
+    auto outputSoundFile = std::make_optional<OutputSoundFile>();
 
-    // Pass the stream to the reader
-    if (!writer->open(filename, sampleRate, channelCount, channelMap))
-    {
-        err() << "Failed to open output sound file from file (writer open failure)" << std::endl;
+    if (!outputSoundFile->openFromFile(filename, sampleRate, channelCount, channelMap))
         return std::nullopt;
-    }
 
-    return OutputSoundFile(std::move(writer));
+    return outputSoundFile;
 }
 
 
@@ -77,12 +96,6 @@ void OutputSoundFile::close()
 {
     // Destroy the reader
     m_writer.reset();
-}
-
-
-////////////////////////////////////////////////////////////
-OutputSoundFile::OutputSoundFile(std::unique_ptr<SoundFileWriter>&& writer) : m_writer(std::move(writer))
-{
 }
 
 } // namespace sf

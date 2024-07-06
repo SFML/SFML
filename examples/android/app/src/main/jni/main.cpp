@@ -86,13 +86,13 @@ int main(int argc, char* argv[])
     sf::RenderWindow window(screen, "");
     window.setFramerateLimit(30);
 
-    const auto texture = sf::Texture::loadFromFile("image.png").value();
+    const auto texture = sf::Texture::createFromFile("image.png").value();
 
     sf::Sprite image(texture);
     image.setPosition(sf::Vector2f(screen.size) / 2.f);
     image.setOrigin(sf::Vector2f(texture.getSize()) / 2.f);
 
-    const auto font = sf::Font::openFromFile("tuffy.ttf").value();
+    const auto font = sf::Font::createFromFile("tuffy.ttf").value();
 
     sf::Text text(font, "Tap anywhere to move the logo.", 64);
     text.setFillColor(sf::Color::Black);

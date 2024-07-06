@@ -49,11 +49,11 @@ int main()
     window.setVerticalSyncEnabled(true);
 
     // Load the sounds used in the game
-    const auto ballSoundBuffer = sf::SoundBuffer::loadFromFile(resourcesDir() / "ball.wav").value();
+    const auto ballSoundBuffer = sf::SoundBuffer::createFromFile(resourcesDir() / "ball.wav").value();
     sf::Sound  ballSound(ballSoundBuffer);
 
     // Create the SFML logo texture:
-    const auto sfmlLogoTexture = sf::Texture::loadFromFile(resourcesDir() / "sfml_logo.png").value();
+    const auto sfmlLogoTexture = sf::Texture::createFromFile(resourcesDir() / "sfml_logo.png").value();
     sf::Sprite sfmlLogo(sfmlLogoTexture);
     sfmlLogo.setPosition({170.f, 50.f});
 
@@ -82,7 +82,7 @@ int main()
     ball.setOrigin({ballRadius / 2.f, ballRadius / 2.f});
 
     // Open the text font
-    const auto font = sf::Font::openFromFile(resourcesDir() / "tuffy.ttf").value();
+    const auto font = sf::Font::createFromFile(resourcesDir() / "tuffy.ttf").value();
 
     // Initialize the pause message
     sf::Text pauseMessage(font);

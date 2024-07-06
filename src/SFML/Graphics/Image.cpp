@@ -98,6 +98,20 @@ namespace sf
 ////////////////////////////////////////////////////////////
 Image::Image(Vector2u size, Color color)
 {
+    resize(size, color);
+}
+
+
+////////////////////////////////////////////////////////////
+Image::Image(Vector2u size, const std::uint8_t* pixels)
+{
+    resize(size, pixels);
+}
+
+
+////////////////////////////////////////////////////////////
+void Image::resize(Vector2u size, Color color)
+{
     if (size.x && size.y)
     {
         // Create a new pixel buffer first for exception safety's sake
@@ -132,7 +146,7 @@ Image::Image(Vector2u size, Color color)
 
 
 ////////////////////////////////////////////////////////////
-Image::Image(Vector2u size, const std::uint8_t* pixels)
+void Image::resize(Vector2u size, const std::uint8_t* pixels)
 {
     if (pixels && size.x && size.y)
     {
@@ -157,13 +171,7 @@ Image::Image(Vector2u size, const std::uint8_t* pixels)
 
 
 ////////////////////////////////////////////////////////////
-Image::Image(Vector2u size, std::vector<std::uint8_t>&& pixels) : m_size(size), m_pixels(std::move(pixels))
-{
-}
-
-
-////////////////////////////////////////////////////////////
-std::optional<Image> Image::loadFromFile(const std::filesystem::path& filename)
+bool Image::loadFromFile(const std::filesystem::path& filename)
 {
 #ifdef SFML_SYSTEM_ANDROID
 
@@ -175,6 +183,9 @@ std::optional<Image> Image::loadFromFile(const std::filesystem::path& filename)
 
 #endif
 
+    // Clear the array (just in case)
+    m_pixels.clear();
+
     // Load the image and get a pointer to the pixels in memory
     int        width    = 0;
     int        height   = 0;
@@ -183,24 +194,32 @@ std::optional<Image> Image::loadFromFile(const std::filesystem::path& filename)
 
     if (ptr)
     {
-        return Image(Vector2u(Vector2i(width, height)), {ptr.get(), ptr.get() + width * height * 4});
-    }
+        // Assign the image properties
+        m_size = Vector2u(Vector2i(width, height));
 
+        // Copy the loaded pixels to the pixel buffer
+        m_pixels.assign(ptr.get(), ptr.get() + width * height * 4);
+
+        return true;
+    }
 
     // Error, failed to load the image
     err() << "Failed to load image\n"
           << formatDebugPathInfo(filename) << "\nReason: " << stbi_failure_reason() << std::endl;
 
-    return std::nullopt;
+    return false;
 }
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Image> Image::loadFromMemory(const void* data, std::size_t size)
+bool Image::loadFromMemory(const void* data, std::size_t size)
 {
     // Check input parameters
     if (data && size)
     {
+        // Clear the array (just in case)
+        m_pixels.clear();
+
         // Load the image and get a pointer to the pixels in memory
         int         width    = 0;
         int         height   = 0;
@@ -211,28 +230,37 @@ std::optional<Image> Image::loadFromMemory(const void* data, std::size_t size)
 
         if (ptr)
         {
-            return Image(Vector2u(Vector2i(width, height)), {ptr.get(), ptr.get() + width * height * 4});
+            // Assign the image properties
+            m_size = Vector2u(Vector2i(width, height));
+
+            // Copy the loaded pixels to the pixel buffer
+            m_pixels.assign(ptr.get(), ptr.get() + width * height * 4);
+
+            return true;
         }
 
         // Error, failed to load the image
         err() << "Failed to load image from memory. Reason: " << stbi_failure_reason() << std::endl;
 
-        return std::nullopt;
+        return false;
     }
 
     err() << "Failed to load image from memory, no data provided" << std::endl;
-    return std::nullopt;
+    return false;
 }
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Image> Image::loadFromStream(InputStream& stream)
+bool Image::loadFromStream(InputStream& stream)
 {
+    // Clear the array (just in case)
+    m_pixels.clear();
+
     // Make sure that the stream's reading position is at the beginning
-    if (!stream.seek(0).has_value())
+    if (!stream.seek(0))
     {
         err() << "Failed to seek image stream" << std::endl;
-        return std::nullopt;
+        return false;
     }
 
     // Setup the stb_image callbacks
@@ -249,13 +277,54 @@ std::optional<Image> Image::loadFromStream(InputStream& stream)
 
     if (ptr)
     {
-        return Image(Vector2u(Vector2i(width, height)), {ptr.get(), ptr.get() + width * height * 4});
+        // Assign the image properties
+        m_size = Vector2u(Vector2i(width, height));
+
+        // Copy the loaded pixels to the pixel buffer
+        m_pixels.assign(ptr.get(), ptr.get() + width * height * 4);
+
+        return true;
     }
 
     // Error, failed to load the image
     err() << "Failed to load image from stream. Reason: " << stbi_failure_reason() << std::endl;
+    return false;
+}
 
-    return std::nullopt;
+
+////////////////////////////////////////////////////////////
+std::optional<Image> Image::createFromFile(const std::filesystem::path& filename)
+{
+    auto image = std::make_optional<Image>();
+
+    if (!image->loadFromFile(filename))
+        return std::nullopt;
+
+    return image;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<Image> Image::createFromMemory(const void* data, std::size_t size)
+{
+    auto image = std::make_optional<Image>();
+
+    if (!image->loadFromMemory(data, size))
+        return std::nullopt;
+
+    return image;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<Image> Image::createFromStream(InputStream& stream)
+{
+    auto image = std::make_optional<Image>();
+
+    if (!image->loadFromStream(stream))
+        return std::nullopt;
+
+    return image;
 }
 
 

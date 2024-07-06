@@ -50,7 +50,34 @@ class SFML_AUDIO_API OutputSoundFile
 {
 public:
     ////////////////////////////////////////////////////////////
+    /// \brief Default constructor
+    ///
+    /// Construct an output sound file that is not associated
+    /// with a file to write.
+    ///
+    ////////////////////////////////////////////////////////////
+    OutputSoundFile() = default;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Open the sound file from the disk for writing
+    ///
+    /// The supported audio formats are: WAV, OGG/Vorbis, FLAC.
+    ///
+    /// \param filename     Path of the sound file to write
+    /// \param sampleRate   Sample rate of the sound
+    /// \param channelCount Number of channels in the sound
+    /// \param channelMap   Map of position in sample frame to sound channel
+    ///
+    /// \return True if the file was successfully opened
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] bool openFromFile(const std::filesystem::path&     filename,
+                                    unsigned int                     sampleRate,
+                                    unsigned int                     channelCount,
+                                    const std::vector<SoundChannel>& channelMap);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create the sound file from the disk for writing
     ///
     /// The supported audio formats are: WAV, OGG/Vorbis, FLAC.
     ///
@@ -62,7 +89,7 @@ public:
     /// \return Output sound file if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<OutputSoundFile> openFromFile(
+    [[nodiscard]] static std::optional<OutputSoundFile> createFromFile(
         const std::filesystem::path&     filename,
         unsigned int                     sampleRate,
         unsigned int                     channelCount,
@@ -85,12 +112,6 @@ public:
 
 private:
     ////////////////////////////////////////////////////////////
-    /// \brief Constructor from writer
-    ///
-    ////////////////////////////////////////////////////////////
-    explicit OutputSoundFile(std::unique_ptr<SoundFileWriter>&& writer);
-
-    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     std::unique_ptr<SoundFileWriter> m_writer; //!< Writer that handles I/O on the file's format
@@ -111,7 +132,7 @@ private:
 /// Usage example:
 /// \code
 /// // Create a sound file, ogg/vorbis format, 44100 Hz, stereo
-/// auto file = sf::OutputSoundFile::openFromFile("music.ogg", 44100, 2).value();
+/// auto file = sf::OutputSoundFile::createFromFile("music.ogg", 44100, 2).value();
 ///
 /// while (...)
 /// {

@@ -57,6 +57,15 @@ class SFML_SYSTEM_API FileInputStream : public InputStream
 {
 public:
     ////////////////////////////////////////////////////////////
+    /// \brief Default constructor
+    ///
+    /// Construct a file input stream that is not associated
+    /// with a file to read.
+    ///
+    ////////////////////////////////////////////////////////////
+    FileInputStream();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Default destructor
     ///
     ////////////////////////////////////////////////////////////
@@ -91,10 +100,20 @@ public:
     ///
     /// \param filename Name of the file to open
     ///
+    /// \return True on success, false on error
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] bool open(const std::filesystem::path& filename);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create the stream from a file path
+    ///
+    /// \param filename Name of the file to open
+    ///
     /// \return File input stream on success, `std::nullopt` on error
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<FileInputStream> open(const std::filesystem::path& filename);
+    [[nodiscard]] static std::optional<FileInputStream> create(const std::filesystem::path& filename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Read data from the stream
@@ -145,20 +164,6 @@ private:
     {
         void operator()(std::FILE* file);
     };
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Construct from file
-    ///
-    ////////////////////////////////////////////////////////////
-    explicit FileInputStream(std::unique_ptr<std::FILE, FileCloser>&& file);
-
-#ifdef SFML_SYSTEM_ANDROID
-    ////////////////////////////////////////////////////////////
-    /// \brief Construct from resource stream
-    ///
-    ////////////////////////////////////////////////////////////
-    explicit FileInputStream(std::unique_ptr<priv::ResourceStream>&& androidFile);
-#endif
 
     ////////////////////////////////////////////////////////////
     // Member data

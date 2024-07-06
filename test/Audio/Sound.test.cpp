@@ -26,7 +26,7 @@ TEST_CASE("[Audio] sf::Sound", runAudioDeviceTests())
         STATIC_CHECK(std::has_virtual_destructor_v<sf::Sound>);
     }
 
-    const auto soundBuffer = sf::SoundBuffer::loadFromFile("Audio/ding.flac").value();
+    const auto soundBuffer = sf::SoundBuffer::createFromFile("Audio/ding.flac").value();
 
     SECTION("Construction")
     {
@@ -52,7 +52,7 @@ TEST_CASE("[Audio] sf::Sound", runAudioDeviceTests())
 
         SECTION("Assignment")
         {
-            const sf::SoundBuffer otherSoundBuffer = sf::SoundBuffer::loadFromFile("Audio/ding.flac").value();
+            const sf::SoundBuffer otherSoundBuffer = sf::SoundBuffer::createFromFile("Audio/ding.flac").value();
             sf::Sound             soundCopy(otherSoundBuffer);
             soundCopy = sound;
             CHECK(&soundCopy.getBuffer() == &soundBuffer);
@@ -64,7 +64,7 @@ TEST_CASE("[Audio] sf::Sound", runAudioDeviceTests())
 
     SECTION("Set/get buffer")
     {
-        const sf::SoundBuffer otherSoundBuffer = sf::SoundBuffer::loadFromFile("Audio/ding.flac").value();
+        const sf::SoundBuffer otherSoundBuffer = sf::SoundBuffer::createFromFile("Audio/ding.flac").value();
         sf::Sound             sound(soundBuffer);
         sound.setBuffer(otherSoundBuffer);
         CHECK(&sound.getBuffer() == &otherSoundBuffer);

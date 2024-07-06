@@ -56,11 +56,11 @@ Cursor& Cursor::operator=(Cursor&&) noexcept = default;
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Cursor> Cursor::loadFromPixels(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot)
+std::optional<Cursor> Cursor::createFromPixels(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot)
 {
     if ((pixels == nullptr) || (size.x == 0) || (size.y == 0))
     {
-        err() << "Failed to load cursor from pixels (invalid arguments)" << std::endl;
+        err() << "Failed to create cursor from pixels (invalid arguments)" << std::endl;
         return std::nullopt;
     }
 
@@ -76,7 +76,7 @@ std::optional<Cursor> Cursor::loadFromPixels(const std::uint8_t* pixels, Vector2
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Cursor> Cursor::loadFromSystem(Type type)
+std::optional<Cursor> Cursor::createFromSystem(Type type)
 {
     Cursor cursor;
     if (!cursor.m_impl->loadFromSystem(type))

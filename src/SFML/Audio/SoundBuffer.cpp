@@ -68,55 +68,55 @@ SoundBuffer::~SoundBuffer()
 
 
 ////////////////////////////////////////////////////////////
-std::optional<SoundBuffer> SoundBuffer::loadFromFile(const std::filesystem::path& filename)
+bool SoundBuffer::loadFromFile(const std::filesystem::path& filename)
 {
-    if (auto file = InputSoundFile::openFromFile(filename))
-        return initialize(*file);
+    InputSoundFile file;
+    if (file.openFromFile(filename))
+        return initialize(file);
 
     err() << "Failed to open sound buffer from file" << std::endl;
-    return std::nullopt;
+    return false;
 }
 
 
 ////////////////////////////////////////////////////////////
-std::optional<SoundBuffer> SoundBuffer::loadFromMemory(const void* data, std::size_t sizeInBytes)
+bool SoundBuffer::loadFromMemory(const void* data, std::size_t sizeInBytes)
 {
-    if (auto file = InputSoundFile::openFromMemory(data, sizeInBytes))
-        return initialize(*file);
+    InputSoundFile file;
+    if (file.openFromMemory(data, sizeInBytes))
+        return initialize(file);
 
     err() << "Failed to open sound buffer from memory" << std::endl;
-    return std::nullopt;
+    return false;
 }
 
 
 ////////////////////////////////////////////////////////////
-std::optional<SoundBuffer> SoundBuffer::loadFromStream(InputStream& stream)
+bool SoundBuffer::loadFromStream(InputStream& stream)
 {
-    if (auto file = InputSoundFile::openFromStream(stream))
-        return initialize(*file);
+    InputSoundFile file;
+    if (file.openFromStream(stream))
+        return initialize(file);
 
     err() << "Failed to open sound buffer from stream" << std::endl;
-    return std::nullopt;
+    return false;
 }
 
 
 ////////////////////////////////////////////////////////////
-std::optional<SoundBuffer> SoundBuffer::loadFromSamples(
-    const std::int16_t*              samples,
-    std::uint64_t                    sampleCount,
-    unsigned int                     channelCount,
-    unsigned int                     sampleRate,
-    const std::vector<SoundChannel>& channelMap)
+bool SoundBuffer::loadFromSamples(const std::int16_t*              samples,
+                                  std::uint64_t                    sampleCount,
+                                  unsigned int                     channelCount,
+                                  unsigned int                     sampleRate,
+                                  const std::vector<SoundChannel>& channelMap)
 {
     if (samples && sampleCount && channelCount && sampleRate && !channelMap.empty())
     {
         // Copy the new audio samples
-        SoundBuffer soundBuffer(std::vector<std::int16_t>(samples, samples + sampleCount));
+        m_samples.assign(samples, samples + sampleCount);
 
         // Update the internal buffer with the new samples
-        if (!soundBuffer.update(channelCount, sampleRate, channelMap))
-            return std::nullopt;
-        return soundBuffer;
+        return update(channelCount, sampleRate, channelMap);
     }
 
     // Error...
@@ -126,7 +126,60 @@ std::optional<SoundBuffer> SoundBuffer::loadFromSamples(
           << "channels: " << channelCount << ", "
           << "samplerate: " << sampleRate << ")" << std::endl;
 
-    return std::nullopt;
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<SoundBuffer> SoundBuffer::createFromFile(const std::filesystem::path& filename)
+{
+    auto soundBuffer = std::make_optional<SoundBuffer>();
+
+    if (!soundBuffer->loadFromFile(filename))
+        return std::nullopt;
+
+    return soundBuffer;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<SoundBuffer> SoundBuffer::createFromMemory(const void* data, std::size_t sizeInBytes)
+{
+    auto soundBuffer = std::make_optional<SoundBuffer>();
+
+    if (!soundBuffer->loadFromMemory(data, sizeInBytes))
+        return std::nullopt;
+
+    return soundBuffer;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<SoundBuffer> SoundBuffer::createFromStream(InputStream& stream)
+{
+    auto soundBuffer = std::make_optional<SoundBuffer>();
+
+    if (!soundBuffer->loadFromStream(stream))
+        return std::nullopt;
+
+    return soundBuffer;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<SoundBuffer> SoundBuffer::createFromSamples(
+    const std::int16_t*              samples,
+    std::uint64_t                    sampleCount,
+    unsigned int                     channelCount,
+    unsigned int                     sampleRate,
+    const std::vector<SoundChannel>& channelMap)
+{
+    auto soundBuffer = std::make_optional<SoundBuffer>();
+
+    if (!soundBuffer->loadFromSamples(samples, sampleCount, channelCount, sampleRate, channelMap))
+        return std::nullopt;
+
+    return soundBuffer;
 }
 
 
@@ -134,10 +187,11 @@ std::optional<SoundBuffer> SoundBuffer::loadFromSamples(
 bool SoundBuffer::saveToFile(const std::filesystem::path& filename) const
 {
     // Create the sound file in write mode
-    if (auto file = OutputSoundFile::openFromFile(filename, getSampleRate(), getChannelCount(), getChannelMap()))
+    OutputSoundFile file;
+    if (file.openFromFile(filename, getSampleRate(), getChannelCount(), getChannelMap()))
     {
         // Write the samples to the opened file
-        file->write(m_samples.data(), m_samples.size());
+        file.write(m_samples.data(), m_samples.size());
 
         return true;
     }
@@ -204,33 +258,26 @@ SoundBuffer& SoundBuffer::operator=(const SoundBuffer& right)
 
 
 ////////////////////////////////////////////////////////////
-SoundBuffer::SoundBuffer(std::vector<std::int16_t>&& samples) : m_samples(std::move(samples))
-{
-}
-
-
-////////////////////////////////////////////////////////////
-std::optional<SoundBuffer> SoundBuffer::initialize(InputSoundFile& file)
+bool SoundBuffer::initialize(InputSoundFile& file)
 {
     // Retrieve the sound parameters
     const std::uint64_t sampleCount = file.getSampleCount();
 
     // Read the samples from the provided file
-    std::vector<std::int16_t> samples(static_cast<std::size_t>(sampleCount));
-    if (file.read(samples.data(), sampleCount) == sampleCount)
+    m_samples.resize(static_cast<std::size_t>(sampleCount));
+    if (file.read(m_samples.data(), sampleCount) == sampleCount)
     {
         // Update the internal buffer with the new samples
-        SoundBuffer soundBuffer(std::move(samples));
-        if (!soundBuffer.update(file.getChannelCount(), file.getSampleRate(), file.getChannelMap()))
+        if (!update(file.getChannelCount(), file.getSampleRate(), file.getChannelMap()))
         {
             err() << "Failed to initialize sound buffer (internal update failure)" << std::endl;
-            return std::nullopt;
+            return false;
         }
 
-        return soundBuffer;
+        return true;
     }
 
-    return std::nullopt;
+    return false;
 }
 
 
