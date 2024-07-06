@@ -97,9 +97,9 @@ struct SoundBase
     std::vector<ma_channel> soundChannelMap; //!< The map of position in sample frame to sound channel (miniaudio channels)
     ma_sound                sound{};         //!< The sound
     SoundSource::Status     status{SoundSource::Status::Stopped}; //!< The status
-    SoundSource::EffectProcessor         effectProcessor;         //!< The effect processor
-    priv::AudioDevice::ResourceEntryIter resourceEntryIter; //!< Iterator to the resource entry registered with the AudioDevice
-    priv::MiniaudioUtils::SavedSettings savedSettings; //!< Saved settings used to restore ma_sound state in case we need to recreate it
+    SoundSource::EffectProcessor   effectProcessor;               //!< The effect processor
+    AudioDevice::ResourceEntryIter resourceEntryIter; //!< Iterator to the resource entry registered with the AudioDevice
+    MiniaudioUtils::SavedSettings savedSettings; //!< Saved settings used to restore ma_sound state in case we need to recreate it
 };
 
 [[nodiscard]] ma_channel   soundChannelToMiniaudioChannel(SoundChannel soundChannel);
