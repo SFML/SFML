@@ -53,7 +53,61 @@ class SFML_AUDIO_API InputSoundFile
 {
 public:
     ////////////////////////////////////////////////////////////
+    /// \brief Default constructor
+    ///
+    /// Construct an input sound file that is not associated
+    /// with a file to read.
+    ///
+    ////////////////////////////////////////////////////////////
+    InputSoundFile() = default;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Open a sound file from the disk for reading
+    ///
+    /// The supported audio formats are: WAV (PCM only), OGG/Vorbis, FLAC, MP3.
+    /// The supported sample sizes for FLAC and WAV are 8, 16, 24 and 32 bit.
+    ///
+    /// Because of minimp3_ex limitation, for MP3 files with big (>16kb) APEv2 tag,
+    /// it may not be properly removed, tag data will be treated as MP3 data
+    /// and there is a low chance of garbage decoded at the end of file.
+    /// See also: https://github.com/lieff/minimp3
+    ///
+    /// \param filename Path of the sound file to load
+    ///
+    /// \return True if the file was successfully opened
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] bool openFromFile(const std::filesystem::path& filename);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Open a sound file in memory for reading
+    ///
+    /// The supported audio formats are: WAV (PCM only), OGG/Vorbis, FLAC.
+    /// The supported sample sizes for FLAC and WAV are 8, 16, 24 and 32 bit.
+    ///
+    /// \param data        Pointer to the file data in memory
+    /// \param sizeInBytes Size of the data to load, in bytes
+    ///
+    /// \return True if the file was successfully opened
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] bool openFromMemory(const void* data, std::size_t sizeInBytes);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Open a sound file from a custom stream for reading
+    ///
+    /// The supported audio formats are: WAV (PCM only), OGG/Vorbis, FLAC.
+    /// The supported sample sizes for FLAC and WAV are 8, 16, 24 and 32 bit.
+    ///
+    /// \param stream Source stream to read from
+    ///
+    /// \return True if the file was successfully opened
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] bool openFromStream(InputStream& stream);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create a sound file from the disk for reading
     ///
     /// The supported audio formats are: WAV (PCM only), OGG/Vorbis, FLAC, MP3.
     /// The supported sample sizes for FLAC and WAV are 8, 16, 24 and 32 bit.
@@ -68,10 +122,10 @@ public:
     /// \return Input sound file if the file was successfully opened, otherwise `std::nullopt`
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<InputSoundFile> openFromFile(const std::filesystem::path& filename);
+    [[nodiscard]] static std::optional<InputSoundFile> createFromFile(const std::filesystem::path& filename);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Open a sound file in memory for reading
+    /// \brief Create a sound file in memory for reading
     ///
     /// The supported audio formats are: WAV (PCM only), OGG/Vorbis, FLAC.
     /// The supported sample sizes for FLAC and WAV are 8, 16, 24 and 32 bit.
@@ -82,10 +136,10 @@ public:
     /// \return Input sound file if the file was successfully opened, otherwise `std::nullopt`
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<InputSoundFile> openFromMemory(const void* data, std::size_t sizeInBytes);
+    [[nodiscard]] static std::optional<InputSoundFile> createFromMemory(const void* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Open a sound file from a custom stream for reading
+    /// \brief Create a sound file from a custom stream for reading
     ///
     /// The supported audio formats are: WAV (PCM only), OGG/Vorbis, FLAC.
     /// The supported sample sizes for FLAC and WAV are 8, 16, 24 and 32 bit.
@@ -95,7 +149,7 @@ public:
     /// \return Input sound file if the file was successfully opened, otherwise `std::nullopt`
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<InputSoundFile> openFromStream(InputStream& stream);
+    [[nodiscard]] static std::optional<InputSoundFile> createFromStream(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the total number of audio samples in the file
@@ -213,14 +267,6 @@ public:
 
 private:
     ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    /// Useful for implementing close()
-    ///
-    ////////////////////////////////////////////////////////////
-    InputSoundFile() = default;
-
-    ////////////////////////////////////////////////////////////
     /// \brief Deleter for input streams that only conditionally deletes
     ///
     ////////////////////////////////////////////////////////////
@@ -236,16 +282,6 @@ private:
 
         bool owned{true};
     };
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Constructor from reader, stream, and attributes
-    ///
-    ////////////////////////////////////////////////////////////
-    InputSoundFile(std::unique_ptr<SoundFileReader>&&            reader,
-                   std::unique_ptr<InputStream, StreamDeleter>&& stream,
-                   std::uint64_t                                 sampleCount,
-                   unsigned int                                  sampleRate,
-                   std::vector<SoundChannel>&&                   channelMap);
 
     ////////////////////////////////////////////////////////////
     // Member data
@@ -275,7 +311,7 @@ private:
 /// Usage example:
 /// \code
 /// // Open a sound file
-/// auto file = sf::InputSoundFile::openFromFile("music.ogg").value();
+/// auto file = sf::InputSoundFile::createFromFile("music.ogg").value();
 ///
 /// // Print the sound attributes
 /// std::cout << "duration: " << file.getDuration().asSeconds() << '\n'

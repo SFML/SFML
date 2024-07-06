@@ -66,12 +66,7 @@ std::uint64_t getUniqueId() noexcept
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Texture::Texture(Vector2u size, Vector2u actualSize, unsigned int texture, bool sRgb) :
-m_size(size),
-m_actualSize(actualSize),
-m_texture(texture),
-m_sRgb(sRgb),
-m_cacheId(TextureImpl::getUniqueId())
+Texture::Texture() : m_cacheId(TextureImpl::getUniqueId())
 {
 }
 
@@ -84,14 +79,16 @@ m_sRgb(copy.m_sRgb),
 m_isRepeated(copy.m_isRepeated),
 m_cacheId(TextureImpl::getUniqueId())
 {
-    if (auto texture = create(copy.getSize(), copy.isSrgb()))
+    if (copy.m_texture)
     {
-        *this = std::move(*texture);
-        update(copy);
-    }
-    else
-    {
-        err() << "Failed to copy texture, failed to create new texture" << std::endl;
+        if (resize(copy.getSize(), copy.isSrgb()))
+        {
+            update(copy);
+        }
+        else
+        {
+            err() << "Failed to copy texture, failed to resize texture" << std::endl;
+        }
     }
 }
 
@@ -165,13 +162,13 @@ Texture& Texture::operator=(Texture&& right) noexcept
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Texture> Texture::create(Vector2u size, bool sRgb)
+bool Texture::resize(Vector2u size, bool sRgb)
 {
     // Check if texture parameters are valid before creating it
     if ((size.x == 0) || (size.y == 0))
     {
-        err() << "Failed to create texture, invalid size (" << size.x << "x" << size.y << ")" << std::endl;
-        return std::nullopt;
+        err() << "Failed to resize texture, invalid size (" << size.x << "x" << size.y << ")" << std::endl;
+        return false;
     }
 
     const TransientContextLock lock;
@@ -189,16 +186,22 @@ std::optional<Texture> Texture::create(Vector2u size, bool sRgb)
         err() << "Failed to create texture, its internal size is too high "
               << "(" << actualSize.x << "x" << actualSize.y << ", "
               << "maximum is " << maxSize << "x" << maxSize << ")" << std::endl;
-        return std::nullopt;
+        return false;
     }
 
-    // Create the OpenGL texture
-    GLuint glTexture = 0;
-    glCheck(glGenTextures(1, &glTexture));
-    assert(glTexture);
-
     // All the validity checks passed, we can store the new texture settings
-    Texture texture(size, actualSize, glTexture, sRgb);
+    m_size          = size;
+    m_actualSize    = actualSize;
+    m_pixelsFlipped = false;
+    m_fboAttachment = false;
+
+    // Create the OpenGL texture if it doesn't exist yet
+    if (!m_texture)
+    {
+        GLuint texture = 0;
+        glCheck(glGenTextures(1, &texture));
+        m_texture = texture;
+    }
 
     // Make sure that the current texture binding will be preserved
     const priv::TextureSaver save;
@@ -222,7 +225,9 @@ std::optional<Texture> Texture::create(Vector2u size, bool sRgb)
 
     static const bool textureSrgb = GLEXT_texture_sRGB;
 
-    if (texture.m_sRgb && !textureSrgb)
+    m_sRgb = sRgb;
+
+    if (m_sRgb && !textureSrgb)
     {
         static bool warned = false;
 
@@ -238,73 +243,64 @@ std::optional<Texture> Texture::create(Vector2u size, bool sRgb)
             warned = true;
         }
 
-        texture.m_sRgb = false;
+        m_sRgb = false;
     }
 
 #ifndef SFML_OPENGL_ES
-    const GLint textureWrapParam = textureEdgeClamp ? GLEXT_GL_CLAMP_TO_EDGE : GLEXT_GL_CLAMP;
+    const GLint textureWrapParam = m_isRepeated ? GL_REPEAT : (textureEdgeClamp ? GLEXT_GL_CLAMP_TO_EDGE : GLEXT_GL_CLAMP);
 #else
-    const GLint textureWrapParam = GLEXT_GL_CLAMP_TO_EDGE;
+    const GLint textureWrapParam = m_isRepeated ? GL_REPEAT : GLEXT_GL_CLAMP_TO_EDGE;
 #endif
 
     // Initialize the texture
-    glCheck(glBindTexture(GL_TEXTURE_2D, texture.m_texture));
+    glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
     glCheck(glTexImage2D(GL_TEXTURE_2D,
                          0,
-                         (texture.m_sRgb ? GLEXT_GL_SRGB8_ALPHA8 : GL_RGBA),
-                         static_cast<GLsizei>(texture.m_actualSize.x),
-                         static_cast<GLsizei>(texture.m_actualSize.y),
+                         (m_sRgb ? GLEXT_GL_SRGB8_ALPHA8 : GL_RGBA),
+                         static_cast<GLsizei>(m_actualSize.x),
+                         static_cast<GLsizei>(m_actualSize.y),
                          0,
                          GL_RGBA,
                          GL_UNSIGNED_BYTE,
                          nullptr));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, textureWrapParam));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, textureWrapParam));
-    glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
-    glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
-    texture.m_cacheId = TextureImpl::getUniqueId();
+    glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
+    glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
+    m_cacheId = TextureImpl::getUniqueId();
 
-    texture.m_hasMipmap = false;
+    m_hasMipmap = false;
 
-    return texture;
+    return true;
 }
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Texture> Texture::loadFromFile(const std::filesystem::path& filename, bool sRgb, const IntRect& area)
+bool Texture::loadFromFile(const std::filesystem::path& filename, bool sRgb, const IntRect& area)
 {
-    if (const auto image = sf::Image::loadFromFile(filename))
-        return loadFromImage(*image, sRgb, area);
-
-    err() << "Failed to load texture from file" << std::endl;
-    return std::nullopt;
+    Image image;
+    return image.loadFromFile(filename) && loadFromImage(image, sRgb, area);
 }
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Texture> Texture::loadFromMemory(const void* data, std::size_t size, bool sRgb, const IntRect& area)
+bool Texture::loadFromMemory(const void* data, std::size_t size, bool sRgb, const IntRect& area)
 {
-    if (const auto image = sf::Image::loadFromMemory(data, size))
-        return loadFromImage(*image, sRgb, area);
-
-    err() << "Failed to load texture from memory" << std::endl;
-    return std::nullopt;
+    Image image;
+    return image.loadFromMemory(data, size) && loadFromImage(image, sRgb, area);
 }
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Texture> Texture::loadFromStream(InputStream& stream, bool sRgb, const IntRect& area)
+bool Texture::loadFromStream(InputStream& stream, bool sRgb, const IntRect& area)
 {
-    if (const auto image = sf::Image::loadFromStream(stream))
-        return loadFromImage(*image, sRgb, area);
-
-    err() << "Failed to load texture from stream" << std::endl;
-    return std::nullopt;
+    Image image;
+    return image.loadFromStream(stream) && loadFromImage(image, sRgb, area);
 }
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Texture> Texture::loadFromImage(const Image& image, bool sRgb, const IntRect& area)
+bool Texture::loadFromImage(const Image& image, bool sRgb, const IntRect& area)
 {
     // Retrieve the image size
     const auto size = Vector2i(image.getSize());
@@ -314,14 +310,14 @@ std::optional<Texture> Texture::loadFromImage(const Image& image, bool sRgb, con
         ((area.position.x <= 0) && (area.position.y <= 0) && (area.size.x >= size.x) && (area.size.y >= size.y)))
     {
         // Load the entire image
-        if (auto texture = sf::Texture::create(image.getSize(), sRgb))
+        if (resize(image.getSize(), sRgb))
         {
-            texture->update(image);
-            return texture;
+            update(image);
+            return true;
         }
 
         // Error message generated in called function.
-        return std::nullopt;
+        return false;
     }
 
     // Load a sub-area of the image
@@ -334,7 +330,7 @@ std::optional<Texture> Texture::loadFromImage(const Image& image, bool sRgb, con
     rectangle.size.y     = std::min(rectangle.size.y, size.y - rectangle.position.y);
 
     // Create the texture and upload the pixels
-    if (auto texture = sf::Texture::create(Vector2u(rectangle.size), sRgb))
+    if (resize(Vector2u(rectangle.size), sRgb))
     {
         const TransientContextLock lock;
 
@@ -343,25 +339,85 @@ std::optional<Texture> Texture::loadFromImage(const Image& image, bool sRgb, con
 
         // Copy the pixels to the texture, row by row
         const std::uint8_t* pixels = image.getPixelsPtr() + 4 * (rectangle.position.x + (size.x * rectangle.position.y));
-        glCheck(glBindTexture(GL_TEXTURE_2D, texture->m_texture));
+        glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
         for (int i = 0; i < rectangle.size.y; ++i)
         {
             glCheck(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, i, rectangle.size.x, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
             pixels += 4 * size.x;
         }
 
-        glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
-        texture->m_hasMipmap = false;
+        glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
+        m_hasMipmap = false;
 
         // Force an OpenGL flush, so that the texture will appear updated
         // in all contexts immediately (solves problems in multi-threaded apps)
         glCheck(glFlush());
 
-        return texture;
+        return true;
     }
 
     // Error message generated in called function.
-    return std::nullopt;
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<Texture> Texture::create(Vector2u size, bool sRgb)
+{
+    auto texture = std::make_optional<Texture>();
+
+    if (!texture->resize(size, sRgb))
+        return std::nullopt;
+
+    return texture;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<Texture> Texture::createFromFile(const std::filesystem::path& filename, bool sRgb, const IntRect& area)
+{
+    auto texture = std::make_optional<Texture>();
+
+    if (!texture->loadFromFile(filename, sRgb, area))
+        return std::nullopt;
+
+    return texture;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<Texture> Texture::createFromMemory(const void* data, std::size_t size, bool sRgb, const IntRect& area)
+{
+    auto texture = std::make_optional<Texture>();
+
+    if (!texture->loadFromMemory(data, size, sRgb, area))
+        return std::nullopt;
+
+    return texture;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<Texture> Texture::createFromStream(InputStream& stream, bool sRgb, const IntRect& area)
+{
+    auto texture = std::make_optional<Texture>();
+
+    if (!texture->loadFromStream(stream, sRgb, area))
+        return std::nullopt;
+
+    return texture;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<Texture> Texture::createFromImage(const Image& image, bool sRgb, const IntRect& area)
+{
+    auto texture = std::make_optional<Texture>();
+
+    if (!texture->loadFromImage(image, sRgb, area))
+        return std::nullopt;
+
+    return texture;
 }
 
 
@@ -376,7 +432,8 @@ Vector2u Texture::getSize() const
 Image Texture::copyToImage() const
 {
     // Easy case: empty texture
-    assert(m_texture && "Texture::copyToImage Cannot copy empty texture to image");
+    if (!m_texture)
+        return {};
 
     const TransientContextLock lock;
 

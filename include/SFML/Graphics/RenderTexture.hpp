@@ -55,6 +55,16 @@ class SFML_GRAPHICS_API RenderTexture : public RenderTarget
 {
 public:
     ////////////////////////////////////////////////////////////
+    /// \brief Default constructor
+    ///
+    /// Constructs a render-texture with width 0 and height 0.
+    ///
+    /// \see resize
+    ///
+    ////////////////////////////////////////////////////////////
+    RenderTexture();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
@@ -83,6 +93,25 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     RenderTexture& operator=(RenderTexture&&) noexcept;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Resize the render-texture
+    ///
+    /// The last parameter, \a settings, is useful if you want to enable
+    /// multi-sampling or use the render-texture for OpenGL rendering that
+    /// requires a depth or stencil buffer. Otherwise it is unnecessary, and
+    /// you should leave this parameter at its default value.
+    ///
+    /// After resizing, the contents of the render-texture are undefined.
+    /// Call `RenderTexture::clear` first to ensure a single color fill.
+    ///
+    /// \param size     Width and height of the render-texture
+    /// \param settings Additional settings for the underlying OpenGL texture and context
+    ///
+    /// \return True if resizing has been successful
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] bool resize(Vector2u size, const ContextSettings& settings = ContextSettings());
 
     ////////////////////////////////////////////////////////////
     /// \brief Create the render-texture
@@ -240,12 +269,6 @@ public:
     [[nodiscard]] const Texture& getTexture() const;
 
 private:
-    ////////////////////////////////////////////////////////////
-    /// \brief Construct from texture
-    ///
-    ////////////////////////////////////////////////////////////
-    explicit RenderTexture(Texture&& texture);
-
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////

@@ -45,7 +45,6 @@
 #include <utility>
 #include <vector>
 
-#include <cassert>
 #include <cstdint>
 
 #ifndef SFML_OPENGL_ES
@@ -252,10 +251,10 @@ Shader& Shader::operator=(Shader&& right) noexcept
         return *this;
     }
     // Explicit scope for RAII
+    if (m_shaderProgram)
     {
         // Destroy effect program
         const TransientContextLock lock;
-        assert(m_shaderProgram);
         glCheck(GLEXT_glDeleteObject(castToGlHandle(m_shaderProgram)));
     }
 
@@ -268,14 +267,14 @@ Shader& Shader::operator=(Shader&& right) noexcept
 }
 
 ////////////////////////////////////////////////////////////
-std::optional<Shader> Shader::loadFromFile(const std::filesystem::path& filename, Type type)
+bool Shader::loadFromFile(const std::filesystem::path& filename, Type type)
 {
     // Read the file
     std::vector<char> shader;
     if (!getFileContents(filename, shader))
     {
         err() << "Failed to open shader file\n" << formatDebugPathInfo(filename) << std::endl;
-        return std::nullopt;
+        return false;
     }
 
     // Compile the shader program
@@ -290,15 +289,15 @@ std::optional<Shader> Shader::loadFromFile(const std::filesystem::path& filename
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Shader> Shader::loadFromFile(const std::filesystem::path& vertexShaderFilename,
-                                           const std::filesystem::path& fragmentShaderFilename)
+bool Shader::loadFromFile(const std::filesystem::path& vertexShaderFilename,
+                          const std::filesystem::path& fragmentShaderFilename)
 {
     // Read the vertex shader file
     std::vector<char> vertexShader;
     if (!getFileContents(vertexShaderFilename, vertexShader))
     {
         err() << "Failed to open vertex shader file\n" << formatDebugPathInfo(vertexShaderFilename) << std::endl;
-        return std::nullopt;
+        return false;
     }
 
     // Read the fragment shader file
@@ -306,7 +305,7 @@ std::optional<Shader> Shader::loadFromFile(const std::filesystem::path& vertexSh
     if (!getFileContents(fragmentShaderFilename, fragmentShader))
     {
         err() << "Failed to open fragment shader file\n" << formatDebugPathInfo(fragmentShaderFilename) << std::endl;
-        return std::nullopt;
+        return false;
     }
 
     // Compile the shader program
@@ -315,16 +314,16 @@ std::optional<Shader> Shader::loadFromFile(const std::filesystem::path& vertexSh
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Shader> Shader::loadFromFile(const std::filesystem::path& vertexShaderFilename,
-                                           const std::filesystem::path& geometryShaderFilename,
-                                           const std::filesystem::path& fragmentShaderFilename)
+bool Shader::loadFromFile(const std::filesystem::path& vertexShaderFilename,
+                          const std::filesystem::path& geometryShaderFilename,
+                          const std::filesystem::path& fragmentShaderFilename)
 {
     // Read the vertex shader file
     std::vector<char> vertexShader;
     if (!getFileContents(vertexShaderFilename, vertexShader))
     {
         err() << "Failed to open vertex shader file\n" << formatDebugPathInfo(vertexShaderFilename) << std::endl;
-        return std::nullopt;
+        return false;
     }
 
     // Read the geometry shader file
@@ -332,7 +331,7 @@ std::optional<Shader> Shader::loadFromFile(const std::filesystem::path& vertexSh
     if (!getFileContents(geometryShaderFilename, geometryShader))
     {
         err() << "Failed to open geometry shader file\n" << formatDebugPathInfo(geometryShaderFilename) << std::endl;
-        return std::nullopt;
+        return false;
     }
 
     // Read the fragment shader file
@@ -340,7 +339,7 @@ std::optional<Shader> Shader::loadFromFile(const std::filesystem::path& vertexSh
     if (!getFileContents(fragmentShaderFilename, fragmentShader))
     {
         err() << "Failed to open fragment shader file\n" << formatDebugPathInfo(fragmentShaderFilename) << std::endl;
-        return std::nullopt;
+        return false;
     }
 
     // Compile the shader program
@@ -349,7 +348,7 @@ std::optional<Shader> Shader::loadFromFile(const std::filesystem::path& vertexSh
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Shader> Shader::loadFromMemory(std::string_view shader, Type type)
+bool Shader::loadFromMemory(std::string_view shader, Type type)
 {
     // Compile the shader program
     if (type == Type::Vertex)
@@ -363,7 +362,7 @@ std::optional<Shader> Shader::loadFromMemory(std::string_view shader, Type type)
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Shader> Shader::loadFromMemory(std::string_view vertexShader, std::string_view fragmentShader)
+bool Shader::loadFromMemory(std::string_view vertexShader, std::string_view fragmentShader)
 {
     // Compile the shader program
     return compile(vertexShader, {}, fragmentShader);
@@ -371,9 +370,7 @@ std::optional<Shader> Shader::loadFromMemory(std::string_view vertexShader, std:
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Shader> Shader::loadFromMemory(std::string_view vertexShader,
-                                             std::string_view geometryShader,
-                                             std::string_view fragmentShader)
+bool Shader::loadFromMemory(std::string_view vertexShader, std::string_view geometryShader, std::string_view fragmentShader)
 {
     // Compile the shader program
     return compile(vertexShader, geometryShader, fragmentShader);
@@ -381,14 +378,14 @@ std::optional<Shader> Shader::loadFromMemory(std::string_view vertexShader,
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Shader> Shader::loadFromStream(InputStream& stream, Type type)
+bool Shader::loadFromStream(InputStream& stream, Type type)
 {
     // Read the shader code from the stream
     std::vector<char> shader;
     if (!getStreamContents(stream, shader))
     {
         err() << "Failed to read shader from stream" << std::endl;
-        return std::nullopt;
+        return false;
     }
 
     // Compile the shader program
@@ -403,14 +400,14 @@ std::optional<Shader> Shader::loadFromStream(InputStream& stream, Type type)
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Shader> Shader::loadFromStream(InputStream& vertexShaderStream, InputStream& fragmentShaderStream)
+bool Shader::loadFromStream(InputStream& vertexShaderStream, InputStream& fragmentShaderStream)
 {
     // Read the vertex shader code from the stream
     std::vector<char> vertexShader;
     if (!getStreamContents(vertexShaderStream, vertexShader))
     {
         err() << "Failed to read vertex shader from stream" << std::endl;
-        return std::nullopt;
+        return false;
     }
 
     // Read the fragment shader code from the stream
@@ -418,7 +415,7 @@ std::optional<Shader> Shader::loadFromStream(InputStream& vertexShaderStream, In
     if (!getStreamContents(fragmentShaderStream, fragmentShader))
     {
         err() << "Failed to read fragment shader from stream" << std::endl;
-        return std::nullopt;
+        return false;
     }
 
     // Compile the shader program
@@ -427,16 +424,14 @@ std::optional<Shader> Shader::loadFromStream(InputStream& vertexShaderStream, In
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Shader> Shader::loadFromStream(InputStream& vertexShaderStream,
-                                             InputStream& geometryShaderStream,
-                                             InputStream& fragmentShaderStream)
+bool Shader::loadFromStream(InputStream& vertexShaderStream, InputStream& geometryShaderStream, InputStream& fragmentShaderStream)
 {
     // Read the vertex shader code from the stream
     std::vector<char> vertexShader;
     if (!getStreamContents(vertexShaderStream, vertexShader))
     {
         err() << "Failed to read vertex shader from stream" << std::endl;
-        return std::nullopt;
+        return false;
     }
 
     // Read the geometry shader code from the stream
@@ -444,7 +439,7 @@ std::optional<Shader> Shader::loadFromStream(InputStream& vertexShaderStream,
     if (!getStreamContents(geometryShaderStream, geometryShader))
     {
         err() << "Failed to read geometry shader from stream" << std::endl;
-        return std::nullopt;
+        return false;
     }
 
     // Read the fragment shader code from the stream
@@ -452,11 +447,126 @@ std::optional<Shader> Shader::loadFromStream(InputStream& vertexShaderStream,
     if (!getStreamContents(fragmentShaderStream, fragmentShader))
     {
         err() << "Failed to read fragment shader from stream" << std::endl;
-        return std::nullopt;
+        return false;
     }
 
     // Compile the shader program
     return compile(vertexShader.data(), geometryShader.data(), fragmentShader.data());
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<Shader> Shader::createFromFile(const std::filesystem::path& filename, Type type)
+{
+    auto shader = std::make_optional<Shader>();
+
+    if (!shader->loadFromFile(filename, type))
+        return std::nullopt;
+
+    return shader;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<Shader> Shader::createFromFile(const std::filesystem::path& vertexShaderFilename,
+                                             const std::filesystem::path& fragmentShaderFilename)
+{
+    auto shader = std::make_optional<Shader>();
+
+    if (!shader->loadFromFile(vertexShaderFilename, fragmentShaderFilename))
+        return std::nullopt;
+
+    return shader;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<Shader> Shader::createFromFile(const std::filesystem::path& vertexShaderFilename,
+                                             const std::filesystem::path& geometryShaderFilename,
+                                             const std::filesystem::path& fragmentShaderFilename)
+{
+    auto shader = std::make_optional<Shader>();
+
+    if (!shader->loadFromFile(vertexShaderFilename, geometryShaderFilename, fragmentShaderFilename))
+        return std::nullopt;
+
+    return shader;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<Shader> Shader::createFromMemory(std::string_view shader, Type type)
+{
+    auto newShader = std::make_optional<Shader>();
+
+    if (!newShader->loadFromMemory(shader, type))
+        return std::nullopt;
+
+    return newShader;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<Shader> Shader::createFromMemory(std::string_view vertexShader, std::string_view fragmentShader)
+{
+    auto shader = std::make_optional<Shader>();
+
+    if (!shader->loadFromMemory(vertexShader, fragmentShader))
+        return std::nullopt;
+
+    return shader;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<Shader> Shader::createFromMemory(std::string_view vertexShader,
+                                               std::string_view geometryShader,
+                                               std::string_view fragmentShader)
+{
+    auto shader = std::make_optional<Shader>();
+
+    if (!shader->loadFromMemory(vertexShader, geometryShader, fragmentShader))
+        return std::nullopt;
+
+    return shader;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<Shader> Shader::createFromStream(InputStream& stream, Type type)
+{
+    auto shader = std::make_optional<Shader>();
+
+    if (!shader->loadFromStream(stream, type))
+        return std::nullopt;
+
+    return shader;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<Shader> Shader::createFromStream(InputStream& vertexShaderStream, InputStream& fragmentShaderStream)
+{
+    auto shader = std::make_optional<Shader>();
+
+    if (!shader->loadFromStream(vertexShaderStream, fragmentShaderStream))
+        return std::nullopt;
+
+    return shader;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<Shader> Shader::createFromStream(InputStream& vertexShaderStream,
+                                               InputStream& geometryShaderStream,
+                                               InputStream& fragmentShaderStream)
+{
+    auto shader = std::make_optional<Shader>();
+
+    if (!shader->loadFromStream(vertexShaderStream, geometryShaderStream, fragmentShaderStream))
+        return std::nullopt;
+
+    return shader;
 }
 
 
@@ -581,32 +691,33 @@ void Shader::setUniform(const std::string& name, const Glsl::Mat4& matrix)
 ////////////////////////////////////////////////////////////
 void Shader::setUniform(const std::string& name, const Texture& texture)
 {
-    assert(m_shaderProgram);
-
-    const TransientContextLock lock;
-
-    // Find the location of the variable in the shader
-    const int location = getUniformLocation(name);
-    if (location != -1)
+    if (m_shaderProgram)
     {
-        // Store the location -> texture mapping
-        const auto it = m_textures.find(location);
-        if (it == m_textures.end())
-        {
-            // New entry, make sure there are enough texture units
-            if (m_textures.size() + 1 >= getMaxTextureUnits())
-            {
-                err() << "Impossible to use texture " << std::quoted(name)
-                      << " for shader: all available texture units are used" << std::endl;
-                return;
-            }
+        const TransientContextLock lock;
 
-            m_textures[location] = &texture;
-        }
-        else
+        // Find the location of the variable in the shader
+        const int location = getUniformLocation(name);
+        if (location != -1)
         {
-            // Location already used, just replace the texture
-            it->second = &texture;
+            // Store the location -> texture mapping
+            const auto it = m_textures.find(location);
+            if (it == m_textures.end())
+            {
+                // New entry, make sure there are enough texture units
+                if (m_textures.size() + 1 >= getMaxTextureUnits())
+                {
+                    err() << "Impossible to use texture " << std::quoted(name)
+                          << " for shader: all available texture units are used" << std::endl;
+                    return;
+                }
+
+                m_textures[location] = &texture;
+            }
+            else
+            {
+                // Location already used, just replace the texture
+                it->second = &texture;
+            }
         }
     }
 }
@@ -615,12 +726,13 @@ void Shader::setUniform(const std::string& name, const Texture& texture)
 ////////////////////////////////////////////////////////////
 void Shader::setUniform(const std::string& name, CurrentTextureType)
 {
-    assert(m_shaderProgram);
+    if (m_shaderProgram)
+    {
+        const TransientContextLock lock;
 
-    const TransientContextLock lock;
-
-    // Find the location of the variable in the shader
-    m_currentTexture = getUniformLocation(name);
+        // Find the location of the variable in the shader
+        m_currentTexture = getUniformLocation(name);
+    }
 }
 
 
@@ -772,15 +884,7 @@ bool Shader::isGeometryAvailable()
 
 
 ////////////////////////////////////////////////////////////
-Shader::Shader(unsigned int shaderProgram) : m_shaderProgram(shaderProgram)
-{
-}
-
-
-////////////////////////////////////////////////////////////
-std::optional<Shader> Shader::compile(std::string_view vertexShaderCode,
-                                      std::string_view geometryShaderCode,
-                                      std::string_view fragmentShaderCode)
+bool Shader::compile(std::string_view vertexShaderCode, std::string_view geometryShaderCode, std::string_view fragmentShaderCode)
 {
     const TransientContextLock lock;
 
@@ -789,15 +893,15 @@ std::optional<Shader> Shader::compile(std::string_view vertexShaderCode,
     {
         err() << "Failed to create a shader: your system doesn't support shaders "
               << "(you should test Shader::isAvailable() before trying to use the Shader class)" << std::endl;
-        return std::nullopt;
+        return false;
     }
 
     // Make sure we can use geometry shaders
-    if (geometryShaderCode.data() && !isGeometryAvailable())
+    if (!geometryShaderCode.empty() && !isGeometryAvailable())
     {
         err() << "Failed to create a shader: your system doesn't support geometry shaders "
               << "(you should test Shader::isGeometryAvailable() before trying to use geometry shaders)" << std::endl;
-        return std::nullopt;
+        return false;
     }
 
     // Create the program
@@ -805,7 +909,7 @@ std::optional<Shader> Shader::compile(std::string_view vertexShaderCode,
     glCheck(shaderProgram = GLEXT_glCreateProgramObject());
 
     // Create the vertex shader if needed
-    if (vertexShaderCode.data())
+    if (!vertexShaderCode.empty())
     {
         // Create and compile the shader
         GLEXT_GLhandle vertexShader{};
@@ -825,7 +929,7 @@ std::optional<Shader> Shader::compile(std::string_view vertexShaderCode,
             err() << "Failed to compile vertex shader:" << '\n' << log << std::endl;
             glCheck(GLEXT_glDeleteObject(vertexShader));
             glCheck(GLEXT_glDeleteObject(shaderProgram));
-            return std::nullopt;
+            return false;
         }
 
         // Attach the shader to the program, and delete it (not needed anymore)
@@ -834,7 +938,7 @@ std::optional<Shader> Shader::compile(std::string_view vertexShaderCode,
     }
 
     // Create the geometry shader if needed
-    if (geometryShaderCode.data())
+    if (!geometryShaderCode.empty())
     {
         // Create and compile the shader
         const GLEXT_GLhandle geometryShader   = GLEXT_glCreateShaderObject(GLEXT_GL_GEOMETRY_SHADER);
@@ -853,7 +957,7 @@ std::optional<Shader> Shader::compile(std::string_view vertexShaderCode,
             err() << "Failed to compile geometry shader:" << '\n' << log << std::endl;
             glCheck(GLEXT_glDeleteObject(geometryShader));
             glCheck(GLEXT_glDeleteObject(shaderProgram));
-            return std::nullopt;
+            return false;
         }
 
         // Attach the shader to the program, and delete it (not needed anymore)
@@ -862,7 +966,7 @@ std::optional<Shader> Shader::compile(std::string_view vertexShaderCode,
     }
 
     // Create the fragment shader if needed
-    if (fragmentShaderCode.data())
+    if (!fragmentShaderCode.empty())
     {
         // Create and compile the shader
         GLEXT_GLhandle fragmentShader{};
@@ -882,7 +986,7 @@ std::optional<Shader> Shader::compile(std::string_view vertexShaderCode,
             err() << "Failed to compile fragment shader:" << '\n' << log << std::endl;
             glCheck(GLEXT_glDeleteObject(fragmentShader));
             glCheck(GLEXT_glDeleteObject(shaderProgram));
-            return std::nullopt;
+            return false;
         }
 
         // Attach the shader to the program, and delete it (not needed anymore)
@@ -902,14 +1006,28 @@ std::optional<Shader> Shader::compile(std::string_view vertexShaderCode,
         glCheck(GLEXT_glGetInfoLog(shaderProgram, sizeof(log), nullptr, log));
         err() << "Failed to link shader:" << '\n' << log << std::endl;
         glCheck(GLEXT_glDeleteObject(shaderProgram));
-        return std::nullopt;
+        return false;
     }
+
+    // Destroy the shader if it was already created
+    if (m_shaderProgram)
+    {
+        glCheck(GLEXT_glDeleteObject(castToGlHandle(m_shaderProgram)));
+        m_shaderProgram = 0;
+    }
+
+    // Reset the internal state
+    m_currentTexture = -1;
+    m_textures.clear();
+    m_uniforms.clear();
+
+    m_shaderProgram = castFromGlHandle(shaderProgram);
 
     // Force an OpenGL flush, so that the shader will appear updated
     // in all contexts immediately (solves problems in multi-threaded apps)
     glCheck(glFlush());
 
-    return Shader(castFromGlHandle(shaderProgram));
+    return true;
 }
 
 
@@ -972,70 +1090,140 @@ Shader& Shader::operator=(Shader&& right) noexcept = default;
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Shader> Shader::loadFromFile(const std::filesystem::path& /* filename */, Type /* type */)
+bool Shader::loadFromFile(const std::filesystem::path& /* filename */, Type /* type */)
+{
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+bool Shader::loadFromFile(const std::filesystem::path& /* vertexShaderFilename */,
+                          const std::filesystem::path& /* fragmentShaderFilename */)
+{
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+bool Shader::loadFromFile(const std::filesystem::path& /* vertexShaderFilename */,
+                          const std::filesystem::path& /* geometryShaderFilename */,
+                          const std::filesystem::path& /* fragmentShaderFilename */)
+{
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+bool Shader::loadFromMemory(std::string_view /* shader */, Type /* type */)
+{
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+bool Shader::loadFromMemory(std::string_view /* vertexShader */, std::string_view /* fragmentShader */)
+{
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+bool Shader::loadFromMemory(std::string_view /* vertexShader */,
+                            std::string_view /* geometryShader */,
+                            std::string_view /* fragmentShader */)
+{
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+bool Shader::loadFromStream(InputStream& /* stream */, Type /* type */)
+{
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+bool Shader::loadFromStream(InputStream& /* vertexShaderStream */, InputStream& /* fragmentShaderStream */)
+{
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+bool Shader::loadFromStream(InputStream& /* vertexShaderStream */,
+                            InputStream& /* geometryShaderStream */,
+                            InputStream& /* fragmentShaderStream */)
+{
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<Shader> Shader::createFromFile(const std::filesystem::path& /* filename */, Type /* type */)
 {
     return std::nullopt;
 }
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Shader> Shader::loadFromFile(const std::filesystem::path& /* vertexShaderFilename */,
-                                           const std::filesystem::path& /* fragmentShaderFilename */)
+std::optional<Shader> Shader::createFromFile(const std::filesystem::path& /* vertexShaderFilename */,
+                                             const std::filesystem::path& /* fragmentShaderFilename */)
 {
     return std::nullopt;
 }
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Shader> Shader::loadFromFile(const std::filesystem::path& /* vertexShaderFilename */,
-                                           const std::filesystem::path& /* geometryShaderFilename */,
-                                           const std::filesystem::path& /* fragmentShaderFilename */)
+std::optional<Shader> Shader::createFromFile(const std::filesystem::path& /* vertexShaderFilename */,
+                                             const std::filesystem::path& /* geometryShaderFilename */,
+                                             const std::filesystem::path& /* fragmentShaderFilename */)
 {
     return std::nullopt;
 }
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Shader> Shader::loadFromMemory(std::string_view /* shader */, Type /* type */)
+std::optional<Shader> Shader::createFromMemory(std::string_view /* shader */, Type /* type */)
 {
     return std::nullopt;
 }
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Shader> Shader::loadFromMemory(std::string_view /* vertexShader */, std::string_view /* fragmentShader */)
+std::optional<Shader> Shader::createFromMemory(std::string_view /* vertexShader */, std::string_view /* fragmentShader */)
 {
     return std::nullopt;
 }
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Shader> Shader::loadFromMemory(std::string_view /* vertexShader */,
-                                             std::string_view /* geometryShader */,
-                                             std::string_view /* fragmentShader */)
+std::optional<Shader> Shader::createFromMemory(std::string_view /* vertexShader */,
+                                               std::string_view /* geometryShader */,
+                                               std::string_view /* fragmentShader */)
 {
     return std::nullopt;
 }
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Shader> Shader::loadFromStream(InputStream& /* stream */, Type /* type */)
+std::optional<Shader> Shader::createFromStream(InputStream& /* stream */, Type /* type */)
 {
     return std::nullopt;
 }
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Shader> Shader::loadFromStream(InputStream& /* vertexShaderStream */, InputStream& /* fragmentShaderStream */)
+std::optional<Shader> Shader::createFromStream(InputStream& /* vertexShaderStream */, InputStream& /* fragmentShaderStream */)
 {
     return std::nullopt;
 }
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Shader> Shader::loadFromStream(InputStream& /* vertexShaderStream */,
-                                             InputStream& /* geometryShaderStream */,
-                                             InputStream& /* fragmentShaderStream */)
+std::optional<Shader> Shader::createFromStream(InputStream& /* vertexShaderStream */,
+                                               InputStream& /* geometryShaderStream */,
+                                               InputStream& /* fragmentShaderStream */)
 {
     return std::nullopt;
 }
@@ -1201,17 +1389,11 @@ bool Shader::isGeometryAvailable()
 
 
 ////////////////////////////////////////////////////////////
-Shader::Shader(unsigned int shaderProgram) : m_shaderProgram(shaderProgram)
+bool Shader::compile(std::string_view /* vertexShaderCode */,
+                     std::string_view /* geometryShaderCode */,
+                     std::string_view /* fragmentShaderCode */)
 {
-}
-
-
-////////////////////////////////////////////////////////////
-std::optional<Shader> Shader::compile(std::string_view /* vertexShaderCode */,
-                                      std::string_view /* geometryShaderCode */,
-                                      std::string_view /* fragmentShaderCode */)
-{
-    return std::nullopt;
+    return false;
 }
 
 

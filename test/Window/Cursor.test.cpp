@@ -21,27 +21,27 @@ TEST_CASE("[Window] sf::Cursor", runDisplayTests())
     {
         static constexpr std::array<std::uint8_t, 4> pixels{};
 
-        CHECK(!sf::Cursor::loadFromPixels(nullptr, {}, {}));
-        CHECK(!sf::Cursor::loadFromPixels(pixels.data(), {0, 1}, {}));
-        CHECK(!sf::Cursor::loadFromPixels(pixels.data(), {1, 0}, {}));
-        CHECK(sf::Cursor::loadFromPixels(pixels.data(), {1, 1}, {}));
+        CHECK(!sf::Cursor::createFromPixels(nullptr, {}, {}));
+        CHECK(!sf::Cursor::createFromPixels(pixels.data(), {0, 1}, {}));
+        CHECK(!sf::Cursor::createFromPixels(pixels.data(), {1, 0}, {}));
+        CHECK(sf::Cursor::createFromPixels(pixels.data(), {1, 1}, {}));
     }
 
     SECTION("loadFromSystem()")
     {
-        CHECK(sf::Cursor::loadFromSystem(sf::Cursor::Type::Hand));
-        CHECK(sf::Cursor::loadFromSystem(sf::Cursor::Type::SizeHorizontal));
-        CHECK(sf::Cursor::loadFromSystem(sf::Cursor::Type::SizeVertical));
-        CHECK(sf::Cursor::loadFromSystem(sf::Cursor::Type::SizeLeft));
-        CHECK(sf::Cursor::loadFromSystem(sf::Cursor::Type::SizeRight));
-        CHECK(sf::Cursor::loadFromSystem(sf::Cursor::Type::SizeTop));
-        CHECK(sf::Cursor::loadFromSystem(sf::Cursor::Type::SizeBottom));
-        CHECK(sf::Cursor::loadFromSystem(sf::Cursor::Type::SizeTopLeft));
-        CHECK(sf::Cursor::loadFromSystem(sf::Cursor::Type::SizeTopRight));
-        CHECK(sf::Cursor::loadFromSystem(sf::Cursor::Type::SizeBottomLeft));
-        CHECK(sf::Cursor::loadFromSystem(sf::Cursor::Type::SizeBottomRight));
-        CHECK(sf::Cursor::loadFromSystem(sf::Cursor::Type::Cross));
-        CHECK(sf::Cursor::loadFromSystem(sf::Cursor::Type::Help));
-        CHECK(sf::Cursor::loadFromSystem(sf::Cursor::Type::NotAllowed));
+        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::Hand));
+        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::SizeHorizontal));
+        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::SizeVertical));
+        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::SizeLeft));
+        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::SizeRight));
+        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::SizeTop));
+        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::SizeBottom));
+        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::SizeTopLeft));
+        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::SizeTopRight));
+        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::SizeBottomLeft));
+        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::SizeBottomRight));
+        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::Cross));
+        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::Help));
+        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::NotAllowed));
     }
 }

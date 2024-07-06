@@ -46,17 +46,22 @@ struct Music::Impl
     std::recursive_mutex      mutex;    //!< Mutex protecting the data
     Span<std::uint64_t>       loopSpan; //!< Loop Range Specifier
 
-    explicit Impl(InputSoundFile&& theFile) :
-    file(std::move(theFile)),
-
-    // Resize the internal buffer so that it can contain 1 second of audio samples
-    samples(file.getSampleRate() * file.getChannelCount()),
-
-    // Compute the music positions
-    loopSpan{0u, file.getSampleCount()}
+    void initialize()
     {
+        // Compute the music positions
+        loopSpan.offset = 0;
+        loopSpan.length = file.getSampleCount();
+
+        // Resize the internal buffer so that it can contain 1 second of audio samples
+        samples.resize(file.getSampleRate() * file.getChannelCount());
     }
 };
+
+
+////////////////////////////////////////////////////////////
+Music::Music() : m_impl(std::make_unique<Impl>())
+{
+}
 
 
 ////////////////////////////////////////////////////////////
@@ -79,37 +84,107 @@ Music& Music::operator=(Music&&) noexcept = default;
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Music> Music::tryOpenFromInputSoundFile(std::optional<InputSoundFile>&& optFile, const char* errorContext)
+bool Music::openFromFile(const std::filesystem::path& filename)
 {
-    if (!optFile.has_value())
+    // First stop the music if it was already running
+    stop();
+
+    // Open the underlying sound file
+    if (!m_impl->file.openFromFile(filename))
     {
-        err() << "Failed to open music from " << errorContext << std::endl;
-        return std::nullopt;
+        err() << "Failed to open music from file" << std::endl;
+        return false;
     }
 
-    // TODO: apply RVO here via passkey idiom
-    return Music(std::move(*optFile));
+    // Perform common initializations
+    m_impl->initialize();
+
+    // Initialize the stream
+    SoundStream::initialize(m_impl->file.getChannelCount(), m_impl->file.getSampleRate(), m_impl->file.getChannelMap());
+
+    return true;
 }
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Music> Music::openFromFile(const std::filesystem::path& filename)
+bool Music::openFromMemory(const void* data, std::size_t sizeInBytes)
 {
-    return tryOpenFromInputSoundFile(InputSoundFile::openFromFile(filename), "file");
+    // First stop the music if it was already running
+    stop();
+
+    // Open the underlying sound file
+    if (!m_impl->file.openFromMemory(data, sizeInBytes))
+    {
+        err() << "Failed to open music from memory" << std::endl;
+        return false;
+    }
+
+    // Perform common initializations
+    m_impl->initialize();
+
+    // Initialize the stream
+    SoundStream::initialize(m_impl->file.getChannelCount(), m_impl->file.getSampleRate(), m_impl->file.getChannelMap());
+
+    return true;
 }
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Music> Music::openFromMemory(const void* data, std::size_t sizeInBytes)
+bool Music::openFromStream(InputStream& stream)
 {
-    return tryOpenFromInputSoundFile(InputSoundFile::openFromMemory(data, sizeInBytes), "memory");
+    // First stop the music if it was already running
+    stop();
+
+    // Open the underlying sound file
+    if (!m_impl->file.openFromStream(stream))
+    {
+        err() << "Failed to open music from stream" << std::endl;
+        return false;
+    }
+
+    // Perform common initializations
+    m_impl->initialize();
+
+    // Initialize the stream
+    SoundStream::initialize(m_impl->file.getChannelCount(), m_impl->file.getSampleRate(), m_impl->file.getChannelMap());
+
+    return true;
 }
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Music> Music::openFromStream(InputStream& stream)
+std::optional<Music> Music::createFromFile(const std::filesystem::path& filename)
 {
-    return tryOpenFromInputSoundFile(InputSoundFile::openFromStream(stream), "stream");
+    auto music = std::make_optional<Music>();
+
+    if (!music->openFromFile(filename))
+        return std::nullopt;
+
+    return music;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<Music> Music::createFromMemory(const void* data, std::size_t sizeInBytes)
+{
+    auto music = std::make_optional<Music>();
+
+    if (!music->openFromMemory(data, sizeInBytes))
+        return std::nullopt;
+
+    return music;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<Music> Music::createFromStream(InputStream& stream)
+{
+    auto music = std::make_optional<Music>();
+
+    if (!music->openFromStream(stream))
+        return std::nullopt;
+
+    return music;
 }
 
 
@@ -244,14 +319,6 @@ std::optional<std::uint64_t> Music::onLoop()
     }
 
     return std::nullopt;
-}
-
-
-////////////////////////////////////////////////////////////
-Music::Music(InputSoundFile&& file) : m_impl(std::make_unique<Impl>(std::move(file)))
-{
-    // Initialize the stream
-    SoundStream::initialize(m_impl->file.getChannelCount(), m_impl->file.getSampleRate(), m_impl->file.getChannelMap());
 }
 
 

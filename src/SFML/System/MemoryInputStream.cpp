@@ -29,24 +29,33 @@
 
 #include <algorithm>
 
-#include <cassert>
 #include <cstring>
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-MemoryInputStream::MemoryInputStream(const void* data, std::size_t sizeInBytes) :
-m_data(static_cast<const std::byte*>(data)),
-m_size(sizeInBytes)
+MemoryInputStream::MemoryInputStream(const void* data, std::size_t sizeInBytes)
 {
-    assert(m_data && "MemoryInputStream must be initialized with non-null data");
+    open(data, sizeInBytes);
+}
+
+
+////////////////////////////////////////////////////////////
+void MemoryInputStream::open(const void* data, std::size_t sizeInBytes)
+{
+    m_data   = static_cast<const std::byte*>(data);
+    m_size   = sizeInBytes;
+    m_offset = 0;
 }
 
 
 ////////////////////////////////////////////////////////////
 std::optional<std::size_t> MemoryInputStream::read(void* data, std::size_t size)
 {
+    if (!m_data)
+        return std::nullopt;
+
     const std::size_t count = std::min(size, m_size - m_offset);
     if (count > 0)
     {
@@ -61,6 +70,9 @@ std::optional<std::size_t> MemoryInputStream::read(void* data, std::size_t size)
 ////////////////////////////////////////////////////////////
 std::optional<std::size_t> MemoryInputStream::seek(std::size_t position)
 {
+    if (!m_data)
+        return std::nullopt;
+
     m_offset = position < m_size ? position : m_size;
     return m_offset;
 }
@@ -69,6 +81,9 @@ std::optional<std::size_t> MemoryInputStream::seek(std::size_t position)
 ////////////////////////////////////////////////////////////
 std::optional<std::size_t> MemoryInputStream::tell()
 {
+    if (!m_data)
+        return std::nullopt;
+
     return m_offset;
 }
 
@@ -76,6 +91,9 @@ std::optional<std::size_t> MemoryInputStream::tell()
 ////////////////////////////////////////////////////////////
 std::optional<std::size_t> MemoryInputStream::getSize()
 {
+    if (!m_data)
+        return std::nullopt;
+
     return m_size;
 }
 

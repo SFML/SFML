@@ -9,11 +9,18 @@ TEST_CASE("[Graphics] sf::RenderTexture", runDisplayTests())
 {
     SECTION("Type traits")
     {
-        STATIC_CHECK(!std::is_default_constructible_v<sf::RenderTexture>);
         STATIC_CHECK(!std::is_copy_constructible_v<sf::RenderTexture>);
         STATIC_CHECK(!std::is_copy_assignable_v<sf::RenderTexture>);
         STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::RenderTexture>);
         STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::RenderTexture>);
+    }
+
+    SECTION("Construction")
+    {
+        const sf::RenderTexture renderTexture;
+        CHECK(!renderTexture.isSmooth());
+        CHECK(!renderTexture.isRepeated());
+        CHECK(renderTexture.getSize() == sf::Vector2u(0, 0));
     }
 
     SECTION("create()")
@@ -35,6 +42,21 @@ TEST_CASE("[Graphics] sf::RenderTexture", runDisplayTests())
         CHECK(!texture.isSrgb());
         CHECK(!texture.isRepeated());
         CHECK(texture.getNativeHandle() != 0);
+    }
+
+    SECTION("resize()")
+    {
+        sf::RenderTexture renderTexture;
+        CHECK(!renderTexture.resize({1'000'000, 1'000'000}));
+        CHECK(renderTexture.resize({480, 360}));
+        CHECK(!renderTexture.isSmooth());
+        CHECK(!renderTexture.isRepeated());
+        CHECK(renderTexture.getSize() == sf::Vector2u(480, 360));
+        CHECK(!renderTexture.isSrgb());
+        CHECK(renderTexture.resize({360, 480}));
+        CHECK(renderTexture.getSize() == sf::Vector2u(360, 480));
+        CHECK(renderTexture.resize({100, 100}, sf::ContextSettings{8 /* depthBits */, 0 /* stencilBits */}));
+        CHECK(renderTexture.resize({100, 100}, sf::ContextSettings{0 /* depthBits */, 8 /* stencilBits */}));
     }
 
     SECTION("getMaximumAntialiasingLevel()")

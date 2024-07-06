@@ -86,6 +86,17 @@ public:
     static inline CurrentTextureType CurrentTexture;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Default constructor
+    ///
+    /// This constructor creates an empty shader.
+    ///
+    /// Binding an empty shader has the same effect as not
+    /// binding any shader.
+    ///
+    ////////////////////////////////////////////////////////////
+    Shader() = default;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
@@ -115,6 +126,202 @@ public:
     ////////////////////////////////////////////////////////////
     Shader& operator=(Shader&& right) noexcept;
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Load the vertex, geometry or fragment shader from a file
+    ///
+    /// This function loads a single shader, vertex, geometry or
+    /// fragment, identified by the second argument.
+    /// The source must be a text file containing a valid
+    /// shader in GLSL language. GLSL is a C-like language
+    /// dedicated to OpenGL shaders; you'll probably need to
+    /// read a good documentation for it before writing your
+    /// own shaders.
+    ///
+    /// \param filename Path of the vertex, geometry or fragment shader file to load
+    /// \param type     Type of shader (vertex, geometry or fragment)
+    ///
+    /// \return True if loading succeeded, false if it failed
+    ///
+    /// \see loadFromMemory, loadFromStream
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] bool loadFromFile(const std::filesystem::path& filename, Type type);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Load both the vertex and fragment shaders from files
+    ///
+    /// This function loads both the vertex and the fragment
+    /// shaders. If one of them fails to load, the shader is left
+    /// empty (the valid shader is unloaded).
+    /// The sources must be text files containing valid shaders
+    /// in GLSL language. GLSL is a C-like language dedicated to
+    /// OpenGL shaders; you'll probably need to read a good documentation
+    /// for it before writing your own shaders.
+    ///
+    /// \param vertexShaderFilename   Path of the vertex shader file to load
+    /// \param fragmentShaderFilename Path of the fragment shader file to load
+    ///
+    /// \return True if loading succeeded, false if it failed
+    ///
+    /// \see loadFromMemory, loadFromStream
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] bool loadFromFile(const std::filesystem::path& vertexShaderFilename,
+                                    const std::filesystem::path& fragmentShaderFilename);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Load the vertex, geometry and fragment shaders from files
+    ///
+    /// This function loads the vertex, geometry and fragment
+    /// shaders. If one of them fails to load, the shader is left
+    /// empty (the valid shader is unloaded).
+    /// The sources must be text files containing valid shaders
+    /// in GLSL language. GLSL is a C-like language dedicated to
+    /// OpenGL shaders; you'll probably need to read a good documentation
+    /// for it before writing your own shaders.
+    ///
+    /// \param vertexShaderFilename   Path of the vertex shader file to load
+    /// \param geometryShaderFilename Path of the geometry shader file to load
+    /// \param fragmentShaderFilename Path of the fragment shader file to load
+    ///
+    /// \return True if loading succeeded, false if it failed
+    ///
+    /// \see loadFromMemory, loadFromStream
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] bool loadFromFile(const std::filesystem::path& vertexShaderFilename,
+                                    const std::filesystem::path& geometryShaderFilename,
+                                    const std::filesystem::path& fragmentShaderFilename);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Load the vertex, geometry or fragment shader from a source code in memory
+    ///
+    /// This function loads a single shader, vertex, geometry
+    /// or fragment, identified by the second argument.
+    /// The source code must be a valid shader in GLSL language.
+    /// GLSL is a C-like language dedicated to OpenGL shaders;
+    /// you'll probably need to read a good documentation for
+    /// it before writing your own shaders.
+    ///
+    /// \param shader String containing the source code of the shader
+    /// \param type   Type of shader (vertex, geometry or fragment)
+    ///
+    /// \return True if loading succeeded, false if it failed
+    ///
+    /// \see loadFromFile, loadFromStream
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] bool loadFromMemory(std::string_view shader, Type type);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Load both the vertex and fragment shaders from source codes in memory
+    ///
+    /// This function loads both the vertex and the fragment
+    /// shaders. If one of them fails to load, the shader is left
+    /// empty (the valid shader is unloaded).
+    /// The sources must be valid shaders in GLSL language. GLSL is
+    /// a C-like language dedicated to OpenGL shaders; you'll
+    /// probably need to read a good documentation for it before
+    /// writing your own shaders.
+    ///
+    /// \param vertexShader   String containing the source code of the vertex shader
+    /// \param fragmentShader String containing the source code of the fragment shader
+    ///
+    /// \return True if loading succeeded, false if it failed
+    ///
+    /// \see loadFromFile, loadFromStream
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] bool loadFromMemory(std::string_view vertexShader, std::string_view fragmentShader);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Load the vertex, geometry and fragment shaders from source codes in memory
+    ///
+    /// This function loads the vertex, geometry and fragment
+    /// shaders. If one of them fails to load, the shader is left
+    /// empty (the valid shader is unloaded).
+    /// The sources must be valid shaders in GLSL language. GLSL is
+    /// a C-like language dedicated to OpenGL shaders; you'll
+    /// probably need to read a good documentation for it before
+    /// writing your own shaders.
+    ///
+    /// \param vertexShader   String containing the source code of the vertex shader
+    /// \param geometryShader String containing the source code of the geometry shader
+    /// \param fragmentShader String containing the source code of the fragment shader
+    ///
+    /// \return True if loading succeeded, false if it failed
+    ///
+    /// \see loadFromFile, loadFromStream
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] bool loadFromMemory(std::string_view vertexShader,
+                                      std::string_view geometryShader,
+                                      std::string_view fragmentShader);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Load the vertex, geometry or fragment shader from a custom stream
+    ///
+    /// This function loads a single shader, vertex, geometry
+    /// or fragment, identified by the second argument.
+    /// The source code must be a valid shader in GLSL language.
+    /// GLSL is a C-like language dedicated to OpenGL shaders;
+    /// you'll probably need to read a good documentation for it
+    /// before writing your own shaders.
+    ///
+    /// \param stream Source stream to read from
+    /// \param type   Type of shader (vertex, geometry or fragment)
+    ///
+    /// \return True if loading succeeded, false if it failed
+    ///
+    /// \see loadFromFile, loadFromMemory
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] bool loadFromStream(InputStream& stream, Type type);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Load both the vertex and fragment shaders from custom streams
+    ///
+    /// This function loads both the vertex and the fragment
+    /// shaders. If one of them fails to load, the shader is left
+    /// empty (the valid shader is unloaded).
+    /// The source codes must be valid shaders in GLSL language.
+    /// GLSL is a C-like language dedicated to OpenGL shaders;
+    /// you'll probably need to read a good documentation for
+    /// it before writing your own shaders.
+    ///
+    /// \param vertexShaderStream   Source stream to read the vertex shader from
+    /// \param fragmentShaderStream Source stream to read the fragment shader from
+    ///
+    /// \return True if loading succeeded, false if it failed
+    ///
+    /// \see loadFromFile, loadFromMemory
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] bool loadFromStream(InputStream& vertexShaderStream, InputStream& fragmentShaderStream);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Load the vertex, geometry and fragment shaders from custom streams
+    ///
+    /// This function loads the vertex, geometry and fragment
+    /// shaders. If one of them fails to load, the shader is left
+    /// empty (the valid shader is unloaded).
+    /// The source codes must be valid shaders in GLSL language.
+    /// GLSL is a C-like language dedicated to OpenGL shaders;
+    /// you'll probably need to read a good documentation for
+    /// it before writing your own shaders.
+    ///
+    /// \param vertexShaderStream   Source stream to read the vertex shader from
+    /// \param geometryShaderStream Source stream to read the geometry shader from
+    /// \param fragmentShaderStream Source stream to read the fragment shader from
+    ///
+    /// \return True if loading succeeded, false if it failed
+    ///
+    /// \see loadFromFile, loadFromMemory
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] bool loadFromStream(InputStream& vertexShaderStream,
+                                      InputStream& geometryShaderStream,
+                                      InputStream& fragmentShaderStream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the vertex, geometry or fragment shader from a file
@@ -132,10 +339,10 @@ public:
     ///
     /// \return Shader if loading succeeded, `std::nullopt` if it failed
     ///
-    /// \see loadFromMemory, loadFromStream
+    /// \see createFromMemory, createFromStream
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Shader> loadFromFile(const std::filesystem::path& filename, Type type);
+    [[nodiscard]] static std::optional<Shader> createFromFile(const std::filesystem::path& filename, Type type);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load both the vertex and fragment shaders from files
@@ -153,11 +360,11 @@ public:
     ///
     /// \return Shader if loading succeeded, `std::nullopt` if it failed
     ///
-    /// \see loadFromMemory, loadFromStream
+    /// \see createFromMemory, createFromStream
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Shader> loadFromFile(const std::filesystem::path& vertexShaderFilename,
-                                                            const std::filesystem::path& fragmentShaderFilename);
+    [[nodiscard]] static std::optional<Shader> createFromFile(const std::filesystem::path& vertexShaderFilename,
+                                                              const std::filesystem::path& fragmentShaderFilename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the vertex, geometry and fragment shaders from files
@@ -176,12 +383,12 @@ public:
     ///
     /// \return Shader if loading succeeded, `std::nullopt` if it failed
     ///
-    /// \see loadFromMemory, loadFromStream
+    /// \see createFromMemory, createFromStream
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Shader> loadFromFile(const std::filesystem::path& vertexShaderFilename,
-                                                            const std::filesystem::path& geometryShaderFilename,
-                                                            const std::filesystem::path& fragmentShaderFilename);
+    [[nodiscard]] static std::optional<Shader> createFromFile(const std::filesystem::path& vertexShaderFilename,
+                                                              const std::filesystem::path& geometryShaderFilename,
+                                                              const std::filesystem::path& fragmentShaderFilename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the vertex, geometry or fragment shader from a source code in memory
@@ -198,10 +405,10 @@ public:
     ///
     /// \return Shader if loading succeeded, `std::nullopt` if it failed
     ///
-    /// \see loadFromFile, loadFromStream
+    /// \see createFromFile, createFromStream
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Shader> loadFromMemory(std::string_view shader, Type type);
+    [[nodiscard]] static std::optional<Shader> createFromMemory(std::string_view shader, Type type);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load both the vertex and fragment shaders from source codes in memory
@@ -219,10 +426,10 @@ public:
     ///
     /// \return Shader if loading succeeded, `std::nullopt` if it failed
     ///
-    /// \see loadFromFile, loadFromStream
+    /// \see createFromFile, createFromStream
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Shader> loadFromMemory(std::string_view vertexShader, std::string_view fragmentShader);
+    [[nodiscard]] static std::optional<Shader> createFromMemory(std::string_view vertexShader, std::string_view fragmentShader);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the vertex, geometry and fragment shaders from source codes in memory
@@ -241,12 +448,12 @@ public:
     ///
     /// \return Shader if loading succeeded, `std::nullopt` if it failed
     ///
-    /// \see loadFromFile, loadFromStream
+    /// \see createFromFile, createFromStream
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Shader> loadFromMemory(std::string_view vertexShader,
-                                                              std::string_view geometryShader,
-                                                              std::string_view fragmentShader);
+    [[nodiscard]] static std::optional<Shader> createFromMemory(std::string_view vertexShader,
+                                                                std::string_view geometryShader,
+                                                                std::string_view fragmentShader);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the vertex, geometry or fragment shader from a custom stream
@@ -263,10 +470,10 @@ public:
     ///
     /// \return Shader if loading succeeded, `std::nullopt` if it failed
     ///
-    /// \see loadFromFile, loadFromMemory
+    /// \see createFromFile, createFromMemory
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Shader> loadFromStream(InputStream& stream, Type type);
+    [[nodiscard]] static std::optional<Shader> createFromStream(InputStream& stream, Type type);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load both the vertex and fragment shaders from custom streams
@@ -284,11 +491,11 @@ public:
     ///
     /// \return Shader if loading succeeded, `std::nullopt` if it failed
     ///
-    /// \see loadFromFile, loadFromMemory
+    /// \see createFromFile, createFromMemory
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Shader> loadFromStream(InputStream& vertexShaderStream,
-                                                              InputStream& fragmentShaderStream);
+    [[nodiscard]] static std::optional<Shader> createFromStream(InputStream& vertexShaderStream,
+                                                                InputStream& fragmentShaderStream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the vertex, geometry and fragment shaders from custom streams
@@ -307,12 +514,12 @@ public:
     ///
     /// \return Shader if loading succeeded, `std::nullopt` if it failed
     ///
-    /// \see loadFromFile, loadFromMemory
+    /// \see createFromFile, createFromMemory
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Shader> loadFromStream(InputStream& vertexShaderStream,
-                                                              InputStream& geometryShaderStream,
-                                                              InputStream& fragmentShaderStream);
+    [[nodiscard]] static std::optional<Shader> createFromStream(InputStream& vertexShaderStream,
+                                                                InputStream& geometryShaderStream,
+                                                                InputStream& fragmentShaderStream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Specify value for \p float uniform
@@ -646,12 +853,6 @@ public:
 
 private:
     ////////////////////////////////////////////////////////////
-    /// \brief Construct from shader program
-    ///
-    ////////////////////////////////////////////////////////////
-    explicit Shader(unsigned int shaderProgram);
-
-    ////////////////////////////////////////////////////////////
     /// \brief Compile the shader(s) and create the program
     ///
     /// If one of the arguments is a null pointer, the corresponding shader
@@ -661,12 +862,12 @@ private:
     /// \param geometryShaderCode Source code of the geometry shader
     /// \param fragmentShaderCode Source code of the fragment shader
     ///
-    /// \return Shader on success, `std::nullopt` if any error happened
+    /// \return True on success, false if any error happened
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Shader> compile(std::string_view vertexShaderCode,
-                                                       std::string_view geometryShaderCode,
-                                                       std::string_view fragmentShaderCode);
+    [[nodiscard]] bool compile(std::string_view vertexShaderCode,
+                               std::string_view geometryShaderCode,
+                               std::string_view fragmentShaderCode);
 
     ////////////////////////////////////////////////////////////
     /// \brief Bind all the textures used by the shader

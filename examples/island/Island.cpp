@@ -91,7 +91,7 @@ int main()
     sf::RenderWindow window(sf::VideoMode({windowWidth, windowHeight}), "SFML Island", sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
 
-    const auto font = sf::Font::openFromFile("resources/tuffy.ttf").value();
+    const auto font = sf::Font::createFromFile("resources/tuffy.ttf").value();
 
     // Create all of our graphics resources
     sf::Text                  hudText(font);
@@ -120,7 +120,7 @@ int main()
     {
         statusText.setString("Shaders and/or Vertex Buffers Unsupported");
     }
-    else if (!(terrainShader = sf::Shader::loadFromFile("resources/terrain.vert", "resources/terrain.frag")))
+    else if (!(terrainShader = sf::Shader::createFromFile("resources/terrain.vert", "resources/terrain.frag")))
     {
         statusText.setString("Failed to load shader program");
     }

@@ -114,22 +114,22 @@ TEST_CASE("[Audio] sf::SoundFileFactory")
 
         SECTION("flac")
         {
-            stream = sf::FileInputStream::open("Audio/ding.flac");
+            stream = sf::FileInputStream::create("Audio/ding.flac");
         }
 
         SECTION("mp3")
         {
-            stream = sf::FileInputStream::open("Audio/ding.mp3");
+            stream = sf::FileInputStream::create("Audio/ding.mp3");
         }
 
         SECTION("ogg")
         {
-            stream = sf::FileInputStream::open("Audio/doodle_pop.ogg");
+            stream = sf::FileInputStream::create("Audio/doodle_pop.ogg");
         }
 
         SECTION("wav")
         {
-            stream = sf::FileInputStream::open("Audio/killdeer.wav");
+            stream = sf::FileInputStream::create("Audio/killdeer.wav");
         }
 
         REQUIRE(stream);

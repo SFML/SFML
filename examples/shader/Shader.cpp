@@ -278,11 +278,11 @@ private:
 ////////////////////////////////////////////////////////////
 std::optional<Pixelate> tryLoadPixelate()
 {
-    auto texture = sf::Texture::loadFromFile("resources/background.jpg");
+    auto texture = sf::Texture::createFromFile("resources/background.jpg");
     if (!texture.has_value())
         return std::nullopt;
 
-    auto shader = sf::Shader::loadFromFile("resources/pixelate.frag", sf::Shader::Type::Fragment);
+    auto shader = sf::Shader::createFromFile("resources/pixelate.frag", sf::Shader::Type::Fragment);
     if (!shader.has_value())
         return std::nullopt;
 
@@ -291,7 +291,7 @@ std::optional<Pixelate> tryLoadPixelate()
 
 std::optional<WaveBlur> tryLoadWaveBlur(const sf::Font& font)
 {
-    auto shader = sf::Shader::loadFromFile("resources/wave.vert", "resources/blur.frag");
+    auto shader = sf::Shader::createFromFile("resources/wave.vert", "resources/blur.frag");
     if (!shader.has_value())
         return std::nullopt;
 
@@ -300,7 +300,7 @@ std::optional<WaveBlur> tryLoadWaveBlur(const sf::Font& font)
 
 std::optional<StormBlink> tryLoadStormBlink()
 {
-    auto shader = sf::Shader::loadFromFile("resources/storm.vert", "resources/blink.frag");
+    auto shader = sf::Shader::createFromFile("resources/storm.vert", "resources/blink.frag");
     if (!shader.has_value())
         return std::nullopt;
 
@@ -317,21 +317,21 @@ std::optional<Edge> tryLoadEdge()
     surface->setSmooth(true);
 
     // Load the background texture
-    auto backgroundTexture = sf::Texture::loadFromFile("resources/sfml.png");
+    auto backgroundTexture = sf::Texture::createFromFile("resources/sfml.png");
     if (!backgroundTexture.has_value())
         return std::nullopt;
 
     backgroundTexture->setSmooth(true);
 
     // Load the entity texture
-    auto entityTexture = sf::Texture::loadFromFile("resources/devices.png");
+    auto entityTexture = sf::Texture::createFromFile("resources/devices.png");
     if (!entityTexture.has_value())
         return std::nullopt;
 
     entityTexture->setSmooth(true);
 
     // Load the shader
-    auto shader = sf::Shader::loadFromFile("resources/edge.frag", sf::Shader::Type::Fragment);
+    auto shader = sf::Shader::createFromFile("resources/edge.frag", sf::Shader::Type::Fragment);
     if (!shader.has_value())
         return std::nullopt;
 
@@ -350,16 +350,16 @@ std::optional<Geometry> tryLoadGeometry()
         return std::nullopt;
 
     // Load the logo texture
-    auto logoTexture = sf::Texture::loadFromFile("resources/logo.png");
+    auto logoTexture = sf::Texture::createFromFile("resources/logo.png");
     if (!logoTexture.has_value())
         return std::nullopt;
 
     logoTexture->setSmooth(true);
 
     // Load the shader
-    auto shader = sf::Shader::loadFromFile("resources/billboard.vert",
-                                           "resources/billboard.geom",
-                                           "resources/billboard.frag");
+    auto shader = sf::Shader::createFromFile("resources/billboard.vert",
+                                             "resources/billboard.geom",
+                                             "resources/billboard.frag");
     if (!shader.has_value())
         return std::nullopt;
 
@@ -394,7 +394,7 @@ int main()
     window.setVerticalSyncEnabled(true);
 
     // Open the application font
-    const auto font = sf::Font::openFromFile("resources/tuffy.ttf").value();
+    const auto font = sf::Font::createFromFile("resources/tuffy.ttf").value();
 
     // Create the effects
     std::optional pixelateEffect   = tryLoadPixelate();
@@ -418,7 +418,7 @@ int main()
     std::size_t current = 0;
 
     // Create the messages background
-    const auto textBackgroundTexture = sf::Texture::loadFromFile("resources/text-background.png").value();
+    const auto textBackgroundTexture = sf::Texture::createFromFile("resources/text-background.png").value();
     sf::Sprite textBackground(textBackgroundTexture);
     textBackground.setPosition({0.f, 520.f});
     textBackground.setColor(sf::Color(255, 255, 255, 200));

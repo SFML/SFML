@@ -115,7 +115,7 @@ public:
         m_listener.setFillColor(sf::Color::Red);
 
         // Load the music file
-        if (!(m_music = sf::Music::openFromFile(resourcesDir() / "doodle_pop.ogg")))
+        if (!(m_music = sf::Music::createFromFile(resourcesDir() / "doodle_pop.ogg")))
         {
             std::cerr << "Failed to load " << (resourcesDir() / "doodle_pop.ogg").string() << std::endl;
             std::abort();
@@ -177,7 +177,7 @@ public:
     m_volumeText(getFont(), "Volume: " + std::to_string(m_volume))
     {
         // Load the music file
-        if (!(m_music = sf::Music::openFromFile(resourcesDir() / "doodle_pop.ogg")))
+        if (!(m_music = sf::Music::createFromFile(resourcesDir() / "doodle_pop.ogg")))
         {
             std::cerr << "Failed to load " << (resourcesDir() / "doodle_pop.ogg").string() << std::endl;
             std::abort();
@@ -283,7 +283,7 @@ public:
         makeCone(m_soundConeInner, innerConeAngle);
 
         // Load the music file
-        if (!(m_music = sf::Music::openFromFile(resourcesDir() / "doodle_pop.ogg")))
+        if (!(m_music = sf::Music::createFromFile(resourcesDir() / "doodle_pop.ogg")))
         {
             std::cerr << "Failed to load " << (resourcesDir() / "doodle_pop.ogg").string() << std::endl;
             std::abort();
@@ -677,7 +677,7 @@ protected:
         m_instructions.setPosition({windowWidth / 2.f - 250.f, windowHeight * 3.f / 4.f});
 
         // Load the music file
-        if (!(m_music = sf::Music::openFromFile(resourcesDir() / "doodle_pop.ogg")))
+        if (!(m_music = sf::Music::createFromFile(resourcesDir() / "doodle_pop.ogg")))
         {
             std::cerr << "Failed to load " << (resourcesDir() / "doodle_pop.ogg").string() << std::endl;
             std::abort();
@@ -1077,7 +1077,7 @@ int main()
     window.setVerticalSyncEnabled(true);
 
     // Open the application font and pass it to the Effect class
-    const auto font = sf::Font::openFromFile(resourcesDir() / "tuffy.ttf").value();
+    const auto font = sf::Font::createFromFile(resourcesDir() / "tuffy.ttf").value();
     Effect::setFont(font);
 
     // Create the effects
@@ -1106,7 +1106,7 @@ int main()
     effects[current]->start();
 
     // Create the messages background
-    const auto textBackgroundTexture = sf::Texture::loadFromFile(resourcesDir() / "text-background.png").value();
+    const auto textBackgroundTexture = sf::Texture::createFromFile(resourcesDir() / "text-background.png").value();
     sf::Sprite textBackground(textBackgroundTexture);
     textBackground.setPosition({0.f, 520.f});
     textBackground.setColor(sf::Color(255, 255, 255, 200));

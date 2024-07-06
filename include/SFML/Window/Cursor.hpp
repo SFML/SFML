@@ -174,7 +174,7 @@ public:
     ///         `std::nullopt` otherwise
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Cursor> loadFromPixels(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot);
+    [[nodiscard]] static std::optional<Cursor> createFromPixels(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a native system cursor
@@ -190,7 +190,7 @@ public:
     ///         `std::nullopt` otherwise
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Cursor> loadFromSystem(Type type);
+    [[nodiscard]] static std::optional<Cursor> createFromSystem(Type type);
 
 private:
     friend class WindowBase;
@@ -232,8 +232,8 @@ private:
 /// associated with either a native system cursor or a custom
 /// cursor.
 ///
-/// After loading the cursor the graphical appearance
-/// with either loadFromPixels() or loadFromSystem(), the
+/// After loading the cursor graphical appearance
+/// with either createFromPixels() or createFromSystem(), the
 /// cursor can be changed with sf::WindowBase::setMouseCursor().
 ///
 /// The behavior is undefined if the cursor is destroyed while
@@ -245,7 +245,7 @@ private:
 ///
 /// // ... create window as usual ...
 ///
-/// const auto cursor = sf::Cursor::loadFromSystem(sf::Cursor::Type::Hand).value();
+/// const auto cursor = sf::Cursor::createFromSystem(sf::Cursor::Type::Hand).value();
 /// window.setMouseCursor(cursor);
 /// \endcode
 ///
