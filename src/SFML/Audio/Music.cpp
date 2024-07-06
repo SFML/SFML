@@ -65,6 +65,30 @@ Music::Music() : m_impl(std::make_unique<Impl>())
 
 
 ////////////////////////////////////////////////////////////
+Music::Music(const std::filesystem::path& filename) : Music()
+{
+    if (!openFromFile(filename))
+        throw std::runtime_error("Failed to open music from file");
+}
+
+
+////////////////////////////////////////////////////////////
+Music::Music(const void* data, std::size_t sizeInBytes) : Music()
+{
+    if (!openFromMemory(data, sizeInBytes))
+        throw std::runtime_error("Failed to open music from memory");
+}
+
+
+////////////////////////////////////////////////////////////
+Music::Music(InputStream& stream) : Music()
+{
+    if (!openFromStream(stream))
+        throw std::runtime_error("Failed to open music from stream");
+}
+
+
+////////////////////////////////////////////////////////////
 Music::~Music()
 {
     // We must stop before destroying the file
@@ -149,42 +173,6 @@ bool Music::openFromStream(InputStream& stream)
     SoundStream::initialize(m_impl->file.getChannelCount(), m_impl->file.getSampleRate(), m_impl->file.getChannelMap());
 
     return true;
-}
-
-
-////////////////////////////////////////////////////////////
-std::optional<Music> Music::createFromFile(const std::filesystem::path& filename)
-{
-    auto music = std::make_optional<Music>();
-
-    if (!music->openFromFile(filename))
-        return std::nullopt;
-
-    return music;
-}
-
-
-////////////////////////////////////////////////////////////
-std::optional<Music> Music::createFromMemory(const void* data, std::size_t sizeInBytes)
-{
-    auto music = std::make_optional<Music>();
-
-    if (!music->openFromMemory(data, sizeInBytes))
-        return std::nullopt;
-
-    return music;
-}
-
-
-////////////////////////////////////////////////////////////
-std::optional<Music> Music::createFromStream(InputStream& stream)
-{
-    auto music = std::make_optional<Music>();
-
-    if (!music->openFromStream(stream))
-        return std::nullopt;
-
-    return music;
 }
 
 

@@ -17,20 +17,45 @@ TEST_CASE("[Graphics] sf::RenderTexture", runDisplayTests())
 
     SECTION("Construction")
     {
-        const sf::RenderTexture renderTexture;
-        CHECK(!renderTexture.isSmooth());
-        CHECK(!renderTexture.isRepeated());
-        CHECK(renderTexture.getSize() == sf::Vector2u(0, 0));
+        SECTION("Default constructor")
+        {
+            const sf::RenderTexture renderTexture;
+            CHECK(!renderTexture.isSmooth());
+            CHECK(!renderTexture.isRepeated());
+            CHECK(renderTexture.getSize() == sf::Vector2u(0, 0));
+        }
+
+        SECTION("2 parameter constructor")
+        {
+            CHECK_THROWS_AS(sf::RenderTexture({1'000'000, 1'000'000}), std::runtime_error);
+
+            CHECK_NOTHROW(sf::RenderTexture({100, 100}, sf::ContextSettings{8 /* depthBits */, 0 /* stencilBits */}));
+            CHECK_NOTHROW(sf::RenderTexture({100, 100}, sf::ContextSettings{0 /* depthBits */, 8 /* stencilBits */}));
+
+            const sf::RenderTexture renderTexture({360, 480});
+            CHECK(renderTexture.getSize() == sf::Vector2u(360, 480));
+            CHECK(!renderTexture.isSmooth());
+            CHECK(!renderTexture.isRepeated());
+            CHECK(!renderTexture.isSrgb());
+
+            const auto& texture = renderTexture.getTexture();
+            CHECK(texture.getSize() == sf::Vector2u(360, 480));
+            CHECK(!texture.isSmooth());
+            CHECK(!texture.isSrgb());
+            CHECK(!texture.isRepeated());
+            CHECK(texture.getNativeHandle() != 0);
+        }
     }
 
-    SECTION("create()")
+    SECTION("resize()")
     {
-        CHECK(!sf::RenderTexture::create({1'000'000, 1'000'000}));
+        sf::RenderTexture renderTexture;
+        CHECK(!renderTexture.resize({1'000'000, 1'000'000}));
 
-        CHECK(sf::RenderTexture::create({100, 100}, sf::ContextSettings{8 /* depthBits */, 0 /* stencilBits */}));
-        CHECK(sf::RenderTexture::create({100, 100}, sf::ContextSettings{0 /* depthBits */, 8 /* stencilBits */}));
+        CHECK(renderTexture.resize({100, 100}, sf::ContextSettings{8 /* depthBits */, 0 /* stencilBits */}));
+        CHECK(renderTexture.resize({100, 100}, sf::ContextSettings{0 /* depthBits */, 8 /* stencilBits */}));
 
-        const auto renderTexture = sf::RenderTexture::create({360, 480}).value();
+        REQUIRE(renderTexture.resize({360, 480}));
         CHECK(renderTexture.getSize() == sf::Vector2u(360, 480));
         CHECK(!renderTexture.isSmooth());
         CHECK(!renderTexture.isRepeated());
@@ -66,27 +91,27 @@ TEST_CASE("[Graphics] sf::RenderTexture", runDisplayTests())
 
     SECTION("Set/get smooth")
     {
-        auto renderTexture = sf::RenderTexture::create({64, 64}).value();
+        sf::RenderTexture renderTexture({64, 64});
         renderTexture.setSmooth(true);
         CHECK(renderTexture.isSmooth());
     }
 
     SECTION("Set/get repeated")
     {
-        auto renderTexture = sf::RenderTexture::create({64, 64}).value();
+        sf::RenderTexture renderTexture({64, 64});
         renderTexture.setRepeated(true);
         CHECK(renderTexture.isRepeated());
     }
 
     SECTION("generateMipmap()")
     {
-        auto renderTexture = sf::RenderTexture::create({64, 64}).value();
+        sf::RenderTexture renderTexture({64, 64});
         CHECK(renderTexture.generateMipmap());
     }
 
     SECTION("setActive()")
     {
-        auto renderTexture = sf::RenderTexture::create({64, 64}).value();
+        sf::RenderTexture renderTexture({64, 64});
         CHECK(renderTexture.setActive());
         CHECK(renderTexture.setActive(false));
         CHECK(renderTexture.setActive(true));
@@ -94,7 +119,7 @@ TEST_CASE("[Graphics] sf::RenderTexture", runDisplayTests())
 
     SECTION("getTexture()")
     {
-        const auto renderTexture = sf::RenderTexture::create({64, 64}).value();
+        const sf::RenderTexture renderTexture({64, 64});
         CHECK(renderTexture.getTexture().getSize() == sf::Vector2u(64, 64));
     }
 }

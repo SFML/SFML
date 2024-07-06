@@ -48,6 +48,14 @@ FileInputStream::FileInputStream() = default;
 
 
 ////////////////////////////////////////////////////////////
+FileInputStream::FileInputStream(const std::filesystem::path& filename)
+{
+    if (!open(filename))
+        throw std::runtime_error("Failed to open file input stream");
+}
+
+
+////////////////////////////////////////////////////////////
 FileInputStream::~FileInputStream() = default;
 
 
@@ -75,18 +83,6 @@ bool FileInputStream::open(const std::filesystem::path& filename)
     m_file.reset(std::fopen(filename.c_str(), "rb"));
 #endif
     return m_file != nullptr;
-}
-
-
-////////////////////////////////////////////////////////////
-std::optional<FileInputStream> FileInputStream::create(const std::filesystem::path& filename)
-{
-    auto fileInputStream = std::make_optional<FileInputStream>();
-
-    if (!fileInputStream->open(filename))
-        return std::nullopt;
-
-    return fileInputStream;
 }
 
 

@@ -66,8 +66,8 @@ TEST_CASE("[Graphics] sf::Shape", runDisplayTests())
 
     SECTION("Set/get texture")
     {
-        const auto    texture = sf::Texture::create({64, 64}).value();
-        TriangleShape triangleShape({});
+        const sf::Texture texture(sf::Vector2u(64, 64));
+        TriangleShape     triangleShape({});
         triangleShape.setTexture(&texture, true);
         CHECK(triangleShape.getTexture() == &texture);
     }

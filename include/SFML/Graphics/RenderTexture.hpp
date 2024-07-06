@@ -37,7 +37,6 @@
 #include <SFML/System/Vector2.hpp>
 
 #include <memory>
-#include <optional>
 
 
 namespace sf
@@ -63,6 +62,25 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     RenderTexture();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct a render-texture
+    ///
+    /// The last parameter, \a settings, is useful if you want to enable
+    /// multi-sampling or use the render-texture for OpenGL rendering that
+    /// requires a depth or stencil buffer. Otherwise it is unnecessary, and
+    /// you should leave this parameter at its default value.
+    ///
+    /// After creation, the contents of the render-texture are undefined.
+    /// Call `RenderTexture::clear` first to ensure a single color fill.
+    ///
+    /// \param size     Width and height of the render-texture
+    /// \param settings Additional settings for the underlying OpenGL texture and context
+    ///
+    /// \throws std::runtime_error if creation was unsuccessful
+    ///
+    ////////////////////////////////////////////////////////////
+    RenderTexture(Vector2u size, const ContextSettings& settings = {});
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
@@ -108,29 +126,10 @@ public:
     /// \param size     Width and height of the render-texture
     /// \param settings Additional settings for the underlying OpenGL texture and context
     ///
-    /// \return True if resizing has been successful
+    /// \return True if resizing has been successful, false if it failed
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool resize(Vector2u size, const ContextSettings& settings = ContextSettings());
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Create the render-texture
-    ///
-    /// The last parameter, \a settings, is useful if you want to enable
-    /// multi-sampling or use the render-texture for OpenGL rendering that
-    /// requires a depth or stencil buffer. Otherwise it is unnecessary, and
-    /// you should leave this parameter at its default value.
-    ///
-    /// After creation, the contents of the render-texture are undefined.
-    /// Call `RenderTexture::clear` first to ensure a single color fill.
-    ///
-    /// \param size     Width and height of the render-texture
-    /// \param settings Additional settings for the underlying OpenGL texture and context
-    ///
-    /// \return Render texture if creation has been successful, otherwise `std::nullopt`
-    ///
-    ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<RenderTexture> create(Vector2u size, const ContextSettings& settings = {});
+    [[nodiscard]] bool resize(Vector2u size, const ContextSettings& settings = {});
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the maximum anti-aliasing level supported by the system
@@ -302,7 +301,7 @@ private:
 /// sf::RenderWindow window(sf::VideoMode({800, 600}), "SFML window");
 ///
 /// // Create a new render-texture
-/// auto texture = sf::RenderTexture::create({500, 500}).value();
+/// sf::RenderTexture texture({500, 500});
 ///
 /// // The main loop
 /// while (window.isOpen())

@@ -89,7 +89,7 @@ public:
            const String&          title,
            std::uint32_t          style    = Style::Default,
            State                  state    = State::Windowed,
-           const ContextSettings& settings = ContextSettings());
+           const ContextSettings& settings = {});
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct a new window
@@ -108,7 +108,7 @@ public:
     /// \param settings Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
-    Window(VideoMode mode, const String& title, State state, const ContextSettings& settings = ContextSettings());
+    Window(VideoMode mode, const String& title, State state, const ContextSettings& settings = {});
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the window from an existing control
@@ -124,7 +124,7 @@ public:
     /// \param settings Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
-    explicit Window(WindowHandle handle, const ContextSettings& settings = ContextSettings());
+    explicit Window(WindowHandle handle, const ContextSettings& settings = {});
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor

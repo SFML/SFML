@@ -67,6 +67,30 @@ void InputSoundFile::StreamDeleter::operator()(InputStream* ptr) const
 
 
 ////////////////////////////////////////////////////////////
+InputSoundFile::InputSoundFile(const std::filesystem::path& filename)
+{
+    if (!openFromFile(filename))
+        throw std::runtime_error("Failed to open input sound file");
+}
+
+
+////////////////////////////////////////////////////////////
+InputSoundFile::InputSoundFile(const void* data, std::size_t sizeInBytes)
+{
+    if (!openFromMemory(data, sizeInBytes))
+        throw std::runtime_error("Failed to open input sound file from memory");
+}
+
+
+////////////////////////////////////////////////////////////
+InputSoundFile::InputSoundFile(InputStream& stream)
+{
+    if (!openFromStream(stream))
+        throw std::runtime_error("Failed to open input sound file from stream");
+}
+
+
+////////////////////////////////////////////////////////////
 bool InputSoundFile::openFromFile(const std::filesystem::path& filename)
 {
     // If the file is already open, first close it
@@ -189,42 +213,6 @@ bool InputSoundFile::openFromStream(InputStream& stream)
     m_channelMap  = info->channelMap;
 
     return true;
-}
-
-
-////////////////////////////////////////////////////////////
-std::optional<InputSoundFile> InputSoundFile::createFromFile(const std::filesystem::path& filename)
-{
-    auto inputSoundFile = std::make_optional<InputSoundFile>();
-
-    if (!inputSoundFile->openFromFile(filename))
-        return std::nullopt;
-
-    return inputSoundFile;
-}
-
-
-////////////////////////////////////////////////////////////
-std::optional<InputSoundFile> InputSoundFile::createFromMemory(const void* data, std::size_t sizeInBytes)
-{
-    auto inputSoundFile = std::make_optional<InputSoundFile>();
-
-    if (!inputSoundFile->openFromMemory(data, sizeInBytes))
-        return std::nullopt;
-
-    return inputSoundFile;
-}
-
-
-////////////////////////////////////////////////////////////
-std::optional<InputSoundFile> InputSoundFile::createFromStream(InputStream& stream)
-{
-    auto inputSoundFile = std::make_optional<InputSoundFile>();
-
-    if (!inputSoundFile->openFromStream(stream))
-        return std::nullopt;
-
-    return inputSoundFile;
 }
 
 

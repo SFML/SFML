@@ -24,16 +24,16 @@ int main()
     sf::RenderWindow window(sf::VideoMode({800, 600}), "SFML window");
 
     // Set the Icon
-    const auto icon = sf::Image::loadFromFile("icon.png").value();
+    const sf::Image icon("icon.png");
     window.setIcon(icon);
 
     // Load a sprite to display
-    const auto texture = sf::Texture::loadFromFile("background.jpg").value();
-    sf::Sprite sprite(texture);
+    const sf::Texture texture("background.jpg");
+    sf::Sprite        sprite(texture);
 
     // Create a graphical text to display
-    const auto font = sf::Font::openFromFile("tuffy.ttf").value();
-    sf::Text   text(font, "Hello SFML", 50);
+    const sf::Font font("tuffy.ttf");
+    sf::Text       text(font, "Hello SFML", 50);
     text.setFillColor(sf::Color::Black);
 
     // Load a music to play

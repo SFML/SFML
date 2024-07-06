@@ -91,14 +91,14 @@ int main()
     sf::RenderWindow window(sf::VideoMode({windowWidth, windowHeight}), "SFML Island", sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
 
-    const auto font = sf::Font::createFromFile("resources/tuffy.ttf").value();
+    const sf::Font font("resources/tuffy.ttf");
 
     // Create all of our graphics resources
-    sf::Text                  hudText(font);
-    sf::Text                  statusText(font);
-    std::optional<sf::Shader> terrainShader;
-    sf::RenderStates          terrainStates;
-    sf::VertexBuffer          terrain(sf::PrimitiveType::Triangles, sf::VertexBuffer::Usage::Static);
+    sf::Text         hudText(font);
+    sf::Text         statusText(font);
+    sf::Shader       terrainShader;
+    sf::RenderStates terrainStates;
+    sf::VertexBuffer terrain(sf::PrimitiveType::Triangles, sf::VertexBuffer::Usage::Static);
 
     // Set up our text drawables
     statusText.setCharacterSize(28);
@@ -120,7 +120,7 @@ int main()
     {
         statusText.setString("Shaders and/or Vertex Buffers Unsupported");
     }
-    else if (!(terrainShader = sf::Shader::createFromFile("resources/terrain.vert", "resources/terrain.frag")))
+    else if (!terrainShader.loadFromFile("resources/terrain.vert", "resources/terrain.frag"))
     {
         statusText.setString("Failed to load shader program");
     }
@@ -148,7 +148,7 @@ int main()
         statusText.setString("Generating Terrain...");
 
         // Set up the render states
-        terrainStates = sf::RenderStates(&*terrainShader);
+        terrainStates = sf::RenderStates(&terrainShader);
     }
 
     // Center the status text
@@ -186,7 +186,8 @@ int main()
             }
 
             // Arrow key pressed:
-            if (terrainShader.has_value() && event->is<sf::Event::KeyPressed>())
+            // TODO Replace use of getNativeHandle() when validity function is added
+            if (terrainShader.getNativeHandle() != 0 && event->is<sf::Event::KeyPressed>())
             {
                 switch (event->getIf<sf::Event::KeyPressed>()->code)
                 {
@@ -216,7 +217,7 @@ int main()
 
         window.draw(statusText);
 
-        if (terrainShader.has_value())
+        if (terrainShader.getNativeHandle() != 0)
         {
             {
                 const std::lock_guard lock(workQueueMutex);
@@ -236,7 +237,7 @@ int main()
                         bufferUploadPending = false;
                     }
 
-                    terrainShader->setUniform("lightFactor", lightFactor);
+                    terrainShader.setUniform("lightFactor", lightFactor);
                     window.draw(terrain, terrainStates);
                 }
             }

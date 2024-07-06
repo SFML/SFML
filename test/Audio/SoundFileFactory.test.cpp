@@ -11,7 +11,6 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include <filesystem>
-#include <optional>
 #include <type_traits>
 
 #include <cstdint>
@@ -110,30 +109,29 @@ TEST_CASE("[Audio] sf::SoundFileFactory")
 
     SECTION("createReaderFromStream()")
     {
-        std::optional<sf::FileInputStream> stream;
+        sf::FileInputStream stream;
 
         SECTION("flac")
         {
-            stream = sf::FileInputStream::create("Audio/ding.flac");
+            REQUIRE(stream.open("Audio/ding.flac"));
         }
 
         SECTION("mp3")
         {
-            stream = sf::FileInputStream::create("Audio/ding.mp3");
+            REQUIRE(stream.open("Audio/ding.mp3"));
         }
 
         SECTION("ogg")
         {
-            stream = sf::FileInputStream::create("Audio/doodle_pop.ogg");
+            REQUIRE(stream.open("Audio/doodle_pop.ogg"));
         }
 
         SECTION("wav")
         {
-            stream = sf::FileInputStream::create("Audio/killdeer.wav");
+            REQUIRE(stream.open("Audio/killdeer.wav"));
         }
 
-        REQUIRE(stream);
-        CHECK(sf::SoundFileFactory::createReaderFromStream(*stream));
+        CHECK(sf::SoundFileFactory::createReaderFromStream(stream));
     }
 
     SECTION("createWriterFromFilename()")
