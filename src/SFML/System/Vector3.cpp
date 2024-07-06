@@ -60,6 +60,6 @@ T Vector3<T>::length() const
 // Explicit template instantiations
 ////////////////////////////////////////////////////////////
 
-template class sf::Vector3<float>;
-template class sf::Vector3<double>;
-template class sf::Vector3<long double>;
+template struct sf::Vector3<float>;
+template struct sf::Vector3<double>;
+template struct sf::Vector3<long double>;

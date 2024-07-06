@@ -15,7 +15,7 @@ std::string runDisplayTests();
 // String conversions for Catch2
 namespace sf
 {
-class VideoMode;
+struct VideoMode;
 
 // Required because WindowUtil.cpp doesn't include WindowUtil.hpp
 // NOLINTNEXTLINE(readability-redundant-declaration)

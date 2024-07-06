@@ -19,10 +19,10 @@ class String;
 class Time;
 
 template <typename>
-class Vector2;
+struct Vector2;
 
 template <typename>
-class Vector3;
+struct Vector3;
 
 void setStreamPrecision(std::ostream& os, int maxDigits10);
 

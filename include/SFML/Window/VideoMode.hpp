@@ -40,9 +40,8 @@ namespace sf
 /// \brief VideoMode defines a video mode (width, height, bpp)
 ///
 ////////////////////////////////////////////////////////////
-class SFML_WINDOW_API VideoMode
+struct SFML_WINDOW_API VideoMode
 {
-public:
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
