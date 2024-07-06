@@ -794,7 +794,7 @@ void WindowImplX11::processEvents()
     }
 
     // Process clipboard window events
-    priv::ClipboardImpl::processEvents();
+    ClipboardImpl::processEvents();
 }
 
 

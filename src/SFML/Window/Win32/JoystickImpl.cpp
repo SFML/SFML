@@ -1102,7 +1102,7 @@ BOOL CALLBACK JoystickImpl::deviceEnumerationCallback(const DIDEVICEINSTANCE* de
 ////////////////////////////////////////////////////////////
 BOOL CALLBACK JoystickImpl::deviceObjectEnumerationCallback(const DIDEVICEOBJECTINSTANCE* deviceObjectInstance, void* userData)
 {
-    sf::priv::JoystickImpl& joystick = *reinterpret_cast<sf::priv::JoystickImpl*>(userData);
+    JoystickImpl& joystick = *reinterpret_cast<JoystickImpl*>(userData);
 
     if (DIDFT_GETTYPE(deviceObjectInstance->dwType) & DIDFT_AXIS)
     {

@@ -211,7 +211,7 @@ bool VertexBuffer::update([[maybe_unused]] const VertexBuffer& vertexBuffer)
     const TransientContextLock contextLock;
 
     // Make sure that extensions are initialized
-    sf::priv::ensureExtensionsInit();
+    priv::ensureExtensionsInit();
 
     if (GLEXT_copy_buffer)
     {
@@ -338,7 +338,7 @@ bool VertexBuffer::isAvailable()
         const TransientContextLock contextLock;
 
         // Make sure that extensions are initialized
-        sf::priv::ensureExtensionsInit();
+        priv::ensureExtensionsInit();
 
         return GLEXT_vertex_buffer_object != 0;
     }();
