@@ -923,17 +923,17 @@ public:
 
         // Use the vertex shader SPIR-V code to create a vertex shader module
         {
-            auto file = sf::FileInputStream::create("resources/shader.vert.spv");
-            if (!file)
+            sf::FileInputStream file;
+            if (!file.open("resources/shader.vert.spv"))
             {
                 vulkanAvailable = false;
                 return;
             }
 
-            const auto                 fileSize = file->getSize().value();
+            const auto                 fileSize = file.getSize().value();
             std::vector<std::uint32_t> buffer(fileSize / sizeof(std::uint32_t));
 
-            if (file->read(buffer.data(), fileSize) != file->getSize())
+            if (file.read(buffer.data(), fileSize) != file.getSize())
             {
                 vulkanAvailable = false;
                 return;
@@ -951,17 +951,17 @@ public:
 
         // Use the fragment shader SPIR-V code to create a fragment shader module
         {
-            auto file = sf::FileInputStream::create("resources/shader.frag.spv");
-            if (!file)
+            sf::FileInputStream file;
+            if (!file.open("resources/shader.frag.spv"))
             {
                 vulkanAvailable = false;
                 return;
             }
 
-            const auto                 fileSize = file->getSize().value();
+            const auto                 fileSize = file.getSize().value();
             std::vector<std::uint32_t> buffer(fileSize / sizeof(std::uint32_t));
 
-            if (file->read(buffer.data(), fileSize) != file->getSize())
+            if (file.read(buffer.data(), fileSize) != file.getSize())
             {
                 vulkanAvailable = false;
                 return;
@@ -1801,15 +1801,12 @@ public:
     void setupTextureImage()
     {
         // Load the image data
-        const auto maybeImageData = sf::Image::createFromFile("resources/logo.png");
-
-        if (!maybeImageData)
+        sf::Image imageData;
+        if (!imageData.loadFromFile("resources/logo.png"))
         {
             vulkanAvailable = false;
             return;
         }
-
-        const auto& imageData = *maybeImageData;
 
         // Create a staging buffer to transfer the data with
         const VkDeviceSize imageSize = imageData.getSize().x * imageData.getSize().y * 4;

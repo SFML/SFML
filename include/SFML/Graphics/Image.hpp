@@ -59,6 +59,8 @@ public:
     ///
     /// Constructs an image with width 0 and height 0.
     ///
+    /// \see resize
+    ///
     ////////////////////////////////////////////////////////////
     Image() = default;
 
@@ -84,6 +86,55 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     Image(Vector2u size, const std::uint8_t* pixels);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct the image from a file on disk
+    ///
+    /// The supported image formats are bmp, png, tga, jpg, gif,
+    /// psd, hdr, pic and pnm. Some format options are not supported,
+    /// like jpeg with arithmetic coding or ASCII pnm.
+    ///
+    /// \param filename Path of the image file to load
+    ///
+    /// \throws std::runtime_error if loading was unsuccessful
+    ///
+    /// \see loadFromFile, loadFromMemory, loadFromStream
+    ///
+    ////////////////////////////////////////////////////////////
+    explicit Image(const std::filesystem::path& filename);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct the image from a file in memory
+    ///
+    /// The supported image formats are bmp, png, tga, jpg, gif,
+    /// psd, hdr, pic and pnm. Some format options are not supported,
+    /// like jpeg with arithmetic coding or ASCII pnm.
+    ///
+    /// \param data Pointer to the file data in memory
+    /// \param size Size of the data to load, in bytes
+    ///
+    /// \throws std::runtime_error if loading was unsuccessful
+    ///
+    /// \see loadFromFile, loadFromMemory, loadFromStream
+    ///
+    ////////////////////////////////////////////////////////////
+    Image(const void* data, std::size_t size);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct the image from a custom stream
+    ///
+    /// The supported image formats are bmp, png, tga, jpg, gif,
+    /// psd, hdr, pic and pnm. Some format options are not supported,
+    /// like jpeg with arithmetic coding or ASCII pnm.
+    ///
+    /// \param stream Source stream to read from
+    ///
+    /// \throws std::runtime_error if loading was unsuccessful
+    ///
+    /// \see loadFromFile, loadFromMemory, loadFromStream
+    ///
+    ////////////////////////////////////////////////////////////
+    explicit Image(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Resize the image and fill it with a unique color
@@ -138,7 +189,7 @@ public:
     ///
     /// \return True if loading was successful
     ///
-    /// \see loadFromFile, loadFromStream
+    /// \see loadFromFile, loadFromStream, saveToMemory
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool loadFromMemory(const void* data, std::size_t size);
@@ -161,58 +212,6 @@ public:
     [[nodiscard]] bool loadFromStream(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Load the image from a file on disk
-    ///
-    /// The supported image formats are bmp, png, tga, jpg, gif,
-    /// psd, hdr, pic and pnm. Some format options are not supported,
-    /// like jpeg with arithmetic coding or ASCII pnm.
-    /// If this function fails, the image is left unchanged.
-    ///
-    /// \param filename Path of the image file to load
-    ///
-    /// \return Image if loading was successful, `std::nullopt` otherwise
-    ///
-    /// \see createFromMemory, createFromStream, saveToFile
-    ///
-    ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Image> createFromFile(const std::filesystem::path& filename);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Load the image from a file in memory
-    ///
-    /// The supported image formats are bmp, png, tga, jpg, gif,
-    /// psd, hdr, pic and pnm. Some format options are not supported,
-    /// like jpeg with arithmetic coding or ASCII pnm.
-    /// If this function fails, the image is left unchanged.
-    ///
-    /// \param data Pointer to the file data in memory
-    /// \param size Size of the data to load, in bytes
-    ///
-    /// \return Image if loading was successful, `std::nullopt` otherwise
-    ///
-    /// \see createFromFile, createFromStream
-    ///
-    ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Image> createFromMemory(const void* data, std::size_t size);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Load the image from a custom stream
-    ///
-    /// The supported image formats are bmp, png, tga, jpg, gif,
-    /// psd, hdr, pic and pnm. Some format options are not supported,
-    /// like jpeg with arithmetic coding or ASCII pnm.
-    /// If this function fails, the image is left unchanged.
-    ///
-    /// \param stream Source stream to read from
-    ///
-    /// \return Image if loading was successful, `std::nullopt` otherwise
-    ///
-    /// \see createFromFile, createFromMemory
-    ///
-    ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Image> createFromStream(InputStream& stream);
-
-    ////////////////////////////////////////////////////////////
     /// \brief Save the image to a file on disk
     ///
     /// The format of the image is automatically deduced from
@@ -224,7 +223,7 @@ public:
     ///
     /// \return True if saving was successful
     ///
-    /// \see create, createFromFile, createFromMemory
+    /// \see saveToMemory, loadFromFile
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool saveToFile(const std::filesystem::path& filename) const;
@@ -242,7 +241,7 @@ public:
     /// \return Buffer with encoded data if saving was successful,
     ///     otherwise std::nullopt
     ///
-    /// \see create, createFromFile, createFromMemory, saveToFile
+    /// \see saveToFile, loadFromMemory
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] std::optional<std::vector<std::uint8_t>> saveToMemory(std::string_view format) const;
@@ -386,7 +385,7 @@ private:
 /// channels -- just like a sf::Color.
 /// All the functions that return an array of pixels follow
 /// this rule, and all parameters that you pass to sf::Image
-/// functions (such as createFromMemory) must use this
+/// functions (such as loadFromMemory) must use this
 /// representation as well.
 ///
 /// A sf::Image can be copied, but it is a heavy resource and
@@ -396,7 +395,7 @@ private:
 /// Usage example:
 /// \code
 /// // Load an image file from a file
-/// const auto background = sf::Image::createFromFile("background.jpg").value();
+/// const sf::Image background("background.jpg");
 ///
 /// // Create a 20x20 image filled with black color
 /// sf::Image image({20, 20}, sf::Color::Black);

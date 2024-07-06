@@ -111,10 +111,10 @@ int main()
     sf::RenderWindow sfmlView2(view2);
 
     // Load some textures to display
-    const auto texture1 = sf::Texture::createFromFile("resources/image1.jpg").value();
-    const auto texture2 = sf::Texture::createFromFile("resources/image2.jpg").value();
-    sf::Sprite sprite1(texture1);
-    sf::Sprite sprite2(texture2);
+    const sf::Texture texture1("resources/image1.jpg");
+    const sf::Texture texture2("resources/image2.jpg");
+    sf::Sprite        sprite1(texture1);
+    sf::Sprite        sprite2(texture2);
     sprite1.setOrigin(sf::Vector2f(texture1.getSize()) / 2.f);
     sprite1.setPosition(sprite1.getOrigin());
 

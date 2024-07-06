@@ -96,6 +96,16 @@ public:
     FileInputStream& operator=(FileInputStream&&) noexcept;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Construct the stream from a file path
+    ///
+    /// \param filename Name of the file to open
+    ///
+    /// \throws std::runtime_error on error
+    ///
+    ////////////////////////////////////////////////////////////
+    explicit FileInputStream(const std::filesystem::path& filename);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Open the stream from a file path
     ///
     /// \param filename Name of the file to open
@@ -104,16 +114,6 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool open(const std::filesystem::path& filename);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Create the stream from a file path
-    ///
-    /// \param filename Name of the file to open
-    ///
-    /// \return File input stream on success, `std::nullopt` on error
-    ///
-    ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<FileInputStream> create(const std::filesystem::path& filename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Read data from the stream

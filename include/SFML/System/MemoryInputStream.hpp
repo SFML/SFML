@@ -56,15 +56,6 @@ public:
     MemoryInputStream(const void* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Open the stream from its data
-    ///
-    /// \param data        Pointer to the data in memory
-    /// \param sizeInBytes Size of the data, in bytes
-    ///
-    ////////////////////////////////////////////////////////////
-    void open(const void* data, std::size_t sizeInBytes);
-
-    ////////////////////////////////////////////////////////////
     /// \brief Read data from the stream
     ///
     /// After reading, the stream's reading position must be

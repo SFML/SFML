@@ -72,6 +72,78 @@ Texture::Texture() : m_cacheId(TextureImpl::getUniqueId())
 
 
 ////////////////////////////////////////////////////////////
+Texture::Texture(const std::filesystem::path& filename, bool sRgb) : Texture()
+{
+    if (!loadFromFile(filename, sRgb))
+        throw std::runtime_error("Failed to load texture from file");
+}
+
+
+////////////////////////////////////////////////////////////
+Texture::Texture(const std::filesystem::path& filename, bool sRgb, const IntRect& area) : Texture()
+{
+    if (!loadFromFile(filename, sRgb, area))
+        throw std::runtime_error("Failed to load texture from file");
+}
+
+
+////////////////////////////////////////////////////////////
+Texture::Texture(const void* data, std::size_t size, bool sRgb) : Texture()
+{
+    if (!loadFromMemory(data, size, sRgb))
+        throw std::runtime_error("Failed to load texture from memory");
+}
+
+
+////////////////////////////////////////////////////////////
+Texture::Texture(const void* data, std::size_t size, bool sRgb, const IntRect& area) : Texture()
+{
+    if (!loadFromMemory(data, size, sRgb, area))
+        throw std::runtime_error("Failed to load texture from memory");
+}
+
+
+////////////////////////////////////////////////////////////
+Texture::Texture(InputStream& stream, bool sRgb) : Texture()
+{
+    if (!loadFromStream(stream, sRgb))
+        throw std::runtime_error("Failed to load texture from stream");
+}
+
+
+////////////////////////////////////////////////////////////
+Texture::Texture(InputStream& stream, bool sRgb, const IntRect& area) : Texture()
+{
+    if (!loadFromStream(stream, sRgb, area))
+        throw std::runtime_error("Failed to load texture from stream");
+}
+
+
+////////////////////////////////////////////////////////////
+Texture::Texture(const Image& image, bool sRgb) : Texture()
+{
+    if (!loadFromImage(image, sRgb))
+        throw std::runtime_error("Failed to load texture from image");
+}
+
+
+////////////////////////////////////////////////////////////
+Texture::Texture(const Image& image, bool sRgb, const IntRect& area) : Texture()
+{
+    if (!loadFromImage(image, sRgb, area))
+        throw std::runtime_error("Failed to load texture from image");
+}
+
+
+////////////////////////////////////////////////////////////
+Texture::Texture(Vector2u size, bool sRgb) : Texture()
+{
+    if (!resize(size, sRgb))
+        throw std::runtime_error("Failed to create texture");
+}
+
+
+////////////////////////////////////////////////////////////
 Texture::Texture(const Texture& copy) :
 GlResource(copy),
 m_isSmooth(copy.m_isSmooth),
@@ -358,66 +430,6 @@ bool Texture::loadFromImage(const Image& image, bool sRgb, const IntRect& area)
 
     // Error message generated in called function.
     return false;
-}
-
-
-////////////////////////////////////////////////////////////
-std::optional<Texture> Texture::create(Vector2u size, bool sRgb)
-{
-    auto texture = std::make_optional<Texture>();
-
-    if (!texture->resize(size, sRgb))
-        return std::nullopt;
-
-    return texture;
-}
-
-
-////////////////////////////////////////////////////////////
-std::optional<Texture> Texture::createFromFile(const std::filesystem::path& filename, bool sRgb, const IntRect& area)
-{
-    auto texture = std::make_optional<Texture>();
-
-    if (!texture->loadFromFile(filename, sRgb, area))
-        return std::nullopt;
-
-    return texture;
-}
-
-
-////////////////////////////////////////////////////////////
-std::optional<Texture> Texture::createFromMemory(const void* data, std::size_t size, bool sRgb, const IntRect& area)
-{
-    auto texture = std::make_optional<Texture>();
-
-    if (!texture->loadFromMemory(data, size, sRgb, area))
-        return std::nullopt;
-
-    return texture;
-}
-
-
-////////////////////////////////////////////////////////////
-std::optional<Texture> Texture::createFromStream(InputStream& stream, bool sRgb, const IntRect& area)
-{
-    auto texture = std::make_optional<Texture>();
-
-    if (!texture->loadFromStream(stream, sRgb, area))
-        return std::nullopt;
-
-    return texture;
-}
-
-
-////////////////////////////////////////////////////////////
-std::optional<Texture> Texture::createFromImage(const Image& image, bool sRgb, const IntRect& area)
-{
-    auto texture = std::make_optional<Texture>();
-
-    if (!texture->loadFromImage(image, sRgb, area))
-        return std::nullopt;
-
-    return texture;
 }
 
 

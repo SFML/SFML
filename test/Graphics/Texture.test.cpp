@@ -24,12 +24,99 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
 
     SECTION("Construction")
     {
-        const sf::Texture texture;
-        CHECK(texture.getSize() == sf::Vector2u());
-        CHECK(!texture.isSmooth());
-        CHECK(!texture.isSrgb());
-        CHECK(!texture.isRepeated());
-        CHECK(texture.getNativeHandle() == 0);
+        SECTION("Default constructor")
+        {
+            const sf::Texture texture;
+            CHECK(texture.getSize() == sf::Vector2u());
+            CHECK(!texture.isSmooth());
+            CHECK(!texture.isSrgb());
+            CHECK(!texture.isRepeated());
+            CHECK(texture.getNativeHandle() == 0);
+        }
+
+        SECTION("Vector")
+        {
+            SECTION("At least one zero dimension")
+            {
+                CHECK_THROWS_AS(sf::Texture(sf::Vector2u()), std::runtime_error);
+                CHECK_THROWS_AS(sf::Texture(sf::Vector2u(0, 1)), std::runtime_error);
+                CHECK_THROWS_AS(sf::Texture(sf::Vector2u(1, 0)), std::runtime_error);
+            }
+
+            SECTION("Valid size")
+            {
+                const sf::Texture texture(sf::Vector2u(100, 100));
+                CHECK(texture.getSize() == sf::Vector2u(100, 100));
+                CHECK(texture.getNativeHandle() != 0);
+            }
+
+            SECTION("Too large")
+            {
+                CHECK_THROWS_AS(sf::Texture(sf::Vector2u(100'000, 100'000)), std::runtime_error);
+                CHECK_THROWS_AS(sf::Texture(sf::Vector2u(1'000'000, 1'000'000)), std::runtime_error);
+            }
+        }
+
+        SECTION("File")
+        {
+            const sf::Texture texture("Graphics/sfml-logo-big.png");
+            CHECK(texture.getSize() == sf::Vector2u(1001, 304));
+            CHECK(!texture.isSmooth());
+            CHECK(!texture.isSrgb());
+            CHECK(!texture.isRepeated());
+            CHECK(texture.getNativeHandle() != 0);
+        }
+
+        SECTION("Memory")
+        {
+            const auto        memory = loadIntoMemory("Graphics/sfml-logo-big.png");
+            const sf::Texture texture(memory.data(), memory.size());
+            CHECK(texture.getSize() == sf::Vector2u(1001, 304));
+            CHECK(!texture.isSmooth());
+            CHECK(!texture.isSrgb());
+            CHECK(!texture.isRepeated());
+            CHECK(texture.getNativeHandle() != 0);
+        }
+
+        SECTION("Stream")
+        {
+            sf::FileInputStream stream("Graphics/sfml-logo-big.png");
+            const sf::Texture   texture(stream);
+            CHECK(texture.getSize() == sf::Vector2u(1001, 304));
+            CHECK(!texture.isSmooth());
+            CHECK(!texture.isSrgb());
+            CHECK(!texture.isRepeated());
+            CHECK(texture.getNativeHandle() != 0);
+        }
+
+        SECTION("Image")
+        {
+            SECTION("Subarea of image")
+            {
+                const sf::Image image(sf::Vector2u(10, 15));
+
+                SECTION("Non-truncated area")
+                {
+                    const sf::Texture texture(image, false, {{0, 0}, {5, 10}});
+                    CHECK(texture.getSize() == sf::Vector2u(5, 10));
+                    CHECK(texture.getNativeHandle() != 0);
+                }
+
+                SECTION("Truncated area (negative position)")
+                {
+                    const sf::Texture texture(image, false, {{-5, -5}, {4, 8}});
+                    CHECK(texture.getSize() == sf::Vector2u(4, 8));
+                    CHECK(texture.getNativeHandle() != 0);
+                }
+
+                SECTION("Truncated area (width/height too big)")
+                {
+                    const sf::Texture texture(image, false, {{5, 5}, {12, 18}});
+                    CHECK(texture.getSize() == sf::Vector2u(5, 10));
+                    CHECK(texture.getNativeHandle() != 0);
+                }
+            }
+        }
     }
 
     SECTION("Move semantics")
@@ -58,12 +145,12 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
         }
     }
 
-    SECTION("Move semantics (create)")
+    SECTION("Move semantics")
     {
         SECTION("Construction")
         {
-            sf::Texture       movedTexture = sf::Texture::create({64, 64}).value();
-            const sf::Texture texture      = std::move(movedTexture);
+            sf::Texture       movedTexture(sf::Vector2u(64, 64));
+            const sf::Texture texture = std::move(movedTexture);
             CHECK(texture.getSize() == sf::Vector2u(64, 64));
             CHECK(!texture.isSmooth());
             CHECK(!texture.isSrgb());
@@ -73,37 +160,14 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
 
         SECTION("Assignment")
         {
-            sf::Texture movedTexture = sf::Texture::create({64, 64}).value();
-            sf::Texture texture      = sf::Texture::create({128, 128}).value();
-            texture                  = std::move(movedTexture);
+            sf::Texture movedTexture(sf::Vector2u(64, 64));
+            sf::Texture texture(sf::Vector2u(128, 128));
+            texture = std::move(movedTexture);
             CHECK(texture.getSize() == sf::Vector2u(64, 64));
             CHECK(!texture.isSmooth());
             CHECK(!texture.isSrgb());
             CHECK(!texture.isRepeated());
             CHECK(texture.getNativeHandle() != 0);
-        }
-    }
-
-    SECTION("create()")
-    {
-        SECTION("At least one zero dimension")
-        {
-            CHECK(!sf::Texture::create({}));
-            CHECK(!sf::Texture::create({0, 1}));
-            CHECK(!sf::Texture::create({1, 0}));
-        }
-
-        SECTION("Valid size")
-        {
-            const auto texture = sf::Texture::create({100, 100}).value();
-            CHECK(texture.getSize() == sf::Vector2u(100, 100));
-            CHECK(texture.getNativeHandle() != 0);
-        }
-
-        SECTION("Too large")
-        {
-            CHECK(!sf::Texture::create({100'000, 100'000}));
-            CHECK(!sf::Texture::create({1'000'000, 1'000'000}));
         }
     }
 
@@ -206,72 +270,11 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
         }
     }
 
-    SECTION("createFromFile()")
-    {
-        const auto texture = sf::Texture::createFromFile("Graphics/sfml-logo-big.png").value();
-        CHECK(texture.getSize() == sf::Vector2u(1001, 304));
-        CHECK(!texture.isSmooth());
-        CHECK(!texture.isSrgb());
-        CHECK(!texture.isRepeated());
-        CHECK(texture.getNativeHandle() != 0);
-    }
-
-    SECTION("createFromMemory()")
-    {
-        const auto memory  = loadIntoMemory("Graphics/sfml-logo-big.png");
-        const auto texture = sf::Texture::createFromMemory(memory.data(), memory.size()).value();
-        CHECK(texture.getSize() == sf::Vector2u(1001, 304));
-        CHECK(!texture.isSmooth());
-        CHECK(!texture.isSrgb());
-        CHECK(!texture.isRepeated());
-        CHECK(texture.getNativeHandle() != 0);
-    }
-
-    SECTION("createFromStream()")
-    {
-        auto       stream  = sf::FileInputStream::create("Graphics/sfml-logo-big.png").value();
-        const auto texture = sf::Texture::createFromStream(stream).value();
-        CHECK(texture.getSize() == sf::Vector2u(1001, 304));
-        CHECK(!texture.isSmooth());
-        CHECK(!texture.isSrgb());
-        CHECK(!texture.isRepeated());
-        CHECK(texture.getNativeHandle() != 0);
-    }
-
-    SECTION("createFromImage()")
-    {
-        SECTION("Subarea of image")
-        {
-            const sf::Image image(sf::Vector2u(10, 15));
-
-            SECTION("Non-truncated area")
-            {
-                const auto texture = sf::Texture::createFromImage(image, false, {{0, 0}, {5, 10}}).value();
-                CHECK(texture.getSize() == sf::Vector2u(5, 10));
-                CHECK(texture.getNativeHandle() != 0);
-            }
-
-            SECTION("Truncated area (negative position)")
-            {
-                const auto texture = sf::Texture::createFromImage(image, false, {{-5, -5}, {4, 8}}).value();
-                CHECK(texture.getSize() == sf::Vector2u(4, 8));
-                CHECK(texture.getNativeHandle() != 0);
-            }
-
-            SECTION("Truncated area (width/height too big)")
-            {
-                const auto texture = sf::Texture::createFromImage(image, false, {{5, 5}, {12, 18}}).value();
-                CHECK(texture.getSize() == sf::Vector2u(5, 10));
-                CHECK(texture.getNativeHandle() != 0);
-            }
-        }
-    }
-
     SECTION("Copy semantics")
     {
         constexpr std::uint8_t red[] = {0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00, 0xFF};
 
-        auto texture = sf::Texture::create({1, 2}).value();
+        sf::Texture texture(sf::Vector2u(1, 2));
         texture.update(red);
 
         SECTION("Construction")
@@ -283,8 +286,8 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
 
         SECTION("Assignment")
         {
-            sf::Texture textureCopy = sf::Texture::create({64, 64}).value();
-            textureCopy             = texture;
+            sf::Texture textureCopy(sf::Vector2u(64, 64));
+            textureCopy = texture;
             REQUIRE(textureCopy.getSize() == sf::Vector2u(1, 2));
             CHECK(textureCopy.copyToImage().getPixel(sf::Vector2u(0, 1)) == sf::Color::Red);
         }
@@ -297,14 +300,14 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
 
         SECTION("Pixels")
         {
-            auto texture = sf::Texture::create(sf::Vector2u(1, 1)).value();
+            sf::Texture texture(sf::Vector2u(1, 1));
             texture.update(yellow);
             CHECK(texture.copyToImage().getPixel(sf::Vector2u(0, 0)) == sf::Color::Yellow);
         }
 
         SECTION("Pixels, size and destination")
         {
-            auto texture = sf::Texture::create(sf::Vector2u(2, 1)).value();
+            sf::Texture texture(sf::Vector2u(2, 1));
             texture.update(yellow, sf::Vector2u(1, 1), sf::Vector2u(0, 0));
             texture.update(cyan, sf::Vector2u(1, 1), sf::Vector2u(1, 0));
             CHECK(texture.copyToImage().getPixel(sf::Vector2u(0, 0)) == sf::Color::Yellow);
@@ -313,19 +316,19 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
 
         SECTION("Another texture")
         {
-            auto otherTexture = sf::Texture::create(sf::Vector2u(1, 1)).value();
+            sf::Texture otherTexture(sf::Vector2u(1, 1));
             otherTexture.update(cyan);
-            auto texture = sf::Texture::create(sf::Vector2u(1, 1)).value();
+            sf::Texture texture(sf::Vector2u(1, 1));
             texture.update(otherTexture);
             CHECK(texture.copyToImage().getPixel(sf::Vector2u(0, 0)) == sf::Color::Cyan);
         }
 
         SECTION("Another texture and destination")
         {
-            auto texture       = sf::Texture::create(sf::Vector2u(2, 1)).value();
-            auto otherTexture1 = sf::Texture::create(sf::Vector2u(1, 1)).value();
+            sf::Texture texture(sf::Vector2u(2, 1));
+            sf::Texture otherTexture1(sf::Vector2u(1, 1));
             otherTexture1.update(cyan);
-            auto otherTexture2 = sf::Texture::create(sf::Vector2u(1, 1)).value();
+            sf::Texture otherTexture2(sf::Vector2u(1, 1));
             otherTexture2.update(yellow);
             texture.update(otherTexture1, sf::Vector2u(0, 0));
             texture.update(otherTexture2, sf::Vector2u(1, 0));
@@ -335,7 +338,7 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
 
         SECTION("Image")
         {
-            auto            texture = sf::Texture::create(sf::Vector2u(16, 32)).value();
+            sf::Texture     texture(sf::Vector2u(16, 32));
             const sf::Image image(sf::Vector2u(16, 32), sf::Color::Red);
             texture.update(image);
             CHECK(texture.copyToImage().getPixel(sf::Vector2u(7, 15)) == sf::Color::Red);
@@ -343,7 +346,7 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
 
         SECTION("Image and destination")
         {
-            auto            texture = sf::Texture::create(sf::Vector2u(16, 32)).value();
+            sf::Texture     texture(sf::Vector2u(16, 32));
             const sf::Image image1(sf::Vector2u(16, 16), sf::Color::Red);
             texture.update(image1);
             const sf::Image image2(sf::Vector2u(16, 16), sf::Color::Green);
@@ -356,7 +359,7 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
 
     SECTION("Set/get smooth")
     {
-        sf::Texture texture = sf::Texture::create({64, 64}).value();
+        sf::Texture texture(sf::Vector2u(64, 64));
         CHECK(!texture.isSmooth());
         texture.setSmooth(true);
         CHECK(texture.isSmooth());
@@ -366,7 +369,7 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
 
     SECTION("Set/get repeated")
     {
-        sf::Texture texture = sf::Texture::create({64, 64}).value();
+        sf::Texture texture(sf::Vector2u(64, 64));
         CHECK(!texture.isRepeated());
         texture.setRepeated(true);
         CHECK(texture.isRepeated());
@@ -376,7 +379,7 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
 
     SECTION("generateMipmap()")
     {
-        sf::Texture texture = sf::Texture::create({100, 100}).value();
+        sf::Texture texture(sf::Vector2u(100, 100));
         CHECK(texture.generateMipmap());
     }
 
@@ -385,12 +388,12 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
         constexpr std::uint8_t blue[]  = {0x00, 0x00, 0xFF, 0xFF};
         constexpr std::uint8_t green[] = {0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0xFF};
 
-        auto texture1 = sf::Texture::create(sf::Vector2u(1, 1), true).value();
+        sf::Texture texture1(sf::Vector2u(1, 1), true);
         texture1.update(blue);
         texture1.setSmooth(false);
         texture1.setRepeated(true);
 
-        auto texture2 = sf::Texture::create(sf::Vector2u(2, 1), false).value();
+        sf::Texture texture2(sf::Vector2u(2, 1), false);
         texture2.update(green);
         texture2.setSmooth(true);
         texture2.setRepeated(false);

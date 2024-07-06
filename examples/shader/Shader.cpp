@@ -278,69 +278,66 @@ private:
 ////////////////////////////////////////////////////////////
 std::optional<Pixelate> tryLoadPixelate()
 {
-    auto texture = sf::Texture::createFromFile("resources/background.jpg");
-    if (!texture.has_value())
+    sf::Texture texture;
+    if (!texture.loadFromFile("resources/background.jpg"))
         return std::nullopt;
 
-    auto shader = sf::Shader::createFromFile("resources/pixelate.frag", sf::Shader::Type::Fragment);
-    if (!shader.has_value())
+    sf::Shader shader;
+    if (!shader.loadFromFile("resources/pixelate.frag", sf::Shader::Type::Fragment))
         return std::nullopt;
 
-    return std::make_optional<Pixelate>(std::move(*texture), std::move(*shader));
+    return std::make_optional<Pixelate>(std::move(texture), std::move(shader));
 }
 
 std::optional<WaveBlur> tryLoadWaveBlur(const sf::Font& font)
 {
-    auto shader = sf::Shader::createFromFile("resources/wave.vert", "resources/blur.frag");
-    if (!shader.has_value())
+    sf::Shader shader;
+    if (!shader.loadFromFile("resources/wave.vert", "resources/blur.frag"))
         return std::nullopt;
 
-    return std::make_optional<WaveBlur>(font, std::move(*shader));
+    return std::make_optional<WaveBlur>(font, std::move(shader));
 }
 
 std::optional<StormBlink> tryLoadStormBlink()
 {
-    auto shader = sf::Shader::createFromFile("resources/storm.vert", "resources/blink.frag");
-    if (!shader.has_value())
+    sf::Shader shader;
+    if (!shader.loadFromFile("resources/storm.vert", "resources/blink.frag"))
         return std::nullopt;
 
-    return std::make_optional<StormBlink>(std::move(*shader));
+    return std::make_optional<StormBlink>(std::move(shader));
 }
 
 std::optional<Edge> tryLoadEdge()
 {
     // Create the off-screen surface
-    auto surface = sf::RenderTexture::create({800, 600});
-    if (!surface.has_value())
+    sf::RenderTexture surface;
+    if (!surface.resize({800, 600}))
         return std::nullopt;
 
-    surface->setSmooth(true);
+    surface.setSmooth(true);
 
     // Load the background texture
-    auto backgroundTexture = sf::Texture::createFromFile("resources/sfml.png");
-    if (!backgroundTexture.has_value())
+    sf::Texture backgroundTexture;
+    if (!backgroundTexture.loadFromFile("resources/sfml.png"))
         return std::nullopt;
 
-    backgroundTexture->setSmooth(true);
+    backgroundTexture.setSmooth(true);
 
     // Load the entity texture
-    auto entityTexture = sf::Texture::createFromFile("resources/devices.png");
-    if (!entityTexture.has_value())
+    sf::Texture entityTexture;
+    if (!entityTexture.loadFromFile("resources/devices.png"))
         return std::nullopt;
 
-    entityTexture->setSmooth(true);
+    entityTexture.setSmooth(true);
 
     // Load the shader
-    auto shader = sf::Shader::createFromFile("resources/edge.frag", sf::Shader::Type::Fragment);
-    if (!shader.has_value())
+    sf::Shader shader;
+    if (!shader.loadFromFile("resources/edge.frag", sf::Shader::Type::Fragment))
         return std::nullopt;
 
-    shader->setUniform("texture", sf::Shader::CurrentTexture);
+    shader.setUniform("texture", sf::Shader::CurrentTexture);
 
-    return std::make_optional<Edge>(std::move(*surface),
-                                    std::move(*backgroundTexture),
-                                    std::move(*entityTexture),
-                                    std::move(*shader));
+    return std::make_optional<Edge>(std::move(surface), std::move(backgroundTexture), std::move(entityTexture), std::move(shader));
 }
 
 std::optional<Geometry> tryLoadGeometry()
@@ -350,25 +347,23 @@ std::optional<Geometry> tryLoadGeometry()
         return std::nullopt;
 
     // Load the logo texture
-    auto logoTexture = sf::Texture::createFromFile("resources/logo.png");
-    if (!logoTexture.has_value())
+    sf::Texture logoTexture;
+    if (!logoTexture.loadFromFile("resources/logo.png"))
         return std::nullopt;
 
-    logoTexture->setSmooth(true);
+    logoTexture.setSmooth(true);
 
     // Load the shader
-    auto shader = sf::Shader::createFromFile("resources/billboard.vert",
-                                             "resources/billboard.geom",
-                                             "resources/billboard.frag");
-    if (!shader.has_value())
+    sf::Shader shader;
+    if (!shader.loadFromFile("resources/billboard.vert", "resources/billboard.geom", "resources/billboard.frag"))
         return std::nullopt;
 
-    shader->setUniform("texture", sf::Shader::CurrentTexture);
+    shader.setUniform("texture", sf::Shader::CurrentTexture);
 
     // Set the render resolution (used for proper scaling)
-    shader->setUniform("resolution", sf::Vector2f(800, 600));
+    shader.setUniform("resolution", sf::Vector2f(800, 600));
 
-    return std::make_optional<Geometry>(std::move(*logoTexture), std::move(*shader));
+    return std::make_optional<Geometry>(std::move(logoTexture), std::move(shader));
 }
 
 } // namespace
@@ -394,7 +389,7 @@ int main()
     window.setVerticalSyncEnabled(true);
 
     // Open the application font
-    const auto font = sf::Font::createFromFile("resources/tuffy.ttf").value();
+    const sf::Font font("resources/tuffy.ttf");
 
     // Create the effects
     std::optional pixelateEffect   = tryLoadPixelate();
@@ -418,8 +413,8 @@ int main()
     std::size_t current = 0;
 
     // Create the messages background
-    const auto textBackgroundTexture = sf::Texture::createFromFile("resources/text-background.png").value();
-    sf::Sprite textBackground(textBackgroundTexture);
+    const sf::Texture textBackgroundTexture("resources/text-background.png");
+    sf::Sprite        textBackground(textBackgroundTexture);
     textBackground.setPosition({0.f, 520.f});
     textBackground.setColor(sf::Color(255, 255, 255, 200));
 

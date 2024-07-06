@@ -75,6 +75,71 @@ public:
     Music();
 
     ////////////////////////////////////////////////////////////
+    /// \brief Construct a music from an audio file
+    ///
+    /// This function doesn't start playing the music (call play()
+    /// to do so).
+    /// See the documentation of sf::InputSoundFile for the list
+    /// of supported formats.
+    ///
+    /// \warning Since the music is not loaded at once but rather
+    /// streamed continuously, the file must remain accessible until
+    /// the sf::Music object loads a new music or is destroyed.
+    ///
+    /// \param filename Path of the music file to open
+    ///
+    /// \throws std::runtime_error if loading was unsuccessful
+    ///
+    /// \see openFromMemory, openFromStream
+    ///
+    ////////////////////////////////////////////////////////////
+    Music(const std::filesystem::path& filename);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct a music from an audio file in memory
+    ///
+    /// This function doesn't start playing the music (call play()
+    /// to do so).
+    /// See the documentation of sf::InputSoundFile for the list
+    /// of supported formats.
+    ///
+    /// \warning Since the music is not loaded at once but rather streamed
+    /// continuously, the \a data buffer must remain accessible until
+    /// the sf::Music object loads a new music or is destroyed. That is,
+    /// you can't deallocate the buffer right after calling this function.
+    ///
+    /// \param data        Pointer to the file data in memory
+    /// \param sizeInBytes Size of the data to load, in bytes
+    ///
+    /// \throws std::runtime_error if loading was unsuccessful
+    ///
+    /// \see openFromFile, openFromStream
+    ///
+    ////////////////////////////////////////////////////////////
+    Music(const void* data, std::size_t sizeInBytes);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct a music from an audio file in a custom stream
+    ///
+    /// This function doesn't start playing the music (call play()
+    /// to do so).
+    /// See the documentation of sf::InputSoundFile for the list
+    /// of supported formats.
+    ///
+    /// \warning Since the music is not loaded at once but rather
+    /// streamed continuously, the \a stream must remain accessible
+    /// until the sf::Music object loads a new music or is destroyed.
+    ///
+    /// \param stream Source stream to read from
+    ///
+    /// \throws std::runtime_error if loading was unsuccessful
+    ///
+    /// \see openFromFile, openFromMemory
+    ///
+    ////////////////////////////////////////////////////////////
+    Music(InputStream& stream);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
@@ -156,71 +221,6 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool openFromStream(InputStream& stream);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Create a music from an audio file
-    ///
-    /// This function doesn't start playing the music (call play()
-    /// to do so).
-    /// See the documentation of sf::InputSoundFile for the list
-    /// of supported formats.
-    ///
-    /// \warning Since the music is not loaded at once but rather
-    /// streamed continuously, the file must remain accessible until
-    /// the sf::Music object loads a new music or is destroyed.
-    ///
-    /// \param filename Path of the music file to open
-    ///
-    /// \return Music if loading succeeded, `std::nullopt` if it failed
-    ///
-    /// \see createFromMemory, createFromStream
-    ///
-    ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Music> createFromFile(const std::filesystem::path& filename);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Create a music from an audio file in memory
-    ///
-    /// This function doesn't start playing the music (call play()
-    /// to do so).
-    /// See the documentation of sf::InputSoundFile for the list
-    /// of supported formats.
-    ///
-    /// \warning Since the music is not loaded at once but rather streamed
-    /// continuously, the \a data buffer must remain accessible until
-    /// the sf::Music object loads a new music or is destroyed. That is,
-    /// you can't deallocate the buffer right after calling this function.
-    ///
-    /// \param data        Pointer to the file data in memory
-    /// \param sizeInBytes Size of the data to load, in bytes
-    ///
-    /// \return Music if loading succeeded, `std::nullopt` if it failed
-    ///
-    /// \see createFromFile, createFromStream
-    ///
-    ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Music> createFromMemory(const void* data, std::size_t sizeInBytes);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Create a music from an audio file in a custom stream
-    ///
-    /// This function doesn't start playing the music (call play()
-    /// to do so).
-    /// See the documentation of sf::InputSoundFile for the list
-    /// of supported formats.
-    ///
-    /// \warning Since the music is not loaded at once but rather
-    /// streamed continuously, the \a stream must remain accessible
-    /// until the sf::Music object loads a new music or is destroyed.
-    ///
-    /// \param stream Source stream to read from
-    ///
-    /// \return Music if loading succeeded, `std::nullopt` if it failed
-    ///
-    /// \see createFromFile, createFromMemory
-    ///
-    ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Music> createFromStream(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the total duration of the music
@@ -360,7 +360,7 @@ private:
 /// Usage example:
 /// \code
 /// // Open a music from an audio file
-/// auto music = sf::Music::createFromFile("music.ogg").value();
+/// sf::Music music("music.ogg");
 ///
 /// // Change some parameters
 /// music.setPosition({0, 1, 10}); // change its 3D position

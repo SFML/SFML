@@ -13,7 +13,7 @@
 void playSound()
 {
     // Load a sound buffer from a wav file
-    const auto buffer = sf::SoundBuffer::createFromFile("resources/killdeer.wav").value();
+    const sf::SoundBuffer buffer("resources/killdeer.wav");
 
     // Display sound information
     std::cout << "killdeer.wav:" << '\n'
@@ -46,7 +46,7 @@ void playSound()
 void playMusic(const std::filesystem::path& filename)
 {
     // Load an ogg music file
-    auto music = sf::Music::createFromFile("resources" / filename).value();
+    sf::Music music("resources" / filename);
 
     // Display music information
     std::cout << filename << ":" << '\n'

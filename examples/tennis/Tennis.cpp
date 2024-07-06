@@ -49,12 +49,12 @@ int main()
     window.setVerticalSyncEnabled(true);
 
     // Load the sounds used in the game
-    const auto ballSoundBuffer = sf::SoundBuffer::createFromFile(resourcesDir() / "ball.wav").value();
-    sf::Sound  ballSound(ballSoundBuffer);
+    const sf::SoundBuffer ballSoundBuffer(resourcesDir() / "ball.wav");
+    sf::Sound             ballSound(ballSoundBuffer);
 
     // Create the SFML logo texture:
-    const auto sfmlLogoTexture = sf::Texture::createFromFile(resourcesDir() / "sfml_logo.png").value();
-    sf::Sprite sfmlLogo(sfmlLogoTexture);
+    const sf::Texture sfmlLogoTexture(resourcesDir() / "sfml_logo.png");
+    sf::Sprite        sfmlLogo(sfmlLogoTexture);
     sfmlLogo.setPosition({170.f, 50.f});
 
     // Create the left paddle
@@ -82,7 +82,7 @@ int main()
     ball.setOrigin({ballRadius / 2.f, ballRadius / 2.f});
 
     // Open the text font
-    const auto font = sf::Font::createFromFile(resourcesDir() / "tuffy.ttf").value();
+    const sf::Font font(resourcesDir() / "tuffy.ttf");
 
     // Initialize the pause message
     sf::Text pauseMessage(font);

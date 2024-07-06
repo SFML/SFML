@@ -46,7 +46,7 @@ TEST_CASE("[Graphics] sf::Drawable", runDisplayTests())
     SECTION("draw()")
     {
         const DrawableTest drawableTest;
-        auto               renderTexture = sf::RenderTexture::create({32, 32}).value();
+        sf::RenderTexture  renderTexture({32, 32});
         CHECK(drawableTest.callCount() == 0);
         renderTexture.draw(drawableTest);
         CHECK(drawableTest.callCount() == 1);

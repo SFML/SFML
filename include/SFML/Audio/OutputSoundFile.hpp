@@ -34,7 +34,6 @@
 
 #include <filesystem>
 #include <memory>
-#include <optional>
 #include <vector>
 
 #include <cstdint>
@@ -59,6 +58,24 @@ public:
     OutputSoundFile() = default;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Construct the sound file from the disk for writing
+    ///
+    /// The supported audio formats are: WAV, OGG/Vorbis, FLAC.
+    ///
+    /// \param filename     Path of the sound file to write
+    /// \param sampleRate   Sample rate of the sound
+    /// \param channelCount Number of channels in the sound
+    /// \param channelMap   Map of position in sample frame to sound channel
+    ///
+    /// \throws std::runtime_error if the file could not be opened successfully
+    ///
+    ////////////////////////////////////////////////////////////
+    OutputSoundFile(const std::filesystem::path&     filename,
+                    unsigned int                     sampleRate,
+                    unsigned int                     channelCount,
+                    const std::vector<SoundChannel>& channelMap);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Open the sound file from the disk for writing
     ///
     /// The supported audio formats are: WAV, OGG/Vorbis, FLAC.
@@ -75,25 +92,6 @@ public:
                                     unsigned int                     sampleRate,
                                     unsigned int                     channelCount,
                                     const std::vector<SoundChannel>& channelMap);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Create the sound file from the disk for writing
-    ///
-    /// The supported audio formats are: WAV, OGG/Vorbis, FLAC.
-    ///
-    /// \param filename     Path of the sound file to write
-    /// \param sampleRate   Sample rate of the sound
-    /// \param channelCount Number of channels in the sound
-    /// \param channelMap   Map of position in sample frame to sound channel
-    ///
-    /// \return Output sound file if the file was successfully opened
-    ///
-    ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<OutputSoundFile> createFromFile(
-        const std::filesystem::path&     filename,
-        unsigned int                     sampleRate,
-        unsigned int                     channelCount,
-        const std::vector<SoundChannel>& channelMap);
 
     ////////////////////////////////////////////////////////////
     /// \brief Write audio samples to the file
@@ -132,7 +130,7 @@ private:
 /// Usage example:
 /// \code
 /// // Create a sound file, ogg/vorbis format, 44100 Hz, stereo
-/// auto file = sf::OutputSoundFile::createFromFile("music.ogg", 44100, 2).value();
+/// sf::OutputSoundFile file("music.ogg", 44100, 2, {sf::SoundChannel::FrontLeft, sf::SoundChannel::FrontRight});
 ///
 /// while (...)
 /// {

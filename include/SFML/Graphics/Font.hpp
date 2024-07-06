@@ -37,7 +37,6 @@
 
 #include <filesystem>
 #include <memory>
-#include <optional>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -82,6 +81,71 @@ public:
     Font() = default;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Construct the font from a file
+    ///
+    /// The supported font formats are: TrueType, Type 1, CFF,
+    /// OpenType, SFNT, X11 PCF, Windows FNT, BDF, PFR and Type 42.
+    /// Note that this function knows nothing about the standard
+    /// fonts installed on the user's system, thus you can't
+    /// load them directly.
+    ///
+    /// \warning SFML cannot preload all the font data in this
+    /// function, so the file has to remain accessible until
+    /// the sf::Font object opens a new font or is destroyed.
+    ///
+    /// \param filename Path of the font file to open
+    ///
+    /// \throws std::runtime_error if opening was unsuccessful
+    ///
+    /// \see openFromFile, openFromMemory, openFromStream
+    ///
+    ////////////////////////////////////////////////////////////
+    Font(const std::filesystem::path& filename);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct the font from a file in memory
+    ///
+    /// The supported font formats are: TrueType, Type 1, CFF,
+    /// OpenType, SFNT, X11 PCF, Windows FNT, BDF, PFR and Type 42.
+    ///
+    /// \warning SFML cannot preload all the font data in this
+    /// function, so the buffer pointed by \a data has to remain
+    /// valid until the sf::Font object opens a new font or
+    /// is destroyed.
+    ///
+    /// \param data        Pointer to the file data in memory
+    /// \param sizeInBytes Size of the data to load, in bytes
+    ///
+    /// \throws std::runtime_error if loading was unsuccessful
+    ///
+    /// \see openFromFile, openFromMemory, openFromStream
+    ///
+    ////////////////////////////////////////////////////////////
+    Font(const void* data, std::size_t sizeInBytes);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct the font from a custom stream
+    ///
+    /// The supported font formats are: TrueType, Type 1, CFF,
+    /// OpenType, SFNT, X11 PCF, Windows FNT, BDF, PFR and Type 42.
+    /// Warning: SFML cannot preload all the font data in this
+    /// function, so the contents of \a stream have to remain
+    /// valid as long as the font is used.
+    ///
+    /// \warning SFML cannot preload all the font data in this
+    /// function, so the stream has to remain accessible until
+    /// the sf::Font object opens a new font or is destroyed.
+    ///
+    /// \param stream Source stream to read from
+    ///
+    /// \throws std::runtime_error if loading was unsuccessful
+    ///
+    /// \see openFromFile, openFromMemory, openFromStream
+    ///
+    ////////////////////////////////////////////////////////////
+    Font(InputStream& stream);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Open the font from a file
     ///
     /// The supported font formats are: TrueType, Type 1, CFF,
@@ -92,11 +156,11 @@ public:
     ///
     /// \warning SFML cannot preload all the font data in this
     /// function, so the file has to remain accessible until
-    /// the sf::Font object loads a new font or is destroyed.
+    /// the sf::Font object opens a new font or is destroyed.
     ///
     /// \param filename Path of the font file to load
     ///
-    /// \return True if loading succeeded, false if it failed
+    /// \return True if opening succeeded, false if it failed
     ///
     /// \see openFromMemory, openFromStream
     ///
@@ -111,13 +175,13 @@ public:
     ///
     /// \warning SFML cannot preload all the font data in this
     /// function, so the buffer pointed by \a data has to remain
-    /// valid until the sf::Font object loads a new font or
+    /// valid until the sf::Font object opens a new font or
     /// is destroyed.
     ///
     /// \param data        Pointer to the file data in memory
     /// \param sizeInBytes Size of the data to load, in bytes
     ///
-    /// \return True if loading succeeded, false if it failed
+    /// \return True if opening succeeded, false if it failed
     ///
     /// \see openFromFile, openFromStream
     ///
@@ -129,83 +193,19 @@ public:
     ///
     /// The supported font formats are: TrueType, Type 1, CFF,
     /// OpenType, SFNT, X11 PCF, Windows FNT, BDF, PFR and Type 42.
-    /// Warning: SFML cannot preload all the font data in this
-    /// function, so the contents of \a stream have to remain
-    /// valid as long as the font is used.
     ///
     /// \warning SFML cannot preload all the font data in this
     /// function, so the stream has to remain accessible until
-    /// the sf::Font object loads a new font or is destroyed.
+    /// the sf::Font object opens a new font or is destroyed.
     ///
     /// \param stream Source stream to read from
     ///
-    /// \return True if loading succeeded, false if it failed
+    /// \return True if opening succeeded, false if it failed
     ///
     /// \see openFromFile, openFromMemory
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool openFromStream(InputStream& stream);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Create the font from a file
-    ///
-    /// The supported font formats are: TrueType, Type 1, CFF,
-    /// OpenType, SFNT, X11 PCF, Windows FNT, BDF, PFR and Type 42.
-    /// Note that this function knows nothing about the standard
-    /// fonts installed on the user's system, thus you can't
-    /// load them directly.
-    ///
-    /// \warning SFML cannot preload all the font data in this
-    /// function, so the file has to remain accessible until
-    /// the sf::Font object is destroyed.
-    ///
-    /// \param filename Path of the font file to load
-    ///
-    /// \return Font if opening succeeded, `std::nullopt` if it failed
-    ///
-    /// \see createFromMemory, createFromStream
-    ///
-    ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Font> createFromFile(const std::filesystem::path& filename);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Create the font from a file in memory
-    ///
-    /// The supported font formats are: TrueType, Type 1, CFF,
-    /// OpenType, SFNT, X11 PCF, Windows FNT, BDF, PFR and Type 42.
-    ///
-    /// \warning SFML cannot preload all the font data in this
-    /// function, so the buffer pointed by \a data has to remain
-    /// valid until the sf::Font object is destroyed.
-    ///
-    /// \param data        Pointer to the file data in memory
-    /// \param sizeInBytes Size of the data to load, in bytes
-    ///
-    /// \return Font if opening succeeded, `std::nullopt` if it failed
-    ///
-    /// \see createFromFile, createFromStream
-    ///
-    ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Font> createFromMemory(const void* data, std::size_t sizeInBytes);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Create the font from a custom stream
-    ///
-    /// The supported font formats are: TrueType, Type 1, CFF,
-    /// OpenType, SFNT, X11 PCF, Windows FNT, BDF, PFR and Type 42.
-    ///
-    /// \warning SFML cannot preload all the font data in this
-    /// function, so the stream has to remain accessible until
-    /// the sf::Font object is destroyed.
-    ///
-    /// \param stream Source stream to read from
-    ///
-    /// \return Font if opening succeeded, `std::nullopt` if it failed
-    ///
-    /// \see createFromFile, createFromMemory
-    ///
-    ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Font> createFromStream(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the font information
@@ -474,7 +474,7 @@ private:
 ///
 /// Fonts can be opened from a file, from memory or from a custom
 /// stream, and supports the most common types of fonts. See
-/// the createFromFile function for the complete list of supported formats.
+/// the openFromFile function for the complete list of supported formats.
 ///
 /// Once it is opened, a sf::Font instance provides three
 /// types of information about the font:
@@ -505,7 +505,7 @@ private:
 /// Usage example:
 /// \code
 /// // Open a new font
-/// const auto font = sf::Font::createFromFile("arial.ttf").value();
+/// const sf::Font font("arial.ttf");
 ///
 /// // Create a text which uses our font
 /// sf::Text text1(font);

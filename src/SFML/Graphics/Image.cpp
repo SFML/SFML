@@ -110,6 +110,30 @@ Image::Image(Vector2u size, const std::uint8_t* pixels)
 
 
 ////////////////////////////////////////////////////////////
+Image::Image(const std::filesystem::path& filename)
+{
+    if (!loadFromFile(filename))
+        throw std::runtime_error("Failed to open image from file");
+}
+
+
+////////////////////////////////////////////////////////////
+Image::Image(const void* data, std::size_t size)
+{
+    if (!loadFromMemory(data, size))
+        throw std::runtime_error("Failed to open image from memory");
+}
+
+
+////////////////////////////////////////////////////////////
+Image::Image(InputStream& stream)
+{
+    if (!loadFromStream(stream))
+        throw std::runtime_error("Failed to open image from stream");
+}
+
+
+////////////////////////////////////////////////////////////
 void Image::resize(Vector2u size, Color color)
 {
     if (size.x && size.y)
@@ -257,7 +281,7 @@ bool Image::loadFromStream(InputStream& stream)
     m_pixels.clear();
 
     // Make sure that the stream's reading position is at the beginning
-    if (!stream.seek(0))
+    if (!stream.seek(0).has_value())
     {
         err() << "Failed to seek image stream" << std::endl;
         return false;
@@ -289,42 +313,6 @@ bool Image::loadFromStream(InputStream& stream)
     // Error, failed to load the image
     err() << "Failed to load image from stream. Reason: " << stbi_failure_reason() << std::endl;
     return false;
-}
-
-
-////////////////////////////////////////////////////////////
-std::optional<Image> Image::createFromFile(const std::filesystem::path& filename)
-{
-    auto image = std::make_optional<Image>();
-
-    if (!image->loadFromFile(filename))
-        return std::nullopt;
-
-    return image;
-}
-
-
-////////////////////////////////////////////////////////////
-std::optional<Image> Image::createFromMemory(const void* data, std::size_t size)
-{
-    auto image = std::make_optional<Image>();
-
-    if (!image->loadFromMemory(data, size))
-        return std::nullopt;
-
-    return image;
-}
-
-
-////////////////////////////////////////////////////////////
-std::optional<Image> Image::createFromStream(InputStream& stream)
-{
-    auto image = std::make_optional<Image>();
-
-    if (!image->loadFromStream(stream))
-        return std::nullopt;
-
-    return image;
 }
 
 

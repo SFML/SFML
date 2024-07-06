@@ -35,18 +35,10 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-MemoryInputStream::MemoryInputStream(const void* data, std::size_t sizeInBytes)
+MemoryInputStream::MemoryInputStream(const void* data, std::size_t sizeInBytes) :
+m_data(static_cast<const std::byte*>(data)),
+m_size(sizeInBytes)
 {
-    open(data, sizeInBytes);
-}
-
-
-////////////////////////////////////////////////////////////
-void MemoryInputStream::open(const void* data, std::size_t sizeInBytes)
-{
-    m_data   = static_cast<const std::byte*>(data);
-    m_size   = sizeInBytes;
-    m_offset = 0;
 }
 
 
