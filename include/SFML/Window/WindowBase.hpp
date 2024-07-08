@@ -492,19 +492,6 @@ private:
     friend class Window;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Create (or recreate) the window
-    ///
-    /// Implementation detail for sharing underlying implementation
-    /// with sf::Window
-    ///
-    /// \param mode  Video mode to use (defines the width, height and depth of the rendering area of the window)
-    /// \param style %Window style, a bitwise OR combination of sf::Style enumerators
-    /// \param state %Window state
-    ///
-    ////////////////////////////////////////////////////////////
-    void create(VideoMode mode, std::uint32_t& style, State& state);
-
-    ////////////////////////////////////////////////////////////
     /// \brief Processes an event before it is sent to the user
     ///
     /// This function is called every time an event is received

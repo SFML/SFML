@@ -84,9 +84,6 @@ void Window::create(VideoMode mode, const String& title, std::uint32_t style, St
 ////////////////////////////////////////////////////////////
 void Window::create(VideoMode mode, const String& title, std::uint32_t style, State state, const ContextSettings& settings)
 {
-    // Delegate to base class for creation logic
-    WindowBase::create(mode, style, state);
-
     // Recreate the window implementation
     m_impl = priv::WindowImpl::create(mode, title, style, state, settings);
 
@@ -108,9 +105,6 @@ void Window::create(WindowHandle handle)
 ////////////////////////////////////////////////////////////
 void Window::create(WindowHandle handle, const ContextSettings& settings)
 {
-    // Destroy the previous window implementation
-    close();
-
     // Recreate the window implementation
     WindowBase::create(handle);
 

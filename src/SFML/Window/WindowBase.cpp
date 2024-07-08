@@ -35,12 +35,8 @@
 #include <SFML/Window/WindowHandle.hpp>
 #include <SFML/Window/WindowImpl.hpp>
 
-#include <SFML/System/Err.hpp>
-
 #include <algorithm>
 #include <limits>
-#include <ostream>
-#include <vector>
 
 #include <cassert>
 #include <cstdlib>
@@ -88,8 +84,6 @@ WindowBase& WindowBase::operator=(WindowBase&&) noexcept = default;
 ////////////////////////////////////////////////////////////
 void WindowBase::create(VideoMode mode, const String& title, std::uint32_t style, State state)
 {
-    WindowBase::create(mode, style, state);
-
     // Recreate the window implementation
     m_impl = priv::WindowImpl::create(mode,
                                       title,
@@ -111,9 +105,6 @@ void WindowBase::create(VideoMode mode, const String& title, std::uint32_t style
 ////////////////////////////////////////////////////////////
 void WindowBase::create(WindowHandle handle)
 {
-    // Destroy the previous window implementation
-    close();
-
     // Recreate the window implementation
     m_impl = priv::WindowImpl::create(handle);
 
@@ -363,51 +354,6 @@ void WindowBase::onCreate()
 void WindowBase::onResize()
 {
     // Nothing by default
-}
-
-
-////////////////////////////////////////////////////////////
-void WindowBase::create(VideoMode mode, std::uint32_t& style, State& state)
-{
-    // Destroy the previous window implementation
-    close();
-
-    // Fullscreen style requires some tests
-    if (state == State::Fullscreen)
-    {
-        // Make sure there's not already a fullscreen window (only one is allowed)
-        if (m_impl->getFullscreenWindow())
-        {
-            err() << "Creating two fullscreen windows is not allowed, switching to windowed mode" << std::endl;
-            state = State::Windowed;
-        }
-        else
-        {
-            // Make sure that the chosen video mode is compatible
-            if (!mode.isValid())
-            {
-                err() << "The requested video mode is not available, switching to a valid mode" << std::endl;
-                assert(!VideoMode::getFullscreenModes().empty() && "No video modes available");
-                mode = VideoMode::getFullscreenModes()[0];
-                err() << "  VideoMode: { size: { " << mode.size.x << ", " << mode.size.y
-                      << " }, bitsPerPixel: " << mode.bitsPerPixel << " }" << std::endl;
-            }
-
-            // Update the fullscreen window
-            m_impl->setFullscreenWindow();
-        }
-    }
-
-// Check validity of style according to the underlying platform
-#if defined(SFML_SYSTEM_IOS) || defined(SFML_SYSTEM_ANDROID)
-    if (state == State::Fullscreen)
-        style &= ~static_cast<std::uint32_t>(Style::Titlebar);
-    else
-        style |= Style::Titlebar;
-#else
-    if ((style & Style::Close) || (style & Style::Resize))
-        style |= Style::Titlebar;
-#endif
 }
 
 
