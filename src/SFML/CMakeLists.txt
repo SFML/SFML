@@ -1,33 +1,6 @@
 # include the SFML specific macros
 include(${PROJECT_SOURCE_DIR}/cmake/Macros.cmake)
 
-# let CMake know about our additional libraries paths
-if(SFML_OS_WINDOWS)
-    list(APPEND CMAKE_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/extlibs/headers")
-    if(SFML_COMPILER_GCC OR (SFML_COMPILER_CLANG AND MINGW))
-        if(ARCH_32BITS)
-            list(APPEND CMAKE_LIBRARY_PATH "${PROJECT_SOURCE_DIR}/extlibs/libs-mingw/x86")
-        elseif(ARCH_64BITS)
-            list(APPEND CMAKE_LIBRARY_PATH "${PROJECT_SOURCE_DIR}/extlibs/libs-mingw/x64")
-        endif()
-    elseif(SFML_COMPILER_MSVC OR (SFML_COMPILER_CLANG AND NOT MINGW))
-        if(ARCH_32BITS)
-            list(APPEND CMAKE_LIBRARY_PATH "${PROJECT_SOURCE_DIR}/extlibs/libs-msvc-universal/x86")
-        elseif(ARCH_64BITS)
-            list(APPEND CMAKE_LIBRARY_PATH "${PROJECT_SOURCE_DIR}/extlibs/libs-msvc-universal/x64")
-        endif()
-    endif()
-elseif(SFML_OS_MACOS)
-    list(APPEND CMAKE_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/extlibs/headers")
-    list(APPEND CMAKE_LIBRARY_PATH "${PROJECT_SOURCE_DIR}/extlibs/libs-macos/Frameworks/")
-elseif(SFML_OS_IOS)
-    list(APPEND CMAKE_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/extlibs/headers")
-    list(APPEND CMAKE_LIBRARY_PATH "${PROJECT_SOURCE_DIR}/extlibs/libs-ios/")
-elseif(SFML_OS_ANDROID)
-    list(APPEND CMAKE_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/extlibs/headers")
-    list(APPEND CMAKE_LIBRARY_PATH "${PROJECT_SOURCE_DIR}/extlibs/libs-android/${CMAKE_ANDROID_ARCH_ABI}")
-endif()
-
 # define the path of our additional CMake modules
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules/")
 

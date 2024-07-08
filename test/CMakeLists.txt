@@ -18,6 +18,7 @@ target_compile_features(Catch2 PRIVATE cxx_std_17)
 # Ensure that Catch2 sources and headers are not analyzed by any tools
 set_target_properties(Catch2 PROPERTIES COMPILE_OPTIONS "" EXPORT_COMPILE_COMMANDS OFF)
 set_target_properties(Catch2WithMain PROPERTIES EXPORT_COMPILE_COMMANDS OFF)
+set_target_properties(Catch2 Catch2WithMain PROPERTIES FOLDER "Dependencies")
 get_target_property(CATCH2_INCLUDE_DIRS Catch2 INTERFACE_INCLUDE_DIRECTORIES)
 target_include_directories(Catch2 SYSTEM INTERFACE ${CATCH2_INCLUDE_DIRS})
 
