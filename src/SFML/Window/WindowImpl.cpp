@@ -31,12 +31,14 @@
 #include <SFML/Window/SensorManager.hpp>
 #include <SFML/Window/WindowImpl.hpp>
 
+#include <SFML/System/Err.hpp>
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/Time.hpp>
 
 #include <array>
 #include <chrono>
 #include <memory>
+#include <ostream>
 
 #include <cmath>
 
@@ -118,7 +120,41 @@ std::unique_ptr<WindowImpl> WindowImpl::create(
     State                  state,
     const ContextSettings& settings)
 {
-    return std::make_unique<WindowImplType>(mode, title, style, state, settings);
+    // Fullscreen style requires some tests
+    if (state == State::Fullscreen)
+    {
+        // Make sure there's not already a fullscreen window (only one is allowed)
+        if (WindowImplImpl::fullscreenWindow != nullptr)
+        {
+            err() << "Creating two fullscreen windows is not allowed, switching to windowed mode" << std::endl;
+            state = State::Windowed;
+        }
+        // Make sure that the chosen video mode is compatible
+        else if (!mode.isValid())
+        {
+            err() << "The requested video mode is not available, switching to a valid mode" << std::endl;
+            assert(!VideoMode::getFullscreenModes().empty() && "No video modes available");
+            mode = VideoMode::getFullscreenModes()[0];
+            err() << "  VideoMode: { size: { " << mode.size.x << ", " << mode.size.y
+                  << " }, bitsPerPixel: " << mode.bitsPerPixel << " }" << std::endl;
+        }
+    }
+
+    // Check validity of style according to the underlying platform
+#if defined(SFML_SYSTEM_IOS) || defined(SFML_SYSTEM_ANDROID)
+    if (state == State::Fullscreen)
+        style &= ~static_cast<std::uint32_t>(Style::Titlebar);
+    else
+        style |= Style::Titlebar;
+#else
+    if ((style & Style::Close) || (style & Style::Resize))
+        style |= Style::Titlebar;
+#endif
+
+    auto windowImpl = std::make_unique<WindowImplType>(mode, title, style, state, settings);
+    if (state == State::Fullscreen)
+        WindowImplImpl::fullscreenWindow = windowImpl.get();
+    return windowImpl;
 }
 
 
@@ -360,20 +396,6 @@ bool WindowImpl::createVulkanSurface([[maybe_unused]] const VkInstance&         
     return VulkanImpl::createVulkanSurface(instance, getNativeHandle(), surface, allocator);
 
 #endif
-}
-
-
-////////////////////////////////////////////////////////////
-const WindowImpl* WindowImpl::getFullscreenWindow() const
-{
-    return WindowImplImpl::fullscreenWindow;
-}
-
-
-////////////////////////////////////////////////////////////
-void WindowImpl::setFullscreenWindow() const
-{
-    WindowImplImpl::fullscreenWindow = this;
 }
 
 } // namespace sf::priv
