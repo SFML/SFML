@@ -28,7 +28,7 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowBase.hpp> // NOLINT(misc-header-include-cycle)
 
-#include <type_traits>
+#include <utility>
 
 
 namespace sf
@@ -43,22 +43,13 @@ struct OverloadSet : Ts...
 template <typename... Ts>
 OverloadSet(Ts...) -> OverloadSet<Ts...>;
 
-template <typename... Ts>
-struct OverloadSetWithDefault : OverloadSet<Ts...>
+struct DelayOverloadResolution
 {
-    // By providing our own operator() and forwarding based
-    // on invocability of OverloadSet<Ts...> on the concrete type
-    // of the value, we save the user from having to provide
-    // their own catch-all overload if they don't want to
     template <typename T>
-    void operator()([[maybe_unused]] T&& value) // NOLINT(cppcoreguidelines-missing-std-forward)
+    DelayOverloadResolution(const T&)
     {
-        if constexpr (std::is_invocable_v<OverloadSet<Ts...>, T>)
-            OverloadSet<Ts...>::operator()(std::forward<T>(value));
     }
 };
-template <typename... Ts>
-OverloadSetWithDefault(Ts...) -> OverloadSetWithDefault<Ts...>;
 } // namespace priv
 
 
@@ -68,7 +59,9 @@ void WindowBase::handleEvents(Ts&&... handlers) // NOLINT(cppcoreguidelines-miss
 {
     // Disable misc-const-correctness for this line since clang-tidy
     // complains about it even though the code would become uncompilable
-    priv::OverloadSetWithDefault overloadSet{std::forward<Ts>(handlers)...}; // NOLINT(misc-const-correctness)
+
+    // NOLINTNEXTLINE(misc-const-correctness)
+    priv::OverloadSet overloadSet{std::forward<Ts>(handlers)..., [](const priv::DelayOverloadResolution&) { /* ignore */ }};
 
     while (const std::optional event = pollEvent())
         event->visit(overloadSet);

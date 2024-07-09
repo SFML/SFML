@@ -195,4 +195,21 @@ TEST_CASE("[Window] sf::WindowBase", runDisplayTests())
         CHECK(windowBase.getSize() == sf::Vector2u(200, 300));
         windowBase.setMinimumSize(sf::Vector2u(200, 300));
     }
+
+    SECTION("handleEvents()")
+    {
+        sf::WindowBase windowBase(sf::VideoMode({360, 240}), "WindowBase Tests");
+
+        // Should compile if user provides nothing
+        windowBase.handleEvents();
+
+        // Should compile if user provides only a specific handler
+        windowBase.handleEvents([](const sf::Event::Closed&) {});
+
+        // Should compile if user provides only a catch-all
+        windowBase.handleEvents([](const auto&) {});
+
+        // Should compile if user provides both a specific handler and a catch-all
+        windowBase.handleEvents([](const sf::Event::Closed&) {}, [](const auto&) {});
+    }
 }
