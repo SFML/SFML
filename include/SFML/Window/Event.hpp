@@ -91,23 +91,31 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief KeyChanged event subtypes
+    /// \brief Key pressed event subtype
     ///
     ////////////////////////////////////////////////////////////
-    struct KeyChanged
+    struct KeyPressed
     {
-        Keyboard::Key      code{};     //!< Code of the key
-        Keyboard::Scancode scancode{}; //!< Physical code of the key
+        Keyboard::Key      code{};     //!< Code of the key that has been pressed
+        Keyboard::Scancode scancode{}; //!< Physical code of the key that has been pressed
         bool               alt{};      //!< Is the Alt key pressed?
         bool               control{};  //!< Is the Control key pressed?
         bool               shift{};    //!< Is the Shift key pressed?
         bool               system{};   //!< Is the System key pressed?
     };
-    struct KeyPressed : KeyChanged
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Key released event subtype
+    ///
+    ////////////////////////////////////////////////////////////
+    struct KeyReleased
     {
-    };
-    struct KeyReleased : KeyChanged
-    {
+        Keyboard::Key      code{};     //!< Code of the key that has been released
+        Keyboard::Scancode scancode{}; //!< Physical code of the key that has been released
+        bool               alt{};      //!< Is the Alt key pressed?
+        bool               control{};  //!< Is the Control key pressed?
+        bool               shift{};    //!< Is the Shift key pressed?
+        bool               system{};   //!< Is the System key pressed?
     };
 
     ////////////////////////////////////////////////////////////
@@ -122,19 +130,23 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Mouse button changed event subtypes
+    /// \brief Mouse button pressed event subtype
     ///
     ////////////////////////////////////////////////////////////
-    struct MouseButtonChanged
+    struct MouseButtonPressed
     {
         Mouse::Button button{}; //!< Code of the button that has been pressed
         Vector2i      position; //!< Position of the mouse pointer, relative to the top left of the owner window
     };
-    struct MouseButtonPressed : MouseButtonChanged
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Mouse button released event subtype
+    ///
+    ////////////////////////////////////////////////////////////
+    struct MouseButtonReleased
     {
-    };
-    struct MouseButtonReleased : MouseButtonChanged
-    {
+        Mouse::Button button{}; //!< Code of the button that has been released
+        Vector2i      position; //!< Position of the mouse pointer, relative to the top left of the owner window
     };
 
     ////////////////////////////////////////////////////////////
@@ -196,19 +208,23 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Joystick button event subtypes
+    /// \brief Joystick button pressed event subtype
     ///
     ////////////////////////////////////////////////////////////
-    struct JoystickButtonChanged
+    struct JoystickButtonPressed
     {
         unsigned int joystickId{}; //!< Index of the joystick (in range [0 .. Joystick::Count - 1])
         unsigned int button{}; //!< Index of the button that has been pressed (in range [0 .. Joystick::ButtonCount - 1])
     };
-    struct JoystickButtonPressed : JoystickButtonChanged
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Joystick button released event subtype
+    ///
+    ////////////////////////////////////////////////////////////
+    struct JoystickButtonReleased
     {
-    };
-    struct JoystickButtonReleased : JoystickButtonChanged
-    {
+        unsigned int joystickId{}; //!< Index of the joystick (in range [0 .. Joystick::Count - 1])
+        unsigned int button{}; //!< Index of the button that has been released (in range [0 .. Joystick::ButtonCount - 1])
     };
 
     ////////////////////////////////////////////////////////////
@@ -223,37 +239,51 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Joystick connection event subtypes
+    /// \brief Joystick connected event subtype
     ///
     ////////////////////////////////////////////////////////////
-    struct JoystickChanged
+    struct JoystickConnected
     {
         unsigned int joystickId{}; //!< Index of the joystick (in range [0 .. Joystick::Count - 1])
     };
-    struct JoystickConnected : JoystickChanged
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Joystick disconnected event subtype
+    ///
+    ////////////////////////////////////////////////////////////
+    struct JoystickDisconnected
     {
-    };
-    struct JoystickDisconnected : JoystickChanged
-    {
+        unsigned int joystickId{}; //!< Index of the joystick (in range [0 .. Joystick::Count - 1])
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Touch event subtypes
+    /// \brief Touch began event subtype
     ///
     ////////////////////////////////////////////////////////////
-    struct TouchChanged
+    struct TouchBegan
     {
         unsigned int finger{}; //!< Index of the finger in case of multi-touch events
-        Vector2i     position; //!< Position of the touch, relative to the top left of the owner window
+        Vector2i     position; //!< Start position of the touch, relative to the top left of the owner window
     };
-    struct TouchBegan : TouchChanged
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Touch moved event subtype
+    ///
+    ////////////////////////////////////////////////////////////
+    struct TouchMoved
     {
+        unsigned int finger{}; //!< Index of the finger in case of multi-touch events
+        Vector2i     position; //!< Current position of the touch, relative to the top left of the owner window
     };
-    struct TouchMoved : TouchChanged
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Touch ended event subtype
+    ///
+    ////////////////////////////////////////////////////////////
+    struct TouchEnded
     {
-    };
-    struct TouchEnded : TouchChanged
-    {
+        unsigned int finger{}; //!< Index of the finger in case of multi-touch events
+        Vector2i     position; //!< Final position of the touch, relative to the top left of the owner window
     };
 
     ////////////////////////////////////////////////////////////

@@ -151,9 +151,23 @@ void initialiseKeyboardHelper()
 
 
 ////////////////////////////////////////////////////////
-sf::Event::KeyChanged keyEventWithModifiers(NSUInteger modifiers, sf::Keyboard::Key key, sf::Keyboard::Scancode code)
+sf::Event::KeyPressed keyPressedEventWithModifiers(NSUInteger modifiers, sf::Keyboard::Key key, sf::Keyboard::Scancode code)
 {
-    sf::Event::KeyChanged event;
+    sf::Event::KeyPressed event;
+    event.code     = key;
+    event.scancode = code;
+    event.alt      = modifiers & NSAlternateKeyMask;
+    event.control  = modifiers & NSControlKeyMask;
+    event.shift    = modifiers & NSShiftKeyMask;
+    event.system   = modifiers & NSCommandKeyMask;
+    return event;
+}
+
+
+////////////////////////////////////////////////////////
+sf::Event::KeyReleased keyReleasedEventWithModifiers(NSUInteger modifiers, sf::Keyboard::Key key, sf::Keyboard::Scancode code)
+{
+    sf::Event::KeyReleased event;
     event.code     = key;
     event.scancode = code;
     event.alt      = modifiers & NSAlternateKeyMask;
@@ -248,11 +262,11 @@ void processOneModifier(NSUInteger                 modifiers,
 
     // Check for key pressed event
     if (isDown && !wasDown)
-        requester.keyDown(sf::Event::KeyPressed{keyEventWithModifiers(modifiers, key, code)});
+        requester.keyDown(keyPressedEventWithModifiers(modifiers, key, code));
 
     // And check for key released event
     else if (!isDown && wasDown)
-        requester.keyUp(sf::Event::KeyReleased{keyEventWithModifiers(modifiers, key, code)});
+        requester.keyUp(keyReleasedEventWithModifiers(modifiers, key, code));
 
     // else isDown == wasDown, so no change
 
