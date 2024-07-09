@@ -42,7 +42,7 @@
 @interface SFOpenGLView (keyboard_priv)
 
 ////////////////////////////////////////////////////////////
-/// \brief Convert a key down/up NSEvent into an SFML key event
+/// \brief Convert a key down NSEvent into an SFML key pressed event
 ///
 /// The conversion is based on localizedKeys and nonLocalizedKeys functions.
 ///
@@ -51,7 +51,19 @@
 /// \return sf::Keyboard::Key::Unknown as Code if the key is unknown
 ///
 ////////////////////////////////////////////////////////////
-+ (sf::Event::KeyChanged)convertNSKeyEventToSFMLEvent:(NSEvent*)event;
++ (sf::Event::KeyPressed)convertNSKeyDownEventToSFMLEvent:(NSEvent*)event;
+
+////////////////////////////////////////////////////////////
+/// \brief Convert a key up NSEvent into an SFML key released event
+///
+/// The conversion is based on localizedKeys and nonLocalizedKeys functions.
+///
+/// \param event a key event
+///
+/// \return sf::Keyboard::Key::Unknown as Code if the key is unknown
+///
+////////////////////////////////////////////////////////////
++ (sf::Event::KeyReleased)convertNSKeyUpEventToSFMLEvent:(NSEvent*)event;
 
 ////////////////////////////////////////////////////////////
 /// \brief Check if the event represent some Unicode text

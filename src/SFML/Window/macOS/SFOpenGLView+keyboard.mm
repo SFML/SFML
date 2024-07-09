@@ -84,7 +84,7 @@
     // Handle key down event
     if (m_useKeyRepeat || ![theEvent isARepeat])
     {
-        const auto key = sf::Event::KeyPressed{[SFOpenGLView convertNSKeyEventToSFMLEvent:theEvent]};
+        const sf::Event::KeyPressed key = [SFOpenGLView convertNSKeyDownEventToSFMLEvent:theEvent];
 
         if ((key.code != sf::Keyboard::Key::Unknown) || (key.scancode != sf::Keyboard::Scan::Unknown))
             m_requester->keyDown(key);
@@ -156,7 +156,7 @@
     if (m_requester == nil)
         return;
 
-    const auto key = sf::Event::KeyReleased{[SFOpenGLView convertNSKeyEventToSFMLEvent:theEvent]};
+    const sf::Event::KeyReleased key = [SFOpenGLView convertNSKeyUpEventToSFMLEvent:theEvent];
 
     if ((key.code != sf::Keyboard::Key::Unknown) || (key.scancode != sf::Keyboard::Scan::Unknown))
         m_requester->keyUp(key);
@@ -178,7 +178,7 @@
 
 
 ////////////////////////////////////////////////////////
-+ (sf::Event::KeyChanged)convertNSKeyEventToSFMLEvent:(NSEvent*)event
++ (sf::Event::KeyPressed)convertNSKeyDownEventToSFMLEvent:(NSEvent*)event
 {
     // The scancode always depends on the hardware keyboard, not some OS setting.
     sf::Keyboard::Scancode code = sf::priv::HIDInputManager::nonLocalizedKey([event keyCode]);
@@ -186,7 +186,20 @@
     // Get the corresponding key under the current keyboard layout.
     sf::Keyboard::Key key = sf::Keyboard::localize(code);
 
-    return keyEventWithModifiers([event modifierFlags], key, code);
+    return keyPressedEventWithModifiers([event modifierFlags], key, code);
+}
+
+
+////////////////////////////////////////////////////////
++ (sf::Event::KeyReleased)convertNSKeyUpEventToSFMLEvent:(NSEvent*)event
+{
+    // The scancode always depends on the hardware keyboard, not some OS setting.
+    sf::Keyboard::Scancode code = sf::priv::HIDInputManager::nonLocalizedKey([event keyCode]);
+
+    // Get the corresponding key under the current keyboard layout.
+    sf::Keyboard::Key key = sf::Keyboard::localize(code);
+
+    return keyReleasedEventWithModifiers([event modifierFlags], key, code);
 }
 
 
