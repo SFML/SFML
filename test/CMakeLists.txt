@@ -54,7 +54,6 @@ set(SYSTEM_SRC
     System/Angle.test.cpp
     System/Clock.test.cpp
     System/Config.test.cpp
-    System/Err.test.cpp
     System/FileInputStream.test.cpp
     System/MemoryInputStream.test.cpp
     System/Sleep.test.cpp
@@ -76,6 +75,7 @@ set(WINDOW_SRC
     Window/Context.test.cpp
     Window/ContextSettings.test.cpp
     Window/Cursor.test.cpp
+    Window/Err.test.cpp # Tested alongside Window module because the System module performs no logging
     Window/Event.test.cpp
     Window/GlResource.test.cpp
     Window/Joystick.test.cpp

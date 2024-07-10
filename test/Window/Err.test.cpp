@@ -1,8 +1,13 @@
 #include <SFML/System/Err.hpp>
 
+// Other 1st party headers
+#include <SFML/Window/Cursor.hpp>
+
 #include <catch2/catch_test_macros.hpp>
 
+#include <array>
 #include <sstream>
+#include <thread>
 
 TEST_CASE("[System] sf::err")
 {
@@ -37,5 +42,27 @@ TEST_CASE("[System] sf::err")
         // Restore sf::err to default stream defaultStreamBuffer
         sf::err().rdbuf(defaultStreamBuffer);
         CHECK(sf::err().rdbuf() == defaultStreamBuffer);
+    }
+
+    SECTION("Log errors")
+    {
+        using namespace std::string_literals;
+        using namespace std::string_view_literals;
+
+        const std::stringstream stream;
+        sf::setErrorBuffer(stream.rdbuf());
+
+        // Produce logs concurrently from multiple threads
+        std::array threads{std::thread([] { (void)sf::Cursor::loadFromPixels(nullptr, {}, {}); }),
+                           std::thread([] { (void)sf::Cursor::loadFromPixels(nullptr, {}, {}); }),
+                           std::thread([] { (void)sf::Cursor::loadFromPixels(nullptr, {}, {}); })};
+        for (auto& thread : threads)
+            thread.join();
+
+        // Ensure all messages come through in their entirety without being interleaved
+        CHECK(stream.str() ==
+              "Failed to load cursor from pixels (invalid arguments)\n"
+              "Failed to load cursor from pixels (invalid arguments)\n"
+              "Failed to load cursor from pixels (invalid arguments)\n");
     }
 }

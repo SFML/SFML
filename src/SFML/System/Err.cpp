@@ -26,8 +26,10 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Err.hpp>
+#include <SFML/System/Logging.hpp>
 
 #include <iostream>
+#include <mutex>
 #include <streambuf>
 
 #include <cstdio>
@@ -96,6 +98,25 @@ private:
 
 namespace sf
 {
+namespace priv
+{
+////////////////////////////////////////////////////////////
+std::mutex& errorStreamMutex()
+{
+    static std::mutex mutex;
+    return mutex;
+}
+
+
+////////////////////////////////////////////////////////////
+std::ostream& errorStream()
+{
+    static std::ostream errorStream(std::cerr.rdbuf());
+    return errorStream;
+}
+} // namespace priv
+
+
 ////////////////////////////////////////////////////////////
 std::ostream& err()
 {
@@ -103,6 +124,14 @@ std::ostream& err()
     static std::ostream        stream(&buffer);
 
     return stream;
+}
+
+
+////////////////////////////////////////////////////////////
+void setErrorBuffer(std::streambuf* streamBuffer)
+{
+    const std::lock_guard lock(priv::errorStreamMutex());
+    priv::errorStream().rdbuf(streamBuffer);
 }
 
 

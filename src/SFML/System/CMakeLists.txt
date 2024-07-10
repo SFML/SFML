@@ -12,6 +12,7 @@ set(SRC
     ${INCROOT}/Err.hpp
     ${INCROOT}/Export.hpp
     ${INCROOT}/InputStream.hpp
+    ${SRCROOT}/Logging.hpp
     ${INCROOT}/NativeActivity.hpp
     ${SRCROOT}/Sleep.cpp
     ${INCROOT}/Sleep.hpp

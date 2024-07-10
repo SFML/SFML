@@ -28,7 +28,7 @@
 #include <SFML/Window/Cursor.hpp>
 #include <SFML/Window/CursorImpl.hpp>
 
-#include <SFML/System/Err.hpp>
+#include <SFML/System/Logging.hpp>
 #include <SFML/System/Vector2.hpp>
 
 #include <memory>
@@ -60,7 +60,7 @@ std::optional<Cursor> Cursor::loadFromPixels(const std::uint8_t* pixels, Vector2
 {
     if ((pixels == nullptr) || (size.x == 0) || (size.y == 0))
     {
-        err() << "Failed to load cursor from pixels (invalid arguments)" << std::endl;
+        priv::log("Failed to load cursor from pixels (invalid arguments)");
         return std::nullopt;
     }
 
