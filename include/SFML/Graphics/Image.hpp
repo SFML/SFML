@@ -36,7 +36,6 @@
 
 #include <filesystem>
 #include <optional>
-#include <string_view>
 #include <vector>
 
 #include <cstddef>
@@ -54,6 +53,18 @@ class InputStream;
 class SFML_GRAPHICS_API Image
 {
 public:
+    ////////////////////////////////////////////////////////////
+    /// \brief Supported formats for saving
+    ///
+    ////////////////////////////////////////////////////////////
+    enum class SaveFormat
+    {
+        BMP,
+        TGA,
+        PNG,
+        JPG
+    };
+
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -220,13 +231,14 @@ public:
     /// if it already exists. This function fails if the image is empty.
     ///
     /// \param filename Path of the file to save
+    /// \param format   Encoding format to use
     ///
     /// \return True if saving was successful
     ///
     /// \see saveToMemory, loadFromFile
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool saveToFile(const std::filesystem::path& filename) const;
+    [[nodiscard]] bool saveToFile(const std::filesystem::path& filename, SaveFormat format) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Save the image to a buffer in memory
@@ -244,7 +256,7 @@ public:
     /// \see saveToFile, loadFromMemory
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] std::optional<std::vector<std::uint8_t>> saveToMemory(std::string_view format) const;
+    [[nodiscard]] std::optional<std::vector<std::uint8_t>> saveToMemory(SaveFormat format) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the size (width and height) of the image

@@ -317,44 +317,34 @@ bool Image::loadFromStream(InputStream& stream)
 
 
 ////////////////////////////////////////////////////////////
-bool Image::saveToFile(const std::filesystem::path& filename) const
+bool Image::saveToFile(const std::filesystem::path& filename, SaveFormat format) const
 {
     // Make sure the image is not empty
     if (!m_pixels.empty() && m_size.x > 0 && m_size.y > 0)
     {
-        // Deduce the image type from its extension
+        const Vector2i convertedSize = Vector2i(m_size);
 
-        // Extract the extension
-        const std::filesystem::path extension     = filename.extension();
-        const Vector2i              convertedSize = Vector2i(m_size);
-
-        if (extension == ".bmp")
+        switch (format)
         {
-            // BMP format
-            if (stbi_write_bmp(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, m_pixels.data()))
-                return true;
-        }
-        else if (extension == ".tga")
-        {
-            // TGA format
-            if (stbi_write_tga(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, m_pixels.data()))
-                return true;
-        }
-        else if (extension == ".png")
-        {
-            // PNG format
-            if (stbi_write_png(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, m_pixels.data(), 0))
-                return true;
-        }
-        else if (extension == ".jpg" || extension == ".jpeg")
-        {
-            // JPG format
-            if (stbi_write_jpg(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, m_pixels.data(), 90))
-                return true;
-        }
-        else
-        {
-            err() << "Image file extension " << extension << " not supported\n";
+            case SaveFormat::BMP:
+                if (stbi_write_bmp(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, m_pixels.data()))
+                    return true;
+                break;
+            case SaveFormat::TGA:
+                if (stbi_write_tga(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, m_pixels.data()))
+                    return true;
+                break;
+            case SaveFormat::PNG:
+                if (stbi_write_png(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, m_pixels.data(), 0))
+                    return true;
+                break;
+            case SaveFormat::JPG:
+                if (stbi_write_jpg(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, m_pixels.data(), 90))
+                    return true;
+                break;
+            default:
+                assert(false && "Invalid format enumeration provided");
+                return false;
         }
     }
 
@@ -364,44 +354,39 @@ bool Image::saveToFile(const std::filesystem::path& filename) const
 
 
 ////////////////////////////////////////////////////////////
-std::optional<std::vector<std::uint8_t>> Image::saveToMemory(std::string_view format) const
+std::optional<std::vector<std::uint8_t>> Image::saveToMemory(SaveFormat format) const
 {
     // Make sure the image is not empty
     if (!m_pixels.empty() && m_size.x > 0 && m_size.y > 0)
     {
-        // Choose function based on format
-        const std::string specified     = toLower(std::string(format));
-        const Vector2i    convertedSize = Vector2i(m_size);
-
+        const Vector2i            convertedSize = Vector2i(m_size);
         std::vector<std::uint8_t> buffer;
 
-        if (specified == "bmp")
+        switch (format)
         {
-            // BMP format
-            if (stbi_write_bmp_to_func(bufferFromCallback, &buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data()))
-                return buffer;
-        }
-        else if (specified == "tga")
-        {
-            // TGA format
-            if (stbi_write_tga_to_func(bufferFromCallback, &buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data()))
-                return buffer;
-        }
-        else if (specified == "png")
-        {
-            // PNG format
-            if (stbi_write_png_to_func(bufferFromCallback, &buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data(), 0))
-                return buffer;
-        }
-        else if (specified == "jpg" || specified == "jpeg")
-        {
-            // JPG format
-            if (stbi_write_jpg_to_func(bufferFromCallback, &buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data(), 90))
-                return buffer;
+            case SaveFormat::BMP:
+                if (stbi_write_bmp_to_func(bufferFromCallback, &buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data()))
+                    return buffer;
+                break;
+            case SaveFormat::TGA:
+                if (stbi_write_tga_to_func(bufferFromCallback, &buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data()))
+                    return buffer;
+                break;
+            case SaveFormat::PNG:
+                if (stbi_write_png_to_func(bufferFromCallback, &buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data(), 0))
+                    return buffer;
+                break;
+            case SaveFormat::JPG:
+                if (stbi_write_jpg_to_func(bufferFromCallback, &buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data(), 90))
+                    return buffer;
+                break;
+            default:
+                assert(false && "Invalid format enumeration provided");
+                return std::nullopt;
         }
     }
 
-    err() << "Failed to save image with format " << std::quoted(format) << std::endl;
+    err() << "Failed to save image" << std::endl;
     return std::nullopt;
 }
 
