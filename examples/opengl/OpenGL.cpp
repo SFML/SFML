@@ -221,6 +221,9 @@ int main()
                         // We simply reload the texture to disable mipmapping
                         texture = sf::Texture::loadFromFile(resourcesDir() / "logo.png").value();
 
+                        // Rebind the texture
+                        sf::Texture::bind(&texture);
+
                         mipmapEnabled = false;
                     }
                     else if (texture.generateMipmap())
