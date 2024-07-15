@@ -249,7 +249,7 @@ public:
     /// operator() defined for a specific event type. Additionally a
     /// generic callable can also be provided that will be invoked for
     /// every event type. If both types of callables are provided, the
-    /// callables taking concrete event types will be prefered over the
+    /// callables taking concrete event types will be preferred over the
     /// generic callable by overload resolution. Generic callables can
     /// be used to customize handler dispatching based on the deduced
     /// type of the event and other information available at compile

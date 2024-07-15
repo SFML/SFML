@@ -7,13 +7,13 @@ if(SFML_OS_WINDOWS)
     if(SFML_COMPILER_GCC OR (SFML_COMPILER_CLANG AND MINGW))
         if(ARCH_X86)
             if(SFML_RUNTIME_UCRT)
-                # taking precendence for provided libraries linking UCRT
+                # taking precedence for provided libraries linking UCRT
                 list(APPEND CMAKE_LIBRARY_PATH "${PROJECT_SOURCE_DIR}/extlibs/libs-mingw-ucrt/x86")
             endif()
             set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${PROJECT_SOURCE_DIR}/extlibs/libs-mingw/x86")
         elseif(ARCH_X64)
             if(SFML_RUNTIME_UCRT)
-                # taking precendence for provided libraries linking UCRT
+                # taking precedence for provided libraries linking UCRT
                 list(APPEND CMAKE_LIBRARY_PATH "${PROJECT_SOURCE_DIR}/extlibs/libs-mingw-ucrt/x64")
             endif()
             set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "${PROJECT_SOURCE_DIR}/extlibs/libs-mingw/x64")

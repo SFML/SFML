@@ -407,7 +407,7 @@ private:
 /// The way to access the current active event subtype is via
 /// `sf::Event::getIf`. This member function returns the address
 /// of the event subtype struct if the event subtype matches the
-/// active event, otherise it returns `nullptr`.
+/// active event, otherwise it returns `nullptr`.
 ///
 /// `sf::Event::is` is used to check the active event subtype
 /// without actually reading any of the corresponding event data.
