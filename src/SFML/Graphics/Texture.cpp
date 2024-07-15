@@ -189,6 +189,7 @@ std::optional<Texture> Texture::create(const Vector2u& size, bool sRgb)
         err() << "Failed to create texture, its internal size is too high "
               << "(" << actualSize.x << "x" << actualSize.y << ", "
               << "maximum is " << maxSize << "x" << maxSize << ")" << std::endl;
+
         return std::nullopt;
     }
 
@@ -199,6 +200,24 @@ std::optional<Texture> Texture::create(const Vector2u& size, bool sRgb)
 
     // All the validity checks passed, we can store the new texture settings
     Texture texture(size, actualSize, glTexture, sRgb);
+
+    if (!texture.recreate(size, sRgb))
+        return std::nullopt;
+
+    return texture;
+}
+
+
+////////////////////////////////////////////////////////////
+bool Texture::recreate(const Vector2u& size, bool sRgb)
+{
+    // TODO: avoid repetition with constructor
+    m_size = size;
+    const Vector2u actualSize(getValidSize(size.x), getValidSize(size.y));
+    m_actualSize = actualSize;
+    m_sRgb       = sRgb;
+    // TODO: m_cacheId?
+    // TODO: m_texture is being reused, is that always fine?
 
     // Make sure that the current texture binding will be preserved
     const priv::TextureSaver save;
@@ -222,7 +241,7 @@ std::optional<Texture> Texture::create(const Vector2u& size, bool sRgb)
 
     static const bool textureSrgb = GLEXT_texture_sRGB;
 
-    if (texture.m_sRgb && !textureSrgb)
+    if (m_sRgb && !textureSrgb)
     {
         static bool warned = false;
 
@@ -238,7 +257,7 @@ std::optional<Texture> Texture::create(const Vector2u& size, bool sRgb)
             warned = true;
         }
 
-        texture.m_sRgb = false;
+        m_sRgb = false;
     }
 
 #ifndef SFML_OPENGL_ES
@@ -248,12 +267,12 @@ std::optional<Texture> Texture::create(const Vector2u& size, bool sRgb)
 #endif
 
     // Initialize the texture
-    glCheck(glBindTexture(GL_TEXTURE_2D, texture.m_texture));
+    glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
     glCheck(glTexImage2D(GL_TEXTURE_2D,
                          0,
-                         (texture.m_sRgb ? GLEXT_GL_SRGB8_ALPHA8 : GL_RGBA),
-                         static_cast<GLsizei>(texture.m_actualSize.x),
-                         static_cast<GLsizei>(texture.m_actualSize.y),
+                         (m_sRgb ? GLEXT_GL_SRGB8_ALPHA8 : GL_RGBA),
+                         static_cast<GLsizei>(m_actualSize.x),
+                         static_cast<GLsizei>(m_actualSize.y),
                          0,
                          GL_RGBA,
                          GL_UNSIGNED_BYTE,
@@ -262,49 +281,98 @@ std::optional<Texture> Texture::create(const Vector2u& size, bool sRgb)
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, textureWrapParam));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
-    texture.m_cacheId = TextureImpl::getUniqueId();
+    m_cacheId = TextureImpl::getUniqueId();
 
-    texture.m_hasMipmap = false;
+    m_hasMipmap = false;
+
+    return true;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<Texture> Texture::createFromFile(const std::filesystem::path& filename, bool sRgb, const IntRect& area)
+{
+    if (const auto image = sf::Image::loadFromFile(filename))
+        return createFromImage(*image, sRgb, area);
+
+    err() << "Failed to create texture from file" << std::endl;
+    return std::nullopt;
+}
+
+
+////////////////////////////////////////////////////////////
+bool Texture::recreateFromFile(const std::filesystem::path& filename, bool sRgb, const IntRect& area)
+{
+    if (const auto image = sf::Image::loadFromFile(filename))
+        return recreateFromImage(*image, sRgb, area);
+
+    err() << "Failed to recreate texture from file" << std::endl;
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<Texture> Texture::createFromMemory(const void* data, std::size_t size, bool sRgb, const IntRect& area)
+{
+    if (const auto image = sf::Image::loadFromMemory(data, size))
+        return createFromImage(*image, sRgb, area);
+
+    err() << "Failed to create texture from memory" << std::endl;
+    return std::nullopt;
+}
+
+
+////////////////////////////////////////////////////////////
+bool Texture::recreateFromMemory(const void* data, std::size_t size, bool sRgb, const IntRect& area)
+{
+    if (const auto image = sf::Image::loadFromMemory(data, size))
+        return recreateFromImage(*image, sRgb, area);
+
+    err() << "Failed to recreate texture from memory" << std::endl;
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<Texture> Texture::createFromStream(InputStream& stream, bool sRgb, const IntRect& area)
+{
+    if (const auto image = sf::Image::loadFromStream(stream))
+        return createFromImage(*image, sRgb, area);
+
+    err() << "Failed to create texture from stream" << std::endl;
+    return std::nullopt;
+}
+
+
+////////////////////////////////////////////////////////////
+bool Texture::recreateFromStream(InputStream& stream, bool sRgb, const IntRect& area)
+{
+    if (const auto image = sf::Image::loadFromStream(stream))
+        return recreateFromImage(*image, sRgb, area);
+
+    err() << "Failed to recreate texture from stream" << std::endl;
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<Texture> Texture::createFromImage(const Image& image, bool sRgb, const IntRect& area)
+{
+    // TODO: avoid setting size twice, maybe have a private default ctor for Texture
+    auto texture = Texture::create(image.getSize(), sRgb);
+
+    if (!texture.has_value())
+        return std::nullopt;
+
+    if (!texture->recreateFromImage(image, sRgb, area))
+        return std::nullopt;
 
     return texture;
 }
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Texture> Texture::loadFromFile(const std::filesystem::path& filename, bool sRgb, const IntRect& area)
-{
-    if (const auto image = sf::Image::loadFromFile(filename))
-        return loadFromImage(*image, sRgb, area);
-
-    err() << "Failed to load texture from file" << std::endl;
-    return std::nullopt;
-}
-
-
-////////////////////////////////////////////////////////////
-std::optional<Texture> Texture::loadFromMemory(const void* data, std::size_t size, bool sRgb, const IntRect& area)
-{
-    if (const auto image = sf::Image::loadFromMemory(data, size))
-        return loadFromImage(*image, sRgb, area);
-
-    err() << "Failed to load texture from memory" << std::endl;
-    return std::nullopt;
-}
-
-
-////////////////////////////////////////////////////////////
-std::optional<Texture> Texture::loadFromStream(InputStream& stream, bool sRgb, const IntRect& area)
-{
-    if (const auto image = sf::Image::loadFromStream(stream))
-        return loadFromImage(*image, sRgb, area);
-
-    err() << "Failed to load texture from stream" << std::endl;
-    return std::nullopt;
-}
-
-
-////////////////////////////////////////////////////////////
-std::optional<Texture> Texture::loadFromImage(const Image& image, bool sRgb, const IntRect& area)
+bool Texture::recreateFromImage(const Image& image, bool sRgb, const IntRect& area)
 {
     // Retrieve the image size
     const auto size = Vector2i(image.getSize());
@@ -314,14 +382,14 @@ std::optional<Texture> Texture::loadFromImage(const Image& image, bool sRgb, con
         ((area.position.x <= 0) && (area.position.y <= 0) && (area.size.x >= size.x) && (area.size.y >= size.y)))
     {
         // Load the entire image
-        if (auto texture = sf::Texture::create(image.getSize(), sRgb))
+        if (recreate(image.getSize(), sRgb))
         {
-            texture->update(image);
-            return texture;
+            update(image);
+            return true;
         }
 
         // Error message generated in called function.
-        return std::nullopt;
+        return false;
     }
 
     // Load a sub-area of the image
@@ -334,7 +402,7 @@ std::optional<Texture> Texture::loadFromImage(const Image& image, bool sRgb, con
     rectangle.size.y     = std::min(rectangle.size.y, size.y - rectangle.position.y);
 
     // Create the texture and upload the pixels
-    if (auto texture = sf::Texture::create(Vector2u(rectangle.size), sRgb))
+    if (recreate(Vector2u(rectangle.size), sRgb))
     {
         const TransientContextLock lock;
 
@@ -343,7 +411,7 @@ std::optional<Texture> Texture::loadFromImage(const Image& image, bool sRgb, con
 
         // Copy the pixels to the texture, row by row
         const std::uint8_t* pixels = image.getPixelsPtr() + 4 * (rectangle.position.x + (size.x * rectangle.position.y));
-        glCheck(glBindTexture(GL_TEXTURE_2D, texture->m_texture));
+        glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
         for (int i = 0; i < rectangle.size.y; ++i)
         {
             glCheck(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, i, rectangle.size.x, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
@@ -351,17 +419,17 @@ std::optional<Texture> Texture::loadFromImage(const Image& image, bool sRgb, con
         }
 
         glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
-        texture->m_hasMipmap = false;
+        m_hasMipmap = false;
 
         // Force an OpenGL flush, so that the texture will appear updated
         // in all contexts immediately (solves problems in multi-threaded apps)
         glCheck(glFlush());
 
-        return texture;
+        return true;
     }
 
     // Error message generated in called function.
-    return std::nullopt;
+    return false;
 }
 
 
@@ -445,10 +513,10 @@ Image Texture::copyToImage() const
         glCheck(glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, allPixels.data()));
 
         // Then we copy the useful pixels from the temporary array to the final one
-        const std::uint8_t* src = allPixels.data();
-        std::uint8_t* dst = pixels.data();
-        int srcPitch = static_cast<int>(m_actualSize.x * 4);
-        const unsigned int dstPitch = m_size.x * 4;
+        const std::uint8_t* src      = allPixels.data();
+        std::uint8_t*       dst      = pixels.data();
+        int                 srcPitch = static_cast<int>(m_actualSize.x * 4);
+        const unsigned int  dstPitch = m_size.x * 4;
 
         // Handle the case where source pixels are flipped vertically
         if (m_pixelsFlipped)

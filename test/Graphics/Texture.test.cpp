@@ -74,7 +74,7 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
 
     SECTION("loadFromFile()")
     {
-        const auto texture = sf::Texture::loadFromFile("Graphics/sfml-logo-big.png").value();
+        const auto texture = sf::Texture::createFromFile("Graphics/sfml-logo-big.png").value();
         CHECK(texture.getSize() == sf::Vector2u(1001, 304));
         CHECK(!texture.isSmooth());
         CHECK(!texture.isSrgb());
@@ -85,7 +85,7 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
     SECTION("loadFromMemory()")
     {
         const auto memory  = loadIntoMemory("Graphics/sfml-logo-big.png");
-        const auto texture = sf::Texture::loadFromMemory(memory.data(), memory.size()).value();
+        const auto texture = sf::Texture::createFromMemory(memory.data(), memory.size()).value();
         CHECK(texture.getSize() == sf::Vector2u(1001, 304));
         CHECK(!texture.isSmooth());
         CHECK(!texture.isSrgb());
@@ -96,7 +96,7 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
     SECTION("loadFromStream()")
     {
         auto       stream  = sf::FileInputStream::open("Graphics/sfml-logo-big.png").value();
-        const auto texture = sf::Texture::loadFromStream(stream).value();
+        const auto texture = sf::Texture::createFromStream(stream).value();
         CHECK(texture.getSize() == sf::Vector2u(1001, 304));
         CHECK(!texture.isSmooth());
         CHECK(!texture.isSrgb());
@@ -112,21 +112,21 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
 
             SECTION("Non-truncated area")
             {
-                const auto texture = sf::Texture::loadFromImage(image, false, {{0, 0}, {5, 10}}).value();
+                const auto texture = sf::Texture::createFromImage(image, false, {{0, 0}, {5, 10}}).value();
                 CHECK(texture.getSize() == sf::Vector2u(5, 10));
                 CHECK(texture.getNativeHandle() != 0);
             }
 
             SECTION("Truncated area (negative position)")
             {
-                const auto texture = sf::Texture::loadFromImage(image, false, {{-5, -5}, {4, 8}}).value();
+                const auto texture = sf::Texture::createFromImage(image, false, {{-5, -5}, {4, 8}}).value();
                 CHECK(texture.getSize() == sf::Vector2u(4, 8));
                 CHECK(texture.getNativeHandle() != 0);
             }
 
             SECTION("Truncated area (width/height too big)")
             {
-                const auto texture = sf::Texture::loadFromImage(image, false, {{5, 5}, {12, 18}}).value();
+                const auto texture = sf::Texture::createFromImage(image, false, {{5, 5}, {12, 18}}).value();
                 CHECK(texture.getSize() == sf::Vector2u(5, 10));
                 CHECK(texture.getNativeHandle() != 0);
             }

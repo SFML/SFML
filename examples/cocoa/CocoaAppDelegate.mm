@@ -54,7 +54,7 @@ struct SFMLmainWindow
     sf::RenderWindow      renderWindow;
     sf::Font              font{sf::Font::openFromFile(resPath / "tuffy.ttf").value()};
     sf::Text              text{font};
-    sf::Texture           logo{sf::Texture::loadFromFile(resPath / "logo.png").value()};
+    sf::Texture           logo{sf::Texture::createFromFile(resPath / "logo.png").value()};
     sf::Sprite            sprite{logo};
     sf::Color             background{sf::Color::Blue};
 };

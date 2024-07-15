@@ -142,7 +142,7 @@ public:
 ///     // Handle error...
 /// }
 ///
-/// const auto texture = sf::Texture::loadFromStream(stream).value();
+/// const auto texture = sf::Texture::createFromStream(stream).value();
 ///
 /// // musics...
 /// sf::Music music;

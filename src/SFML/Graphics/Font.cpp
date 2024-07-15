@@ -750,7 +750,7 @@ std::optional<Font::Page> Font::Page::create(bool smooth)
             image.setPixel({x, y}, Color::White);
 
     // Create the texture
-    auto texture = sf::Texture::loadFromImage(image);
+    auto texture = sf::Texture::createFromImage(image);
     if (!texture)
     {
         err() << "Failed to load font page texture" << std::endl;

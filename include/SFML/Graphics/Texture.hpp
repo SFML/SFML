@@ -100,6 +100,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] static std::optional<Texture> create(const Vector2u& size, bool sRgb = false);
+    [[nodiscard]] bool                          recreate(const Vector2u& size, bool sRgb = false);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from a file on disk
@@ -124,9 +125,11 @@ public:
     /// \see loadFromMemory, loadFromStream, loadFromImage
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Texture> loadFromFile(const std::filesystem::path& filename,
-                                                             bool                         sRgb = false,
-                                                             const IntRect&               area = {});
+    [[nodiscard]] static std::optional<Texture> createFromFile(const std::filesystem::path& filename,
+                                                               bool                         sRgb = false,
+                                                               const IntRect&               area = {});
+    [[nodiscard]] bool recreateFromFile(const std::filesystem::path& filename, bool sRgb = false, const IntRect& area = {});
+
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from a file in memory
@@ -152,11 +155,12 @@ public:
     /// \see loadFromFile, loadFromStream, loadFromImage
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Texture> loadFromMemory(
+    [[nodiscard]] static std::optional<Texture> createFromMemory(
         const void*    data,
         std::size_t    size,
         bool           sRgb = false,
         const IntRect& area = {});
+    [[nodiscard]] bool recreateFromMemory(const void* data, std::size_t size, bool sRgb = false, const IntRect& area = {});
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from a custom stream
@@ -181,7 +185,10 @@ public:
     /// \see loadFromFile, loadFromMemory, loadFromImage
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Texture> loadFromStream(InputStream& stream, bool sRgb = false, const IntRect& area = {});
+    [[nodiscard]] static std::optional<Texture> createFromStream(InputStream&   stream,
+                                                                 bool           sRgb = false,
+                                                                 const IntRect& area = {});
+    [[nodiscard]] bool recreateFromStream(InputStream& stream, bool sRgb = false, const IntRect& area = {});
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from an image
@@ -206,7 +213,8 @@ public:
     /// \see loadFromFile, loadFromMemory
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Texture> loadFromImage(const Image& image, bool sRgb = false, const IntRect& area = {});
+    [[nodiscard]] static std::optional<Texture> createFromImage(const Image& image, bool sRgb = false, const IntRect& area = {});
+    [[nodiscard]] bool recreateFromImage(const Image& image, bool sRgb = false, const IntRect& area = {});
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the size of the texture
@@ -630,7 +638,7 @@ SFML_GRAPHICS_API void swap(Texture& left, Texture& right) noexcept;
 /// However, if you want to perform some modifications on the pixels
 /// before creating the final texture, you can load your file to a
 /// sf::Image, do whatever you need with the pixels, and then call
-/// Texture::loadFromImage.
+/// Texture::createFromImage.
 ///
 /// Since they live in the graphics card memory, the pixels of a texture
 /// cannot be accessed without a slow copy first. And they cannot be
@@ -662,7 +670,7 @@ SFML_GRAPHICS_API void swap(Texture& left, Texture& right) noexcept;
 /// // drawing a sprite
 ///
 /// // Load a texture from a file
-/// const auto texture = sf::Texture::loadFromFile("texture.png").value();
+/// const auto texture = sf::Texture::createFromFile("texture.png").value();
 ///
 /// // Assign it to a sprite
 /// sf::Sprite sprite(texture);

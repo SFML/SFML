@@ -278,7 +278,7 @@ private:
 ////////////////////////////////////////////////////////////
 std::optional<Pixelate> tryLoadPixelate()
 {
-    auto texture = sf::Texture::loadFromFile("resources/background.jpg");
+    auto texture = sf::Texture::createFromFile("resources/background.jpg");
     if (!texture.has_value())
         return std::nullopt;
 
@@ -317,14 +317,14 @@ std::optional<Edge> tryLoadEdge()
     surface->setSmooth(true);
 
     // Load the background texture
-    auto backgroundTexture = sf::Texture::loadFromFile("resources/sfml.png");
+    auto backgroundTexture = sf::Texture::createFromFile("resources/sfml.png");
     if (!backgroundTexture.has_value())
         return std::nullopt;
 
     backgroundTexture->setSmooth(true);
 
     // Load the entity texture
-    auto entityTexture = sf::Texture::loadFromFile("resources/devices.png");
+    auto entityTexture = sf::Texture::createFromFile("resources/devices.png");
     if (!entityTexture.has_value())
         return std::nullopt;
 
@@ -350,7 +350,7 @@ std::optional<Geometry> tryLoadGeometry()
         return std::nullopt;
 
     // Load the logo texture
-    auto logoTexture = sf::Texture::loadFromFile("resources/logo.png");
+    auto logoTexture = sf::Texture::createFromFile("resources/logo.png");
     if (!logoTexture.has_value())
         return std::nullopt;
 
@@ -418,7 +418,7 @@ int main()
     std::size_t current = 0;
 
     // Create the messages background
-    const auto textBackgroundTexture = sf::Texture::loadFromFile("resources/text-background.png").value();
+    const auto textBackgroundTexture = sf::Texture::createFromFile("resources/text-background.png").value();
     sf::Sprite textBackground(textBackgroundTexture);
     textBackground.setPosition({0.f, 520.f});
     textBackground.setColor(sf::Color(255, 255, 255, 200));

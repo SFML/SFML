@@ -30,7 +30,7 @@ int main()
     window.setIcon(icon);
 
     // Load a sprite to display
-    const auto texture = sf::Texture::loadFromFile(resourcePath() / "background.jpg").value();
+    const auto texture = sf::Texture::createFromFile(resourcePath() / "background.jpg").value();
     sf::Sprite sprite(texture);
 
     // Create a graphical text to display

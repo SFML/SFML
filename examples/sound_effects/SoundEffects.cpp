@@ -1106,7 +1106,7 @@ int main()
     effects[current]->start();
 
     // Create the messages background
-    const auto textBackgroundTexture = sf::Texture::loadFromFile(resourcesDir() / "text-background.png").value();
+    const auto textBackgroundTexture = sf::Texture::createFromFile(resourcesDir() / "text-background.png").value();
     sf::Sprite textBackground(textBackgroundTexture);
     textBackground.setPosition({0.f, 520.f});
     textBackground.setColor(sf::Color(255, 255, 255, 200));

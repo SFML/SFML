@@ -86,7 +86,7 @@ int main(int argc, char* argv[])
     sf::RenderWindow window(screen, "");
     window.setFramerateLimit(30);
 
-    const auto texture = sf::Texture::loadFromFile("image.png").value();
+    const auto texture = sf::Texture::createFromFile("image.png").value();
 
     sf::Sprite image(texture);
     image.setPosition(sf::Vector2f(screen.size) / 2.f);

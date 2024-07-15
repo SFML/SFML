@@ -58,7 +58,7 @@ int main()
         window.setMaximumSize(sf::Vector2u(1200, 900));
 
         // Create a sprite for the background
-        const auto       backgroundTexture = sf::Texture::loadFromFile(resourcesDir() / "background.jpg", sRgb).value();
+        const auto       backgroundTexture = sf::Texture::createFromFile(resourcesDir() / "background.jpg", sRgb).value();
         const sf::Sprite background(backgroundTexture);
 
         // Create some text to draw on top of our OpenGL object
@@ -75,7 +75,7 @@ int main()
         mipmapInstructions.setPosition({200.f, 550.f});
 
         // Load a texture to apply to our 3D cube
-        auto texture = sf::Texture::loadFromFile(resourcesDir() / "logo.png").value();
+        auto texture = sf::Texture::createFromFile(resourcesDir() / "logo.png").value();
 
         // Attempt to generate a mipmap for our cube texture
         // We don't check the return value here since
@@ -219,7 +219,7 @@ int main()
                     if (mipmapEnabled)
                     {
                         // We simply reload the texture to disable mipmapping
-                        texture = sf::Texture::loadFromFile(resourcesDir() / "logo.png").value();
+                        texture = sf::Texture::createFromFile(resourcesDir() / "logo.png").value();
 
                         mipmapEnabled = false;
                     }
