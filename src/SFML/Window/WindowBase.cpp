@@ -236,13 +236,13 @@ void WindowBase::setMaximumSize(const std::optional<Vector2u>& maximumSize)
 {
     if (m_impl)
     {
-        [[maybe_unused]] const auto validateMaxiumSize = [this, maximumSize]
+        [[maybe_unused]] const auto validateMaximumSize = [this, maximumSize]
         {
             if (!maximumSize.has_value() || !m_impl->getMinimumSize().has_value())
                 return true;
             return maximumSize->x >= m_impl->getMinimumSize()->x && maximumSize->y >= m_impl->getMinimumSize()->y;
         };
-        assert(validateMaxiumSize() && "Maximum size cannot be smaller than the minimum size along either axis");
+        assert(validateMaximumSize() && "Maximum size cannot be smaller than the minimum size along either axis");
 
         m_impl->setMaximumSize(maximumSize);
         setSize(getSize());
