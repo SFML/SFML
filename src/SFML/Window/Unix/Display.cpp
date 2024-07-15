@@ -83,7 +83,7 @@ std::shared_ptr<_XIM> openXim()
     const std::lock_guard lock(UnixDisplayImpl::mutex);
 
     assert(!UnixDisplayImpl::weakSharedDisplay.expired() &&
-           "Display is not initalized. Call priv::openDisplay() to initialize it.");
+           "Display is not initialized. Call priv::openDisplay() to initialize it.");
 
     static std::weak_ptr<_XIM> xim;
 

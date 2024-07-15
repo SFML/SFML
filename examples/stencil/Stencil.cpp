@@ -98,7 +98,7 @@ int main()
         // Without the stencil buffer, 1 of the rectangles would have to be precisely split along the edge of another
         // rectangle and both pieces would have to be drawn at different stages in the draw pass. This would not only be
         // almost impossible to compute to the required accuracy to mimic the GPU's vertex computations but splitting a
-        // primitive up and drawing the pieces in seperate draw calls would introduce noticeable artifacts which would
+        // primitive up and drawing the pieces in separate draw calls would introduce noticeable artifacts which would
         // reduce the overall quality of the output image.
 
         // To start with, we initialize the stencil buffer values for every pixel to 0 at the start of each frame. In
@@ -126,7 +126,7 @@ int main()
         // Now comes the magic. We want to draw the third rectangle so it is behind i.e. does not overwrite pixels of the
         // first rectangle but in front of i.e. overwrites pixels of the second rectangle. We already set the reference
         // value of the first rectangle to 3 and the second rectangle to 1, so in order to be "between" them, this rectangle
-        // has to have a reference value of 2. 2 is not greather than 3 so pixels of this rectangle will not overwrite pixels
+        // has to have a reference value of 2. 2 is not greater than 3 so pixels of this rectangle will not overwrite pixels
         // of the first rectangle, however 2 is greater than 1 and thus pixels of this rectangle will overwrite pixels of the
         // second rectangle. The stencil update operation for this draw operation is not significant in any way since this is
         // the last draw call in the frame.
