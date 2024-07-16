@@ -17,11 +17,11 @@ TEST_CASE("[Graphics] sf::Glyph")
 
     SECTION("Construction")
     {
-        const sf::Glyph glyph;
-        CHECK(glyph.advance == 0.f);
-        CHECK(glyph.lsbDelta == 0);
-        CHECK(glyph.rsbDelta == 0);
-        CHECK(glyph.bounds == sf::FloatRect());
-        CHECK(glyph.textureRect == sf::IntRect());
+        constexpr sf::Glyph glyph;
+        STATIC_CHECK(glyph.advance == 0.f);
+        STATIC_CHECK(glyph.lsbDelta == 0);
+        STATIC_CHECK(glyph.rsbDelta == 0);
+        STATIC_CHECK(glyph.bounds == sf::FloatRect());
+        STATIC_CHECK(glyph.textureRect == sf::IntRect());
     }
 }
