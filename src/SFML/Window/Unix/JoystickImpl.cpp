@@ -525,7 +525,7 @@ bool JoystickImpl::open(unsigned int index)
         if (m_file >= 0)
         {
             // Retrieve the axes mapping
-            ioctl(m_file, JSIOCGAXMAP, m_mapping);
+            ioctl(m_file, JSIOCGAXMAP, m_mapping.data());
 
             // Get info
             m_identification.name = getJoystickName(index);
