@@ -32,11 +32,6 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Rect<T>::Rect() = default;
-
-
-////////////////////////////////////////////////////////////
-template <typename T>
 constexpr Rect<T>::Rect(const Vector2<T>& thePosition, const Vector2<T>& theSize) : position(thePosition), size(theSize)
 {
 }

@@ -46,7 +46,7 @@ public:
     /// Creates a Vector2(0, 0).
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Vector2();
+    constexpr Vector2() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the vector from cartesian coordinates

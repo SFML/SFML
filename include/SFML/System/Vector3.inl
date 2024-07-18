@@ -33,11 +33,6 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-template <typename T>
-constexpr Vector3<T>::Vector3() = default;
-
-
-////////////////////////////////////////////////////////////
 #if defined(__GNUC__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wshadow"

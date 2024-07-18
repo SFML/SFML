@@ -49,7 +49,7 @@ public:
     /// Rect({0, 0}, {0, 0})).
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Rect();
+    constexpr Rect() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the rectangle from position and size
