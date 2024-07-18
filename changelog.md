@@ -90,6 +90,7 @@ For a closer look at breaking changes and how to migrate from SFML 2, check out 
 -   [Linux] Fixed broken joystick axis mappings under Linux (#3167)
 -   [macOS] Fixed how macOS fullscreen video modes are detected (#3151)
 -   [macOS] Avoided unnecessary permission request prompts (#3232)
+-   [Linux] Fixed DRM mode setting to use SFML window dimensions (#3310)
 
 ### Graphics
 
