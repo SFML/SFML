@@ -298,11 +298,13 @@ int findDrmDevice(drmModeResPtr& resources)
         if (fileDescriptor < 0)
             continue;
         result = getResources(fileDescriptor, resources);
-#ifdef SFML_DEBUG
-        sf::err() << "DRM device used: " << i << std::endl;
-#endif
         if (!result && hasMonitorConnected(fileDescriptor, *resources) != 0)
+        {
+#ifdef SFML_DEBUG
+            sf::err() << "DRM device used: " << device->nodes[DRM_NODE_PRIMARY] << std::endl;
+#endif
             break;
+        }
         close(fileDescriptor);
         fileDescriptor = -1;
     }
@@ -313,23 +315,28 @@ int findDrmDevice(drmModeResPtr& resources)
     return fileDescriptor;
 }
 
-int initDrm(sf::priv::Drm& drm, const char* device, const char* modeStr, unsigned int vrefresh)
+int initDrm()
 {
+    if (initialized)
+        return 0;
+
     drmModeResPtr resources = nullptr;
 
-    if (device)
+    // Use environment variable "SFML_DRM_DEVICE" (or nullptr if not set)
+    const char* deviceStr = std::getenv("SFML_DRM_DEVICE");
+    if (deviceStr && *deviceStr)
     {
-        drm.fileDescriptor = open(device, O_RDWR);
-        const int ret      = getResources(drm.fileDescriptor, resources);
+        drmNode.fileDescriptor = open(deviceStr, O_RDWR);
+        const int ret          = getResources(drmNode.fileDescriptor, resources);
         if (ret < 0 && errno == EOPNOTSUPP)
-            sf::err() << device << " does not look like a modeset device" << std::endl;
+            sf::err() << deviceStr << " does not look like a modeset device" << std::endl;
     }
     else
     {
-        drm.fileDescriptor = findDrmDevice(resources);
+        drmNode.fileDescriptor = findDrmDevice(resources);
     }
 
-    if (drm.fileDescriptor < 0)
+    if (drmNode.fileDescriptor < 0)
     {
         sf::err() << "Could not open drm device" << std::endl;
         return -1;
@@ -345,7 +352,7 @@ int initDrm(sf::priv::Drm& drm, const char* device, const char* modeStr, unsigne
     drmModeConnectorPtr connector = nullptr;
     for (int i = 0; i < resources->count_connectors; ++i)
     {
-        connector = drmModeGetConnector(drm.fileDescriptor, resources->connectors[i]);
+        connector = drmModeGetConnector(drmNode.fileDescriptor, resources->connectors[i]);
         if (connector->connection == DRM_MODE_CONNECTED)
         {
             // It's connected, let's use this!
@@ -362,31 +369,11 @@ int initDrm(sf::priv::Drm& drm, const char* device, const char* modeStr, unsigne
         return -1;
     }
 
-    // Find user requested mode:
-    if (modeStr && *modeStr)
-    {
-        for (int i = 0; i < connector->count_modes; ++i)
-        {
-            drmModeModeInfoPtr currentMode = &connector->modes[i];
-
-            if (std::string_view(currentMode->name) == modeStr)
-            {
-                if (vrefresh == 0 || currentMode->vrefresh == vrefresh)
-                {
-                    drm.mode = currentMode;
-                    break;
-                }
-            }
-        }
-        if (!drm.mode)
-            sf::err() << "Requested mode not found, using default mode!" << std::endl;
-    }
-
     // Find encoder:
     drmModeEncoderPtr encoder = nullptr;
     for (int i = 0; i < resources->count_encoders; ++i)
     {
-        encoder = drmModeGetEncoder(drm.fileDescriptor, resources->encoders[i]);
+        encoder = drmModeGetEncoder(drmNode.fileDescriptor, resources->encoders[i]);
         if (encoder->encoder_id == connector->encoder_id)
             break;
         drmModeFreeEncoder(encoder);
@@ -395,74 +382,29 @@ int initDrm(sf::priv::Drm& drm, const char* device, const char* modeStr, unsigne
 
     if (encoder)
     {
-        drm.crtcId = encoder->crtc_id;
+        drmNode.crtcId = encoder->crtc_id;
     }
     else
     {
-        const std::uint32_t crtcId = findCrtcForConnector(drm, *resources, *connector);
+        const std::uint32_t crtcId = findCrtcForConnector(drmNode, *resources, *connector);
         if (crtcId == 0)
         {
             sf::err() << "No crtc found!" << std::endl;
             return -1;
         }
 
-        drm.crtcId = crtcId;
+        drmNode.crtcId = crtcId;
     }
 
     drmModeFreeResources(resources);
 
-    drm.connectorId = connector->connector_id;
+    drmNode.connectorId = connector->connector_id;
 
-    drm.savedConnector = connector;
-    drm.savedEncoder   = encoder;
+    drmNode.savedConnector = connector;
+    drmNode.savedEncoder   = encoder;
 
     // Get original display mode so we can restore display mode after program exits
-    drm.originalCrtc = drmModeGetCrtc(drm.fileDescriptor, drm.crtcId);
-
-    // Use the current mode rather than the preferred one if the user didn't specify a mode with env vars
-    if (!drm.mode)
-    {
-#ifdef SFML_DEBUG
-        sf::err() << "DRM using the current mode" << std::endl;
-#endif
-        drm.mode = &(drm.originalCrtc->mode);
-    }
-
-#ifdef SFML_DEBUG
-    sf::err() << "DRM Mode used: " << drm.mode->name << "@" << drm.mode->vrefresh << std::endl;
-#endif
-
-    return 0;
-}
-
-void checkInit()
-{
-    if (initialized)
-        return;
-
-    // Use environment variable "SFML_DRM_DEVICE" (or nullptr if not set)
-    char* deviceString = std::getenv("SFML_DRM_DEVICE");
-    if (deviceString && !*deviceString)
-        deviceString = nullptr;
-
-    // Use environment variable "SFML_DRM_MODE" (or nullptr if not set)
-    char* modeString = std::getenv("SFML_DRM_MODE");
-
-    // Use environment variable "SFML_DRM_REFRESH" (or 0 if not set)
-    // Use in combination with mode to request specific refresh rate for the mode
-    // if multiple refresh rates for same mode might be supported
-    unsigned int refreshRate = 0;
-    if (const char* refreshString = std::getenv("SFML_DRM_REFRESH"))
-        refreshRate = static_cast<unsigned int>(std::atoi(refreshString));
-
-    if (initDrm(drmNode,
-                deviceString,     // device
-                modeString,       // requested mode
-                refreshRate) < 0) // screen refresh rate
-    {
-        sf::err() << "Error initializing DRM" << std::endl;
-        return;
-    }
+    drmNode.originalCrtc = drmModeGetCrtc(drmNode.fileDescriptor, drmNode.crtcId);
 
     gbmDevice = gbm_create_device(drmNode.fileDescriptor);
 
@@ -473,12 +415,70 @@ void checkInit()
     pollFD.events                 = POLLIN;
     drmEventCtx.version           = 2;
     drmEventCtx.page_flip_handler = pageFlipHandler;
+
+    drmNode.mode = nullptr;
+
+    return 1;
+}
+
+void setDrmMode(sf::Vector2u size = {})
+{
+    // don't do anything if supplied width and height are 0 and we already have a drm mode
+    if ((size == sf::Vector2u()) && drmNode.mode)
+        return;
+
+    drmModeConnectorPtr connector = drmNode.savedConnector;
+    if (!connector)
+        return;
+
+    // Find user requested mode:
+    // Use environment variable "SFML_DRM_MODE" (or nullptr if not set)
+    const char* modeString = std::getenv("SFML_DRM_MODE");
+
+    // Use environment variable "SFML_DRM_REFRESH" (or 0 if not set)
+    // Use in combination with mode to request specific refresh rate for the mode
+    // if multiple refresh rates for same mode might be supported
+    unsigned int refreshRate   = 0;
+    const char*  refreshString = std::getenv("SFML_DRM_REFRESH");
+
+    if (refreshString)
+        refreshRate = static_cast<unsigned int>(std::atoi(refreshString));
+
+    bool matched = false;
+    for (int i = 0; i < connector->count_modes; ++i)
+    {
+        drmModeModeInfoPtr currentMode = &connector->modes[i];
+
+        if (refreshRate == 0 || currentMode->vrefresh == refreshRate)
+        {
+            // prefer SFML_DRM_MODE setting if matched
+            if ((modeString && *modeString) && (std::strcmp(currentMode->name, modeString) == 0))
+            {
+                drmNode.mode = currentMode;
+                break;
+            }
+            // otherwise match to program supplied width and height
+            if (!matched && sf::Vector2u(currentMode->hdisplay, currentMode->vdisplay) == size)
+            {
+                drmNode.mode = currentMode;
+                matched      = true;
+            }
+        }
+    }
+    if ((modeString && *modeString) && !drmNode.mode)
+        sf::err() << "SFML_DRM_MODE (" << modeString << ") not found, using default mode!" << std::endl;
+
+    // Let's use the current mode rather than the preferred one if the user didn't specify a mode with env vars
+    if (!drmNode.mode)
+        drmNode.mode = &(drmNode.originalCrtc->mode);
+
+#ifdef SFML_DEBUG
+    sf::err() << "DRM Mode used: " << drmNode.mode->name << "@" << drmNode.mode->vrefresh << std::endl;
+#endif
 }
 
 EGLDisplay getInitializedDisplay()
 {
-    checkInit();
-
     if (display == EGL_NO_DISPLAY)
     {
         gladLoaderLoadEGL(EGL_NO_DISPLAY);
@@ -515,59 +515,70 @@ namespace sf::priv
 DRMContext::DRMContext(DRMContext* shared)
 {
     contextCount++;
+    if (initDrm() < 0)
+        return;
+
+    setDrmMode();
 
     // Get the initialized EGL display
     m_display = getInitializedDisplay();
 
     // Get the best EGL config matching the default video settings
-    m_config = getBestConfig(m_display, VideoMode::getDesktopMode().bitsPerPixel, ContextSettings{});
+    m_config = getBestConfig(m_display, ContextSettings{});
     updateSettings();
 
     // Create EGL context
     createContext(shared);
 
     if (shared)
-        createSurface(shared->m_size, VideoMode::getDesktopMode().bitsPerPixel, false);
+        createSurface({drmNode.mode->hdisplay, drmNode.mode->vdisplay}, false);
     else // create a surface to force the GL to initialize (seems to be required for glGetString() etc )
-        createSurface({1, 1}, VideoMode::getDesktopMode().bitsPerPixel, false);
+        createSurface({1, 1}, false);
 }
 
 
 ////////////////////////////////////////////////////////////
-DRMContext::DRMContext(DRMContext* shared, const ContextSettings& settings, const WindowImpl& owner, unsigned int bitsPerPixel)
+DRMContext::DRMContext(DRMContext* shared, const ContextSettings& settings, const WindowImpl& owner, unsigned int /*bitsPerPixel*/)
 {
     contextCount++;
+    if (initDrm() < 0)
+        return;
+
+    setDrmMode(owner.getSize());
 
     // Get the initialized EGL display
     m_display = getInitializedDisplay();
 
     // Get the best EGL config matching the requested video settings
-    m_config = getBestConfig(m_display, bitsPerPixel, settings);
+    m_config = getBestConfig(m_display, settings);
     updateSettings();
 
     // Create EGL context
     createContext(shared);
 
-    const Vector2u size = owner.getSize();
-    createSurface(size, bitsPerPixel, true);
+    createSurface({drmNode.mode->hdisplay, drmNode.mode->vdisplay}, true);
 }
 
 
 ////////////////////////////////////////////////////////////
-DRMContext::DRMContext(DRMContext* shared, const ContextSettings& settings, Vector2u size)
+DRMContext::DRMContext(DRMContext* shared, const ContextSettings& settings, Vector2u /*size*/)
 {
     contextCount++;
+    if (initDrm() < 0)
+        return;
+
+    setDrmMode();
 
     // Get the initialized EGL display
     m_display = getInitializedDisplay();
 
     // Get the best EGL config matching the requested video settings
-    m_config = getBestConfig(m_display, VideoMode::getDesktopMode().bitsPerPixel, settings);
+    m_config = getBestConfig(m_display, settings);
     updateSettings();
 
     // Create EGL context
     createContext(shared);
-    createSurface(size, VideoMode::getDesktopMode().bitsPerPixel, false);
+    createSurface({drmNode.mode->hdisplay, drmNode.mode->vdisplay}, false);
 }
 
 
@@ -702,23 +713,25 @@ void DRMContext::createContext(DRMContext* shared)
 
 
 ////////////////////////////////////////////////////////////
-void DRMContext::createSurface(Vector2u size, unsigned int /*bpp*/, bool scanout)
+void DRMContext::createSurface(Vector2u size, bool scanout)
 {
-    std::uint32_t flags = GBM_BO_USE_RENDERING;
+    static constexpr std::uint32_t fmt   = GBM_FORMAT_ARGB8888;
+    std::uint32_t                  flags = GBM_BO_USE_RENDERING;
 
     m_scanOut = scanout;
     if (m_scanOut)
         flags |= GBM_BO_USE_SCANOUT;
 
-    m_gbmSurface = gbm_surface_create(gbmDevice, size.x, size.y, GBM_FORMAT_ARGB8888, flags);
+    if (!gbm_device_is_format_supported(gbmDevice, fmt, flags))
+        err() << "Warning: GBM surface format not supported." << std::endl;
+
+    m_gbmSurface = gbm_surface_create(gbmDevice, size.x, size.y, fmt, flags);
 
     if (!m_gbmSurface)
     {
         err() << "Failed to create gbm surface." << std::endl;
         return;
     }
-
-    m_size = size;
 
     eglCheck(
         m_surface = eglCreateWindowSurface(m_display, m_config, reinterpret_cast<EGLNativeWindowType>(m_gbmSurface), nullptr));
@@ -745,13 +758,11 @@ void DRMContext::destroySurface()
 
 
 ////////////////////////////////////////////////////////////
-EGLConfig DRMContext::getBestConfig(EGLDisplay display, unsigned int bitsPerPixel, const ContextSettings& settings)
+EGLConfig DRMContext::getBestConfig(EGLDisplay display, const ContextSettings& settings)
 {
     // Set our video settings constraint
     const std::array attributes =
-    { EGL_BUFFER_SIZE,
-      static_cast<EGLint>(bitsPerPixel),
-      EGL_DEPTH_SIZE,
+    { EGL_DEPTH_SIZE,
       static_cast<EGLint>(settings.depthBits),
       EGL_STENCIL_SIZE,
       static_cast<EGLint>(settings.stencilBits),
@@ -765,7 +776,6 @@ EGLConfig DRMContext::getBestConfig(EGLDisplay display, unsigned int bitsPerPixe
       8,
       EGL_ALPHA_SIZE,
       8,
-
       EGL_SURFACE_TYPE,
       EGL_WINDOW_BIT,
 #if defined(SFML_OPENGL_ES)
@@ -818,7 +828,7 @@ GlFunctionPointer DRMContext::getFunction(const char* name)
 ////////////////////////////////////////////////////////////
 Drm& DRMContext::getDRM()
 {
-    checkInit();
+    initDrm();
     return drmNode;
 }
 
