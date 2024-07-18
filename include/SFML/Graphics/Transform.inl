@@ -35,10 +35,6 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-constexpr Transform::Transform() = default;
-
-
-////////////////////////////////////////////////////////////
 // clang-format off
 constexpr Transform::Transform(float a00, float a01, float a02,
                                float a10, float a11, float a12,

@@ -49,7 +49,7 @@ public:
     /// Sets the time value to zero.
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Time();
+    constexpr Time() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct from std::chrono::duration

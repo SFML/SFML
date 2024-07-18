@@ -53,7 +53,7 @@ public:
     /// Creates an identity transform (a transform that does nothing).
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Transform();
+    constexpr Transform() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct a transform from a 3x3 matrix

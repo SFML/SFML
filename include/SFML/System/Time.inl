@@ -35,10 +35,6 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-constexpr Time::Time() = default;
-
-
-////////////////////////////////////////////////////////////
 template <typename Rep, typename Period>
 constexpr Time::Time(const std::chrono::duration<Rep, Period>& duration) : m_microseconds(duration)
 {

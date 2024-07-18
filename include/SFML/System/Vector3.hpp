@@ -44,7 +44,7 @@ public:
     /// Creates a Vector3(0, 0, 0).
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Vector3();
+    constexpr Vector3() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the vector from its coordinates

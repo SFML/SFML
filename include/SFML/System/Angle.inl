@@ -45,11 +45,6 @@ constexpr float positiveRemainder(float a, float b)
 }
 } // namespace priv
 
-
-////////////////////////////////////////////////////////////
-constexpr Angle::Angle() = default;
-
-
 ////////////////////////////////////////////////////////////
 constexpr float Angle::asDegrees() const
 {
