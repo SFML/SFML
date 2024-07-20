@@ -35,12 +35,48 @@ namespace sf
 {
 namespace priv
 {
+
+// workaround on MSVC bug with multiple empty base classes ending up one byte past the child object
+// disadvantage is making the overloadSet class bigger than it needs to be
+// no __declspec(empty_bases) on OverloadSet does not work
+#if defined(_MSC_VER) && !defined(__clang__) 
+template<typename T,bool = std::is_empty_v<T>>
+struct NotEmpty : T
+{
+    using T::T;
+    template<typename U>
+    NotEmpty(U&& u) : T(static_cast<U&&>(u))
+    {}
+
+    char for_making_this_not_empty;
+};
+
+template <typename T>
+struct NotEmpty<T,false> : T
+{
+    using T::T;
+    template <typename U>
+    NotEmpty(U&& u) : T(static_cast<U&&>(u))
+    {
+    }
+};
+
+template <typename... Ts>
+struct OverloadSet : NotEmpty<Ts>...
+{
+
+    using NotEmpty<Ts>::operator()...;
+};
+#else // not MSVC
 template <typename... Ts>
 struct OverloadSet : Ts...
 {
     using Ts::operator()...;
 };
-template <typename... Ts>
+
+#endif
+
+template<typename... Ts>
 OverloadSet(Ts...) -> OverloadSet<Ts...>;
 
 struct DelayOverloadResolution
@@ -52,7 +88,6 @@ struct DelayOverloadResolution
 };
 } // namespace priv
 
-
 ////////////////////////////////////////////////////////////
 template <typename... Ts>
 void WindowBase::handleEvents(Ts&&... handlers) // NOLINT(cppcoreguidelines-missing-std-forward)
@@ -61,7 +96,9 @@ void WindowBase::handleEvents(Ts&&... handlers) // NOLINT(cppcoreguidelines-miss
     // complains about it even though the code would become uncompilable
 
     // NOLINTNEXTLINE(misc-const-correctness)
-    priv::OverloadSet overloadSet{std::forward<Ts>(handlers)..., [](const priv::DelayOverloadResolution&) { /* ignore */ }};
+    priv::OverloadSet overloadSet
+    {std::forward<Ts>(handlers)..., [](const priv::DelayOverloadResolution&) {}
+    };
 
     while (const std::optional event = pollEvent())
         event->visit(overloadSet);
