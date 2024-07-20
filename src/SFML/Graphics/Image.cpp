@@ -30,7 +30,6 @@
 #include <SFML/System/Err.hpp>
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/Utils.hpp>
-
 #ifdef SFML_SYSTEM_ANDROID
 #include <SFML/System/Android/Activity.hpp>
 #include <SFML/System/Android/ResourceStream.hpp>
@@ -49,27 +48,10 @@
 
 #include <cassert>
 #include <cstring>
-#include <cctype>
+
 
 namespace
 {
-
-bool caseless_equal(std::string_view a, std::string_view b)
-{
-    const auto alen = a.length();
-    if (alen != b.length())
-        return false;
-
-    for (std::size_t i = 0; i < alen; ++i)
-    {
-        if (std::tolower(static_cast<unsigned char>(a[i])) !=
-            std::tolower(static_cast<unsigned char>(b[i])))
-            return false;
-    }
-    return true;
-}
-
-
 // stb_image callbacks that operate on a sf::InputStream
 int read(void* user, char* data, int size)
 {
@@ -114,40 +96,63 @@ using StbPtr = std::unique_ptr<stbi_uc, StbDeleter>;
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Image::Image(Vector2u size, const Color& color) :
-m_size(size),
-m_pixels(static_cast<std::size_t>(size.x) * static_cast<std::size_t>(size.y) * 4)
+Image::Image(Vector2u size, const Color& color)
 {
-    // not sure if this is intended
-    // but I will keep compliance with the previous implementation
-    if (size.x == 0 || size.y == 0)
-        m_size = {};
-
-    // Fill it with the specified color
-    std::uint8_t* ptr = m_pixels.data();
-    std::uint8_t* end = ptr + m_pixels.size();
-    while (ptr != end)
+    if (size.x && size.y)
     {
-        *ptr++ = color.r;
-        *ptr++ = color.g;
-        *ptr++ = color.b;
-        *ptr++ = color.a;
+        // Create a new pixel buffer first for exception safety's sake
+        std::vector<std::uint8_t> newPixels(static_cast<std::size_t>(size.x) * static_cast<std::size_t>(size.y) * 4);
+
+        // Fill it with the specified color
+        std::uint8_t* ptr = newPixels.data();
+        std::uint8_t* end = ptr + newPixels.size();
+        while (ptr < end)
+        {
+            *ptr++ = color.r;
+            *ptr++ = color.g;
+            *ptr++ = color.b;
+            *ptr++ = color.a;
+        }
+
+        // Commit the new pixel buffer
+        m_pixels.swap(newPixels);
+
+        // Assign the new size
+        m_size = size;
+    }
+    else
+    {
+        // Dump the pixel buffer
+        std::vector<std::uint8_t>().swap(m_pixels);
+
+        // Assign the new size
+        m_size = {};
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-Image::Image(Vector2u size, const std::uint8_t* pixels) : m_size(size)
+Image::Image(Vector2u size, const std::uint8_t* pixels)
 {
-    // not sure if this is intended
-    // but I will keep compliance with the previous implementation
-    if (size.x == 0 || size.y == 0)
+    if (pixels && size.x && size.y)
+    {
+        // Create a new pixel buffer first for exception safety's sake
+        std::vector<std::uint8_t> newPixels(pixels, pixels + size.x * size.y * 4);
+
+        // Commit the new pixel buffer
+        m_pixels.swap(newPixels);
+
+        // Assign the new size
+        m_size = size;
+    }
+    else
+    {
+        // Dump the pixel buffer
+        std::vector<std::uint8_t>().swap(m_pixels);
+
+        // Assign the new size
         m_size = {};
-
-    if (!pixels)
-        return;
-
-    m_pixels.assign(pixels, pixels + (size.x * size.y * 4));
+    }
 }
 
 
@@ -177,7 +182,9 @@ std::optional<Image> Image::loadFromFile(const std::filesystem::path& filename)
     const auto ptr      = StbPtr(stbi_load(filename.string().c_str(), &width, &height, &channels, STBI_rgb_alpha));
 
     if (ptr)
+    {
         return Image(Vector2u(Vector2i(width, height)), {ptr.get(), ptr.get() + width * height * 4});
+    }
 
 
     // Error, failed to load the image
@@ -192,24 +199,28 @@ std::optional<Image> Image::loadFromFile(const std::filesystem::path& filename)
 std::optional<Image> Image::loadFromMemory(const void* data, std::size_t size)
 {
     // Check input parameters
-    if (!data || size == 0)
+    if (data && size)
     {
-        err() << "Failed to load image from memory, no data provided (was null) or size was 0" << std::endl;
+        // Load the image and get a pointer to the pixels in memory
+        int         width    = 0;
+        int         height   = 0;
+        int         channels = 0;
+        const auto* buffer   = static_cast<const unsigned char*>(data);
+        const auto  ptr      = StbPtr(
+            stbi_load_from_memory(buffer, static_cast<int>(size), &width, &height, &channels, STBI_rgb_alpha));
+
+        if (ptr)
+        {
+            return Image(Vector2u(Vector2i(width, height)), {ptr.get(), ptr.get() + width * height * 4});
+        }
+
+        // Error, failed to load the image
+        err() << "Failed to load image from memory. Reason: " << stbi_failure_reason() << std::endl;
+
         return std::nullopt;
     }
 
-    // Load the image and get a pointer to the pixels in memory
-    Vector2i     dim;
-    int          channels = 0;
-    const auto*  buffer   = static_cast<const unsigned char*>(data);
-    const StbPtr ptr(stbi_load_from_memory(buffer, static_cast<int>(size), &dim.x, &dim.y, &channels, STBI_rgb_alpha));
-
-    // apply RVO if possible (via passkey)
-    if (ptr)
-        return Image(Vector2u(dim), {ptr.get(), ptr.get() + dim.x * dim.y * 4});
-
-    // Error, failed to load the image
-    err() << "Failed to load image from memory. Reason: " << stbi_failure_reason() << std::endl;
+    err() << "Failed to load image from memory, no data provided" << std::endl;
     return std::nullopt;
 }
 
@@ -231,12 +242,15 @@ std::optional<Image> Image::loadFromStream(InputStream& stream)
     callbacks.eof  = eof;
 
     // Load the image and get a pointer to the pixels in memory
-    Vector2i   dim;
+    int        width    = 0;
+    int        height   = 0;
     int        channels = 0;
-    const auto ptr = StbPtr(stbi_load_from_callbacks(&callbacks, &stream, &dim.x, &dim.y, &channels, STBI_rgb_alpha));
+    const auto ptr = StbPtr(stbi_load_from_callbacks(&callbacks, &stream, &width, &height, &channels, STBI_rgb_alpha));
 
     if (ptr)
-        return Image(Vector2u(dim), {ptr.get(), ptr.get() + dim.x * dim.y * 4});
+    {
+        return Image(Vector2u(Vector2i(width, height)), {ptr.get(), ptr.get() + width * height * 4});
+    }
 
     // Error, failed to load the image
     err() << "Failed to load image from stream. Reason: " << stbi_failure_reason() << std::endl;
@@ -249,46 +263,45 @@ std::optional<Image> Image::loadFromStream(InputStream& stream)
 bool Image::saveToFile(const std::filesystem::path& filename) const
 {
     // Make sure the image is not empty
-    if (m_pixels.empty() || m_size.x == 0 || m_size.y == 0)
+    if (!m_pixels.empty() && m_size.x > 0 && m_size.y > 0)
     {
-        err() << "Failed to save empty image\n" << formatDebugPathInfo(filename) << std::endl;
-        return false;
+        // Deduce the image type from its extension
+
+        // Extract the extension
+        const std::filesystem::path extension     = filename.extension();
+        const Vector2i              convertedSize = Vector2i(m_size);
+
+        if (extension == ".bmp")
+        {
+            // BMP format
+            if (stbi_write_bmp(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, m_pixels.data()))
+                return true;
+        }
+        else if (extension == ".tga")
+        {
+            // TGA format
+            if (stbi_write_tga(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, m_pixels.data()))
+                return true;
+        }
+        else if (extension == ".png")
+        {
+            // PNG format
+            if (stbi_write_png(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, m_pixels.data(), 0))
+                return true;
+        }
+        else if (extension == ".jpg" || extension == ".jpeg")
+        {
+            // JPG format
+            if (stbi_write_jpg(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, m_pixels.data(), 90))
+                return true;
+        }
+        else
+        {
+            err() << "Image file extension " << extension << " not supported\n";
+        }
     }
 
-    // Deduce the image type from its extension
-
-    // Extract the extension
-    const std::filesystem::path extension     = filename.extension();
-    const Vector2i              convertedSize = Vector2i(m_size);
-
-    if (extension == ".bmp")
-    {
-        // BMP format
-        if (stbi_write_bmp(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, m_pixels.data()))
-            return true;
-    }
-    else if (extension == ".tga")
-    {
-        // TGA format
-        if (stbi_write_tga(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, m_pixels.data()))
-            return true;
-    }
-    else if (extension == ".png")
-    {
-        // PNG format
-        if (stbi_write_png(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, m_pixels.data(), 0))
-            return true;
-    }
-    else if (extension == ".jpg" || extension == ".jpeg")
-    {
-        // JPG format
-        if (stbi_write_jpg(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, m_pixels.data(), 90))
-            return true;
-    }
-    else
-    {
-        err() << "Image file extension " << extension << " not supported\n";
-    }
+    err() << "Failed to save image\n" << formatDebugPathInfo(filename) << std::endl;
     return false;
 }
 
@@ -297,41 +310,41 @@ bool Image::saveToFile(const std::filesystem::path& filename) const
 std::optional<std::vector<std::uint8_t>> Image::saveToMemory(std::string_view format) const
 {
     // Make sure the image is not empty
-    if (m_pixels.empty() || m_size.x == 0 || m_size.y == 0)
+    if (!m_pixels.empty() && m_size.x > 0 && m_size.y > 0)
     {
-        err() << "Failed to save image with format " << std::quoted(format) << std::endl;
-        return std::nullopt;
+        // Choose function based on format
+        const std::string specified     = toLower(std::string(format));
+        const Vector2i    convertedSize = Vector2i(m_size);
+
+        std::vector<std::uint8_t> buffer;
+
+        if (specified == "bmp")
+        {
+            // BMP format
+            if (stbi_write_bmp_to_func(bufferFromCallback, &buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data()))
+                return buffer;
+        }
+        else if (specified == "tga")
+        {
+            // TGA format
+            if (stbi_write_tga_to_func(bufferFromCallback, &buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data()))
+                return buffer;
+        }
+        else if (specified == "png")
+        {
+            // PNG format
+            if (stbi_write_png_to_func(bufferFromCallback, &buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data(), 0))
+                return buffer;
+        }
+        else if (specified == "jpg" || specified == "jpeg")
+        {
+            // JPG format
+            if (stbi_write_jpg_to_func(bufferFromCallback, &buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data(), 90))
+                return buffer;
+        }
     }
 
-    // Choose function based on format
-    const Vector2i convertedSize = Vector2i(m_size);
-
-    std::optional<std::vector<std::uint8_t>> buffer(std::in_place);
-
-    if (caseless_equal(format, "bmp"))
-    {
-        // BMP format
-        if (stbi_write_bmp_to_func(bufferFromCallback, &*buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data()))
-            return buffer;
-    }
-    else if (caseless_equal(format, "tga"))
-    {
-        // TGA format
-        if (stbi_write_tga_to_func(bufferFromCallback, &*buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data()))
-            return buffer;
-    }
-    else if (caseless_equal(format, "png"))
-    {
-        // PNG format
-        if (stbi_write_png_to_func(bufferFromCallback, &*buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data(), 0))
-            return buffer;
-    }
-    else if (caseless_equal(format, "jpg") || caseless_equal(format, "jpeg"))
-    {
-        // JPG format
-        if (stbi_write_jpg_to_func(bufferFromCallback, &*buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data(), 90))
-            return buffer;
-    }
+    err() << "Failed to save image with format " << std::quoted(format) << std::endl;
     return std::nullopt;
 }
 
@@ -347,29 +360,23 @@ Vector2u Image::getSize() const
 void Image::createMaskFromColor(const Color& color, std::uint8_t alpha)
 {
     // Make sure that the image is not empty
-    if (m_pixels.empty())
-        return;
-
-    // Replace the alpha of the pixels that match the transparent color
-    std::uint8_t* ptr = m_pixels.data();
-    std::uint8_t* end = ptr + m_pixels.size();
-    while (ptr != end)
+    if (!m_pixels.empty())
     {
-        // this could be replaced by
-        // std::memcpy(ptr,&color,4) == 0
-        // which I personally find it clearer
-        // and the assembely shows it is faster but I am not doing it for that
-        // https://godbolt.org/z/Tf6jEfs9Y
-        // if you use -fno-builtin it will be slower
-        if ((ptr[0] == color.r) && (ptr[1] == color.g) && (ptr[2] == color.b) && (ptr[3] == color.a))
-            ptr[3] = alpha;
-        ptr += 4;
+        // Replace the alpha of the pixels that match the transparent color
+        std::uint8_t* ptr = m_pixels.data();
+        std::uint8_t* end = ptr + m_pixels.size();
+        while (ptr < end)
+        {
+            if ((ptr[0] == color.r) && (ptr[1] == color.g) && (ptr[2] == color.b) && (ptr[3] == color.a))
+                ptr[3] = alpha;
+            ptr += 4;
+        }
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-bool Image::copy(const Image& source, Vector2u dest, const IntRect& sourceRect, bool applyAlpha)
+[[nodiscard]] bool Image::copy(const Image& source, Vector2u dest, const IntRect& sourceRect, bool applyAlpha)
 {
     // Make sure that both images are valid
     if (source.m_size.x == 0 || source.m_size.y == 0 || m_size.x == 0 || m_size.y == 0)
@@ -379,13 +386,9 @@ bool Image::copy(const Image& source, Vector2u dest, const IntRect& sourceRect, 
     if (sourceRect.position.x < 0 || sourceRect.position.y < 0 || sourceRect.size.x < 0 || sourceRect.size.y < 0)
         return false;
 
-    // Make sure the destination position is within this image bounds
-    if (m_size.x <= dest.x || m_size.y <= dest.y)
-        return false;
-
     Rect<unsigned int> srcRect(sourceRect);
 
-    // Use the whole source image as srcRect if the provided source rectangle has either x or y equal zero
+    // Use the whole source image as srcRect if the provided source rectangle is empty
     if (srcRect.size.x == 0 || srcRect.size.y == 0)
     {
         srcRect = Rect<unsigned int>({0, 0}, source.m_size);
@@ -399,16 +402,20 @@ bool Image::copy(const Image& source, Vector2u dest, const IntRect& sourceRect, 
             return false;
     }
 
+    // Make sure the destination position is within this image bounds
+    if (m_size.x <= dest.x || m_size.y <= dest.y)
+        return false;
+
     // Then find the valid size of the destination rectangle
     const Vector2u dstSize(std::min(m_size.x - dest.x, srcRect.size.x), std::min(m_size.y - dest.y, srcRect.size.y));
 
     // Precompute as much as possible
-    const auto  pitch     = static_cast<std::size_t>(dstSize.x) * 4;
+    const std::size_t  pitch     = static_cast<std::size_t>(dstSize.x) * 4;
     const unsigned int srcStride = source.m_size.x * 4;
     const unsigned int dstStride = m_size.x * 4;
 
     const std::uint8_t* srcPixels = source.m_pixels.data() + (srcRect.position.x + srcRect.position.y * source.m_size.x) * 4;
-    std::uint8_t* dstPixels = m_pixels.data() + (dest.x + dest.y * m_size.x) * 4;
+    std::uint8_t*       dstPixels = m_pixels.data() + (dest.x + dest.y * m_size.x) * 4;
 
     // Copy the pixels
     if (applyAlpha)
@@ -429,7 +436,7 @@ bool Image::copy(const Image& source, Vector2u dest, const IntRect& sourceRect, 
 
                 dst[3] = outAlpha;
 
-                if (outAlpha != 0)
+                if (outAlpha)
                     for (int k = 0; k < 3; k++)
                         dst[k] = static_cast<std::uint8_t>((src[k] * srcAlpha + dst[k] * (outAlpha - srcAlpha)) / outAlpha);
                 else
@@ -462,10 +469,7 @@ void Image::setPixel(Vector2u coords, const Color& color)
     assert(coords.x < m_size.x && "Image::setPixel() x coordinate is out of bounds");
     assert(coords.y < m_size.y && "Image::setPixel() y coordinate is out of bounds");
 
-    const auto index = (coords.x + coords.y * m_size.x) * 4;
-    // can use std::memcpy here
-    // std::memcpy(&m_pixels[index],&color,4);
-    // which should be fine iirc
+    const auto    index = (coords.x + coords.y * m_size.x) * 4;
     std::uint8_t* pixel = &m_pixels[index];
     *pixel++            = color.r;
     *pixel++            = color.g;
@@ -490,7 +494,9 @@ Color Image::getPixel(Vector2u coords) const
 const std::uint8_t* Image::getPixelsPtr() const
 {
     if (!m_pixels.empty())
+    {
         return m_pixels.data();
+    }
 
     err() << "Trying to access the pixels of an empty image" << std::endl;
     return nullptr;
@@ -500,21 +506,23 @@ const std::uint8_t* Image::getPixelsPtr() const
 ////////////////////////////////////////////////////////////
 void Image::flipHorizontally()
 {
-    if (m_pixels.empty())
-        return;
-
-    const std::size_t rowSize = m_size.x * 4;
-
-    for (std::size_t y = 0; y < m_size.y; ++y)
+    if (!m_pixels.empty())
     {
-        auto left  = m_pixels.data() + y * rowSize;
-        auto right = m_pixels.data() + ((y + 1) * rowSize - 4);
+        const std::size_t rowSize = m_size.x * 4;
 
-        for (std::size_t x = 0; x < m_size.x / 2; ++x)
+        for (std::size_t y = 0; y < m_size.y; ++y)
         {
-            std::swap_ranges(left, left + 4, right);
-            left += 4;
-            right -= 4;
+            auto left = m_pixels.begin() + static_cast<std::vector<std::uint8_t>::iterator::difference_type>(y * rowSize);
+            auto right = m_pixels.begin() +
+                         static_cast<std::vector<std::uint8_t>::iterator::difference_type>((y + 1) * rowSize - 4);
+
+            for (std::size_t x = 0; x < m_size.x / 2; ++x)
+            {
+                std::swap_ranges(left, left + 4, right);
+
+                left += 4;
+                right -= 4;
+            }
         }
     }
 }
@@ -523,20 +531,20 @@ void Image::flipHorizontally()
 ////////////////////////////////////////////////////////////
 void Image::flipVertically()
 {
-    if (m_pixels.empty())
-        return;
-
-    const auto rowSize = m_size.x * 4;
-
-    auto top    = m_pixels.data();
-    auto bottom = (m_pixels.data() + m_pixels.size()) - rowSize;
-
-    for (std::size_t y = 0; y < m_size.y / 2; ++y)
+    if (!m_pixels.empty())
     {
-        std::swap_ranges(top, top + rowSize, bottom);
+        const auto rowSize = static_cast<std::vector<std::uint8_t>::iterator::difference_type>(m_size.x * 4);
 
-        top += rowSize;
-        bottom -= rowSize;
+        auto top    = m_pixels.begin();
+        auto bottom = m_pixels.end() - rowSize;
+
+        for (std::size_t y = 0; y < m_size.y / 2; ++y)
+        {
+            std::swap_ranges(top, top + rowSize, bottom);
+
+            top += rowSize;
+            bottom -= rowSize;
+        }
     }
 }
 
