@@ -29,7 +29,7 @@
 #include <SFML/Window/WindowBase.hpp> // NOLINT(misc-header-include-cycle)
 
 #include <utility>
-
+#include <type_traits>
 
 namespace sf
 {
@@ -45,7 +45,7 @@ struct NotEmpty : T
 {
     using T::T;
     template<typename U>
-    NotEmpty(U&& u) : T(static_cast<U&&>(u))
+    NotEmpty(U&& u) : T(std::forward<U>(u))
     {}
 
     char for_making_this_not_empty;
@@ -56,7 +56,7 @@ struct NotEmpty<T,false> : T
 {
     using T::T;
     template <typename U>
-    NotEmpty(U&& u) : T(static_cast<U&&>(u))
+    NotEmpty(U&& u) : T(std::forward<U>(u))
     {
     }
 };
