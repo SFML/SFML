@@ -51,7 +51,8 @@ struct NeverEmpty : T
     {
     }
 
-    char for_making_this_not_empty;
+private:
+    char m_forMakingThisNeverEmpty;
 };
 
 template <typename T>
