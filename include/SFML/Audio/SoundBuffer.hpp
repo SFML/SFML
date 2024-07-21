@@ -118,7 +118,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Load the sound buffer from an array of audio samples
     ///
-    /// The assumed format of the audio samples is 16 bits signed integer.
+    /// The assumed format of the audio samples is 16 bit signed integer.
     ///
     /// \param samples      Pointer to the array of samples in memory
     /// \param sampleCount  Number of samples in the array
@@ -156,7 +156,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Get the array of audio samples stored in the buffer
     ///
-    /// The format of the returned samples is 16 bits signed integer.
+    /// The format of the returned samples is 16 bit signed integer.
     /// The total number of samples in this array is given by the
     /// getSampleCount() function.
     ///
@@ -310,7 +310,7 @@ private:
 /// \ingroup audio
 ///
 /// A sound buffer holds the data of a sound, which is
-/// an array of audio samples. A sample is a 16 bits signed integer
+/// an array of audio samples. A sample is a 16 bit signed integer
 /// that defines the amplitude of the sound at a given time.
 /// The sound is then reconstituted by playing these samples at
 /// a high rate (for example, 44100 samples per second is the

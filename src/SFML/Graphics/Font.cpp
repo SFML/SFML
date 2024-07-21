@@ -596,7 +596,7 @@ Glyph Font::loadGlyph(std::uint32_t codePoint, unsigned int characterSize, bool 
         }
         else
         {
-            // Pixels are 8 bits gray levels
+            // Pixels are 8 bit gray levels
             for (unsigned int y = padding; y < size.y - padding; ++y)
             {
                 for (unsigned int x = padding; x < size.x - padding; ++x)
