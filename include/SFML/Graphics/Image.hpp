@@ -254,7 +254,7 @@ public:
     /// \brief Get a read-only pointer to the array of pixels
     ///
     /// The returned value points to an array of RGBA pixels made of
-    /// 8 bits integers components. The size of the array is
+    /// 8 bit integer components. The size of the array is
     /// width * height * 4 (getSize().x * getSize().y * 4).
     /// Warning: the returned pointer may become invalid if you
     /// modify the image, so you should never store it for too long.
@@ -305,7 +305,7 @@ private:
 ///
 /// sf::Image can handle a unique internal representation of
 /// pixels, which is RGBA 32 bits. This means that a pixel
-/// must be composed of 8 bits red, green, blue and alpha
+/// must be composed of 8 bit red, green, blue and alpha
 /// channels -- just like a sf::Color.
 /// All the functions that return an array of pixels follow
 /// this rule, and all parameters that you pass to sf::Image

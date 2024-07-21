@@ -641,7 +641,7 @@ SFML_GRAPHICS_API void swap(Texture& left, Texture& right) noexcept;
 ///
 /// Like sf::Image, sf::Texture can handle a unique internal
 /// representation of pixels, which is RGBA 32 bits. This means
-/// that a pixel must be composed of 8 bits red, green, blue and
+/// that a pixel must be composed of 8 bit red, green, blue and
 /// alpha channels -- just like a sf::Color.
 ///
 /// When providing texture data from an image file or memory, it can
