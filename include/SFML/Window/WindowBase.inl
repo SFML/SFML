@@ -57,6 +57,8 @@ struct DelayOverloadResolution
 template <typename... Ts>
 void WindowBase::handleEvents(Ts&&... handlers) // NOLINT(cppcoreguidelines-missing-std-forward)
 {
+    static_assert(sizeof...(Ts) > 0, "Must provide at least one handler");
+
     // Disable misc-const-correctness for this line since clang-tidy
     // complains about it even though the code would become uncompilable
 

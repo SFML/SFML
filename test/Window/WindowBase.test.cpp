@@ -203,9 +203,6 @@ TEST_CASE("[Window] sf::WindowBase", runDisplayTests())
     {
         sf::WindowBase windowBase(sf::VideoMode({360, 240}), "WindowBase Tests");
 
-        // Should compile if user provides nothing
-        windowBase.handleEvents();
-
         // Should compile if user provides only a specific handler
         windowBase.handleEvents([](const sf::Event::Closed&) {});
 
