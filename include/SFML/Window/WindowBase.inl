@@ -39,6 +39,9 @@ template <typename... Ts>
 struct OverloadSet : Ts...
 {
     using Ts::operator()...;
+#if defined(_MSC_VER) && !defined(__clang__)
+    unsigned char dummy; // Dummy variable to ensure that this struct is not empty thus avoiding a crash due to an MSVC bug
+#endif
 };
 template <typename... Ts>
 OverloadSet(Ts...) -> OverloadSet<Ts...>;
