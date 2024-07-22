@@ -662,7 +662,7 @@ Out Utf<32>::toUtf32(In begin, In end, Out output)
 
 ////////////////////////////////////////////////////////////
 template <typename In>
-std::uint32_t Utf<32>::decodeAnsi(In input, [[maybe_unused]] const std::locale& locale)
+std::uint32_t Utf<32>::decodeAnsi(In input,const std::locale& locale)
 {
     // Get the facet of the locale which deals with character conversion
     const auto& facet = std::use_facet<std::ctype<wchar_t>>(locale);
@@ -688,7 +688,7 @@ std::uint32_t Utf<32>::decodeWide(In input)
 
 ////////////////////////////////////////////////////////////
 template <typename Out>
-Out Utf<32>::encodeAnsi(std::uint32_t codepoint, Out output, char replacement, [[maybe_unused]] const std::locale& locale)
+Out Utf<32>::encodeAnsi(std::uint32_t codepoint, Out output, char replacement,const std::locale& locale)
 {
     // Get the facet of the locale which deals with character conversion
     const auto& facet = std::use_facet<std::ctype<wchar_t>>(locale);
