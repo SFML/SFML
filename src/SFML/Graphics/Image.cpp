@@ -376,7 +376,7 @@ void Image::createMaskFromColor(const Color& color, std::uint8_t alpha)
 
 
 ////////////////////////////////////////////////////////////
-[[nodiscard]] bool Image::copy(const Image& source, Vector2u dest, const IntRect& sourceRect, bool applyAlpha)
+bool Image::copy(const Image& source, Vector2u dest, const IntRect& sourceRect, bool applyAlpha)
 {
     // Make sure that both images are valid
     if (source.m_size.x == 0 || source.m_size.y == 0 || m_size.x == 0 || m_size.y == 0)
