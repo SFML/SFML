@@ -258,7 +258,6 @@ std::uint64_t InputSoundFile::read(std::int16_t* samples, std::uint64_t maxCount
 void InputSoundFile::close()
 {
     *this = {};
-    m_channelMap.clear();
 }
 
 
