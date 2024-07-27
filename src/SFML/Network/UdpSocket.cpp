@@ -65,7 +65,7 @@ unsigned short UdpSocket::getLocalPort() const
 
 
 ////////////////////////////////////////////////////////////
-Socket::Status UdpSocket::bind(unsigned short port, const IpAddress& address)
+Socket::Status UdpSocket::bind(unsigned short port, IpAddress address)
 {
     // Close the socket if it is already bound
     close();
@@ -98,7 +98,7 @@ void UdpSocket::unbind()
 
 
 ////////////////////////////////////////////////////////////
-Socket::Status UdpSocket::send(const void* data, std::size_t size, const IpAddress& remoteAddress, unsigned short remotePort)
+Socket::Status UdpSocket::send(const void* data, std::size_t size, IpAddress remoteAddress, unsigned short remotePort)
 {
     // Create the internal socket if it doesn't exist
     create();
@@ -183,7 +183,7 @@ Socket::Status UdpSocket::receive(void*                     data,
 
 
 ////////////////////////////////////////////////////////////
-Socket::Status UdpSocket::send(Packet& packet, const IpAddress& remoteAddress, unsigned short remotePort)
+Socket::Status UdpSocket::send(Packet& packet, IpAddress remoteAddress, unsigned short remotePort)
 {
     // UDP is a datagram-oriented protocol (as opposed to TCP which is a stream protocol).
     // Sending one datagram is almost safe: it may be lost but if it's received, then its data

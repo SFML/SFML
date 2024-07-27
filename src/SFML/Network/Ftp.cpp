@@ -158,7 +158,7 @@ Ftp::~Ftp()
 
 
 ////////////////////////////////////////////////////////////
-Ftp::Response Ftp::connect(const IpAddress& server, unsigned short port, Time timeout)
+Ftp::Response Ftp::connect(IpAddress server, unsigned short port, Time timeout)
 {
     // Connect to the server
     if (m_commandSocket.connect(server, port, timeout) != Socket::Status::Done)

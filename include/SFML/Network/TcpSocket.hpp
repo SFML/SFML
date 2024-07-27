@@ -115,7 +115,7 @@ public:
     /// \see disconnect
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Status connect(const IpAddress& remoteAddress, unsigned short remotePort, Time timeout = Time::Zero);
+    [[nodiscard]] Status connect(IpAddress remoteAddress, unsigned short remotePort, Time timeout = Time::Zero);
 
     ////////////////////////////////////////////////////////////
     /// \brief Disconnect the socket from its remote peer
