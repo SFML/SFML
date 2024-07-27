@@ -30,7 +30,7 @@ public:
     /// \param port Port of the remote host
     ///
     ////////////////////////////////////////////////////////////
-    NetworkRecorder(const sf::IpAddress& host, unsigned short port) : m_host(host), m_port(port)
+    NetworkRecorder(sf::IpAddress host, unsigned short port) : m_host(host), m_port(port)
     {
     }
 

@@ -62,7 +62,7 @@ unsigned short TcpListener::getLocalPort() const
 
 
 ////////////////////////////////////////////////////////////
-Socket::Status TcpListener::listen(unsigned short port, const IpAddress& address)
+Socket::Status TcpListener::listen(unsigned short port, IpAddress address)
 {
     // Close the socket if it is already bound
     close();

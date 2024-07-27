@@ -290,7 +290,7 @@ public:
     /// \see disconnect
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Response connect(const IpAddress& server, unsigned short port = 21, Time timeout = Time::Zero);
+    [[nodiscard]] Response connect(IpAddress server, unsigned short port = 21, Time timeout = Time::Zero);
 
     ////////////////////////////////////////////////////////////
     /// \brief Close the connection with the server

@@ -85,7 +85,7 @@ public:
     /// \see accept, close
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Status listen(unsigned short port, const IpAddress& address = IpAddress::Any);
+    [[nodiscard]] Status listen(unsigned short port, IpAddress address = IpAddress::Any);
 
     ////////////////////////////////////////////////////////////
     /// \brief Stop listening and close the socket

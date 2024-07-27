@@ -119,7 +119,7 @@ unsigned short TcpSocket::getRemotePort() const
 
 
 ////////////////////////////////////////////////////////////
-Socket::Status TcpSocket::connect(const IpAddress& remoteAddress, unsigned short remotePort, Time timeout)
+Socket::Status TcpSocket::connect(IpAddress remoteAddress, unsigned short remotePort, Time timeout)
 {
     // Disconnect the socket if it is already connected
     disconnect();

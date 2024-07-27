@@ -190,42 +190,42 @@ std::optional<IpAddress> IpAddress::getPublicAddress(Time timeout)
 
 
 ////////////////////////////////////////////////////////////
-bool operator==(const IpAddress& left, const IpAddress& right)
+bool operator==(IpAddress left, IpAddress right)
 {
     return !(left < right) && !(right < left);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator!=(const IpAddress& left, const IpAddress& right)
+bool operator!=(IpAddress left, IpAddress right)
 {
     return !(left == right);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator<(const IpAddress& left, const IpAddress& right)
+bool operator<(IpAddress left, IpAddress right)
 {
     return left.m_address < right.m_address;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator>(const IpAddress& left, const IpAddress& right)
+bool operator>(IpAddress left, IpAddress right)
 {
     return right < left;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator<=(const IpAddress& left, const IpAddress& right)
+bool operator<=(IpAddress left, IpAddress right)
 {
     return !(right < left);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator>=(const IpAddress& left, const IpAddress& right)
+bool operator>=(IpAddress left, IpAddress right)
 {
     return !(left < right);
 }
@@ -243,7 +243,7 @@ std::istream& operator>>(std::istream& stream, std::optional<IpAddress>& address
 
 
 ////////////////////////////////////////////////////////////
-std::ostream& operator<<(std::ostream& stream, const IpAddress& address)
+std::ostream& operator<<(std::ostream& stream, IpAddress address)
 {
     return stream << address.toString();
 }

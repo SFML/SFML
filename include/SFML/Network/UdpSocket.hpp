@@ -97,7 +97,7 @@ public:
     /// \see unbind, getLocalPort
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Status bind(unsigned short port, const IpAddress& address = IpAddress::Any);
+    [[nodiscard]] Status bind(unsigned short port, IpAddress address = IpAddress::Any);
 
     ////////////////////////////////////////////////////////////
     /// \brief Unbind the socket from the local port to which it is bound
@@ -130,7 +130,7 @@ public:
     /// \see receive
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Status send(const void* data, std::size_t size, const IpAddress& remoteAddress, unsigned short remotePort);
+    [[nodiscard]] Status send(const void* data, std::size_t size, IpAddress remoteAddress, unsigned short remotePort);
 
     ////////////////////////////////////////////////////////////
     /// \brief Receive raw data from a remote peer
@@ -175,7 +175,7 @@ public:
     /// \see receive
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Status send(Packet& packet, const IpAddress& remoteAddress, unsigned short remotePort);
+    [[nodiscard]] Status send(Packet& packet, IpAddress remoteAddress, unsigned short remotePort);
 
     ////////////////////////////////////////////////////////////
     /// \brief Receive a formatted packet of data from a remote peer
