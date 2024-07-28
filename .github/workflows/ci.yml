@@ -19,8 +19,8 @@ jobs:
         - { name: Linux GCC OpenGL ES,  os: ubuntu-20.04, flags: -DSFML_OPENGL_ES=ON }
         - { name: macOS x64,            os: macos-12 }
         - { name: macOS arm64,          os: macos-14 }
-        - { name: iOS,                  os: macos-11, flags: -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=arm64 }
-        - { name: iOS Xcode,            os: macos-11, suffix: -- CODE_SIGNING_ALLOWED=NO, flags: -DCMAKE_SYSTEM_NAME=iOS -GXcode }
+        - { name: iOS,                  os: macos-12, flags: -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=arm64 }
+        - { name: iOS Xcode,            os: macos-12, suffix: -- CODE_SIGNING_ALLOWED=NO, flags: -DCMAKE_SYSTEM_NAME=iOS -GXcode }
         config:
         - { name: Shared, flags: -DBUILD_SHARED_LIBS=TRUE }
         - { name: Static, flags: -DBUILD_SHARED_LIBS=FALSE }
