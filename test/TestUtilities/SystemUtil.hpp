@@ -31,7 +31,7 @@ std::ostream& operator<<(std::ostream& os, const String& string);
 std::ostream& operator<<(std::ostream& os, Time time);
 
 template <typename T>
-std::ostream& operator<<(std::ostream& os, const Vector2<T>& vector);
+std::ostream& operator<<(std::ostream& os, Vector2<T> vector);
 
 template <typename T>
 std::ostream& operator<<(std::ostream& os, const Vector3<T>& vector);
@@ -53,7 +53,7 @@ struct Approx
 };
 
 bool operator==(const float& lhs, const Approx<float>& rhs);
-bool operator==(const sf::Vector2<float>& lhs, const Approx<sf::Vector2<float>>& rhs);
+bool operator==(sf::Vector2<float> lhs, const Approx<sf::Vector2<float>>& rhs);
 bool operator==(const sf::Vector3<float>& lhs, const Approx<sf::Vector3<float>>& rhs);
 bool operator==(const sf::Angle& lhs, const Approx<sf::Angle>& rhs);
 
