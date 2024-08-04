@@ -3,7 +3,7 @@ val ARCH_ABI by extra(project.properties["ARCH_ABI"] as? String ?: "arm64-v8a")
 val MIN_SDK by extra((project.properties["MIN_SDK"] as? String ?: "21").toInt())
 val TARGET_SDK by extra((project.properties["TARGET_SDK"] as? String ?: "33").toInt())
 val STL_TYPE by extra(project.properties["STL_TYPE"] as? String ?: "c++_shared")
-val SFML_STATIC by extra(project.properties["SFML_STATIC"] as? String ?: "FALSE")
+val SFML_STATIC by extra(project.properties["SFML_STATIC"] as? String ?: "OFF")
 
 plugins {
     id("com.android.application")

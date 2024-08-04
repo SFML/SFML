@@ -17,11 +17,11 @@
 #   find_package(SFML 2.6 COMPONENTS ...) # version 2.6 or greater with the same major version
 #
 # By default, the dynamic libraries of SFML will be found. To find the static ones instead,
-# you must set the SFML_STATIC_LIBRARIES variable to TRUE before calling find_package(SFML ...).
+# you must set the SFML_STATIC_LIBRARIES variable to ON before calling find_package(SFML ...).
 # You don't need to deal with SFML's dependencies when linking your targets against SFML libraries,
 # they will all be configured automatically, even if you use SFML static libraries.
 # example:
-#   set(SFML_STATIC_LIBRARIES TRUE)
+#   set(SFML_STATIC_LIBRARIES ON)
 #   find_package(SFML 3 COMPONENTS Network System)
 #
 # When searching for SFML with find_package(), keep in mind that it will also find versions which are
@@ -35,7 +35,7 @@
 #
 # On macOS by default CMake will search for frameworks. If you want to use static libraries and have installed
 # both SFML frameworks and SFML static libraries, your must set CMAKE_FIND_FRAMEWORK to "NEVER" or "LAST"
-# in addition to setting SFML_STATIC_LIBRARIES to TRUE. Otherwise CMake will check the frameworks bundle config and
+# in addition to setting SFML_STATIC_LIBRARIES to ON. Otherwise CMake will check the frameworks bundle config and
 # fail after finding out that it does not provide static libraries. Please refer to CMake documentation for more details.
 #
 # Additionally, keep in mind that SFML frameworks are only available as release libraries unlike dylibs which
@@ -119,8 +119,8 @@ set(targets_config_file "${CMAKE_CURRENT_LIST_DIR}/SFML${config_name}Targets.cma
 
 # Generate imported targets for SFML and its dependencies
 if(EXISTS "${targets_config_file}")
-    # Set SFML_FOUND to TRUE by default, may be overwritten by one of the includes below
-    set(SFML_FOUND TRUE)
+    # Set SFML_FOUND to ON by default, may be overwritten by one of the includes below
+    set(SFML_FOUND ON)
     include("${targets_config_file}")
     include("${CMAKE_CURRENT_LIST_DIR}/SFMLConfigDependencies.cmake")
 
@@ -129,18 +129,18 @@ if(EXISTS "${targets_config_file}")
 
         foreach(component ${SFML_FIND_COMPONENTS})
             string(TOUPPER "${component}" UPPER_COMPONENT)
-            set(SFML_${UPPER_COMPONENT}_FOUND FALSE)
+            set(SFML_${UPPER_COMPONENT}_FOUND OFF)
             if(TARGET SFML::${component})
-                set(SFML_${UPPER_COMPONENT}_FOUND TRUE)
+                set(SFML_${UPPER_COMPONENT}_FOUND ON)
             elseif(SFML_FIND_REQUIRED_${component})
                 set(FIND_SFML_ERROR "Found SFML but requested component '${component}' is missing in the config defined in ${SFML_ROOT}.")
-                set(SFML_FOUND FALSE)
+                set(SFML_FOUND OFF)
             endif()
         endforeach()
     endif()
 else()
     set(FIND_SFML_ERROR "Requested SFML configuration (${config_name}) was not found")
-    set(SFML_FOUND FALSE)
+    set(SFML_FOUND OFF)
 endif()
 
 if(NOT SFML_FOUND)

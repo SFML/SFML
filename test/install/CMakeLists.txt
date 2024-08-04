@@ -4,7 +4,7 @@ project(test-sfml-install CXX)
 # This skips the find_package call when building via add_subdirectory since that will fail under those circumstances
 if(PROJECT_IS_TOP_LEVEL)
     if(NOT BUILD_SHARED_LIBS)
-        set(SFML_STATIC_LIBRARIES TRUE)
+        set(SFML_STATIC_LIBRARIES ON)
     endif()
 
     # cmake by default will only search inside the iOS SDK for packages/libraries, so we need to tell it to look elsewhere

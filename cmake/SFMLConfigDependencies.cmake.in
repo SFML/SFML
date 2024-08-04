@@ -66,6 +66,6 @@ if(SFML_STATIC_LIBRARIES)
 
     if(FIND_SFML_DEPENDENCIES_NOTFOUND)
         set(FIND_SFML_ERROR "SFML found but some of its dependencies are missing (${FIND_SFML_DEPENDENCIES_NOTFOUND})")
-        set(SFML_FOUND FALSE)
+        set(SFML_FOUND OFF)
     endif()
 endif()

@@ -44,7 +44,7 @@ function(sfml_set_common_ios_properties target)
     get_target_property(target_type ${target} TYPE)
     if(target_type STREQUAL "EXECUTABLE")
         set_target_properties(${target} PROPERTIES
-            MACOSX_BUNDLE TRUE # Bare executables are not usable on iOS, only bundle applications
+            MACOSX_BUNDLE ON # Bare executables are not usable on iOS, only bundle applications
             MACOSX_BUNDLE_GUI_IDENTIFIER "org.sfml-dev.${target}" # If missing, trying to launch an example in simulator will make Xcode < 9.3 crash
             MACOSX_BUNDLE_BUNDLE_NAME "${target}"
             MACOSX_BUNDLE_LONG_VERSION_STRING "${PROJECT_VERSION}"
@@ -191,7 +191,7 @@ macro(sfml_add_library module)
         if(SFML_BUILD_FRAMEWORKS)
             # adapt target to build frameworks instead of dylibs
             set_target_properties(${target} PROPERTIES
-                                  FRAMEWORK TRUE
+                                  FRAMEWORK ON
                                   FRAMEWORK_VERSION ${PROJECT_VERSION}
                                   MACOSX_FRAMEWORK_IDENTIFIER org.sfml-dev.${target}
                                   MACOSX_FRAMEWORK_SHORT_VERSION_STRING ${PROJECT_VERSION}
@@ -203,7 +203,7 @@ macro(sfml_add_library module)
         if(NOT CMAKE_SKIP_RPATH AND NOT CMAKE_SKIP_INSTALL_RPATH AND NOT CMAKE_INSTALL_RPATH AND NOT CMAKE_INSTALL_RPATH_USE_LINK_PATH AND NOT CMAKE_INSTALL_NAME_DIR)
             set_target_properties(${target} PROPERTIES INSTALL_NAME_DIR "@rpath")
             if(NOT CMAKE_SKIP_BUILD_RPATH)
-                set_target_properties(${target} PROPERTIES BUILD_WITH_INSTALL_NAME_DIR TRUE)
+                set_target_properties(${target} PROPERTIES BUILD_WITH_INSTALL_NAME_DIR ON)
             endif()
         endif()
     endif()

@@ -50,7 +50,7 @@ http://developer.apple.com/library/ios/#documentation/ToolsLanguages/Conceptual/
 Install
 -------
 
-If you are building SFML from sources you can set CMake's INSTALL_XCODE_TEMPLATES variable to TRUE
+If you are building SFML from sources you can set CMake's INSTALL_XCODE_TEMPLATES variable to ON
 to install the templates automatically.
 
 
