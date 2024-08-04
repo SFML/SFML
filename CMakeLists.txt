@@ -43,37 +43,37 @@ include(GNUInstallDirs)
 
 # disable static libraries on Android
 if(SFML_OS_ANDROID)
-    set(BUILD_SHARED_LIBS TRUE)
+    set(BUILD_SHARED_LIBS ON)
 endif()
 
 # add options to select which modules to build
-sfml_set_option(SFML_BUILD_WINDOW TRUE BOOL "TRUE to build SFML's Window module. This setting is ignored, if the graphics module is built.")
-sfml_set_option(SFML_BUILD_GRAPHICS TRUE BOOL "TRUE to build SFML's Graphics module.")
-sfml_set_option(SFML_BUILD_AUDIO TRUE BOOL "TRUE to build SFML's Audio module.")
-sfml_set_option(SFML_BUILD_NETWORK TRUE BOOL "TRUE to build SFML's Network module.")
+sfml_set_option(SFML_BUILD_WINDOW ON BOOL "ON to build SFML's Window module. This setting is ignored, if the graphics module is built.")
+sfml_set_option(SFML_BUILD_GRAPHICS ON BOOL "ON to build SFML's Graphics module.")
+sfml_set_option(SFML_BUILD_AUDIO ON BOOL "ON to build SFML's Audio module.")
+sfml_set_option(SFML_BUILD_NETWORK ON BOOL "ON to build SFML's Network module.")
 
 if(SFML_BUILD_WINDOW)
     # add an option for choosing the OpenGL implementation
-    sfml_set_option(SFML_OPENGL_ES ${OPENGL_ES} BOOL "TRUE to use an OpenGL ES implementation, FALSE to use a desktop OpenGL implementation")
+    sfml_set_option(SFML_OPENGL_ES ${OPENGL_ES} BOOL "ON to use an OpenGL ES implementation, OFF to use a desktop OpenGL implementation")
 
     # add an option for choosing whether to use the DRM windowing backend
     if(SFML_OS_LINUX)
-        sfml_set_option(SFML_USE_DRM FALSE BOOL "TRUE to use DRM windowing backend")
+        sfml_set_option(SFML_USE_DRM OFF BOOL "ON to use DRM windowing backend")
     endif()
 endif()
 
 # macOS specific options
 if(SFML_OS_MACOS OR SFML_OS_IOS)
     # add an option to build frameworks instead of dylibs (release only)
-    sfml_set_option(SFML_BUILD_FRAMEWORKS FALSE BOOL "TRUE to build SFML as frameworks libraries (release only), FALSE to build according to BUILD_SHARED_LIBS")
+    sfml_set_option(SFML_BUILD_FRAMEWORKS OFF BOOL "ON to build SFML as frameworks libraries (release only), OFF to build according to BUILD_SHARED_LIBS")
 
     # add an option to automatically install Xcode templates
-    sfml_set_option(SFML_INSTALL_XCODE_TEMPLATES FALSE BOOL "TRUE to automatically install the Xcode templates, FALSE to do nothing about it. The templates are compatible with Xcode 4 and 5.")
+    sfml_set_option(SFML_INSTALL_XCODE_TEMPLATES OFF BOOL "ON to automatically install the Xcode templates, OFF to do nothing about it. The templates are compatible with Xcode 4 and 5.")
 endif()
 
 # Android options
 if(SFML_OS_ANDROID)
-    sfml_set_option(SFML_ANDROID_USE_SUSPEND_AWARE_CLOCK FALSE BOOL "TRUE to use an sf::Clock implementation which takes system sleep time into account (keeps advancing during suspension), FALSE to default to another available monotonic clock")
+    sfml_set_option(SFML_ANDROID_USE_SUSPEND_AWARE_CLOCK OFF BOOL "ON to use an sf::Clock implementation which takes system sleep time into account (keeps advancing during suspension), OFF to default to another available monotonic clock")
     if(SFML_ANDROID_USE_SUSPEND_AWARE_CLOCK)
         add_definitions(-DSFML_ANDROID_USE_SUSPEND_AWARE_CLOCK)
     endif()
@@ -103,13 +103,13 @@ endif()
 # force building sfml-window, if sfml-graphics module is built
 if(SFML_BUILD_GRAPHICS AND NOT SFML_BUILD_WINDOW)
     message(WARNING "You're trying to build SFML's Graphics module without the Window module. Forcing building of the Window module as a dependency.")
-    set(SFML_BUILD_WINDOW TRUE)
+    set(SFML_BUILD_WINDOW ON)
 endif()
 
 # allow not using bundled dependencies with a switch
 # (except for stb_image)
 # yes this is horrible, but GLOB_RECURSE sucks
-sfml_set_option(SFML_USE_SYSTEM_DEPS FALSE BOOL "TRUE to use system dependencies, FALSE to use the bundled ones.")
+sfml_set_option(SFML_USE_SYSTEM_DEPS OFF BOOL "ON to use system dependencies, OFF to use the bundled ones.")
 if(SFML_USE_SYSTEM_DEPS)
     if(SFML_INSTALL_XCODE_TEMPLATES)
         message(FATAL_ERROR "XCode templates installation cannot be used with the SFML_USE_SYSTEM_DEPS option (the bundled frameworks are required.)")
@@ -141,7 +141,7 @@ endif()
 
 if(SFML_COMPILER_MSVC)
     # add an option to choose whether PDB debug symbols should be generated (defaults to true when possible)
-    sfml_set_option(SFML_GENERATE_PDB TRUE BOOL "True to generate PDB debug symbols, FALSE otherwise.")
+    sfml_set_option(SFML_GENERATE_PDB ON BOOL "True to generate PDB debug symbols, OFF otherwise.")
 
     # if building using a compiler launcher, embed the MSVC debugging information to allow for caching
     if(CMAKE_CXX_COMPILER_LAUNCHER)
@@ -157,14 +157,14 @@ endif()
 
 # define an option for choosing between static and dynamic C runtime (Windows only)
 if(SFML_OS_WINDOWS)
-    sfml_set_option(SFML_USE_STATIC_STD_LIBS FALSE BOOL "TRUE to statically link to the standard libraries, FALSE to use them as DLLs")
+    sfml_set_option(SFML_USE_STATIC_STD_LIBS OFF BOOL "ON to statically link to the standard libraries, OFF to use them as DLLs")
 
     # the following combination of flags is not valid
     if(BUILD_SHARED_LIBS AND SFML_USE_STATIC_STD_LIBS)
         message(FATAL_ERROR "BUILD_SHARED_LIBS and SFML_USE_STATIC_STD_LIBS cannot be used together")
     endif()
 
-    sfml_set_option(SFML_USE_MESA3D FALSE BOOL "TRUE to use the Mesa 3D graphics library for rendering, FALSE to use the system provided library for rendering")
+    sfml_set_option(SFML_USE_MESA3D OFF BOOL "ON to use the Mesa 3D graphics library for rendering, OFF to use the system provided library for rendering")
 
     include(cmake/Mesa3D.cmake)
 endif()
@@ -178,13 +178,13 @@ if(SFML_OS_MACOS)
     if(SFML_BUILD_FRAMEWORKS)
         # requirement #1
         if(NOT CMAKE_BUILD_TYPE STREQUAL "Release")
-            message(FATAL_ERROR "CMAKE_BUILD_TYPE should be \"Release\" when SFML_BUILD_FRAMEWORKS is TRUE")
+            message(FATAL_ERROR "CMAKE_BUILD_TYPE should be \"Release\" when SFML_BUILD_FRAMEWORKS is ON")
             return()
         endif()
 
         # requirement #2
         if(NOT BUILD_SHARED_LIBS)
-            message(FATAL_ERROR "BUILD_SHARED_LIBS should be TRUE when SFML_BUILD_FRAMEWORKS is TRUE")
+            message(FATAL_ERROR "BUILD_SHARED_LIBS should be ON when SFML_BUILD_FRAMEWORKS is ON")
             return()
         endif()
     endif()
@@ -220,13 +220,13 @@ set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake")
 add_subdirectory(src/SFML)
 
 # on Linux and BSD-like OS, install pkg-config files by default
-set(SFML_INSTALL_PKGCONFIG_DEFAULT FALSE)
+set(SFML_INSTALL_PKGCONFIG_DEFAULT OFF)
 
 if(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
-    set(SFML_INSTALL_PKGCONFIG_DEFAULT TRUE)
+    set(SFML_INSTALL_PKGCONFIG_DEFAULT ON)
 endif()
 
-sfml_set_option(SFML_INSTALL_PKGCONFIG_FILES ${SFML_INSTALL_PKGCONFIG_DEFAULT} BOOL "TRUE to automatically install pkg-config files so other projects can find SFML")
+sfml_set_option(SFML_INSTALL_PKGCONFIG_FILES ${SFML_INSTALL_PKGCONFIG_DEFAULT} BOOL "ON to automatically install pkg-config files so other projects can find SFML")
 
 if(SFML_INSTALL_PKGCONFIG_FILES)
     # account for CMAKE_INSTALL_LIBDIR potentially being an absolute path
@@ -253,7 +253,7 @@ if(SFML_INSTALL_PKGCONFIG_FILES)
 endif()
 
 # option to enable precompiled headers
-sfml_set_option(SFML_ENABLE_PCH FALSE BOOL "TRUE to enable precompiled headers for SFML builds -- only supported on Windows/Linux and for static library builds")
+sfml_set_option(SFML_ENABLE_PCH OFF BOOL "ON to enable precompiled headers for SFML builds -- only supported on Windows/Linux and for static library builds")
 
 if(SFML_ENABLE_PCH AND BUILD_SHARED_LIBS)
     message(FATAL_ERROR "Precompiled headers are currently not supported for shared library builds")
@@ -310,7 +310,7 @@ else()
 
     # edit target properties
     set_target_properties(SFML PROPERTIES
-                          FRAMEWORK TRUE
+                          FRAMEWORK ON
                           FRAMEWORK_VERSION ${PROJECT_VERSION}
                           MACOSX_FRAMEWORK_IDENTIFIER org.sfml-dev.SFML
                           MACOSX_FRAMEWORK_SHORT_VERSION_STRING ${PROJECT_VERSION}
@@ -368,7 +368,7 @@ else()
     # NOTE: it's not required to link against SFML.framework
     set_target_properties(SFML PROPERTIES INSTALL_NAME_DIR "@rpath")
     if(NOT CMAKE_SKIP_BUILD_RPATH)
-        set_target_properties(SFML PROPERTIES BUILD_WITH_INSTALL_NAME_DIR TRUE)
+        set_target_properties(SFML PROPERTIES BUILD_WITH_INSTALL_NAME_DIR ON)
     endif()
 
     # install rule
@@ -476,7 +476,7 @@ endif()
 sfml_export_targets()
 
 # configure extras by default when building SFML directly, otherwise hide them
-sfml_set_option(SFML_CONFIGURE_EXTRAS ${PROJECT_IS_TOP_LEVEL} BOOL "TRUE to configure extras, FALSE to ignore them")
+sfml_set_option(SFML_CONFIGURE_EXTRAS ${PROJECT_IS_TOP_LEVEL} BOOL "ON to configure extras, OFF to ignore them")
 
 if(NOT SFML_CONFIGURE_EXTRAS)
     return()
@@ -503,22 +503,22 @@ set(CPACK_NSIS_INSTALLER_MUI_ICON_CODE "!define MUI_WELCOMEFINISHPAGE_BITMAP \\\
 include(CPack)
 
 # add an option for building the API documentation
-sfml_set_option(SFML_BUILD_DOC FALSE BOOL "TRUE to generate the API documentation, FALSE to ignore it")
+sfml_set_option(SFML_BUILD_DOC OFF BOOL "ON to generate the API documentation, OFF to ignore it")
 if(SFML_BUILD_DOC)
     add_subdirectory(doc)
 endif()
 
 # add an option for building the examples
-sfml_set_option(SFML_BUILD_EXAMPLES FALSE BOOL "TRUE to build the SFML examples, FALSE to ignore them")
+sfml_set_option(SFML_BUILD_EXAMPLES OFF BOOL "ON to build the SFML examples, OFF to ignore them")
 if(SFML_BUILD_EXAMPLES AND NOT SFML_OS_ANDROID)
     add_subdirectory(examples)
 endif()
 
 # add an option for building the test suite
-sfml_set_option(SFML_BUILD_TEST_SUITE FALSE BOOL "TRUE to build the SFML test suite, FALSE to ignore it")
+sfml_set_option(SFML_BUILD_TEST_SUITE OFF BOOL "ON to build the SFML test suite, OFF to ignore it")
 
 # add an option for enabling coverage reporting
-sfml_set_option(SFML_ENABLE_COVERAGE FALSE BOOL "TRUE to enable coverage reporting, FALSE to ignore it")
+sfml_set_option(SFML_ENABLE_COVERAGE OFF BOOL "ON to enable coverage reporting, OFF to ignore it")
 
 if(SFML_BUILD_TEST_SUITE)
     if(SFML_BUILD_WINDOW AND SFML_BUILD_GRAPHICS AND SFML_BUILD_NETWORK AND SFML_BUILD_AUDIO)

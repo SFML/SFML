@@ -28,15 +28,15 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-        - { name: Windows VS2019 x86,             os: windows-2019, flags: -DSFML_USE_MESA3D=TRUE -GNinja }
-        - { name: Windows VS2019 x64,             os: windows-2019, flags: -DSFML_USE_MESA3D=TRUE -GNinja }
-        - { name: Windows VS2022 x86,             os: windows-2022, flags: -DSFML_USE_MESA3D=TRUE -GNinja }
-        - { name: Windows VS2022 x64,             os: windows-2022, flags: -DSFML_USE_MESA3D=TRUE -GNinja }
-        - { name: Windows VS2022 ClangCL MSBuild, os: windows-2022, flags: -DSFML_USE_MESA3D=TRUE -T ClangCL } # ninja doesn't support specifying the toolset, so use the ClangCL toolset to test building with MSBuild as well
-        - { name: Windows VS2022 OpenGL ES,       os: windows-2022, flags: -DSFML_USE_MESA3D=TRUE -DSFML_OPENGL_ES=ON -GNinja }
-        - { name: Windows VS2022 Unity,           os: windows-2022, flags: -DSFML_USE_MESA3D=TRUE -DCMAKE_UNITY_BUILD=ON -GNinja }
-        - { name: Windows LLVM/Clang,             os: windows-2022, flags: -DSFML_USE_MESA3D=TRUE -DCMAKE_CXX_COMPILER=clang++ -GNinja }
-        - { name: Windows MinGW,                  os: windows-2022, flags: -DSFML_USE_MESA3D=TRUE -DCMAKE_CXX_COMPILER=g++ -GNinja }
+        - { name: Windows VS2019 x86,             os: windows-2019, flags: -DSFML_USE_MESA3D=ON -GNinja }
+        - { name: Windows VS2019 x64,             os: windows-2019, flags: -DSFML_USE_MESA3D=ON -GNinja }
+        - { name: Windows VS2022 x86,             os: windows-2022, flags: -DSFML_USE_MESA3D=ON -GNinja }
+        - { name: Windows VS2022 x64,             os: windows-2022, flags: -DSFML_USE_MESA3D=ON -GNinja }
+        - { name: Windows VS2022 ClangCL MSBuild, os: windows-2022, flags: -DSFML_USE_MESA3D=ON -T ClangCL } # ninja doesn't support specifying the toolset, so use the ClangCL toolset to test building with MSBuild as well
+        - { name: Windows VS2022 OpenGL ES,       os: windows-2022, flags: -DSFML_USE_MESA3D=ON -DSFML_OPENGL_ES=ON -GNinja }
+        - { name: Windows VS2022 Unity,           os: windows-2022, flags: -DSFML_USE_MESA3D=ON -DCMAKE_UNITY_BUILD=ON -GNinja }
+        - { name: Windows LLVM/Clang,             os: windows-2022, flags: -DSFML_USE_MESA3D=ON -DCMAKE_CXX_COMPILER=clang++ -GNinja }
+        - { name: Windows MinGW,                  os: windows-2022, flags: -DSFML_USE_MESA3D=ON -DCMAKE_CXX_COMPILER=g++ -GNinja }
         - { name: Linux GCC,                      os: ubuntu-22.04, flags: -GNinja }
         - { name: Linux Clang,                    os: ubuntu-22.04, flags: -DCMAKE_CXX_COMPILER=clang++ -GNinja , gcovr_options: '--gcov-executable="llvm-cov-$CLANG_VERSION gcov"' }
         - { name: Linux GCC DRM,                  os: ubuntu-22.04, flags: -DSFML_USE_DRM=ON -DSFML_RUN_DISPLAY_TESTS=OFF -GNinja }
@@ -47,31 +47,31 @@ jobs:
         - { name: iOS,                            os: macos-12, flags: -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=arm64 }
         - { name: iOS Xcode,                      os: macos-12, flags: -DCMAKE_SYSTEM_NAME=iOS -GXcode -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO }
         config:
-        - { name: Shared, flags: -DBUILD_SHARED_LIBS=TRUE }
-        - { name: Static, flags: -DBUILD_SHARED_LIBS=FALSE }
+        - { name: Shared, flags: -DBUILD_SHARED_LIBS=ON }
+        - { name: Static, flags: -DBUILD_SHARED_LIBS=OFF }
         type:
         - { name: Release }
-        - { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug -DSFML_ENABLE_COVERAGE=TRUE }
+        - { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug -DSFML_ENABLE_COVERAGE=ON }
 
         include:
         - platform: { name: Windows VS2022 x64, os: windows-2022 }
-          config: { name: Static with PCH (MSVC), flags: -DSFML_USE_MESA3D=TRUE -GNinja -DBUILD_SHARED_LIBS=FALSE -DSFML_ENABLE_PCH=1 }
+          config: { name: Static with PCH (MSVC), flags: -DSFML_USE_MESA3D=ON -GNinja -DBUILD_SHARED_LIBS=OFF -DSFML_ENABLE_PCH=ON }
         - platform: { name: Linux GCC, os: ubuntu-22.04 }
-          config: { name: Static with PCH (GCC), flags: -GNinja -DCMAKE_CXX_COMPILER=g++ -DBUILD_SHARED_LIBS=FALSE -DSFML_ENABLE_PCH=1 }
+          config: { name: Static with PCH (GCC), flags: -GNinja -DCMAKE_CXX_COMPILER=g++ -DBUILD_SHARED_LIBS=OFF -DSFML_ENABLE_PCH=ON }
         - platform: { name: Linux Clang, os: ubuntu-22.04 }
-          config: { name: Static with PCH (Clang), flags: -GNinja -DCMAKE_CXX_COMPILER=clang++ -DBUILD_SHARED_LIBS=FALSE -DSFML_ENABLE_PCH=1 }
+          config: { name: Static with PCH (Clang), flags: -GNinja -DCMAKE_CXX_COMPILER=clang++ -DBUILD_SHARED_LIBS=OFF -DSFML_ENABLE_PCH=ON }
         - platform: { name: Windows MinGW, os: windows-2022 }
-          config: { name: Static Standard Libraries, flags: -GNinja -DSFML_USE_MESA3D=TRUE -DCMAKE_CXX_COMPILER=g++ -DSFML_USE_STATIC_STD_LIBS=TRUE }
+          config: { name: Static Standard Libraries, flags: -GNinja -DSFML_USE_MESA3D=ON -DCMAKE_CXX_COMPILER=g++ -DSFML_USE_STATIC_STD_LIBS=ON }
         - platform: { name: Windows MinGW, os: windows-2022 }
-          config: { name: Static with PCH (GCC), flags: -GNinja -DSFML_USE_MESA3D=TRUE -DCMAKE_CXX_COMPILER=g++ -DBUILD_SHARED_LIBS=FALSE -DSFML_ENABLE_PCH=1 -DSFML_ENABLE_STDLIB_ASSERTIONS=FALSE } # disabling stdlib assertions due to false positive
+          config: { name: Static with PCH (GCC), flags: -GNinja -DSFML_USE_MESA3D=ON -DCMAKE_CXX_COMPILER=g++ -DBUILD_SHARED_LIBS=OFF -DSFML_ENABLE_PCH=ON -DSFML_ENABLE_STDLIB_ASSERTIONS=OFF } # disabling stdlib assertions due to false positive
         - platform: { name: macOS, os: macos-12 }
-          config: { name: Frameworks, flags: -GNinja -DSFML_BUILD_FRAMEWORKS=TRUE -DBUILD_SHARED_LIBS=TRUE }
+          config: { name: Frameworks, flags: -GNinja -DSFML_BUILD_FRAMEWORKS=ON -DBUILD_SHARED_LIBS=ON }
         - platform: { name: macOS , os: macos-12 }
-          config: { name: System Deps, flags: -GNinja -DBUILD_SHARED_LIBS=TRUE -DSFML_USE_SYSTEM_DEPS=TRUE }
+          config: { name: System Deps, flags: -GNinja -DBUILD_SHARED_LIBS=ON -DSFML_USE_SYSTEM_DEPS=ON }
         - platform: { name: Android, os: ubuntu-22.04 }
           config:
             name: x86 (API 21)
-            flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=x86 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=21 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF
+            flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=x86 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=21 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=ON -DCMAKE_ANDROID_STL_TYPE=c++_shared -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF
             arch: x86
             api: 21
             libcxx: i686-linux-android/libc++_shared.so
@@ -81,7 +81,7 @@ jobs:
         - platform: { name: Android, os: ubuntu-22.04 }
           config:
             name: x86_64 (API 24)
-            flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=x86_64 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=24 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF
+            flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=x86_64 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=24 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=ON -DCMAKE_ANDROID_STL_TYPE=c++_shared -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF
             arch: x86_64
             api: 24
             libcxx: x86_64-linux-android/libc++_shared.so
@@ -91,7 +91,7 @@ jobs:
         - platform: { name: Android, os: ubuntu-22.04 }
           config:
             name: armeabi-v7a (API 29)
-            flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=29 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared
+            flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=29 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=ON -DCMAKE_ANDROID_STL_TYPE=c++_shared
             arch: armeabi-v7a
             api: 29
             # There are no emulators available for armeabi-v7a so we skip running the tests (we still build them) by not specifying emuapi
@@ -99,7 +99,7 @@ jobs:
         - platform: { name: Android, os: ubuntu-22.04 }
           config:
             name: arm64-v8a (API 33)
-            flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=33 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=TRUE -DCMAKE_ANDROID_STL_TYPE=c++_shared -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF
+            flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=33 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=ON -DCMAKE_ANDROID_STL_TYPE=c++_shared -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF
             arch: arm64-v8a
             api: 33
             libcxx: aarch64-linux-android/libc++_shared.so
@@ -345,7 +345,7 @@ jobs:
         platform:
         - { name: Windows,         os: windows-2022, flags: -GNinja }
         - { name: Linux,           os: ubuntu-24.04 }
-        - { name: Linux DRM,       os: ubuntu-24.04, flags: -DSFML_USE_DRM=TRUE }
+        - { name: Linux DRM,       os: ubuntu-24.04, flags: -DSFML_USE_DRM=ON }
         - { name: Linux OpenGL ES, os: ubuntu-24.04, flags: -DSFML_OPENGL_ES=ON }
         - { name: macOS,           os: macos-12 }
         - { name: iOS,             os: macos-12,     flags: -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=arm64 }

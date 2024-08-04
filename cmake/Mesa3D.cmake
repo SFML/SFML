@@ -60,7 +60,7 @@ if(SFML_OS_WINDOWS AND SFML_USE_MESA3D)
 
     add_custom_target(install-mesa3d DEPENDS ${MESA3D_INSTALLED_FILES})
 
-    set_target_properties(install-mesa3d PROPERTIES EXCLUDE_FROM_ALL TRUE)
+    set_target_properties(install-mesa3d PROPERTIES EXCLUDE_FROM_ALL ON)
 elseif(SFML_OS_WINDOWS AND EXISTS "${MESA3D_ARCH_PATH}")
     # we are removing the files
 
