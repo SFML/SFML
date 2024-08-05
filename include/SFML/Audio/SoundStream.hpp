@@ -186,25 +186,25 @@ public:
     ///
     /// If set, the stream will restart from beginning after
     /// reaching the end and so on, until it is stopped or
-    /// setLoop(false) is called.
+    /// setLooping(false) is called.
     /// The default looping state for streams is false.
     ///
     /// \param loop True to play in loop, false to play once
     ///
-    /// \see getLoop
+    /// \see isLooping
     ///
     ////////////////////////////////////////////////////////////
-    void setLoop(bool loop);
+    void setLooping(bool loop);
 
     ////////////////////////////////////////////////////////////
     /// \brief Tell whether or not the stream is in loop mode
     ///
     /// \return True if the stream is looping, false otherwise
     ///
-    /// \see setLoop
+    /// \see setLooping
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool getLoop() const;
+    [[nodiscard]] bool isLooping() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the effect processor to be applied to the sound

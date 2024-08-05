@@ -200,7 +200,7 @@ Sound::Sound(const Sound& copy) : SoundSource(copy), m_impl(std::make_unique<Imp
 
     if (copy.m_impl->buffer)
         setBuffer(*copy.m_impl->buffer);
-    setLoop(copy.getLoop());
+    setLooping(copy.isLooping());
 }
 
 
@@ -283,7 +283,7 @@ void Sound::setBuffer(const SoundBuffer& buffer)
 
 
 ////////////////////////////////////////////////////////////
-void Sound::setLoop(bool loop)
+void Sound::setLooping(bool loop)
 {
     ma_sound_set_looping(&m_impl->sound, loop ? MA_TRUE : MA_FALSE);
 }
@@ -319,7 +319,7 @@ const SoundBuffer& Sound::getBuffer() const
 
 
 ////////////////////////////////////////////////////////////
-bool Sound::getLoop() const
+bool Sound::isLooping() const
 {
     return ma_sound_is_looping(&m_impl->sound) == MA_TRUE;
 }
@@ -366,7 +366,7 @@ Sound& Sound::operator=(const Sound& right)
     // Copy the remaining sound attributes
     if (right.m_impl->buffer)
         setBuffer(*right.m_impl->buffer);
-    setLoop(right.getLoop());
+    setLooping(right.isLooping());
 
     return *this;
 }

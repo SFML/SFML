@@ -122,7 +122,7 @@ public:
         }
 
         // Set the music to loop
-        m_music.setLoop(true);
+        m_music.setLooping(true);
 
         // Set attenuation to a nice value
         m_music.setAttenuation(0.04f);
@@ -184,7 +184,7 @@ public:
         }
 
         // Set the music to loop
-        m_music.setLoop(true);
+        m_music.setLooping(true);
 
         // We don't care about attenuation in this effect
         m_music.setAttenuation(0.f);
@@ -290,7 +290,7 @@ public:
         }
 
         // Set the music to loop
-        m_music.setLoop(true);
+        m_music.setLooping(true);
 
         // Set attenuation factor
         m_music.setAttenuation(m_attenuation);
@@ -684,7 +684,7 @@ protected:
         }
 
         // Set the music to loop
-        m_music.setLoop(true);
+        m_music.setLooping(true);
 
         // Set attenuation to a nice value
         m_music.setAttenuation(0.0f);
