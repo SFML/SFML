@@ -375,14 +375,14 @@ Time SoundStream::getPlayingOffset() const
 
 
 ////////////////////////////////////////////////////////////
-void SoundStream::setLoop(bool loop)
+void SoundStream::setLooping(bool loop)
 {
     ma_sound_set_looping(&m_impl->sound, loop ? MA_TRUE : MA_FALSE);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool SoundStream::getLoop() const
+bool SoundStream::isLooping() const
 {
     return ma_sound_is_looping(&m_impl->sound) == MA_TRUE;
 }

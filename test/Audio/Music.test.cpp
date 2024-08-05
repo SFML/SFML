@@ -45,7 +45,7 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
             CHECK(music.getSampleRate() == 0);
             CHECK(music.getStatus() == sf::Music::Status::Stopped);
             CHECK(music.getPlayingOffset() == sf::Time::Zero);
-            CHECK(!music.getLoop());
+            CHECK(!music.isLooping());
         }
 
         SECTION("File")
@@ -66,7 +66,7 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
                 CHECK(music.getSampleRate() == 44100);
                 CHECK(music.getStatus() == sf::Music::Status::Stopped);
                 CHECK(music.getPlayingOffset() == sf::Time::Zero);
-                CHECK(!music.getLoop());
+                CHECK(!music.isLooping());
             }
         }
 
@@ -92,7 +92,7 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
                 CHECK(music.getSampleRate() == 44100);
                 CHECK(music.getStatus() == sf::Music::Status::Stopped);
                 CHECK(music.getPlayingOffset() == sf::Time::Zero);
-                CHECK(!music.getLoop());
+                CHECK(!music.isLooping());
             }
         }
 
@@ -108,7 +108,7 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
             CHECK(music.getSampleRate() == 44100);
             CHECK(music.getStatus() == sf::Music::Status::Stopped);
             CHECK(music.getPlayingOffset() == sf::Time::Zero);
-            CHECK(!music.getLoop());
+            CHECK(!music.isLooping());
         }
     }
 
@@ -127,7 +127,7 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
             CHECK(music.getSampleRate() == 0);
             CHECK(music.getStatus() == sf::Music::Status::Stopped);
             CHECK(music.getPlayingOffset() == sf::Time::Zero);
-            CHECK(!music.getLoop());
+            CHECK(!music.isLooping());
         }
 
         SECTION("Valid file")
@@ -141,7 +141,7 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
             CHECK(music.getSampleRate() == 44100);
             CHECK(music.getStatus() == sf::Music::Status::Stopped);
             CHECK(music.getPlayingOffset() == sf::Time::Zero);
-            CHECK(!music.getLoop());
+            CHECK(!music.isLooping());
         }
     }
 
@@ -161,7 +161,7 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
             CHECK(music.getSampleRate() == 0);
             CHECK(music.getStatus() == sf::Music::Status::Stopped);
             CHECK(music.getPlayingOffset() == sf::Time::Zero);
-            CHECK(!music.getLoop());
+            CHECK(!music.isLooping());
         }
 
         SECTION("Valid buffer")
@@ -176,7 +176,7 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
             CHECK(music.getSampleRate() == 44100);
             CHECK(music.getStatus() == sf::Music::Status::Stopped);
             CHECK(music.getPlayingOffset() == sf::Time::Zero);
-            CHECK(!music.getLoop());
+            CHECK(!music.isLooping());
         }
     }
 
@@ -196,7 +196,7 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
             CHECK(music.getSampleRate() == 0);
             CHECK(music.getStatus() == sf::Music::Status::Stopped);
             CHECK(music.getPlayingOffset() == sf::Time::Zero);
-            CHECK(!music.getLoop());
+            CHECK(!music.isLooping());
         }
 
         SECTION("Valid stream")
@@ -211,7 +211,7 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
             CHECK(music.getSampleRate() == 44100);
             CHECK(music.getStatus() == sf::Music::Status::Stopped);
             CHECK(music.getPlayingOffset() == sf::Time::Zero);
-            CHECK(!music.getLoop());
+            CHECK(!music.isLooping());
         }
     }
 
@@ -249,6 +249,6 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
         CHECK(music.getSampleRate() == 22050);
         CHECK(music.getStatus() == sf::Music::Status::Stopped);
         CHECK(music.getPlayingOffset() == sf::Time::Zero);
-        CHECK(!music.getLoop());
+        CHECK(!music.isLooping());
     }
 }

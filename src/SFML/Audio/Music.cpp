@@ -262,7 +262,7 @@ bool Music::onGetData(SoundStream::Chunk& data)
     // If the loop end is enabled and imminent, request less data.
     // This will trip an "onLoop()" call from the underlying SoundStream,
     // and we can then take action.
-    if (getLoop() && (m_impl->loopSpan.length != 0) && (currentOffset <= loopEnd) && (currentOffset + toFill > loopEnd))
+    if (isLooping() && (m_impl->loopSpan.length != 0) && (currentOffset <= loopEnd) && (currentOffset + toFill > loopEnd))
         toFill = static_cast<std::size_t>(loopEnd - currentOffset);
 
     // Fill the chunk parameters
@@ -291,7 +291,8 @@ std::optional<std::uint64_t> Music::onLoop()
     const std::lock_guard lock(m_impl->mutex);
     const std::uint64_t   currentOffset = m_impl->file.getSampleOffset();
 
-    if (getLoop() && (m_impl->loopSpan.length != 0) && (currentOffset == m_impl->loopSpan.offset + m_impl->loopSpan.length))
+    if (isLooping() && (m_impl->loopSpan.length != 0) &&
+        (currentOffset == m_impl->loopSpan.offset + m_impl->loopSpan.length))
     {
         // Looping is enabled, and either we're at the loop end, or we're at the EOF
         // when it's equivalent to the loop end (loop end takes priority). Send us to loop begin
@@ -299,7 +300,7 @@ std::optional<std::uint64_t> Music::onLoop()
         return m_impl->file.getSampleOffset();
     }
 
-    if (getLoop() && (currentOffset >= m_impl->file.getSampleCount()))
+    if (isLooping() && (currentOffset >= m_impl->file.getSampleCount()))
     {
         // If we're at the EOF, reset to 0
         m_impl->file.seek(0);

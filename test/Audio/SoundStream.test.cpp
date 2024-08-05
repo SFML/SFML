@@ -47,7 +47,7 @@ TEST_CASE("[Audio] sf::SoundStream", runAudioDeviceTests())
         CHECK(soundStream.getSampleRate() == 0);
         CHECK(soundStream.getStatus() == sf::SoundStream::Status::Stopped);
         CHECK(soundStream.getPlayingOffset() == sf::Time::Zero);
-        CHECK(!soundStream.getLoop());
+        CHECK(!soundStream.isLooping());
     }
 
     SECTION("Set/get playing offset")
@@ -60,7 +60,7 @@ TEST_CASE("[Audio] sf::SoundStream", runAudioDeviceTests())
     SECTION("Set/get loop")
     {
         SoundStream soundStream;
-        soundStream.setLoop(true);
-        CHECK(soundStream.getLoop());
+        soundStream.setLooping(true);
+        CHECK(soundStream.isLooping());
     }
 }
