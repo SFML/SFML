@@ -123,7 +123,8 @@ void SensorImpl::close()
 Vector3f SensorImpl::update()
 {
     // Update our sensor data list
-    ALooper_pollAll(0, NULL, NULL, NULL);
+    while (ALooper_pollOnce(0, NULL, NULL, NULL) >= 0)
+        ;
 
     return sensorData[m_index];
 }
