@@ -117,7 +117,7 @@ TEST_CASE("[Graphics] sf::Image")
 
             SECTION("Successful load")
             {
-                const auto      memory = sf::Image({24, 24}, sf::Color::Green).saveToMemory("png").value();
+                const auto memory = sf::Image({24, 24}, sf::Color::Green).saveToMemory(sf::Image::SaveFormat::PNG).value();
                 const sf::Image image(memory.data(), memory.size());
                 CHECK(image.getSize() == sf::Vector2u(24, 24));
                 CHECK(image.getPixelsPtr() != nullptr);
@@ -344,13 +344,7 @@ TEST_CASE("[Graphics] sf::Image")
 
         SECTION("Successful load")
         {
-            const auto memory = []()
-            {
-                sf::Image savedImage;
-                savedImage.resize({24, 24}, sf::Color::Green);
-                return savedImage.saveToMemory("png").value();
-            }();
-
+            const auto memory = sf::Image({24, 24}, sf::Color::Green).saveToMemory(sf::Image::SaveFormat::PNG).value();
             CHECK(image.loadFromMemory(memory.data(), memory.size()));
             CHECK(image.getSize() == sf::Vector2u(24, 24));
             CHECK(image.getPixelsPtr() != nullptr);
@@ -384,23 +378,11 @@ TEST_CASE("[Graphics] sf::Image")
     {
         SECTION("Invalid size")
         {
-            CHECK(!sf::Image({10, 0}, sf::Color::Magenta).saveToFile("test.jpg"));
-            CHECK(!sf::Image({0, 10}, sf::Color::Magenta).saveToFile("test.jpg"));
+            CHECK(!sf::Image({10, 0}, sf::Color::Magenta).saveToFile("test.jpg", sf::Image::SaveFormat::JPG));
+            CHECK(!sf::Image({0, 10}, sf::Color::Magenta).saveToFile("test.jpg", sf::Image::SaveFormat::JPG));
         }
 
         const sf::Image image({256, 256}, sf::Color::Magenta);
-
-        SECTION("No extension")
-        {
-            CHECK(!image.saveToFile("wheresmyextension"));
-            CHECK(!image.saveToFile("pls/add/extension"));
-        }
-
-        SECTION("Invalid extension")
-        {
-            CHECK(!image.saveToFile("test.ps"));
-            CHECK(!image.saveToFile("test.foo"));
-        }
 
         SECTION("Successful save")
         {
@@ -409,27 +391,32 @@ TEST_CASE("[Graphics] sf::Image")
             SECTION("To .bmp")
             {
                 filename /= "test.bmp";
-                CHECK(image.saveToFile(filename));
+                CHECK(image.saveToFile(filename, sf::Image::SaveFormat::BMP));
             }
 
             SECTION("To .tga")
             {
                 filename /= "test.tga";
-                CHECK(image.saveToFile(filename));
+                CHECK(image.saveToFile(filename, sf::Image::SaveFormat::TGA));
             }
 
             SECTION("To .png")
             {
                 filename /= "test.png";
-                CHECK(image.saveToFile(filename));
+                CHECK(image.saveToFile(filename, sf::Image::SaveFormat::PNG));
             }
 
             // Cannot test JPEG encoding due to it triggering UB in stbiw__jpg_writeBits
 
-            const sf::Image loadedImage(filename);
+            SECTION("Filename without extension")
+            {
+                filename /= "test";
+                CHECK(image.saveToFile(filename, sf::Image::SaveFormat::PNG));
+            }
+
+            const auto loadedImage = sf::Image(filename);
             CHECK(loadedImage.getSize() == sf::Vector2u(256, 256));
             CHECK(loadedImage.getPixelsPtr() != nullptr);
-
             CHECK(std::filesystem::remove(filename));
         }
     }
@@ -437,71 +424,49 @@ TEST_CASE("[Graphics] sf::Image")
     SECTION("saveToMemory()")
     {
         SECTION("Invalid size")
-        {
-            CHECK(!sf::Image({10, 0}, sf::Color::Magenta).saveToMemory("test.jpg"));
-            CHECK(!sf::Image({0, 10}, sf::Color::Magenta).saveToMemory("test.jpg"));
-        }
+        CHECK(!sf::Image({10, 0}, sf::Color::Magenta).saveToMemory(sf::Image::SaveFormat::JPG));
+        CHECK(!sf::Image({0, 10}, sf::Color::Magenta).saveToMemory(sf::Image::SaveFormat::JPG));
+    }
 
+    SECTION("Successful save")
+    {
         const sf::Image image({16, 16}, sf::Color::Magenta);
 
-        SECTION("No extension")
+        SECTION("To bmp")
         {
-            CHECK(!image.saveToMemory(""));
+            const auto memory = image.saveToMemory(sf::Image::SaveFormat::BMP).value();
+            REQUIRE(memory.size() == 1146);
+            CHECK(memory[0] == 66);
+            CHECK(memory[1] == 77);
+            CHECK(memory[2] == 122);
+            CHECK(memory[3] == 4);
+            CHECK(memory[1000] == 255);
+            CHECK(memory[1001] == 255);
+            CHECK(memory[1002] == 255);
+            CHECK(memory[1003] == 0);
         }
 
-        SECTION("Invalid extension")
+        SECTION("To tga")
         {
-            CHECK(!image.saveToMemory("."));
-            CHECK(!image.saveToMemory("gif"));
-            CHECK(!image.saveToMemory(".jpg")); // Supposed to be "jpg"
+            const auto memory = image.saveToMemory(sf::Image::SaveFormat::TGA).value();
+            REQUIRE(memory.size() == 98);
+            CHECK(memory[0] == 0);
+            CHECK(memory[1] == 0);
+            CHECK(memory[2] == 10);
+            CHECK(memory[3] == 0);
         }
 
-        SECTION("Successful save")
+        SECTION("To png")
         {
-            std::optional<std::vector<std::uint8_t>> maybeOutput;
-
-            SECTION("To bmp")
-            {
-                maybeOutput = image.saveToMemory("bmp");
-                REQUIRE(maybeOutput.has_value());
-                const auto& output = *maybeOutput;
-                REQUIRE(output.size() == 1146);
-                CHECK(output[0] == 66);
-                CHECK(output[1] == 77);
-                CHECK(output[2] == 122);
-                CHECK(output[3] == 4);
-                CHECK(output[1000] == 255);
-                CHECK(output[1001] == 255);
-                CHECK(output[1002] == 255);
-                CHECK(output[1003] == 0);
-            }
-
-            SECTION("To tga")
-            {
-                maybeOutput = image.saveToMemory("tga");
-                REQUIRE(maybeOutput.has_value());
-                const auto& output = *maybeOutput;
-                REQUIRE(output.size() == 98);
-                CHECK(output[0] == 0);
-                CHECK(output[1] == 0);
-                CHECK(output[2] == 10);
-                CHECK(output[3] == 0);
-            }
-
-            SECTION("To png")
-            {
-                maybeOutput = image.saveToMemory("png");
-                REQUIRE(maybeOutput.has_value());
-                const auto& output = *maybeOutput;
-                REQUIRE(output.size() == 92);
-                CHECK(output[0] == 137);
-                CHECK(output[1] == 80);
-                CHECK(output[2] == 78);
-                CHECK(output[3] == 71);
-            }
-
-            // Cannot test JPEG encoding due to it triggering UB in stbiw__jpg_writeBits
+            const auto memory = image.saveToMemory(sf::Image::SaveFormat::PNG).value();
+            REQUIRE(memory.size() == 92);
+            CHECK(memory[0] == 137);
+            CHECK(memory[1] == 80);
+            CHECK(memory[2] == 78);
+            CHECK(memory[3] == 71);
         }
+
+        // Cannot test JPEG encoding due to it triggering UB in stbiw__jpg_writeBits
     }
 
     SECTION("Set/get pixel")
