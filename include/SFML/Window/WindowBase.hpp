@@ -46,7 +46,7 @@ namespace sf
 {
 class Cursor;
 class String;
-class VideoMode;
+struct VideoMode;
 
 namespace priv
 {

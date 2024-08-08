@@ -12,11 +12,11 @@ namespace sf
 {
 struct BlendMode;
 struct StencilMode;
-class Color;
+struct Color;
 class Transform;
 
 template <typename>
-class Rect;
+struct Rect;
 
 std::ostream& operator<<(std::ostream& os, const BlendMode& blendMode);
 std::ostream& operator<<(std::ostream& os, const StencilMode& stencilMode);

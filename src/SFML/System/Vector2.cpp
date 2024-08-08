@@ -119,6 +119,6 @@ T Vector2<T>::length() const
 // Explicit template instantiations
 ////////////////////////////////////////////////////////////
 
-template class sf::Vector2<float>;
-template class sf::Vector2<double>;
-template class sf::Vector2<long double>;
+template struct sf::Vector2<float>;
+template struct sf::Vector2<double>;
+template struct sf::Vector2<long double>;
