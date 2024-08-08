@@ -28,18 +28,58 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowBase.hpp> // NOLINT(misc-header-include-cycle)
 
-#include <utility>
+#if defined(_MSC_VER) && !(defined(__clang__) || defined(__INTEL_COMPILER))
+#include <type_traits>
+#endif
 
+#include <utility>
 
 namespace sf
 {
 namespace priv
 {
+
+// workaround on MSVC bug with multiple empty base classes ending up one byte past the child object
+// disadvantage is making the overloadSet class bigger than it needs to be
+// no __declspec(empty_bases) on OverloadSet does not work
+#if defined(_MSC_VER) && !(defined(__clang__) || defined(__INTEL_COMPILER))
+template <typename T, bool = std::is_empty_v<T>>
+struct NeverEmpty : T
+{
+    template <typename U>
+    NeverEmpty(U&& u) : T(std::forward<U>(u))
+    {
+    }
+
+private:
+    char m_forMakingThisNeverEmpty;
+};
+
+template <typename T>
+struct NeverEmpty<T, false> : T
+{
+    template <typename U>
+    NeverEmpty(U&& u) : T(std::forward<U>(u))
+    {
+    }
+};
+
+template <typename... Ts>
+struct OverloadSet : NeverEmpty<Ts>...
+{
+    using NeverEmpty<Ts>::operator()...;
+};
+
+#else // not MSVC
+
 template <typename... Ts>
 struct OverloadSet : Ts...
 {
     using Ts::operator()...;
 };
+
+#endif
+
 template <typename... Ts>
 OverloadSet(Ts...) -> OverloadSet<Ts...>;
 
@@ -50,8 +90,8 @@ struct DelayOverloadResolution
     {
     }
 };
-} // namespace priv
 
+} // namespace priv
 
 ////////////////////////////////////////////////////////////
 template <typename... Ts>
