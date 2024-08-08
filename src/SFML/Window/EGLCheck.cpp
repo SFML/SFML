@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/EGLCheck.hpp>
 
-#include <SFML/System/Err.hpp>
+#include <SFML/System/Logging.hpp>
 
 #include <glad/egl.h>
 
@@ -163,9 +163,17 @@ void eglCheckError(const std::filesystem::path& file, unsigned int line, std::st
         }
 
         // Log the error
-        err() << "An internal EGL call failed in " << file.filename() << " (" << line << ") : "
-              << "\nExpression:\n   " << expression << "\nError description:\n   " << error << "\n   " << description << '\n'
-              << std::endl;
+        priv::log("An internal EGL call failed in ",
+                  file.filename(),
+                  " (",
+                  line,
+                  ") : ",
+                  "\nExpression:\n   ",
+                  expression,
+                  "\nError description:\n   ",
+                  error,
+                  "\n   ",
+                  description);
     }
 }
 

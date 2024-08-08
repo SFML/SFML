@@ -29,7 +29,7 @@
 #include <SFML/Window/Window.hpp>
 #include <SFML/Window/WindowImpl.hpp>
 
-#include <SFML/System/Err.hpp>
+#include <SFML/System/Logging.hpp>
 #include <SFML/System/Sleep.hpp>
 
 #include <ostream>
@@ -164,7 +164,7 @@ bool Window::setActive(bool active) const
             return true;
         }
 
-        err() << "Failed to activate the window's context" << std::endl;
+        priv::log("Failed to activate the window's context");
         return false;
     }
 
@@ -201,7 +201,7 @@ void Window::initialize()
     // Activate the window
     if (!setActive())
     {
-        err() << "Failed to set window as active during initialization" << std::endl;
+        priv::log("Failed to set window as active during initialization");
     }
 
     WindowBase::initialize();

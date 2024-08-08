@@ -29,7 +29,7 @@
 #include <SFML/Window/EglContext.hpp>
 #include <SFML/Window/WindowImpl.hpp>
 
-#include <SFML/System/Err.hpp>
+#include <SFML/System/Logging.hpp>
 #include <SFML/System/Sleep.hpp>
 
 #include <memory>
@@ -93,7 +93,7 @@ void ensureInit()
                        {
                            // At this point, the failure is unrecoverable
                            // Dump a message to the console and let the application terminate
-                           sf::err() << "Failed to load EGL entry points" << std::endl;
+                           sf::priv::log("Failed to load EGL entry points");
 
                            assert(false);
 
@@ -177,9 +177,9 @@ EglContext::EglContext(EglContext* /*shared*/, const ContextSettings& /*settings
 {
     EglContextImpl::ensureInit();
 
-    sf::err() << "Warning: context has not been initialized. The constructor EglContext(shared, settings, size) is "
-                 "currently not implemented."
-              << std::endl;
+    sf::priv::log(
+        "Warning: context has not been initialized. The constructor EglContext(shared, settings, size) is "
+        "currently not implemented.");
 }
 
 
@@ -424,7 +424,7 @@ XVisualInfo EglContext::selectBestVisual(::Display* xDisplay, unsigned int bitsP
     if (nativeVisualId == 0)
     {
         // Should never happen...
-        err() << "No EGL visual found. You should check your graphics driver" << std::endl;
+        priv::log("No EGL visual found. You should check your graphics driver");
 
         return {};
     }
@@ -439,7 +439,7 @@ XVisualInfo EglContext::selectBestVisual(::Display* xDisplay, unsigned int bitsP
     if (visualCount == 0)
     {
         // Can't happen...
-        err() << "No X11 visual found. Bug in your EGL implementation ?" << std::endl;
+        priv::log("No X11 visual found. Bug in your EGL implementation ?");
 
         return {};
     }

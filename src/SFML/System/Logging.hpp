@@ -29,55 +29,34 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Export.hpp>
 
-#include <iosfwd>
+#include <mutex>
+#include <ostream>
 
 
-namespace sf
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-/// \brief Standard stream used by SFML to output warnings and errors
+/// \brief Get mutex for locking error stream
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] SFML_SYSTEM_API std::ostream& err();
+SFML_SYSTEM_API std::mutex& errorStreamMutex();
 
 ////////////////////////////////////////////////////////////
-/// \brief Specify buffer to which warnings and errors are logged
+/// \brief Get error stream
 ///
 ////////////////////////////////////////////////////////////
-SFML_SYSTEM_API void setErrorBuffer(std::streambuf* streamBuffer);
-
-} // namespace sf
-
+SFML_SYSTEM_API std::ostream& errorStream();
 
 ////////////////////////////////////////////////////////////
-/// \fn sf::err
-/// \ingroup system
-///
-/// By default, sf::err() outputs to the same location as std::cerr,
-/// (-> the stderr descriptor) which is the console if there's
-/// one available.
-///
-/// It is a standard std::ostream instance, so it supports all the
-/// insertion operations defined by the STL
-/// (operator <<, manipulators, etc.).
-///
-/// sf::err() can be redirected to write to another output, independently
-/// of std::cerr, by using the rdbuf() function provided by the
-/// std::ostream class.
-///
-/// Example:
-/// \code
-/// // Redirect to a file
-/// std::ofstream file("sfml-log.txt");
-/// std::streambuf* previous = sf::err().rdbuf(file.rdbuf());
-///
-/// // Redirect to nothing
-/// sf::err().rdbuf(nullptr);
-///
-/// // Restore the original output
-/// sf::err().rdbuf(previous);
-/// \endcode
-///
-/// \return Reference to std::ostream representing the SFML error stream
+/// \brief Log warning or error to a given stream
 ///
 ////////////////////////////////////////////////////////////
+template <typename... Args>
+void log(Args&&... args)
+{
+    const std::lock_guard lock(errorStreamMutex());
+    (errorStream() << ... << std::forward<Args>(args));
+    errorStream() << std::endl;
+}
+
+} // namespace sf::priv

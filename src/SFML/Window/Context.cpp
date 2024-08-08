@@ -28,7 +28,7 @@
 #include <SFML/Window/Context.hpp>
 #include <SFML/Window/GlContext.hpp>
 
-#include <SFML/System/Err.hpp>
+#include <SFML/System/Logging.hpp>
 
 #include <ostream>
 #include <utility>
@@ -50,7 +50,7 @@ namespace sf
 Context::Context() : m_context(priv::GlContext::create())
 {
     if (!setActive(true))
-        err() << "Failed to set context as active during construction" << std::endl;
+        priv::log("Failed to set context as active during construction");
 }
 
 
@@ -58,7 +58,7 @@ Context::Context() : m_context(priv::GlContext::create())
 Context::~Context()
 {
     if (m_context && !setActive(false))
-        err() << "Failed to set context as inactive during destruction" << std::endl;
+        priv::log("Failed to set context as inactive during destruction");
 }
 
 
@@ -143,7 +143,7 @@ GlFunctionPointer Context::getFunction(const char* name)
 Context::Context(const ContextSettings& settings, Vector2u size) : m_context(priv::GlContext::create(settings, size))
 {
     if (!setActive(true))
-        err() << "Failed to set context as active during construction" << std::endl;
+        priv::log("Failed to set context as active during construction");
 }
 
 } // namespace sf

@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/SensorManager.hpp>
 
-#include <SFML/System/Err.hpp>
+#include <SFML/System/Logging.hpp>
 
 #include <ostream>
 
@@ -59,8 +59,7 @@ void SensorManager::setEnabled(Sensor::Type sensor, bool enabled)
     }
     else
     {
-        err() << "Warning: trying to enable a sensor that is not available (call Sensor::isAvailable to check it)"
-              << std::endl;
+        log("Warning: trying to enable a sensor that is not available (call Sensor::isAvailable to check it)");
     }
 }
 
@@ -115,7 +114,7 @@ SensorManager::SensorManager()
             else
             {
                 m_sensors[sensor].available = false;
-                err() << "Warning: sensor " << i << " failed to open, will not be available" << std::endl;
+                log("Warning: sensor ", i, " failed to open, will not be available");
             }
         }
     }

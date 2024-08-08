@@ -31,7 +31,7 @@
 #include <SFML/Window/SensorManager.hpp>
 #include <SFML/Window/WindowImpl.hpp>
 
-#include <SFML/System/Err.hpp>
+#include <SFML/System/Logging.hpp>
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/Time.hpp>
 
@@ -126,17 +126,22 @@ std::unique_ptr<WindowImpl> WindowImpl::create(
         // Make sure there's not already a fullscreen window (only one is allowed)
         if (WindowImplImpl::fullscreenWindow != nullptr)
         {
-            err() << "Creating two fullscreen windows is not allowed, switching to windowed mode" << std::endl;
+            log("Creating two fullscreen windows is not allowed, switching to windowed mode");
             state = State::Windowed;
         }
         // Make sure that the chosen video mode is compatible
         else if (!mode.isValid())
         {
-            err() << "The requested video mode is not available, switching to a valid mode" << std::endl;
+            log("The requested video mode is not available, switching to a valid mode");
             assert(!VideoMode::getFullscreenModes().empty() && "No video modes available");
             mode = VideoMode::getFullscreenModes()[0];
-            err() << "  VideoMode: { size: { " << mode.size.x << ", " << mode.size.y
-                  << " }, bitsPerPixel: " << mode.bitsPerPixel << " }" << std::endl;
+            log("  VideoMode: { size: { ",
+                mode.size.x,
+                ", ",
+                mode.size.y,
+                " }, bitsPerPixel: ",
+                mode.bitsPerPixel,
+                " }");
         }
     }
 
