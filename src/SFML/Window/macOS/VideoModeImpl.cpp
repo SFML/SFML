@@ -27,6 +27,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/VideoModeImpl.hpp>
+#include <SFML/Window/macOS/Utils.hpp>
 #include <SFML/Window/macOS/cg_sf_conversion.hpp>
 
 #include <SFML/System/Err.hpp>
@@ -43,7 +44,7 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
     std::vector<VideoMode> modes;
 
     // Retrieve all modes available for main screen only.
-    CFArrayRef cgmodes = CGDisplayCopyAllDisplayModes(CGMainDisplayID(), nullptr);
+    const auto cgmodes = CFPtr<const __CFArray>(CGDisplayCopyAllDisplayModes(CGMainDisplayID(), nullptr));
 
     if (cgmodes == nullptr)
     {
@@ -54,10 +55,10 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
     const VideoMode desktop = getDesktopMode();
 
     // Loop on each mode and convert it into a sf::VideoMode object.
-    const CFIndex modesCount = CFArrayGetCount(cgmodes);
+    const CFIndex modesCount = CFArrayGetCount(cgmodes.get());
     for (CFIndex i = 0; i < modesCount; ++i)
     {
-        auto* cgmode = static_cast<CGDisplayModeRef>(const_cast<void*>(CFArrayGetValueAtIndex(cgmodes, i)));
+        auto* cgmode = static_cast<CGDisplayModeRef>(const_cast<void*>(CFArrayGetValueAtIndex(cgmodes.get(), i)));
 
         const VideoMode mode = convertCGModeToSFMode(cgmode);
 
@@ -69,9 +70,6 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
         if (std::find(modes.begin(), modes.end(), mode) == modes.end())
             modes.push_back(mode);
     }
-
-    // Clean up memory.
-    CFRelease(cgmodes);
 
     return modes;
 }

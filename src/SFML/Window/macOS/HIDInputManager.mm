@@ -78,14 +78,12 @@ CFDictionaryRef HIDInputManager::copyDevicesMask(std::uint32_t page, std::uint32
                                                             &kCFTypeDictionaryValueCallBacks);
 
     // Add the page value.
-    CFNumberRef value = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &page);
-    CFDictionarySetValue(dict, CFSTR(kIOHIDDeviceUsagePageKey), value);
-    CFRelease(value);
+    auto value = CFPtr<const __CFNumber>(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &page));
+    CFDictionarySetValue(dict, CFSTR(kIOHIDDeviceUsagePageKey), value.get());
 
     // Add the usage value (which is only valid if page value exists).
-    value = CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &usage);
-    CFDictionarySetValue(dict, CFSTR(kIOHIDDeviceUsageKey), value);
-    CFRelease(value);
+    value = CFPtr<const __CFNumber>(CFNumberCreate(kCFAllocatorDefault, kCFNumberIntType, &usage));
+    CFDictionarySetValue(dict, CFSTR(kIOHIDDeviceUsageKey), value.get());
 
     return dict;
 }
@@ -705,8 +703,8 @@ String HIDInputManager::getDescription(Keyboard::Scancode code)
 HIDInputManager::HIDInputManager()
 {
     // Create an HID Manager reference
-    m_manager                 = IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone);
-    const IOReturn openStatus = IOHIDManagerOpen(m_manager, kIOHIDOptionsTypeNone);
+    m_manager                 = CFPtr<__IOHIDManager>(IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone));
+    const IOReturn openStatus = IOHIDManagerOpen(m_manager.get(), kIOHIDOptionsTypeNone);
 
     if (openStatus != kIOReturnSuccess)
     {
@@ -746,7 +744,7 @@ void HIDInputManager::initializeKeyboard()
     // in approximately constant time.
 
     // Get only keyboards
-    CFSetRef underlying = copyDevices(kHIDPage_GenericDesktop, kHIDUsage_GD_Keyboard);
+    const auto underlying = copyDevices(kHIDPage_GenericDesktop, kHIDUsage_GD_Keyboard);
     if (underlying == nullptr)
     {
         err() << "No keyboard detected by the HID manager!" << std::endl;
@@ -754,11 +752,9 @@ void HIDInputManager::initializeKeyboard()
         return;
     }
 
-    auto* const keyboards = static_cast<NSSet*>(underlying); // Toll-Free Bridge
-    for (id keyboard in keyboards)                           // NOLINT(cppcoreguidelines-init-variables)
+    auto* const keyboards = static_cast<NSSet*>(underlying.get()); // Toll-Free Bridge
+    for (id keyboard in keyboards)                                 // NOLINT(cppcoreguidelines-init-variables)
         loadKeyboard(static_cast<IOHIDDeviceRef>(keyboard));
-
-    CFRelease(underlying);
 
     ////////////////////////////////////////////////////////////
     // At this point m_keys is filled with as many IOHIDElementRef as possible
@@ -768,22 +764,21 @@ void HIDInputManager::initializeKeyboard()
 ////////////////////////////////////////////////////////////
 void HIDInputManager::loadKeyboard(IOHIDDeviceRef keyboard)
 {
-    CFArrayRef underlying = IOHIDDeviceCopyMatchingElements(keyboard, nullptr, kIOHIDOptionsTypeNone);
-    if ((underlying == nullptr) || (CFArrayGetCount(underlying) == 0))
+    const auto underlying = CFPtr<const __CFArray>(
+        IOHIDDeviceCopyMatchingElements(keyboard, nullptr, kIOHIDOptionsTypeNone));
+    if ((underlying == nullptr) || (CFArrayGetCount(underlying.get()) == 0))
     {
         err() << "Detected a keyboard without any keys." << std::endl;
         return;
     }
 
-    auto* const keys = static_cast<NSArray*>(underlying); // Toll-Free Bridge
-    for (id key in keys)                                  // NOLINT(cppcoreguidelines-init-variables)
+    auto* const keys = static_cast<NSArray*>(underlying.get()); // Toll-Free Bridge
+    for (id key in keys)                                        // NOLINT(cppcoreguidelines-init-variables)
     {
         auto* elem = static_cast<IOHIDElementRef>(key);
         if (IOHIDElementGetUsagePage(elem) == kHIDPage_KeyboardOrKeypad)
             loadKey(elem);
     }
-
-    CFRelease(underlying);
 }
 
 
@@ -795,7 +790,7 @@ void HIDInputManager::loadKey(IOHIDElementRef key)
     if (code != Keyboard::Scan::Unknown)
     {
         CFRetain(key);
-        m_keys[code].push_back(key);
+        m_keys[code].emplace_back(key);
     }
 }
 
@@ -808,13 +803,12 @@ void HIDInputManager::buildMappings()
     m_scancodeToKeyMapping.fill(Keyboard::Key::Unknown);
 
     // Get the current keyboard layout
-    TISInputSourceRef tis  = TISCopyCurrentKeyboardLayoutInputSource();
-    const auto* layoutData = static_cast<CFDataRef>(TISGetInputSourceProperty(tis, kTISPropertyUnicodeKeyLayoutData));
+    const auto tis         = CFPtr<__TISInputSource>(TISCopyCurrentKeyboardLayoutInputSource());
+    const auto* layoutData = static_cast<CFDataRef>(TISGetInputSourceProperty(tis.get(), kTISPropertyUnicodeKeyLayoutData));
 
     if (layoutData == nullptr)
     {
         err() << "Cannot get the keyboard layout\n";
-        CFRelease(tis);
         return;
     }
 
@@ -899,8 +893,6 @@ void HIDInputManager::buildMappings()
             m_keyToScancodeMapping[code] = scan;
         m_scancodeToKeyMapping[scan] = code;
     }
-
-    CFRelease(tis);
 }
 
 
@@ -919,42 +911,28 @@ void HIDInputManager::keyboardChanged(CFNotificationCenterRef /* center */,
 ////////////////////////////////////////////////////////////
 void HIDInputManager::freeUp()
 {
-    if (m_manager != nil)
-        CFRelease(m_manager);
-
-    m_manager = nil;
+    m_manager.reset();
 
     for (auto& key : m_keys)
-    {
-        for (IOHIDElementRef iohidElementRef : key)
-            CFRelease(iohidElementRef);
-
         key.clear();
-    }
 }
 
 
 ////////////////////////////////////////////////////////////
-CFSetRef HIDInputManager::copyDevices(std::uint32_t page, std::uint32_t usage)
+CFPtr<const __CFSet> HIDInputManager::copyDevices(std::uint32_t page, std::uint32_t usage)
 {
     // Filter and keep only the requested devices
-    CFDictionaryRef mask = copyDevicesMask(page, usage);
+    const auto mask = CFPtr<const __CFDictionary>(copyDevicesMask(page, usage));
 
-    IOHIDManagerSetDeviceMatching(m_manager, mask);
+    IOHIDManagerSetDeviceMatching(m_manager.get(), mask.get());
 
-    CFRelease(mask);
-    mask = nil;
-
-    CFSetRef devices = IOHIDManagerCopyDevices(m_manager);
+    auto devices = CFPtr<const __CFSet>(IOHIDManagerCopyDevices(m_manager.get()));
     if (devices == nullptr)
         return nullptr;
 
     // Is there at least one device?
-    if (CFSetGetCount(devices) < 1)
-    {
-        CFRelease(devices);
+    if (CFSetGetCount(devices.get()) < 1)
         return nullptr;
-    }
 
     return devices;
 }
@@ -968,13 +946,12 @@ bool HIDInputManager::isPressed(IOHIDElements& elements) const
     {
         IOHIDValueRef value = nil;
 
-        IOHIDDeviceRef device = IOHIDElementGetDevice(*it);
-        IOHIDDeviceGetValue(device, *it, &value);
+        IOHIDDeviceRef device = IOHIDElementGetDevice(it->get());
+        IOHIDDeviceGetValue(device, it->get(), &value);
 
         if (!value)
         {
             // This means some kind of error / disconnection so we remove this element from our database.
-            CFRelease(*it);
             it = elements.erase(it);
         }
         else
