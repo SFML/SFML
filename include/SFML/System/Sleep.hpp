@@ -40,7 +40,7 @@ class Time;
 ///
 /// sf::sleep is the best way to block a program or one of its
 /// threads, as it doesn't consume any CPU power. Compared to
-/// the standard std::this_thread::sleep_for function, this
+/// the standard `std::this_thread::sleep_for` function, this
 /// one provides more accurate sleeping time thanks to some
 /// platform-specific tweaks.
 ///

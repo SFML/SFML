@@ -41,7 +41,7 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// \brief Character traits for std::uint8_t
+/// \brief Character traits for `std::uint8_t`
 ///
 ////////////////////////////////////////////////////////////
 struct SFML_SYSTEM_API U8StringCharTraits
@@ -71,7 +71,7 @@ struct SFML_SYSTEM_API U8StringCharTraits
 };
 
 ////////////////////////////////////////////////////////////
-/// \brief Portable replacement for std::basic_string<std::uint8_t>
+/// \brief Portable replacement for `std::basic_string<std::uint8_t>`
 ///
 /// While all major C++ implementations happen to define this
 /// as of early 2024, this specialization is not strictly speaking
@@ -226,8 +226,8 @@ public:
     /// \brief Create a new sf::String from a UTF-32 encoded string
     ///
     /// This function is provided for consistency, it is equivalent to
-    /// using the constructors that takes a const char32_t* or
-    /// a std::u32string.
+    /// using the constructors that takes a `const char32_t*` or
+    /// a `std::u32string`.
     ///
     /// \param begin Forward iterator to the beginning of the UTF-32 sequence
     /// \param end   Forward iterator to the end of the UTF-32 sequence
@@ -241,7 +241,7 @@ public:
     [[nodiscard]] static String fromUtf32(T begin, T end);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Implicit conversion operator to std::string (ANSI string)
+    /// \brief Implicit conversion operator to `std::string` (ANSI string)
     ///
     /// The current global locale is used for conversion. If you
     /// want to explicitly specify a locale, see toAnsiString.
@@ -258,7 +258,7 @@ public:
     operator std::string() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Implicit conversion operator to std::wstring (wide string)
+    /// \brief Implicit conversion operator to `std::wstring` (wide string)
     ///
     /// Characters that do not fit in the target encoding are
     /// discarded from the returned string.
@@ -678,7 +678,7 @@ private:
 /// \endcode
 ///
 /// sf::String defines the most important functions of the
-/// standard std::string class: removing, random access, iterating,
+/// standard `std::string` class: removing, random access, iterating,
 /// appending, comparing, etc. However it is a simple class
 /// provided for convenience, and you may have to consider using
 /// a more optimized class if your program requires complex string
