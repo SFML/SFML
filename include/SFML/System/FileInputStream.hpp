@@ -100,7 +100,7 @@ public:
     ///
     /// \param filename Name of the file to open
     ///
-    /// \throws std::runtime_error on error
+    /// \throws `std::runtime_error` on error
     ///
     ////////////////////////////////////////////////////////////
     explicit FileInputStream(const std::filesystem::path& filename);

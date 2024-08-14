@@ -280,7 +280,7 @@ protected:
     /// allow implementation of custom loop points. Otherwise,
     /// it just calls onSeek(Time::Zero) and returns 0.
     ///
-    /// \return The seek position after looping (or std::nullopt if there's no loop)
+    /// \return The seek position after looping (or `std::nullopt` if there's no loop)
     ///
     ////////////////////////////////////////////////////////////
     virtual std::optional<std::uint64_t> onLoop();

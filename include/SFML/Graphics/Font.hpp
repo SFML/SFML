@@ -95,7 +95,7 @@ public:
     ///
     /// \param filename Path of the font file to open
     ///
-    /// \throws std::runtime_error if opening was unsuccessful
+    /// \throws `std::runtime_error` if opening was unsuccessful
     ///
     /// \see openFromFile, openFromMemory, openFromStream
     ///
@@ -116,7 +116,7 @@ public:
     /// \param data        Pointer to the file data in memory
     /// \param sizeInBytes Size of the data to load, in bytes
     ///
-    /// \throws std::runtime_error if loading was unsuccessful
+    /// \throws `std::runtime_error` if loading was unsuccessful
     ///
     /// \see openFromFile, openFromMemory, openFromStream
     ///
@@ -138,7 +138,7 @@ public:
     ///
     /// \param stream Source stream to read from
     ///
-    /// \throws std::runtime_error if loading was unsuccessful
+    /// \throws `std::runtime_error` if loading was unsuccessful
     ///
     /// \see openFromFile, openFromMemory, openFromStream
     ///

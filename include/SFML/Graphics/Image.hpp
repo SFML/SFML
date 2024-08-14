@@ -96,7 +96,7 @@ public:
     ///
     /// \param filename Path of the image file to load
     ///
-    /// \throws std::runtime_error if loading was unsuccessful
+    /// \throws `std::runtime_error` if loading was unsuccessful
     ///
     /// \see loadFromFile, loadFromMemory, loadFromStream
     ///
@@ -113,7 +113,7 @@ public:
     /// \param data Pointer to the file data in memory
     /// \param size Size of the data to load, in bytes
     ///
-    /// \throws std::runtime_error if loading was unsuccessful
+    /// \throws `std::runtime_error` if loading was unsuccessful
     ///
     /// \see loadFromFile, loadFromMemory, loadFromStream
     ///
@@ -129,7 +129,7 @@ public:
     ///
     /// \param stream Source stream to read from
     ///
-    /// \throws std::runtime_error if loading was unsuccessful
+    /// \throws `std::runtime_error` if loading was unsuccessful
     ///
     /// \see loadFromFile, loadFromMemory, loadFromStream
     ///
@@ -239,7 +239,7 @@ public:
     /// \param format Encoding format to use
     ///
     /// \return Buffer with encoded data if saving was successful,
-    ///     otherwise std::nullopt
+    ///     otherwise `std::nullopt`
     ///
     /// \see saveToFile, loadFromMemory
     ///

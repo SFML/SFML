@@ -449,7 +449,7 @@ private:
 /// It is designed to follow the behavior of standard C++ streams,
 /// using operators >> and << to extract and insert data.
 ///
-/// It is recommended to use only fixed-size types (like std::int32_t, etc.),
+/// It is recommended to use only fixed-size types (like `std::int32_t`, etc.),
 /// to avoid possible differences between the sender and the receiver.
 /// Indeed, the native C++ types may have different sizes on two platforms
 /// and your data may be corrupted if that happens.
@@ -485,10 +485,10 @@ private:
 ///
 /// Packets have built-in operator >> and << overloads for
 /// standard types:
-/// \li bool
-/// \li fixed-size integer types (int[8|16|32]_t, uint[8|16|32]_t)
-/// \li floating point numbers (float, double)
-/// \li string types (char*, wchar_t*, std::string, std::wstring, sf::String)
+/// \li `bool`
+/// \li fixed-size integer types (`int[8|16|32]_t`, `uint[8|16|32]_t`)
+/// \li floating point numbers (`float`, `double`)
+/// \li string types (`char*`, `wchar_t*`, `std::string`, `std::wstring`, `sf::String`)
 ///
 /// Like standard streams, it is also possible to define your own
 /// overloads of operators >> and << in order to handle your

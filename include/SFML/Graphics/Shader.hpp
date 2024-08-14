@@ -139,7 +139,7 @@ public:
     /// \param filename Path of the vertex, geometry or fragment shader file to load
     /// \param type     Type of shader (vertex, geometry or fragment)
     ///
-    /// \throws std::runtime_error if loading was unsuccessful
+    /// \throws `std::runtime_error` if loading was unsuccessful
     ///
     /// \see loadFromFile, loadFromMemory, loadFromStream
     ///
@@ -160,7 +160,7 @@ public:
     /// \param vertexShaderFilename   Path of the vertex shader file to load
     /// \param fragmentShaderFilename Path of the fragment shader file to load
     ///
-    /// \throws std::runtime_error if loading was unsuccessful
+    /// \throws `std::runtime_error` if loading was unsuccessful
     ///
     /// \see loadFromFile, loadFromMemory, loadFromStream
     ///
@@ -182,7 +182,7 @@ public:
     /// \param geometryShaderFilename Path of the geometry shader file to load
     /// \param fragmentShaderFilename Path of the fragment shader file to load
     ///
-    /// \throws std::runtime_error if loading was unsuccessful
+    /// \throws `std::runtime_error` if loading was unsuccessful
     ///
     /// \see loadFromFile, loadFromMemory, loadFromStream
     ///
@@ -204,7 +204,7 @@ public:
     /// \param shader String containing the source code of the shader
     /// \param type   Type of shader (vertex, geometry or fragment)
     ///
-    /// \throws std::runtime_error if loading was unsuccessful
+    /// \throws `std::runtime_error` if loading was unsuccessful
     ///
     /// \see loadFromFile, loadFromMemory, loadFromStream
     ///
@@ -225,7 +225,7 @@ public:
     /// \param vertexShader   String containing the source code of the vertex shader
     /// \param fragmentShader String containing the source code of the fragment shader
     ///
-    /// \throws std::runtime_error if loading was unsuccessful
+    /// \throws `std::runtime_error` if loading was unsuccessful
     ///
     /// \see loadFromFile, loadFromMemory, loadFromStream
     ///
@@ -247,7 +247,7 @@ public:
     /// \param geometryShader String containing the source code of the geometry shader
     /// \param fragmentShader String containing the source code of the fragment shader
     ///
-    /// \throws std::runtime_error if loading was unsuccessful
+    /// \throws `std::runtime_error` if loading was unsuccessful
     ///
     /// \see loadFromFile, loadFromMemory, loadFromStream
     ///
@@ -267,7 +267,7 @@ public:
     /// \param stream Source stream to read from
     /// \param type   Type of shader (vertex, geometry or fragment)
     ///
-    /// \throws std::runtime_error if loading was unsuccessful
+    /// \throws `std::runtime_error` if loading was unsuccessful
     ///
     /// \see loadFromFile, loadFromMemory, loadFromStream
     ///
@@ -288,7 +288,7 @@ public:
     /// \param vertexShaderStream   Source stream to read the vertex shader from
     /// \param fragmentShaderStream Source stream to read the fragment shader from
     ///
-    /// \throws std::runtime_error if loading was unsuccessful
+    /// \throws `std::runtime_error` if loading was unsuccessful
     ///
     /// \see loadFromFile, loadFromMemory, loadFromStream
     ///
@@ -310,7 +310,7 @@ public:
     /// \param geometryShaderStream Source stream to read the geometry shader from
     /// \param fragmentShaderStream Source stream to read the fragment shader from
     ///
-    /// \throws std::runtime_error if loading was unsuccessful
+    /// \throws `std::runtime_error` if loading was unsuccessful
     ///
     /// \see loadFromFile, loadFromMemory, loadFromStream
     ///

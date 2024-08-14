@@ -97,7 +97,7 @@ public:
     ///
     /// \param rectangle Rectangle to test
     ///
-    /// \return Intersection rectangle if intersecting, std::nullopt otherwise
+    /// \return Intersection rectangle if intersecting, `std::nullopt` otherwise
     ///
     /// \see contains
     ///

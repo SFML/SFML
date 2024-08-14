@@ -102,7 +102,7 @@ namespace sf::PlaybackDevice
 ////////////////////////////////////////////////////////////
 /// \brief Get the name of the current audio playback device
 ///
-/// \return The name of the current audio playback device or std::nullopt if there is none
+/// \return The name of the current audio playback device or `std::nullopt` if there is none
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_AUDIO_API std::optional<std::string> getDevice();

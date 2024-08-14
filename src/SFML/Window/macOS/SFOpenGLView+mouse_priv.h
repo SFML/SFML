@@ -103,7 +103,7 @@
 ///
 /// \param event a mouse button event
 ///
-/// \return Left, Right, ..., or std::nullopt if the button is unknown
+/// \return Left, Right, ..., or `std::nullopt` if the button is unknown
 ///
 ////////////////////////////////////////////////////////////
 + (std::optional<sf::Mouse::Button>)mouseButtonFromEvent:(NSEvent*)event;

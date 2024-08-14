@@ -52,7 +52,7 @@ public:
     constexpr Time() = default;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Construct from std::chrono::duration
+    /// \brief Construct from `std::chrono::duration`
     ///
     ////////////////////////////////////////////////////////////
     template <typename Rep, typename Period>
@@ -89,7 +89,7 @@ public:
     [[nodiscard]] constexpr std::int64_t asMicroseconds() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Return the time value as a std::chorono::duration
+    /// \brief Return the time value as a `std::chorono::duration`
     ///
     /// \return Time in microseconds
     ///
@@ -97,7 +97,7 @@ public:
     [[nodiscard]] constexpr std::chrono::microseconds toDuration() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Implicit conversion to std::chrono::duration
+    /// \brief Implicit conversion to `std::chrono::duration`
     ///
     /// \return Duration in microseconds
     ///
