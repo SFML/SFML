@@ -97,7 +97,9 @@ VideoMode convertCGModeToSFMode(CGDisplayModeRef cgmode)
     // [1]: "APIs for Supporting High Resolution" > "Additions and Changes for OS X v10.8"
     // https://developer.apple.com/library/mac/documentation/GraphicsAnimation/Conceptual/HighResolutionOSX/APIs/APIs.html#//apple_ref/doc/uid/TP40012302-CH5-SW27
     const Vector2u size = Vector2u(Vector2<size_t>(CGDisplayModeGetPixelWidth(cgmode), CGDisplayModeGetPixelHeight(cgmode)));
-    return VideoMode(size.x, size.y, static_cast<unsigned int>(modeBitsPerPixel(cgmode)));
+    VideoMode mode(size.x, size.y, static_cast<unsigned int>(modeBitsPerPixel(cgmode)));
+    scaleInWidthHeight(mode, nil);
+    return mode;
 }
 
 } // namespace priv
