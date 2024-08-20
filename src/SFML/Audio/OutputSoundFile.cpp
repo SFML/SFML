@@ -30,6 +30,7 @@
 #include <SFML/Audio/SoundFileWriter.hpp>
 
 #include <SFML/System/Err.hpp>
+#include <SFML/System/Exception.hpp>
 
 #include <cassert>
 
@@ -43,7 +44,7 @@ OutputSoundFile::OutputSoundFile(const std::filesystem::path&     filename,
                                  const std::vector<SoundChannel>& channelMap)
 {
     if (!openFromFile(filename, sampleRate, channelCount, channelMap))
-        throw std::runtime_error("Failed to open output sound file");
+        throw sf::Exception("Failed to open output sound file");
 }
 
 

@@ -171,7 +171,7 @@ public:
     /// \param size    Width and height of the image
     /// \param hotspot (x,y) location of the hotspot
     ///
-    /// \throws `std::runtime_error` if the cursor could not be constructed
+    /// \throws `sf::Exception` if the cursor could not be constructed
     ///
     ////////////////////////////////////////////////////////////
     Cursor(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot);
@@ -186,7 +186,7 @@ public:
     ///
     /// \param type Native system cursor type
     ///
-    /// \throws `std::runtime_error` if the corresponding cursor
+    /// \throws `sf::Exception` if the corresponding cursor
     ///         is not natively supported by the operating
     ///         system
     ///

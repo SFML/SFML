@@ -35,6 +35,7 @@
 #include <SFML/Window/Window.hpp>
 
 #include <SFML/System/Err.hpp>
+#include <SFML/System/Exception.hpp>
 
 #include <algorithm>
 #include <array>
@@ -75,7 +76,7 @@ Texture::Texture() : m_cacheId(TextureImpl::getUniqueId())
 Texture::Texture(const std::filesystem::path& filename, bool sRgb) : Texture()
 {
     if (!loadFromFile(filename, sRgb))
-        throw std::runtime_error("Failed to load texture from file");
+        throw sf::Exception("Failed to load texture from file");
 }
 
 
@@ -83,7 +84,7 @@ Texture::Texture(const std::filesystem::path& filename, bool sRgb) : Texture()
 Texture::Texture(const std::filesystem::path& filename, bool sRgb, const IntRect& area) : Texture()
 {
     if (!loadFromFile(filename, sRgb, area))
-        throw std::runtime_error("Failed to load texture from file");
+        throw sf::Exception("Failed to load texture from file");
 }
 
 
@@ -91,7 +92,7 @@ Texture::Texture(const std::filesystem::path& filename, bool sRgb, const IntRect
 Texture::Texture(const void* data, std::size_t size, bool sRgb) : Texture()
 {
     if (!loadFromMemory(data, size, sRgb))
-        throw std::runtime_error("Failed to load texture from memory");
+        throw sf::Exception("Failed to load texture from memory");
 }
 
 
@@ -99,7 +100,7 @@ Texture::Texture(const void* data, std::size_t size, bool sRgb) : Texture()
 Texture::Texture(const void* data, std::size_t size, bool sRgb, const IntRect& area) : Texture()
 {
     if (!loadFromMemory(data, size, sRgb, area))
-        throw std::runtime_error("Failed to load texture from memory");
+        throw sf::Exception("Failed to load texture from memory");
 }
 
 
@@ -107,7 +108,7 @@ Texture::Texture(const void* data, std::size_t size, bool sRgb, const IntRect& a
 Texture::Texture(InputStream& stream, bool sRgb) : Texture()
 {
     if (!loadFromStream(stream, sRgb))
-        throw std::runtime_error("Failed to load texture from stream");
+        throw sf::Exception("Failed to load texture from stream");
 }
 
 
@@ -115,7 +116,7 @@ Texture::Texture(InputStream& stream, bool sRgb) : Texture()
 Texture::Texture(InputStream& stream, bool sRgb, const IntRect& area) : Texture()
 {
     if (!loadFromStream(stream, sRgb, area))
-        throw std::runtime_error("Failed to load texture from stream");
+        throw sf::Exception("Failed to load texture from stream");
 }
 
 
@@ -123,7 +124,7 @@ Texture::Texture(InputStream& stream, bool sRgb, const IntRect& area) : Texture(
 Texture::Texture(const Image& image, bool sRgb) : Texture()
 {
     if (!loadFromImage(image, sRgb))
-        throw std::runtime_error("Failed to load texture from image");
+        throw sf::Exception("Failed to load texture from image");
 }
 
 
@@ -131,7 +132,7 @@ Texture::Texture(const Image& image, bool sRgb) : Texture()
 Texture::Texture(const Image& image, bool sRgb, const IntRect& area) : Texture()
 {
     if (!loadFromImage(image, sRgb, area))
-        throw std::runtime_error("Failed to load texture from image");
+        throw sf::Exception("Failed to load texture from image");
 }
 
 
@@ -139,7 +140,7 @@ Texture::Texture(const Image& image, bool sRgb, const IntRect& area) : Texture()
 Texture::Texture(Vector2u size, bool sRgb) : Texture()
 {
     if (!resize(size, sRgb))
-        throw std::runtime_error("Failed to create texture");
+        throw sf::Exception("Failed to create texture");
 }
 
 

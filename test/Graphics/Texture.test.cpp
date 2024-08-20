@@ -3,6 +3,7 @@
 // Other 1st party headers
 #include <SFML/Graphics/Image.hpp>
 
+#include <SFML/System/Exception.hpp>
 #include <SFML/System/FileInputStream.hpp>
 
 #include <catch2/catch_test_macros.hpp>
@@ -38,9 +39,9 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
         {
             SECTION("At least one zero dimension")
             {
-                CHECK_THROWS_AS(sf::Texture(sf::Vector2u()), std::runtime_error);
-                CHECK_THROWS_AS(sf::Texture(sf::Vector2u(0, 1)), std::runtime_error);
-                CHECK_THROWS_AS(sf::Texture(sf::Vector2u(1, 0)), std::runtime_error);
+                CHECK_THROWS_AS(sf::Texture(sf::Vector2u()), sf::Exception);
+                CHECK_THROWS_AS(sf::Texture(sf::Vector2u(0, 1)), sf::Exception);
+                CHECK_THROWS_AS(sf::Texture(sf::Vector2u(1, 0)), sf::Exception);
             }
 
             SECTION("Valid size")
@@ -52,8 +53,8 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
 
             SECTION("Too large")
             {
-                CHECK_THROWS_AS(sf::Texture(sf::Vector2u(100'000, 100'000)), std::runtime_error);
-                CHECK_THROWS_AS(sf::Texture(sf::Vector2u(1'000'000, 1'000'000)), std::runtime_error);
+                CHECK_THROWS_AS(sf::Texture(sf::Vector2u(100'000, 100'000)), sf::Exception);
+                CHECK_THROWS_AS(sf::Texture(sf::Vector2u(1'000'000, 1'000'000)), sf::Exception);
             }
         }
 

@@ -30,6 +30,7 @@
 #include <SFML/Graphics/RenderTextureImplFBO.hpp>
 
 #include <SFML/System/Err.hpp>
+#include <SFML/System/Exception.hpp>
 
 #include <memory>
 #include <ostream>
@@ -47,7 +48,7 @@ RenderTexture::RenderTexture() = default;
 RenderTexture::RenderTexture(Vector2u size, const ContextSettings& settings)
 {
     if (!resize(size, settings))
-        throw std::runtime_error("Failed to create render texture");
+        throw sf::Exception("Failed to create render texture");
 }
 
 

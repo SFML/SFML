@@ -1,5 +1,8 @@
 #include <SFML/Graphics/RenderTexture.hpp>
 
+// Other 1st party headers
+#include <SFML/System/Exception.hpp>
+
 #include <catch2/catch_test_macros.hpp>
 
 #include <WindowUtil.hpp>
@@ -27,7 +30,7 @@ TEST_CASE("[Graphics] sf::RenderTexture", runDisplayTests())
 
         SECTION("2 parameter constructor")
         {
-            CHECK_THROWS_AS(sf::RenderTexture({1'000'000, 1'000'000}), std::runtime_error);
+            CHECK_THROWS_AS(sf::RenderTexture({1'000'000, 1'000'000}), sf::Exception);
 
             CHECK_NOTHROW(sf::RenderTexture({100, 100}, sf::ContextSettings{8 /* depthBits */, 0 /* stencilBits */}));
             CHECK_NOTHROW(sf::RenderTexture({100, 100}, sf::ContextSettings{0 /* depthBits */, 8 /* stencilBits */}));

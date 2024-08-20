@@ -25,6 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/System/Exception.hpp>
 #include <SFML/System/FileInputStream.hpp>
 #ifdef SFML_SYSTEM_ANDROID
 #include <SFML/System/Android/Activity.hpp>
@@ -51,7 +52,7 @@ FileInputStream::FileInputStream() = default;
 FileInputStream::FileInputStream(const std::filesystem::path& filename)
 {
     if (!open(filename))
-        throw std::runtime_error("Failed to open file input stream");
+        throw sf::Exception("Failed to open file input stream");
 }
 
 

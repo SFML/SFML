@@ -1,6 +1,7 @@
 #include <SFML/Graphics/Image.hpp>
 
 // Other 1st party headers
+#include <SFML/System/Exception.hpp>
 #include <SFML/System/FileInputStream.hpp>
 
 #include <catch2/catch_test_macros.hpp>
@@ -32,8 +33,8 @@ TEST_CASE("[Graphics] sf::Image")
         {
             SECTION("Invalid file")
             {
-                CHECK_THROWS_AS(sf::Image("."), std::runtime_error);
-                CHECK_THROWS_AS(sf::Image("this/does/not/exist.jpg"), std::runtime_error);
+                CHECK_THROWS_AS(sf::Image("."), sf::Exception);
+                CHECK_THROWS_AS(sf::Image("this/does/not/exist.jpg"), sf::Exception);
             }
 
             SECTION("Successful load")
@@ -89,13 +90,13 @@ TEST_CASE("[Graphics] sf::Image")
         {
             SECTION("Invalid pointer")
             {
-                CHECK_THROWS_AS(sf::Image(nullptr, 1), std::runtime_error);
+                CHECK_THROWS_AS(sf::Image(nullptr, 1), sf::Exception);
             }
 
             SECTION("Invalid size")
             {
                 const std::byte testByte{0xAB};
-                CHECK_THROWS_AS(sf::Image(&testByte, 0), std::runtime_error);
+                CHECK_THROWS_AS(sf::Image(&testByte, 0), sf::Exception);
             }
 
             SECTION("Failed load")
@@ -112,7 +113,7 @@ TEST_CASE("[Graphics] sf::Image")
                     memory = {1, 2, 3, 4};
                 }
 
-                CHECK_THROWS_AS(sf::Image(memory.data(), memory.size()), std::runtime_error);
+                CHECK_THROWS_AS(sf::Image(memory.data(), memory.size()), sf::Exception);
             }
 
             SECTION("Successful load")

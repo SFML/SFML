@@ -29,6 +29,7 @@
 #include <SFML/Audio/Music.hpp>
 
 #include <SFML/System/Err.hpp>
+#include <SFML/System/Exception.hpp>
 #include <SFML/System/Time.hpp>
 
 #include <algorithm>
@@ -68,7 +69,7 @@ Music::Music() : m_impl(std::make_unique<Impl>())
 Music::Music(const std::filesystem::path& filename) : Music()
 {
     if (!openFromFile(filename))
-        throw std::runtime_error("Failed to open music from file");
+        throw sf::Exception("Failed to open music from file");
 }
 
 
@@ -76,7 +77,7 @@ Music::Music(const std::filesystem::path& filename) : Music()
 Music::Music(const void* data, std::size_t sizeInBytes) : Music()
 {
     if (!openFromMemory(data, sizeInBytes))
-        throw std::runtime_error("Failed to open music from memory");
+        throw sf::Exception("Failed to open music from memory");
 }
 
 
@@ -84,7 +85,7 @@ Music::Music(const void* data, std::size_t sizeInBytes) : Music()
 Music::Music(InputStream& stream) : Music()
 {
     if (!openFromStream(stream))
-        throw std::runtime_error("Failed to open music from stream");
+        throw sf::Exception("Failed to open music from stream");
 }
 
 

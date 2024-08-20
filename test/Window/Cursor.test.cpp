@@ -1,5 +1,8 @@
 #include <SFML/Window/Cursor.hpp>
 
+// Other 1st party headers
+#include <SFML/System/Exception.hpp>
+
 #include <catch2/catch_test_macros.hpp>
 
 #include <WindowUtil.hpp>
@@ -23,9 +26,9 @@ TEST_CASE("[Window] sf::Cursor", runDisplayTests())
         {
             static constexpr std::array<std::uint8_t, 4> pixels{};
 
-            CHECK_THROWS_AS(sf::Cursor(nullptr, {}, {}), std::runtime_error);
-            CHECK_THROWS_AS(sf::Cursor(pixels.data(), {0, 1}, {}), std::runtime_error);
-            CHECK_THROWS_AS(sf::Cursor(pixels.data(), {1, 0}, {}), std::runtime_error);
+            CHECK_THROWS_AS(sf::Cursor(nullptr, {}, {}), sf::Exception);
+            CHECK_THROWS_AS(sf::Cursor(pixels.data(), {0, 1}, {}), sf::Exception);
+            CHECK_THROWS_AS(sf::Cursor(pixels.data(), {1, 0}, {}), sf::Exception);
             CHECK_NOTHROW(sf::Cursor(pixels.data(), {1, 1}, {}));
         }
 

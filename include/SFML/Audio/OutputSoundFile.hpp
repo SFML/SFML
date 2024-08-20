@@ -67,7 +67,7 @@ public:
     /// \param channelCount Number of channels in the sound
     /// \param channelMap   Map of position in sample frame to sound channel
     ///
-    /// \throws `std::runtime_error` if the file could not be opened successfully
+    /// \throws `sf::Exception` if the file could not be opened successfully
     ///
     ////////////////////////////////////////////////////////////
     OutputSoundFile(const std::filesystem::path&     filename,
