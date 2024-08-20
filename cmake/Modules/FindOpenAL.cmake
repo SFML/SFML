@@ -114,7 +114,7 @@ if(OPENAL_INCLUDE_DIR AND OPENAL_LIBRARY)
           IMPORTED_LOCATION "${DLL_PATH}"
           IMPORTED_IMPLIB "${OPENAL_LIBRARY}")
       elseif(APPLE)
-          find_file(OPENAL_FULL_PATH OpenAL ${OPENAL_LIBRARY})
+          find_file(OPENAL_FULL_PATH OpenAL OpenAL.tbd PATHS ${OPENAL_LIBRARY} REQUIRED)
           add_library(OpenAL::OpenAL SHARED IMPORTED)
           set_target_properties(OpenAL::OpenAL PROPERTIES
             IMPORTED_LOCATION "${OPENAL_FULL_PATH}")
