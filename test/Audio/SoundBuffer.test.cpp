@@ -1,6 +1,7 @@
 #include <SFML/Audio/SoundBuffer.hpp>
 
 // Other 1st party headers
+#include <SFML/System/Exception.hpp>
 #include <SFML/System/FileInputStream.hpp>
 
 #include <catch2/catch_test_macros.hpp>
@@ -38,7 +39,7 @@ TEST_CASE("[Audio] sf::SoundBuffer", runAudioDeviceTests())
         {
             SECTION("Invalid filename")
             {
-                CHECK_THROWS_AS(sf::SoundBuffer("does/not/exist.wav"), std::runtime_error);
+                CHECK_THROWS_AS(sf::SoundBuffer("does/not/exist.wav"), sf::Exception);
             }
 
             SECTION("Valid file")
@@ -57,7 +58,7 @@ TEST_CASE("[Audio] sf::SoundBuffer", runAudioDeviceTests())
             SECTION("Invalid memory")
             {
                 constexpr std::array<std::byte, 5> memory{};
-                CHECK_THROWS_AS(sf::SoundBuffer(memory.data(), memory.size()), std::runtime_error);
+                CHECK_THROWS_AS(sf::SoundBuffer(memory.data(), memory.size()), sf::Exception);
             }
 
             SECTION("Valid memory")

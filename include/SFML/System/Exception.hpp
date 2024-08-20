@@ -27,29 +27,26 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/System/Export.hpp>
 
-#include <SFML/Config.hpp>
-
-#include <SFML/System/Angle.hpp>
-#include <SFML/System/Clock.hpp>
-#include <SFML/System/Err.hpp>
-#include <SFML/System/Exception.hpp>
-#include <SFML/System/FileInputStream.hpp>
-#include <SFML/System/InputStream.hpp>
-#include <SFML/System/MemoryInputStream.hpp>
-#include <SFML/System/Sleep.hpp>
-#include <SFML/System/String.hpp>
-#include <SFML/System/Time.hpp>
-#include <SFML/System/Utf.hpp>
-#include <SFML/System/Vector2.hpp>
-#include <SFML/System/Vector3.hpp>
+#include <stdexcept>
 
 
+namespace sf
+{
 ////////////////////////////////////////////////////////////
-/// \defgroup system System module
-///
-/// Base module of SFML, defining various utilities. It provides
-/// vector classes, Unicode strings and conversion functions,
-/// threads and mutexes, timing classes.
+/// \brief Library-specific exception type
 ///
 ////////////////////////////////////////////////////////////
+class SFML_SYSTEM_API Exception : public std::runtime_error
+{
+public:
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct with message
+    ///
+    /// \param message Exception message
+    ///
+    ////////////////////////////////////////////////////////////
+    explicit Exception(const std::string& message);
+};
+} // namespace sf

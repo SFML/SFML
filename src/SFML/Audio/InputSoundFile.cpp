@@ -30,6 +30,7 @@
 #include <SFML/Audio/SoundFileReader.hpp>
 
 #include <SFML/System/Err.hpp>
+#include <SFML/System/Exception.hpp>
 #include <SFML/System/FileInputStream.hpp>
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/MemoryInputStream.hpp>
@@ -70,7 +71,7 @@ void InputSoundFile::StreamDeleter::operator()(InputStream* ptr) const
 InputSoundFile::InputSoundFile(const std::filesystem::path& filename)
 {
     if (!openFromFile(filename))
-        throw std::runtime_error("Failed to open input sound file");
+        throw sf::Exception("Failed to open input sound file");
 }
 
 
@@ -78,7 +79,7 @@ InputSoundFile::InputSoundFile(const std::filesystem::path& filename)
 InputSoundFile::InputSoundFile(const void* data, std::size_t sizeInBytes)
 {
     if (!openFromMemory(data, sizeInBytes))
-        throw std::runtime_error("Failed to open input sound file from memory");
+        throw sf::Exception("Failed to open input sound file from memory");
 }
 
 
@@ -86,7 +87,7 @@ InputSoundFile::InputSoundFile(const void* data, std::size_t sizeInBytes)
 InputSoundFile::InputSoundFile(InputStream& stream)
 {
     if (!openFromStream(stream))
-        throw std::runtime_error("Failed to open input sound file from stream");
+        throw sf::Exception("Failed to open input sound file from stream");
 }
 
 

@@ -28,6 +28,7 @@
 #include <SFML/Graphics/Image.hpp>
 
 #include <SFML/System/Err.hpp>
+#include <SFML/System/Exception.hpp>
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/Utils.hpp>
 #ifdef SFML_SYSTEM_ANDROID
@@ -113,7 +114,7 @@ Image::Image(Vector2u size, const std::uint8_t* pixels)
 Image::Image(const std::filesystem::path& filename)
 {
     if (!loadFromFile(filename))
-        throw std::runtime_error("Failed to open image from file");
+        throw sf::Exception("Failed to open image from file");
 }
 
 
@@ -121,7 +122,7 @@ Image::Image(const std::filesystem::path& filename)
 Image::Image(const void* data, std::size_t size)
 {
     if (!loadFromMemory(data, size))
-        throw std::runtime_error("Failed to open image from memory");
+        throw sf::Exception("Failed to open image from memory");
 }
 
 
@@ -129,7 +130,7 @@ Image::Image(const void* data, std::size_t size)
 Image::Image(InputStream& stream)
 {
     if (!loadFromStream(stream))
-        throw std::runtime_error("Failed to open image from stream");
+        throw sf::Exception("Failed to open image from stream");
 }
 
 

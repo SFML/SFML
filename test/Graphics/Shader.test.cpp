@@ -1,6 +1,7 @@
 #include <SFML/Graphics/Shader.hpp>
 
 // Other 1st party headers
+#include <SFML/System/Exception.hpp>
 #include <SFML/System/FileInputStream.hpp>
 
 #include <catch2/catch_test_macros.hpp>
@@ -147,14 +148,14 @@ TEST_CASE("[Graphics] sf::Shader (Dummy Implementation)", skipShaderDummyTests()
 
     SECTION("Construct from memory")
     {
-        CHECK_THROWS_AS(sf::Shader(std::string_view(vertexSource), sf::Shader::Type::Vertex), std::runtime_error);
-        CHECK_THROWS_AS(sf::Shader(std::string_view(geometrySource), sf::Shader::Type::Geometry), std::runtime_error);
-        CHECK_THROWS_AS(sf::Shader(std::string_view(fragmentSource), sf::Shader::Type::Fragment), std::runtime_error);
-        CHECK_THROWS_AS(sf::Shader(std::string_view(vertexSource), std::string_view(fragmentSource)), std::runtime_error);
+        CHECK_THROWS_AS(sf::Shader(std::string_view(vertexSource), sf::Shader::Type::Vertex), sf::Exception);
+        CHECK_THROWS_AS(sf::Shader(std::string_view(geometrySource), sf::Shader::Type::Geometry), sf::Exception);
+        CHECK_THROWS_AS(sf::Shader(std::string_view(fragmentSource), sf::Shader::Type::Fragment), sf::Exception);
+        CHECK_THROWS_AS(sf::Shader(std::string_view(vertexSource), std::string_view(fragmentSource)), sf::Exception);
         CHECK_THROWS_AS(sf::Shader(std::string_view(vertexSource),
                                    std::string_view(geometrySource),
                                    std::string_view(fragmentSource)),
-                        std::runtime_error);
+                        sf::Exception);
     }
 
     SECTION("loadFromMemory()")
@@ -191,7 +192,7 @@ TEST_CASE("[Graphics] sf::Shader", skipShaderFullTests())
             SECTION("One shader")
             {
                 CHECK_THROWS_AS(sf::Shader(std::filesystem::path("does-not-exist.vert"), sf::Shader::Type::Vertex),
-                                std::runtime_error);
+                                sf::Exception);
 
                 if (sf::Shader::isAvailable())
                 {
@@ -203,9 +204,9 @@ TEST_CASE("[Graphics] sf::Shader", skipShaderFullTests())
                 else
                 {
                     CHECK_THROWS_AS(sf::Shader(std::filesystem::path("Graphics/shader.vert"), sf::Shader::Type::Vertex),
-                                    std::runtime_error);
+                                    sf::Exception);
                     CHECK_THROWS_AS(sf::Shader(std::filesystem::path("Graphics/shader.frag"), sf::Shader::Type::Fragment),
-                                    std::runtime_error);
+                                    sf::Exception);
                 }
             }
 
@@ -213,10 +214,10 @@ TEST_CASE("[Graphics] sf::Shader", skipShaderFullTests())
             {
                 CHECK_THROWS_AS(sf::Shader(std::filesystem::path("does-not-exist.vert"),
                                            std::filesystem::path("Graphics/shader.frag")),
-                                std::runtime_error);
+                                sf::Exception);
                 CHECK_THROWS_AS(sf::Shader(std::filesystem::path("Graphics/shader.vert"),
                                            std::filesystem::path("does-not-exist.frag")),
-                                std::runtime_error);
+                                sf::Exception);
 
                 if (sf::Shader::isAvailable())
                 {
@@ -228,7 +229,7 @@ TEST_CASE("[Graphics] sf::Shader", skipShaderFullTests())
                 {
                     CHECK_THROWS_AS(sf::Shader(std::filesystem::path("Graphics/shader.vert"),
                                                std::filesystem::path("Graphics/shader.frag")),
-                                    std::runtime_error);
+                                    sf::Exception);
                 }
             }
 
@@ -237,15 +238,15 @@ TEST_CASE("[Graphics] sf::Shader", skipShaderFullTests())
                 CHECK_THROWS_AS(sf::Shader(std::filesystem::path("does-not-exist.vert"),
                                            std::filesystem::path("Graphics/shader.geom"),
                                            std::filesystem::path("Graphics/shader.frag")),
-                                std::runtime_error);
+                                sf::Exception);
                 CHECK_THROWS_AS(sf::Shader(std::filesystem::path("Graphics/shader.vert"),
                                            std::filesystem::path("does-not-exist.geom"),
                                            std::filesystem::path("Graphics/shader.frag")),
-                                std::runtime_error);
+                                sf::Exception);
                 CHECK_THROWS_AS(sf::Shader(std::filesystem::path("Graphics/shader.vert"),
                                            std::filesystem::path("Graphics/shader.geom"),
                                            std::filesystem::path("does-not-exist.frag")),
-                                std::runtime_error);
+                                sf::Exception);
 
                 if (sf::Shader::isGeometryAvailable())
                 {
@@ -259,7 +260,7 @@ TEST_CASE("[Graphics] sf::Shader", skipShaderFullTests())
                     CHECK_THROWS_AS(sf::Shader(std::filesystem::path("Graphics/shader.vert"),
                                                std::filesystem::path("Graphics/shader.geom"),
                                                std::filesystem::path("Graphics/shader.frag")),
-                                    std::runtime_error);
+                                    sf::Exception);
                 }
             }
         }
@@ -269,20 +270,16 @@ TEST_CASE("[Graphics] sf::Shader", skipShaderFullTests())
             if (sf::Shader::isAvailable())
             {
                 CHECK(sf::Shader(std::string_view(vertexSource), sf::Shader::Type::Vertex).getNativeHandle() != 0);
-                CHECK_THROWS_AS(sf::Shader(std::string_view(geometrySource), sf::Shader::Type::Geometry),
-                                std::runtime_error);
+                CHECK_THROWS_AS(sf::Shader(std::string_view(geometrySource), sf::Shader::Type::Geometry), sf::Exception);
                 CHECK(sf::Shader(std::string_view(fragmentSource), sf::Shader::Type::Fragment).getNativeHandle() != 0);
                 CHECK(sf::Shader(std::string_view(vertexSource), std::string_view(fragmentSource)).getNativeHandle() != 0);
             }
             else
             {
-                CHECK_THROWS_AS(sf::Shader(std::string_view(vertexSource), sf::Shader::Type::Vertex), std::runtime_error);
-                CHECK_THROWS_AS(sf::Shader(std::string_view(geometrySource), sf::Shader::Type::Geometry),
-                                std::runtime_error);
-                CHECK_THROWS_AS(sf::Shader(std::string_view(fragmentSource), sf::Shader::Type::Fragment),
-                                std::runtime_error);
-                CHECK_THROWS_AS(sf::Shader(std::string_view(vertexSource), std::string_view(fragmentSource)),
-                                std::runtime_error);
+                CHECK_THROWS_AS(sf::Shader(std::string_view(vertexSource), sf::Shader::Type::Vertex), sf::Exception);
+                CHECK_THROWS_AS(sf::Shader(std::string_view(geometrySource), sf::Shader::Type::Geometry), sf::Exception);
+                CHECK_THROWS_AS(sf::Shader(std::string_view(fragmentSource), sf::Shader::Type::Fragment), sf::Exception);
+                CHECK_THROWS_AS(sf::Shader(std::string_view(vertexSource), std::string_view(fragmentSource)), sf::Exception);
             }
 
             if (sf::Shader::isGeometryAvailable())
@@ -295,7 +292,7 @@ TEST_CASE("[Graphics] sf::Shader", skipShaderFullTests())
                 CHECK_THROWS_AS(sf::Shader(std::string_view(vertexSource),
                                            std::string_view(geometrySource),
                                            std::string_view(fragmentSource)),
-                                std::runtime_error);
+                                sf::Exception);
             }
         }
 
@@ -309,7 +306,7 @@ TEST_CASE("[Graphics] sf::Shader", skipShaderFullTests())
 
             SECTION("One shader")
             {
-                CHECK_THROWS_AS(sf::Shader(emptyStream, sf::Shader::Type::Vertex), std::runtime_error);
+                CHECK_THROWS_AS(sf::Shader(emptyStream, sf::Shader::Type::Vertex), sf::Exception);
 
                 if (sf::Shader::isAvailable())
                 {
@@ -318,15 +315,15 @@ TEST_CASE("[Graphics] sf::Shader", skipShaderFullTests())
                 }
                 else
                 {
-                    CHECK_THROWS_AS(sf::Shader(vertexShaderStream, sf::Shader::Type::Vertex), std::runtime_error);
-                    CHECK_THROWS_AS(sf::Shader(fragmentShaderStream, sf::Shader::Type::Fragment), std::runtime_error);
+                    CHECK_THROWS_AS(sf::Shader(vertexShaderStream, sf::Shader::Type::Vertex), sf::Exception);
+                    CHECK_THROWS_AS(sf::Shader(fragmentShaderStream, sf::Shader::Type::Fragment), sf::Exception);
                 }
             }
 
             SECTION("Two shaders")
             {
-                CHECK_THROWS_AS(sf::Shader(emptyStream, fragmentShaderStream), std::runtime_error);
-                CHECK_THROWS_AS(sf::Shader(vertexShaderStream, emptyStream), std::runtime_error);
+                CHECK_THROWS_AS(sf::Shader(emptyStream, fragmentShaderStream), sf::Exception);
+                CHECK_THROWS_AS(sf::Shader(vertexShaderStream, emptyStream), sf::Exception);
 
                 if (sf::Shader::isAvailable())
                 {
@@ -334,15 +331,15 @@ TEST_CASE("[Graphics] sf::Shader", skipShaderFullTests())
                 }
                 else
                 {
-                    CHECK_THROWS_AS(sf::Shader(vertexShaderStream, fragmentShaderStream), std::runtime_error);
+                    CHECK_THROWS_AS(sf::Shader(vertexShaderStream, fragmentShaderStream), sf::Exception);
                 }
             }
 
             SECTION("Three shaders")
             {
-                CHECK_THROWS_AS(sf::Shader(emptyStream, geometryShaderStream, fragmentShaderStream), std::runtime_error);
-                CHECK_THROWS_AS(sf::Shader(vertexShaderStream, emptyStream, fragmentShaderStream), std::runtime_error);
-                CHECK_THROWS_AS(sf::Shader(vertexShaderStream, geometryShaderStream, emptyStream), std::runtime_error);
+                CHECK_THROWS_AS(sf::Shader(emptyStream, geometryShaderStream, fragmentShaderStream), sf::Exception);
+                CHECK_THROWS_AS(sf::Shader(vertexShaderStream, emptyStream, fragmentShaderStream), sf::Exception);
+                CHECK_THROWS_AS(sf::Shader(vertexShaderStream, geometryShaderStream, emptyStream), sf::Exception);
 
                 if (sf::Shader::isGeometryAvailable())
                 {
@@ -351,7 +348,7 @@ TEST_CASE("[Graphics] sf::Shader", skipShaderFullTests())
                 else
                 {
                     CHECK_THROWS_AS(sf::Shader(vertexShaderStream, geometryShaderStream, fragmentShaderStream),
-                                    std::runtime_error);
+                                    sf::Exception);
                 }
             }
         }

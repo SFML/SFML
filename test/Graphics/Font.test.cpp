@@ -1,7 +1,9 @@
 #include <SFML/Graphics/Font.hpp>
-#include <SFML/Graphics/Texture.hpp>
 
 // Other 1st party headers
+#include <SFML/Graphics/Texture.hpp>
+
+#include <SFML/System/Exception.hpp>
 #include <SFML/System/FileInputStream.hpp>
 
 #include <catch2/catch_test_macros.hpp>
@@ -38,7 +40,7 @@ TEST_CASE("[Graphics] sf::Font", runDisplayTests())
         {
             SECTION("Invalid filename")
             {
-                CHECK_THROWS_AS(sf::Font("does/not/exist.ttf"), std::runtime_error);
+                CHECK_THROWS_AS(sf::Font("does/not/exist.ttf"), sf::Exception);
             }
 
             SECTION("Successful load")
@@ -72,9 +74,9 @@ TEST_CASE("[Graphics] sf::Font", runDisplayTests())
         {
             SECTION("Invalid data and size")
             {
-                CHECK_THROWS_AS(sf::Font(nullptr, 1), std::runtime_error);
+                CHECK_THROWS_AS(sf::Font(nullptr, 1), sf::Exception);
                 const std::byte testByte{0xCD};
-                CHECK_THROWS_AS(sf::Font(&testByte, 0), std::runtime_error);
+                CHECK_THROWS_AS(sf::Font(&testByte, 0), sf::Exception);
             }
 
             SECTION("Successful load")

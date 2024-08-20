@@ -55,6 +55,7 @@ set(SYSTEM_SRC
     System/Clock.test.cpp
     System/Config.test.cpp
     System/Err.test.cpp
+    System/Exception.test.cpp
     System/FileInputStream.test.cpp
     System/MemoryInputStream.test.cpp
     System/Sleep.test.cpp

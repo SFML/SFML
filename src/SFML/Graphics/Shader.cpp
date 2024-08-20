@@ -34,6 +34,7 @@
 #include <SFML/Window/GlResource.hpp>
 
 #include <SFML/System/Err.hpp>
+#include <SFML/System/Exception.hpp>
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/Utils.hpp>
 #include <SFML/System/Vector2.hpp>
@@ -227,7 +228,7 @@ struct Shader::UniformBinder
 Shader::Shader(const std::filesystem::path& filename, Type type)
 {
     if (!loadFromFile(filename, type))
-        throw std::runtime_error("Failed to load shader from file");
+        throw sf::Exception("Failed to load shader from file");
 }
 
 
@@ -235,7 +236,7 @@ Shader::Shader(const std::filesystem::path& filename, Type type)
 Shader::Shader(const std::filesystem::path& vertexShaderFilename, const std::filesystem::path& fragmentShaderFilename)
 {
     if (!loadFromFile(vertexShaderFilename, fragmentShaderFilename))
-        throw std::runtime_error("Failed to load shader from files");
+        throw sf::Exception("Failed to load shader from files");
 }
 
 
@@ -245,7 +246,7 @@ Shader::Shader(const std::filesystem::path& vertexShaderFilename,
                const std::filesystem::path& fragmentShaderFilename)
 {
     if (!loadFromFile(vertexShaderFilename, geometryShaderFilename, fragmentShaderFilename))
-        throw std::runtime_error("Failed to load shader from files");
+        throw sf::Exception("Failed to load shader from files");
 }
 
 
@@ -253,7 +254,7 @@ Shader::Shader(const std::filesystem::path& vertexShaderFilename,
 Shader::Shader(std::string_view shader, Type type)
 {
     if (!loadFromMemory(shader, type))
-        throw std::runtime_error("Failed to load shader from memory");
+        throw sf::Exception("Failed to load shader from memory");
 }
 
 
@@ -261,7 +262,7 @@ Shader::Shader(std::string_view shader, Type type)
 Shader::Shader(std::string_view vertexShader, std::string_view fragmentShader)
 {
     if (!loadFromMemory(vertexShader, fragmentShader))
-        throw std::runtime_error("Failed to load shader from memory");
+        throw sf::Exception("Failed to load shader from memory");
 }
 
 
@@ -269,7 +270,7 @@ Shader::Shader(std::string_view vertexShader, std::string_view fragmentShader)
 Shader::Shader(std::string_view vertexShader, std::string_view geometryShader, std::string_view fragmentShader)
 {
     if (!loadFromMemory(vertexShader, geometryShader, fragmentShader))
-        throw std::runtime_error("Failed to load shader from memory");
+        throw sf::Exception("Failed to load shader from memory");
 }
 
 
@@ -277,7 +278,7 @@ Shader::Shader(std::string_view vertexShader, std::string_view geometryShader, s
 Shader::Shader(InputStream& stream, Type type)
 {
     if (!loadFromStream(stream, type))
-        throw std::runtime_error("Failed to load shader from stream");
+        throw sf::Exception("Failed to load shader from stream");
 }
 
 
@@ -285,7 +286,7 @@ Shader::Shader(InputStream& stream, Type type)
 Shader::Shader(InputStream& vertexShaderStream, InputStream& fragmentShaderStream)
 {
     if (!loadFromStream(vertexShaderStream, fragmentShaderStream))
-        throw std::runtime_error("Failed to load shader from streams");
+        throw sf::Exception("Failed to load shader from streams");
 }
 
 
@@ -293,7 +294,7 @@ Shader::Shader(InputStream& vertexShaderStream, InputStream& fragmentShaderStrea
 Shader::Shader(InputStream& vertexShaderStream, InputStream& geometryShaderStream, InputStream& fragmentShaderStream)
 {
     if (!loadFromStream(vertexShaderStream, geometryShaderStream, fragmentShaderStream))
-        throw std::runtime_error("Failed to load shader from streams");
+        throw sf::Exception("Failed to load shader from streams");
 }
 
 
@@ -1039,7 +1040,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 Shader::Shader(const std::filesystem::path& /* filename */, Type /* type */)
 {
-    throw std::runtime_error("Shaders are not supported with OpenGL ES 1");
+    throw sf::Exception("Shaders are not supported with OpenGL ES 1");
 }
 
 
@@ -1047,7 +1048,7 @@ Shader::Shader(const std::filesystem::path& /* filename */, Type /* type */)
 Shader::Shader(const std::filesystem::path& /* vertexShaderFilename */,
                const std::filesystem::path& /* fragmentShaderFilename */)
 {
-    throw std::runtime_error("Shaders are not supported with OpenGL ES 1");
+    throw sf::Exception("Shaders are not supported with OpenGL ES 1");
 }
 
 
@@ -1056,42 +1057,42 @@ Shader::Shader(const std::filesystem::path& /* vertexShaderFilename */,
                const std::filesystem::path& /* geometryShaderFilename */,
                const std::filesystem::path& /* fragmentShaderFilename */)
 {
-    throw std::runtime_error("Shaders are not supported with OpenGL ES 1");
+    throw sf::Exception("Shaders are not supported with OpenGL ES 1");
 }
 
 
 ////////////////////////////////////////////////////////////
 Shader::Shader(std::string_view /* shader */, Type /* type */)
 {
-    throw std::runtime_error("Shaders are not supported with OpenGL ES 1");
+    throw sf::Exception("Shaders are not supported with OpenGL ES 1");
 }
 
 
 ////////////////////////////////////////////////////////////
 Shader::Shader(std::string_view /* vertexShader */, std::string_view /* fragmentShader */)
 {
-    throw std::runtime_error("Shaders are not supported with OpenGL ES 1");
+    throw sf::Exception("Shaders are not supported with OpenGL ES 1");
 }
 
 
 ////////////////////////////////////////////////////////////
 Shader::Shader(std::string_view /* vertexShader */, std::string_view /* geometryShader */, std::string_view /* fragmentShader */)
 {
-    throw std::runtime_error("Shaders are not supported with OpenGL ES 1");
+    throw sf::Exception("Shaders are not supported with OpenGL ES 1");
 }
 
 
 ////////////////////////////////////////////////////////////
 Shader::Shader(InputStream& /* stream */, Type /* type */)
 {
-    throw std::runtime_error("Shaders are not supported with OpenGL ES 1");
+    throw sf::Exception("Shaders are not supported with OpenGL ES 1");
 }
 
 
 ////////////////////////////////////////////////////////////
 Shader::Shader(InputStream& /* vertexShaderStream */, InputStream& /* fragmentShaderStream */)
 {
-    throw std::runtime_error("Shaders are not supported with OpenGL ES 1");
+    throw sf::Exception("Shaders are not supported with OpenGL ES 1");
 }
 
 
@@ -1100,7 +1101,7 @@ Shader::Shader(InputStream& /* vertexShaderStream */,
                InputStream& /* geometryShaderStream */,
                InputStream& /* fragmentShaderStream */)
 {
-    throw std::runtime_error("Shaders are not supported with OpenGL ES 1");
+    throw sf::Exception("Shaders are not supported with OpenGL ES 1");
 }
 
 

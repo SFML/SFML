@@ -88,7 +88,7 @@ public:
     ///
     /// \param filename Path of the music file to open
     ///
-    /// \throws `std::runtime_error` if loading was unsuccessful
+    /// \throws `sf::Exception` if loading was unsuccessful
     ///
     /// \see openFromMemory, openFromStream
     ///
@@ -111,7 +111,7 @@ public:
     /// \param data        Pointer to the file data in memory
     /// \param sizeInBytes Size of the data to load, in bytes
     ///
-    /// \throws `std::runtime_error` if loading was unsuccessful
+    /// \throws `sf::Exception` if loading was unsuccessful
     ///
     /// \see openFromFile, openFromStream
     ///
@@ -132,7 +132,7 @@ public:
     ///
     /// \param stream Source stream to read from
     ///
-    /// \throws `std::runtime_error` if loading was unsuccessful
+    /// \throws `sf::Exception` if loading was unsuccessful
     ///
     /// \see openFromFile, openFromMemory
     ///

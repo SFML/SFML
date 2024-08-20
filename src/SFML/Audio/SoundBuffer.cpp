@@ -31,6 +31,7 @@
 #include <SFML/Audio/SoundBuffer.hpp>
 
 #include <SFML/System/Err.hpp>
+#include <SFML/System/Exception.hpp>
 
 #include <exception>
 #include <ostream>
@@ -43,7 +44,7 @@ namespace sf
 SoundBuffer::SoundBuffer(const std::filesystem::path& filename)
 {
     if (!loadFromFile(filename))
-        throw std::runtime_error("Failed to open sound buffer from file");
+        throw sf::Exception("Failed to open sound buffer from file");
 }
 
 
@@ -51,7 +52,7 @@ SoundBuffer::SoundBuffer(const std::filesystem::path& filename)
 SoundBuffer::SoundBuffer(const void* data, std::size_t sizeInBytes)
 {
     if (!loadFromMemory(data, sizeInBytes))
-        throw std::runtime_error("Failed to open sound buffer from memory");
+        throw sf::Exception("Failed to open sound buffer from memory");
 }
 
 
@@ -59,7 +60,7 @@ SoundBuffer::SoundBuffer(const void* data, std::size_t sizeInBytes)
 SoundBuffer::SoundBuffer(InputStream& stream)
 {
     if (!loadFromStream(stream))
-        throw std::runtime_error("Failed to open sound buffer from stream");
+        throw sf::Exception("Failed to open sound buffer from stream");
 }
 
 
@@ -71,7 +72,7 @@ SoundBuffer::SoundBuffer(const std::int16_t*              samples,
                          const std::vector<SoundChannel>& channelMap)
 {
     if (!loadFromSamples(samples, sampleCount, channelCount, sampleRate, channelMap))
-        throw std::runtime_error("Failed to open sound buffer from samples");
+        throw sf::Exception("Failed to open sound buffer from samples");
 }
 
 

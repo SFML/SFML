@@ -106,7 +106,7 @@ public:
     /// \param filename Path of the image file to load
     /// \param sRgb     True to enable sRGB conversion, false to disable it
     ///
-    /// \throws `std::runtime_error` if loading was unsuccessful
+    /// \throws `sf::Exception` if loading was unsuccessful
     ///
     /// \see loadFromFile, loadFromMemory, loadFromStream, loadFromImage
     ///
@@ -129,7 +129,7 @@ public:
     /// \param sRgb     True to enable sRGB conversion, false to disable it
     /// \param area     Area of the image to load
     ///
-    /// \throws `std::runtime_error` if loading was unsuccessful
+    /// \throws `sf::Exception` if loading was unsuccessful
     ///
     /// \see loadFromFile, loadFromMemory, loadFromStream, loadFromImage
     ///
@@ -146,7 +146,7 @@ public:
     /// \param size Size of the data to load, in bytes
     /// \param sRgb True to enable sRGB conversion, false to disable it
     ///
-    /// \throws `std::runtime_error` if loading was unsuccessful
+    /// \throws `sf::Exception` if loading was unsuccessful
     ///
     /// \see loadFromFile, loadFromMemory, loadFromStream, loadFromImage
     ///
@@ -170,7 +170,7 @@ public:
     /// \param sRgb True to enable sRGB conversion, false to disable it
     /// \param area Area of the image to load
     ///
-    /// \throws `std::runtime_error` if loading was unsuccessful
+    /// \throws `sf::Exception` if loading was unsuccessful
     ///
     /// \see loadFromFile, loadFromMemory, loadFromStream, loadFromImage
     ///
@@ -186,7 +186,7 @@ public:
     /// \param stream Source stream to read from
     /// \param sRgb   True to enable sRGB conversion, false to disable it
     ///
-    /// \throws `std::runtime_error` if loading was unsuccessful
+    /// \throws `sf::Exception` if loading was unsuccessful
     ///
     /// \see loadFromFile, loadFromMemory, loadFromStream, loadFromImage
     ///
@@ -209,7 +209,7 @@ public:
     /// \param sRgb   True to enable sRGB conversion, false to disable it
     /// \param area   Area of the image to load
     ///
-    /// \throws `std::runtime_error` if loading was unsuccessful
+    /// \throws `sf::Exception` if loading was unsuccessful
     ///
     /// \see loadFromFile, loadFromMemory, loadFromStream, loadFromImage
     ///
@@ -225,7 +225,7 @@ public:
     /// \param image Image to load into the texture
     /// \param sRgb  True to enable sRGB conversion, false to disable it
     ///
-    /// \throws `std::runtime_error` if loading was unsuccessful
+    /// \throws `sf::Exception` if loading was unsuccessful
     ///
     /// \see loadFromFile, loadFromMemory, loadFromStream, loadFromImage
     ///
@@ -247,7 +247,7 @@ public:
     /// \param sRgb  True to enable sRGB conversion, false to disable it
     /// \param area  Area of the image to load
     ///
-    /// \throws `std::runtime_error` if loading was unsuccessful
+    /// \throws `sf::Exception` if loading was unsuccessful
     ///
     /// \see loadFromFile, loadFromMemory, loadFromStream, loadFromImage
     ///
@@ -260,7 +260,7 @@ public:
     /// \param size Width and height of the texture
     /// \param sRgb True to enable sRGB conversion, false to disable it
     ///
-    /// \throws `std::runtime_error` if construction was unsuccessful
+    /// \throws `sf::Exception` if construction was unsuccessful
     ///
     ////////////////////////////////////////////////////////////
     explicit Texture(Vector2u size, bool sRgb = false);

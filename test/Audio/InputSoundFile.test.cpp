@@ -1,6 +1,7 @@
 #include <SFML/Audio/InputSoundFile.hpp>
 
 // Other 1st party headers
+#include <SFML/System/Exception.hpp>
 #include <SFML/System/FileInputStream.hpp>
 #include <SFML/System/Time.hpp>
 
@@ -36,7 +37,7 @@ TEST_CASE("[Audio] sf::InputSoundFile")
 
         SECTION("Invalid file")
         {
-            CHECK_THROWS_AS(sf::InputSoundFile("does/not/exist.wav"), std::runtime_error);
+            CHECK_THROWS_AS(sf::InputSoundFile("does/not/exist.wav"), sf::Exception);
         }
 
         SECTION("Valid file")

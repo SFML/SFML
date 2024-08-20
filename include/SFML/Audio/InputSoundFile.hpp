@@ -73,7 +73,7 @@ public:
     ///
     /// \param filename Path of the sound file to load
     ///
-    /// \throws `std::runtime_error` if opening the file was unsuccessful
+    /// \throws `sf::Exception` if opening the file was unsuccessful
     ///
     ////////////////////////////////////////////////////////////
     InputSoundFile(const std::filesystem::path& filename);
@@ -87,7 +87,7 @@ public:
     /// \param data        Pointer to the file data in memory
     /// \param sizeInBytes Size of the data to load, in bytes
     ///
-    /// \throws `std::runtime_error` if opening the file was unsuccessful
+    /// \throws `sf::Exception` if opening the file was unsuccessful
     ///
     ////////////////////////////////////////////////////////////
     InputSoundFile(const void* data, std::size_t sizeInBytes);
@@ -100,7 +100,7 @@ public:
     ///
     /// \param stream Source stream to read from
     ///
-    /// \throws `std::runtime_error` if opening the file was unsuccessful
+    /// \throws `sf::Exception` if opening the file was unsuccessful
     ///
     ////////////////////////////////////////////////////////////
     InputSoundFile(InputStream& stream);
