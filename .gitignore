@@ -36,5 +36,6 @@ build/
 
 # Cache/IDE folders
 .cache/
+.vs/
 .vscode/
 .idea/
