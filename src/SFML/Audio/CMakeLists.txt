@@ -68,7 +68,7 @@ elseif(SFML_OS_ANDROID)
 endif()
 
 # find external libraries
-sfml_find_package(OpenAL INCLUDE "OPENAL_INCLUDE_DIR" LINK "OPENAL_LIBRARY")
+find_package(OpenAL REQUIRED)
 sfml_find_package(VORBIS INCLUDE "VORBIS_INCLUDE_DIRS" LINK "VORBIS_LIBRARIES")
 sfml_find_package(FLAC INCLUDE "FLAC_INCLUDE_DIR" LINK "FLAC_LIBRARY")
 
@@ -81,7 +81,7 @@ sfml_add_library(sfml-audio
                  SOURCES ${SRC} ${CODECS_SRC})
 
 # setup dependencies
-target_link_libraries(sfml-audio PRIVATE OpenAL)
+target_link_libraries(sfml-audio PRIVATE OpenAL::OpenAL)
 
 # minimp3 sources
 target_include_directories(sfml-audio SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/minimp3")
