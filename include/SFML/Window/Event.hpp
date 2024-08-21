@@ -373,13 +373,13 @@ private:
     // Helper functions
     ////////////////////////////////////////////////////////////
     template <typename T, typename... Ts>
-    [[nodiscard]] static constexpr bool isInParameterPack(const std::variant<Ts...>&)
+    [[nodiscard]] static constexpr bool isInParameterPack(const std::variant<Ts...>*)
     {
         return (std::is_same_v<T, Ts> || ...);
     }
 
     template <typename T>
-    static constexpr bool isEventSubtype = isInParameterPack<T>(decltype(m_data)());
+    static constexpr bool isEventSubtype = isInParameterPack<T>(decltype (&m_data)(nullptr));
 };
 
 } // namespace sf
