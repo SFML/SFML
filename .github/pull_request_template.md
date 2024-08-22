@@ -1,7 +1,7 @@
 <!--
 Thanks a lot for making a contribution to SFML! 🙂
 
-Please make sure you are targetting the correct branch. No more features are planned for the 2.x branches! (See State of Development in the readme)
+Please make sure you are targetting the correct branch. No more features are planned for the 2.x branches! (See [the readme](https://github.com/SFML/SFML#state-of-development))
 
 Before creating the pull request, we ask you to check the following boxes: (For small changes not everything needs to ticked, but the more the better!)
 
