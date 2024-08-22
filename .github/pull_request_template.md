@@ -1,12 +1,14 @@
 <!--
 Thanks a lot for making a contribution to SFML! 🙂
 
-Before you create the pull request, we ask you to check the follow boxes. (For small changes not everything needs to ticked, but the more the better!)
+Please make sure you are targetting the correct branch. No more features are planned for the 2.x branches! (See State of Development in the readme)
+
+Before creating the pull request, we ask you to check the following boxes: (For small changes not everything needs to ticked, but the more the better!)
 
 -   [ ] Has this change been discussed on [the forum](https://en.sfml-dev.org/forums/index.php#c3) or in an issue before?
 -   [ ] Does the code follow the SFML [Code Style Guide](https://www.sfml-dev.org/style.php)?
 -   [ ] Have you provided some example/test code for your changes?
--   [ ] If you have additional steps which need to be performed list them as tasks!
+-   [ ] If you have additional steps which need to be performed, please list them as tasks!
 -->
 
 ## Description
@@ -27,7 +29,7 @@ This PR is related to the issue #
 
 <!-- Describe how to best test these changes. -->
 
-<!-- Please provide a [minimal, complete and verifiable example](https://stackoverflow.com/help/mcve) if possible, you can use the follow template as a start: -->
+<!-- Please provide a [minimal, complete and verifiable example](https://stackoverflow.com/help/mcve) if possible, you can use the following template as a start: -->
 
 ```cpp
 #include <SFML/Graphics.hpp>
