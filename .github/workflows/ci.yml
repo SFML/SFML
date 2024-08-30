@@ -428,3 +428,23 @@ jobs:
 
     - name: Test
       run: ctest --test-dir build --output-on-failure
+
+  docs:
+    name: Documentation
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Install Linux Dependencies
+      run: sudo apt-get update && sudo apt-get install xorg-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev xvfb fluxbox && sudo apt-get remove -y libasound2
+
+    - name: Install Doxygen
+      run: sudo apt-get install doxygen graphviz
+
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Configure
+      run: cmake -B build -DSFML_BUILD_DOC=ON
+
+    - name: Build Doxygen Site
+      run: cmake --build build --target doc
