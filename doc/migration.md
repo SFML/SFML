@@ -42,7 +42,7 @@ target_link_libraries(my_app PRIVATE sfml-graphics sfml-audio sfml-network)
 
 v3:
 ```cmake
-find_package(SFML 3 REQUIRED COMPONENT Graphics Audio Network)
+find_package(SFML 3 REQUIRED COMPONENTS Graphics Audio Network)
 ...
 target_link_libraries(my_app PRIVATE SFML::Graphics SFML::Audio SFML::Network)
 ```
