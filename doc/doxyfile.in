@@ -74,7 +74,7 @@ PROJECT_ICON           =
 # entered, it will be relative to the location where doxygen was started. If
 # left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = "@DOXYGEN_OUTPUT_DIR@"
+OUTPUT_DIRECTORY       = "@CMAKE_CURRENT_BINARY_DIR@"
 
 # If the CREATE_SUBDIRS tag is set to YES then doxygen will create up to 4096
 # sub-directories (in 2 levels) under the output directory of each output format
@@ -199,7 +199,7 @@ STRIP_FROM_PATH        =
 # specify the list of include paths that are normally passed to the compiler
 # using the -I flag.
 
-STRIP_FROM_INC_PATH    = "@DOXYGEN_INPUT_DIR@/include"
+STRIP_FROM_INC_PATH    = "@PROJECT_SOURCE_DIR@/include"
 
 # If the SHORT_NAMES tag is set to YES, doxygen will generate much shorter (but
 # less readable) file names. This can be useful is your file systems doesn't
@@ -966,8 +966,8 @@ WARN_LOGFILE           =
 # spaces. See also FILE_PATTERNS and EXTENSION_MAPPING
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = "@DOXYGEN_INPUT_DIR@/include/SFML" \
-                         "@DOXYGEN_INPUT_DIR@/doc/mainpage.hpp"
+INPUT                  = "@PROJECT_SOURCE_DIR@/include/SFML" \
+                         "@PROJECT_SOURCE_DIR@/doc/mainpage.hpp"
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -1340,7 +1340,7 @@ HTML_FILE_EXTENSION    = .html
 # of the possible markers and block names see the documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_HEADER            = "@DOXYGEN_OUTPUT_DIR@/header.html"
+HTML_HEADER            = "@CMAKE_CURRENT_BINARY_DIR@/header.html"
 
 # The HTML_FOOTER tag can be used to specify a user-defined HTML footer for each
 # generated HTML page. If the tag is left blank doxygen will generate a standard
@@ -1350,7 +1350,7 @@ HTML_HEADER            = "@DOXYGEN_OUTPUT_DIR@/header.html"
 # that doxygen normally uses.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_FOOTER            = "@DOXYGEN_INPUT_DIR@/doc/footer.html"
+HTML_FOOTER            = "@PROJECT_SOURCE_DIR@/doc/footer.html"
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading style
 # sheet that is used by each HTML page. It can be used to fine-tune the look of
@@ -1362,7 +1362,7 @@ HTML_FOOTER            = "@DOXYGEN_INPUT_DIR@/doc/footer.html"
 # obsolete.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_STYLESHEET        = "@DOXYGEN_INPUT_DIR@/doc/doxygen.css"
+HTML_STYLESHEET        = "@PROJECT_SOURCE_DIR@/doc/doxygen.css"
 
 # The HTML_EXTRA_STYLESHEET tag can be used to specify additional user-defined
 # cascading style sheets that are included after the standard style sheets
@@ -2482,7 +2482,7 @@ TAGFILES               =
 # tag file that is based on the input files it reads. See section "Linking to
 # external documentation" for more information about the usage of tag files.
 
-GENERATE_TAGFILE       = "@DOXYGEN_OUTPUT_DIR@/SFML.tag"
+GENERATE_TAGFILE       = "@CMAKE_CURRENT_BINARY_DIR@/SFML.tag"
 
 # If the ALLEXTERNALS tag is set to YES, all external classes and namespaces
 # will be listed in the class and namespace index. If set to NO, only the
