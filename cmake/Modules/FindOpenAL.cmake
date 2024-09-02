@@ -77,7 +77,7 @@ find_path(OPENAL_INCLUDE_DIR al.h
   )
 
 find_library(OPENAL_LIBRARY
-  NAMES OpenAL al openal OpenAL32
+  NAMES OpenAL al openal OpenAL32 openal32
   HINTS
     ENV OPENALDIR
   PATHS
