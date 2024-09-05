@@ -1213,7 +1213,7 @@ int main()
         }
 
         // Update the current example
-        const auto [x, y] = sf::Vector2f(sf::Mouse::getPosition(window)).cwiseDiv(sf::Vector2f(window.getSize()));
+        const auto [x, y] = sf::Vector2f(sf::Mouse::getPosition(window)).componentWiseDiv(sf::Vector2f(window.getSize()));
         effects[current]->update(clock.getElapsedTime().asSeconds(), x, y);
 
         // Clear the window

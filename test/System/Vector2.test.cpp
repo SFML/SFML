@@ -254,13 +254,13 @@ TEMPLATE_TEST_CASE("[System] sf::Vector2", "", int, float)
         constexpr sf::Vector2f v(2.4f, 3.0f);
 
         CHECK(v.length() == Approx(3.84187f));
-        CHECK(v.lengthSq() == Approx(14.7599650969f));
+        CHECK(v.lengthSquared() == Approx(14.7599650969f));
         CHECK(v.normalized() == Approx(sf::Vector2f(0.624695f, 0.780869f)));
 
         constexpr sf::Vector2f w(-0.7f, -2.2f);
 
         CHECK(w.length() == Approx(2.30868f));
-        CHECK(w.lengthSq() == Approx(5.3300033f));
+        CHECK(w.lengthSquared() == Approx(5.3300033f));
         CHECK(w.normalized() == Approx(sf::Vector2f(-0.303204f, -0.952926f)));
     }
 
@@ -304,10 +304,10 @@ TEMPLATE_TEST_CASE("[System] sf::Vector2", "", int, float)
         CHECK(v.cross(w) == Approx(-3.18f));
         CHECK(w.cross(v) == Approx(+3.18f));
 
-        CHECK(v.cwiseMul(w) == Approx(sf::Vector2f(-1.68f, -6.6f)));
-        CHECK(w.cwiseMul(v) == Approx(sf::Vector2f(-1.68f, -6.6f)));
-        CHECK(v.cwiseDiv(w) == Approx(sf::Vector2f(-3.428571f, -1.363636f)));
-        CHECK(w.cwiseDiv(v) == Approx(sf::Vector2f(-0.291666f, -0.733333f)));
+        CHECK(v.componentWiseMul(w) == Approx(sf::Vector2f(-1.68f, -6.6f)));
+        CHECK(w.componentWiseMul(v) == Approx(sf::Vector2f(-1.68f, -6.6f)));
+        CHECK(v.componentWiseDiv(w) == Approx(sf::Vector2f(-3.428571f, -1.363636f)));
+        CHECK(w.componentWiseDiv(v) == Approx(sf::Vector2f(-0.291666f, -0.733333f)));
     }
 
     SECTION("Projection")
@@ -334,12 +334,12 @@ TEMPLATE_TEST_CASE("[System] sf::Vector2", "", int, float)
         STATIC_CHECK(v.y == 2);
         STATIC_CHECK(v + w == sf::Vector2<TestType>(3, -4));
 
-        STATIC_CHECK(v.lengthSq() == 5);
+        STATIC_CHECK(v.lengthSquared() == 5);
         STATIC_CHECK(v.perpendicular() == sf::Vector2<TestType>(-2, 1));
 
         STATIC_CHECK(v.dot(w) == -10);
         STATIC_CHECK(v.cross(w) == -10);
-        STATIC_CHECK(v.cwiseMul(w) == sf::Vector2<TestType>(2, -12));
-        STATIC_CHECK(w.cwiseDiv(v) == sf::Vector2<TestType>(2, -3));
+        STATIC_CHECK(v.componentWiseMul(w) == sf::Vector2<TestType>(2, -12));
+        STATIC_CHECK(w.componentWiseDiv(v) == sf::Vector2<TestType>(2, -3));
     }
 }

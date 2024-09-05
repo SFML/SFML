@@ -211,7 +211,7 @@ TEMPLATE_TEST_CASE("[System] sf::Vector3", "", int, float)
         constexpr sf::Vector3f v(2.4f, 3.0f, 5.2f);
 
         CHECK(v.length() == Approx(6.46529f));
-        CHECK(v.lengthSq() == Approx(41.79997f));
+        CHECK(v.lengthSquared() == Approx(41.79997f));
         CHECK(v.normalized() == Approx(sf::Vector3f(0.37121f, 0.46401f, 0.80429f)));
     }
 
@@ -226,9 +226,9 @@ TEMPLATE_TEST_CASE("[System] sf::Vector3", "", int, float)
         CHECK(v.cross(w) == Approx(sf::Vector3f(-2.96f, 7.88f, -3.18f)));
         CHECK(w.cross(v) == Approx(sf::Vector3f(2.96f, -7.88f, 3.18f)));
 
-        CHECK(v.cwiseMul(w) == Approx(sf::Vector3f(-1.68f, -6.6f, -24.96f)));
-        CHECK(w.cwiseMul(v) == Approx(sf::Vector3f(-1.68f, -6.6f, -24.96f)));
-        CHECK(v.cwiseDiv(w) == Approx(sf::Vector3f(-3.428571f, -1.363636f, -1.0833333f)));
-        CHECK(w.cwiseDiv(v) == Approx(sf::Vector3f(-0.291666f, -0.733333f, -0.9230769f)));
+        CHECK(v.componentWiseMul(w) == Approx(sf::Vector3f(-1.68f, -6.6f, -24.96f)));
+        CHECK(w.componentWiseMul(v) == Approx(sf::Vector3f(-1.68f, -6.6f, -24.96f)));
+        CHECK(v.componentWiseDiv(w) == Approx(sf::Vector3f(-3.428571f, -1.363636f, -1.0833333f)));
+        CHECK(w.componentWiseDiv(v) == Approx(sf::Vector3f(-0.291666f, -0.733333f, -0.9230769f)));
     }
 }

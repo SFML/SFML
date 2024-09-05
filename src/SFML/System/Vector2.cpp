@@ -88,7 +88,7 @@ Vector2<T> Vector2<T>::projectedOnto(Vector2<T> axis) const
     static_assert(std::is_floating_point_v<T>, "Vector2::projectedOnto() is only supported for floating point types");
 
     assert(axis != Vector2<T>() && "Vector2::projectedOnto() cannot project onto a zero vector");
-    return dot(axis) / axis.lengthSq() * axis;
+    return dot(axis) / axis.lengthSquared() * axis;
 }
 
 

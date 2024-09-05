@@ -54,7 +54,7 @@ Take `sf::Transformable::setPosition(float, float)` for example.
 The two parameters combine to represent a position in world space.
 
 SFML 3 takes all of the APIs with pairs of parameters like `(float, float)` or `(unsigned int, unsigned int)` and converts them to their corresponding `sf::Vector2<T>` type like `sf::Vector2f` or `sf::Vector2u` to make the interface more expressive and composable.
-This transition is often as simple as wrapping the two adjacement parameters with braces to construct the vector.
+This transition is often as simple as wrapping the two adjacent parameters with braces to construct the vector.
 
 v2:
 ```cpp
@@ -353,31 +353,31 @@ const sf::SoundBuffer soundBuffer("sound.wav");
 
 `sf::Vector2<T>` and `sf::Vector3<T>` gained a number of new functions for performing common mathematic operations on vectors.
 
-| `sf::Vector2<T>` Function    | Description                              |
-| ---------------------------- | ---------------------------------------- |
-| `Vector2(T, sf::Angle)`      | Construct from polar coordinates         |
-| `length()`                   | Get length                               |
-| `lengthSq()`                 | Get length squared                       |
-| `normalized()`               | Get vector normalized to unit circle     |
-| `angleTo(sf::Vector2)`       | Get angle to another vector              |
-| `angle()`                    | Get angle from X axis                    |
-| `rotatedBy(sf::Angle)`       | Get vector rotated by a given angle      |
-| `projectedOnto(sf::Vector2)` | Get vector projected onto another vector |
-| `perpendicular()`            | Get perpendicular vector                 |
-| `dot(sf::Vector2)`           | Get dot product                          |
-| `cross(sf::Vector2)`         | Get Z component of cross product         |
-| `cwiseMul(sf::Vector2)`      | Get component-wise multiple              |
-| `cwiseDiv(sf::Vector2)`      | Get component-wise divisor               |
+| `sf::Vector2<T>` Function       | Description                              |
+| ------------------------------- | ---------------------------------------- |
+| `Vector2(T, sf::Angle)`         | Construct from polar coordinates         |
+| `length()`                      | Get length                               |
+| `lengthSquared()`               | Get length squared                       |
+| `normalized()`                  | Get vector normalized to unit circle     |
+| `angleTo(sf::Vector2)`          | Get angle to another vector              |
+| `angle()`                       | Get angle from X axis                    |
+| `rotatedBy(sf::Angle)`          | Get vector rotated by a given angle      |
+| `projectedOnto(sf::Vector2)`    | Get vector projected onto another vector |
+| `perpendicular()`               | Get perpendicular vector                 |
+| `dot(sf::Vector2)`              | Get dot product                          |
+| `cross(sf::Vector2)`            | Get Z component of cross product         |
+| `componentWiseMul(sf::Vector2)` | Get component-wise multiple              |
+| `componentWiseDiv(sf::Vector2)` | Get component-wise divisor               |
 
-| `sf::Vector3<T>` Function | Description                           |
-| ------------------------- | ------------------------------------- |
-| `length()`                | Get length                            |
-| `lengthSq()`              | Get length squared                    |
-| `normalized()`            | Get vector normalized to unit circle  |
-| `dot(sf::Vector3)`        | Get dot product                       |
-| `cross(sf::Vector3)`      | Get cross product                     |
-| `cwiseMul(sf::Vector3)`   | Get component-wise multiple           |
-| `cwiseDiv(sf::Vector3)`   | Get component-wise divisor            |
+| `sf::Vector3<T>` Function       | Description                           |
+| ------------------------------- | ------------------------------------- |
+| `length()`                      | Get length                            |
+| `lengthSquared()`               | Get length squared                    |
+| `normalized()`                  | Get vector normalized to unit circle  |
+| `dot(sf::Vector3)`              | Get dot product                       |
+| `cross(sf::Vector3)`            | Get cross product                     |
+| `componentWiseMul(sf::Vector3)` | Get component-wise multiple           |
+| `componentWiseDiv(sf::Vector3)` | Get component-wise divisor            |
 
 ## Threading Primitives
 
