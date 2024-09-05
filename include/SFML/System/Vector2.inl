@@ -56,7 +56,7 @@ constexpr Vector2<T>::Vector2(Vector2<U> vector) : x(static_cast<T>(vector.x)), 
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr T Vector2<T>::lengthSq() const
+constexpr T Vector2<T>::lengthSquared() const
 {
     return dot(*this);
 }
@@ -88,7 +88,7 @@ constexpr T Vector2<T>::cross(Vector2<T> rhs) const
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Vector2<T> Vector2<T>::cwiseMul(Vector2<T> rhs) const
+constexpr Vector2<T> Vector2<T>::componentWiseMul(Vector2<T> rhs) const
 {
     return Vector2<T>(x * rhs.x, y * rhs.y);
 }
@@ -96,10 +96,10 @@ constexpr Vector2<T> Vector2<T>::cwiseMul(Vector2<T> rhs) const
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Vector2<T> Vector2<T>::cwiseDiv(Vector2<T> rhs) const
+constexpr Vector2<T> Vector2<T>::componentWiseDiv(Vector2<T> rhs) const
 {
-    assert(rhs.x != 0 && "Vector2::cwiseDiv() cannot divide by 0");
-    assert(rhs.y != 0 && "Vector2::cwiseDiv() cannot divide by 0");
+    assert(rhs.x != 0 && "Vector2::componentWiseDiv() cannot divide by 0");
+    assert(rhs.y != 0 && "Vector2::componentWiseDiv() cannot divide by 0");
     return Vector2<T>(x / rhs.x, y / rhs.y);
 }
 

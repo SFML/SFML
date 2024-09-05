@@ -271,8 +271,8 @@ void Shape::updateTexCoords()
 
     for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i)
     {
-        const Vector2f ratio    = (m_vertices[i].position - m_insideBounds.position).cwiseDiv(safeInsideSize);
-        m_vertices[i].texCoords = convertedTextureRect.position + convertedTextureRect.size.cwiseMul(ratio);
+        const Vector2f ratio    = (m_vertices[i].position - m_insideBounds.position).componentWiseDiv(safeInsideSize);
+        m_vertices[i].texCoords = convertedTextureRect.position + convertedTextureRect.size.componentWiseMul(ratio);
     }
 }
 

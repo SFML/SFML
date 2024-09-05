@@ -59,7 +59,7 @@ z(static_cast<T>(vector.z))
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr T Vector3<T>::lengthSq() const
+constexpr T Vector3<T>::lengthSquared() const
 {
     return dot(*this);
 }
@@ -83,7 +83,7 @@ constexpr Vector3<T> Vector3<T>::cross(const Vector3<T>& rhs) const
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Vector3<T> Vector3<T>::cwiseMul(const Vector3<T>& rhs) const
+constexpr Vector3<T> Vector3<T>::componentWiseMul(const Vector3<T>& rhs) const
 {
     return Vector3<T>(x * rhs.x, y * rhs.y, z * rhs.z);
 }
@@ -91,11 +91,11 @@ constexpr Vector3<T> Vector3<T>::cwiseMul(const Vector3<T>& rhs) const
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Vector3<T> Vector3<T>::cwiseDiv(const Vector3<T>& rhs) const
+constexpr Vector3<T> Vector3<T>::componentWiseDiv(const Vector3<T>& rhs) const
 {
-    assert(rhs.x != 0 && "Vector3::cwiseDiv() cannot divide by 0");
-    assert(rhs.y != 0 && "Vector3::cwiseDiv() cannot divide by 0");
-    assert(rhs.z != 0 && "Vector3::cwiseDiv() cannot divide by 0");
+    assert(rhs.x != 0 && "Vector3::componentWiseDiv() cannot divide by 0");
+    assert(rhs.y != 0 && "Vector3::componentWiseDiv() cannot divide by 0");
+    assert(rhs.z != 0 && "Vector3::componentWiseDiv() cannot divide by 0");
     return Vector3<T>(x / rhs.x, y / rhs.y, z / rhs.z);
 }
 

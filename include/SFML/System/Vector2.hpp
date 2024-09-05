@@ -90,7 +90,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Length of the vector <i><b>(floating-point)</b></i>.
     ///
-    /// If you are not interested in the actual length, but only in comparisons, consider using lengthSq().
+    /// If you are not interested in the actual length, but only in comparisons, consider using lengthSquared().
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] SFML_SYSTEM_API T length() const;
@@ -101,7 +101,7 @@ public:
     /// Suitable for comparisons, more efficient than length().
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] constexpr T lengthSq() const;
+    [[nodiscard]] constexpr T lengthSquared() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Vector with same direction but length 1 <i><b>(floating-point)</b></i>.
@@ -189,7 +189,7 @@ public:
     /// This operation is also known as the Hadamard or Schur product.
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] constexpr Vector2 cwiseMul(Vector2 rhs) const;
+    [[nodiscard]] constexpr Vector2 componentWiseMul(Vector2 rhs) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Component-wise division of \c *this and \c rhs.
@@ -201,7 +201,7 @@ public:
     /// \pre Neither component of \c rhs is zero.
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] constexpr Vector2 cwiseDiv(Vector2 rhs) const;
+    [[nodiscard]] constexpr Vector2 componentWiseDiv(Vector2 rhs) const;
 
 
     ////////////////////////////////////////////////////////////
