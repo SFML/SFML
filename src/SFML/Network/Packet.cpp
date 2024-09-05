@@ -33,6 +33,7 @@
 
 #include <array>
 
+#include <cassert>
 #include <cstring>
 #include <cwchar>
 
@@ -255,6 +256,8 @@ Packet& Packet::operator>>(double& data)
 ////////////////////////////////////////////////////////////
 Packet& Packet::operator>>(char* data)
 {
+    assert(data && "Packet::operator>> Data must not be null");
+
     // First extract string length
     std::uint32_t length = 0;
     *this >> length;
@@ -297,6 +300,8 @@ Packet& Packet::operator>>(std::string& data)
 ////////////////////////////////////////////////////////////
 Packet& Packet::operator>>(wchar_t* data)
 {
+    assert(data && "Packet::operator>> Data must not be null");
+
     // First extract string length
     std::uint32_t length = 0;
     *this >> length;
@@ -482,6 +487,8 @@ Packet& Packet::operator<<(double data)
 ////////////////////////////////////////////////////////////
 Packet& Packet::operator<<(const char* data)
 {
+    assert(data && "Packet::operator<< Data must not be null");
+
     // First insert string length
     const auto length = static_cast<std::uint32_t>(std::strlen(data));
     *this << length;
@@ -511,6 +518,8 @@ Packet& Packet::operator<<(const std::string& data)
 ////////////////////////////////////////////////////////////
 Packet& Packet::operator<<(const wchar_t* data)
 {
+    assert(data && "Packet::operator<< Data must not be null");
+
     // First insert string length
     const auto length = static_cast<std::uint32_t>(std::wcslen(data));
     *this << length;

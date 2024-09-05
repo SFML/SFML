@@ -33,6 +33,8 @@
 #include <ostream>
 #include <utility>
 
+#include <cassert>
+
 
 namespace
 {
@@ -135,6 +137,7 @@ bool Context::isExtensionAvailable(std::string_view name)
 ////////////////////////////////////////////////////////////
 GlFunctionPointer Context::getFunction(const char* name)
 {
+    assert(name && "Context::getFunction Name must not be null");
     return priv::GlContext::getFunction(name);
 }
 
