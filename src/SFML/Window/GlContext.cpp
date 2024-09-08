@@ -596,7 +596,7 @@ std::unique_ptr<GlContext> GlContext::create(const ContextSettings& settings, co
         // Re-create our shared context as a core context
         const ContextSettings sharedSettings{/* depthBits */ 0,
                                              /* stencilBits */ 0,
-                                             /* antialiasingLevel */ 0,
+                                             /* antiAliasingLevel */ 0,
                                              settings.majorVersion,
                                              settings.minorVersion,
                                              settings.attributeFlags};
@@ -645,7 +645,7 @@ std::unique_ptr<GlContext> GlContext::create(const ContextSettings& settings, Ve
         // Re-create our shared context as a core context
         const ContextSettings sharedSettings{/* depthBits */ 0,
                                              /* stencilBits */ 0,
-                                             /* antialiasingLevel */ 0,
+                                             /* antiAliasingLevel */ 0,
                                              settings.majorVersion,
                                              settings.minorVersion,
                                              settings.attributeFlags};
@@ -810,23 +810,23 @@ int GlContext::evaluateFormat(
     int                    colorBits,
     int                    depthBits,
     int                    stencilBits,
-    int                    antialiasing,
+    int                    antiAliasing,
     bool                   accelerated,
     bool                   sRgb)
 {
     int colorDiff        = static_cast<int>(bitsPerPixel) - colorBits;
     int depthDiff        = static_cast<int>(settings.depthBits) - depthBits;
     int stencilDiff      = static_cast<int>(settings.stencilBits) - stencilBits;
-    int antialiasingDiff = static_cast<int>(settings.antialiasingLevel) - antialiasing;
+    int antiAliasingDiff = static_cast<int>(settings.antiAliasingLevel) - antiAliasing;
 
     // Weight sub-scores so that better settings don't score equally as bad as worse settings
     colorDiff *= ((colorDiff > 0) ? 100000 : 1);
     depthDiff *= ((depthDiff > 0) ? 100000 : 1);
     stencilDiff *= ((stencilDiff > 0) ? 100000 : 1);
-    antialiasingDiff *= ((antialiasingDiff > 0) ? 100000 : 1);
+    antiAliasingDiff *= ((antiAliasingDiff > 0) ? 100000 : 1);
 
     // Aggregate the scores
-    int score = std::abs(colorDiff) + std::abs(depthDiff) + std::abs(stencilDiff) + std::abs(antialiasingDiff);
+    int score = std::abs(colorDiff) + std::abs(depthDiff) + std::abs(stencilDiff) + std::abs(antiAliasingDiff);
 
     // If the user wants an sRGB capable format, try really hard to get one
     if (settings.sRgbCapable && !sRgb)
@@ -1021,13 +1021,13 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
     }
 
     // Enable anti-aliasing if requested by the user and supported
-    if ((requestedSettings.antialiasingLevel > 0) && (m_settings.antialiasingLevel > 0))
+    if ((requestedSettings.antiAliasingLevel > 0) && (m_settings.antiAliasingLevel > 0))
     {
         glEnableFunc(GL_MULTISAMPLE);
     }
     else
     {
-        m_settings.antialiasingLevel = 0;
+        m_settings.antiAliasingLevel = 0;
     }
 
     // Enable sRGB if requested by the user and supported
@@ -1058,19 +1058,19 @@ void GlContext::checkSettings(const ContextSettings& requestedSettings) const
 
     if ((m_settings.attributeFlags != requestedSettings.attributeFlags) || (version < requestedVersion) ||
         (m_settings.stencilBits < requestedSettings.stencilBits) ||
-        (m_settings.antialiasingLevel < requestedSettings.antialiasingLevel) ||
+        (m_settings.antiAliasingLevel < requestedSettings.antiAliasingLevel) ||
         (m_settings.depthBits < requestedSettings.depthBits) || (!m_settings.sRgbCapable && requestedSettings.sRgbCapable))
     {
         err() << "Warning: The created OpenGL context does not fully meet the settings that were requested" << '\n'
               << "Requested: version = " << requestedSettings.majorVersion << "." << requestedSettings.minorVersion
               << " ; depth bits = " << requestedSettings.depthBits << " ; stencil bits = " << requestedSettings.stencilBits
-              << " ; AA level = " << requestedSettings.antialiasingLevel << std::boolalpha
+              << " ; AA level = " << requestedSettings.antiAliasingLevel << std::boolalpha
               << " ; core = " << ((requestedSettings.attributeFlags & ContextSettings::Core) != 0)
               << " ; debug = " << ((requestedSettings.attributeFlags & ContextSettings::Debug) != 0)
               << " ; sRGB = " << requestedSettings.sRgbCapable << std::noboolalpha << '\n'
               << "Created: version = " << m_settings.majorVersion << "." << m_settings.minorVersion
               << " ; depth bits = " << m_settings.depthBits << " ; stencil bits = " << m_settings.stencilBits
-              << " ; AA level = " << m_settings.antialiasingLevel << std::boolalpha
+              << " ; AA level = " << m_settings.antiAliasingLevel << std::boolalpha
               << " ; core = " << ((m_settings.attributeFlags & ContextSettings::Core) != 0)
               << " ; debug = " << ((m_settings.attributeFlags & ContextSettings::Debug) != 0)
               << " ; sRGB = " << m_settings.sRgbCapable << std::noboolalpha << std::endl;

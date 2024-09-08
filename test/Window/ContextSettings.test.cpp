@@ -21,7 +21,7 @@ TEST_CASE("[Window] sf::ContextSettings")
             constexpr sf::ContextSettings contextSettings;
             STATIC_CHECK(contextSettings.depthBits == 0);
             STATIC_CHECK(contextSettings.stencilBits == 0);
-            STATIC_CHECK(contextSettings.antialiasingLevel == 0);
+            STATIC_CHECK(contextSettings.antiAliasingLevel == 0);
             STATIC_CHECK(contextSettings.majorVersion == 1);
             STATIC_CHECK(contextSettings.minorVersion == 1);
             STATIC_CHECK(contextSettings.attributeFlags == sf::ContextSettings::Default);
@@ -33,7 +33,7 @@ TEST_CASE("[Window] sf::ContextSettings")
             constexpr sf::ContextSettings contextSettings{1, 1, 2, 3, 5, sf::ContextSettings::Core, true};
             STATIC_CHECK(contextSettings.depthBits == 1);
             STATIC_CHECK(contextSettings.stencilBits == 1);
-            STATIC_CHECK(contextSettings.antialiasingLevel == 2);
+            STATIC_CHECK(contextSettings.antiAliasingLevel == 2);
             STATIC_CHECK(contextSettings.majorVersion == 3);
             STATIC_CHECK(contextSettings.minorVersion == 5);
             STATIC_CHECK(contextSettings.attributeFlags == sf::ContextSettings::Core);

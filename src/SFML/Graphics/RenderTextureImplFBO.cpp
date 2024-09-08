@@ -114,7 +114,7 @@ bool RenderTextureImplFBO::isAvailable()
 
 
 ////////////////////////////////////////////////////////////
-unsigned int RenderTextureImplFBO::getMaximumAntialiasingLevel()
+unsigned int RenderTextureImplFBO::getMaximumAntiAliasingLevel()
 {
 #ifdef SFML_OPENGL_ES
 
@@ -150,7 +150,7 @@ bool RenderTextureImplFBO::create(Vector2u size, unsigned int textureId, const C
         // Make sure that extensions are initialized
         ensureExtensionsInit();
 
-        if (settings.antialiasingLevel && !(GLEXT_framebuffer_multisample && GLEXT_framebuffer_blit))
+        if (settings.antiAliasingLevel && !(GLEXT_framebuffer_multisample && GLEXT_framebuffer_blit))
             return false;
 
         m_sRgb = settings.sRgbCapable && GL_EXT_texture_sRGB;
@@ -158,22 +158,22 @@ bool RenderTextureImplFBO::create(Vector2u size, unsigned int textureId, const C
 #ifndef SFML_OPENGL_ES
 
         // Check if the requested anti-aliasing level is supported
-        if (settings.antialiasingLevel)
+        if (settings.antiAliasingLevel)
         {
             GLint samples = 0;
             glCheck(glGetIntegerv(GLEXT_GL_MAX_SAMPLES, &samples));
 
-            if (settings.antialiasingLevel > static_cast<unsigned int>(samples))
+            if (settings.antiAliasingLevel > static_cast<unsigned int>(samples))
             {
                 err() << "Impossible to create render texture (unsupported anti-aliasing level)"
-                      << " Requested: " << settings.antialiasingLevel << " Maximum supported: " << samples << std::endl;
+                      << " Requested: " << settings.antiAliasingLevel << " Maximum supported: " << samples << std::endl;
                 return false;
             }
         }
 
 #endif
 
-        if (!settings.antialiasingLevel)
+        if (!settings.antiAliasingLevel)
         {
             // Create the depth/stencil buffer if requested
             if (settings.stencilBits && settings.depthBits)
@@ -261,7 +261,7 @@ bool RenderTextureImplFBO::create(Vector2u size, unsigned int textureId, const C
             }
             glCheck(GLEXT_glBindRenderbuffer(GLEXT_GL_RENDERBUFFER, m_colorBuffer));
             glCheck(GLEXT_glRenderbufferStorageMultisample(GLEXT_GL_RENDERBUFFER,
-                                                           static_cast<GLsizei>(settings.antialiasingLevel),
+                                                           static_cast<GLsizei>(settings.antiAliasingLevel),
                                                            m_sRgb ? GL_SRGB8_ALPHA8_EXT : GL_RGBA,
                                                            static_cast<GLsizei>(size.x),
                                                            static_cast<GLsizei>(size.y)));
@@ -281,7 +281,7 @@ bool RenderTextureImplFBO::create(Vector2u size, unsigned int textureId, const C
                 }
                 glCheck(GLEXT_glBindRenderbuffer(GLEXT_GL_RENDERBUFFER, m_depthStencilBuffer));
                 glCheck(GLEXT_glRenderbufferStorageMultisample(GLEXT_GL_RENDERBUFFER,
-                                                               static_cast<GLsizei>(settings.antialiasingLevel),
+                                                               static_cast<GLsizei>(settings.antiAliasingLevel),
                                                                GLEXT_GL_DEPTH24_STENCIL8,
                                                                static_cast<GLsizei>(size.x),
                                                                static_cast<GLsizei>(size.y)));
@@ -303,7 +303,7 @@ bool RenderTextureImplFBO::create(Vector2u size, unsigned int textureId, const C
                 }
                 glCheck(GLEXT_glBindRenderbuffer(GLEXT_GL_RENDERBUFFER, m_depthStencilBuffer));
                 glCheck(GLEXT_glRenderbufferStorageMultisample(GLEXT_GL_RENDERBUFFER,
-                                                               static_cast<GLsizei>(settings.antialiasingLevel),
+                                                               static_cast<GLsizei>(settings.antiAliasingLevel),
                                                                GLEXT_GL_DEPTH_COMPONENT,
                                                                static_cast<GLsizei>(size.x),
                                                                static_cast<GLsizei>(size.y)));
@@ -325,7 +325,7 @@ bool RenderTextureImplFBO::create(Vector2u size, unsigned int textureId, const C
                 }
                 glCheck(GLEXT_glBindRenderbuffer(GLEXT_GL_RENDERBUFFER, m_depthStencilBuffer));
                 glCheck(GLEXT_glRenderbufferStorageMultisample(GLEXT_GL_RENDERBUFFER,
-                                                               static_cast<GLsizei>(settings.antialiasingLevel),
+                                                               static_cast<GLsizei>(settings.antiAliasingLevel),
                                                                GLEXT_GL_STENCIL_INDEX8,
                                                                static_cast<GLsizei>(size.x),
                                                                static_cast<GLsizei>(size.y)));

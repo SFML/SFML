@@ -54,7 +54,7 @@ struct ContextSettings
     ////////////////////////////////////////////////////////////
     unsigned int  depthBits{};                        //!< Bits of the depth buffer
     unsigned int  stencilBits{};                      //!< Bits of the stencil buffer
-    unsigned int  antialiasingLevel{};                //!< Level of antialiasing
+    unsigned int  antiAliasingLevel{};                //!< Level of anti-aliasing
     unsigned int  majorVersion{1};                    //!< Major number of the context version to create
     unsigned int  minorVersion{1};                    //!< Minor number of the context version to create
     std::uint32_t attributeFlags{Attribute::Default}; //!< The attribute flags to create the context with
@@ -80,7 +80,7 @@ struct ContextSettings
 /// of bits per pixel requested for the (respectively) depth
 /// and stencil buffers.
 ///
-/// antialiasingLevel represents the requested number of
+/// antiAliasingLevel represents the requested number of
 /// multisampling levels for anti-aliasing.
 ///
 /// majorVersion and minorVersion define the version of the

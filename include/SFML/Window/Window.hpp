@@ -75,7 +75,7 @@ public:
     /// must be a valid video mode.
     ///
     /// The last parameter is an optional structure specifying
-    /// advanced OpenGL context settings such as antialiasing,
+    /// advanced OpenGL context settings such as anti-aliasing,
     /// depth-buffer bits, etc.
     ///
     /// \param mode     Video mode to use (defines the width, height and depth of the rendering area of the window)

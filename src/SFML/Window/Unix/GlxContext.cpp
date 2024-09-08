@@ -421,7 +421,7 @@ void GlxContext::updateSettingsFromVisualInfo(XVisualInfo* visualInfo)
 
     m_settings.depthBits         = static_cast<unsigned int>(depth);
     m_settings.stencilBits       = static_cast<unsigned int>(stencil);
-    m_settings.antialiasingLevel = multiSampling ? static_cast<unsigned int>(samples) : 0;
+    m_settings.antiAliasingLevel = multiSampling ? static_cast<unsigned int>(samples) : 0;
     m_settings.sRgbCapable       = (sRgb == True);
 }
 

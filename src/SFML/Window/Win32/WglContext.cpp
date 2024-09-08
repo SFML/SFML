@@ -266,7 +266,7 @@ int WglContext::selectBestPixelFormat(HDC deviceContext, unsigned int bitsPerPix
         unsigned int bitsPerPixel{};
         unsigned int depthBits{};
         unsigned int stencilBits{};
-        unsigned int antialiasingLevel{};
+        unsigned int antiAliasingLevel{};
         bool         pbuffer{};
         int          bestFormat{};
     };
@@ -282,7 +282,7 @@ int WglContext::selectBestPixelFormat(HDC deviceContext, unsigned int bitsPerPix
         for (const auto& entry : pixelFormatCache)
         {
             if (bitsPerPixel == entry.bitsPerPixel && settings.depthBits == entry.depthBits &&
-                settings.stencilBits == entry.stencilBits && settings.antialiasingLevel == entry.antialiasingLevel &&
+                settings.stencilBits == entry.stencilBits && settings.antiAliasingLevel == entry.antiAliasingLevel &&
                 pbuffer == entry.pbuffer)
                 return entry.bestFormat;
         }
@@ -429,7 +429,7 @@ int WglContext::selectBestPixelFormat(HDC deviceContext, unsigned int bitsPerPix
         const std::lock_guard lock(cacheMutex);
 
         pixelFormatCache.emplace_back(
-            PixelFormatCacheEntry{bitsPerPixel, settings.depthBits, settings.stencilBits, settings.antialiasingLevel, pbuffer, bestFormat});
+            PixelFormatCacheEntry{bitsPerPixel, settings.depthBits, settings.stencilBits, settings.antiAliasingLevel, pbuffer, bestFormat});
     }
 
     return bestFormat;
@@ -524,18 +524,18 @@ void WglContext::updateSettingsFromPixelFormat()
             if (wglGetPixelFormatAttribivARB(m_deviceContext, format, PFD_MAIN_PLANE, 2, sampleAttributes, sampleValues) ==
                 TRUE)
             {
-                m_settings.antialiasingLevel = static_cast<unsigned int>(sampleValues[0] ? sampleValues[1] : 0);
+                m_settings.antiAliasingLevel = static_cast<unsigned int>(sampleValues[0] ? sampleValues[1] : 0);
             }
             else
             {
                 err() << "Failed to retrieve pixel format multisampling information: " << getErrorString(GetLastError())
                       << std::endl;
-                m_settings.antialiasingLevel = 0;
+                m_settings.antiAliasingLevel = 0;
             }
         }
         else
         {
-            m_settings.antialiasingLevel = 0;
+            m_settings.antiAliasingLevel = 0;
         }
 
         if (SF_GLAD_WGL_ARB_framebuffer_sRGB || SF_GLAD_WGL_EXT_framebuffer_sRGB)
@@ -564,7 +564,7 @@ void WglContext::updateSettingsFromPixelFormat()
     {
         m_settings.depthBits         = actualFormat.cDepthBits;
         m_settings.stencilBits       = actualFormat.cStencilBits;
-        m_settings.antialiasingLevel = 0;
+        m_settings.antiAliasingLevel = 0;
     }
 }
 
