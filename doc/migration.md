@@ -414,6 +414,13 @@ SFML 3 removes all of the deprecated APIs in SFML 2.
 This is not a drop-in replacement but rather will require refactoring your code to work with a new geometry.
 One viable option is to use `sf::PrimitiveType::Triangles` where two adjacent triangles join to form what was previously one quad.
 
+## Anti-Aliasing Renamed
+
+SFML 3 capitalizes the `A` of `aliasing` for all the APIs.
+
+* `sf::RenderTexture::getMaximumAntialiasingLevel()` becomes `sf::RenderTexture::getMaximumAntiAliasingLevel()`
+* `sf::ContextSettings::antialiasingLevel` becomes `sf::ContextSettings::antiAliasingLevel`
+
 ## Other Minor Changes
 
 SFML 3 includes various smaller changes that ought to be mentioned.

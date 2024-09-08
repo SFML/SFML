@@ -87,9 +87,9 @@ TEST_CASE("[Graphics] sf::RenderTexture", runDisplayTests())
         CHECK(renderTexture.resize({100, 100}, sf::ContextSettings{0 /* depthBits */, 8 /* stencilBits */}));
     }
 
-    SECTION("getMaximumAntialiasingLevel()")
+    SECTION("getMaximumAntiAliasingLevel()")
     {
-        CHECK(sf::RenderTexture::getMaximumAntialiasingLevel() <= 64);
+        CHECK(sf::RenderTexture::getMaximumAntiAliasingLevel() <= 64);
     }
 
     SECTION("Set/get smooth")

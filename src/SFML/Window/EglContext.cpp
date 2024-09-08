@@ -376,7 +376,7 @@ void EglContext::updateSettings()
     m_settings.attributeFlags    = ContextSettings::Default;
     m_settings.depthBits         = 0;
     m_settings.stencilBits       = 0;
-    m_settings.antialiasingLevel = 0;
+    m_settings.antiAliasingLevel = 0;
 
     EGLBoolean result = EGL_FALSE;
     EGLint     tmp    = 0;
@@ -399,7 +399,7 @@ void EglContext::updateSettings()
         eglCheck(result = eglGetConfigAttrib(m_display, m_config, EGL_SAMPLES, &tmp));
 
         if (result != EGL_FALSE)
-            m_settings.antialiasingLevel = static_cast<unsigned int>(tmp);
+            m_settings.antiAliasingLevel = static_cast<unsigned int>(tmp);
     }
 }
 

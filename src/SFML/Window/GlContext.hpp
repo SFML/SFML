@@ -273,7 +273,7 @@ protected:
     /// \param colorBits    Color bits of the configuration to evaluate
     /// \param depthBits    Depth bits of the configuration to evaluate
     /// \param stencilBits  Stencil bits of the configuration to evaluate
-    /// \param antialiasing Antialiasing level of the configuration to evaluate
+    /// \param antiAliasing Anti-aliasing level of the configuration to evaluate
     /// \param accelerated  Whether the pixel format is hardware accelerated
     /// \param sRgb         Whether the pixel format is sRGB capable
     ///
@@ -285,7 +285,7 @@ protected:
                               int                    colorBits,
                               int                    depthBits,
                               int                    stencilBits,
-                              int                    antialiasing,
+                              int                    antiAliasing,
                               bool                   accelerated,
                               bool                   sRgb);
 

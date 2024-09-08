@@ -80,7 +80,7 @@ public:
     /// \return The maximum anti-aliasing level supported by the system
     ///
     ////////////////////////////////////////////////////////////
-    static unsigned int getMaximumAntialiasingLevel();
+    static unsigned int getMaximumAntiAliasingLevel();
 
     ////////////////////////////////////////////////////////////
     /// \brief Unbind the currently bound FBO

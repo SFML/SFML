@@ -130,7 +130,7 @@ void Window::close()
 ////////////////////////////////////////////////////////////
 const ContextSettings& Window::getSettings() const
 {
-    static constexpr ContextSettings empty{/* depthBits */ 0, /* stencilBits */ 0, /* antialiasingLevel */ 0};
+    static constexpr ContextSettings empty{/* depthBits */ 0, /* stencilBits */ 0, /* antiAliasingLevel */ 0};
 
     return m_context ? m_context->getSettings() : empty;
 }

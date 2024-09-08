@@ -106,14 +106,14 @@ bool RenderTexture::resize(Vector2u size, const ContextSettings& settings)
 
 
 ////////////////////////////////////////////////////////////
-unsigned int RenderTexture::getMaximumAntialiasingLevel()
+unsigned int RenderTexture::getMaximumAntiAliasingLevel()
 {
     if (priv::RenderTextureImplFBO::isAvailable())
     {
-        return priv::RenderTextureImplFBO::getMaximumAntialiasingLevel();
+        return priv::RenderTextureImplFBO::getMaximumAntiAliasingLevel();
     }
 
-    return priv::RenderTextureImplDefault::getMaximumAntialiasingLevel();
+    return priv::RenderTextureImplDefault::getMaximumAntiAliasingLevel();
 }
 
 
