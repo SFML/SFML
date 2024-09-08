@@ -97,7 +97,7 @@ public:
     ///
     /// \param socket Reference to the socket to add
     ///
-    /// \see remove, clear
+    /// \see `remove`, `clear`
     ///
     ////////////////////////////////////////////////////////////
     void add(Socket& socket);
@@ -110,7 +110,7 @@ public:
     ///
     /// \param socket Reference to the socket to remove
     ///
-    /// \see add, clear
+    /// \see `add`, `clear`
     ///
     ////////////////////////////////////////////////////////////
     void remove(Socket& socket);
@@ -122,7 +122,7 @@ public:
     /// removes all the references that the selector has to
     /// external sockets.
     ///
-    /// \see add, remove
+    /// \see `add`, `remove`
     ///
     ////////////////////////////////////////////////////////////
     void clear();
@@ -132,15 +132,15 @@ public:
     ///
     /// This function returns as soon as at least one socket has
     /// some data available to be received. To know which sockets are
-    /// ready, use the isReady function.
+    /// ready, use the `isReady` function.
     /// If you use a timeout and no socket is ready before the timeout
-    /// is over, the function returns false.
+    /// is over, the function returns `false`.
     ///
     /// \param timeout Maximum time to wait, (use Time::Zero for infinity)
     ///
-    /// \return True if there are sockets ready, false otherwise
+    /// \return `true` if there are sockets ready, `false` otherwise
     ///
-    /// \see isReady
+    /// \see `isReady`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool wait(Time timeout = Time::Zero);
@@ -152,14 +152,14 @@ public:
     /// which sockets are ready to receive data. If a socket is
     /// ready, a call to receive will never block because we know
     /// that there is data available to read.
-    /// Note that if this function returns true for a TcpListener,
+    /// Note that if this function returns `true` for a TcpListener,
     /// this means that it is ready to accept a new connection.
     ///
     /// \param socket Socket to test
     ///
-    /// \return True if the socket is ready to read, false otherwise
+    /// \return `true` if the socket is ready to read, `false` otherwise
     ///
-    /// \see isReady
+    /// \see `isReady`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool isReady(Socket& socket) const;
@@ -189,9 +189,9 @@ private:
 /// all the sockets.
 ///
 /// All types of sockets can be used in a selector:
-/// \li sf::TcpListener
-/// \li sf::TcpSocket
-/// \li sf::UdpSocket
+/// \li `sf::TcpListener`
+/// \li `sf::TcpSocket`
+/// \li `sf::UdpSocket`
 ///
 /// A selector doesn't store its own copies of the sockets
 /// (socket classes are not copyable anyway), it simply keeps
@@ -268,6 +268,6 @@ private:
 /// }
 /// \endcode
 ///
-/// \see sf::Socket
+/// \see `sf::Socket`
 ///
 ////////////////////////////////////////////////////////////

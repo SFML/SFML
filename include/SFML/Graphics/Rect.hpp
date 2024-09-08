@@ -46,7 +46,7 @@ public:
     /// \brief Default constructor
     ///
     /// Creates an empty rectangle (it is equivalent to calling
-    /// Rect({0, 0}, {0, 0})).
+    /// `Rect({0, 0}, {0, 0})`).
     ///
     ////////////////////////////////////////////////////////////
     constexpr Rect() = default;
@@ -81,13 +81,13 @@ public:
     /// \brief Check if a point is inside the rectangle's area
     ///
     /// This check is non-inclusive. If the point lies on the
-    /// edge of the rectangle, this function will return false.
+    /// edge of the rectangle, this function will return `false`.
     ///
     /// \param point Point to test
     ///
-    /// \return True if the point is inside, false otherwise
+    /// \return `true` if the point is inside, `false` otherwise
     ///
-    /// \see findIntersection
+    /// \see `findIntersection`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] constexpr bool contains(Vector2<T> point) const;
@@ -99,7 +99,7 @@ public:
     ///
     /// \return Intersection rectangle if intersecting, `std::nullopt` otherwise
     ///
-    /// \see contains
+    /// \see `contains`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] constexpr std::optional<Rect<T>> findIntersection(const Rect<T>& rectangle) const;
@@ -121,14 +121,14 @@ public:
 
 ////////////////////////////////////////////////////////////
 /// \relates Rect
-/// \brief Overload of binary operator ==
+/// \brief Overload of binary `operator==`
 ///
 /// This operator compares strict equality between two rectangles.
 ///
 /// \param lhs Left operand (a rectangle)
 /// \param rhs Right operand (a rectangle)
 ///
-/// \return True if \a lhs is equal to \a rhs
+/// \return `true` if \a lhs is equal to \a rhs
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -136,14 +136,14 @@ template <typename T>
 
 ////////////////////////////////////////////////////////////
 /// \relates Rect
-/// \brief Overload of binary operator !=
+/// \brief Overload of binary `operator!=`
 ///
 /// This operator compares strict difference between two rectangles.
 ///
 /// \param lhs Left operand (a rectangle)
 /// \param rhs Right operand (a rectangle)
 ///
-/// \return True if \a lhs is not equal to \a rhs
+/// \return `true` if \a lhs is not equal to \a rhs
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -166,24 +166,24 @@ using FloatRect = Rect<float>;
 /// It is a very simple class defined for convenience, so
 /// its member variables (position and size) are public
 /// and can be accessed directly, just like the vector classes
-/// (Vector2 and Vector3).
+/// (`Vector2` and `Vector3`).
 ///
-/// To keep things simple, sf::Rect doesn't define
+/// To keep things simple, `sf::Rect` doesn't define
 /// functions to emulate the properties that are not directly
 /// members (such as right, bottom, etc.), it rather
 /// only provides intersection functions.
 ///
-/// sf::Rect uses the usual rules for its boundaries:
+/// `sf::Rect` uses the usual rules for its boundaries:
 /// \li The left and top edges are included in the rectangle's area
 /// \li The right and bottom edges are excluded from the rectangle's area
 ///
-/// This means that sf::IntRect({0, 0}, {1, 1}) and sf::IntRect({1, 1}, {1, 1})
+/// This means that `sf::IntRect({0, 0}, {1, 1})` and `sf::IntRect({1, 1}, {1, 1})`
 /// don't intersect.
 ///
-/// sf::Rect is a template and may be used with any numeric type, but
+/// `sf::Rect` is a template and may be used with any numeric type, but
 /// for simplicity type aliases for the instantiations used by SFML are given:
-/// \li sf::Rect<int> is sf::IntRect
-/// \li sf::Rect<float> is sf::FloatRect
+/// \li `sf::Rect<int>` is `sf::IntRect`
+/// \li `sf::Rect<float>` is `sf::FloatRect`
 ///
 /// So that you don't have to care about the template syntax.
 ///

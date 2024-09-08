@@ -77,20 +77,20 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Construct a music from an audio file
     ///
-    /// This function doesn't start playing the music (call play()
+    /// This function doesn't start playing the music (call `play()`
     /// to do so).
-    /// See the documentation of sf::InputSoundFile for the list
+    /// See the documentation of `sf::InputSoundFile` for the list
     /// of supported formats.
     ///
     /// \warning Since the music is not loaded at once but rather
     /// streamed continuously, the file must remain accessible until
-    /// the sf::Music object loads a new music or is destroyed.
+    /// the `sf::Music` object loads a new music or is destroyed.
     ///
     /// \param filename Path of the music file to open
     ///
     /// \throws `sf::Exception` if loading was unsuccessful
     ///
-    /// \see openFromMemory, openFromStream
+    /// \see `openFromMemory`, `openFromStream`
     ///
     ////////////////////////////////////////////////////////////
     Music(const std::filesystem::path& filename);
@@ -98,14 +98,14 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Construct a music from an audio file in memory
     ///
-    /// This function doesn't start playing the music (call play()
+    /// This function doesn't start playing the music (call `play()`
     /// to do so).
-    /// See the documentation of sf::InputSoundFile for the list
+    /// See the documentation of `sf::InputSoundFile` for the list
     /// of supported formats.
     ///
     /// \warning Since the music is not loaded at once but rather streamed
     /// continuously, the \a data buffer must remain accessible until
-    /// the sf::Music object loads a new music or is destroyed. That is,
+    /// the `sf::Music` object loads a new music or is destroyed. That is,
     /// you can't deallocate the buffer right after calling this function.
     ///
     /// \param data        Pointer to the file data in memory
@@ -113,7 +113,7 @@ public:
     ///
     /// \throws `sf::Exception` if loading was unsuccessful
     ///
-    /// \see openFromFile, openFromStream
+    /// \see `openFromFile`, `openFromStream`
     ///
     ////////////////////////////////////////////////////////////
     Music(const void* data, std::size_t sizeInBytes);
@@ -121,20 +121,20 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Construct a music from an audio file in a custom stream
     ///
-    /// This function doesn't start playing the music (call play()
+    /// This function doesn't start playing the music (call `play()`
     /// to do so).
-    /// See the documentation of sf::InputSoundFile for the list
+    /// See the documentation of `sf::InputSoundFile` for the list
     /// of supported formats.
     ///
     /// \warning Since the music is not loaded at once but rather
-    /// streamed continuously, the \a stream must remain accessible
-    /// until the sf::Music object loads a new music or is destroyed.
+    /// streamed continuously, the \a `stream` must remain accessible
+    /// until the `sf::Music` object loads a new music or is destroyed.
     ///
     /// \param stream Source stream to read from
     ///
     /// \throws `sf::Exception` if loading was unsuccessful
     ///
-    /// \see openFromFile, openFromMemory
+    /// \see `openFromFile`, `openFromMemory`
     ///
     ////////////////////////////////////////////////////////////
     Music(InputStream& stream);
@@ -160,20 +160,20 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Open a music from an audio file
     ///
-    /// This function doesn't start playing the music (call play()
+    /// This function doesn't start playing the music (call `play()`
     /// to do so).
-    /// See the documentation of sf::InputSoundFile for the list
+    /// See the documentation of `sf::InputSoundFile` for the list
     /// of supported formats.
     ///
     /// \warning Since the music is not loaded at once but rather
     /// streamed continuously, the file must remain accessible until
-    /// the sf::Music object loads a new music or is destroyed.
+    /// the `sf::Music` object loads a new music or is destroyed.
     ///
     /// \param filename Path of the music file to open
     ///
-    /// \return True if loading succeeded, false if it failed
+    /// \return `true` if loading succeeded, `false` if it failed
     ///
-    /// \see openFromMemory, openFromStream
+    /// \see `openFromMemory`, `openFromStream`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool openFromFile(const std::filesystem::path& filename);
@@ -181,22 +181,22 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Open a music from an audio file in memory
     ///
-    /// This function doesn't start playing the music (call play()
+    /// This function doesn't start playing the music (call `play()`
     /// to do so).
-    /// See the documentation of sf::InputSoundFile for the list
+    /// See the documentation of `sf::InputSoundFile` for the list
     /// of supported formats.
     ///
     /// \warning Since the music is not loaded at once but rather streamed
-    /// continuously, the \a data buffer must remain accessible until
-    /// the sf::Music object loads a new music or is destroyed. That is,
+    /// continuously, the \a `data` buffer must remain accessible until
+    /// the `sf::Music` object loads a new music or is destroyed. That is,
     /// you can't deallocate the buffer right after calling this function.
     ///
     /// \param data        Pointer to the file data in memory
     /// \param sizeInBytes Size of the data to load, in bytes
     ///
-    /// \return True if loading succeeded, false if it failed
+    /// \return `true` if loading succeeded, `false` if it failed
     ///
-    /// \see openFromFile, openFromStream
+    /// \see `openFromFile`, `openFromStream`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool openFromMemory(const void* data, std::size_t sizeInBytes);
@@ -204,20 +204,20 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Open a music from an audio file in a custom stream
     ///
-    /// This function doesn't start playing the music (call play()
+    /// This function doesn't start playing the music (call `play()`
     /// to do so).
-    /// See the documentation of sf::InputSoundFile for the list
+    /// See the documentation of `sf::InputSoundFile` for the list
     /// of supported formats.
     ///
     /// \warning Since the music is not loaded at once but rather
-    /// streamed continuously, the \a stream must remain accessible
-    /// until the sf::Music object loads a new music or is destroyed.
+    /// streamed continuously, the \a `stream` must remain accessible
+    /// until the `sf::Music` object loads a new music or is destroyed.
     ///
     /// \param stream Source stream to read from
     ///
-    /// \return True if loading succeeded, false if it failed
+    /// \return `true` if loading succeeded, `false` if it failed
     ///
-    /// \see openFromFile, openFromMemory
+    /// \see `openFromFile`, `openFromMemory`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool openFromStream(InputStream& stream);
@@ -235,25 +235,25 @@ public:
     ///
     /// \return Loop Time position class.
     ///
-    /// \warning Since setLoopPoints() performs some adjustments on the
+    /// \warning Since `setLoopPoints()` performs some adjustments on the
     /// provided values and rounds them to internal samples, a call to
-    /// getLoopPoints() is not guaranteed to return the same times passed
-    /// into a previous call to setLoopPoints(). However, it is guaranteed
+    /// `getLoopPoints()` is not guaranteed to return the same times passed
+    /// into a previous call to `setLoopPoints()`. However, it is guaranteed
     /// to return times that will map to the valid internal samples of
-    /// this Music if they are later passed to setLoopPoints().
+    /// this Music if they are later passed to `setLoopPoints()`.
     ///
-    /// \see setLoopPoints
+    /// \see `setLoopPoints`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] TimeSpan getLoopPoints() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Sets the beginning and duration of the sound's looping sequence using sf::Time
+    /// \brief Sets the beginning and duration of the sound's looping sequence using `sf::Time`
     ///
-    /// setLoopPoints() allows for specifying the beginning offset and the duration of the loop such that, when the music
-    /// is enabled for looping, it will seamlessly seek to the beginning whenever it
-    /// encounters the end of the duration. Valid ranges for timePoints.offset and timePoints.length are
-    /// [0, Dur) and (0, Dur-offset] respectively, where Dur is the value returned by getDuration().
+    /// `setLoopPoints()` allows for specifying the beginning offset and the duration of the loop such that,
+    /// when the music is enabled for looping, it will seamlessly seek to the beginning whenever it
+    /// encounters the end of the duration. Valid ranges for `timePoints.offset` and `timePoints.length` are
+    /// [0, Dur) and (0, Dur-offset] respectively, where Dur is the value returned by `getDuration()`.
     /// Note that the EOF "loop point" from the end to the beginning of the stream is still honored,
     /// in case the caller seeks to a point after the end of the loop range. This function can be
     /// safely called at any point after a stream is opened, and will be applied to a playing sound
@@ -264,7 +264,7 @@ public:
     ///
     /// \param timePoints The definition of the loop. Can be any time points within the sound's length
     ///
-    /// \see getLoopPoints
+    /// \see `getLoopPoints`
     ///
     ////////////////////////////////////////////////////////////
     void setLoopPoints(TimeSpan timePoints);
@@ -278,7 +278,7 @@ protected:
     ///
     /// \param data Chunk of data to fill
     ///
-    /// \return True to continue playback, false to stop
+    /// \return `true` to continue playback, `false` to stop
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool onGetData(Chunk& data) override;
@@ -294,7 +294,7 @@ protected:
     ////////////////////////////////////////////////////////////
     /// \brief Change the current playing position in the stream source to the loop offset
     ///
-    /// This is called by the underlying SoundStream whenever it needs us to reset
+    /// This is called by the underlying `SoundStream` whenever it needs us to reset
     /// the seek position for a loop. We then determine whether we are looping on a
     /// loop point or the end-of-file, perform the seek, and return the new position.
     ///
@@ -305,7 +305,7 @@ protected:
 
 private:
     ////////////////////////////////////////////////////////////
-    /// \brief Helper to convert an sf::Time to a sample position
+    /// \brief Helper to convert an `sf::Time` to a sample position
     ///
     /// \param position Time to convert to samples
     ///
@@ -315,7 +315,7 @@ private:
     [[nodiscard]] std::uint64_t timeToSamples(Time position) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Helper to convert a sample position to an sf::Time
+    /// \brief Helper to convert a sample position to an `sf::Time`
     ///
     /// \param samples Sample count to convert to Time
     ///
@@ -345,16 +345,16 @@ private:
 /// you avoid saturating the memory and have almost no loading delay.
 /// This implies that the underlying resource (file, stream or
 /// memory buffer) must remain valid for the lifetime of the
-/// sf::Music object.
+/// `sf::Music` object.
 ///
-/// Apart from that, a sf::Music has almost the same features as
-/// the sf::SoundBuffer / sf::Sound pair: you can play/pause/stop
+/// Apart from that, a `sf::Music` has almost the same features as
+/// the `sf::SoundBuffer` / `sf::Sound` pair: you can play/pause/stop
 /// it, request its parameters (channels, sample rate), change
 /// the way it is played (pitch, volume, 3D position, ...), etc.
 ///
 /// As a sound stream, a music is played in its own thread in order
 /// not to block the rest of the program. This means that you can
-/// leave the music alone after calling play(), it will manage itself
+/// leave the music alone after calling `play()`, it will manage itself
 /// very well.
 ///
 /// Usage example:
@@ -372,6 +372,6 @@ private:
 /// music.play();
 /// \endcode
 ///
-/// \see sf::Sound, sf::SoundStream
+/// \see `sf::Sound`, `sf::SoundStream`
 ///
 ////////////////////////////////////////////////////////////

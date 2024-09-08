@@ -41,7 +41,7 @@ class Shader;
 class Texture;
 
 ////////////////////////////////////////////////////////////
-/// \brief Define the states used for drawing to a RenderTarget
+/// \brief Define the states used for drawing to a `RenderTarget`
 ///
 ////////////////////////////////////////////////////////////
 struct SFML_GRAPHICS_API RenderStates
@@ -50,13 +50,13 @@ struct SFML_GRAPHICS_API RenderStates
     /// \brief Default constructor
     ///
     /// Constructing a default set of render states is equivalent
-    /// to using sf::RenderStates::Default.
+    /// to using `sf::RenderStates::Default`.
     /// The default set defines:
-    /// \li the BlendAlpha blend mode
-    /// \li the default StencilMode (no stencil)
+    /// \li the `BlendAlpha` blend mode
+    /// \li the default `StencilMode` (no stencil)
     /// \li the identity transform
-    /// \li a null texture
-    /// \li a null shader
+    /// \li a `nullptr` texture
+    /// \li a `nullptr` shader
     ///
     ////////////////////////////////////////////////////////////
     RenderStates() = default;
@@ -172,20 +172,20 @@ struct SFML_GRAPHICS_API RenderStates
 ///
 /// If you want to use a single specific render state,
 /// for example a shader, you can pass it directly to the Draw
-/// function: sf::RenderStates has an implicit one-argument
+/// function: `sf::RenderStates` has an implicit one-argument
 /// constructor for each state.
 /// \code
 /// window.draw(sprite, shader);
 /// \endcode
 ///
 /// When you're inside the Draw function of a drawable
-/// object (inherited from sf::Drawable), you can
+/// object (inherited from `sf::Drawable`), you can
 /// either pass the render states unmodified, or change
 /// some of them.
 /// For example, a transformable object will combine the
 /// current transform with its own transform. A sprite will
 /// set its texture. Etc.
 ///
-/// \see sf::RenderTarget, sf::Drawable
+/// \see `sf::RenderTarget`, `sf::Drawable`
 ///
 ////////////////////////////////////////////////////////////

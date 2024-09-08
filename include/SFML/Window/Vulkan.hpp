@@ -66,16 +66,16 @@ namespace Vulkan
 /// \brief Tell whether or not the system supports Vulkan
 ///
 /// This function should always be called before using
-/// the Vulkan features. If it returns false, then
+/// the Vulkan features. If it returns `false`, then
 /// any attempt to use Vulkan will fail.
 ///
-/// If only compute is required, set \a requireGraphics
-/// to false to skip checking for the extensions necessary
+/// If only compute is required, set \a `requireGraphics`
+/// to `false` to skip checking for the extensions necessary
 /// for graphics rendering.
 ///
 /// \param requireGraphics
 ///
-/// \return True if Vulkan is supported, false otherwise
+/// \return `true` if Vulkan is supported, `false` otherwise
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_WINDOW_API bool isAvailable(bool requireGraphics = true);

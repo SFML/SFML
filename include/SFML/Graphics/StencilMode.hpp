@@ -37,7 +37,7 @@ namespace sf
 /// \brief Enumeration of the stencil test comparisons that can be performed
 ///
 /// The comparisons are mapped directly to their OpenGL equivalents,
-/// specified by glStencilFunc().
+/// specified by `glStencilFunc()`.
 ////////////////////////////////////////////////////////
 enum class StencilComparison
 {
@@ -47,7 +47,7 @@ enum class StencilComparison
     Greater,      //!< The stencil test passes if the new value is greater than the value in the stencil buffer
     GreaterEqual, //!< The stencil test passes if the new value is greater than or equal to the value in the stencil buffer
     Equal,        //!< The stencil test passes if the new value is strictly equal to the value in the stencil buffer
-    NotEqual,     //!< The stencil test passes if the new value is strictly inequal to the value in the stencil buffer
+    NotEqual,     //!< The stencil test passes if the new value is strictly unequal to the value in the stencil buffer
     Always        //!< The stencil test always passes
 };
 
@@ -55,7 +55,7 @@ enum class StencilComparison
 /// \brief Enumeration of the stencil buffer update operations
 ///
 /// The update operations are mapped directly to their OpenGL equivalents,
-/// specified by glStencilOp().
+/// specified by `glStencilOp()`.
 ////////////////////////////////////////////////////////
 enum class StencilUpdateOperation
 {
@@ -115,24 +115,24 @@ struct SFML_GRAPHICS_API StencilMode
 
 ////////////////////////////////////////////////////////////
 /// \relates StencilMode
-/// \brief Overload of the == operator
+/// \brief Overload of the `operator==`
 ///
 /// \param left  Left operand
 /// \param right Right operand
 ///
-/// \return True if stencil modes are equal, false if they are different
+/// \return `true` if stencil modes are equal, `false` if they are different
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_GRAPHICS_API bool operator==(const StencilMode& left, const StencilMode& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates StencilMode
-/// \brief Overload of the != operator
+/// \brief Overload of the `operator!=`
 ///
 /// \param left  Left operand
 /// \param right Right operand
 ///
-/// \return True if stencil modes are different, false if they are equal
+/// \return `true` if stencil modes are different, `false` if they are equal
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_GRAPHICS_API bool operator!=(const StencilMode& left, const StencilMode& right);
@@ -144,7 +144,7 @@ struct SFML_GRAPHICS_API StencilMode
 /// \class sf::StencilMode
 /// \ingroup graphics
 ///
-/// sf::StencilMode is a class that controls stencil testing.
+/// `sf::StencilMode` is a class that controls stencil testing.
 ///
 /// In addition to drawing to the visible portion of a render target,
 /// there is the possibility to "draw" to a so-called stencil buffer.
@@ -154,23 +154,23 @@ struct SFML_GRAPHICS_API StencilMode
 /// value that can be represented depends on what is supported by the system.
 /// Typically support for a 8-bit stencil buffer should always be available.
 /// This will also have to be requested when creating a render target via
-/// the sf::ContextSettings that is passed during creation. Stencil testing
+/// the `sf::ContextSettings` that is passed during creation. Stencil testing
 /// will not work if there is no stencil buffer available in the target
 /// that is being drawn to.
 ///
 /// Initially, just like with the visible color buffer, the stencil value of
-/// each pixel is set to an undefined value. Calling sf::RenderTarget::clear
-/// will set each pixel's stencil value to 0. sf::RenderTarget::clear can be
+/// each pixel is set to an undefined value. Calling `sf::RenderTarget::clear`
+/// will set each pixel's stencil value to 0. `sf::RenderTarget::clear` can be
 /// called at any time to reset the stencil values back to 0.
 ///
 /// When drawing an object, before each pixel of the color buffer is updated
 /// with its new color value, the stencil test is performed. During this test
 /// 2 values are compared with each other: the reference value that is passed
-/// via sf::StencilMode and the value that is currently in the stencil buffer.
+/// via `sf::StencilMode` and the value that is currently in the stencil buffer.
 /// The arithmetic comparison that is performed on the 2 values can also be
-/// controlled via sf::StencilMode. Depending on whether the test passes i.e.
-/// the comparison yields true, the color buffer is updated with its new RGBA
-/// value and if set in sf::StencilMode the stencil buffer is updated
+/// controlled via `sf::StencilMode`. Depending on whether the test passes i.e.
+/// the comparison yields `true`, the color buffer is updated with its new RGBA
+/// value and if set in `sf::StencilMode` the stencil buffer is updated
 /// accordingly. The new stencil value will be used during stencil testing the
 /// next time the pixel is drawn to.
 ///
@@ -183,7 +183,7 @@ struct SFML_GRAPHICS_API StencilMode
 /// \li Stencil Only Update (\ref stencilOnly)
 ///
 /// The stencil comparison specifies the comparison that is performed between
-/// the reference value of the currently active sf::StencilMode and the value
+/// the reference value of the currently active `sf::StencilMode` and the value
 /// that is currently in the stencil buffer. This comparison determines whether
 /// the stencil test passes or fails.
 ///
@@ -207,9 +207,9 @@ struct SFML_GRAPHICS_API StencilMode
 /// buffer and not the color buffer during a draw. The written stencil buffer
 /// value can then be used in subsequent draws as a masking region.
 ///
-/// In SFML, a stencil mode can be specified every time you draw a sf::Drawable
-/// object to a render target. It is part of the sf::RenderStates compound
-/// that is passed to the member function sf::RenderTarget::draw().
+/// In SFML, a stencil mode can be specified every time you draw a `sf::Drawable`
+/// object to a render target. It is part of the `sf::RenderStates` compound
+/// that is passed to the member function `sf::RenderTarget::draw()`.
 ///
 /// Usage example:
 /// \code
@@ -251,6 +251,6 @@ struct SFML_GRAPHICS_API StencilMode
 /// window.draw(right, sf::StencilMode{sf::StencilComparison::NotEqual, sf::StencilUpdateOperation::Keep, 1, 0xFF, false});
 /// \endcode
 ///
-/// \see sf::RenderStates, sf::RenderTarget
+/// \see `sf::RenderStates`, `sf::RenderTarget`
 ///
 ////////////////////////////////////////////////////////////

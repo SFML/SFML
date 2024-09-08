@@ -52,7 +52,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Register a new reader
     ///
-    /// \see unregisterReader
+    /// \see `unregisterReader`
     ///
     ////////////////////////////////////////////////////////////
     template <typename T>
@@ -61,7 +61,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Unregister a reader
     ///
-    /// \see registerReader
+    /// \see `registerReader`
     ///
     ////////////////////////////////////////////////////////////
     template <typename T>
@@ -77,7 +77,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Register a new writer
     ///
-    /// \see unregisterWriter
+    /// \see `unregisterWriter`
     ///
     ////////////////////////////////////////////////////////////
     template <typename T>
@@ -86,7 +86,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Unregister a writer
     ///
-    /// \see registerWriter
+    /// \see `registerWriter`
     ///
     ////////////////////////////////////////////////////////////
     template <typename T>
@@ -106,7 +106,7 @@ public:
     ///
     /// \return A new sound file reader that can read the given file, or null if no reader can handle it
     ///
-    /// \see createReaderFromMemory, createReaderFromStream
+    /// \see `createReaderFromMemory`, `createReaderFromStream`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] static std::unique_ptr<SoundFileReader> createReaderFromFilename(const std::filesystem::path& filename);
@@ -119,7 +119,7 @@ public:
     ///
     /// \return A new sound file codec that can read the given file, or null if no codec can handle it
     ///
-    /// \see createReaderFromFilename, createReaderFromStream
+    /// \see `createReaderFromFilename`, `createReaderFromStream`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] static std::unique_ptr<SoundFileReader> createReaderFromMemory(const void* data, std::size_t sizeInBytes);
@@ -131,7 +131,7 @@ public:
     ///
     /// \return A new sound file codec that can read the given file, or null if no codec can handle it
     ///
-    /// \see createReaderFromFilename, createReaderFromMemory
+    /// \see `createReaderFromFilename`, `createReaderFromMemory`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] static std::unique_ptr<SoundFileReader> createReaderFromStream(InputStream& stream);
@@ -178,12 +178,12 @@ private:
 /// This class is where all the sound file readers and writers are
 /// registered. You should normally only need to use its registration
 /// and unregistration functions; readers/writers creation and manipulation
-/// are wrapped into the higher-level classes sf::InputSoundFile and
-/// sf::OutputSoundFile.
+/// are wrapped into the higher-level classes `sf::InputSoundFile` and
+/// `sf::OutputSoundFile`.
 ///
-/// To register a new reader (writer) use the sf::SoundFileFactory::registerReader
-/// (registerWriter) static function. You don't have to call the unregisterReader
-/// (unregisterWriter) function, unless you want to unregister a format before your
+/// To register a new reader (writer) use the `sf::SoundFileFactory::registerReader`
+/// (`registerWriter`) static function. You don't have to call the `unregisterReader`
+/// (`unregisterWriter`) function, unless you want to unregister a format before your
 /// application ends (typically, when a plugin is unloaded).
 ///
 /// Usage example:
@@ -195,6 +195,6 @@ private:
 /// assert(sf::SoundFileFactory::isWriterRegistered<MySoundFileWriter>());
 /// \endcode
 ///
-/// \see sf::InputSoundFile, sf::OutputSoundFile, sf::SoundFileReader, sf::SoundFileWriter
+/// \see `sf::InputSoundFile`, `sf::OutputSoundFile`, `sf::SoundFileReader`, `sf::SoundFileWriter`
 ///
 ////////////////////////////////////////////////////////////

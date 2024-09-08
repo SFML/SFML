@@ -111,9 +111,9 @@ public:
     String() = default;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Deleted nullptr constructor
+    /// \brief Deleted `std::nullptr_t` constructor
     ///
-    /// Disallow construction from nullptr literal
+    /// Disallow construction from `nullptr` literal
     ///
     ////////////////////////////////////////////////////////////
     String(std::nullptr_t, const std::locale& = {}) = delete;
@@ -203,35 +203,35 @@ public:
     String(std::u32string utf32String);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Create a new sf::String from a UTF-8 encoded string
+    /// \brief Create a new `sf::String` from a UTF-8 encoded string
     ///
     /// \param begin Forward iterator to the beginning of the UTF-8 sequence
     /// \param end   Forward iterator to the end of the UTF-8 sequence
     ///
-    /// \return A sf::String containing the source string
+    /// \return A `sf::String` containing the source string
     ///
-    /// \see fromUtf16, fromUtf32
+    /// \see `fromUtf16`, `fromUtf32`
     ///
     ////////////////////////////////////////////////////////////
     template <typename T>
     [[nodiscard]] static String fromUtf8(T begin, T end);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Create a new sf::String from a UTF-16 encoded string
+    /// \brief Create a new `sf::String` from a UTF-16 encoded string
     ///
     /// \param begin Forward iterator to the beginning of the UTF-16 sequence
     /// \param end   Forward iterator to the end of the UTF-16 sequence
     ///
-    /// \return A sf::String containing the source string
+    /// \return A `sf::String` containing the source string
     ///
-    /// \see fromUtf8, fromUtf32
+    /// \see `fromUtf8`, `fromUtf32`
     ///
     ////////////////////////////////////////////////////////////
     template <typename T>
     [[nodiscard]] static String fromUtf16(T begin, T end);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Create a new sf::String from a UTF-32 encoded string
+    /// \brief Create a new `sf::String` from a UTF-32 encoded string
     ///
     /// This function is provided for consistency, it is equivalent to
     /// using the constructors that takes a `const char32_t*` or
@@ -240,9 +240,9 @@ public:
     /// \param begin Forward iterator to the beginning of the UTF-32 sequence
     /// \param end   Forward iterator to the end of the UTF-32 sequence
     ///
-    /// \return A sf::String containing the source string
+    /// \return A `sf::String` containing the source string
     ///
-    /// \see fromUtf8, fromUtf16
+    /// \see `fromUtf8`, `fromUtf16`
     ///
     ////////////////////////////////////////////////////////////
     template <typename T>
@@ -256,11 +256,11 @@ public:
     /// Characters that do not fit in the target encoding are
     /// discarded from the returned string.
     /// This operator is defined for convenience, and is equivalent
-    /// to calling toAnsiString().
+    /// to calling `toAnsiString()`.
     ///
     /// \return Converted ANSI string
     ///
-    /// \see toAnsiString, operator std::wstring
+    /// \see `toAnsiString`, `operator std::wstring`
     ///
     ////////////////////////////////////////////////////////////
     operator std::string() const;
@@ -271,11 +271,11 @@ public:
     /// Characters that do not fit in the target encoding are
     /// discarded from the returned string.
     /// This operator is defined for convenience, and is equivalent
-    /// to calling toWideString().
+    /// to calling `toWideString()`.
     ///
     /// \return Converted wide string
     ///
-    /// \see toWideString, operator std::string
+    /// \see `toWideString`, `operator std::string`
     ///
     ////////////////////////////////////////////////////////////
     operator std::wstring() const;
@@ -284,7 +284,7 @@ public:
     /// \brief Convert the Unicode string to an ANSI string
     ///
     /// The UTF-32 string is converted to an ANSI string in
-    /// the encoding defined by \a locale.
+    /// the encoding defined by \a `locale`.
     /// Characters that do not fit in the target encoding are
     /// discarded from the returned string.
     ///
@@ -292,7 +292,7 @@ public:
     ///
     /// \return Converted ANSI string
     ///
-    /// \see toWideString, operator std::string
+    /// \see `toWideString`, `operator std::string`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] std::string toAnsiString(const std::locale& locale = {}) const;
@@ -305,7 +305,7 @@ public:
     ///
     /// \return Converted wide string
     ///
-    /// \see toAnsiString, operator std::wstring
+    /// \see `toAnsiString`, `operator std::wstring`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] std::wstring toWideString() const;
@@ -315,7 +315,7 @@ public:
     ///
     /// \return Converted UTF-8 string
     ///
-    /// \see toUtf16, toUtf32
+    /// \see `toUtf16`, `toUtf32`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] sf::U8String toUtf8() const;
@@ -325,7 +325,7 @@ public:
     ///
     /// \return Converted UTF-16 string
     ///
-    /// \see toUtf8, toUtf32
+    /// \see `toUtf8`, `toUtf32`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] std::u16string toUtf16() const;
@@ -338,13 +338,13 @@ public:
     ///
     /// \return Converted UTF-32 string
     ///
-    /// \see toUtf8, toUtf16
+    /// \see `toUtf8`, `toUtf16`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] std::u32string toUtf32() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Overload of += operator to append an UTF-32 string
+    /// \brief Overload of `operator+=` to append an UTF-32 string
     ///
     /// \param right String to append
     ///
@@ -354,27 +354,27 @@ public:
     String& operator+=(const String& right);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Overload of [] operator to access a character by its position
+    /// \brief Overload of `operator[]` to access a character by its position
     ///
     /// This function provides read-only access to characters.
-    /// Note: the behavior is undefined if \a index is out of range.
+    /// Note: the behavior is undefined if \a `index` is out of range.
     ///
     /// \param index Index of the character to get
     ///
-    /// \return Character at position \a index
+    /// \return Character at position \a `index`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] char32_t operator[](std::size_t index) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Overload of [] operator to access a character by its position
+    /// \brief Overload of `operator[]` to access a character by its position
     ///
     /// This function provides read and write access to characters.
-    /// Note: the behavior is undefined if \a index is out of range.
+    /// Note: the behavior is undefined if \a `index` is out of range.
     ///
     /// \param index Index of the character to get
     ///
-    /// \return Reference to the character at position \a index
+    /// \return Reference to the character at position \a `index`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] char32_t& operator[](std::size_t index);
@@ -384,7 +384,7 @@ public:
     ///
     /// This function removes all the characters from the string.
     ///
-    /// \see isEmpty, erase
+    /// \see `isEmpty`, `erase`
     ///
     ////////////////////////////////////////////////////////////
     void clear();
@@ -394,7 +394,7 @@ public:
     ///
     /// \return Number of characters in the string
     ///
-    /// \see isEmpty
+    /// \see `isEmpty`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] std::size_t getSize() const;
@@ -402,9 +402,9 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Check whether the string is empty or not
     ///
-    /// \return True if the string is empty (i.e. contains no character)
+    /// \return `true` if the string is empty (i.e. contains no character)
     ///
-    /// \see clear, getSize
+    /// \see `clear`, `getSize`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool isEmpty() const;
@@ -412,8 +412,8 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Erase one or more characters from the string
     ///
-    /// This function removes a sequence of \a count characters
-    /// starting from \a position.
+    /// This function removes a sequence of \a `count` characters
+    /// starting from \a `position`.
     ///
     /// \param position Position of the first character to erase
     /// \param count    Number of characters to erase
@@ -424,8 +424,8 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Insert one or more characters into the string
     ///
-    /// This function inserts the characters of \a str
-    /// into the string, starting from \a position.
+    /// This function inserts the characters of \a `str`
+    /// into the string, starting from \a `position`.
     ///
     /// \param position Position of insertion
     /// \param str      Characters to insert
@@ -436,13 +436,13 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Find a sequence of one or more characters in the string
     ///
-    /// This function searches for the characters of \a str
-    /// in the string, starting from \a start.
+    /// This function searches for the characters of \a `str`
+    /// in the string, starting from \a `start`.
     ///
     /// \param str   Characters to find
     /// \param start Where to begin searching
     ///
-    /// \return Position of \a str in the string, or String::InvalidPos if not found
+    /// \return Position of \a `str` in the string, or `String::InvalidPos` if not found
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] std::size_t find(const String& str, std::size_t start = 0) const;
@@ -450,8 +450,8 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Replace a substring with another string
     ///
-    /// This function replaces the substring that starts at index \a position
-    /// and spans \a length characters with the string \a replaceWith.
+    /// This function replaces the substring that starts at index \a `position`
+    /// and spans \a `length` characters with the string \a `replaceWith`.
     ///
     /// \param position    Index of the first character to be replaced
     /// \param length      Number of characters to replace. You can pass InvalidPos to
@@ -464,11 +464,11 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Replace all occurrences of a substring with a replacement string
     ///
-    /// This function replaces all occurrences of \a searchFor in this string
-    /// with the string \a replaceWith.
+    /// This function replaces all occurrences of \a `searchFor` in this string
+    /// with the string \a `replaceWith`.
     ///
     /// \param searchFor   The value being searched for
-    /// \param replaceWith The value that replaces found \a searchFor values
+    /// \param replaceWith The value that replaces found \a `searchFor` values
     ///
     ////////////////////////////////////////////////////////////
     void replace(const String& searchFor, const String& replaceWith);
@@ -476,13 +476,13 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Return a part of the string
     ///
-    /// This function returns the substring that starts at index \a position
-    /// and spans \a length characters.
+    /// This function returns the substring that starts at index \a `position`
+    /// and spans \a `length` characters.
     ///
     /// \param position Index of the first character
     /// \param length   Number of characters to include in the substring (if
     ///                 the string is shorter, as many characters as possible
-    ///                 are included). \ref InvalidPos can be used to include all
+    ///                 are included). `InvalidPos` can be used to include all
     ///                 characters until the end of the string.
     ///
     /// \return String object containing a substring of this object
@@ -508,7 +508,7 @@ public:
     ///
     /// \return Read-write iterator to the beginning of the string characters
     ///
-    /// \see end
+    /// \see `end`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Iterator begin();
@@ -518,7 +518,7 @@ public:
     ///
     /// \return Read-only iterator to the beginning of the string characters
     ///
-    /// \see end
+    /// \see `end`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] ConstIterator begin() const;
@@ -532,7 +532,7 @@ public:
     ///
     /// \return Read-write iterator to the end of the string characters
     ///
-    /// \see begin
+    /// \see `begin`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Iterator end();
@@ -546,7 +546,7 @@ public:
     ///
     /// \return Read-only iterator to the end of the string characters
     ///
-    /// \see begin
+    /// \see `begin`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] ConstIterator end() const;
@@ -563,79 +563,79 @@ private:
 
 ////////////////////////////////////////////////////////////
 /// \relates String
-/// \brief Overload of == operator to compare two UTF-32 strings
+/// \brief Overload of `operator==` to compare two UTF-32 strings
 ///
 /// \param left  Left operand (a string)
 /// \param right Right operand (a string)
 ///
-/// \return True if both strings are equal
+/// \return `true` if both strings are equal
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_SYSTEM_API bool operator==(const String& left, const String& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates String
-/// \brief Overload of != operator to compare two UTF-32 strings
+/// \brief Overload of `operator!=` to compare two UTF-32 strings
 ///
 /// \param left  Left operand (a string)
 /// \param right Right operand (a string)
 ///
-/// \return True if both strings are different
+/// \return `true` if both strings are different
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_SYSTEM_API bool operator!=(const String& left, const String& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates String
-/// \brief Overload of < operator to compare two UTF-32 strings
+/// \brief Overload of `operator<` to compare two UTF-32 strings
 ///
 /// \param left  Left operand (a string)
 /// \param right Right operand (a string)
 ///
-/// \return True if \a left is lexicographically before \a right
+/// \return `true` if \a `left` is lexicographically before \a `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_SYSTEM_API bool operator<(const String& left, const String& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates String
-/// \brief Overload of > operator to compare two UTF-32 strings
+/// \brief Overload of `operator>` to compare two UTF-32 strings
 ///
 /// \param left  Left operand (a string)
 /// \param right Right operand (a string)
 ///
-/// \return True if \a left is lexicographically after \a right
+/// \return `true` if \a `left` is lexicographically after \a `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_SYSTEM_API bool operator>(const String& left, const String& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates String
-/// \brief Overload of <= operator to compare two UTF-32 strings
+/// \brief Overload of `operator<=` to compare two UTF-32 strings
 ///
 /// \param left  Left operand (a string)
 /// \param right Right operand (a string)
 ///
-/// \return True if \a left is lexicographically before or equivalent to \a right
+/// \return `true` if \a `left` is lexicographically before or equivalent to \a `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_SYSTEM_API bool operator<=(const String& left, const String& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates String
-/// \brief Overload of >= operator to compare two UTF-32 strings
+/// \brief Overload of `operator>=` to compare two UTF-32 strings
 ///
 /// \param left  Left operand (a string)
 /// \param right Right operand (a string)
 ///
-/// \return True if \a left is lexicographically after or equivalent to \a right
+/// \return `true` if \a `left` is lexicographically after or equivalent to \a `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_SYSTEM_API bool operator>=(const String& left, const String& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates String
-/// \brief Overload of binary + operator to concatenate two strings
+/// \brief Overload of binary `operator+` to concatenate two strings
 ///
 /// \param left  Left operand (a string)
 /// \param right Right operand (a string)
@@ -654,7 +654,7 @@ private:
 /// \class sf::String
 /// \ingroup system
 ///
-/// sf::String is a utility string class defined mainly for
+/// `sf::String` is a utility string class defined mainly for
 /// convenience. It is a Unicode string (implemented using
 /// UTF-32), thus it can store any character in the world
 /// (European, Chinese, Arabic, Hebrew, etc.).
@@ -662,7 +662,7 @@ private:
 /// It automatically handles conversions from/to ANSI and
 /// wide strings, so that you can work with standard string
 /// classes and still be compatible with functions taking a
-/// sf::String.
+/// `sf::String`.
 ///
 /// \code
 /// sf::String s;
@@ -685,16 +685,16 @@ private:
 /// s = sf::String("hello", locale);
 /// \endcode
 ///
-/// sf::String defines the most important functions of the
+/// `sf::String` defines the most important functions of the
 /// standard `std::string` class: removing, random access, iterating,
 /// appending, comparing, etc. However it is a simple class
 /// provided for convenience, and you may have to consider using
 /// a more optimized class if your program requires complex string
 /// handling. The automatic conversion functions will then take
-/// care of converting your string to sf::String whenever SFML
+/// care of converting your string to `sf::String` whenever SFML
 /// requires it.
 ///
 /// Please note that SFML also defines a low-level, generic
-/// interface for Unicode handling, see the sf::Utf classes.
+/// interface for Unicode handling, see the `sf::Utf` classes.
 ///
 ////////////////////////////////////////////////////////////

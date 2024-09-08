@@ -59,7 +59,7 @@ static constexpr unsigned int Count{6}; //!< The total number of sensor types
 ///
 /// \param sensor Sensor to check
 ///
-/// \return True if the sensor is available, false otherwise
+/// \return `true` if the sensor is available, `false` otherwise
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_WINDOW_API bool isAvailable(Type sensor);
@@ -74,7 +74,7 @@ static constexpr unsigned int Count{6}; //!< The total number of sensor types
 /// This function does nothing if the sensor is unavailable.
 ///
 /// \param sensor  Sensor to enable
-/// \param enabled True to enable, false to disable
+/// \param enabled `true` to enable, `false` to disable
 ///
 ////////////////////////////////////////////////////////////
 SFML_WINDOW_API void setEnabled(Type sensor, bool enabled);
@@ -95,19 +95,19 @@ SFML_WINDOW_API void setEnabled(Type sensor, bool enabled);
 /// \namespace sf::Sensor
 /// \ingroup window
 ///
-/// sf::Sensor provides an interface to the state of the
+/// `sf::Sensor` provides an interface to the state of the
 /// various sensors that a device provides.
 ///
 /// This namespace allows users to query the sensors values at any
 /// time and directly, without having to deal with a window and
-/// its events. Compared to the SensorChanged event, sf::Sensor
+/// its events. Compared to the SensorChanged event, `sf::Sensor`
 /// can retrieve the state of a sensor at any time (you don't need to
 /// store and update its current value on your side).
 ///
 /// Depending on the OS and hardware of the device (phone, tablet, ...),
 /// some sensor types may not be available. You should always check
 /// the availability of a sensor before trying to read it, with the
-/// sf::Sensor::isAvailable function.
+/// `sf::Sensor::isAvailable` function.
 ///
 /// You may wonder why some sensor types look so similar, for example
 /// Accelerometer and Gravity / UserAcceleration. The first one
@@ -119,7 +119,7 @@ SFML_WINDOW_API void setEnabled(Type sensor, bool enabled);
 /// This is exactly the same for Gyroscope vs Orientation.
 ///
 /// Because sensors consume a non-negligible amount of current, they are
-/// all disabled by default. You must call sf::Sensor::setEnabled for each
+/// all disabled by default. You must call `sf::Sensor::setEnabled` for each
 /// sensor in which you are interested.
 ///
 /// Usage example:

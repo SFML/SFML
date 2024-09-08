@@ -102,7 +102,7 @@ public:
         ///
         /// See the Method enumeration for a complete list of all
         /// the available methods.
-        /// The method is Http::Request::Method::Get by default.
+        /// The method is `Http::Request::Method::Get` by default.
         ///
         /// \param method Method to use for the request
         ///
@@ -165,7 +165,7 @@ public:
         ///
         /// \param field Name of the field to test
         ///
-        /// \return True if the field exists, false otherwise
+        /// \return `true` if the field exists, `false` otherwise
         ///
         ////////////////////////////////////////////////////////////
         [[nodiscard]] bool hasField(const std::string& field) const;
@@ -236,7 +236,7 @@ public:
         ////////////////////////////////////////////////////////////
         /// \brief Get the value of a field
         ///
-        /// If the field \a field is not found in the response header,
+        /// If the field \a `field` is not found in the response header,
         /// the empty string is returned. This function uses
         /// case-insensitive comparisons.
         ///
@@ -265,7 +265,7 @@ public:
         ///
         /// \return Major HTTP version number
         ///
-        /// \see getMinorHttpVersion
+        /// \see `getMinorHttpVersion`
         ///
         ////////////////////////////////////////////////////////////
         [[nodiscard]] unsigned int getMajorHttpVersion() const;
@@ -275,7 +275,7 @@ public:
         ///
         /// \return Minor HTTP version number
         ///
-        /// \see getMajorHttpVersion
+        /// \see `getMajorHttpVersion`
         ///
         ////////////////////////////////////////////////////////////
         [[nodiscard]] unsigned int getMinorHttpVersion() const;
@@ -300,7 +300,7 @@ public:
         ////////////////////////////////////////////////////////////
         /// \brief Construct the header from a response string
         ///
-        /// This function is used by Http to build the response
+        /// This function is used by `Http` to build the response
         /// of a request.
         ///
         /// \param data Content of the response to parse
@@ -312,7 +312,7 @@ public:
         ////////////////////////////////////////////////////////////
         /// \brief Read values passed in the answer header
         ///
-        /// This function is used by Http to extract values passed
+        /// This function is used by `Http` to extract values passed
         /// in the response.
         ///
         /// \param in String stream containing the header values
@@ -344,7 +344,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Construct the HTTP client with the target host
     ///
-    /// This is equivalent to calling setHost(host, port).
+    /// This is equivalent to calling `setHost(host, port)`.
     /// The port has a default value of 0, which means that the
     /// HTTP client will use the right port according to the
     /// protocol used (80 for HTTP). You should leave it like
@@ -389,13 +389,13 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Send a HTTP request and return the server's response.
     ///
-    /// You must have a valid host before sending a request (see setHost).
+    /// You must have a valid host before sending a request (see `setHost`).
     /// Any missing mandatory header field in the request will be added
     /// with an appropriate value.
     /// Warning: this function waits for the server's response and may
     /// not return instantly; use a thread if you don't want to block your
     /// application, or use a timeout to limit the time to wait. A value
-    /// of Time::Zero means that the client will use the system default timeout
+    /// of `Time::Zero` means that the client will use the system default timeout
     /// (which is usually pretty long).
     ///
     /// \param request Request to send
@@ -423,32 +423,32 @@ private:
 /// \class sf::Http
 /// \ingroup network
 ///
-/// sf::Http is a very simple HTTP client that allows you
+/// `sf::Http` is a very simple HTTP client that allows you
 /// to communicate with a web server. You can retrieve
 /// web pages, send data to an interactive resource,
 /// download a remote file, etc. The HTTPS protocol is
 /// not supported.
 ///
 /// The HTTP client is split into 3 classes:
-/// \li sf::Http::Request
-/// \li sf::Http::Response
-/// \li sf::Http
+/// \li `sf::Http::Request`
+/// \li `sf::Http::Response`
+/// \li `sf::Http`
 ///
-/// sf::Http::Request builds the request that will be
+/// `sf::Http::Request` builds the request that will be
 /// sent to the server. A request is made of:
 /// \li a method (what you want to do)
 /// \li a target URI (usually the name of the web page or file)
 /// \li one or more header fields (options that you can pass to the server)
 /// \li an optional body (for POST requests)
 ///
-/// sf::Http::Response parse the response from the web server
+/// `sf::Http::Response` parse the response from the web server
 /// and provides getters to read them. The response contains:
 /// \li a status code
 /// \li header fields (that may be answers to the ones that you requested)
 /// \li a body, which contains the contents of the requested resource
 ///
-/// sf::Http provides a simple function, SendRequest, to send a
-/// sf::Http::Request and return the corresponding sf::Http::Response
+/// `sf::Http` provides a simple function, SendRequest, to send a
+/// `sf::Http::Request` and return the corresponding `sf::Http::Response`
 /// from the server.
 ///
 /// Usage example:

@@ -85,7 +85,7 @@ public:
     /// \param channelCount Number of channels in the sound
     /// \param channelMap   Map of position in sample frame to sound channel
     ///
-    /// \return True if the file was successfully opened
+    /// \return `true` if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool openFromFile(const std::filesystem::path&     filename,
@@ -123,7 +123,7 @@ private:
 /// \ingroup audio
 ///
 /// This class encodes audio samples to a sound file. It is
-/// used internally by higher-level classes such as sf::SoundBuffer,
+/// used internally by higher-level classes such as `sf::SoundBuffer`,
 /// but can also be useful if you want to create audio files from
 /// custom data sources, like generated audio samples.
 ///
@@ -142,6 +142,6 @@ private:
 /// }
 /// \endcode
 ///
-/// \see sf::SoundFileWriter, sf::InputSoundFile
+/// \see `sf::SoundFileWriter`, `sf::InputSoundFile`
 ///
 ////////////////////////////////////////////////////////////

@@ -120,6 +120,6 @@ struct ContextSettings
 /// are not supported by the system; instead, SFML will try to
 /// find the closest valid match. You can then retrieve the
 /// settings that the window actually used to create its context,
-/// with Window::getSettings().
+/// with `Window::getSettings()`.
 ///
 ////////////////////////////////////////////////////////////

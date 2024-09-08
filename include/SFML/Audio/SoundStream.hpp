@@ -88,7 +88,7 @@ public:
     /// This function uses its own thread so that it doesn't block
     /// the rest of the program while the stream is played.
     ///
-    /// \see pause, stop
+    /// \see `pause`, `stop`
     ///
     ////////////////////////////////////////////////////////////
     void play() override;
@@ -99,7 +99,7 @@ public:
     /// This function pauses the stream if it was playing,
     /// otherwise (stream already paused or stopped) it has no effect.
     ///
-    /// \see play, stop
+    /// \see `play`, `stop`
     ///
     ////////////////////////////////////////////////////////////
     void pause() override;
@@ -109,9 +109,9 @@ public:
     ///
     /// This function stops the stream if it was playing or paused,
     /// and does nothing if it was already stopped.
-    /// It also resets the playing position (unlike pause()).
+    /// It also resets the playing position (unlike `pause()`).
     ///
-    /// \see play, pause
+    /// \see `play`, `pause`
     ///
     ////////////////////////////////////////////////////////////
     void stop() override;
@@ -141,7 +141,7 @@ public:
     /// \brief Get the map of position in sample frame to sound channel
     ///
     /// This is used to map a sample in the sample stream to a
-    /// position during spatialisation.
+    /// position during spatialization.
     ///
     /// \return Map of position in sample frame to sound channel
     ///
@@ -166,7 +166,7 @@ public:
     ///
     /// \param timeOffset New playing position, from the beginning of the stream
     ///
-    /// \see getPlayingOffset
+    /// \see `getPlayingOffset`
     ///
     ////////////////////////////////////////////////////////////
     void setPlayingOffset(Time timeOffset);
@@ -176,7 +176,7 @@ public:
     ///
     /// \return Current playing position, from the beginning of the stream
     ///
-    /// \see setPlayingOffset
+    /// \see `setPlayingOffset`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Time getPlayingOffset() const;
@@ -186,12 +186,12 @@ public:
     ///
     /// If set, the stream will restart from beginning after
     /// reaching the end and so on, until it is stopped or
-    /// setLooping(false) is called.
-    /// The default looping state for streams is false.
+    /// `setLooping(false)` is called.
+    /// The default looping state for streams is `false`.
     ///
-    /// \param loop True to play in loop, false to play once
+    /// \param loop `true` to play in loop, `false` to play once
     ///
-    /// \see isLooping
+    /// \see `isLooping`
     ///
     ////////////////////////////////////////////////////////////
     void setLooping(bool loop);
@@ -199,9 +199,9 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Tell whether or not the stream is in loop mode
     ///
-    /// \return True if the stream is looping, false otherwise
+    /// \return `true` if the stream is looping, `false` otherwise
     ///
-    /// \see setLooping
+    /// \see `setLooping`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool isLooping() const;
@@ -231,7 +231,7 @@ protected:
     ///
     /// This function must be called by derived classes as soon
     /// as they know the audio settings of the stream to play.
-    /// Any attempt to manipulate the stream (play(), ...) before
+    /// Any attempt to manipulate the stream (`play()`, ...) before
     /// calling this function will fail.
     /// It can be called multiple times if the settings of the
     /// audio stream change, but only when the stream is stopped.
@@ -250,14 +250,14 @@ protected:
     /// the audio samples to play. It is called continuously by the
     /// streaming loop, in a separate thread.
     /// The source can choose to stop the streaming loop at any time, by
-    /// returning false to the caller.
-    /// If you return true (i.e. continue streaming) it is important that
+    /// returning `false` to the caller.
+    /// If you return `true` (i.e. continue streaming) it is important that
     /// the returned array of samples is not empty; this would stop the stream
     /// due to an internal limitation.
     ///
     /// \param data Chunk of data to fill
     ///
-    /// \return True to continue playback, false to stop
+    /// \return `true` to continue playback, `false` to stop
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] virtual bool onGetData(Chunk& data) = 0;
@@ -278,7 +278,7 @@ protected:
     ///
     /// This function can be overridden by derived classes to
     /// allow implementation of custom loop points. Otherwise,
-    /// it just calls onSeek(Time::Zero) and returns 0.
+    /// it just calls `onSeek(Time::Zero)` and returns 0.
     ///
     /// \return The seek position after looping (or `std::nullopt` if there's no loop)
     ///
@@ -308,7 +308,7 @@ private:
 /// \class sf::SoundStream
 /// \ingroup audio
 ///
-/// Unlike audio buffers (see sf::SoundBuffer), audio streams
+/// Unlike audio buffers (see `sf::SoundBuffer`), audio streams
 /// are never completely loaded in memory. Instead, the audio
 /// data is acquired continuously while the stream is playing.
 /// This behavior allows to play a sound with no loading delay,
@@ -319,19 +319,19 @@ private:
 /// or files that would take a lot of time to be received
 /// (sounds played over the network).
 ///
-/// sf::SoundStream is a base class that doesn't care about the
+/// `sf::SoundStream` is a base class that doesn't care about the
 /// stream source, which is left to the derived class. SFML provides
-/// a built-in specialization for big files (see sf::Music).
+/// a built-in specialization for big files (see `sf::Music`).
 /// No network stream source is provided, but you can write your own
 /// by combining this class with the network module.
 ///
 /// A derived class has to override two virtual functions:
-/// \li onGetData fills a new chunk of audio data to be played
-/// \li onSeek changes the current playing position in the source
+/// \li `onGetData` fills a new chunk of audio data to be played
+/// \li `onSeek` changes the current playing position in the source
 ///
 /// It is important to note that each SoundStream is played in its
 /// own separate thread, so that the streaming loop doesn't block the
-/// rest of the program. In particular, the OnGetData and OnSeek
+/// rest of the program. In particular, the `onGetData` and `onSeek`
 /// virtual functions may sometimes be called from this separate thread.
 /// It is important to keep this in mind, because you may have to take
 /// care of synchronization issues if you share data between threads.
@@ -380,6 +380,6 @@ private:
 /// stream.play();
 /// \endcode
 ///
-/// \see sf::Music
+/// \see `sf::Music`
 ///
 ////////////////////////////////////////////////////////////

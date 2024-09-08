@@ -110,7 +110,7 @@ public:
     ///
     /// \param filename Name of the file to open
     ///
-    /// \return True on success, false on error
+    /// \return `true` on success, `false` on error
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool open(const std::filesystem::path& filename);
@@ -182,16 +182,16 @@ private:
 /// \class sf::FileInputStream
 /// \ingroup system
 ///
-/// This class is a specialization of InputStream that
+/// This class is a specialization of `InputStream` that
 /// reads from a file on disk.
 ///
-/// It wraps a file in the common InputStream interface
+/// It wraps a file in the common `InputStream` interface
 /// and therefore allows to use generic classes or functions
 /// that accept such a stream, with a file on disk as the data
 /// source.
 ///
 /// In addition to the virtual functions inherited from
-/// InputStream, FileInputStream adds a function to
+/// `InputStream`, `FileInputStream` adds a function to
 /// specify the file to open.
 ///
 /// SFML resource classes can usually be loaded directly from
@@ -207,6 +207,6 @@ private:
 ///    process(*stream);
 /// \endcode
 ///
-/// InputStream, MemoryInputStream
+/// \see `InputStream`, `MemoryInputStream`
 ///
 ////////////////////////////////////////////////////////////

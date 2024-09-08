@@ -126,24 +126,24 @@ struct SFML_GRAPHICS_API BlendMode
 
 ////////////////////////////////////////////////////////////
 /// \relates BlendMode
-/// \brief Overload of the == operator
+/// \brief Overload of the `operator==`
 ///
 /// \param left  Left operand
 /// \param right Right operand
 ///
-/// \return True if blending modes are equal, false if they are different
+/// \return `true` if blending modes are equal, `false` if they are different
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_GRAPHICS_API bool operator==(const BlendMode& left, const BlendMode& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates BlendMode
-/// \brief Overload of the != operator
+/// \brief Overload of the `operator!=`
 ///
 /// \param left  Left operand
 /// \param right Right operand
 ///
-/// \return True if blending modes are different, false if they are equal
+/// \return `true` if blending modes are different, `false` if they are equal
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_GRAPHICS_API bool operator!=(const BlendMode& left, const BlendMode& right);
@@ -167,7 +167,7 @@ SFML_GRAPHICS_API extern const BlendMode BlendNone;     //!< Overwrite dest with
 /// \class sf::BlendMode
 /// \ingroup graphics
 ///
-/// sf::BlendMode is a class that represents a blend mode. A blend
+/// `sf::BlendMode` is a class that represents a blend mode. A blend
 /// mode determines how the colors of an object you draw are
 /// mixed with the colors that are already in the buffer.
 ///
@@ -191,7 +191,7 @@ SFML_GRAPHICS_API extern const BlendMode BlendNone;     //!< Overwrite dest with
 ///
 /// The blend factors and equations correspond to their OpenGL equivalents.
 /// In general, the color of the resulting pixel is calculated according
-/// to the following formula (\a src is the color of the source pixel, \a dst
+/// to the following formula (\a `src` is the color of the source pixel, \a `dst`
 /// the color of the destination pixel, the other variables correspond to the
 /// public members, with the equations being + or - operators):
 /// \code
@@ -211,10 +211,10 @@ SFML_GRAPHICS_API extern const BlendMode BlendNone;     //!< Overwrite dest with
 /// sf::BlendMode noBlending             = sf::BlendNone;
 /// \endcode
 ///
-/// In SFML, a blend mode can be specified every time you draw a sf::Drawable
-/// object to a render target. It is part of the sf::RenderStates compound
-/// that is passed to the member function sf::RenderTarget::draw().
+/// In SFML, a blend mode can be specified every time you draw a `sf::Drawable`
+/// object to a render target. It is part of the `sf::RenderStates` compound
+/// that is passed to the member function `sf::RenderTarget::draw()`.
 ///
-/// \see sf::RenderStates, sf::RenderTarget
+/// \see `sf::RenderStates`, `sf::RenderTarget`
 ///
 ////////////////////////////////////////////////////////////

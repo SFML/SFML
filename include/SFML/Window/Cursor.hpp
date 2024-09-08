@@ -56,29 +56,29 @@ public:
     /// Refer to the following table to determine which cursor
     /// is available on which platform.
     ///
-    ///  Type                                     | Linux | macOS | Windows  |
-    /// ------------------------------------------|:-----:|:-----:|:--------:|
-    ///  sf::Cursor::Type::Arrow                  |  yes  | yes   |   yes    |
-    ///  sf::Cursor::Type::ArrowWait              |  no   | no    |   yes    |
-    ///  sf::Cursor::Type::Wait                   |  yes  | no    |   yes    |
-    ///  sf::Cursor::Type::Text                   |  yes  | yes   |   yes    |
-    ///  sf::Cursor::Type::Hand                   |  yes  | yes   |   yes    |
-    ///  sf::Cursor::Type::SizeHorizontal         |  yes  | yes   |   yes    |
-    ///  sf::Cursor::Type::SizeVertical           |  yes  | yes   |   yes    |
-    ///  sf::Cursor::Type::SizeTopLeftBottomRight |  no   | yes*  |   yes    |
-    ///  sf::Cursor::Type::SizeBottomLeftTopRight |  no   | yes*  |   yes    |
-    ///  sf::Cursor::Type::SizeLeft               |  yes  | yes** |   yes**  |
-    ///  sf::Cursor::Type::SizeRight              |  yes  | yes** |   yes**  |
-    ///  sf::Cursor::Type::SizeTop                |  yes  | yes** |   yes**  |
-    ///  sf::Cursor::Type::SizeBottom             |  yes  | yes** |   yes**  |
-    ///  sf::Cursor::Type::SizeTopLeft            |  yes  | yes** |   yes**  |
-    ///  sf::Cursor::Type::SizeTopRight           |  yes  | yes** |   yes**  |
-    ///  sf::Cursor::Type::SizeBottomLeft         |  yes  | yes** |   yes**  |
-    ///  sf::Cursor::Type::SizeBottomRight        |  yes  | yes** |   yes**  |
-    ///  sf::Cursor::Type::SizeAll                |  yes  | no    |   yes    |
-    ///  sf::Cursor::Type::Cross                  |  yes  | yes   |   yes    |
-    ///  sf::Cursor::Type::Help                   |  yes  | yes*  |   yes    |
-    ///  sf::Cursor::Type::NotAllowed             |  yes  | yes   |   yes    |
+    ///  Type                                       | Linux | macOS | Windows  |
+    /// --------------------------------------------|:-----:|:-----:|:--------:|
+    ///  `sf::Cursor::Type::Arrow`                  |  yes  | yes   |   yes    |
+    ///  `sf::Cursor::Type::ArrowWait`              |  no   | no    |   yes    |
+    ///  `sf::Cursor::Type::Wait`                   |  yes  | no    |   yes    |
+    ///  `sf::Cursor::Type::Text`                   |  yes  | yes   |   yes    |
+    ///  `sf::Cursor::Type::Hand`                   |  yes  | yes   |   yes    |
+    ///  `sf::Cursor::Type::SizeHorizontal`         |  yes  | yes   |   yes    |
+    ///  `sf::Cursor::Type::SizeVertical`           |  yes  | yes   |   yes    |
+    ///  `sf::Cursor::Type::SizeTopLeftBottomRight` |  no   | yes*  |   yes    |
+    ///  `sf::Cursor::Type::SizeBottomLeftTopRight` |  no   | yes*  |   yes    |
+    ///  `sf::Cursor::Type::SizeLeft`               |  yes  | yes** |   yes**  |
+    ///  `sf::Cursor::Type::SizeRight`              |  yes  | yes** |   yes**  |
+    ///  `sf::Cursor::Type::SizeTop`                |  yes  | yes** |   yes**  |
+    ///  `sf::Cursor::Type::SizeBottom`             |  yes  | yes** |   yes**  |
+    ///  `sf::Cursor::Type::SizeTopLeft`            |  yes  | yes** |   yes**  |
+    ///  `sf::Cursor::Type::SizeTopRight`           |  yes  | yes** |   yes**  |
+    ///  `sf::Cursor::Type::SizeBottomLeft`         |  yes  | yes** |   yes**  |
+    ///  `sf::Cursor::Type::SizeBottomRight`        |  yes  | yes** |   yes**  |
+    ///  `sf::Cursor::Type::SizeAll`                |  yes  | no    |   yes    |
+    ///  `sf::Cursor::Type::Cross`                  |  yes  | yes   |   yes    |
+    ///  `sf::Cursor::Type::Help`                   |  yes  | yes*  |   yes    |
+    ///  `sf::Cursor::Type::NotAllowed`             |  yes  | yes   |   yes    |
     ///
     ///  * These cursor types are undocumented so may not
     ///    be available on all versions, but have been tested on 10.13
@@ -147,12 +147,12 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Construct a cursor with the provided image
     ///
-    /// \a pixels must be an array of \a width by \a height pixels
-    /// in 32-bit RGBA format. If not, this will cause undefined behavior.
+    /// \a `pixels` must be an array of \a `size` pixels in
+    /// 32-bit RGBA format. If not, this will cause undefined behavior.
     ///
-    /// If \a pixels is null or either \a width or \a height are 0,
-    /// the current cursor is left unchanged and the function will
-    /// return false.
+    /// If \a `pixels` is `nullptr` or either of \a `size`'s
+    /// properties are 0, the current cursor is left unchanged
+    /// and the function will return `false`.
     ///
     /// In addition to specifying the pixel data, you can also
     /// specify the location of the hotspot of the cursor. The
@@ -180,7 +180,7 @@ public:
     /// \brief Create a native system cursor
     ///
     /// Refer to the list of cursor available on each system
-    /// (see sf::Cursor::Type) to know whether a given cursor is
+    /// (see `sf::Cursor::Type`) to know whether a given cursor is
     /// expected to load successfully or is not supported by
     /// the operating system.
     ///
@@ -196,12 +196,12 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Create a cursor with the provided image
     ///
-    /// \a pixels must be an array of \a width by \a height pixels
+    /// \a `pixels` must be an array of \a `size` pixels
     /// in 32-bit RGBA format. If not, this will cause undefined behavior.
     ///
-    /// If \a pixels is null or either \a width or \a height are 0,
-    /// the current cursor is left unchanged and the function will
-    /// return false.
+    /// If \a `pixels` is `nullptr` or either of \a `size`'s
+    /// properties are 0, the current cursor is left unchanged
+    /// and the function will return `false`.
     ///
     /// In addition to specifying the pixel data, you can also
     /// specify the location of the hotspot of the cursor. The
@@ -229,7 +229,7 @@ public:
     /// \brief Create a native system cursor
     ///
     /// Refer to the list of cursor available on each system
-    /// (see sf::Cursor::Type) to know whether a given cursor is
+    /// (see `sf::Cursor::Type`) to know whether a given cursor is
     /// expected to load successfully or is not supported by
     /// the operating system.
     ///
@@ -253,7 +253,7 @@ private:
     ////////////////////////////////////////////////////////////
     /// \brief Get access to the underlying implementation
     ///
-    /// This is primarily designed for sf::WindowBase::setMouseCursor,
+    /// This is primarily designed for `sf::WindowBase::setMouseCursor`,
     /// hence the friendship.
     ///
     /// \return a reference to the OS-specific implementation
@@ -282,8 +282,8 @@ private:
 /// cursor.
 ///
 /// After loading the cursor graphical appearance
-/// with either createFromPixels() or createFromSystem(), the
-/// cursor can be changed with sf::WindowBase::setMouseCursor().
+/// with either `createFromPixels()` or `createFromSystem()`, the
+/// cursor can be changed with `sf::WindowBase::setMouseCursor()`.
 ///
 /// The behavior is undefined if the cursor is destroyed while
 /// in use by the window.
@@ -298,6 +298,6 @@ private:
 /// window.setMouseCursor(cursor);
 /// \endcode
 ///
-/// \see sf::WindowBase::setMouseCursor
+/// \see `sf::WindowBase::setMouseCursor`
 ///
 ////////////////////////////////////////////////////////////

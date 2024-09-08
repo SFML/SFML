@@ -151,7 +151,7 @@ public:
         /// This function is defined for convenience, it is
         /// equivalent to testing if the status code is < 400.
         ///
-        /// \return True if the status is a success, false if it is a failure
+        /// \return `true` if the status is a success, `false` if it is a failure
         ///
         ////////////////////////////////////////////////////////////
         [[nodiscard]] bool isOk() const;
@@ -213,7 +213,7 @@ public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Specialization of FTP response returning a
-    ///        filename listing
+    ///        file name listing
     ////////////////////////////////////////////////////////////
     class SFML_NETWORK_API ListingResponse : public Response
     {
@@ -278,7 +278,7 @@ public:
     /// This function tries to connect to the server so it may take
     /// a while to complete, especially if the server is not
     /// reachable. To avoid blocking your application for too long,
-    /// you can use a timeout. The default value, Time::Zero, means that the
+    /// you can use a timeout. The default value, `Time::Zero`, means that the
     /// system timeout will be used (which is usually pretty long).
     ///
     /// \param server  Name or address of the FTP server to connect to
@@ -287,7 +287,7 @@ public:
     ///
     /// \return Server response to the request
     ///
-    /// \see disconnect
+    /// \see `disconnect`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Response connect(IpAddress server, unsigned short port = 21, Time timeout = Time::Zero);
@@ -297,7 +297,7 @@ public:
     ///
     /// \return Server response to the request
     ///
-    /// \see connect
+    /// \see `connect`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Response disconnect();
@@ -346,7 +346,7 @@ public:
     ///
     /// \return Server response to the request
     ///
-    /// \see getDirectoryListing, changeDirectory, parentDirectory
+    /// \see `getDirectoryListing`, `changeDirectory`, `parentDirectory`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] DirectoryResponse getWorkingDirectory();
@@ -356,14 +356,14 @@ public:
     ///
     /// This function retrieves the sub-directories and files
     /// contained in the given directory. It is not recursive.
-    /// The \a directory parameter is relative to the current
+    /// The \a `directory` parameter is relative to the current
     /// working directory.
     ///
     /// \param directory Directory to list
     ///
     /// \return Server response to the request
     ///
-    /// \see getWorkingDirectory, changeDirectory, parentDirectory
+    /// \see `getWorkingDirectory`, `changeDirectory`, `parentDirectory`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] ListingResponse getDirectoryListing(const std::string& directory = "");
@@ -377,7 +377,7 @@ public:
     ///
     /// \return Server response to the request
     ///
-    /// \see getWorkingDirectory, getDirectoryListing, parentDirectory
+    /// \see `getWorkingDirectory`, `getDirectoryListing`, `parentDirectory`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Response changeDirectory(const std::string& directory);
@@ -387,7 +387,7 @@ public:
     ///
     /// \return Server response to the request
     ///
-    /// \see getWorkingDirectory, getDirectoryListing, changeDirectory
+    /// \see `getWorkingDirectory`, `getDirectoryListing`, `changeDirectory`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Response parentDirectory();
@@ -402,7 +402,7 @@ public:
     ///
     /// \return Server response to the request
     ///
-    /// \see deleteDirectory
+    /// \see `deleteDirectory`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Response createDirectory(const std::string& name);
@@ -419,7 +419,7 @@ public:
     ///
     /// \return Server response to the request
     ///
-    /// \see createDirectory
+    /// \see `createDirectory`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Response deleteDirectory(const std::string& name);
@@ -427,7 +427,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Rename an existing file
     ///
-    /// The filenames must be relative to the current working
+    /// The file names must be relative to the current working
     /// directory.
     ///
     /// \param file    File to rename
@@ -435,7 +435,7 @@ public:
     ///
     /// \return Server response to the request
     ///
-    /// \see deleteFile
+    /// \see `deleteFile`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Response renameFile(const std::filesystem::path& file, const std::filesystem::path& newName);
@@ -452,7 +452,7 @@ public:
     ///
     /// \return Server response to the request
     ///
-    /// \see renameFile
+    /// \see `renameFile`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Response deleteFile(const std::filesystem::path& name);
@@ -460,21 +460,21 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Download a file from the server
     ///
-    /// The filename of the distant file is relative to the
+    /// The file name of the distant file is relative to the
     /// current working directory of the server, and the local
     /// destination path is relative to the current directory
     /// of your application.
-    /// If a file with the same filename as the distant file
+    /// If a file with the same file name as the distant file
     /// already exists in the local destination path, it will
     /// be overwritten.
     ///
-    /// \param remoteFile Filename of the distant file to download
+    /// \param remoteFile File name of the distant file to download
     /// \param localPath  The directory in which to put the file on the local computer
     /// \param mode       Transfer mode
     ///
     /// \return Server response to the request
     ///
-    /// \see upload
+    /// \see `upload`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Response download(const std::filesystem::path& remoteFile,
@@ -495,11 +495,11 @@ public:
     /// \param localFile  Path of the local file to upload
     /// \param remotePath The directory in which to put the file on the server
     /// \param mode       Transfer mode
-    /// \param append     Pass true to append to or false to overwrite the remote file if it already exists
+    /// \param append     Pass `true` to append to or `false` to overwrite the remote file if it already exists
     ///
     /// \return Server response to the request
     ///
-    /// \see download
+    /// \see `download`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Response upload(const std::filesystem::path& localFile,
@@ -511,11 +511,11 @@ public:
     /// \brief Send a command to the FTP server
     ///
     /// While the most often used commands are provided as member
-    /// functions in the sf::Ftp class, this method can be used
+    /// functions in the `sf::Ftp` class, this method can be used
     /// to send any FTP command to the server. If the command
     /// requires one or more parameters, they can be specified
-    /// in \a parameter. If the server returns information, you
-    /// can extract it from the response using Response::getMessage().
+    /// in \a `parameter`. If the server returns information, you
+    /// can extract it from the response using `Response::getMessage()`.
     ///
     /// \param command   Command to send
     /// \param parameter Command parameter
@@ -530,7 +530,7 @@ private:
     /// \brief Receive a response from the server
     ///
     /// This function must be called after each call to
-    /// sendCommand that expects a response.
+    /// `sendCommand` that expects a response.
     ///
     /// \return Server response to the request
     ///
@@ -560,7 +560,7 @@ private:
 /// \class sf::Ftp
 /// \ingroup network
 ///
-/// sf::Ftp is a very simple FTP client that allows you
+/// `sf::Ftp` is a very simple FTP client that allows you
 /// to communicate with a FTP server. The FTP protocol allows
 /// you to manipulate a remote file system (list files,
 /// upload, download, create, remove, ...).
@@ -573,11 +573,11 @@ private:
 ///
 /// Every command returns a FTP response, which contains the
 /// status code as well as a message from the server. Some
-/// commands such as getWorkingDirectory() and getDirectoryListing()
+/// commands such as `getWorkingDirectory()` and `getDirectoryListing()`
 /// return additional data, and use a class derived from
-/// sf::Ftp::Response to provide this data. The most often used
+/// `sf::Ftp::Response` to provide this data. The most often used
 /// commands are directly provided as member functions, but it is
-/// also possible to use specific commands with the sendCommand() function.
+/// also possible to use specific commands with the `sendCommand()` function.
 ///
 /// Note that response statuses >= 1000 are not part of the FTP standard,
 /// they are generated by SFML when an internal error occurs.

@@ -84,7 +84,7 @@ public:
     /// This function uses its own thread so that it doesn't block
     /// the rest of the program while the sound is played.
     ///
-    /// \see pause, stop
+    /// \see `pause`, `stop`
     ///
     ////////////////////////////////////////////////////////////
     void play() override;
@@ -95,7 +95,7 @@ public:
     /// This function pauses the sound if it was playing,
     /// otherwise (sound already paused or stopped) it has no effect.
     ///
-    /// \see play, stop
+    /// \see `play`, `stop`
     ///
     ////////////////////////////////////////////////////////////
     void pause() override;
@@ -105,9 +105,9 @@ public:
     ///
     /// This function stops the sound if it was playing or paused,
     /// and does nothing if it was already stopped.
-    /// It also resets the playing position (unlike pause()).
+    /// It also resets the playing position (unlike `pause()`).
     ///
-    /// \see play, pause
+    /// \see `play`, `pause`
     ///
     ////////////////////////////////////////////////////////////
     void stop() override;
@@ -116,12 +116,12 @@ public:
     /// \brief Set the source buffer containing the audio data to play
     ///
     /// It is important to note that the sound buffer is not copied,
-    /// thus the sf::SoundBuffer instance must remain alive as long
+    /// thus the `sf::SoundBuffer` instance must remain alive as long
     /// as it is attached to the sound.
     ///
     /// \param buffer Sound buffer to attach to the sound
     ///
-    /// \see getBuffer
+    /// \see `getBuffer`
     ///
     ////////////////////////////////////////////////////////////
     void setBuffer(const SoundBuffer& buffer);
@@ -137,12 +137,12 @@ public:
     ///
     /// If set, the sound will restart from beginning after
     /// reaching the end and so on, until it is stopped or
-    /// setLooping(false) is called.
-    /// The default looping state for sound is false.
+    /// `setLooping(false)` is called.
+    /// The default looping state for sound is `false`.
     ///
-    /// \param loop True to play in loop, false to play once
+    /// \param loop `true` to play in loop, `false` to play once
     ///
-    /// \see isLooping
+    /// \see `isLooping`
     ///
     ////////////////////////////////////////////////////////////
     void setLooping(bool loop);
@@ -157,7 +157,7 @@ public:
     ///
     /// \param timeOffset New playing position, from the beginning of the sound
     ///
-    /// \see getPlayingOffset
+    /// \see `getPlayingOffset`
     ///
     ////////////////////////////////////////////////////////////
     void setPlayingOffset(Time timeOffset);
@@ -184,9 +184,9 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Tell whether or not the sound is in loop mode
     ///
-    /// \return True if the sound is looping, false otherwise
+    /// \return `true` if the sound is looping, `false` otherwise
     ///
-    /// \see setLooping
+    /// \see `setLooping`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool isLooping() const;
@@ -196,7 +196,7 @@ public:
     ///
     /// \return Current playing position, from the beginning of the sound
     ///
-    /// \see setPlayingOffset
+    /// \see `setPlayingOffset`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Time getPlayingOffset() const;
@@ -253,21 +253,21 @@ private:
 /// \class sf::Sound
 /// \ingroup audio
 ///
-/// sf::Sound is the class to use to play sounds.
+/// `sf::Sound` is the class to use to play sounds.
 /// It provides:
 /// \li Control (play, pause, stop)
 /// \li Ability to modify output parameters in real-time (pitch, volume, ...)
 /// \li 3D spatial features (position, attenuation, ...).
 ///
-/// sf::Sound is perfect for playing short sounds that can
+/// `sf::Sound` is perfect for playing short sounds that can
 /// fit in memory and require no latency, like foot steps or
 /// gun shots. For longer sounds, like background musics
-/// or long speeches, rather see sf::Music (which is based
+/// or long speeches, rather see `sf::Music` (which is based
 /// on streaming).
 ///
 /// In order to work, a sound must be given a buffer of audio
-/// data to play. Audio data (samples) is stored in sf::SoundBuffer,
-/// and attached to a sound when it is created or with the setBuffer() function.
+/// data to play. Audio data (samples) is stored in `sf::SoundBuffer,`
+/// and attached to a sound when it is created or with the `setBuffer()` function.
 /// The buffer object attached to a sound must remain alive
 /// as long as the sound uses it. Note that multiple sounds
 /// can use the same sound buffer at the same time.
@@ -279,6 +279,6 @@ private:
 /// sound.play();
 /// \endcode
 ///
-/// \see sf::SoundBuffer, sf::Music
+/// \see `sf::SoundBuffer`, `sf::Music`
 ///
 ////////////////////////////////////////////////////////////

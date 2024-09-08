@@ -41,7 +41,7 @@ class Transform;
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-/// \brief Helper functions to copy sf::Transform to sf::Glsl::Mat3/4
+/// \brief Helper functions to copy `sf::Transform` to `sf::Glsl::Mat3/4`
 ///
 ////////////////////////////////////////////////////////////
 void SFML_GRAPHICS_API copyMatrix(const Transform& source, Matrix<3, 3>& dest);

@@ -135,8 +135,8 @@ public:
     /// \brief Combine the current transform with another one
     ///
     /// The result is a transform that is equivalent to applying
-    /// \a transform followed by *this. Mathematically, it is
-    /// equivalent to a matrix multiplication (*this) * transform.
+    /// \a `transform` followed by `*this`. Mathematically, it is
+    /// equivalent to a matrix multiplication `(*this) * transform`.
     ///
     /// These two statements are equivalent:
     /// \code
@@ -146,7 +146,7 @@ public:
     ///
     /// \param transform Transform to combine with this transform
     ///
-    /// \return Reference to *this
+    /// \return Reference to `*this`
     ///
     ////////////////////////////////////////////////////////////
     constexpr Transform& combine(const Transform& transform);
@@ -154,7 +154,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with a translation
     ///
-    /// This function returns a reference to *this, so that calls
+    /// This function returns a reference to `*this`, so that calls
     /// can be chained.
     /// \code
     /// sf::Transform transform;
@@ -163,9 +163,9 @@ public:
     ///
     /// \param offset Translation offset to apply
     ///
-    /// \return Reference to *this
+    /// \return Reference to `*this`
     ///
-    /// \see rotate, scale
+    /// \see `rotate`, `scale`
     ///
     ////////////////////////////////////////////////////////////
     constexpr Transform& translate(Vector2f offset);
@@ -173,7 +173,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with a rotation
     ///
-    /// This function returns a reference to *this, so that calls
+    /// This function returns a reference to `*this`, so that calls
     /// can be chained.
     /// \code
     /// sf::Transform transform;
@@ -182,9 +182,9 @@ public:
     ///
     /// \param angle Rotation angle
     ///
-    /// \return Reference to *this
+    /// \return Reference to `*this`
     ///
-    /// \see translate, scale
+    /// \see `translate`, `scale`
     ///
     ////////////////////////////////////////////////////////////
     SFML_GRAPHICS_API Transform& rotate(Angle angle);
@@ -195,9 +195,9 @@ public:
     /// The center of rotation is provided for convenience as a second
     /// argument, so that you can build rotations around arbitrary points
     /// more easily (and efficiently) than the usual
-    /// translate(-center).rotate(angle).translate(center).
+    /// `translate(-center).rotate(angle).translate(center)`.
     ///
-    /// This function returns a reference to *this, so that calls
+    /// This function returns a reference to `*this`, so that calls
     /// can be chained.
     /// \code
     /// sf::Transform transform;
@@ -207,9 +207,9 @@ public:
     /// \param angle Rotation angle
     /// \param center Center of rotation
     ///
-    /// \return Reference to *this
+    /// \return Reference to `*this`
     ///
-    /// \see translate, scale
+    /// \see `translate`, `scale`
     ///
     ////////////////////////////////////////////////////////////
     SFML_GRAPHICS_API Transform& rotate(Angle angle, Vector2f center);
@@ -217,7 +217,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Combine the current transform with a scaling
     ///
-    /// This function returns a reference to *this, so that calls
+    /// This function returns a reference to `*this`, so that calls
     /// can be chained.
     /// \code
     /// sf::Transform transform;
@@ -226,9 +226,9 @@ public:
     ///
     /// \param factors Scaling factors
     ///
-    /// \return Reference to *this
+    /// \return Reference to `*this`
     ///
-    /// \see translate, rotate
+    /// \see `translate`, `rotate`
     ///
     ////////////////////////////////////////////////////////////
     constexpr Transform& scale(Vector2f factors);
@@ -239,9 +239,9 @@ public:
     /// The center of scaling is provided for convenience as a second
     /// argument, so that you can build scaling around arbitrary points
     /// more easily (and efficiently) than the usual
-    /// translate(-center).scale(factors).translate(center).
+    /// `translate(-center).scale(factors).translate(center)`.
     ///
-    /// This function returns a reference to *this, so that calls
+    /// This function returns a reference to `*this`, so that calls
     /// can be chained.
     /// \code
     /// sf::Transform transform;
@@ -251,9 +251,9 @@ public:
     /// \param factors Scaling factors
     /// \param center Center of scaling
     ///
-    /// \return Reference to *this
+    /// \return Reference to `*this`
     ///
-    /// \see translate, rotate
+    /// \see `translate`, `rotate`
     ///
     ////////////////////////////////////////////////////////////
     constexpr Transform& scale(Vector2f factors, Vector2f center);
@@ -277,10 +277,10 @@ private:
 };
 
 ////////////////////////////////////////////////////////////
-/// \relates sf::Transform
-/// \brief Overload of binary operator * to combine two transforms
+/// \relates `sf::Transform`
+/// \brief Overload of binary `operator*` to combine two transforms
 ///
-/// This call is equivalent to calling Transform(left).combine(right).
+/// This call is equivalent to calling `Transform(left).combine(right)`.
 ///
 /// \param left Left operand (the first transform)
 /// \param right Right operand (the second transform)
@@ -291,10 +291,10 @@ private:
 [[nodiscard]] constexpr Transform operator*(const Transform& left, const Transform& right);
 
 ////////////////////////////////////////////////////////////
-/// \relates sf::Transform
-/// \brief Overload of binary operator *= to combine two transforms
+/// \relates `sf::Transform`
+/// \brief Overload of binary `operator*=` to combine two transforms
 ///
-/// This call is equivalent to calling left.combine(right).
+/// This call is equivalent to calling `left.combine(right)`.
 ///
 /// \param left Left operand (the first transform)
 /// \param right Right operand (the second transform)
@@ -305,10 +305,10 @@ private:
 constexpr Transform& operator*=(Transform& left, const Transform& right);
 
 ////////////////////////////////////////////////////////////
-/// \relates sf::Transform
-/// \brief Overload of binary operator * to transform a point
+/// \relates `sf::Transform`
+/// \brief Overload of binary `operator*` to transform a point
 ///
-/// This call is equivalent to calling left.transformPoint(right).
+/// This call is equivalent to calling `left.transformPoint(right)`.
 ///
 /// \param left Left operand (the transform)
 /// \param right Right operand (the point to transform)
@@ -319,8 +319,8 @@ constexpr Transform& operator*=(Transform& left, const Transform& right);
 [[nodiscard]] constexpr Vector2f operator*(const Transform& left, Vector2f right);
 
 ////////////////////////////////////////////////////////////
-/// \relates sf::Transform
-/// \brief Overload of binary operator == to compare two transforms
+/// \relates `sf::Transform`
+/// \brief Overload of binary `operator==` to compare two transforms
 ///
 /// Performs an element-wise comparison of the elements of the
 /// left transform with the elements of the right transform.
@@ -328,21 +328,21 @@ constexpr Transform& operator*=(Transform& left, const Transform& right);
 /// \param left Left operand (the first transform)
 /// \param right Right operand (the second transform)
 ///
-/// \return true if the transforms are equal, false otherwise
+/// \return `true` if the transforms are equal, `false` otherwise
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr bool operator==(const Transform& left, const Transform& right);
 
 ////////////////////////////////////////////////////////////
-/// \relates sf::Transform
-/// \brief Overload of binary operator != to compare two transforms
+/// \relates `sf::Transform`
+/// \brief Overload of binary `operator!=` to compare two transforms
 ///
-/// This call is equivalent to !(left == right).
+/// This call is equivalent to `!(left == right)`.
 ///
 /// \param left Left operand (the first transform)
 /// \param right Right operand (the second transform)
 ///
-/// \return true if the transforms are not equal, false otherwise
+/// \return `true` if the transforms are not equal, `false` otherwise
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr bool operator!=(const Transform& left, const Transform& right);
@@ -356,7 +356,7 @@ constexpr Transform& operator*=(Transform& left, const Transform& right);
 /// \class sf::Transform
 /// \ingroup graphics
 ///
-/// A sf::Transform specifies how to translate, rotate, scale,
+/// A `sf::Transform` specifies how to translate, rotate, scale,
 /// shear, project, whatever things. In mathematical terms, it defines
 /// how to transform a coordinate system into another.
 ///
@@ -388,6 +388,6 @@ constexpr Transform& operator*=(Transform& left, const Transform& right);
 /// sf::FloatRect rect = transform.transformRect(sf::FloatRect({0, 0}, {10, 100}));
 /// \endcode
 ///
-/// \see sf::Transformable, sf::RenderStates
+/// \see `sf::Transformable`, `sf::RenderStates`
 ///
 ////////////////////////////////////////////////////////////

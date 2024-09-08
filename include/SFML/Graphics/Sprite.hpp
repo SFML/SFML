@@ -55,7 +55,7 @@ public:
     ///
     /// \param texture Source texture
     ///
-    /// \see setTexture
+    /// \see `setTexture`
     ///
     ////////////////////////////////////////////////////////////
     explicit Sprite(const Texture& texture);
@@ -72,7 +72,7 @@ public:
     /// \param texture   Source texture
     /// \param rectangle Sub-rectangle of the texture to assign to the sprite
     ///
-    /// \see setTexture, setTextureRect
+    /// \see `setTexture`, `setTextureRect`
     ///
     ////////////////////////////////////////////////////////////
     Sprite(const Texture& texture, const IntRect& rectangle);
@@ -86,20 +86,20 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Change the source texture of the sprite
     ///
-    /// The \a texture argument refers to a texture that must
+    /// The \a `texture` argument refers to a texture that must
     /// exist as long as the sprite uses it. Indeed, the sprite
     /// doesn't store its own copy of the texture, but rather keeps
     /// a pointer to the one that you passed to this function.
     /// If the source texture is destroyed and the sprite tries to
     /// use it, the behavior is undefined.
-    /// If \a resetRect is true, the TextureRect property of
+    /// If \a `resetRect` is `true`, the `TextureRect` property of
     /// the sprite is automatically adjusted to the size of the new
-    /// texture. If it is false, the texture rect is left unchanged.
+    /// texture. If it is `false`, the texture rect is left unchanged.
     ///
     /// \param texture   New texture
     /// \param resetRect Should the texture rect be reset to the size of the new texture?
     ///
-    /// \see getTexture, setTextureRect
+    /// \see `getTexture`, `setTextureRect`
     ///
     ////////////////////////////////////////////////////////////
     void setTexture(const Texture& texture, bool resetRect = false);
@@ -119,7 +119,7 @@ public:
     ///
     /// \param rectangle Rectangle defining the region of the texture to display
     ///
-    /// \see getTextureRect, setTexture
+    /// \see `getTextureRect`, `setTexture`
     ///
     ////////////////////////////////////////////////////////////
     void setTextureRect(const IntRect& rectangle);
@@ -134,7 +134,7 @@ public:
     ///
     /// \param color New color of the sprite
     ///
-    /// \see getColor
+    /// \see `getColor`
     ///
     ////////////////////////////////////////////////////////////
     void setColor(Color color);
@@ -147,7 +147,7 @@ public:
     ///
     /// \return Reference to the sprite's texture
     ///
-    /// \see setTexture
+    /// \see `setTexture`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] const Texture& getTexture() const;
@@ -157,7 +157,7 @@ public:
     ///
     /// \return Texture rectangle of the sprite
     ///
-    /// \see setTextureRect
+    /// \see `setTextureRect`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] const IntRect& getTextureRect() const;
@@ -167,7 +167,7 @@ public:
     ///
     /// \return Global color of the sprite
     ///
-    /// \see setColor
+    /// \see `setColor`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Color getColor() const;
@@ -231,32 +231,32 @@ private:
 /// \class sf::Sprite
 /// \ingroup graphics
 ///
-/// sf::Sprite is a drawable class that allows to easily display
+/// `sf::Sprite` is a drawable class that allows to easily display
 /// a texture (or a part of it) on a render target.
 ///
-/// It inherits all the functions from sf::Transformable:
+/// It inherits all the functions from `sf::Transformable`:
 /// position, rotation, scale, origin. It also adds sprite-specific
 /// properties such as the texture to use, the part of it to display,
 /// and some convenience functions to change the overall color of the
 /// sprite, or to get its bounding rectangle.
 ///
-/// sf::Sprite works in combination with the sf::Texture class, which
+/// `sf::Sprite` works in combination with the `sf::Texture` class, which
 /// loads and provides the pixel data of a given texture.
 ///
-/// The separation of sf::Sprite and sf::Texture allows more flexibility
-/// and better performances: indeed a sf::Texture is a heavy resource,
+/// The separation of `sf::Sprite` and `sf::Texture` allows more flexibility
+/// and better performances: indeed a `sf::Texture` is a heavy resource,
 /// and any operation on it is slow (often too slow for real-time
-/// applications). On the other side, a sf::Sprite is a lightweight
-/// object which can use the pixel data of a sf::Texture and draw
+/// applications). On the other side, a `sf::Sprite` is a lightweight
+/// object which can use the pixel data of a `sf::Texture` and draw
 /// it with its own transformation/color/blending attributes.
 ///
-/// It is important to note that the sf::Sprite instance doesn't
+/// It is important to note that the `sf::Sprite` instance doesn't
 /// copy the texture that it uses, it only keeps a reference to it.
-/// Thus, a sf::Texture must not be destroyed while it is
-/// used by a sf::Sprite (i.e. never write a function that
-/// uses a local sf::Texture instance for creating a sprite).
+/// Thus, a `sf::Texture` must not be destroyed while it is
+/// used by a `sf::Sprite` (i.e. never write a function that
+/// uses a local `sf::Texture` instance for creating a sprite).
 ///
-/// See also the note on coordinates and undistorted rendering in sf::Transformable.
+/// See also the note on coordinates and undistorted rendering in `sf::Transformable`.
 ///
 /// Usage example:
 /// \code
@@ -273,6 +273,6 @@ private:
 /// window.draw(sprite);
 /// \endcode
 ///
-/// \see sf::Texture, sf::Transformable
+/// \see `sf::Texture`, `sf::Transformable`
 ///
 ////////////////////////////////////////////////////////////

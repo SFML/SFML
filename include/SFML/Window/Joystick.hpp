@@ -79,7 +79,7 @@ struct SFML_WINDOW_API Identification
 ///
 /// \param joystick Index of the joystick to check
 ///
-/// \return True if the joystick is connected, false otherwise
+/// \return `true` if the joystick is connected, `false` otherwise
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_WINDOW_API bool isConnected(unsigned int joystick);
@@ -99,12 +99,12 @@ struct SFML_WINDOW_API Identification
 ////////////////////////////////////////////////////////////
 /// \brief Check if a joystick supports a given axis
 ///
-/// If the joystick is not connected, this function returns false.
+/// If the joystick is not connected, this function returns `false`.
 ///
 /// \param joystick Index of the joystick
 /// \param axis     Axis to check
 ///
-/// \return True if the joystick supports the axis, false otherwise
+/// \return `true` if the joystick supports the axis, `false` otherwise
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_WINDOW_API bool hasAxis(unsigned int joystick, Axis axis);
@@ -112,12 +112,12 @@ struct SFML_WINDOW_API Identification
 ////////////////////////////////////////////////////////////
 /// \brief Check if a joystick button is pressed
 ///
-/// If the joystick is not connected, this function returns false.
+/// If the joystick is not connected, this function returns `false`.
 ///
 /// \param joystick Index of the joystick
 /// \param button   Button to check
 ///
-/// \return True if the button is pressed, false otherwise
+/// \return `true` if the button is pressed, `false` otherwise
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_WINDOW_API bool isButtonPressed(unsigned int joystick, unsigned int button);
@@ -162,14 +162,14 @@ SFML_WINDOW_API void update();
 /// \namespace sf::Joystick
 /// \ingroup window
 ///
-/// sf::Joystick provides an interface to the state of the
+/// `sf::Joystick` provides an interface to the state of the
 /// joysticks. Each joystick is identified by an index that
 /// is passed to the functions in this namespace.
 ///
 /// This namespace allows users to query the state of joysticks at any
 /// time and directly, without having to deal with a window and
-/// its events. Compared to the JoystickMoved, JoystickButtonPressed
-/// and JoystickButtonReleased events, sf::Joystick can retrieve the
+/// its events. Compared to the `JoystickMoved`, `JoystickButtonPressed`
+/// and `JoystickButtonReleased` events, `sf::Joystick` can retrieve the
 /// state of axes and buttons of joysticks at any time
 /// (you don't need to store and update a boolean on your side
 /// in order to know if a button is pressed or released), and you
@@ -178,17 +178,17 @@ SFML_WINDOW_API void update();
 /// and no event is triggered.
 ///
 /// SFML supports:
-/// \li 8 joysticks (sf::Joystick::Count)
-/// \li 32 buttons per joystick (sf::Joystick::ButtonCount)
-/// \li 8 axes per joystick (sf::Joystick::AxisCount)
+/// \li 8 joysticks (`sf::Joystick::Count`)
+/// \li 32 buttons per joystick (`sf::Joystick::ButtonCount`)
+/// \li 8 axes per joystick (`sf::Joystick::AxisCount`)
 ///
 /// Unlike the keyboard or mouse, the state of joysticks is sometimes
-/// not directly available (depending on the OS), therefore an update()
+/// not directly available (depending on the OS), therefore an `update()`
 /// function must be called in order to update the current state of
 /// joysticks. When you have a window with event handling, this is done
 /// automatically, you don't need to call anything. But if you have no
 /// window, or if you want to check joysticks state before creating one,
-/// you must call sf::Joystick::update explicitly.
+/// you must call `sf::Joystick::update` explicitly.
 ///
 /// Usage example:
 /// \code
@@ -208,6 +208,6 @@ SFML_WINDOW_API void update();
 /// float position = sf::Joystick::getAxisPosition(0, sf::Joystick::Axis::Y);
 /// \endcode
 ///
-/// \see sf::Keyboard, sf::Mouse
+/// \see `sf::Keyboard`, `sf::Mouse`
 ///
 ////////////////////////////////////////////////////////////

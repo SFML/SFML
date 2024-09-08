@@ -58,7 +58,7 @@ public:
     ///
     /// \param size New size of the rectangle
     ///
-    /// \see getSize
+    /// \see `getSize`
     ///
     ////////////////////////////////////////////////////////////
     void setSize(Vector2f size);
@@ -68,7 +68,7 @@ public:
     ///
     /// \return Size of the rectangle
     ///
-    /// \see setSize
+    /// \see `setSize`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Vector2f getSize() const;
@@ -88,7 +88,7 @@ public:
     /// The returned point is in local coordinates, that is,
     /// the shape's transforms (position, rotation, scale) are
     /// not taken into account.
-    /// The result is undefined if \a index is out of the valid range.
+    /// The result is undefined if \a `index` is out of the valid range.
     ///
     /// \param index Index of the point to get, in range [0 .. 3]
     ///
@@ -123,9 +123,9 @@ private:
 /// \class sf::RectangleShape
 /// \ingroup graphics
 ///
-/// This class inherits all the functions of sf::Transformable
+/// This class inherits all the functions of `sf::Transformable`
 /// (position, rotation, scale, bounds, ...) as well as the
-/// functions of sf::Shape (outline, color, texture, ...).
+/// functions of `sf::Shape` (outline, color, texture, ...).
 ///
 /// Usage example:
 /// \code
@@ -138,6 +138,6 @@ private:
 /// window.draw(rectangle);
 /// \endcode
 ///
-/// \see sf::Shape, sf::CircleShape, sf::ConvexShape
+/// \see `sf::Shape`, `sf::CircleShape`, `sf::ConvexShape`
 ///
 ////////////////////////////////////////////////////////////

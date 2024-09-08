@@ -33,9 +33,9 @@ namespace sf
 /// In multi-channel audio, each sound channel can be
 /// assigned a position. The position of the channel is
 /// used to determine where to place a sound when it
-/// is spatialised. Assigning an incorrect sound channel
+/// is spatialized. Assigning an incorrect sound channel
 /// will result in multi-channel audio being positioned
-/// incorrectly when using spatialisation.
+/// incorrectly when using spatialization.
 ///
 ////////////////////////////////////////////////////////////
 enum class SoundChannel
