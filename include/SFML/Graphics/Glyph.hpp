@@ -56,12 +56,12 @@ struct SFML_GRAPHICS_API Glyph
 ///
 /// A glyph is the visual representation of a character.
 ///
-/// The sf::Glyph structure provides the information needed
+/// The `sf::Glyph` structure provides the information needed
 /// to handle the glyph:
 /// \li its coordinates in the font's texture
 /// \li its bounding rectangle
 /// \li the offset to apply to get the starting position of the next glyph
 ///
-/// \see sf::Font
+/// \see `sf::Font`
 ///
 ////////////////////////////////////////////////////////////

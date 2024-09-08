@@ -100,9 +100,9 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Activate or deactivate explicitly the context
     ///
-    /// \param active True to activate, false to deactivate
+    /// \param active `true` to activate, `false` to deactivate
     ///
-    /// \return True on success, false on failure
+    /// \return `true` on success, `false` on failure
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool setActive(bool active);
@@ -124,7 +124,7 @@ public:
     ///
     /// \param name Name of the extension to check for
     ///
-    /// \return True if available, false if unavailable
+    /// \return `true` if available, `false` if unavailable
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] static bool isExtensionAvailable(std::string_view name);
@@ -145,11 +145,11 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Get the currently active context
     ///
-    /// This function will only return sf::Context objects.
+    /// This function will only return `sf::Context` objects.
     /// Contexts created e.g. by RenderTargets or for internal
     /// use will not be returned by this function.
     ///
-    /// \return The currently active context or a null pointer if none is active
+    /// \return The currently active context or `nullptr` if none is active
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] static const Context* getActiveContext();
@@ -201,7 +201,7 @@ private:
 /// if you create a new thread it will have no valid context
 /// by default.
 ///
-/// To use a sf::Context instance, just construct it and let it
+/// To use a `sf::Context` instance, just construct it and let it
 /// live as long as you need a valid context. No explicit activation
 /// is needed, all it has to do is to exist. Its destructor
 /// will take care of deactivating and freeing all the attached

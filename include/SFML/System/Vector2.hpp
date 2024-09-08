@@ -43,7 +43,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
-    /// Creates a Vector2(0, 0).
+    /// Creates a `Vector2(0, 0)`.
     ///
     ////////////////////////////////////////////////////////////
     constexpr Vector2() = default;
@@ -77,12 +77,12 @@ public:
     /// \param r   Length of vector (can be negative)
     /// \param phi Angle from X axis
     ///
-    /// Note that this constructor is lossy: calling length() and angle()
+    /// Note that this constructor is lossy: calling `length()` and `angle()`
     /// may return values different to those provided in this constructor.
     ///
     /// In particular, these transforms can be applied:
-    /// * Vector2(r, phi) == Vector2(-r, phi + 180_deg)
-    /// * Vector2(r, phi) == Vector2(r, phi + n * 360_deg)
+    /// * `Vector2(r, phi) == Vector2(-r, phi + 180_deg)`
+    /// * `Vector2(r, phi) == Vector2(r, phi + n * 360_deg)`
     ///
     ////////////////////////////////////////////////////////////
     SFML_SYSTEM_API Vector2(T r, Angle phi);
@@ -90,7 +90,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Length of the vector <i><b>(floating-point)</b></i>.
     ///
-    /// If you are not interested in the actual length, but only in comparisons, consider using lengthSquared().
+    /// If you are not interested in the actual length, but only in comparisons, consider using `lengthSquared()`.
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] SFML_SYSTEM_API T length() const;
@@ -98,7 +98,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Square of vector's length.
     ///
-    /// Suitable for comparisons, more efficient than length().
+    /// Suitable for comparisons, more efficient than `length()`.
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] constexpr T lengthSquared() const;
@@ -106,18 +106,18 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Vector with same direction but length 1 <i><b>(floating-point)</b></i>.
     ///
-    /// \pre \c *this is no zero vector.
+    /// \pre `*this` is no zero vector.
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] SFML_SYSTEM_API Vector2 normalized() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Signed angle from \c *this to \c rhs <i><b>(floating-point)</b></i>.
+    /// \brief Signed angle from `*this` to \a `rhs` <i><b>(floating-point)</b></i>.
     ///
-    /// \return The smallest angle which rotates \c *this in positive
-    /// or negative direction, until it has the same direction as \c rhs.
+    /// \return The smallest angle which rotates `*this` in positive
+    /// or negative direction, until it has the same direction as \a `rhs`.
     /// The result has a sign and lies in the range [-180, 180) degrees.
-    /// \pre Neither \c *this nor \c rhs is a zero vector.
+    /// \pre Neither `*this` nor \a `rhs` is a zero vector.
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] SFML_SYSTEM_API Angle angleTo(Vector2 rhs) const;
@@ -139,16 +139,16 @@ public:
     /// Returns a vector with same length but different direction.
     ///
     /// In SFML's default coordinate system with +X right and +Y down,
-    /// this amounts to a clockwise rotation by \c phi.
+    /// this amounts to a clockwise rotation by \a `phi`.
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] SFML_SYSTEM_API Vector2 rotatedBy(Angle phi) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Projection of this vector onto \c axis <i><b>(floating-point)</b></i>.
+    /// \brief Projection of this vector onto \a `axis` <i><b>(floating-point)</b></i>.
     ///
     /// \param axis Vector being projected onto. Need not be normalized.
-    /// \pre \c axis must not have length zero.
+    /// \pre \a `axis` must not have length zero.
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] SFML_SYSTEM_API Vector2 projectedOnto(Vector2 axis) const;
@@ -156,7 +156,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Returns a perpendicular vector.
     ///
-    /// Returns \c *this rotated by +90 degrees; (x,y) becomes (-y,x).
+    /// Returns `*this` rotated by +90 degrees; (x,y) becomes (-y,x).
     /// For example, the vector (1,0) is transformed to (0,1).
     ///
     /// In SFML's default coordinate system with +X right and +Y down,
@@ -181,9 +181,9 @@ public:
     [[nodiscard]] constexpr T cross(Vector2 rhs) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Component-wise multiplication of \c *this and \c rhs.
+    /// \brief Component-wise multiplication of `*this` and \a `rhs`.
     ///
-    /// Computes <tt>(lhs.x*rhs.x, lhs.y*rhs.y)</tt>.
+    /// Computes `(lhs.x*rhs.x, lhs.y*rhs.y)`.
     ///
     /// Scaling is the most common use case for component-wise multiplication/division.
     /// This operation is also known as the Hadamard or Schur product.
@@ -192,13 +192,13 @@ public:
     [[nodiscard]] constexpr Vector2 componentWiseMul(Vector2 rhs) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Component-wise division of \c *this and \c rhs.
+    /// \brief Component-wise division of `*this` and \a `rhs`.
     ///
-    /// Computes <tt>(lhs.x/rhs.x, lhs.y/rhs.y)</tt>.
+    /// Computes `(lhs.x/rhs.x, lhs.y/rhs.y)`.
     ///
     /// Scaling is the most common use case for component-wise multiplication/division.
     ///
-    /// \pre Neither component of \c rhs is zero.
+    /// \pre Neither component of \a `rhs` is zero.
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] constexpr Vector2 componentWiseDiv(Vector2 rhs) const;
@@ -227,11 +227,11 @@ using Vector2f = Vector2<float>;
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
-/// \brief Overload of unary operator -
+/// \brief Overload of unary `operator-`
 ///
 /// \param right Vector to negate
 ///
-/// \return Memberwise opposite of the vector
+/// \return Member-wise opposite of the vector
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -239,15 +239,15 @@ template <typename T>
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
-/// \brief Overload of binary operator +=
+/// \brief Overload of binary `operator+=`
 ///
-/// This operator performs a memberwise addition of both vectors,
-/// and assigns the result to \c left.
+/// This operator performs a member-wise addition of both vectors,
+/// and assigns the result to \a `left`.
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a vector)
 ///
-/// \return Reference to \c left
+/// \return Reference to \a `left`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -255,10 +255,10 @@ constexpr Vector2<T>& operator+=(Vector2<T>& left, Vector2<T> right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
-/// \brief Overload of binary operator -=
+/// \brief Overload of binary `operator-=`
 ///
-/// This operator performs a memberwise subtraction of both vectors,
-/// and assigns the result to \c left.
+/// This operator performs a member-wise subtraction of both vectors,
+/// and assigns the result to \a `left.
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a vector)
@@ -271,12 +271,12 @@ constexpr Vector2<T>& operator-=(Vector2<T>& left, Vector2<T> right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
-/// \brief Overload of binary operator +
+/// \brief Overload of binary `operator+`
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a vector)
 ///
-/// \return Memberwise addition of both vectors
+/// \return Member-wise addition of both vectors
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -284,12 +284,12 @@ template <typename T>
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
-/// \brief Overload of binary operator -
+/// \brief Overload of binary `operator-`
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a vector)
 ///
-/// \return Memberwise subtraction of both vectors
+/// \return Member-wise subtraction of both vectors
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -297,12 +297,12 @@ template <typename T>
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
-/// \brief Overload of binary operator *
+/// \brief Overload of binary `operator*`
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a scalar value)
 ///
-/// \return Memberwise multiplication by \c right
+/// \return Member-wise multiplication by \a `right`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -310,12 +310,12 @@ template <typename T>
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
-/// \brief Overload of binary operator *
+/// \brief Overload of binary `operator*`
 ///
 /// \param left  Left operand (a scalar value)
 /// \param right Right operand (a vector)
 ///
-/// \return Memberwise multiplication by \c left
+/// \return Member-wise multiplication by \a `left`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -323,15 +323,15 @@ template <typename T>
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
-/// \brief Overload of binary operator *=
+/// \brief Overload of binary `operator*=`
 ///
-/// This operator performs a memberwise multiplication by \c right,
-/// and assigns the result to \c left.
+/// This operator performs a member-wise multiplication by \a `right`,
+/// and assigns the result to \a `left`.
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a scalar value)
 ///
-/// \return Reference to \c left
+/// \return Reference to \a `left`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -339,12 +339,12 @@ constexpr Vector2<T>& operator*=(Vector2<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
-/// \brief Overload of binary operator /
+/// \brief Overload of binary `operator/`
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a scalar value)
 ///
-/// \return Memberwise division by \c right
+/// \return Member-wise division by \a `right`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -352,15 +352,15 @@ template <typename T>
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
-/// \brief Overload of binary operator /=
+/// \brief Overload of binary `operator/=`
 ///
-/// This operator performs a memberwise division by \c right,
-/// and assigns the result to \c left.
+/// This operator performs a member-wise division by \a `right`,
+/// and assigns the result to \a `left`.
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a scalar value)
 ///
-/// \return Reference to \c left
+/// \return Reference to \a `left`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -368,14 +368,14 @@ constexpr Vector2<T>& operator/=(Vector2<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
-/// \brief Overload of binary operator ==
+/// \brief Overload of binary `operator==`
 ///
 /// This operator compares strict equality between two vectors.
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a vector)
 ///
-/// \return True if \c left is equal to \c right
+/// \return `true` if \a `left` is equal to \a `right`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -383,14 +383,14 @@ template <typename T>
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector2
-/// \brief Overload of binary operator !=
+/// \brief Overload of binary `operator!=`
 ///
 /// This operator compares strict difference between two vectors.
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a vector)
 ///
-/// \return True if \c left is not equal to \c right
+/// \return `true` if \a `left` is not equal to \a `right`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -405,7 +405,7 @@ template <typename T>
 /// \class sf::Vector2
 /// \ingroup system
 ///
-/// sf::Vector2 is a simple class that defines a mathematical
+/// `sf::Vector2` is a simple class that defines a mathematical
 /// vector with two coordinates (x and y). It can be used to
 /// represent anything that has two dimensions: a size, a point,
 /// a velocity, a scale, etc.
@@ -422,13 +422,13 @@ template <typename T>
 /// results cannot be represented accurately with integers.
 /// The method documentation mentions "(floating-point)" in those cases.
 ///
-/// You generally don't have to care about the templated form (sf::Vector2<T>),
+/// You generally don't have to care about the templated form (`sf::Vector2<T>`),
 /// the most common specializations have special type aliases:
-/// \li sf::Vector2<float> is sf::Vector2f
-/// \li sf::Vector2<int> is sf::Vector2i
-/// \li sf::Vector2<unsigned int> is sf::Vector2u
+/// \li `sf::Vector2<float>` is `sf::Vector2f`
+/// \li `sf::Vector2<int>` is `sf::Vector2i`
+/// \li `sf::Vector2<unsigned int>` is `sf::Vector2u`
 ///
-/// The sf::Vector2 class has a simple interface, its x and y members
+/// The `sf::Vector2` class has a simple interface, its x and y members
 /// can be accessed directly (there are no accessors like setX(), getX()).
 ///
 /// Usage example:
@@ -446,6 +446,6 @@ template <typename T>
 /// bool different = (v != u);
 /// \endcode
 ///
-/// Note: for 3-dimensional vectors, see sf::Vector3.
+/// Note: for 3-dimensional vectors, see `sf::Vector3`.
 ///
 ////////////////////////////////////////////////////////////

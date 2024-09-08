@@ -71,7 +71,7 @@ protected:
     ////////////////////////////////////////////////////////////
     /// \brief Start capturing audio data
     ///
-    /// \return True to start the capture, or false to abort it
+    /// \return `true` to start the capture, or `false` to abort it
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool onStart() override;
@@ -82,7 +82,7 @@ protected:
     /// \param samples     Pointer to the new chunk of recorded samples
     /// \param sampleCount Number of samples pointed by \a samples
     ///
-    /// \return True to continue the capture, or false to stop it
+    /// \return `true` to continue the capture, or `false` to stop it
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool onProcessSamples(const std::int16_t* samples, std::size_t sampleCount) override;
@@ -108,16 +108,16 @@ private:
 /// \class sf::SoundBufferRecorder
 /// \ingroup audio
 ///
-/// sf::SoundBufferRecorder allows to access a recorded sound
-/// through a sf::SoundBuffer, so that it can be played, saved
+/// `sf::SoundBufferRecorder` allows to access a recorded sound
+/// through a `sf::SoundBuffer`, so that it can be played, saved
 /// to a file, etc.
 ///
-/// It has the same simple interface as its base class (start(), stop())
+/// It has the same simple interface as its base class (`start()`, `stop()`)
 /// and adds a function to retrieve the recorded sound buffer
-/// (getBuffer()).
+/// (`getBuffer()`).
 ///
-/// As usual, don't forget to call the isAvailable() function
-/// before using this class (see sf::SoundRecorder for more details
+/// As usual, don't forget to call the `isAvailable()` function
+/// before using this class (see `sf::SoundRecorder` for more details
 /// about this).
 ///
 /// Usage example:
@@ -144,6 +144,6 @@ private:
 /// }
 /// \endcode
 ///
-/// \see sf::SoundRecorder
+/// \see `sf::SoundRecorder`
 ///
 ////////////////////////////////////////////////////////////

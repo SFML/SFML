@@ -155,7 +155,7 @@ enum class Key
 };
 
 ////////////////////////////////////////////////////////////
-/// \brief The total number of keyboard keys, ignoring Key::Unknown
+/// \brief The total number of keyboard keys, ignoring `Key::Unknown`
 ///
 ////////////////////////////////////////////////////////////
 // NOLINTNEXTLINE(readability-identifier-naming)
@@ -329,7 +329,7 @@ enum class Scan
 using Scancode = Scan;
 
 ////////////////////////////////////////////////////////////
-/// \brief The total number of scancodes, ignoring Scan::Unknown
+/// \brief The total number of scancodes, ignoring `Scan::Unknown`
 ///
 ////////////////////////////////////////////////////////////
 // NOLINTNEXTLINE(readability-identifier-naming)
@@ -340,7 +340,7 @@ static constexpr unsigned int ScancodeCount{static_cast<unsigned int>(Scan::Laun
 ///
 /// \param key Key to check
 ///
-/// \return True if the key is pressed, false otherwise
+/// \return `true` if the key is pressed, `false` otherwise
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_WINDOW_API bool isKeyPressed(Key key);
@@ -350,7 +350,7 @@ static constexpr unsigned int ScancodeCount{static_cast<unsigned int>(Scan::Laun
 ///
 /// \param code Scancode to check
 ///
-/// \return True if the physical key is pressed, false otherwise
+/// \return `true` if the physical key is pressed, `false` otherwise
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_WINDOW_API bool isKeyPressed(Scancode code);
@@ -362,10 +362,10 @@ static constexpr unsigned int ScancodeCount{static_cast<unsigned int>(Scan::Laun
 ///
 /// \return The key corresponding to the scancode under the current
 ///         keyboard layout used by the operating system, or
-///         sf::Keyboard::Key::Unknown when the scancode cannot be mapped
+///         `sf::Keyboard::Key::Unknown` when the scancode cannot be mapped
 ///         to a Key.
 ///
-/// \see delocalize
+/// \see `delocalize`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_WINDOW_API Key localize(Scancode code);
@@ -377,10 +377,10 @@ static constexpr unsigned int ScancodeCount{static_cast<unsigned int>(Scan::Laun
 ///
 /// \return The scancode corresponding to the key under the current
 ///         keyboard layout used by the operating system, or
-///         sf::Keyboard::Scan::Unknown when the key cannot be mapped
-///         to a sf::Keyboard::Scancode.
+///         `sf::Keyboard::Scan::Unknown` when the key cannot be mapped
+///         to a `sf::Keyboard::Scancode`.
 ///
-/// \see localize
+/// \see `localize`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_WINDOW_API Scancode delocalize(Key key);
@@ -393,12 +393,12 @@ static constexpr unsigned int ScancodeCount{static_cast<unsigned int>(Scan::Laun
 /// used in user interfaces, as the description for the key takes
 /// the users keyboard layout into consideration.
 ///
-/// \warning The result is OS-dependent: for example, sf::Keyboard::Scan::LSystem
+/// \warning The result is OS-dependent: for example, `sf::Keyboard::Scan::LSystem`
 ///          is "Left Meta" on Linux, "Left Windows" on Windows and
 ///          "Left Command" on macOS.
 ///
 /// The current keyboard layout set by the operating system is used to
-/// interpret the scancode: for example, sf::Keyboard::Key::Semicolon is
+/// interpret the scancode: for example, `sf::Keyboard::Key::Semicolon` is
 /// mapped to ";" for layout and to "é" for others.
 ///
 /// \param code Scancode to check
@@ -418,7 +418,7 @@ static constexpr unsigned int ScancodeCount{static_cast<unsigned int>(Scan::Laun
 /// If the virtual keyboard is not available, this function does
 /// nothing.
 ///
-/// \param visible True to show, false to hide
+/// \param visible `true` to show, `false` to hide
 ///
 ////////////////////////////////////////////////////////////
 SFML_WINDOW_API void setVirtualKeyboardVisible(bool visible);
@@ -431,13 +431,13 @@ SFML_WINDOW_API void setVirtualKeyboardVisible(bool visible);
 /// \namespace sf::Keyboard
 /// \ingroup window
 ///
-/// sf::Keyboard provides an interface to the state of the
+/// `sf::Keyboard` provides an interface to the state of the
 /// keyboard.
 ///
 /// This namespace allows users to query the keyboard state at any
 /// time and directly, without having to deal with a window and
-/// its events. Compared to the KeyPressed and KeyReleased events,
-/// sf::Keyboard can retrieve the state of a key at any time
+/// its events. Compared to the `KeyPressed` and `KeyReleased` events,
+/// `sf::Keyboard` can retrieve the state of a key at any time
 /// (you don't need to store and update a boolean on your side
 /// in order to know if a key is pressed or released), and you
 /// always get the real state of the keyboard, even if keys are
@@ -464,6 +464,6 @@ SFML_WINDOW_API void setVirtualKeyboardVisible(bool visible);
 /// }
 /// \endcode
 ///
-/// \see sf::Joystick, sf::Mouse, sf::Touch
+/// \see `sf::Joystick`, `sf::Mouse`, `sf::Touch`
 ///
 ////////////////////////////////////////////////////////////

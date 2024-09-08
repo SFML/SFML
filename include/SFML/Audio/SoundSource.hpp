@@ -63,9 +63,9 @@ public:
     ///
     /// Sounds will play at gain 1 when the listener
     /// is positioned within the inner angle of the cone.
-    /// Sounds will play at outerGain when the listener is
+    /// Sounds will play at `outerGain` when the listener is
     /// positioned outside the outer angle of the cone.
-    /// The gain declines linearly from 1 to outerGain as the
+    /// The gain declines linearly from 1 to `outerGain` as the
     /// listener moves from the inner angle to the outer angle.
     ///
     ////////////////////////////////////////////////////////////
@@ -110,7 +110,7 @@ public:
     ///
     /// It is important to note that the channel count of the
     /// audio engine currently sourcing data from this sound
-    /// will always be provided in frameChannelCount. This can
+    /// will always be provided in `frameChannelCount`. This can
     /// be different from the channel count of the sound source
     /// so make sure to size necessary processing buffers
     /// according to the engine channel count and not the sound
@@ -131,7 +131,7 @@ public:
     ///
     /// If the audio engine determines that no audio data is
     /// available from the data source, the input data frames
-    /// pointer is set to nullptr and the input frame count is
+    /// pointer is set to `nullptr` and the input frame count is
     /// set to 0. In this case it is up to the function to
     /// decide how to handle the situation. For specific effects
     /// e.g. Echo/Delay buffered data might still be able to be
@@ -143,9 +143,9 @@ public:
     /// engine runs on an internal thread of its own, make sure
     /// access to shared data is synchronized appropriately.
     ///
-    /// Because this function is stored by the SoundSource
+    /// Because this function is stored by the `SoundSource`
     /// object it will be able to be called as long as the
-    /// SoundSource object hasn't yet been destroyed. Make sure
+    /// `SoundSource` object hasn't yet been destroyed. Make sure
     /// that any data this function references outlives the
     /// SoundSource object otherwise use-after-free errors will
     /// occur.
@@ -189,7 +189,7 @@ public:
     ///
     /// \param pitch New pitch to apply to the sound
     ///
-    /// \see getPitch
+    /// \see `getPitch`
     ///
     ////////////////////////////////////////////////////////////
     void setPitch(float pitch);
@@ -204,7 +204,7 @@ public:
     ///
     /// \param pan New pan to apply to the sound [-1, +1]
     ///
-    /// \see getPan
+    /// \see `getPan`
     ///
     ////////////////////////////////////////////////////////////
     void setPan(float pan);
@@ -217,7 +217,7 @@ public:
     ///
     /// \param volume Volume of the sound
     ///
-    /// \see getVolume
+    /// \see `getVolume`
     ///
     ////////////////////////////////////////////////////////////
     void setVolume(float volume);
@@ -230,9 +230,9 @@ public:
     /// 3D space and exhibiting various physical phenomena such as
     /// directional attenuation and doppler shift.
     ///
-    /// \param enabled True to enable spatialization, false to disable
+    /// \param enabled `true` to enable spatialization, `false` to disable
     ///
-    /// \see isSpatializationEnabled
+    /// \see `isSpatializationEnabled`
     ///
     ////////////////////////////////////////////////////////////
     void setSpatializationEnabled(bool enabled);
@@ -246,7 +246,7 @@ public:
     ///
     /// \param position Position of the sound in the scene
     ///
-    /// \see getPosition
+    /// \see `getPosition`
     ///
     ////////////////////////////////////////////////////////////
     void setPosition(const Vector3f& position);
@@ -261,7 +261,7 @@ public:
     ///
     /// \param direction Direction of the sound in the scene
     ///
-    /// \see getDirection
+    /// \see `getDirection`
     ///
     ////////////////////////////////////////////////////////////
     void setDirection(const Vector3f& direction);
@@ -270,11 +270,11 @@ public:
     /// \brief Set the cone properties of the sound in the audio scene
     ///
     /// The cone defines how directional attenuation is applied.
-    /// The default cone of a sound is {2 * PI, 2 * PI, 1}.
+    /// The default cone of a sound is (2 * PI, 2 * PI, 1).
     ///
     /// \param cone Cone properties of the sound in the scene
     ///
-    /// \see getCone
+    /// \see `getCone`
     ///
     ////////////////////////////////////////////////////////////
     void setCone(const Cone& cone);
@@ -289,7 +289,7 @@ public:
     ///
     /// \param velocity Velocity of the sound in the scene
     ///
-    /// \see getVelocity
+    /// \see `getVelocity`
     ///
     ////////////////////////////////////////////////////////////
     void setVelocity(const Vector3f& velocity);
@@ -302,7 +302,7 @@ public:
     ///
     /// \param factor New doppler factor to apply to the sound
     ///
-    /// \see getDopplerFactor
+    /// \see `getDopplerFactor`
     ///
     ////////////////////////////////////////////////////////////
     void setDopplerFactor(float factor);
@@ -319,7 +319,7 @@ public:
     ///
     /// \param factor New directional attenuation factor to apply to the sound
     ///
-    /// \see getDirectionalAttenuationFactor
+    /// \see `getDirectionalAttenuationFactor`
     ///
     ////////////////////////////////////////////////////////////
     void setDirectionalAttenuationFactor(float factor);
@@ -331,11 +331,11 @@ public:
     /// be played the same way regardless of the position of the listener.
     /// This can be useful for non-spatialized sounds, sounds that are
     /// produced by the listener, or sounds attached to it.
-    /// The default value is false (position is absolute).
+    /// The default value is `false` (position is absolute).
     ///
-    /// \param relative True to set the position relative, false to set it absolute
+    /// \param relative `true` to set the position relative, `false` to set it absolute
     ///
-    /// \see isRelativeToListener
+    /// \see `isRelativeToListener`
     ///
     ////////////////////////////////////////////////////////////
     void setRelativeToListener(bool relative);
@@ -352,7 +352,7 @@ public:
     ///
     /// \param distance New minimum distance of the sound
     ///
-    /// \see getMinDistance, setAttenuation
+    /// \see `getMinDistance`, `setAttenuation`
     ///
     ////////////////////////////////////////////////////////////
     void setMinDistance(float distance);
@@ -369,7 +369,7 @@ public:
     ///
     /// \param distance New maximum distance of the sound
     ///
-    /// \see getMaxDistance, setAttenuation
+    /// \see `getMaxDistance`, `setAttenuation`
     ///
     ////////////////////////////////////////////////////////////
     void setMaxDistance(float distance);
@@ -383,7 +383,7 @@ public:
     ///
     /// \param gain New minimum gain of the sound
     ///
-    /// \see getMinGain, setAttenuation
+    /// \see `getMinGain`, `setAttenuation`
     ///
     ////////////////////////////////////////////////////////////
     void setMinGain(float gain);
@@ -397,7 +397,7 @@ public:
     ///
     /// \param gain New maximum gain of the sound
     ///
-    /// \see getMaxGain, setAttenuation
+    /// \see `getMaxGain`, `setAttenuation`
     ///
     ////////////////////////////////////////////////////////////
     void setMaxGain(float gain);
@@ -416,7 +416,7 @@ public:
     ///
     /// \param attenuation New attenuation factor of the sound
     ///
-    /// \see getAttenuation, setMinDistance
+    /// \see `getAttenuation`, `setMinDistance`
     ///
     ////////////////////////////////////////////////////////////
     void setAttenuation(float attenuation);
@@ -437,7 +437,7 @@ public:
     ///
     /// \return Pitch of the sound
     ///
-    /// \see setPitch
+    /// \see `setPitch`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] float getPitch() const;
@@ -447,7 +447,7 @@ public:
     ///
     /// \return Pan of the sound
     ///
-    /// \see setPan
+    /// \see `setPan`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] float getPan() const;
@@ -457,7 +457,7 @@ public:
     ///
     /// \return Volume of the sound, in the range [0, 100]
     ///
-    /// \see setVolume
+    /// \see `setVolume`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] float getVolume() const;
@@ -465,9 +465,9 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Tell whether spatialization of the sound is enabled
     ///
-    /// \return True if spatialization is enabled, false if it's disabled
+    /// \return `true` if spatialization is enabled, `false` if it's disabled
     ///
-    /// \see setSpatializationEnabled
+    /// \see `setSpatializationEnabled`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool isSpatializationEnabled() const;
@@ -477,7 +477,7 @@ public:
     ///
     /// \return Position of the sound
     ///
-    /// \see setPosition
+    /// \see `setPosition`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Vector3f getPosition() const;
@@ -487,7 +487,7 @@ public:
     ///
     /// \return Direction of the sound
     ///
-    /// \see setDirection
+    /// \see `setDirection`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Vector3f getDirection() const;
@@ -497,7 +497,7 @@ public:
     ///
     /// \return Cone properties of the sound
     ///
-    /// \see setCone
+    /// \see `setCone`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Cone getCone() const;
@@ -507,7 +507,7 @@ public:
     ///
     /// \return Velocity of the sound
     ///
-    /// \see setVelocity
+    /// \see `setVelocity`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Vector3f getVelocity() const;
@@ -517,7 +517,7 @@ public:
     ///
     /// \return Doppler factor of the sound
     ///
-    /// \see setDopplerFactor
+    /// \see `setDopplerFactor`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] float getDopplerFactor() const;
@@ -527,7 +527,7 @@ public:
     ///
     /// \return Directional attenuation factor of the sound
     ///
-    /// \see setDirectionalAttenuationFactor
+    /// \see `setDirectionalAttenuationFactor`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] float getDirectionalAttenuationFactor() const;
@@ -536,9 +536,9 @@ public:
     /// \brief Tell whether the sound's position is relative to the
     ///        listener or is absolute
     ///
-    /// \return True if the position is relative, false if it's absolute
+    /// \return `true` if the position is relative, `false` if it's absolute
     ///
-    /// \see setRelativeToListener
+    /// \see `setRelativeToListener`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool isRelativeToListener() const;
@@ -548,7 +548,7 @@ public:
     ///
     /// \return Minimum distance of the sound
     ///
-    /// \see setMinDistance, getAttenuation
+    /// \see `setMinDistance`, `getAttenuation`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] float getMinDistance() const;
@@ -558,7 +558,7 @@ public:
     ///
     /// \return Maximum distance of the sound
     ///
-    /// \see setMaxDistance, getAttenuation
+    /// \see `setMaxDistance`, `getAttenuation`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] float getMaxDistance() const;
@@ -568,7 +568,7 @@ public:
     ///
     /// \return Minimum gain of the sound
     ///
-    /// \see setMinGain, getAttenuation
+    /// \see `setMinGain`, `getAttenuation`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] float getMinGain() const;
@@ -578,7 +578,7 @@ public:
     ///
     /// \return Maximum gain of the sound
     ///
-    /// \see setMaxGain, getAttenuation
+    /// \see `setMaxGain`, `getAttenuation`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] float getMaxGain() const;
@@ -588,7 +588,7 @@ public:
     ///
     /// \return Attenuation factor of the sound
     ///
-    /// \see setAttenuation, getMinDistance
+    /// \see `setAttenuation`, `getMinDistance`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] float getAttenuation() const;
@@ -610,7 +610,7 @@ public:
     /// it if it was paused, and restarts it from the beginning if
     /// it was already playing.
     ///
-    /// \see pause, stop
+    /// \see `pause`, `stop`
     ///
     ////////////////////////////////////////////////////////////
     virtual void play() = 0;
@@ -621,7 +621,7 @@ public:
     /// This function pauses the source if it was playing,
     /// otherwise (source already paused or stopped) it has no effect.
     ///
-    /// \see play, stop
+    /// \see `play`, `stop`
     ///
     ////////////////////////////////////////////////////////////
     virtual void pause() = 0;
@@ -631,9 +631,9 @@ public:
     ///
     /// This function stops the source if it was playing or paused,
     /// and does nothing if it was already stopped.
-    /// It also resets the playing position (unlike pause()).
+    /// It also resets the playing position (unlike `pause()`).
     ///
-    /// \see play, pause
+    /// \see `play`, `pause`
     ///
     ////////////////////////////////////////////////////////////
     virtual void stop() = 0;
@@ -673,7 +673,7 @@ private:
 /// \class sf::SoundSource
 /// \ingroup audio
 ///
-/// sf::SoundSource is not meant to be used directly, it
+/// `sf::SoundSource` is not meant to be used directly, it
 /// only serves as a common base for all audio objects
 /// that can live in the audio environment.
 ///
@@ -681,6 +681,6 @@ private:
 /// volume, position, attenuation, etc. All of them can be
 /// changed at any time with no impact on performances.
 ///
-/// \see sf::Sound, sf::SoundStream
+/// \see `sf::Sound`, `sf::SoundStream`
 ///
 ////////////////////////////////////////////////////////////

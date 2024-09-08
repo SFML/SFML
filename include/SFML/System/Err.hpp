@@ -47,15 +47,15 @@ namespace sf
 /// \fn sf::err
 /// \ingroup system
 ///
-/// By default, sf::err() outputs to the same location as `std::cerr`,
+/// By default, `sf::err()` outputs to the same location as `std::cerr`,
 /// (-> the stderr descriptor) which is the console if there's
 /// one available.
 ///
 /// It is a standard `std::ostream` instance, so it supports all the
 /// insertion operations defined by the STL
-/// (operator <<, manipulators, etc.).
+/// (`operator<<`, manipulators, etc.).
 ///
-/// sf::err() can be redirected to write to another output, independently
+/// `sf::err()` can be redirected to write to another output, independently
 /// of `std::cerr`, by using the `rdbuf()` function provided by the
 /// `std::ostream` class.
 ///

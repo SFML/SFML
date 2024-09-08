@@ -59,7 +59,7 @@ public:
     /// \brief Default constructor
     ///
     /// This constructor doesn't actually create the window,
-    /// use the other constructors or call create() to do so.
+    /// use the other constructors or call `create()` to do so.
     ///
     ////////////////////////////////////////////////////////////
     Window();
@@ -68,10 +68,10 @@ public:
     /// \brief Construct a new window
     ///
     /// This constructor creates the window with the size and pixel
-    /// depth defined in \a mode. An optional style can be passed to
+    /// depth defined in \a `mode`. An optional style can be passed to
     /// customize the look and behavior of the window (borders,
     /// title bar, resizable, closable, ...). An optional state can
-    /// be provided. If \a state is State::Fullscreen, then \a mode
+    /// be provided. If \a `state` is `State::Fullscreen`, then \a `mode`
     /// must be a valid video mode.
     ///
     /// The last parameter is an optional structure specifying
@@ -80,7 +80,7 @@ public:
     ///
     /// \param mode     Video mode to use (defines the width, height and depth of the rendering area of the window)
     /// \param title    Title of the window
-    /// \param style    %Window style, a bitwise OR combination of sf::Style enumerators
+    /// \param style    %Window style, a bitwise OR combination of `sf::Style` enumerators
     /// \param state    %Window state
     /// \param settings Additional settings for the underlying OpenGL context
     ///
@@ -95,11 +95,11 @@ public:
     /// \brief Construct a new window
     ///
     /// This constructor creates the window with the size and pixel
-    /// depth defined in \a mode. If \a state is State::Fullscreen,
-    /// then \a mode must be a valid video mode.
+    /// depth defined in \a `mode`. If \a `state` is `State::Fullscreen`,
+    /// then \a `mode` must be a valid video mode.
     ///
     /// The last parameter is an optional structure specifying
-    /// advanced OpenGL context settings such as antialiasing,
+    /// advanced OpenGL context settings such as anti-aliasing,
     /// depth-buffer bits, etc.
     ///
     /// \param mode     Video mode to use (defines the width, height and depth of the rendering area of the window)
@@ -117,7 +117,7 @@ public:
     /// rendering area into an already existing control.
     ///
     /// The second parameter is an optional structure specifying
-    /// advanced OpenGL context settings such as antialiasing,
+    /// advanced OpenGL context settings such as anti-aliasing,
     /// depth-buffer bits, etc.
     ///
     /// \param handle   Platform-specific handle of the control
@@ -162,12 +162,12 @@ public:
     /// \brief Create (or recreate) the window
     ///
     /// If the window was already created, it closes it first.
-    /// If \a state is State::Fullscreen, then \a mode must be
+    /// If \a `state` is `State::Fullscreen`, then \a `mode` must be
     /// a valid video mode.
     ///
     /// \param mode     Video mode to use (defines the width, height and depth of the rendering area of the window)
     /// \param title    Title of the window
-    /// \param style    %Window style, a bitwise OR combination of sf::Style enumerators
+    /// \param style    %Window style, a bitwise OR combination of `sf::Style` enumerators
     /// \param state    %Window state
     ///
     ////////////////////////////////////////////////////////////
@@ -177,16 +177,16 @@ public:
     /// \brief Create (or recreate) the window
     ///
     /// If the window was already created, it closes it first.
-    /// If \a state is State::Fullscreen, then \a mode must be
+    /// If \a `state` is `State::Fullscreen`, then \a `mode` must be
     /// a valid video mode.
     ///
     /// The last parameter is an optional structure specifying
-    /// advanced OpenGL context settings such as antialiasing,
+    /// advanced OpenGL context settings such as anti-aliasing,
     /// depth-buffer bits, etc.
     ///
     /// \param mode     Video mode to use (defines the width, height and depth of the rendering area of the window)
     /// \param title    Title of the window
-    /// \param style    %Window style, a bitwise OR combination of sf::Style enumerators
+    /// \param style    %Window style, a bitwise OR combination of `sf::Style` enumerators
     /// \param state    %Window state
     /// \param settings Additional settings for the underlying OpenGL context
     ///
@@ -213,7 +213,7 @@ public:
     /// If the window was already created, it closes it first.
     ///
     /// The second parameter is an optional structure specifying
-    /// advanced OpenGL context settings such as antialiasing,
+    /// advanced OpenGL context settings such as anti-aliasing,
     /// depth-buffer bits, etc.
     ///
     /// \param handle   Platform-specific handle of the control
@@ -225,10 +225,10 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Close the window and destroy all the attached resources
     ///
-    /// After calling this function, the sf::Window instance remains
-    /// valid and you can call create() to recreate the window.
-    /// All other functions such as pollEvent() or display() will
-    /// still work (i.e. you don't have to test isOpen() every time),
+    /// After calling this function, the `sf::Window` instance remains
+    /// valid and you can call `create()` to recreate the window.
+    /// All other functions such as `pollEvent()` or `display()` will
+    /// still work (i.e. you don't have to test `isOpen()` every time),
     /// and will have no effect on closed windows.
     ///
     ////////////////////////////////////////////////////////////
@@ -238,7 +238,7 @@ public:
     /// \brief Get the settings of the OpenGL context of the window
     ///
     /// Note that these settings may be different from what was
-    /// passed to the constructor or the create() function,
+    /// passed to the constructor or the `create()` function,
     /// if one or more settings were not supported. In this case,
     /// SFML chose the closest match.
     ///
@@ -257,7 +257,7 @@ public:
     ///
     /// Vertical synchronization is disabled by default.
     ///
-    /// \param enabled True to enable v-sync, false to deactivate it
+    /// \param enabled `true` to enable v-sync, `false` to deactivate it
     ///
     ////////////////////////////////////////////////////////////
     void setVerticalSyncEnabled(bool enabled);
@@ -266,10 +266,10 @@ public:
     /// \brief Limit the framerate to a maximum fixed frequency
     ///
     /// If a limit is set, the window will use a small delay after
-    /// each call to display() to ensure that the current frame
+    /// each call to `display()` to ensure that the current frame
     /// lasted long enough to match the framerate limit.
     /// SFML will try to match the given limit as much as it can,
-    /// but since it internally uses sf::sleep, whose precision
+    /// but since it internally uses `sf::sleep`, whose precision
     /// depends on the underlying OS, the results may be a little
     /// imprecise as well (for example, you can get 65 FPS when
     /// requesting 60).
@@ -288,11 +288,11 @@ public:
     /// on the previous thread first if it was active.
     /// Only one window can be active on a thread at a time, thus
     /// the window previously active (if any) automatically gets deactivated.
-    /// This is not to be confused with requestFocus().
+    /// This is not to be confused with `requestFocus()`.
     ///
-    /// \param active True to activate, false to deactivate
+    /// \param active `true` to activate, `false` to deactivate
     ///
-    /// \return True if operation was successful, false otherwise
+    /// \return `true` if operation was successful, `false` otherwise
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool setActive(bool active = true) const;
@@ -329,25 +329,25 @@ private:
 /// \class sf::Window
 /// \ingroup window
 ///
-/// sf::Window is the main class of the Window module. It defines
+/// `sf::Window` is the main class of the Window module. It defines
 /// an OS window that is able to receive an OpenGL rendering.
 ///
-/// A sf::Window can create its own new window, or be embedded into
-/// an already existing control using the create(handle) function.
+/// A `sf::Window` can create its own new window, or be embedded into
+/// an already existing control using the `create(handle)` function.
 /// This can be useful for embedding an OpenGL rendering area into
 /// a view which is part of a bigger GUI with existing windows,
 /// controls, etc. It can also serve as embedding an OpenGL rendering
 /// area into a window created by another (probably richer) GUI library
 /// like Qt or wxWidgets.
 ///
-/// The sf::Window class provides a simple interface for manipulating
+/// The `sf::Window` class provides a simple interface for manipulating
 /// the window: move, resize, show/hide, control mouse cursor, etc.
-/// It also provides event handling through its pollEvent() and waitEvent()
+/// It also provides event handling through its `pollEvent()` and `waitEvent()`
 /// functions.
 ///
-/// Note that OpenGL experts can pass their own parameters (antialiasing
+/// Note that OpenGL experts can pass their own parameters (anti-aliasing
 /// level, bits for the depth and stencil buffers, etc.) to the
-/// OpenGL context attached to the window, with the sf::ContextSettings
+/// OpenGL context attached to the window, with the `sf::ContextSettings`
 /// structure which is passed as an optional argument when creating the
 /// window.
 ///
@@ -355,7 +355,7 @@ private:
 /// and a powerful discrete GPU, the driver picks which GPU will run an
 /// SFML application. In order to inform the driver that an SFML application
 /// can benefit from being run on the more powerful discrete GPU,
-/// #SFML_DEFINE_DISCRETE_GPU_PREFERENCE can be placed in a source file
+/// `#SFML_DEFINE_DISCRETE_GPU_PREFERENCE` can be placed in a source file
 /// that is compiled and linked into the final application. The macro
 /// should be placed outside of any scopes in the global namespace.
 ///

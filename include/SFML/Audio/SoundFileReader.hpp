@@ -70,7 +70,7 @@ public:
     /// \brief Open a sound file for reading
     ///
     /// The provided stream reference is valid as long as the
-    /// SoundFileReader is alive, so it is safe to use/store it
+    /// `SoundFileReader` is alive, so it is safe to use/store it
     /// during the whole lifetime of the reader.
     ///
     /// \param stream Source stream to read from
@@ -122,7 +122,7 @@ public:
 /// as well as providing a static check function; the latter is used by
 /// SFML to find a suitable writer for a given input file.
 ///
-/// To register a new reader, use the sf::SoundFileFactory::registerReader
+/// To register a new reader, use the `sf::SoundFileFactory::registerReader`
 /// template function.
 ///
 /// Usage example:
@@ -162,6 +162,6 @@ public:
 /// sf::SoundFileFactory::registerReader<MySoundFileReader>();
 /// \endcode
 ///
-/// \see sf::InputSoundFile, sf::SoundFileFactory, sf::SoundFileWriter
+/// \see `sf::InputSoundFile`, `sf::SoundFileFactory`, `sf::SoundFileWriter`
 ///
 ////////////////////////////////////////////////////////////

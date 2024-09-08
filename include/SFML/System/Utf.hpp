@@ -123,7 +123,7 @@ public:
     /// \brief Convert an ANSI characters range to UTF-8
     ///
     /// The current global locale will be used by default, unless you
-    /// pass a custom one in the \a locale parameter.
+    /// pass a custom one in the \a `locale` parameter.
     ///
     /// \param begin  Iterator pointing to the beginning of the input sequence
     /// \param end    Iterator pointing to the end of the input sequence
@@ -166,7 +166,7 @@ public:
     /// \brief Convert an UTF-8 characters range to ANSI characters
     ///
     /// The current global locale will be used by default, unless you
-    /// pass a custom one in the \a locale parameter.
+    /// pass a custom one in the \a `locale` parameter.
     ///
     /// \param begin       Iterator pointing to the beginning of the input sequence
     /// \param end         Iterator pointing to the end of the input sequence
@@ -213,7 +213,7 @@ public:
     ///
     /// This functions does nothing more than a direct copy;
     /// it is defined only to provide the same interface as other
-    /// specializations of the sf::Utf<> template, and allow
+    /// specializations of the `sf::Utf<>` template, and allow
     /// generic code to be written on top of it.
     ///
     /// \param begin  Iterator pointing to the beginning of the input sequence
@@ -329,7 +329,7 @@ public:
     /// \brief Convert an ANSI characters range to UTF-16
     ///
     /// The current global locale will be used by default, unless you
-    /// pass a custom one in the \a locale parameter.
+    /// pass a custom one in the \a `locale` parameter.
     ///
     /// \param begin  Iterator pointing to the beginning of the input sequence
     /// \param end    Iterator pointing to the end of the input sequence
@@ -372,7 +372,7 @@ public:
     /// \brief Convert an UTF-16 characters range to ANSI characters
     ///
     /// The current global locale will be used by default, unless you
-    /// pass a custom one in the \a locale parameter.
+    /// pass a custom one in the \a `locale` parameter.
     ///
     /// \param begin       Iterator pointing to the beginning of the input sequence
     /// \param end         Iterator pointing to the end of the input sequence
@@ -432,7 +432,7 @@ public:
     ///
     /// This functions does nothing more than a direct copy;
     /// it is defined only to provide the same interface as other
-    /// specializations of the sf::Utf<> template, and allow
+    /// specializations of the `sf::Utf<>` template, and allow
     /// generic code to be written on top of it.
     ///
     /// \param begin  Iterator pointing to the beginning of the input sequence
@@ -536,7 +536,7 @@ public:
     /// \brief Convert an ANSI characters range to UTF-32
     ///
     /// The current global locale will be used by default, unless you
-    /// pass a custom one in the \a locale parameter.
+    /// pass a custom one in the \a `locale` parameter.
     ///
     /// \param begin  Iterator pointing to the beginning of the input sequence
     /// \param end    Iterator pointing to the end of the input sequence
@@ -579,7 +579,7 @@ public:
     /// \brief Convert an UTF-32 characters range to ANSI characters
     ///
     /// The current global locale will be used by default, unless you
-    /// pass a custom one in the \a locale parameter.
+    /// pass a custom one in the \a `locale` parameter.
     ///
     /// \param begin       Iterator pointing to the beginning of the input sequence
     /// \param end         Iterator pointing to the end of the input sequence
@@ -652,7 +652,7 @@ public:
     ///
     /// This functions does nothing more than a direct copy;
     /// it is defined only to provide the same interface as other
-    /// specializations of the sf::Utf<> template, and allow
+    /// specializations of the `sf::Utf<>` template, and allow
     /// generic code to be written on top of it.
     ///
     /// \param begin  Iterator pointing to the beginning of the input sequence
@@ -669,7 +669,7 @@ public:
     /// \brief Decode a single ANSI character to UTF-32
     ///
     /// This function does not exist in other specializations
-    /// of sf::Utf<>, it is defined for convenience (it is used by
+    /// of `sf::Utf<>`, it is defined for convenience (it is used by
     /// several other conversion functions).
     ///
     /// \param input  Input ANSI character
@@ -685,7 +685,7 @@ public:
     /// \brief Decode a single wide character to UTF-32
     ///
     /// This function does not exist in other specializations
-    /// of sf::Utf<>, it is defined for convenience (it is used by
+    /// of `sf::Utf<>`, it is defined for convenience (it is used by
     /// several other conversion functions).
     ///
     /// \param input Input wide character
@@ -700,7 +700,7 @@ public:
     /// \brief Encode a single UTF-32 character to ANSI
     ///
     /// This function does not exist in other specializations
-    /// of sf::Utf<>, it is defined for convenience (it is used by
+    /// of `sf::Utf<>`, it is defined for convenience (it is used by
     /// several other conversion functions).
     ///
     /// \param codepoint   Iterator pointing to the beginning of the input sequence
@@ -718,7 +718,7 @@ public:
     /// \brief Encode a single UTF-32 character to wide
     ///
     /// This function does not exist in other specializations
-    /// of sf::Utf<>, it is defined for convenience (it is used by
+    /// of `sf::Utf<>`, it is defined for convenience (it is used by
     /// several other conversion functions).
     ///
     /// \param codepoint   Iterator pointing to the beginning of the input sequence
@@ -748,17 +748,17 @@ using Utf32 = Utf<32>;
 ///
 /// Utility class providing generic functions for UTF conversions.
 ///
-/// sf::Utf is a low-level, generic interface for counting, iterating,
+/// `sf::Utf` is a low-level, generic interface for counting, iterating,
 /// encoding and decoding Unicode characters and strings. It is able
 /// to handle ANSI, wide, latin-1, UTF-8, UTF-16 and UTF-32 encodings.
 ///
-/// sf::Utf<X> functions are all static, these classes are not meant to
+/// `sf::Utf<X>` functions are all static, these classes are not meant to
 /// be instantiated. All the functions are template, so that you
 /// can use any character / string type for a given encoding.
 ///
 /// It has 3 specializations:
-/// \li sf::Utf<8> (with sf::Utf8 type alias)
-/// \li sf::Utf<16> (with sf::Utf16 type alias)
-/// \li sf::Utf<32> (with sf::Utf32 type alias)
+/// \li `sf::Utf<8>` (with `sf::Utf8` type alias)
+/// \li `sf::Utf<16>` (with `sf::Utf16` type alias)
+/// \li `sf::Utf<32>` (with `sf::Utf32` type alias)
 ///
 ////////////////////////////////////////////////////////////

@@ -45,9 +45,9 @@ namespace Clipboard
 ///
 /// This function returns the content of the clipboard
 /// as a string. If the clipboard does not contain string
-/// it returns an empty sf::String object.
+/// it returns an empty `sf::String` object.
 ///
-/// \return Clipboard contents as sf::String object
+/// \return Clipboard contents as `sf::String` object
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_WINDOW_API String getString();
@@ -63,7 +63,7 @@ namespace Clipboard
 ///          guaranteed to work if there is currently an
 ///          open window for which events are being handled.
 ///
-/// \param text sf::String containing the data to be sent
+/// \param text `sf::String` containing the data to be sent
 /// to the clipboard
 ///
 ////////////////////////////////////////////////////////////
@@ -77,7 +77,7 @@ SFML_WINDOW_API void setString(const String& text);
 /// \namespace sf::Clipboard
 /// \ingroup window
 ///
-/// sf::Clipboard provides an interface for getting and
+/// `sf::Clipboard` provides an interface for getting and
 /// setting the contents of the system clipboard.
 ///
 /// It is important to note that due to limitations on some
@@ -109,6 +109,6 @@ SFML_WINDOW_API void setString(const String& text);
 /// }
 /// \endcode
 ///
-/// \see sf::String, sf::Event
+/// \see `sf::String`, `sf::Event`
 ///
 ////////////////////////////////////////////////////////////

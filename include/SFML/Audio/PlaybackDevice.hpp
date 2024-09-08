@@ -83,7 +83,7 @@ namespace sf::PlaybackDevice
 /// \brief Set the audio playback device
 ///
 /// This function sets the audio playback device to the device
-/// with the given \a name. It can be called on the fly (i.e:
+/// with the given \a `name`. It can be called on the fly (i.e:
 /// while sounds are playing).
 ///
 /// If there are sounds playing when the audio playback
@@ -92,9 +92,9 @@ namespace sf::PlaybackDevice
 ///
 /// \param name The name of the audio playback device
 ///
-/// \return True, if it was able to set the requested device
+/// \return `true`, if it was able to set the requested device
 ///
-/// \see getAvailableDevices, getDefaultDevice
+/// \see `getAvailableDevices`, `getDefaultDevice`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_AUDIO_API bool setDevice(const std::string& name);

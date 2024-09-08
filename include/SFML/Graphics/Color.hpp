@@ -43,7 +43,7 @@ public:
     /// \brief Default constructor
     ///
     /// Constructs an opaque black color. It is equivalent to
-    /// sf::Color(0, 0, 0, 255).
+    /// `sf::Color(0, 0, 0, 255)`.
     ///
     ////////////////////////////////////////////////////////////
     constexpr Color() = default;
@@ -101,35 +101,35 @@ public:
 
 ////////////////////////////////////////////////////////////
 /// \relates Color
-/// \brief Overload of the == operator
+/// \brief Overload of the `operator==`
 ///
 /// This operator compares two colors and check if they are equal.
 ///
 /// \param left  Left operand
 /// \param right Right operand
 ///
-/// \return True if colors are equal, false if they are different
+/// \return `true` if colors are equal, `false` if they are different
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr bool operator==(Color left, Color right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Color
-/// \brief Overload of the != operator
+/// \brief Overload of the `operator!=`
 ///
 /// This operator compares two colors and check if they are different.
 ///
 /// \param left  Left operand
 /// \param right Right operand
 ///
-/// \return True if colors are different, false if they are equal
+/// \return `true` if colors are different, `false` if they are equal
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr bool operator!=(Color left, Color right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Color
-/// \brief Overload of the binary + operator
+/// \brief Overload of the binary `operator+`
 ///
 /// This operator returns the component-wise sum of two colors.
 /// Components that exceed 255 are clamped to 255.
@@ -144,7 +144,7 @@ public:
 
 ////////////////////////////////////////////////////////////
 /// \relates Color
-/// \brief Overload of the binary - operator
+/// \brief Overload of the binary `operator-`
 ///
 /// This operator returns the component-wise subtraction of two colors.
 /// Components below 0 are clamped to 0.
@@ -159,7 +159,7 @@ public:
 
 ////////////////////////////////////////////////////////////
 /// \relates Color
-/// \brief Overload of the binary * operator
+/// \brief Overload of the binary `operator*`
 ///
 /// This operator returns the component-wise multiplication
 /// (also called "modulation") of two colors.
@@ -176,7 +176,7 @@ public:
 
 ////////////////////////////////////////////////////////////
 /// \relates Color
-/// \brief Overload of the binary += operator
+/// \brief Overload of the binary `operator+=`
 ///
 /// This operator computes the component-wise sum of two colors,
 /// and assigns the result to the left operand.
@@ -192,7 +192,7 @@ constexpr Color& operator+=(Color& left, Color right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Color
-/// \brief Overload of the binary -= operator
+/// \brief Overload of the binary `operator-=`
 ///
 /// This operator computes the component-wise subtraction of two colors,
 /// and assigns the result to the left operand.
@@ -208,7 +208,7 @@ constexpr Color& operator-=(Color& left, Color right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Color
-/// \brief Overload of the binary *= operator
+/// \brief Overload of the binary `operator*=`
 ///
 /// This operator returns the component-wise multiplication
 /// (also called "modulation") of two colors, and assigns
@@ -233,7 +233,7 @@ constexpr Color& operator*=(Color& left, Color right);
 /// \class sf::Color
 /// \ingroup graphics
 ///
-/// sf::Color is a simple color class composed of 4 components:
+/// `sf::Color` is a simple color class composed of 4 components:
 /// \li Red
 /// \li Green
 /// \li Blue

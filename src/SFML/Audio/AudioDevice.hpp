@@ -373,7 +373,7 @@ private:
     std::optional<ma_log>     m_log;            //!< The miniaudio log
     std::optional<ma_context> m_context;        //!< The miniaudio context
     std::optional<ma_device>  m_playbackDevice; //!< The miniaudio playback device
-    std::optional<ma_engine>  m_engine;         //!< The miniaudio engine (used for effects and spatialisation)
+    std::optional<ma_engine>  m_engine;         //!< The miniaudio engine (used for effects and spatialization)
     ResourceEntryList         m_resources;      //!< Registered resources
     std::mutex                m_resourcesMutex; //!< The mutex guarding the registered resources
 };

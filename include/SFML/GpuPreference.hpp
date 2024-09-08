@@ -51,7 +51,7 @@
 ///
 /// SFML defines a helper macro to easily do this.
 ///
-/// Place SFML_DEFINE_DISCRETE_GPU_PREFERENCE in the
+/// Place `SFML_DEFINE_DISCRETE_GPU_PREFERENCE` in the
 /// global scope of a source file that will be linked into
 /// the final executable. Typically it is best to place it
 /// where the main function is also defined.

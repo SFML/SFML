@@ -71,12 +71,12 @@ enum class Wheel
 ////////////////////////////////////////////////////////////
 /// \brief Check if a mouse button is pressed
 ///
-/// \warning Checking the state of buttons Mouse::Button::Extra1 and
-/// Mouse::Button::Extra2 is not supported on Linux with X11.
+/// \warning Checking the state of buttons `Mouse::Button::Extra1` and
+/// `Mouse::Button::Extra2` is not supported on Linux with X11.
 ///
 /// \param button Button to check
 ///
-/// \return True if the button is pressed, false otherwise
+/// \return `true` if the button is pressed, `false` otherwise
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_WINDOW_API bool isButtonPressed(Button button);
@@ -136,13 +136,13 @@ SFML_WINDOW_API void setPosition(Vector2i position, const WindowBase& relativeTo
 /// \namespace sf::Mouse
 /// \ingroup window
 ///
-/// sf::Mouse provides an interface to the state of the
+/// `sf::Mouse` provides an interface to the state of the
 /// mouse. A single mouse is assumed.
 ///
 /// This namespace allows users to query the mouse state at any
 /// time and directly, without having to deal with a window and
-/// its events. Compared to the MouseMoved, MouseButtonPressed
-/// and MouseButtonReleased events, sf::Mouse can retrieve the
+/// its events. Compared to the `MouseMoved`, `MouseButtonPressed`
+/// and `MouseButtonReleased` events, `sf::Mouse` can retrieve the
 /// state of the cursor and the buttons at any time
 /// (you don't need to store and update a boolean on your side
 /// in order to know if a button is pressed or released), and you
@@ -150,7 +150,7 @@ SFML_WINDOW_API void setPosition(Vector2i position, const WindowBase& relativeTo
 /// moved, pressed or released when your window is out of focus
 /// and no event is triggered.
 ///
-/// The setPosition and getPosition functions can be used to change
+/// The `setPosition` and `getPosition` functions can be used to change
 /// or retrieve the current position of the mouse pointer. There are
 /// two versions: one that operates in global coordinates (relative
 /// to the desktop) and one that operates in window coordinates
@@ -170,6 +170,6 @@ SFML_WINDOW_API void setPosition(Vector2i position, const WindowBase& relativeTo
 /// sf::Mouse::setPosition(sf::Vector2i(100, 200), window);
 /// \endcode
 ///
-/// \see sf::Joystick, sf::Keyboard, sf::Touch
+/// \see `sf::Joystick`, `sf::Keyboard`, `sf::Touch`
 ///
 ////////////////////////////////////////////////////////////

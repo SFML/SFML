@@ -66,7 +66,7 @@ public:
     ///
     /// \return Port to which the socket is bound
     ///
-    /// \see connect, getRemotePort
+    /// \see `connect`, `getRemotePort`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] unsigned short getLocalPort() const;
@@ -79,7 +79,7 @@ public:
     ///
     /// \return Address of the remote peer
     ///
-    /// \see getRemotePort
+    /// \see `getRemotePort`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] std::optional<IpAddress> getRemoteAddress() const;
@@ -92,7 +92,7 @@ public:
     ///
     /// \return Remote port to which the socket is connected
     ///
-    /// \see getRemoteAddress
+    /// \see `getRemoteAddress`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] unsigned short getRemotePort() const;
@@ -112,7 +112,7 @@ public:
     ///
     /// \return Status code
     ///
-    /// \see disconnect
+    /// \see `disconnect`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Status connect(IpAddress remoteAddress, unsigned short remotePort, Time timeout = Time::Zero);
@@ -123,7 +123,7 @@ public:
     /// This function gracefully closes the connection. If the
     /// socket is not connected, this function has no effect.
     ///
-    /// \see connect
+    /// \see `connect`
     ///
     ////////////////////////////////////////////////////////////
     void disconnect();
@@ -132,7 +132,7 @@ public:
     /// \brief Send raw data to the remote peer
     ///
     /// To be able to handle partial sends over non-blocking
-    /// sockets, use the send(const void*, std::size_t, std::size_t&)
+    /// sockets, use the `send(const void*, std::size_t, std::size_t&)`
     /// overload instead.
     /// This function will fail if the socket is not connected.
     ///
@@ -141,7 +141,7 @@ public:
     ///
     /// \return Status code
     ///
-    /// \see receive
+    /// \see `receive`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Status send(const void* data, std::size_t size);
@@ -157,7 +157,7 @@ public:
     ///
     /// \return Status code
     ///
-    /// \see receive
+    /// \see `receive`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Status send(const void* data, std::size_t size, std::size_t& sent);
@@ -175,7 +175,7 @@ public:
     ///
     /// \return Status code
     ///
-    /// \see send
+    /// \see `send`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Status receive(void* data, std::size_t size, std::size_t& received);
@@ -183,7 +183,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Send a formatted packet of data to the remote peer
     ///
-    /// In non-blocking mode, if this function returns sf::Socket::Status::Partial,
+    /// In non-blocking mode, if this function returns `sf::Socket::Status::Partial`,
     /// you \em must retry sending the same unmodified packet before sending
     /// anything else in order to guarantee the packet arrives at the remote
     /// peer uncorrupted.
@@ -193,7 +193,7 @@ public:
     ///
     /// \return Status code
     ///
-    /// \see receive
+    /// \see `receive`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Status send(Packet& packet);
@@ -209,7 +209,7 @@ public:
     ///
     /// \return Status code
     ///
-    /// \see send
+    /// \see `send`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Status receive(Packet& packet);
@@ -252,7 +252,7 @@ private:
 ///
 /// When a socket is connected to a remote host, you can
 /// retrieve information about this host with the
-/// getRemoteAddress and getRemotePort functions. You can
+/// `getRemoteAddress` and `getRemotePort` functions. You can
 /// also get the local port to which the socket is bound
 /// (which is automatically chosen when the socket is connected),
 /// with the getLocalPort function.
@@ -263,9 +263,9 @@ private:
 /// one call to Send will exactly match one call to Receive
 /// at the other end of the socket.
 ///
-/// The high-level interface uses packets (see sf::Packet),
+/// The high-level interface uses packets (see `sf::Packet`),
 /// which are easier to use and provide more safety regarding
-/// the data that is exchanged. You can look at the sf::Packet
+/// the data that is exchanged. You can look at the `sf::Packet`
 /// class to get more details about how they work.
 ///
 /// The socket is automatically disconnected when it is destroyed,
@@ -312,6 +312,6 @@ private:
 /// socket.send(message.c_str(), message.size() + 1);
 /// \endcode
 ///
-/// \see sf::Socket, sf::UdpSocket, sf::Packet
+/// \see `sf::Socket`, `sf::UdpSocket`, `sf::Packet`
 ///
 ////////////////////////////////////////////////////////////

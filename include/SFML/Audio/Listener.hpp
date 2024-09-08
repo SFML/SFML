@@ -45,9 +45,9 @@ namespace sf::Listener
 ///
 /// Sounds will play at gain 1 when they are positioned
 /// within the inner angle of the cone. Sounds will play
-/// at outerGain when they are positioned outside the
+/// at `outerGain` when they are positioned outside the
 /// outer angle of the cone. The gain declines linearly
-/// from 1 to outerGain as the sound moves from the inner
+/// from 1 to `outerGain` as the sound moves from the inner
 /// angle to the outer angle.
 ///
 ////////////////////////////////////////////////////////////
@@ -61,13 +61,13 @@ struct Cone
 ////////////////////////////////////////////////////////////
 /// \brief Change the global volume of all the sounds and musics
 ///
-/// The volume is a number between 0 and 100; it is combined with
-/// the individual volume of each sound / music.
+/// \a `volume` is a number between 0 and 100; it is combined
+/// with the individual volume of each sound / music.
 /// The default value for the volume is 100 (maximum).
 ///
 /// \param volume New global volume, in the range [0, 100]
 ///
-/// \see getGlobalVolume
+/// \see `getGlobalVolume`
 ///
 ////////////////////////////////////////////////////////////
 SFML_AUDIO_API void setGlobalVolume(float volume);
@@ -77,7 +77,7 @@ SFML_AUDIO_API void setGlobalVolume(float volume);
 ///
 /// \return Current global volume, in the range [0, 100]
 ///
-/// \see setGlobalVolume
+/// \see `setGlobalVolume`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_AUDIO_API float getGlobalVolume();
@@ -89,7 +89,7 @@ SFML_AUDIO_API void setGlobalVolume(float volume);
 ///
 /// \param position New listener's position
 ///
-/// \see getPosition, setDirection
+/// \see `getPosition`, `setDirection`
 ///
 ////////////////////////////////////////////////////////////
 SFML_AUDIO_API void setPosition(const Vector3f& position);
@@ -99,7 +99,7 @@ SFML_AUDIO_API void setPosition(const Vector3f& position);
 ///
 /// \return Listener's position
 ///
-/// \see setPosition
+/// \see `setPosition`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_AUDIO_API Vector3f getPosition();
@@ -116,7 +116,7 @@ SFML_AUDIO_API void setPosition(const Vector3f& position);
 ///
 /// \param direction New listener's direction
 ///
-/// \see getDirection, setUpVector, setPosition
+/// \see `getDirection`, `setUpVector`, `setPosition`
 ///
 ////////////////////////////////////////////////////////////
 SFML_AUDIO_API void setDirection(const Vector3f& direction);
@@ -126,7 +126,7 @@ SFML_AUDIO_API void setDirection(const Vector3f& direction);
 ///
 /// \return Listener's forward vector (not normalized)
 ///
-/// \see setDirection
+/// \see `setDirection`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_AUDIO_API Vector3f getDirection();
@@ -138,7 +138,7 @@ SFML_AUDIO_API void setDirection(const Vector3f& direction);
 ///
 /// \param velocity New listener's velocity
 ///
-/// \see getVelocity, getDirection, setUpVector, setPosition
+/// \see `getVelocity`, `getDirection`, `setUpVector`, `setPosition`
 ///
 ////////////////////////////////////////////////////////////
 SFML_AUDIO_API void setVelocity(const Vector3f& velocity);
@@ -148,7 +148,7 @@ SFML_AUDIO_API void setVelocity(const Vector3f& velocity);
 ///
 /// \return Listener's velocity
 ///
-/// \see setVelocity
+/// \see `setVelocity`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_AUDIO_API Vector3f getVelocity();
@@ -157,11 +157,11 @@ SFML_AUDIO_API void setVelocity(const Vector3f& velocity);
 /// \brief Set the cone properties of the listener in the audio scene
 ///
 /// The cone defines how directional attenuation is applied.
-/// The default cone of a sound is {2 * PI, 2 * PI, 1}.
+/// The default cone of a sound is (2 * PI, 2 * PI, 1).
 ///
 /// \param cone Cone properties of the listener in the scene
 ///
-/// \see getCone
+/// \see `getCone`
 ///
 ////////////////////////////////////////////////////////////
 SFML_AUDIO_API void setCone(const Listener::Cone& cone);
@@ -171,7 +171,7 @@ SFML_AUDIO_API void setCone(const Listener::Cone& cone);
 ///
 /// \return Cone properties of the listener
 ///
-/// \see setCone
+/// \see `setCone`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_AUDIO_API Listener::Cone getCone();
@@ -188,7 +188,7 @@ SFML_AUDIO_API void setCone(const Listener::Cone& cone);
 ///
 /// \param upVector New listener's up vector
 ///
-/// \see getUpVector, setDirection, setPosition
+/// \see `getUpVector`, `setDirection`, `setPosition`
 ///
 ////////////////////////////////////////////////////////////
 SFML_AUDIO_API void setUpVector(const Vector3f& upVector);
@@ -198,7 +198,7 @@ SFML_AUDIO_API void setUpVector(const Vector3f& upVector);
 ///
 /// \return Listener's upward vector (not normalized)
 ///
-/// \see setUpVector
+/// \see `setUpVector`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_AUDIO_API Vector3f getUpVector();
@@ -211,11 +211,11 @@ SFML_AUDIO_API void setUpVector(const Vector3f& upVector);
 ///
 /// The audio listener defines the global properties of the
 /// audio environment, it defines where and how sounds and musics
-/// are heard. If sf::View is the eyes of the user, then sf::Listener
-/// is his ears (by the way, they are often linked together --
-/// same position, orientation, etc.).
+/// are heard. If `sf::View` is the eyes of the user, then
+/// `sf::Listener` are their ears (by the way, they are often linked
+/// together -- same position, orientation, etc.).
 ///
-/// sf::Listener is a simple interface, which allows to setup the
+/// `sf::Listener` is a simple interface, which allows to setup the
 /// listener in the 3D audio environment (position, direction and
 /// up vector), and to adjust the global volume.
 ///

@@ -103,9 +103,9 @@ public:
     /// available or not.
     /// By default, all sockets are blocking.
     ///
-    /// \param blocking True to set the socket as blocking, false for non-blocking
+    /// \param blocking `true` to set the socket as blocking, `false` for non-blocking
     ///
-    /// \see isBlocking
+    /// \see `isBlocking`
     ///
     ////////////////////////////////////////////////////////////
     void setBlocking(bool blocking);
@@ -113,9 +113,9 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Tell whether the socket is in blocking or non-blocking mode
     ///
-    /// \return True if the socket is blocking, false otherwise
+    /// \return `true` if the socket is blocking, `false` otherwise
     ///
-    /// \see setBlocking
+    /// \see `setBlocking`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool isBlocking() const;
@@ -215,7 +215,7 @@ private:
 /// In non-blocking mode, all the socket functions will
 /// return immediately. If the socket is not ready to complete
 /// the requested operation, the function simply returns
-/// the proper status code (Socket::Status::NotReady).
+/// the proper status code (`Socket::Status::NotReady`).
 ///
 /// The default mode, which is blocking, is the one that is
 /// generally used, in combination with threads or selectors.
@@ -224,6 +224,6 @@ private:
 /// the socket often enough, and cannot afford blocking
 /// this loop.
 ///
-/// \see sf::TcpListener, sf::TcpSocket, sf::UdpSocket
+/// \see `sf::TcpListener`, `sf::TcpSocket`, `sf::UdpSocket`
 ///
 ////////////////////////////////////////////////////////////

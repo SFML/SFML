@@ -111,15 +111,15 @@ private:
 /// \class sf::MemoryInputStream
 /// \ingroup system
 ///
-/// This class is a specialization of InputStream that
+/// This class is a specialization of `InputStream` that
 /// reads from data in memory.
 ///
-/// It wraps a memory chunk in the common InputStream interface
+/// It wraps a memory chunk in the common `InputStream` interface
 /// and therefore allows to use generic classes or functions
 /// that accept such a stream, with content already loaded in memory.
 ///
 /// In addition to the virtual functions inherited from
-/// InputStream, MemoryInputStream adds a function to
+/// `InputStream`, `MemoryInputStream` adds a function to
 /// specify the pointer and size of the data in memory.
 ///
 /// SFML resource classes can usually be loaded directly from
@@ -134,6 +134,6 @@ private:
 /// process(stream);
 /// \endcode
 ///
-/// InputStream, FileInputStream
+/// \see `InputStream`, `FileInputStream`
 ///
 ////////////////////////////////////////////////////////////

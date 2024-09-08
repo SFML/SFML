@@ -57,21 +57,21 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Change the source texture of the shape
     ///
-    /// The \a texture argument refers to a texture that must
+    /// The \a `texture` argument refers to a texture that must
     /// exist as long as the shape uses it. Indeed, the shape
     /// doesn't store its own copy of the texture, but rather keeps
     /// a pointer to the one that you passed to this function.
     /// If the source texture is destroyed and the shape tries to
     /// use it, the behavior is undefined.
-    /// \a texture can be a null pointer to disable texturing.
-    /// If \a resetRect is true, the TextureRect property of
+    /// \a `texture` can be a null pointer to disable texturing.
+    /// If \a `resetRect` is `true`, the `TextureRect` property of
     /// the shape is automatically adjusted to the size of the new
-    /// texture. If it is false, the texture rect is left unchanged.
+    /// texture. If it is `false`, the texture rect is left unchanged.
     ///
     /// \param texture   New texture
     /// \param resetRect Should the texture rect be reset to the size of the new texture?
     ///
-    /// \see getTexture, setTextureRect
+    /// \see `getTexture`, `setTextureRect`
     ///
     ////////////////////////////////////////////////////////////
     void setTexture(const Texture* texture, bool resetRect = false);
@@ -85,7 +85,7 @@ public:
     ///
     /// \param rect Rectangle defining the region of the texture to display
     ///
-    /// \see getTextureRect, setTexture
+    /// \see `getTextureRect`, `setTexture`
     ///
     ////////////////////////////////////////////////////////////
     void setTextureRect(const IntRect& rect);
@@ -96,13 +96,13 @@ public:
     /// This color is modulated (multiplied) with the shape's
     /// texture if any. It can be used to colorize the shape,
     /// or change its global opacity.
-    /// You can use sf::Color::Transparent to make the inside of
+    /// You can use `sf::Color::Transparent to make the inside of
     /// the shape transparent, and have the outline alone.
     /// By default, the shape's fill color is opaque white.
     ///
     /// \param color New color of the shape
     ///
-    /// \see getFillColor, setOutlineColor
+    /// \see `getFillColor`, `setOutlineColor`
     ///
     ////////////////////////////////////////////////////////////
     void setFillColor(Color color);
@@ -114,7 +114,7 @@ public:
     ///
     /// \param color New outline color of the shape
     ///
-    /// \see getOutlineColor, setFillColor
+    /// \see `getOutlineColor`, `setFillColor`
     ///
     ////////////////////////////////////////////////////////////
     void setOutlineColor(Color color);
@@ -129,7 +129,7 @@ public:
     ///
     /// \param thickness New outline thickness
     ///
-    /// \see getOutlineThickness
+    /// \see `getOutlineThickness`
     ///
     ////////////////////////////////////////////////////////////
     void setOutlineThickness(float thickness);
@@ -137,13 +137,13 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Get the source texture of the shape
     ///
-    /// If the shape has no source texture, a null pointer is returned.
+    /// If the shape has no source texture, a `nullptr` is returned.
     /// The returned pointer is const, which means that you can't
     /// modify the texture when you retrieve it with this function.
     ///
     /// \return Pointer to the shape's texture
     ///
-    /// \see setTexture
+    /// \see `setTexture`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] const Texture* getTexture() const;
@@ -153,7 +153,7 @@ public:
     ///
     /// \return Texture rectangle of the shape
     ///
-    /// \see setTextureRect
+    /// \see `setTextureRect`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] const IntRect& getTextureRect() const;
@@ -163,7 +163,7 @@ public:
     ///
     /// \return Fill color of the shape
     ///
-    /// \see setFillColor
+    /// \see `setFillColor`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Color getFillColor() const;
@@ -173,7 +173,7 @@ public:
     ///
     /// \return Outline color of the shape
     ///
-    /// \see setOutlineColor
+    /// \see `setOutlineColor`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Color getOutlineColor() const;
@@ -183,7 +183,7 @@ public:
     ///
     /// \return Outline thickness of the shape
     ///
-    /// \see setOutlineThickness
+    /// \see `setOutlineThickness`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] float getOutlineThickness() const;
@@ -193,7 +193,7 @@ public:
     ///
     /// \return Number of points of the shape
     ///
-    /// \see getPoint
+    /// \see `getPoint`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] virtual std::size_t getPointCount() const = 0;
@@ -204,13 +204,13 @@ public:
     /// The returned point is in local coordinates, that is,
     /// the shape's transforms (position, rotation, scale) are
     /// not taken into account.
-    /// The result is undefined if \a index is out of the valid range.
+    /// The result is undefined if \a `index` is out of the valid range.
     ///
     /// \param index Index of the point to get, in range [0 .. getPointCount() - 1]
     ///
     /// \return index-th point of the shape
     ///
-    /// \see getPointCount
+    /// \see `getPointCount`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] virtual Vector2f getPoint(std::size_t index) const = 0;
@@ -250,7 +250,7 @@ public:
     /// In other words, this function returns the bounds of the
     /// shape in the global 2D world's coordinate system.
     ///
-    /// This function does not necessarily return the \a minimal
+    /// This function does not necessarily return the \a `minimal`
     /// bounding rectangle. It merely ensures that the returned
     /// rectangle covers all the vertices (but possibly more).
     /// This allows for a fast approximation of the bounds as a
@@ -328,7 +328,7 @@ private:
 /// \class sf::Shape
 /// \ingroup graphics
 ///
-/// sf::Shape is a drawable class that allows to define and
+/// `sf::Shape` is a drawable class that allows to define and
 /// display a custom convex shape on a render target.
 /// It's only an abstract base, it needs to be specialized for
 /// concrete types of shapes (circle, rectangle, convex polygon,
@@ -344,7 +344,7 @@ private:
 ///
 /// Each feature is optional, and can be disabled easily:
 /// \li the texture can be null
-/// \li the fill/outline colors can be sf::Color::Transparent
+/// \li the fill/outline colors can be `sf::Color::Transparent`
 /// \li the outline thickness can be zero
 ///
 /// You can write your own derived shape class, there are only
@@ -352,6 +352,6 @@ private:
 /// \li getPointCount must return the number of points of the shape
 /// \li getPoint must return the points of the shape
 ///
-/// \see sf::RectangleShape, sf::CircleShape, sf::ConvexShape, sf::Transformable
+/// \see `sf::RectangleShape`, `sf::CircleShape`, `sf::ConvexShape`, `sf::Transformable`
 ///
 ////////////////////////////////////////////////////////////

@@ -79,15 +79,15 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Get a read-write access to a vertex by its index
     ///
-    /// This function doesn't check \a index, it must be in range
-    /// [0, getVertexCount() - 1]. The behavior is undefined
+    /// This function doesn't check \a `index`, it must be in range
+    /// [0, `getVertexCount()` - 1]. The behavior is undefined
     /// otherwise.
     ///
     /// \param index Index of the vertex to get
     ///
     /// \return Reference to the index-th vertex
     ///
-    /// \see getVertexCount
+    /// \see `getVertexCount`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Vertex& operator[](std::size_t index);
@@ -95,15 +95,15 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Get a read-only access to a vertex by its index
     ///
-    /// This function doesn't check \a index, it must be in range
-    /// [0, getVertexCount() - 1]. The behavior is undefined
+    /// This function doesn't check \a `index`, it must be in range
+    /// [0, `getVertexCount()` - 1]. The behavior is undefined
     /// otherwise.
     ///
     /// \param index Index of the vertex to get
     ///
     /// \return Const reference to the index-th vertex
     ///
-    /// \see getVertexCount
+    /// \see `getVertexCount`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] const Vertex& operator[](std::size_t index) const;
@@ -122,10 +122,10 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Resize the vertex array
     ///
-    /// If \a vertexCount is greater than the current size, the previous
+    /// If \a `vertexCount` is greater than the current size, the previous
     /// vertices are kept and new (default-constructed) vertices are
     /// added.
-    /// If \a vertexCount is less than the current size, existing vertices
+    /// If \a `vertexCount` is less than the current size, existing vertices
     /// are removed from the array.
     ///
     /// \param vertexCount New size of the array (number of vertices)
@@ -149,7 +149,7 @@ public:
     /// \li As points
     /// \li As lines
     /// \li As triangles
-    /// The default primitive type is sf::PrimitiveType::Points.
+    /// The default primitive type is `sf::PrimitiveType::Points`.
     ///
     /// \param type Type of primitive
     ///
@@ -199,10 +199,10 @@ private:
 /// \class sf::VertexArray
 /// \ingroup graphics
 ///
-/// sf::VertexArray is a very simple wrapper around a dynamic
+/// `sf::VertexArray` is a very simple wrapper around a dynamic
 /// array of vertices and a primitives type.
 ///
-/// It inherits sf::Drawable, but unlike other drawables it
+/// It inherits `sf::Drawable`, but unlike other drawables it
 /// is not transformable.
 ///
 /// Example:
@@ -216,6 +216,6 @@ private:
 /// window.draw(lines);
 /// \endcode
 ///
-/// \see sf::Vertex
+/// \see `sf::Vertex`
 ///
 ////////////////////////////////////////////////////////////

@@ -64,7 +64,7 @@ public:
     ///
     /// \param position New position
     ///
-    /// \see move, getPosition
+    /// \see `move`, `getPosition`
     ///
     ////////////////////////////////////////////////////////////
     void setPosition(Vector2f position);
@@ -78,7 +78,7 @@ public:
     ///
     /// \param angle New rotation
     ///
-    /// \see rotate, getRotation
+    /// \see `rotate`, `getRotation`
     ///
     ////////////////////////////////////////////////////////////
     void setRotation(Angle angle);
@@ -92,7 +92,7 @@ public:
     ///
     /// \param factors New scale factors
     ///
-    /// \see scale, getScale
+    /// \see `scale`, `getScale`
     ///
     ////////////////////////////////////////////////////////////
     void setScale(Vector2f factors);
@@ -109,7 +109,7 @@ public:
     ///
     /// \param origin New origin
     ///
-    /// \see getOrigin
+    /// \see `getOrigin`
     ///
     ////////////////////////////////////////////////////////////
     void setOrigin(Vector2f origin);
@@ -119,7 +119,7 @@ public:
     ///
     /// \return Current position
     ///
-    /// \see setPosition
+    /// \see `setPosition`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Vector2f getPosition() const;
@@ -131,7 +131,7 @@ public:
     ///
     /// \return Current rotation
     ///
-    /// \see setRotation
+    /// \see `setRotation`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Angle getRotation() const;
@@ -141,7 +141,7 @@ public:
     ///
     /// \return Current scale factors
     ///
-    /// \see setScale
+    /// \see `setScale`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Vector2f getScale() const;
@@ -151,7 +151,7 @@ public:
     ///
     /// \return Current origin
     ///
-    /// \see setOrigin
+    /// \see `setOrigin`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Vector2f getOrigin() const;
@@ -160,7 +160,7 @@ public:
     /// \brief Move the object by a given offset
     ///
     /// This function adds to the current position of the object,
-    /// unlike setPosition which overwrites it.
+    /// unlike `setPosition` which overwrites it.
     /// Thus, it is equivalent to the following code:
     /// \code
     /// object.setPosition(object.getPosition() + offset);
@@ -168,7 +168,7 @@ public:
     ///
     /// \param offset Offset
     ///
-    /// \see setPosition
+    /// \see `setPosition`
     ///
     ////////////////////////////////////////////////////////////
     void move(Vector2f offset);
@@ -177,7 +177,7 @@ public:
     /// \brief Rotate the object
     ///
     /// This function adds to the current rotation of the object,
-    /// unlike setRotation which overwrites it.
+    /// unlike `setRotation` which overwrites it.
     /// Thus, it is equivalent to the following code:
     /// \code
     /// object.setRotation(object.getRotation() + angle);
@@ -192,7 +192,7 @@ public:
     /// \brief Scale the object
     ///
     /// This function multiplies the current scale of the object,
-    /// unlike setScale which overwrites it.
+    /// unlike `setScale` which overwrites it.
     /// Thus, it is equivalent to the following code:
     /// \code
     /// sf::Vector2f scale = object.getScale();
@@ -201,7 +201,7 @@ public:
     ///
     /// \param factor Scale factors
     ///
-    /// \see setScale
+    /// \see `setScale`
     ///
     ////////////////////////////////////////////////////////////
     void scale(Vector2f factor);
@@ -211,7 +211,7 @@ public:
     ///
     /// \return Transform combining the position/rotation/scale/origin of the object
     ///
-    /// \see getInverseTransform
+    /// \see `getInverseTransform`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] const Transform& getTransform() const;
@@ -221,7 +221,7 @@ public:
     ///
     /// \return Inverse of the combined transformations applied to the object
     ///
-    /// \see getTransform
+    /// \see `getTransform`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] const Transform& getInverseTransform() const;
@@ -247,9 +247,9 @@ private:
 /// \class sf::Transformable
 /// \ingroup graphics
 ///
-/// This class is provided for convenience, on top of sf::Transform.
+/// This class is provided for convenience, on top of `sf::Transform`.
 ///
-/// sf::Transform, as a low-level class, offers a great level of
+/// `sf::Transform`, as a low-level class, offers a great level of
 /// flexibility but it is not always convenient to manage. Indeed,
 /// one can easily combine any kind of operation, such as a translation
 /// followed by a rotation followed by a scaling, but once the result
@@ -261,13 +261,13 @@ private:
 /// rotation. This is a tedious operation, and it requires to store
 /// all the individual components of the final transform.
 ///
-/// That's exactly what sf::Transformable was written for: it hides
+/// That's exactly what `sf::Transformable` was written for: it hides
 /// these variables and the composed transform behind an easy to use
 /// interface. You can set or get any of the individual components
 /// without worrying about the others. It also provides the composed
-/// transform (as a sf::Transform), and keeps it up-to-date.
+/// transform (as a `sf::Transform`), and keeps it up-to-date.
 ///
-/// In addition to the position, rotation and scale, sf::Transformable
+/// In addition to the position, rotation and scale, `sf::Transformable`
 /// provides an "origin" component, which represents the local origin
 /// of the three other components. Let's take an example with a 10x10
 /// pixels sprite. By default, the sprite is positioned/rotated/scaled
@@ -277,13 +277,13 @@ private:
 /// we set the origin to (10, 10), it will be transformed around its
 /// bottom-right corner.
 ///
-/// To keep the sf::Transformable class simple, there's only one
+/// To keep the `sf::Transformable` class simple, there's only one
 /// origin for all the components. You cannot position the sprite
 /// relatively to its top-left corner while rotating it around its
-/// center, for example. To do such things, use sf::Transform directly.
+/// center, for example. To do such things, use `sf::Transform` directly.
 ///
-/// sf::Transformable can be used as a base class. It is often
-/// combined with sf::Drawable -- that's what SFML's sprites,
+/// `sf::Transformable` can be used as a base class. It is often
+/// combined with `sf::Drawable` -- that's what SFML's sprites,
 /// texts and shapes do.
 /// \code
 /// class MyEntity : public sf::Transformable, public sf::Drawable
@@ -328,13 +328,13 @@ private:
 /// such as sprites or texts when rendering. While this allows transitions
 /// like slow movements or rotations to appear smoothly, it can lead to
 /// unwanted results in some cases, for example blurred or distorted objects.
-/// In order to render a sf::Drawable object pixel-perfectly, make sure
+/// In order to render a `sf::Drawable` object pixel-perfectly, make sure
 /// the involved coordinates allow a 1:1 mapping of pixels in the window
 /// to texels (pixels in the texture). More specifically, this means:
 /// * The object's position, origin and scale have no fractional part
 /// * The object's and the view's rotation are a multiple of 90 degrees
 /// * The view's center and size have no fractional part
 ///
-/// \see sf::Transform
+/// \see `sf::Transform`
 ///
 ////////////////////////////////////////////////////////////

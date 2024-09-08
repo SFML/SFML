@@ -138,11 +138,11 @@ public:
     /// so it is not necessary to keep the original one alive
     /// after calling this function.
     /// To restore the original view of the target, you can pass
-    /// the result of getDefaultView() to this function.
+    /// the result of `getDefaultView()` to this function.
     ///
     /// \param view New view to use
     ///
-    /// \see getView, getDefaultView
+    /// \see `getView`, `getDefaultView`
     ///
     ////////////////////////////////////////////////////////////
     void setView(const View& view);
@@ -152,7 +152,7 @@ public:
     ///
     /// \return The view object that is currently used
     ///
-    /// \see setView, getDefaultView
+    /// \see `setView`, `getDefaultView`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] const View& getView() const;
@@ -165,7 +165,7 @@ public:
     ///
     /// \return The default view of the render target
     ///
-    /// \see setView, getView
+    /// \see `setView`, `getView`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] const View& getDefaultView() const;
@@ -215,7 +215,7 @@ public:
     ///
     /// \return The converted point, in "world" coordinates
     ///
-    /// \see mapCoordsToPixel
+    /// \see `mapCoordsToPixel`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Vector2f mapPixelToCoords(Vector2i point) const;
@@ -230,7 +230,7 @@ public:
     ///
     /// Initially, both coordinate systems (world units and target pixels)
     /// match perfectly. But if you define a custom view or resize your
-    /// render target, this assertion is not true anymore, i.e. a point
+    /// render target, this assertion is not `true` anymore, i.e. a point
     /// located at (10, 50) in your render target may map to the point
     /// (150, 75) in your 2D world -- if the view is translated by (140, 25).
     ///
@@ -246,7 +246,7 @@ public:
     ///
     /// \return The converted point, in "world" units
     ///
-    /// \see mapCoordsToPixel
+    /// \see `mapCoordsToPixel`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Vector2f mapPixelToCoords(Vector2i point, const View& view) const;
@@ -255,7 +255,7 @@ public:
     /// \brief Convert a point from world coordinates to target
     ///        coordinates, using the current view
     ///
-    /// This function is an overload of the mapCoordsToPixel
+    /// This function is an overload of the `mapCoordsToPixel`
     /// function that implicitly uses the current view.
     /// It is equivalent to:
     /// \code
@@ -266,7 +266,7 @@ public:
     ///
     /// \return The converted point, in target coordinates (pixels)
     ///
-    /// \see mapPixelToCoords
+    /// \see `mapPixelToCoords`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Vector2i mapCoordsToPixel(Vector2f point) const;
@@ -280,7 +280,7 @@ public:
     ///
     /// Initially, both coordinate systems (world units and target pixels)
     /// match perfectly. But if you define a custom view or resize your
-    /// render target, this assertion is not true anymore, i.e. a point
+    /// render target, this assertion is not `true` anymore, i.e. a point
     /// located at (150, 75) in your 2D world may map to the pixel
     /// (10, 50) of your render target -- if the view is translated by (140, 25).
     ///
@@ -293,7 +293,7 @@ public:
     ///
     /// \return The converted point, in target coordinates (pixels)
     ///
-    /// \see mapPixelToCoords
+    /// \see `mapPixelToCoords`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Vector2i mapCoordsToPixel(Vector2f point, const View& view) const;
@@ -355,7 +355,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Tell if the render target will use sRGB encoding when drawing on it
     ///
-    /// \return True if the render target use sRGB encoding, false otherwise
+    /// \return `true` if the render target use sRGB encoding, `false` otherwise
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] virtual bool isSrgb() const;
@@ -375,9 +375,9 @@ public:
     /// target will automatically deactivate the previously active
     /// context (if any).
     ///
-    /// \param active True to activate, false to deactivate
+    /// \param active `true` to activate, `false` to deactivate
     ///
-    /// \return True if operation was successful, false otherwise
+    /// \return `true` if operation was successful, `false` otherwise
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] virtual bool setActive(bool active = true);
@@ -392,7 +392,7 @@ public:
     /// \li your OpenGL states are not modified by a call to a SFML function
     ///
     /// More specifically, it must be used around code that
-    /// calls Draw functions. Example:
+    /// calls `draw` functions. Example:
     /// \code
     /// // OpenGL code here...
     /// window.pushGLStates();
@@ -411,7 +411,7 @@ public:
     /// saved and restored). Take a look at the resetGLStates
     /// function if you do so.
     ///
-    /// \see popGLStates
+    /// \see `popGLStates`
     ///
     ////////////////////////////////////////////////////////////
     void pushGLStates();
@@ -419,10 +419,10 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Restore the previously saved OpenGL render states and matrices
     ///
-    /// See the description of pushGLStates to get a detailed
+    /// See the description of `pushGLStates` to get a detailed
     /// description of these functions.
     ///
-    /// \see pushGLStates
+    /// \see `pushGLStates`
     ///
     ////////////////////////////////////////////////////////////
     void popGLStates();
@@ -432,8 +432,8 @@ public:
     ///
     /// This function can be used when you mix SFML drawing
     /// and direct OpenGL rendering, if you choose not to use
-    /// pushGLStates/popGLStates. It makes sure that all OpenGL
-    /// states needed by SFML are set, so that subsequent draw()
+    /// `pushGLStates`/`popGLStates`. It makes sure that all OpenGL
+    /// states needed by SFML are set, so that subsequent `draw()`
     /// calls will work as expected.
     ///
     /// Example:
@@ -556,7 +556,7 @@ private:
         StencilMode           lastStencilMode;         //!< Cached stencil
         std::uint64_t         lastTextureId{};         //!< Cached texture
         CoordinateType        lastCoordinateType{};    //!< Texture coordinate type
-        bool                  texCoordsArrayEnabled{}; //!< Is GL_TEXTURE_COORD_ARRAY client state enabled?
+        bool                  texCoordsArrayEnabled{}; //!< Is `GL_TEXTURE_COORD_ARRAY` client state enabled?
         bool                  useVertexCache{};        //!< Did we previously use the vertex cache?
         std::array<Vertex, 4> vertexCache{};           //!< Pre-transformed vertices cache
     };
@@ -577,23 +577,23 @@ private:
 /// \class sf::RenderTarget
 /// \ingroup graphics
 ///
-/// sf::RenderTarget defines the common behavior of all the
+/// `sf::RenderTarget` defines the common behavior of all the
 /// 2D render targets usable in the graphics module. It makes
 /// it possible to draw 2D entities like sprites, shapes, text
 /// without using any OpenGL command directly.
 ///
-/// A sf::RenderTarget is also able to use views (sf::View),
+/// A `sf::RenderTarget` is also able to use views (`sf::View`),
 /// which are a kind of 2D cameras. With views you can globally
 /// scroll, rotate or zoom everything that is drawn,
 /// without having to transform every single entity. See the
-/// documentation of sf::View for more details and sample pieces of
+/// documentation of `sf::View` for more details and sample pieces of
 /// code about this class.
 ///
 /// On top of that, render targets are still able to render direct
 /// OpenGL stuff. It is even possible to mix together OpenGL calls
 /// and regular SFML drawing commands. When doing so, make sure that
 /// OpenGL states are not messed up by calling the
-/// pushGLStates/popGLStates functions.
+/// `pushGLStates`/`popGLStates` functions.
 ///
 /// While render targets are moveable, it is not valid to move them
 /// between threads. This will cause your program to crash. The
@@ -601,6 +601,6 @@ private:
 /// works in multithreaded environments. Please ensure you only move
 /// render targets within the same thread.
 ///
-/// \see sf::RenderWindow, sf::RenderTexture, sf::View
+/// \see `sf::RenderWindow`, `sf::RenderTexture`, `sf::View`
 ///
 ////////////////////////////////////////////////////////////

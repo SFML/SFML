@@ -57,23 +57,23 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Start the capture
     ///
-    /// The \a sampleRate parameter defines the number of audio samples
+    /// The \a `sampleRate` parameter defines the number of audio samples
     /// captured per second. The higher, the better the quality
     /// (for example, 44100 samples/sec is CD quality).
     /// This function uses its own thread so that it doesn't block
     /// the rest of the program while the capture runs.
     /// Please note that only one capture can happen at the same time.
     /// You can select which capture device will be used by passing
-    /// the name to the setDevice() method. If none was selected
+    /// the name to the `setDevice()` method. If none was selected
     /// before, the default capture device will be used. You can get a
     /// list of the names of all available capture devices by calling
-    /// getAvailableDevices().
+    /// `getAvailableDevices()`.
     ///
     /// \param sampleRate Desired capture rate, in number of samples per second
     ///
-    /// \return True, if start of capture was successful
+    /// \return `true`, if start of capture was successful
     ///
-    /// \see stop, getAvailableDevices
+    /// \see `stop`, `getAvailableDevices`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool start(unsigned int sampleRate = 44100);
@@ -81,7 +81,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Stop the capture
     ///
-    /// \see start
+    /// \see `start`
     ///
     ////////////////////////////////////////////////////////////
     void stop();
@@ -125,15 +125,15 @@ public:
     /// \brief Set the audio capture device
     ///
     /// This function sets the audio capture device to the device
-    /// with the given \a name. It can be called on the fly (i.e:
+    /// with the given \a `name`. It can be called on the fly (i.e:
     /// while recording). If you do so while recording and
     /// opening the device fails, it stops the recording.
     ///
     /// \param name The name of the audio capture device
     ///
-    /// \return True, if it was able to set the requested device
+    /// \return `true`, if it was able to set the requested device
     ///
-    /// \see getAvailableDevices, getDefaultDevice
+    /// \see `getAvailableDevices`, `getDefaultDevice`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool setDevice(const std::string& name);
@@ -156,7 +156,7 @@ public:
     /// \param channelCount Number of channels. Currently only
     ///                     mono (1) and stereo (2) are supported.
     ///
-    /// \see getChannelCount
+    /// \see `getChannelCount`
     ///
     ////////////////////////////////////////////////////////////
     void setChannelCount(unsigned int channelCount);
@@ -169,7 +169,7 @@ public:
     ///
     /// \return Number of channels
     ///
-    /// \see setChannelCount
+    /// \see `setChannelCount`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] unsigned int getChannelCount() const;
@@ -178,7 +178,7 @@ public:
     /// \brief Get the map of position in sample frame to sound channel
     ///
     /// This is used to map a sample in the sample stream to a
-    /// position during spatialisation.
+    /// position during spatialization.
     ///
     /// \return Map of position in sample frame to sound channel
     ///
@@ -189,11 +189,11 @@ public:
     /// \brief Check if the system supports audio capture
     ///
     /// This function should always be called before using
-    /// the audio capture features. If it returns false, then
-    /// any attempt to use sf::SoundRecorder or one of its derived
+    /// the audio capture features. If it returns `false`, then
+    /// any attempt to use `sf::SoundRecorder` or one of its derived
     /// classes will fail.
     ///
-    /// \return True if audio capture is supported, false otherwise
+    /// \return `true` if audio capture is supported, `false` otherwise
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] static bool isAvailable();
@@ -215,7 +215,7 @@ protected:
     /// starts. If not, this function can be ignored; the default
     /// implementation does nothing.
     ///
-    /// \return True to start the capture, or false to abort it
+    /// \return `true` to start the capture, or `false` to abort it
     ///
     ////////////////////////////////////////////////////////////
     virtual bool onStart();
@@ -229,9 +229,9 @@ protected:
     /// it over the network, etc.).
     ///
     /// \param samples     Pointer to the new chunk of recorded samples
-    /// \param sampleCount Number of samples pointed by \a samples
+    /// \param sampleCount Number of samples pointed by \a `samples`
     ///
-    /// \return True to continue the capture, or false to stop it
+    /// \return `true` to continue the capture, or `false` to stop it
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] virtual bool onProcessSamples(const std::int16_t* samples, std::size_t sampleCount) = 0;
@@ -262,24 +262,24 @@ private:
 /// \class sf::SoundRecorder
 /// \ingroup audio
 ///
-/// sf::SoundBuffer provides a simple interface to access
+/// `sf::SoundBuffer` provides a simple interface to access
 /// the audio recording capabilities of the computer
 /// (the microphone). As an abstract base class, it only cares
 /// about capturing sound samples, the task of making something
 /// useful with them is left to the derived class. Note that
 /// SFML provides a built-in specialization for saving the
-/// captured data to a sound buffer (see sf::SoundBufferRecorder).
+/// captured data to a sound buffer (see `sf::SoundBufferRecorder`).
 ///
 /// A derived class has only one virtual function to override:
-/// \li onProcessSamples provides the new chunks of audio samples while the capture happens
+/// \li `onProcessSamples` provides the new chunks of audio samples while the capture happens
 ///
 /// Moreover, two additional virtual functions can be overridden
 /// as well if necessary:
-/// \li onStart is called before the capture happens, to perform custom initializations
-/// \li onStop is called after the capture ends, to perform custom cleanup
+/// \li `onStart` is called before the capture happens, to perform custom initializations
+/// \li `onStop` is called after the capture ends, to perform custom cleanup
 ///
 /// A derived class can also control the frequency of the onProcessSamples
-/// calls, with the setProcessingInterval protected function. The default
+/// calls, with the `setProcessingInterval` protected function. The default
 /// interval is chosen so that recording thread doesn't consume too much
 /// CPU, but it can be changed to a smaller value if you need to process
 /// the recorded data in real time, for example.
@@ -287,13 +287,13 @@ private:
 /// The audio capture feature may not be supported or activated
 /// on every platform, thus it is recommended to check its
 /// availability with the isAvailable() function. If it returns
-/// false, then any attempt to use an audio recorder will fail.
+/// `false`, then any attempt to use an audio recorder will fail.
 ///
 /// If you have multiple sound input devices connected to your
-/// computer (for example: microphone, external soundcard, webcam mic, ...)
+/// computer (for example: microphone, external sound card, webcam mic, ...)
 /// you can get a list of all available devices through the
-/// getAvailableDevices() function. You can then select a device
-/// by calling setDevice() with the appropriate device. Otherwise
+/// `getAvailableDevices()` function. You can then select a device
+/// by calling `setDevice()` with the appropriate device. Otherwise
 /// the default capturing device will be used.
 ///
 /// By default the recording is in 16-bit mono. Using the
@@ -304,12 +304,12 @@ private:
 ///
 /// It is important to note that the audio capture happens in a
 /// separate thread, so that it doesn't block the rest of the
-/// program. In particular, the onProcessSamples virtual function
-/// (but not onStart and not onStop) will be called
+/// program. In particular, the `onProcessSamples` virtual function
+/// (but not `onStart` and not `onStop`) will be called
 /// from this separate thread. It is important to keep this in
 /// mind, because you may have to take care of synchronization
 /// issues if you share data between threads.
-/// Another thing to bear in mind is that you must call stop()
+/// Another thing to bear in mind is that you must call `stop()`
 /// in the destructor of your derived class, so that the recording
 /// thread finishes before your object is destroyed.
 ///
@@ -363,6 +363,6 @@ private:
 /// }
 /// \endcode
 ///
-/// \see sf::SoundBufferRecorder
+/// \see `sf::SoundBufferRecorder`
 ///
 ////////////////////////////////////////////////////////////

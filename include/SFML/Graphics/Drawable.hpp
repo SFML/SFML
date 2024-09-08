@@ -73,15 +73,15 @@ protected:
 /// \class sf::Drawable
 /// \ingroup graphics
 ///
-/// sf::Drawable is a very simple base class that allows objects
-/// of derived classes to be drawn to a sf::RenderTarget.
+/// `sf::Drawable` is a very simple base class that allows objects
+/// of derived classes to be drawn to a `sf::RenderTarget`.
 ///
 /// All you have to do in your derived class is to override the
 /// draw virtual function.
 ///
-/// Note that inheriting from sf::Drawable is not mandatory,
-/// but it allows this nice syntax "window.draw(object)" rather
-/// than "object.draw(window)", which is more consistent with other
+/// Note that inheriting from `sf::Drawable` is not mandatory,
+/// but it allows this nice syntax `window.draw(object)` rather
+/// than `object.draw(window)`, which is more consistent with other
 /// SFML classes.
 ///
 /// Example:
@@ -115,6 +115,6 @@ protected:
 /// };
 /// \endcode
 ///
-/// \see sf::RenderTarget
+/// \see `sf::RenderTarget`
 ///
 ////////////////////////////////////////////////////////////

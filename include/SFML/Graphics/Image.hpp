@@ -59,7 +59,7 @@ public:
     ///
     /// Constructs an image with width 0 and height 0.
     ///
-    /// \see resize
+    /// \see `resize`
     ///
     ////////////////////////////////////////////////////////////
     Image() = default;
@@ -76,10 +76,9 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Construct the image from an array of pixels
     ///
-    /// The \a pixel array is assumed to contain 32-bits RGBA pixels,
-    /// and have the given \a width and \a height. If not, this is
-    /// an undefined behavior.
-    /// If \a pixels is null, an empty image is created.
+    /// The pixel array is assumed to contain 32-bits RGBA pixels,
+    /// and have the given \a `size`. If not, this is an undefined behavior.
+    /// If \a `pixels` is `nullptr`, an empty image is created.
     ///
     /// \param size   Width and height of the image
     /// \param pixels Array of pixels to copy to the image
@@ -98,7 +97,7 @@ public:
     ///
     /// \throws `sf::Exception` if loading was unsuccessful
     ///
-    /// \see loadFromFile, loadFromMemory, loadFromStream
+    /// \see `loadFromFile`, `loadFromMemory`, `loadFromStream`
     ///
     ////////////////////////////////////////////////////////////
     explicit Image(const std::filesystem::path& filename);
@@ -115,7 +114,7 @@ public:
     ///
     /// \throws `sf::Exception` if loading was unsuccessful
     ///
-    /// \see loadFromFile, loadFromMemory, loadFromStream
+    /// \see `loadFromFile`, `loadFromMemory`, `loadFromStream`
     ///
     ////////////////////////////////////////////////////////////
     Image(const void* data, std::size_t size);
@@ -131,7 +130,7 @@ public:
     ///
     /// \throws `sf::Exception` if loading was unsuccessful
     ///
-    /// \see loadFromFile, loadFromMemory, loadFromStream
+    /// \see `loadFromFile`, `loadFromMemory`, `loadFromStream`
     ///
     ////////////////////////////////////////////////////////////
     explicit Image(InputStream& stream);
@@ -148,10 +147,9 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Resize the image from an array of pixels
     ///
-    /// The \a pixel array is assumed to contain 32-bits RGBA pixels,
-    /// and have the given \a width and \a height. If not, this is
-    /// an undefined behavior.
-    /// If \a pixels is null, an empty image is created.
+    /// The pixel array is assumed to contain 32-bits RGBA pixels,
+    /// and have the given \a `size`. If not, this is an undefined behavior.
+    /// If \a `pixels` is `nullptr`, an empty image is created.
     ///
     /// \param size   Width and height of the image
     /// \param pixels Array of pixels to copy to the image
@@ -169,9 +167,9 @@ public:
     ///
     /// \param filename Path of the image file to load
     ///
-    /// \return True if loading was successful
+    /// \return `true` if loading was successful
     ///
-    /// \see loadFromMemory, loadFromStream, saveToFile
+    /// \see `loadFromMemory`, `loadFromStream`, `saveToFile`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool loadFromFile(const std::filesystem::path& filename);
@@ -187,9 +185,9 @@ public:
     /// \param data Pointer to the file data in memory
     /// \param size Size of the data to load, in bytes
     ///
-    /// \return True if loading was successful
+    /// \return `true` if loading was successful
     ///
-    /// \see loadFromFile, loadFromStream, saveToMemory
+    /// \see `loadFromFile`, `loadFromStream`, `saveToMemory`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool loadFromMemory(const void* data, std::size_t size);
@@ -204,9 +202,9 @@ public:
     ///
     /// \param stream Source stream to read from
     ///
-    /// \return True if loading was successful
+    /// \return `true` if loading was successful
     ///
-    /// \see loadFromFile, loadFromMemory
+    /// \see `loadFromFile`, `loadFromMemory`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool loadFromStream(InputStream& stream);
@@ -221,9 +219,9 @@ public:
     ///
     /// \param filename Path of the file to save
     ///
-    /// \return True if saving was successful
+    /// \return `true` if saving was successful
     ///
-    /// \see saveToMemory, loadFromFile
+    /// \see `saveToMemory`, `loadFromFile`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool saveToFile(const std::filesystem::path& filename) const;
@@ -241,7 +239,7 @@ public:
     /// \return Buffer with encoded data if saving was successful,
     ///     otherwise `std::nullopt`
     ///
-    /// \see saveToFile, loadFromMemory
+    /// \see `saveToFile`, `loadFromMemory`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] std::optional<std::vector<std::uint8_t>> saveToMemory(std::string_view format) const;
@@ -258,7 +256,7 @@ public:
     /// \brief Create a transparency mask from a specified color-key
     ///
     /// This function sets the alpha value of every pixel matching
-    /// the given color to \a alpha (0 by default), so that they
+    /// the given color to \a `alpha` (0 by default), so that they
     /// become transparent.
     ///
     /// \param color Color to make transparent
@@ -273,20 +271,20 @@ public:
     /// This function does a slow pixel copy and should not be
     /// used intensively. It can be used to prepare a complex
     /// static image from several others, but if you need this
-    /// kind of feature in real-time you'd better use sf::RenderTexture.
+    /// kind of feature in real-time you'd better use `sf::RenderTexture`.
     ///
-    /// If \a sourceRect is empty, the whole image is copied.
-    /// If \a applyAlpha is set to true, alpha blending is
+    /// If \a `sourceRect` is empty, the whole image is copied.
+    /// If \a `applyAlpha` is set to `true`, alpha blending is
     /// applied from the source pixels to the destination pixels
-    /// using the \b over operator. If it is false, the source
+    /// using the \b over operator. If it is `false`, the source
     /// pixels are copied unchanged with their alpha value.
     ///
     /// See https://en.wikipedia.org/wiki/Alpha_compositing for
     /// details on the \b over operator.
     ///
     /// Note that this function can fail if either image is invalid
-    /// (i.e. zero-sized width or height), or if \a sourceRect is
-    /// not within the boundaries of the \a source parameter, or
+    /// (i.e. zero-sized width or height), or if \a `sourceRect` is
+    /// not within the boundaries of the \a `source` parameter, or
     /// if the destination area is out of the boundaries of this image.
     ///
     /// On failure, the destination image is left unchanged.
@@ -296,7 +294,7 @@ public:
     /// \param sourceRect Sub-rectangle of the source image to copy
     /// \param applyAlpha Should the copy take into account the source transparency?
     ///
-    /// \return True if the operation was successful, false otherwise
+    /// \return `true` if the operation was successful, `false` otherwise
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool copy(const Image& source, Vector2u dest, const IntRect& sourceRect = {}, bool applyAlpha = false);
@@ -311,7 +309,7 @@ public:
     /// \param coords Coordinates of pixel to change
     /// \param color  New color of the pixel
     ///
-    /// \see getPixel
+    /// \see `getPixel`
     ///
     ////////////////////////////////////////////////////////////
     void setPixel(Vector2u coords, Color color);
@@ -327,7 +325,7 @@ public:
     ///
     /// \return Color of the pixel at given coordinates
     ///
-    /// \see setPixel
+    /// \see `setPixel`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Color getPixel(Vector2u coords) const;
@@ -337,7 +335,7 @@ public:
     ///
     /// The returned value points to an array of RGBA pixels made of
     /// 8 bit integer components. The size of the array is
-    /// width * height * 4 (getSize().x * getSize().y * 4).
+    /// `width * height * 4 (getSize().x * getSize().y * 4)`.
     /// Warning: the returned pointer may become invalid if you
     /// modify the image, so you should never store it for too long.
     /// If the image is empty, a null pointer is returned.
@@ -374,21 +372,21 @@ private:
 /// \class sf::Image
 /// \ingroup graphics
 ///
-/// sf::Image is an abstraction to manipulate images
-/// as bidimensional arrays of pixels. The class provides
+/// `sf::Image` is an abstraction to manipulate images
+/// as bi-dimensional arrays of pixels. The class provides
 /// functions to load, read, write and save pixels, as well
 /// as many other useful functions.
 ///
-/// sf::Image can handle a unique internal representation of
+/// `sf::Image` can handle a unique internal representation of
 /// pixels, which is RGBA 32 bits. This means that a pixel
 /// must be composed of 8 bit red, green, blue and alpha
-/// channels -- just like a sf::Color.
+/// channels -- just like a `sf::Color`.
 /// All the functions that return an array of pixels follow
-/// this rule, and all parameters that you pass to sf::Image
-/// functions (such as loadFromMemory) must use this
+/// this rule, and all parameters that you pass to `sf::Image`
+/// functions (such as `loadFromMemory`) must use this
 /// representation as well.
 ///
-/// A sf::Image can be copied, but it is a heavy resource and
+/// A `sf::Image` can be copied, but it is a heavy resource and
 /// if possible you should always use [const] references to
 /// pass or return them to avoid useless copies.
 ///
@@ -414,6 +412,6 @@ private:
 ///     return -1;
 /// \endcode
 ///
-/// \see sf::Texture
+/// \see `sf::Texture`
 ///
 ////////////////////////////////////////////////////////////

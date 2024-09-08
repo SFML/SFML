@@ -47,7 +47,7 @@ namespace Touch
 ///
 /// \param finger Finger index
 ///
-/// \return True if \a finger is currently touching the screen, false otherwise
+/// \return `true` if \a finger is currently touching the screen, `false` otherwise
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_WINDOW_API bool isDown(unsigned int finger);
@@ -87,13 +87,13 @@ namespace Touch
 /// \namespace sf::Touch
 /// \ingroup window
 ///
-/// sf::Touch provides an interface to the state of the
+/// `sf::Touch` provides an interface to the state of the
 /// touches.
 ///
 /// This namespace allows users to query the touches state at any
 /// time and directly, without having to deal with a window and
-/// its events. Compared to the TouchBegan, TouchMoved
-/// and TouchEnded events, sf::Touch can retrieve the
+/// its events. Compared to the `TouchBegan`, `TouchMoved`
+/// and `TouchEnded` events, `sf::Touch` can retrieve the
 /// state of the touches at any time (you don't need to store and
 /// update a boolean on your side in order to know if a touch is down),
 /// and you always get the real state of the touches, even if they
@@ -126,6 +126,6 @@ namespace Touch
 /// sf::Vector2i relativePos = sf::Touch::getPosition(1, window);
 /// \endcode
 ///
-/// \see sf::Joystick, sf::Keyboard, sf::Mouse
+/// \see `sf::Joystick`, `sf::Keyboard`, `sf::Mouse`
 ///
 ////////////////////////////////////////////////////////////
