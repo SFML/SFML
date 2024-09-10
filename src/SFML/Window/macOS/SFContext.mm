@@ -246,7 +246,7 @@ void SFContext::createContext(SFContext* shared, unsigned int bitsPerPixel, cons
 
     attrs.push_back(static_cast<NSOpenGLPixelFormatAttribute>(0)); // end of array
 
-    // All OS X pixel formats are sRGB capable
+    // All macOS pixel formats are sRGB capable
     m_settings.sRgbCapable = true;
 
     // Create the pixel format.
