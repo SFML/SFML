@@ -384,7 +384,7 @@ constexpr Transform& operator*=(Transform& left, const Transform& right);
 /// sf::Transform transform = translation * rotation;
 ///
 /// // use the result to transform stuff...
-/// sf::Vector2f point = transform.transformPoint(10, 20);
+/// sf::Vector2f point = transform.transformPoint({10, 20});
 /// sf::FloatRect rect = transform.transformRect(sf::FloatRect({0, 0}, {10, 100}));
 /// \endcode
 ///
