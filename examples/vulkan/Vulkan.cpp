@@ -26,7 +26,6 @@
 ////////////////////////////////////////////////////////////
 namespace
 {
-using Vec3   = float[3];
 using Matrix = float[4][4];
 
 // Multiply 2 matrices
@@ -96,57 +95,33 @@ void matrixRotateZ(Matrix& result, sf::Angle angle)
 }
 
 // Construct a lookat view matrix
-void matrixLookAt(Matrix& result, const Vec3& eye, const Vec3& center, const Vec3& up)
+void matrixLookAt(Matrix& result, const sf::Vector3f& eye, const sf::Vector3f& center, const sf::Vector3f& up)
 {
     // Forward-looking vector
-    // clang-format off
-    Vec3 forward = {
-        center[0] - eye[0],
-        center[1] - eye[1],
-        center[2] - eye[2]
-    };
-    // clang-format on
-
-    // Normalize
-    float factor = 1.0f / std::sqrt(forward[0] * forward[0] + forward[1] * forward[1] + forward[2] * forward[2]);
-
-    for (float& f : forward)
-        f *= factor;
+    const sf::Vector3f forward = (center - eye).normalized();
 
     // Side vector (Forward cross product Up)
-    // clang-format off
-    Vec3 side = {
-        forward[1] * up[2] - forward[2] * up[1],
-        forward[2] * up[0] - forward[0] * up[2],
-        forward[0] * up[1] - forward[1] * up[0]
-    };
-    // clang-format on
+    const sf::Vector3f side = forward.cross(up).normalized();
 
-    // Normalize
-    factor = 1.0f / std::sqrt(side[0] * side[0] + side[1] * side[1] + side[2] * side[2]);
-
-    for (float& f : side)
-        f *= factor;
-
-    result[0][0] = side[0];
-    result[0][1] = side[1] * forward[2] - side[2] * forward[1];
-    result[0][2] = -forward[0];
+    result[0][0] = side.x;
+    result[0][1] = side.y * forward.z - side.z * forward.y;
+    result[0][2] = -forward.x;
     result[0][3] = 0.f;
 
-    result[1][0] = side[1];
-    result[1][1] = side[2] * forward[0] - side[0] * forward[2];
-    result[1][2] = -forward[1];
+    result[1][0] = side.y;
+    result[1][1] = side.z * forward.x - side.x * forward.z;
+    result[1][2] = -forward.y;
     result[1][3] = 0.f;
 
-    result[2][0] = side[2];
-    result[2][1] = side[0] * forward[1] - side[1] * forward[0];
-    result[2][2] = -forward[2];
+    result[2][0] = side.z;
+    result[2][1] = side.x * forward.y - side.y * forward.x;
+    result[2][2] = -forward.z;
     result[2][3] = 0.f;
 
-    result[3][0] = (-eye[0]) * result[0][0] + (-eye[1]) * result[1][0] + (-eye[2]) * result[2][0];
-    result[3][1] = (-eye[0]) * result[0][1] + (-eye[1]) * result[1][1] + (-eye[2]) * result[2][1];
-    result[3][2] = (-eye[0]) * result[0][2] + (-eye[1]) * result[1][2] + (-eye[2]) * result[2][2];
-    result[3][3] = (-eye[0]) * result[0][3] + (-eye[1]) * result[1][3] + (-eye[2]) * result[2][3] + 1.0f;
+    result[3][0] = (-eye.x) * result[0][0] + (-eye.y) * result[1][0] + (-eye.z) * result[2][0];
+    result[3][1] = (-eye.x) * result[0][1] + (-eye.y) * result[1][1] + (-eye.z) * result[2][1];
+    result[3][2] = (-eye.x) * result[0][2] + (-eye.y) * result[1][2] + (-eye.z) * result[2][2];
+    result[3][3] = (-eye.x) * result[0][3] + (-eye.y) * result[1][3] + (-eye.z) * result[2][3] + 1.0f;
 }
 
 // Construct a perspective projection matrix
@@ -2412,12 +2387,11 @@ public:
         model[3][2] += y;
 
         // Construct the view matrix
-        const Vec3 eye    = {0.0f, 4.0f, 0.0f};
-        const Vec3 center = {0.0f, 0.0f, 0.0f};
-        const Vec3 up     = {0.0f, 0.0f, 1.0f};
+        const sf::Vector3f eye(0.0f, 4.0f, 0.0f);
+        const sf::Vector3f center(0.0f, 0.0f, 0.0f);
+        const sf::Vector3f up(0.0f, 0.0f, 1.0f);
 
         Matrix view;
-
         matrixLookAt(view, eye, center, up);
 
         // Construct the projection matrix
