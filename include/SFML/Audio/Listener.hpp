@@ -215,8 +215,8 @@ SFML_AUDIO_API void setUpVector(const Vector3f& upVector);
 /// `sf::Listener` are their ears (by the way, they are often linked
 /// together -- same position, orientation, etc.).
 ///
-/// `sf::Listener` is a simple interface, which allows to setup the
-/// listener in the 3D audio environment (position, direction and
+/// `sf::Listener` is a simple interface, which allows for setting up
+/// the listener in the 3D audio environment (position, direction and
 /// up vector), and to adjust the global volume.
 ///
 /// Usage example:

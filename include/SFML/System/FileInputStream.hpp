@@ -186,7 +186,7 @@ private:
 /// reads from a file on disk.
 ///
 /// It wraps a file in the common `InputStream` interface
-/// and therefore allows to use generic classes or functions
+/// and therefore allows for using generic classes or functions
 /// that accept such a stream, with a file on disk as the data
 /// source.
 ///

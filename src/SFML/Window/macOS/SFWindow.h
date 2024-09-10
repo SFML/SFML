@@ -35,7 +35,7 @@
 @interface SFWindow : NSWindow
 
 ////////////////////////////////////////////////////////////
-/// \brief Allow to grab fullscreen events
+/// \brief Allow for grabbing fullscreen events
 ///
 /// acceptsFirstResponder and canBecomeKeyWindow messages must
 /// return YES to grab fullscreen events.
@@ -48,7 +48,7 @@
 - (BOOL)acceptsFirstResponder;
 
 ////////////////////////////////////////////////////////////
-/// \brief Allow to grab fullscreen events
+/// \brief Allow for grabbing fullscreen events
 ///
 /// See acceptsFirstResponder documentation above.
 ///

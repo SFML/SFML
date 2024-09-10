@@ -201,7 +201,7 @@ public:
 ///
 /// Additionally, `sf::VideoMode` provides a static function
 /// to get the mode currently used by the desktop: `getDesktopMode()`.
-/// This allows to build windows with the same size or pixel
+/// This allows for building windows with the same size or pixel
 /// depth as the current resolution.
 ///
 /// Usage example:

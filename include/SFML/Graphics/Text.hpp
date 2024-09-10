@@ -435,7 +435,7 @@ private:
 /// \class sf::Text
 /// \ingroup graphics
 ///
-/// `sf::Text` is a drawable class that allows to easily display
+/// `sf::Text` is a drawable class that allows for easily displaying
 /// some text with custom style and color on a render target.
 ///
 /// It inherits all the functions from `sf::Transformable`:

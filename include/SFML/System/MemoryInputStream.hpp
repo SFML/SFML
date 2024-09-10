@@ -115,7 +115,7 @@ private:
 /// reads from data in memory.
 ///
 /// It wraps a memory chunk in the common `InputStream` interface
-/// and therefore allows to use generic classes or functions
+/// and therefore allows for using generic classes or functions
 /// that accept such a stream, with content already loaded in memory.
 ///
 /// In addition to the virtual functions inherited from

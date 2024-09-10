@@ -165,7 +165,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Test the validity of the packet, for reading
     ///
-    /// This operator allows to test the packet as a boolean
+    /// This operator allows for testing the packet as a boolean
     /// variable, to check if a reading operation was successful.
     ///
     /// A packet will be in an invalid state if it has no more
@@ -513,7 +513,7 @@ private:
 /// }
 /// \endcode
 ///
-/// Packets also provide an extra feature that allows to apply
+/// Packets also provide an extra feature that allows for applying
 /// custom transformations to the data before it is sent,
 /// and after it is received. This is typically used to
 /// handle automatic compression or encryption of the data.

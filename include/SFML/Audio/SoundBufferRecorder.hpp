@@ -108,7 +108,7 @@ private:
 /// \class sf::SoundBufferRecorder
 /// \ingroup audio
 ///
-/// `sf::SoundBufferRecorder` allows to access a recorded sound
+/// `sf::SoundBufferRecorder` allows for accessing a recorded sound
 /// through a `sf::SoundBuffer`, so that it can be played, saved
 /// to a file, etc.
 ///

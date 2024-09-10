@@ -452,7 +452,7 @@ constexpr Time& operator%=(Time& left, Time right);
 /// \ingroup system
 ///
 /// `sf::Time` encapsulates a time value in a flexible way.
-/// It allows to define a time value either as a number of
+/// It allows for defining a time value either as a number of
 /// seconds, milliseconds or microseconds. It also works the
 /// other way round: you can read a time value as either
 /// a number of seconds, milliseconds or microseconds. It

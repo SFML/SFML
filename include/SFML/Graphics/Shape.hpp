@@ -328,8 +328,8 @@ private:
 /// \class sf::Shape
 /// \ingroup graphics
 ///
-/// `sf::Shape` is a drawable class that allows to define and
-/// display a custom convex shape on a render target.
+/// `sf::Shape` is a drawable class that allows for defining and
+/// displaying a custom convex shape on a render target.
 /// It's only an abstract base, it needs to be specialized for
 /// concrete types of shapes (circle, rectangle, convex polygon,
 /// star, ...).

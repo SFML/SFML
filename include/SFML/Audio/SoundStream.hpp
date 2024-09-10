@@ -311,7 +311,7 @@ private:
 /// Unlike audio buffers (see `sf::SoundBuffer`), audio streams
 /// are never completely loaded in memory. Instead, the audio
 /// data is acquired continuously while the stream is playing.
-/// This behavior allows to play a sound with no loading delay,
+/// This behavior allows for playing a sound with no loading delay,
 /// and keeps the memory consumption very low.
 ///
 /// Sound sources that need to be streamed are usually big files

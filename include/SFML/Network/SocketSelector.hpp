@@ -39,7 +39,7 @@ namespace sf
 class Socket;
 
 ////////////////////////////////////////////////////////////
-/// \brief Multiplexer that allows to read from multiple sockets
+/// \brief Multiplexer that allows for reading from multiple sockets
 ///
 ////////////////////////////////////////////////////////////
 class SFML_NETWORK_API SocketSelector
