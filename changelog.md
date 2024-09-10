@@ -1,5 +1,8 @@
 # Changelog
 
+SFML 3 is coming soon!
+For a sneak peak at what has changed, check out the [migration guide](migration.md).
+
 ## Unreleased
 
 ### General
