@@ -431,14 +431,13 @@ jobs:
 
   docs:
     name: Documentation
-    runs-on: ubuntu-22.04
+    runs-on: macos-14
 
     steps:
-    - name: Install Linux Dependencies
-      run: sudo apt-get update && sudo apt-get install xorg-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev xvfb fluxbox && sudo apt-get remove -y libasound2
-
     - name: Install Doxygen
-      run: sudo apt-get install doxygen graphviz
+      run: |
+        brew update
+        brew install doxygen || true
 
     - name: Checkout
       uses: actions/checkout@v4
