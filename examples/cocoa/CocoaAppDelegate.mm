@@ -120,7 +120,7 @@ struct SFMLmainWindow
          * periodically we need to add it to the two above runloop mode.
          *
          * The default mode allows timer firing while the user doesn't do anything
-         * while the second mode allows timer firing while he is using a slider
+         * while the second mode allows timer firing while they are using a slider
          * or a menu.
          */
 
