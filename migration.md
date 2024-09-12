@@ -425,6 +425,7 @@ SFML 3 capitalizes the `A` of `aliasing` for all the APIs.
 
 SFML 3 includes various smaller changes that ought to be mentioned.
 
+* Changed the parameter order of the `sf::Text` constructor, so that the provided font is always the first parameter
 * Reverted to default value of CMake's `BUILD_SHARED_LIBS` which means SFML now builds static libraries by default
 * Changed `sf::String` interface to use `std::u16string` and `std::u32string`
 * Removed `sf::ContextSettings` constructor in favor of aggregate initialization
