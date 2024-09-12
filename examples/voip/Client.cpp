@@ -107,7 +107,7 @@ private:
 
 ////////////////////////////////////////////////////////////
 /// Create a client, connect it to a running server and
-/// start sending him audio data
+/// start sending it audio data
 ///
 ////////////////////////////////////////////////////////////
 void doClient(unsigned short port)

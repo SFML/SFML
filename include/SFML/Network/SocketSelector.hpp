@@ -237,7 +237,7 @@ private:
 ///             if (listener.accept(client) == sf::Socket::Status::Done)
 ///             {
 ///                 // Add the new client to the selector so that we will
-///                 // be notified when he sends something
+///                 // be notified when they send something
 ///                 selector.add(client);
 ///
 ///                 // Add the new client to the clients list
