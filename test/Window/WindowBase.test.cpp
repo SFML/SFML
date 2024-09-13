@@ -88,6 +88,14 @@ TEST_CASE("[Window] sf::WindowBase", runDisplayTests())
             CHECK(windowBase.getNativeHandle() != sf::WindowHandle());
         }
 
+        SECTION("Mode, title, and state")
+        {
+            windowBase.create(sf::VideoMode({240, 360}), "WindowBase Tests", sf::State::Windowed);
+            CHECK(windowBase.isOpen());
+            CHECK(windowBase.getSize() == sf::Vector2u(240, 360));
+            CHECK(windowBase.getNativeHandle() != sf::WindowHandle());
+        }
+
         SECTION("Mode, title, style, and state")
         {
             windowBase.create(sf::VideoMode({240, 360}), "WindowBase Tests", sf::Style::Resize, sf::State::Windowed);

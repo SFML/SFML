@@ -96,6 +96,20 @@ void Window::create(VideoMode mode, const String& title, std::uint32_t style, St
 
 
 ////////////////////////////////////////////////////////////
+void Window::create(VideoMode mode, const String& title, State state)
+{
+    Window::create(mode, title, sf::Style::Default, state, ContextSettings{});
+}
+
+
+////////////////////////////////////////////////////////////
+void Window::create(VideoMode mode, const String& title, State state, const ContextSettings& settings)
+{
+    Window::create(mode, title, sf::Style::Default, state, settings);
+}
+
+
+////////////////////////////////////////////////////////////
 void Window::create(WindowHandle handle)
 {
     Window::create(handle, ContextSettings{});

@@ -158,6 +158,20 @@ public:
     virtual void create(VideoMode mode, const String& title, std::uint32_t style = Style::Default, State state = State::Windowed);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Create (or recreate) the window
+    ///
+    /// If the window was already created, it closes it first.
+    /// If \a `state` is `State::Fullscreen`, then \a `mode` must be
+    /// a valid video mode.
+    ///
+    /// \param mode  Video mode to use (defines the width, height and depth of the rendering area of the window)
+    /// \param title Title of the window
+    /// \param state %Window state
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void create(VideoMode mode, const String& title, State state);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Create (or recreate) the window from an existing control
     ///
     /// \param handle Platform-specific handle of the control
