@@ -346,11 +346,11 @@ private:
 ///     {
 ///         // Open the source and get audio settings
 ///         ...
-///         unsigned int channelCount = ...;
-///         unsigned int sampleRate = ...;
+///         unsigned int channelCount = 2; // Stereo
+///         unsigned int sampleRate = 44100; // 44100 Hz
 ///
 ///         // Initialize the stream -- important!
-///         initialize(channelCount, sampleRate);
+///         initialize(channelCount, sampleRate, {sf::SoundChannel::FrontLeft, sf::SoundChannel::FrontRight});
 ///         return true;
 ///     }
 ///
