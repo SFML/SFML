@@ -5,17 +5,12 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
     # don't use the OpenGL ES implementation on Windows
     set(OPENGL_ES 0)
 
-    # detect the architecture (note: this test won't work for cross-compilation)
-    include(CheckTypeSize)
-    check_type_size(void* SIZEOF_VOID_PTR)
-
-    if(${CMAKE_GENERATOR_PLATFORM} MATCHES "ARM64")
+    # detect the architecture
+    if("${CMAKE_GENERATOR_PLATFORM}" MATCHES "ARM64" OR "${MSVC_CXX_ARCHITECTURE_ID}" MATCHES "ARM64" OR "${CMAKE_SYSTEM_PROCESSOR}" MATCHES "ARM64")
         set(ARCH_ARM64 1)
-    elseif("${CMAKE_GENERATOR_PLATFORM}" STREQUAL "" AND ${CMAKE_SYSTEM_PROCESSOR} MATCHES "ARM64")
-        set(ARCH_ARM64 1)
-    elseif(${SIZEOF_VOID_PTR} STREQUAL "4")
+    elseif(CMAKE_SIZEOF_VOID_P EQUAL 4)
         set(ARCH_X86 1)
-    elseif(${SIZEOF_VOID_PTR} STREQUAL "8")
+    elseif(CMAKE_SIZEOF_VOID_P EQUAL 8)
         set(ARCH_X64 1)
     else()
         message(FATAL_ERROR "Unsupported architecture")
