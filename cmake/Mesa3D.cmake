@@ -4,11 +4,11 @@ set(MESA3D_SHA256 "FEF8A643689414A70347AE8027D24674DEFD85E8D6428C8A9D4145BB3F44A
 get_filename_component(MESA3D_ARCHIVE "${MESA3D_URL}" NAME)
 get_filename_component(MESA3D_ARCHIVE_DIRECTORY "${MESA3D_URL}" NAME_WLE)
 
-if(${ARCH_X64})
+if(ARCH_X64)
     set(MESA3D_ARCH "x64")
-elseif(${ARCH_X86})
+elseif(ARCH_X86)
     set(MESA3D_ARCH "x86")
-else()
+elseif(SFML_USE_MESA3D)
     message(FATAL_ERROR "Mesa 3D does currently not support the target architecture.")
 endif()
 
@@ -61,7 +61,7 @@ if(SFML_OS_WINDOWS AND SFML_USE_MESA3D)
     add_custom_target(install-mesa3d DEPENDS ${MESA3D_INSTALLED_FILES})
 
     set_target_properties(install-mesa3d PROPERTIES EXCLUDE_FROM_ALL ON)
-elseif(SFML_OS_WINDOWS AND EXISTS "${MESA3D_ARCH_PATH}")
+elseif(SFML_OS_WINDOWS AND MESA3D_ARCH AND EXISTS "${MESA3D_ARCH_PATH}")
     # we are removing the files
 
     # compile a list of file names that we have to remove
