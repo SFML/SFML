@@ -103,6 +103,13 @@ void WindowBase::create(VideoMode mode, const String& title, std::uint32_t style
 
 
 ////////////////////////////////////////////////////////////
+void WindowBase::create(VideoMode mode, const String& title, State state)
+{
+    create(mode, title, Style::Default, state);
+}
+
+
+////////////////////////////////////////////////////////////
 void WindowBase::create(WindowHandle handle)
 {
     // Recreate the window implementation
