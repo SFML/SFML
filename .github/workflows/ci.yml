@@ -13,6 +13,7 @@ jobs:
         platform:
         - { name: Windows VS2022,       os: windows-2022 }
         - { name: Windows VS2022 Clang, os: windows-2022, flags: -T ClangCL }
+        - { name: Windows VS2022 arm64, os: windows-2022, flags: -A arm64 -DSFML_BUILD_TEST_SUITE=FALSE }
         - { name: Linux GCC,            os: ubuntu-22.04 }
         - { name: Linux Clang,          os: ubuntu-22.04, flags: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ }
         - { name: Linux GCC OpenGL ES,  os: ubuntu-22.04, flags: -DSFML_OPENGL_ES=ON }
