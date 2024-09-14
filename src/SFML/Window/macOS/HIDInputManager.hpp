@@ -286,7 +286,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    IOHIDManagerRef                                                       m_manager{}; ///< Underlying HID Manager
+    IOHIDManagerRef m_manager{};         ///< Underlying HID Manager
+    bool            m_keysInitialized{}; ///< Has initializeKeyboard been called at least once?
     EnumArray<Keyboard::Scancode, IOHIDElements, Keyboard::ScancodeCount> m_keys; ///< All the keys on any connected keyboard
     EnumArray<Keyboard::Key, Keyboard::Scancode, Keyboard::KeyCount> m_keyToScancodeMapping{}; ///< Mapping from Key to Scancode
     EnumArray<Keyboard::Scancode, Keyboard::Key, Keyboard::ScancodeCount> m_scancodeToKeyMapping{}; ///< Mapping from Scancode to Key
