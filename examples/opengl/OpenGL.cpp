@@ -1,339 +1,235 @@
-////////////////////////////////////////////////////////////
-// Headers
-////////////////////////////////////////////////////////////
-#include <SFML/Graphics.hpp>
+#include "SFML/Graphics/Font.hpp"
+#include "SFML/Graphics/Image.hpp"
+#include "SFML/Graphics/RenderStates.hpp"
+#include "SFML/Graphics/RenderTexture.hpp"
+#include "SFML/Graphics/RenderWindow.hpp"
+#include "SFML/Graphics/Sprite.hpp"
+#include "SFML/Graphics/Text.hpp"
+#include "SFML/Graphics/Texture.hpp"
+#include "SFML/System/Clock.hpp"
+#include "SFML/System/Vector2.hpp"
+#include "SFML/Window/Event.hpp"
+#include "SFML/Window/VideoMode.hpp"
 
-#include <array>
-#include <filesystem>
-#include <iostream>
+#include <random>
+#include <string>
+#include <vector>
 
-#include <cstdlib>
+#include <cstddef>
 
-#define GLAD_GL_IMPLEMENTATION
-#include <gl.h>
 
-#ifdef SFML_SYSTEM_IOS
-#include <SFML/Main.hpp>
-#endif
-
-#ifndef GL_SRGB8_ALPHA8
-#define GL_SRGB8_ALPHA8 0x8C43
-#endif
-
-std::filesystem::path resourcesDir()
+float getRndFloat(float min, float max)
 {
-#ifdef SFML_SYSTEM_IOS
-    return "";
-#else
-    return "resources";
-#endif
+    static std::mt19937 rng(std::random_device{}());
+    return std::uniform_real_distribution<float>{min, max}(rng);
 }
 
-////////////////////////////////////////////////////////////
-/// Entry point of application
-///
-/// \return Application exit code
-///
-////////////////////////////////////////////////////////////
 int main()
 {
-    bool exit = false;
-    bool sRgb = false;
 
-    while (!exit)
+    //
+    //
+    // Set up window
+    constexpr sf::Vector2f windowSize{1024.f, 768.f};
+
+    sf::RenderWindow window(sf::VideoMode{{1024u, 768u}}, "upstream batching");
+
+    window.setVerticalSyncEnabled(true);
+
+    //
+    //
+    // Load fonts
+    const sf::Font fontTuffy("resources/tuffy.ttf");
+    const sf::Font fontMouldyCheese("resources/mouldycheese.ttf");
+
+    //
+    //
+    // Load images
+    const sf::Image imgElephant("resources/elephant.png");
+    const sf::Image imgGiraffe("resources/giraffe.png");
+    const sf::Image imgMonkey("resources/monkey.png");
+    const sf::Image imgPig("resources/pig.png");
+    const sf::Image imgRabbit("resources/rabbit.png");
+    const sf::Image imgSnake("resources/snake.png");
+
+    //
+    //
+    // Texture array
+    const sf::Texture spriteTextures[]{sf::Texture(imgElephant),
+                                       sf::Texture(imgGiraffe),
+                                       sf::Texture(imgMonkey),
+                                       sf::Texture(imgPig),
+                                       sf::Texture(imgRabbit),
+                                       sf::Texture(imgSnake)};
+
+    //
+    //
+    // Simulation stuff
+    constexpr const char* names[]{"Elephant", "Giraffe", "Monkey", "Pig", "Rabbit", "Snake"};
+
+    struct Entity
     {
-        // Request a 24-bits depth buffer when creating the window
-        sf::ContextSettings contextSettings;
-        contextSettings.depthBits   = 24;
-        contextSettings.sRgbCapable = sRgb;
+        sf::Text     text;
+        sf::Sprite   sprite;
+        sf::Vector2f velocity;
+        float        torque{};
+    };
 
-        // Create the main window
-        sf::RenderWindow window(sf::VideoMode({800, 600}),
-                                "SFML graphics with OpenGL",
-                                sf::Style::Default,
-                                sf::State::Windowed,
-                                contextSettings);
-        window.setVerticalSyncEnabled(true);
-        window.setMinimumSize(sf::Vector2u(400, 300));
-        window.setMaximumSize(sf::Vector2u(1200, 900));
+    std::vector<Entity> entities;
 
-        // Create a sprite for the background
-        const sf::Texture backgroundTexture(resourcesDir() / "background.jpg", sRgb);
-        const sf::Sprite  background(backgroundTexture);
-
-        // Create some text to draw on top of our OpenGL object
-        const sf::Font font(resourcesDir() / "tuffy.ttf");
-
-        sf::Text text(font, "SFML / OpenGL demo");
-        sf::Text sRgbInstructions(font, "Press space to toggle sRGB conversion");
-        sf::Text mipmapInstructions(font, "Press return to toggle mipmapping");
-        text.setFillColor(sf::Color(255, 255, 255, 170));
-        sRgbInstructions.setFillColor(sf::Color(255, 255, 255, 170));
-        mipmapInstructions.setFillColor(sf::Color(255, 255, 255, 170));
-        text.setPosition({280.f, 450.f});
-        sRgbInstructions.setPosition({175.f, 500.f});
-        mipmapInstructions.setPosition({200.f, 550.f});
-
-        // Load a texture to apply to our 3D cube
-        sf::Texture texture(resourcesDir() / "logo.png");
-
-        // Attempt to generate a mipmap for our cube texture
-        // We don't check the return value here since
-        // mipmapping is purely optional in this example
-        (void)texture.generateMipmap();
-
-        // Make the window the active window for OpenGL calls
-        if (!window.setActive(true))
+    const auto populateEntities = [&](const std::size_t n)
+    {
+        if (n < entities.size())
         {
-            std::cerr << "Failed to set window to active" << std::endl;
-            return EXIT_FAILURE;
+            entities.erase(entities.begin() + static_cast<std::ptrdiff_t>(n), entities.end());
+            return;
         }
 
-        // Load OpenGL or OpenGL ES entry points using glad
-#ifdef SFML_OPENGL_ES
-        gladLoadGLES1(sf::Context::getFunction);
-#else
-        gladLoadGL(sf::Context::getFunction);
-#endif
+        entities.clear();
+        entities.reserve(n);
 
-        // Enable Z-buffer read and write
-        glEnable(GL_DEPTH_TEST);
-        glDepthMask(GL_TRUE);
-#ifdef SFML_OPENGL_ES
-        glClearDepthf(1.f);
-#else
-        glClearDepth(1.f);
-#endif
-
-        // Disable lighting
-        glDisable(GL_LIGHTING);
-
-        // Configure the viewport (the same size as the window)
-        glViewport(0, 0, static_cast<GLsizei>(window.getSize().x), static_cast<GLsizei>(window.getSize().y));
-
-        // Setup a perspective projection
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        const GLfloat ratio = static_cast<float>(window.getSize().x) / static_cast<float>(window.getSize().y);
-#ifdef SFML_OPENGL_ES
-        glFrustumf(-ratio, ratio, -1.f, 1.f, 1.f, 500.f);
-#else
-        glFrustum(-ratio, ratio, -1.f, 1.f, 1.f, 500.f);
-#endif
-
-        // Bind the texture
-        glEnable(GL_TEXTURE_2D);
-        sf::Texture::bind(&texture);
-
-        // Define a 3D cube (6 faces made of 2 triangles composed by 3 vertices)
-        // clang-format off
-        constexpr std::array<GLfloat, 180> cube =
+        for (std::size_t i = 0u; i < n; ++i)
         {
-            // positions    // texture coordinates
-            -20, -20, -20,  0, 0,
-            -20,  20, -20,  1, 0,
-            -20, -20,  20,  0, 1,
-            -20, -20,  20,  0, 1,
-            -20,  20, -20,  1, 0,
-            -20,  20,  20,  1, 1,
+            const std::size_t  type    = i % 6u;
+            const sf::Texture& texture = spriteTextures[type];
 
-             20, -20, -20,  0, 0,
-             20,  20, -20,  1, 0,
-             20, -20,  20,  0, 1,
-             20, -20,  20,  0, 1,
-             20,  20, -20,  1, 0,
-             20,  20,  20,  1, 1,
+            const auto label = std::string{names[i % 6u]} + " #" + std::to_string((i / (type + 1)) + 1);
 
-            -20, -20, -20,  0, 0,
-             20, -20, -20,  1, 0,
-            -20, -20,  20,  0, 1,
-            -20, -20,  20,  0, 1,
-             20, -20, -20,  1, 0,
-             20, -20,  20,  1, 1,
+            entities.push_back({sf::Text{i % 2u == 0u ? fontTuffy : fontMouldyCheese, label},
+                                sf::Sprite{texture},
+                                sf::Vector2f{getRndFloat(-2.5f, 2.5f), getRndFloat(-2.5f, 2.5f)},
+                                getRndFloat(-0.05f, 0.05f)});
 
-            -20,  20, -20,  0, 0,
-             20,  20, -20,  1, 0,
-            -20,  20,  20,  0, 1,
-            -20,  20,  20,  0, 1,
-             20,  20, -20,  1, 0,
-             20,  20,  20,  1, 1,
+            auto& [text, sprite, velocity, torque] = entities.back();
 
-            -20, -20, -20,  0, 0,
-             20, -20, -20,  1, 0,
-            -20,  20, -20,  0, 1,
-            -20,  20, -20,  0, 1,
-             20, -20, -20,  1, 0,
-             20,  20, -20,  1, 1,
+            sprite.setOrigin(sf::Vector2f(texture.getSize()) / 2.f);
+            sprite.setRotation(sf::degrees(getRndFloat(0.f, 360.f)));
 
-            -20, -20,  20,  0, 0,
-             20, -20,  20,  1, 0,
-            -20,  20,  20,  0, 1,
-            -20,  20,  20,  0, 1,
-             20, -20,  20,  1, 0,
-             20,  20,  20,  1, 1
-        };
-        // clang-format on
+            const float scaleFactor = getRndFloat(0.08f, 0.17f);
+            sprite.setScale({scaleFactor, scaleFactor});
+            text.setScale({scaleFactor * 3.5f, scaleFactor * 3.5f});
 
-        // Enable position and texture coordinates vertex components
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glVertexPointer(3, GL_FLOAT, 5 * sizeof(GLfloat), cube.data());
-        glTexCoordPointer(2, GL_FLOAT, 5 * sizeof(GLfloat), cube.data() + 3);
+            sprite.setPosition({getRndFloat(0.f, windowSize.x), getRndFloat(0.f, windowSize.y)});
 
-        // Disable normal and color vertex components
-        glDisableClientState(GL_NORMAL_ARRAY);
-        glDisableClientState(GL_COLOR_ARRAY);
+            text.setFillColor(sf::Color::Black);
+            text.setOutlineColor(sf::Color::White);
+            text.setOutlineThickness(5.f);
 
-        // Make the window no longer the active window for OpenGL calls
-        if (!window.setActive(false))
+            text.setOrigin(text.getLocalBounds().size / 2.f);
+        }
+    };
+
+    //
+    //
+    // Set up UI elements
+    bool drawSprites = true;
+    bool drawText    = true;
+    int  numEntities = 10000;
+
+    //
+    //
+    // Set up clock and time sampling stuff
+    sf::Clock clock;
+    sf::Clock fpsClock;
+
+    std::vector<float> samplesUpdateMs{};
+    std::vector<float> samplesDrawMs{};
+    std::vector<float> samplesFPS{};
+
+    const auto recordUs = [&](std::vector<float>& target, const float value)
+    {
+        target.push_back(value);
+
+        if (target.size() > 32u)
+            target.erase(target.begin());
+    };
+
+    const auto getAverage = [&](const std::vector<float>& target)
+    {
+        double accumulator = 0.0;
+
+        for (auto value : target)
+            accumulator += static_cast<double>(value);
+
+        return accumulator / static_cast<double>(target.size());
+    };
+
+    //
+    //
+    // Set up initial simulation state
+    populateEntities(static_cast<std::size_t>(numEntities));
+
+    //
+    //
+    // Simulation loop
+    while (true)
+    {
+        fpsClock.restart();
+
+        ////////////////////////////////////////////////////////////
+        // Event handling
+        ////////////////////////////////////////////////////////////
+        while (auto event = window.pollEvent())
         {
-            std::cerr << "Failed to set window to inactive" << std::endl;
-            return EXIT_FAILURE;
+            if (event->is<sf::Event::Closed>() ||
+                (event->is<sf::Event::KeyPressed>() &&
+                 event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Escape))
+            {
+                window.close();
+                break;
+            }
         }
 
-        // Create a clock for measuring the time elapsed
-        const sf::Clock clock;
-
-        // Flag to track whether mipmapping is currently enabled
-        bool mipmapEnabled = true;
-
-        // Start game loop
-        while (window.isOpen())
+        ////////////////////////////////////////////////////////////
+        // Update step
+        ////////////////////////////////////////////////////////////
         {
-            // Process events
-            while (const std::optional event = window.pollEvent())
+            clock.restart();
+
+            for (auto& [text, sprite, velocity, torque] : entities)
             {
-                // Window closed or escape key pressed: exit
-                if (event->is<sf::Event::Closed>() ||
-                    (event->is<sf::Event::KeyPressed>() &&
-                     event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Escape))
-                {
-                    exit = true;
-                    window.close();
-                }
+                sprite.move(velocity);
+                sprite.rotate(sf::radians(torque));
 
-                // Return key: toggle mipmapping
-                if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>();
-                    keyPressed && keyPressed->code == sf::Keyboard::Key::Enter)
-                {
-                    if (mipmapEnabled)
-                    {
-                        // We simply reload the texture to disable mipmapping
-                        texture = sf::Texture(resourcesDir() / "logo.png");
+                if ((sprite.getPosition().x > windowSize.x && velocity.x > 0.f) ||
+                    (sprite.getPosition().x < 0.f && velocity.x < 0.f))
+                    velocity.x = -velocity.x;
 
-                        // Rebind the texture
-                        sf::Texture::bind(&texture);
+                if ((sprite.getPosition().y > windowSize.y && velocity.y > 0.f) ||
+                    (sprite.getPosition().y < 0.f && velocity.y < 0.f))
+                    velocity.y = -velocity.y;
 
-                        mipmapEnabled = false;
-                    }
-                    else if (texture.generateMipmap())
-                    {
-                        mipmapEnabled = true;
-                    }
-                }
-
-                // Space key: toggle sRGB conversion
-                if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>();
-                    keyPressed && keyPressed->code == sf::Keyboard::Key::Space)
-                {
-                    sRgb = !sRgb;
-                    window.close();
-                }
-
-                // Adjust the viewport when the window is resized
-                if (const auto* resized = event->getIf<sf::Event::Resized>())
-                {
-                    const sf::Vector2u textureSize = backgroundTexture.getSize();
-
-                    // Make the window the active window for OpenGL calls
-                    if (!window.setActive(true))
-                    {
-                        std::cerr << "Failed to set window to active" << std::endl;
-                        return EXIT_FAILURE;
-                    }
-
-                    const auto [width, height] = resized->size;
-                    glViewport(0, 0, static_cast<GLsizei>(width), static_cast<GLsizei>(height));
-                    glMatrixMode(GL_PROJECTION);
-                    glLoadIdentity();
-                    const GLfloat newRatio = static_cast<float>(width) / static_cast<float>(height);
-#ifdef SFML_OPENGL_ES
-                    glFrustumf(-newRatio, newRatio, -1.f, 1.f, 1.f, 500.f);
-#else
-                    glFrustum(-newRatio, newRatio, -1.f, 1.f, 1.f, 500.f);
-#endif
-
-                    // Make the window no longer the active window for OpenGL calls
-                    if (!window.setActive(false))
-                    {
-                        std::cerr << "Failed to set window to inactive" << std::endl;
-                        return EXIT_FAILURE;
-                    }
-
-                    sf::View view;
-                    view.setSize(sf::Vector2f(textureSize));
-                    view.setCenter(sf::Vector2f(textureSize) / 2.f);
-                    window.setView(view);
-                }
+                text.setPosition(sprite.getPosition() - sf::Vector2f{0.f, 250.f * sprite.getScale().x});
             }
 
-            // Draw the background
-            window.pushGLStates();
-            window.draw(background);
-            window.popGLStates();
-
-            // Make the window the active window for OpenGL calls
-            if (!window.setActive(true))
-            {
-                // On failure, try re-creating the window, as it is intentionally
-                // closed when changing color space.
-                continue;
-            }
-
-            // Clear the depth buffer
-            glClear(GL_DEPTH_BUFFER_BIT);
-
-            // We get the position of the mouse cursor (or touch), so that we can move the box accordingly
-            sf::Vector2i pos;
-
-#ifdef SFML_SYSTEM_IOS
-            pos = sf::Touch::getPosition(0);
-#else
-            pos = sf::Mouse::getPosition(window);
-#endif
-
-            const float x = static_cast<float>(pos.x) * 200.f / static_cast<float>(window.getSize().x) - 100.f;
-            const float y = -static_cast<float>(pos.y) * 200.f / static_cast<float>(window.getSize().y) + 100.f;
-
-            // Apply some transformations
-            glMatrixMode(GL_MODELVIEW);
-            glLoadIdentity();
-            glTranslatef(x, y, -100.f);
-            glRotatef(clock.getElapsedTime().asSeconds() * 50.f, 1.f, 0.f, 0.f);
-            glRotatef(clock.getElapsedTime().asSeconds() * 30.f, 0.f, 1.f, 0.f);
-            glRotatef(clock.getElapsedTime().asSeconds() * 90.f, 0.f, 0.f, 1.f);
-
-            // Draw the cube
-            glDrawArrays(GL_TRIANGLES, 0, 36);
-
-            // Make the window no longer the active window for OpenGL calls
-            if (!window.setActive(false))
-            {
-                std::cerr << "Failed to set window to inactive" << std::endl;
-                return EXIT_FAILURE;
-            }
-
-            // Draw some text on top of our OpenGL object
-            window.pushGLStates();
-            window.draw(text);
-            window.draw(sRgbInstructions);
-            window.draw(mipmapInstructions);
-            window.popGLStates();
-
-            // Finally, display the rendered frame on screen
-            window.display();
+            recordUs(samplesUpdateMs, clock.getElapsedTime().asSeconds() * 1000.f);
         }
+
+        ////////////////////////////////////////////////////////////
+        // Draw step
+        ////////////////////////////////////////////////////////////
+        {
+            clock.restart();
+            window.clear();
+
+            for (const Entity& entity : entities)
+            {
+                if (drawSprites)
+                    window.draw(entity.sprite);
+
+                if (drawText)
+                    window.draw(entity.text);
+            }
+
+            recordUs(samplesDrawMs, clock.getElapsedTime().asSeconds() * 1000.f);
+        }
+
+        window.display();
+
+        recordUs(samplesFPS, 1.f / fpsClock.getElapsedTime().asSeconds());
+
+        window.setTitle(
+            "FPS: " + std::to_string(getAverage(samplesFPS)) + " || U: " + std::to_string(getAverage(samplesUpdateMs)) +
+            " || D: " + std::to_string(getAverage(samplesDrawMs)));
     }
-
-    return EXIT_SUCCESS;
 }
