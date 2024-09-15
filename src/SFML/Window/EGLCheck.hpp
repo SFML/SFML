@@ -63,7 +63,9 @@ namespace sf::priv
 /// \param line Line number of the source file where the call is located
 /// \param expression The evaluated expression as a string
 ///
+/// \return `false` if an error occurred, `true` otherwise
+///
 ////////////////////////////////////////////////////////////
-void eglCheckError(const std::filesystem::path& file, unsigned int line, std::string_view expression);
+bool eglCheckError(const std::filesystem::path& file, unsigned int line, std::string_view expression);
 
 } // namespace sf::priv
