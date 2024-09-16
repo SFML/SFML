@@ -22,6 +22,7 @@
 -   [Windows] Close the clipboard if we fail to empty it (#3043)
 -   [Android] Remove use of deprecated `ALooper_pollAll` (#3181, #3189)
 -   [macOS] Fix how macOS fullscreen video modes are detected (#2300, #3151)
+-   [macOS] Prevent unnecessary macOS input monitoring permission prompts (#2843, #3235)
 
 ### Graphics
 
