@@ -36,27 +36,6 @@
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-/// Let's define a macro to quickly check every EGL API call
-////////////////////////////////////////////////////////////
-#ifdef SFML_DEBUG
-
-// In debug mode, perform a test on every EGL call
-// The do-while loop is needed so that glCheck can be used as a single statement in if/else branches
-#define eglCheck(expr)                                      \
-    do                                                      \
-    {                                                       \
-        expr;                                               \
-        sf::priv::eglCheckError(__FILE__, __LINE__, #expr); \
-    } while (false)
-
-#else
-
-// Else, we don't add any overhead
-#define eglCheck(x) (x)
-
-#endif
-
-////////////////////////////////////////////////////////////
 /// \brief Check the last EGL error
 ///
 /// \param file Source file where the call is located
@@ -67,5 +46,36 @@ namespace sf::priv
 ///
 ////////////////////////////////////////////////////////////
 bool eglCheckError(const std::filesystem::path& file, unsigned int line, std::string_view expression);
+
+////////////////////////////////////////////////////////////
+/// Let's define a macro to quickly check every EGL API call
+////////////////////////////////////////////////////////////
+#ifdef SFML_DEBUG
+
+// In debug mode, perform a test on every EGL call
+// The lamdba allows us to call eglCheck as an expression and acts as a single statement perfect for if/else statements
+#define eglCheck(...)                                                                             \
+    [](auto&& eglCheckInternalFunction)                                                           \
+    {                                                                                             \
+        if constexpr (!std::is_void_v<decltype(eglCheckInternalFunction())>)                      \
+        {                                                                                         \
+            const auto eglCheckInternalReturnValue = eglCheckInternalFunction();                  \
+            sf::priv::eglCheckError(__FILE__, static_cast<unsigned int>(__LINE__), #__VA_ARGS__); \
+            return eglCheckInternalReturnValue;                                                   \
+        }                                                                                         \
+        else                                                                                      \
+        {                                                                                         \
+            eglCheckInternalFunction();                                                           \
+            sf::priv::eglCheckError(__FILE__, static_cast<unsigned int>(__LINE__), #__VA_ARGS__); \
+        }                                                                                         \
+    }([&]() { return __VA_ARGS__; })
+
+#else
+
+// Else, we don't add any overhead
+#define eglCheck(...) (__VA_ARGS__)
+
+#endif
+
 
 } // namespace sf::priv

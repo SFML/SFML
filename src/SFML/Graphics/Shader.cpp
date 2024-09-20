@@ -185,7 +185,7 @@ struct Shader::UniformBinder
         if (currentProgram)
         {
             // Enable program object
-            glCheck(savedProgram = GLEXT_glGetHandle(GLEXT_GL_PROGRAM_OBJECT));
+            savedProgram = glCheck(GLEXT_glGetHandle(GLEXT_GL_PROGRAM_OBJECT));
             if (currentProgram != savedProgram)
                 glCheck(GLEXT_glUseProgramObject(currentProgram));
 
@@ -865,17 +865,15 @@ bool Shader::compile(std::string_view vertexShaderCode, std::string_view geometr
     }
 
     // Create the program
-    GLEXT_GLhandle shaderProgram{};
-    glCheck(shaderProgram = GLEXT_glCreateProgramObject());
+    const GLEXT_GLhandle shaderProgram = glCheck(GLEXT_glCreateProgramObject());
 
     // Create the vertex shader if needed
     if (!vertexShaderCode.empty())
     {
         // Create and compile the shader
-        GLEXT_GLhandle vertexShader{};
-        glCheck(vertexShader = GLEXT_glCreateShaderObject(GLEXT_GL_VERTEX_SHADER));
-        const GLcharARB* sourceCode       = vertexShaderCode.data();
-        const auto       sourceCodeLength = static_cast<GLint>(vertexShaderCode.length());
+        const GLEXT_GLhandle vertexShader     = glCheck(GLEXT_glCreateShaderObject(GLEXT_GL_VERTEX_SHADER));
+        const GLcharARB*     sourceCode       = vertexShaderCode.data();
+        const auto           sourceCodeLength = static_cast<GLint>(vertexShaderCode.length());
         glCheck(GLEXT_glShaderSource(vertexShader, 1, &sourceCode, &sourceCodeLength));
         glCheck(GLEXT_glCompileShader(vertexShader));
 
@@ -929,10 +927,9 @@ bool Shader::compile(std::string_view vertexShaderCode, std::string_view geometr
     if (!fragmentShaderCode.empty())
     {
         // Create and compile the shader
-        GLEXT_GLhandle fragmentShader{};
-        glCheck(fragmentShader = GLEXT_glCreateShaderObject(GLEXT_GL_FRAGMENT_SHADER));
-        const GLcharARB* sourceCode       = fragmentShaderCode.data();
-        const auto       sourceCodeLength = static_cast<GLint>(fragmentShaderCode.length());
+        const GLEXT_GLhandle fragmentShader   = glCheck(GLEXT_glCreateShaderObject(GLEXT_GL_FRAGMENT_SHADER));
+        const GLcharARB*     sourceCode       = fragmentShaderCode.data();
+        const auto           sourceCodeLength = static_cast<GLint>(fragmentShaderCode.length());
         glCheck(GLEXT_glShaderSource(fragmentShader, 1, &sourceCode, &sourceCodeLength));
         glCheck(GLEXT_glCompileShader(fragmentShader));
 

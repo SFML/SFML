@@ -236,23 +236,19 @@ bool VertexBuffer::update([[maybe_unused]] const VertexBuffer& vertexBuffer)
                                nullptr,
                                VertexBufferImpl::usageToGlEnum(m_usage)));
 
-    void* destination = nullptr;
-    glCheck(destination = GLEXT_glMapBuffer(GLEXT_GL_ARRAY_BUFFER, GLEXT_GL_WRITE_ONLY));
+    void* const destination = glCheck(GLEXT_glMapBuffer(GLEXT_GL_ARRAY_BUFFER, GLEXT_GL_WRITE_ONLY));
 
     glCheck(GLEXT_glBindBuffer(GLEXT_GL_ARRAY_BUFFER, vertexBuffer.m_buffer));
 
-    void* source = nullptr;
-    glCheck(source = GLEXT_glMapBuffer(GLEXT_GL_ARRAY_BUFFER, GLEXT_GL_READ_ONLY));
+    const void* const source = glCheck(GLEXT_glMapBuffer(GLEXT_GL_ARRAY_BUFFER, GLEXT_GL_READ_ONLY));
 
     std::memcpy(destination, source, sizeof(Vertex) * vertexBuffer.m_size);
 
-    GLboolean sourceResult = GL_FALSE;
-    glCheck(sourceResult = GLEXT_glUnmapBuffer(GLEXT_GL_ARRAY_BUFFER));
+    const GLboolean sourceResult = glCheck(GLEXT_glUnmapBuffer(GLEXT_GL_ARRAY_BUFFER));
 
     glCheck(GLEXT_glBindBuffer(GLEXT_GL_ARRAY_BUFFER, m_buffer));
 
-    GLboolean destinationResult = GL_FALSE;
-    glCheck(destinationResult = GLEXT_glUnmapBuffer(GLEXT_GL_ARRAY_BUFFER));
+    const GLboolean destinationResult = glCheck(GLEXT_glUnmapBuffer(GLEXT_GL_ARRAY_BUFFER));
 
     glCheck(GLEXT_glBindBuffer(GLEXT_GL_ARRAY_BUFFER, 0));
 
