@@ -31,31 +31,10 @@
 
 #include <filesystem>
 #include <string_view>
-
+#include <type_traits>
 
 namespace sf::priv
 {
-////////////////////////////////////////////////////////////
-/// Let's define a macro to quickly check every OpenGL API call
-////////////////////////////////////////////////////////////
-#ifdef SFML_DEBUG
-
-// In debug mode, perform a test on every OpenGL call
-// The do-while loop is needed so that glCheck can be used as a single statement in if/else branches
-#define glCheck(expr)                                      \
-    do                                                     \
-    {                                                      \
-        expr;                                              \
-        sf::priv::glCheckError(__FILE__, __LINE__, #expr); \
-    } while (false)
-
-#else
-
-// Else, we don't add any overhead
-#define glCheck(expr) (expr)
-
-#endif
-
 ////////////////////////////////////////////////////////////
 /// \brief Check the last OpenGL error
 ///
@@ -67,5 +46,33 @@ namespace sf::priv
 ///
 ////////////////////////////////////////////////////////////
 bool glCheckError(const std::filesystem::path& file, unsigned int line, std::string_view expression);
+
+////////////////////////////////////////////////////////////
+/// Let's define a macro to quickly check every OpenGL API call
+////////////////////////////////////////////////////////////
+#ifdef SFML_DEBUG
+// In debug mode, perform a test on every OpenGL call
+// The lamdba allows us to call glCheck as an expression and acts as a single statement perfect for if/else statements
+#define glCheck(...)                                                                             \
+    [](auto&& glCheckInternalFunction)                                                           \
+    {                                                                                            \
+        if constexpr (!std::is_void_v<decltype(glCheckInternalFunction())>)                      \
+        {                                                                                        \
+            const auto glCheckInternalReturnValue = glCheckInternalFunction();                   \
+            sf::priv::glCheckError(__FILE__, static_cast<unsigned int>(__LINE__), #__VA_ARGS__); \
+            return glCheckInternalReturnValue;                                                   \
+        }                                                                                        \
+        else                                                                                     \
+        {                                                                                        \
+            glCheckInternalFunction();                                                           \
+            sf::priv::glCheckError(__FILE__, static_cast<unsigned int>(__LINE__), #__VA_ARGS__); \
+        }                                                                                        \
+    }([&]() { return __VA_ARGS__; })
+#else
+
+// Else, we don't add any overhead
+#define glCheck(...) (__VA_ARGS__)
+
+#endif
 
 } // namespace sf::priv

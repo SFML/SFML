@@ -42,7 +42,7 @@ bool eglCheckError(const std::filesystem::path& file, unsigned int line, std::st
 {
     const auto logError = [&](const char* error, const char* description)
     {
-        err() << "An internal EGL call failed in " << file.filename() << " (" << line << ") : "
+        err() << "An internal EGL call failed in " << file.filename() << "(" << line << ")."
               << "\nExpression:\n   " << expression << "\nError description:\n   " << error << "\n   " << description << '\n'
               << std::endl;
 
