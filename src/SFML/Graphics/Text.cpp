@@ -312,9 +312,7 @@ Vector2f Text::findCharacterPos(std::size_t index) const
     }
 
     // Transform the position to global coordinates
-    position = getTransform().transformPoint(position);
-
-    return position;
+    return getTransform().transformPoint(position);
 }
 
 
