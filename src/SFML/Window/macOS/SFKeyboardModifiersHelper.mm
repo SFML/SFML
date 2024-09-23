@@ -75,33 +75,40 @@ namespace
 /// Share 'modifiers' state with all windows to correctly fire pressed/released events
 ModifiersState state;
 BOOL           isStateInitialized = NO;
+
+////////////////////////////////////////////////////////
+BOOL isKeyMaskActive(NSUInteger modifiers, NSUInteger mask)
+{
+    // Here we need to make sure it's exactly the mask since some masks
+    // share some bits such that the & operation would result in a non zero
+    // value without corresponding to the processed key.
+    return (modifiers & mask) == mask;
 }
 
-
-////////////////////////////////////////////////////////////
-// Local & Private Functions
-////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////
-/// \brief Carefully observe if the key mask is on in the modifiers
-///
-////////////////////////////////////////////////////////////
-BOOL isKeyMaskActive(NSUInteger modifiers, NSUInteger mask);
-
-
-////////////////////////////////////////////////////////////
-/// \brief Handle one modifier key mask
-///
-/// Update the key state and send events to the requester
-///
-////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////
 void processOneModifier(NSUInteger                 modifiers,
                         NSUInteger                 mask,
                         BOOL&                      wasDown,
                         sf::Keyboard::Key          key,
                         sf::Keyboard::Scancode     code,
-                        sf::priv::WindowImplCocoa& requester);
+                        sf::priv::WindowImplCocoa& requester)
+{
+    // State
+    const BOOL isDown = isKeyMaskActive(modifiers, mask);
 
+    // Check for key pressed event
+    if (isDown && !wasDown)
+        requester.keyDown(keyPressedEventWithModifiers(modifiers, key, code));
+
+    // And check for key released event
+    else if (!isDown && wasDown)
+        requester.keyUp(keyReleasedEventWithModifiers(modifiers, key, code));
+
+    // else isDown == wasDown, so no change
+
+    // Update state
+    wasDown = isDown;
+}
 
 ////////////////////////////////////////////////////////////
 /// \brief Handle left & right modifier keys
@@ -119,12 +126,12 @@ void processLeftRightModifiers(
     sf::Keyboard::Key          rightKey,
     sf::Keyboard::Scancode     leftCode,
     sf::Keyboard::Scancode     rightCode,
-    sf::priv::WindowImplCocoa& requester);
-
-
-////////////////////////////////////////////////////////////
-// Implementations
-////////////////////////////////////////////////////////////
+    sf::priv::WindowImplCocoa& requester)
+{
+    processOneModifier(modifiers, leftMask, leftWasDown, leftKey, leftCode, requester);
+    processOneModifier(modifiers, rightMask, rightWasDown, rightKey, rightCode, requester);
+}
+}
 
 
 ////////////////////////////////////////////////////////
@@ -236,58 +243,4 @@ void handleModifiersChanged(NSUInteger modifiers, sf::priv::WindowImplCocoa& req
                        sf::Keyboard::Key::Unknown,
                        sf::Keyboard::Scan::CapsLock,
                        requester);
-}
-
-
-////////////////////////////////////////////////////////
-BOOL isKeyMaskActive(NSUInteger modifiers, NSUInteger mask)
-{
-    // Here we need to make sure it's exactly the mask since some masks
-    // share some bits such that the & operation would result in a non zero
-    // value without corresponding to the processed key.
-    return (modifiers & mask) == mask;
-}
-
-
-////////////////////////////////////////////////////////
-void processOneModifier(NSUInteger                 modifiers,
-                        NSUInteger                 mask,
-                        BOOL&                      wasDown,
-                        sf::Keyboard::Key          key,
-                        sf::Keyboard::Scancode     code,
-                        sf::priv::WindowImplCocoa& requester)
-{
-    // State
-    const BOOL isDown = isKeyMaskActive(modifiers, mask);
-
-    // Check for key pressed event
-    if (isDown && !wasDown)
-        requester.keyDown(keyPressedEventWithModifiers(modifiers, key, code));
-
-    // And check for key released event
-    else if (!isDown && wasDown)
-        requester.keyUp(keyReleasedEventWithModifiers(modifiers, key, code));
-
-    // else isDown == wasDown, so no change
-
-    // Update state
-    wasDown = isDown;
-}
-
-
-////////////////////////////////////////////////////////
-void processLeftRightModifiers(
-    NSUInteger                 modifiers,
-    NSUInteger                 leftMask,
-    NSUInteger                 rightMask,
-    BOOL&                      leftWasDown,
-    BOOL&                      rightWasDown,
-    sf::Keyboard::Key          leftKey,
-    sf::Keyboard::Key          rightKey,
-    sf::Keyboard::Scancode     leftCode,
-    sf::Keyboard::Scancode     rightCode,
-    sf::priv::WindowImplCocoa& requester)
-{
-    processOneModifier(modifiers, leftMask, leftWasDown, leftKey, leftCode, requester);
-    processOneModifier(modifiers, rightMask, rightWasDown, rightKey, rightCode, requester);
 }

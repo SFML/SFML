@@ -20,6 +20,8 @@
 #define GL_SRGB8_ALPHA8 0x8C43
 #endif
 
+namespace
+{
 std::filesystem::path resourcesDir()
 {
 #ifdef SFML_SYSTEM_IOS
@@ -28,6 +30,7 @@ std::filesystem::path resourcesDir()
     return "resources";
 #endif
 }
+} // namespace
 
 ////////////////////////////////////////////////////////////
 /// Entry point of application

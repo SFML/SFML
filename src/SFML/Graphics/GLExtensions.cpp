@@ -50,7 +50,7 @@
 #endif
 
 
-namespace sf::priv
+namespace
 {
 ////////////////////////////////////////////////////////////
 void extensionSanityCheck()
@@ -82,8 +82,10 @@ void extensionSanityCheck()
     check(GLEXT_copy_buffer_dependencies);
 #endif
 }
+} // namespace
 
-
+namespace sf::priv
+{
 ////////////////////////////////////////////////////////////
 void ensureExtensionsInit()
 {
