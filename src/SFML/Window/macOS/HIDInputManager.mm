@@ -562,6 +562,13 @@ bool HIDInputManager::isKeyPressed(Keyboard::Key key)
 ////////////////////////////////////////////////////////////
 bool HIDInputManager::isKeyPressed(Keyboard::Scancode code)
 {
+    // Lazy load m_keys to prevent unnecessary macOS input monitoring permission requests
+    if (!m_keysInitialized)
+    {
+        initializeKeyboard();
+        m_keysInitialized = true;
+    }
+
     return (code != Keyboard::Scan::Unknown) && isPressed(m_keys[code]);
 }
 
@@ -716,7 +723,6 @@ HIDInputManager::HIDInputManager()
     }
 
     // Build up our knowledge of the hardware
-    initializeKeyboard();
     buildMappings();
 
     // Register for notification on keyboard layout changes
@@ -924,13 +930,17 @@ void HIDInputManager::freeUp()
 
     m_manager = nil;
 
-    for (auto& key : m_keys)
+    if (m_keysInitialized)
     {
-        for (IOHIDElementRef iohidElementRef : key)
-            CFRelease(iohidElementRef);
+        for (auto& key : m_keys)
+        {
+            for (IOHIDElementRef iohidElementRef : key)
+                CFRelease(iohidElementRef);
 
-        key.clear();
+            key.clear();
+        }
     }
+    m_keysInitialized = false;
 }
 
 

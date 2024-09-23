@@ -46,6 +46,7 @@
 #include <memory>
 #include <ostream>
 #include <string>
+#include <utility>
 
 #include <cassert>
 #include <cstring>
@@ -154,7 +155,7 @@ void Image::resize(Vector2u size, Color color)
         }
 
         // Commit the new pixel buffer
-        m_pixels.swap(newPixels);
+        m_pixels = std::move(newPixels);
 
         // Assign the new size
         m_size = size;
@@ -179,7 +180,7 @@ void Image::resize(Vector2u size, const std::uint8_t* pixels)
         std::vector<std::uint8_t> newPixels(pixels, pixels + size.x * size.y * 4);
 
         // Commit the new pixel buffer
-        m_pixels.swap(newPixels);
+        m_pixels = std::move(newPixels);
 
         // Assign the new size
         m_size = size;

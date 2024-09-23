@@ -180,9 +180,8 @@ public:
     /// If \a `state` is `State::Fullscreen`, then \a `mode` must be
     /// a valid video mode.
     ///
-    /// The last parameter is an optional structure specifying
-    /// advanced OpenGL context settings such as anti-aliasing,
-    /// depth-buffer bits, etc.
+    /// The last parameter is a structure specifying advanced OpenGL
+    /// context settings such as anti-aliasing, depth-buffer bits, etc.
     ///
     /// \param mode     Video mode to use (defines the width, height and depth of the rendering area of the window)
     /// \param title    Title of the window
@@ -192,6 +191,38 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     virtual void create(VideoMode mode, const String& title, std::uint32_t style, State state, const ContextSettings& settings);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create (or recreate) the window
+    ///
+    /// If the window was already created, it closes it first.
+    /// If \a `state` is `State::Fullscreen`, then \a `mode` must be
+    /// a valid video mode.
+    ///
+    /// \param mode     Video mode to use (defines the width, height and depth of the rendering area of the window)
+    /// \param title    Title of the window
+    /// \param state    %Window state
+    ///
+    ////////////////////////////////////////////////////////////
+    void create(VideoMode mode, const String& title, State state) override;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create (or recreate) the window
+    ///
+    /// If the window was already created, it closes it first.
+    /// If \a `state` is `State::Fullscreen`, then \a `mode` must be
+    /// a valid video mode.
+    ///
+    /// The last parameter is a structure specifying advanced OpenGL
+    /// context settings such as anti-aliasing, depth-buffer bits, etc.
+    ///
+    /// \param mode     Video mode to use (defines the width, height and depth of the rendering area of the window)
+    /// \param title    Title of the window
+    /// \param state    %Window state
+    /// \param settings Additional settings for the underlying OpenGL context
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void create(VideoMode mode, const String& title, State state, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create (or recreate) the window from an existing control

@@ -362,13 +362,10 @@ std::uint64_t SoundFileReaderFlac::read(std::int16_t* samples, std::uint64_t max
         if (left > maxCount)
         {
             // There are more leftovers than needed
-            std::copy(m_clientData.leftovers.begin(),
-                      m_clientData.leftovers.begin() + static_cast<std::vector<std::int16_t>::difference_type>(maxCount),
-                      samples);
-            std::vector<std::int16_t> leftovers(m_clientData.leftovers.begin() +
-                                                    static_cast<std::vector<std::int16_t>::difference_type>(maxCount),
-                                                m_clientData.leftovers.end());
-            m_clientData.leftovers.swap(leftovers);
+            const auto signedMaxCount = static_cast<std::vector<std::int16_t>::difference_type>(maxCount);
+            std::copy(m_clientData.leftovers.begin(), m_clientData.leftovers.begin() + signedMaxCount, samples);
+            m_clientData.leftovers = std::vector<std::int16_t>(m_clientData.leftovers.begin() + signedMaxCount,
+                                                               m_clientData.leftovers.end());
             return maxCount;
         }
 
