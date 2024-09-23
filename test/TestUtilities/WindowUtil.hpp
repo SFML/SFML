@@ -8,8 +8,6 @@
 #include <SystemUtil.hpp>
 #include <string>
 
-// Required because WindowUtil.cpp doesn't include WindowUtil.hpp
-// NOLINTNEXTLINE(readability-redundant-declaration)
 std::string runDisplayTests();
 
 // String conversions for Catch2
@@ -17,7 +15,5 @@ namespace sf
 {
 class VideoMode;
 
-// Required because WindowUtil.cpp doesn't include WindowUtil.hpp
-// NOLINTNEXTLINE(readability-redundant-declaration)
 std::ostream& operator<<(std::ostream& os, const VideoMode& videoMode);
 } // namespace sf

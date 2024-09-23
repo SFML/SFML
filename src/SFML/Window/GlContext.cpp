@@ -388,7 +388,7 @@ struct GlContext::TransientContext
     ////////////////////////////////////////////////////////////
     static std::optional<TransientContext>& get()
     {
-        thread_local std::optional<TransientContext> transientContext;
+        static thread_local std::optional<TransientContext> transientContext;
         return transientContext;
     }
 

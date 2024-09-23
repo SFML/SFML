@@ -69,7 +69,6 @@ NSString* sfStringToNSString(const sf::String& string)
     NSString* const str = [[NSString alloc] initWithBytes:data length:length encoding:encoding];
     return [str autorelease];
 }
-}
 
 
 ////////////////////////////////////////////////////////
@@ -93,6 +92,7 @@ void showMouseCursor()
         [NSCursor unhide];
         isCursorHidden = false;
     }
+}
 }
 
 #pragma mark

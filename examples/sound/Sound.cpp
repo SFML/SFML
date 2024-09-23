@@ -6,6 +6,8 @@
 #include <iostream>
 
 
+namespace
+{
 ////////////////////////////////////////////////////////////
 /// Play a sound
 ///
@@ -69,6 +71,7 @@ void playMusic(const std::filesystem::path& filename)
 
     std::cout << '\n' << std::endl;
 }
+} // namespace
 
 
 ////////////////////////////////////////////////////////////

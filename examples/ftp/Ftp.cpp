@@ -7,6 +7,8 @@
 #include <optional>
 
 
+namespace
+{
 ////////////////////////////////////////////////////////////
 /// Print a FTP response into a standard output stream
 ///
@@ -15,6 +17,7 @@ std::ostream& operator<<(std::ostream& stream, const sf::Ftp::Response& response
 {
     return stream << static_cast<int>(response.getStatus()) << response.getMessage();
 }
+} // namespace
 
 
 ////////////////////////////////////////////////////////////
