@@ -290,7 +290,7 @@ int WglContext::selectBestPixelFormat(HDC deviceContext, unsigned int bitsPerPix
 
     WglContextImpl::ensureInit();
 
-    // Let's find a suitable pixel format -- first try with wglChoosePixelFormatARB
+    // Find a suitable pixel format -- first try with wglChoosePixelFormatARB
     int bestFormat = 0;
     if (SF_GLAD_WGL_ARB_pixel_format)
     {
@@ -306,7 +306,7 @@ int WglContext::selectBestPixelFormat(HDC deviceContext, unsigned int bitsPerPix
                                0,
                                0};
 
-        // Let's check how many formats are supporting our requirements
+        // Check how many formats are supporting our requirements
         int formats[512];
         UINT nbFormats = 0; // We must initialize to 0 otherwise broken drivers might fill with garbage in the following call
         const bool isValid = wglChoosePixelFormatARB(deviceContext, intAttributes, nullptr, 512, formats, &nbFormats) != FALSE;
