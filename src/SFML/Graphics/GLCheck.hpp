@@ -48,7 +48,7 @@ namespace sf::priv
 bool glCheckError(const std::filesystem::path& file, unsigned int line, std::string_view expression);
 
 ////////////////////////////////////////////////////////////
-/// Let's define a macro to quickly check every OpenGL API call
+/// Define a macro to quickly check every OpenGL API call
 ////////////////////////////////////////////////////////////
 #ifdef SFML_DEBUG
 // In debug mode, perform a test on every OpenGL call

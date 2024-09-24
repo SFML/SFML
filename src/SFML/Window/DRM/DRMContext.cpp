@@ -418,7 +418,7 @@ int initDrm(sf::priv::Drm& drm, const char* device, const char* modeStr, unsigne
     // Get original display mode so we can restore display mode after program exits
     drm.originalCrtc = drmModeGetCrtc(drm.fileDescriptor, drm.crtcId);
 
-    // Let's use the current mode rather than the preferred one if the user didn't specify a mode with env vars
+    // Use the current mode rather than the preferred one if the user didn't specify a mode with env vars
     if (!drm.mode)
     {
 #ifdef SFML_DEBUG

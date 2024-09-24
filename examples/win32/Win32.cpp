@@ -68,7 +68,7 @@ int main()
     windowClass.lpszClassName = TEXT("SFML App");
     RegisterClass(&windowClass);
 
-    // Let's create the main window
+    // Create the main window
     HWND window = CreateWindow(TEXT("SFML App"),
                                TEXT("SFML Win32"),
                                WS_SYSMENU | WS_VISIBLE,
@@ -84,7 +84,7 @@ int main()
     // Add a button for exiting
     button = CreateWindow(TEXT("BUTTON"), TEXT("Quit"), WS_CHILD | WS_VISIBLE, 560, 440, 80, 40, window, nullptr, instance, nullptr);
 
-    // Let's create two SFML views
+    // Create two SFML views
     HWND             view1 = CreateWindow(TEXT("STATIC"),
                               nullptr,
                               WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS,

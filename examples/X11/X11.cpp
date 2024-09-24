@@ -167,7 +167,7 @@ int main()
     // Get the default screen
     const int screen = DefaultScreen(display);
 
-    // Let's create the main window
+    // Create the main window
     XSetWindowAttributes attributes;
     attributes.background_pixel = BlackPixel(display, screen);
     attributes.event_mask       = KeyPressMask;
@@ -189,7 +189,7 @@ int main()
     // Set the window's name
     XStoreName(display, window, "SFML Window");
 
-    // Let's create the windows which will serve as containers for our SFML views
+    // Create the windows which will serve as containers for our SFML views
     const Window view1 = XCreateWindow(display,
                                        window,
                                        10,
