@@ -868,89 +868,50 @@ bool Shader::compile(std::string_view vertexShaderCode, std::string_view geometr
     // Create the program
     const GLEXT_GLhandle shaderProgram = glCheck(GLEXT_glCreateProgramObject());
 
-    // Create the vertex shader if needed
-    if (!vertexShaderCode.empty())
+    // Helper function for shader creation
+    const auto createAndAttachShader =
+        [shaderProgram](GLenum shaderType, const char* shaderTypeStr, std::string_view shaderCode)
     {
         // Create and compile the shader
-        const GLEXT_GLhandle vertexShader     = glCheck(GLEXT_glCreateShaderObject(GLEXT_GL_VERTEX_SHADER));
-        const GLcharARB*     sourceCode       = vertexShaderCode.data();
-        const auto           sourceCodeLength = static_cast<GLint>(vertexShaderCode.length());
-        glCheck(GLEXT_glShaderSource(vertexShader, 1, &sourceCode, &sourceCodeLength));
-        glCheck(GLEXT_glCompileShader(vertexShader));
+        const GLEXT_GLhandle shader           = glCheck(GLEXT_glCreateShaderObject(shaderType));
+        const GLcharARB*     sourceCode       = shaderCode.data();
+        const auto           sourceCodeLength = static_cast<GLint>(shaderCode.length());
+        glCheck(GLEXT_glShaderSource(shader, 1, &sourceCode, &sourceCodeLength));
+        glCheck(GLEXT_glCompileShader(shader));
 
         // Check the compile log
         GLint success = 0;
-        glCheck(GLEXT_glGetObjectParameteriv(vertexShader, GLEXT_GL_OBJECT_COMPILE_STATUS, &success));
+        glCheck(GLEXT_glGetObjectParameteriv(shader, GLEXT_GL_OBJECT_COMPILE_STATUS, &success));
         if (success == GL_FALSE)
         {
             std::array<char, 1024> log{};
-            glCheck(GLEXT_glGetInfoLog(vertexShader, sizeof(log), nullptr, log.data()));
-            err() << "Failed to compile vertex shader:" << '\n' << log.data() << std::endl;
-            glCheck(GLEXT_glDeleteObject(vertexShader));
+            glCheck(GLEXT_glGetInfoLog(shader, sizeof(log), nullptr, log.data()));
+            err() << "Failed to compile " << shaderTypeStr << " shader:" << '\n' << log.data() << std::endl;
+            glCheck(GLEXT_glDeleteObject(shader));
             glCheck(GLEXT_glDeleteObject(shaderProgram));
             return false;
         }
 
         // Attach the shader to the program, and delete it (not needed anymore)
-        glCheck(GLEXT_glAttachObject(shaderProgram, vertexShader));
-        glCheck(GLEXT_glDeleteObject(vertexShader));
-    }
+        glCheck(GLEXT_glAttachObject(shaderProgram, shader));
+        glCheck(GLEXT_glDeleteObject(shader));
+        return true;
+    };
+
+    // Create the vertex shader if needed
+    if (!vertexShaderCode.empty())
+        if (!createAndAttachShader(GLEXT_GL_VERTEX_SHADER, "vertex", vertexShaderCode))
+            return false;
 
     // Create the geometry shader if needed
     if (!geometryShaderCode.empty())
-    {
-        // Create and compile the shader
-        const GLEXT_GLhandle geometryShader   = GLEXT_glCreateShaderObject(GLEXT_GL_GEOMETRY_SHADER);
-        const GLcharARB*     sourceCode       = geometryShaderCode.data();
-        const auto           sourceCodeLength = static_cast<GLint>(geometryShaderCode.length());
-        glCheck(GLEXT_glShaderSource(geometryShader, 1, &sourceCode, &sourceCodeLength));
-        glCheck(GLEXT_glCompileShader(geometryShader));
-
-        // Check the compile log
-        GLint success = 0;
-        glCheck(GLEXT_glGetObjectParameteriv(geometryShader, GLEXT_GL_OBJECT_COMPILE_STATUS, &success));
-        if (success == GL_FALSE)
-        {
-            std::array<char, 1024> log{};
-            glCheck(GLEXT_glGetInfoLog(geometryShader, sizeof(log), nullptr, log.data()));
-            err() << "Failed to compile geometry shader:" << '\n' << log.data() << std::endl;
-            glCheck(GLEXT_glDeleteObject(geometryShader));
-            glCheck(GLEXT_glDeleteObject(shaderProgram));
+        if (!createAndAttachShader(GLEXT_GL_GEOMETRY_SHADER, "geometry", geometryShaderCode))
             return false;
-        }
-
-        // Attach the shader to the program, and delete it (not needed anymore)
-        glCheck(GLEXT_glAttachObject(shaderProgram, geometryShader));
-        glCheck(GLEXT_glDeleteObject(geometryShader));
-    }
 
     // Create the fragment shader if needed
     if (!fragmentShaderCode.empty())
-    {
-        // Create and compile the shader
-        const GLEXT_GLhandle fragmentShader   = glCheck(GLEXT_glCreateShaderObject(GLEXT_GL_FRAGMENT_SHADER));
-        const GLcharARB*     sourceCode       = fragmentShaderCode.data();
-        const auto           sourceCodeLength = static_cast<GLint>(fragmentShaderCode.length());
-        glCheck(GLEXT_glShaderSource(fragmentShader, 1, &sourceCode, &sourceCodeLength));
-        glCheck(GLEXT_glCompileShader(fragmentShader));
-
-        // Check the compile log
-        GLint success = 0;
-        glCheck(GLEXT_glGetObjectParameteriv(fragmentShader, GLEXT_GL_OBJECT_COMPILE_STATUS, &success));
-        if (success == GL_FALSE)
-        {
-            std::array<char, 1024> log{};
-            glCheck(GLEXT_glGetInfoLog(fragmentShader, sizeof(log), nullptr, log.data()));
-            err() << "Failed to compile fragment shader:" << '\n' << log.data() << std::endl;
-            glCheck(GLEXT_glDeleteObject(fragmentShader));
-            glCheck(GLEXT_glDeleteObject(shaderProgram));
+        if (!createAndAttachShader(GLEXT_GL_FRAGMENT_SHADER, "fragment", fragmentShaderCode))
             return false;
-        }
-
-        // Attach the shader to the program, and delete it (not needed anymore)
-        glCheck(GLEXT_glAttachObject(shaderProgram, fragmentShader));
-        glCheck(GLEXT_glDeleteObject(fragmentShader));
-    }
 
     // Link the program
     glCheck(GLEXT_glLinkProgram(shaderProgram));
