@@ -357,7 +357,7 @@ const Glyph& Font::getGlyph(std::uint32_t codePoint, unsigned int characterSize,
 
     // Not found: we have to load it
     const Glyph glyph = loadGlyph(codePoint, characterSize, bold, outlineThickness);
-    return glyphs.emplace(key, glyph).first->second;
+    return glyphs.try_emplace(key, glyph).first->second;
 }
 
 
