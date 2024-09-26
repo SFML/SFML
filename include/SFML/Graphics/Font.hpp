@@ -100,7 +100,7 @@ public:
     /// \see `openFromFile`, `openFromMemory`, `openFromStream`
     ///
     ////////////////////////////////////////////////////////////
-    Font(const std::filesystem::path& filename);
+    explicit Font(const std::filesystem::path& filename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the font from a file in memory
@@ -143,7 +143,7 @@ public:
     /// \see `openFromFile`, `openFromMemory`, `openFromStream`
     ///
     ////////////////////////////////////////////////////////////
-    Font(InputStream& stream);
+    explicit Font(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Open the font from a file

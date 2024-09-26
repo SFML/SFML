@@ -139,7 +139,7 @@ protected:
     /// \param type Type of the socket (TCP or UDP)
     ///
     ////////////////////////////////////////////////////////////
-    Socket(Type type);
+    explicit Socket(Type type);
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the internal handle of the socket

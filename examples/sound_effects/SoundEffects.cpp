@@ -75,7 +75,7 @@ public:
     }
 
 protected:
-    Effect(std::string name) : m_name(std::move(name))
+    explicit Effect(std::string name) : m_name(std::move(name))
     {
     }
 
@@ -665,7 +665,7 @@ public:
     }
 
 protected:
-    Processing(std::string name) :
+    explicit Processing(std::string name) :
     Effect(std::move(name)),
     m_enabledText(getFont(), "Processing: Enabled"),
     m_instructions(getFont(), "Press Space to enable/disable processing")
@@ -990,7 +990,7 @@ private:
     class FIRFilter
     {
     public:
-        FIRFilter(std::vector<float> taps) : m_taps(std::move(taps))
+        explicit FIRFilter(std::vector<float> taps) : m_taps(std::move(taps))
         {
         }
 

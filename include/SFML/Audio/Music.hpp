@@ -93,7 +93,7 @@ public:
     /// \see `openFromMemory`, `openFromStream`
     ///
     ////////////////////////////////////////////////////////////
-    Music(const std::filesystem::path& filename);
+    explicit Music(const std::filesystem::path& filename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct a music from an audio file in memory
@@ -137,7 +137,7 @@ public:
     /// \see `openFromFile`, `openFromMemory`
     ///
     ////////////////////////////////////////////////////////////
-    Music(InputStream& stream);
+    explicit Music(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor

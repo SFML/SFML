@@ -28,7 +28,7 @@ class TemporaryFile
 {
 public:
     // Create a temporary file with a randomly generated path, containing 'contents'.
-    TemporaryFile(const std::string& contents) : m_path(getTemporaryFilePath())
+    explicit TemporaryFile(const std::string& contents) : m_path(getTemporaryFilePath())
     {
         std::ofstream ofs(m_path);
         assert(ofs && "Stream encountered an error");
