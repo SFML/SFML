@@ -7,7 +7,7 @@
 
 namespace
 {
-struct
+const struct
 {
     std::string_view operator()(const sf::Event::Closed&) const
     {

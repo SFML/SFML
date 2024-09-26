@@ -69,7 +69,7 @@ long tell(void* data)
     return position ? static_cast<long>(*position) : -1;
 }
 
-ov_callbacks callbacks = {&read, &seek, nullptr, &tell};
+const ov_callbacks callbacks = {&read, &seek, nullptr, &tell};
 } // namespace
 
 namespace sf::priv
