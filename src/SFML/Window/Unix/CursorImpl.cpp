@@ -204,7 +204,7 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
 
 
 ////////////////////////////////////////////////////////////
-bool CursorImpl::isColorCursorSupported()
+bool CursorImpl::isColorCursorSupported() const
 {
     return XcursorSupportsARGB(m_display.get());
 }

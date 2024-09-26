@@ -2080,7 +2080,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
 
 
 ////////////////////////////////////////////////////////////
-bool WindowImplX11::checkXRandR()
+bool WindowImplX11::checkXRandR() const
 {
     // Check if the XRandR extension is present
     int version = 0;
@@ -2095,7 +2095,7 @@ bool WindowImplX11::checkXRandR()
 
 
 ////////////////////////////////////////////////////////////
-RROutput WindowImplX11::getOutputPrimary(::Window& rootWindow, XRRScreenResources* res)
+RROutput WindowImplX11::getOutputPrimary(::Window& rootWindow, XRRScreenResources* res) const
 {
     const RROutput output = XRRGetOutputPrimary(m_display.get(), rootWindow);
 
@@ -2108,7 +2108,7 @@ RROutput WindowImplX11::getOutputPrimary(::Window& rootWindow, XRRScreenResource
 
 
 ////////////////////////////////////////////////////////////
-Vector2i WindowImplX11::getPrimaryMonitorPosition()
+Vector2i WindowImplX11::getPrimaryMonitorPosition() const
 {
     Vector2i monitorPosition;
 
