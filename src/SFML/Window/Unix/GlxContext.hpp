@@ -51,7 +51,7 @@ public:
     /// \param shared Context to share the new one with (can be a null pointer)
     ///
     ////////////////////////////////////////////////////////////
-    GlxContext(GlxContext* shared);
+    explicit GlxContext(GlxContext* shared);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context attached to a window

@@ -84,7 +84,7 @@ int handleXError(::Display*, XErrorEvent*)
 class GlxErrorHandler
 {
 public:
-    GlxErrorHandler(::Display* display) : m_display(display)
+    explicit GlxErrorHandler(::Display* display) : m_display(display)
     {
         glxErrorOccurred  = false;
         m_previousHandler = XSetErrorHandler(handleXError);

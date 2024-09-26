@@ -45,7 +45,7 @@ namespace sf
 {
 struct SoundRecorder::Impl
 {
-    Impl(SoundRecorder* ownerPtr) : owner(ownerPtr)
+    explicit Impl(SoundRecorder* ownerPtr) : owner(ownerPtr)
     {
     }
 

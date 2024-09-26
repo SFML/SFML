@@ -45,7 +45,7 @@ namespace sf
 {
 struct SoundStream::Impl : priv::MiniaudioUtils::SoundBase
 {
-    Impl(SoundStream* ownerPtr) :
+    explicit Impl(SoundStream* ownerPtr) :
     SoundBase(vtable, [](void* ptr) { static_cast<Impl*>(ptr)->initialize(); }),
     owner(ownerPtr)
     {

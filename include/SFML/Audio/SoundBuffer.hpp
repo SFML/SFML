@@ -84,7 +84,7 @@ public:
     /// \see `loadFromMemory`, `loadFromStream`, `loadFromSamples`, `saveToFile`
     ///
     ////////////////////////////////////////////////////////////
-    SoundBuffer(const std::filesystem::path& filename);
+    explicit SoundBuffer(const std::filesystem::path& filename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the sound buffer from a file in memory
@@ -115,7 +115,7 @@ public:
     /// \see `loadFromFile`, `loadFromMemory`, `loadFromSamples`
     ///
     ////////////////////////////////////////////////////////////
-    SoundBuffer(InputStream& stream);
+    explicit SoundBuffer(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the sound buffer from an array of audio samples

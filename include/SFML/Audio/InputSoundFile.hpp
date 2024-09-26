@@ -76,7 +76,7 @@ public:
     /// \throws `sf::Exception` if opening the file was unsuccessful
     ///
     ////////////////////////////////////////////////////////////
-    InputSoundFile(const std::filesystem::path& filename);
+    explicit InputSoundFile(const std::filesystem::path& filename);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct a sound file in memory for reading
@@ -103,7 +103,7 @@ public:
     /// \throws `sf::Exception` if opening the file was unsuccessful
     ///
     ////////////////////////////////////////////////////////////
-    InputSoundFile(InputStream& stream);
+    explicit InputSoundFile(InputStream& stream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Open a sound file from the disk for reading

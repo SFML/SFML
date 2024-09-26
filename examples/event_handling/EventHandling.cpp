@@ -40,7 +40,7 @@ public:
     // The operator()s can also have void return type if there is nothing to return.
     struct Visitor
     {
-        Visitor(Application& app) : application(app)
+        explicit Visitor(Application& app) : application(app)
         {
         }
 
