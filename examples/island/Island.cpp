@@ -398,7 +398,7 @@ void generateTerrain(sf::Vertex* buffer)
         {
             const std::lock_guard lock(workQueueMutex);
 
-            if (workQueue.empty())
+            if (pendingWorkCount == 0u)
                 break;
         }
 
