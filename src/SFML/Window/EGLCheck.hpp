@@ -29,8 +29,13 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 
+#include <SFML/System/Err.hpp>
+
+#include <glad/egl.h>
+
 #include <filesystem>
 #include <string_view>
+#include <type_traits>
 
 
 namespace sf::priv
@@ -54,20 +59,28 @@ bool eglCheckError(const std::filesystem::path& file, unsigned int line, std::st
 
 // In debug mode, perform a test on every EGL call
 // The lamdba allows us to call eglCheck as an expression and acts as a single statement perfect for if/else statements
-#define eglCheck(...)                                                                             \
-    [](auto&& eglCheckInternalFunction)                                                           \
-    {                                                                                             \
-        if constexpr (!std::is_void_v<decltype(eglCheckInternalFunction())>)                      \
-        {                                                                                         \
-            const auto eglCheckInternalReturnValue = eglCheckInternalFunction();                  \
-            sf::priv::eglCheckError(__FILE__, static_cast<unsigned int>(__LINE__), #__VA_ARGS__); \
-            return eglCheckInternalReturnValue;                                                   \
-        }                                                                                         \
-        else                                                                                      \
-        {                                                                                         \
-            eglCheckInternalFunction();                                                           \
-            sf::priv::eglCheckError(__FILE__, static_cast<unsigned int>(__LINE__), #__VA_ARGS__); \
-        }                                                                                         \
+#define eglCheck(...)                                                                                              \
+    [](auto&& eglCheckInternalFunction)                                                                            \
+    {                                                                                                              \
+        if (const EGLint eglCheckInternalError = eglGetError(); eglCheckInternalError != EGL_SUCCESS)              \
+            sf::err() << "EGL error (" << eglCheckInternalError << ") detected during eglCheck call" << std::endl; \
+                                                                                                                   \
+        if constexpr (!std::is_void_v<decltype(eglCheckInternalFunction())>)                                       \
+        {                                                                                                          \
+            const auto eglCheckInternalReturnValue = eglCheckInternalFunction();                                   \
+                                                                                                                   \
+            while (!sf::priv::eglCheckError(__FILE__, static_cast<unsigned int>(__LINE__), #__VA_ARGS__))          \
+                /* no-op */;                                                                                       \
+                                                                                                                   \
+            return eglCheckInternalReturnValue;                                                                    \
+        }                                                                                                          \
+        else                                                                                                       \
+        {                                                                                                          \
+            eglCheckInternalFunction();                                                                            \
+                                                                                                                   \
+            while (!sf::priv::eglCheckError(__FILE__, static_cast<unsigned int>(__LINE__), #__VA_ARGS__))          \
+                /* no-op */;                                                                                       \
+        }                                                                                                          \
     }([&]() { return __VA_ARGS__; })
 
 #else
