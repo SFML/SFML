@@ -438,7 +438,7 @@ bool RenderTextureImplFBO::createFrameBuffer()
     }
 
     // Insert the FBO into our map
-    m_frameBuffers.emplace(Context::getActiveContextId(), frameBuffer);
+    m_frameBuffers.try_emplace(Context::getActiveContextId(), frameBuffer);
 
     // Register the object with the current context so it is automatically destroyed
     registerUnsharedGlObject(std::move(frameBuffer));
@@ -494,7 +494,7 @@ bool RenderTextureImplFBO::createFrameBuffer()
         }
 
         // Insert the FBO into our map
-        m_multisampleFrameBuffers.emplace(Context::getActiveContextId(), multisampleFrameBuffer);
+        m_multisampleFrameBuffers.try_emplace(Context::getActiveContextId(), multisampleFrameBuffer);
 
         // Register the object with the current context so it is automatically destroyed
         registerUnsharedGlObject(std::move(multisampleFrameBuffer));
