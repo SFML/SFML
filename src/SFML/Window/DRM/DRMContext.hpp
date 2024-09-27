@@ -143,11 +143,10 @@ public:
     ///
     /// \param width   Back buffer width, in pixels
     /// \param height  Back buffer height, in pixels
-    /// \param bpp     Pixel depth, in bits per pixel
     /// \param scanout True to present the surface to the screen
     ///
     ////////////////////////////////////////////////////////////
-    void createSurface(unsigned int width, unsigned int height, unsigned int bpp, bool scanout);
+    void createSurface(unsigned int width, unsigned int height, bool scanout);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destroy the EGL surface
@@ -162,13 +161,12 @@ public:
     /// \brief Get the best EGL visual for a given set of video settings
     ///
     /// \param display      EGL display
-    /// \param bitsPerPixel Pixel depth, in bits per pixel
     /// \param settings     Requested context settings
     ///
     /// \return The best EGL config
     ///
     ////////////////////////////////////////////////////////////
-    static EGLConfig getBestConfig(EGLDisplay display, unsigned int bitsPerPixel, const ContextSettings& settings);
+    static EGLConfig getBestConfig(EGLDisplay display, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the address of an OpenGL function
@@ -210,8 +208,6 @@ private:
     gbm_bo* m_currentBO;
     gbm_bo* m_nextBO;
     gbm_surface* m_gbmSurface;
-    unsigned int m_width;
-    unsigned int m_height;
     bool m_shown;
     bool m_scanOut;
 };

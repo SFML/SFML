@@ -61,6 +61,9 @@ VideoMode VideoModeImpl::getDesktopMode()
 {
     Drm& drm = sf::priv::DRMContext::getDRM();
     drmModeModeInfoPtr ptr = drm.mode;
+    if (!ptr) // if no mode has been set, return the original mode we started with
+        ptr = &drm.originalCrtc->mode;
+
     if (ptr)
         return VideoMode(ptr->hdisplay, ptr->vdisplay);
     else
