@@ -33,8 +33,10 @@ TEMPLATE_TEST_CASE("[System] sf::Vector3", "", int, float)
             STATIC_CHECK(vector.z == 3);
         }
 
-        SECTION("Conversion constructor")
+        SECTION("Conversion operator")
         {
+            STATIC_CHECK(!std::is_convertible_v<sf::Vector3f, sf::Vector3i>);
+
             constexpr sf::Vector3f sourceVector(1.0f, 2.0f, 3.0f);
             constexpr sf::Vector3i vector(sourceVector);
 

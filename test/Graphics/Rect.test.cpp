@@ -35,15 +35,6 @@ TEMPLATE_TEST_CASE("[Graphics] sf::Rect", "", int, float)
             STATIC_CHECK(rectangle.position == position);
             STATIC_CHECK(rectangle.size == dimension);
         }
-
-        SECTION("Conversion constructor")
-        {
-            constexpr sf::FloatRect sourceRectangle({1.0f, 2.0f}, {3.0f, 4.0f});
-            constexpr sf::IntRect   rectangle(sourceRectangle);
-
-            STATIC_CHECK(rectangle.position == sf::Vector2i(1, 2));
-            STATIC_CHECK(rectangle.size == sf::Vector2i(3, 4));
-        }
     }
 
     SECTION("contains(Vector2)")
@@ -81,6 +72,17 @@ TEMPLATE_TEST_CASE("[Graphics] sf::Rect", "", int, float)
 
     SECTION("Operators")
     {
+        SECTION("operator Rect<U>")
+        {
+            STATIC_CHECK(!std::is_convertible_v<sf::FloatRect, sf::IntRect>);
+
+            constexpr sf::FloatRect sourceRectangle({1.0f, 2.0f}, {3.0f, 4.0f});
+            constexpr sf::IntRect   rectangle(sourceRectangle);
+
+            STATIC_CHECK(rectangle.position == sf::Vector2i(1, 2));
+            STATIC_CHECK(rectangle.size == sf::Vector2i(3, 4));
+        }
+
         SECTION("operator==")
         {
             STATIC_CHECK(sf::Rect<TestType>() == sf::Rect<TestType>());

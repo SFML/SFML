@@ -49,11 +49,9 @@ constexpr Vector3<T>::Vector3(T x, T y, T z) : x(x), y(y), z(z)
 ////////////////////////////////////////////////////////////
 template <typename T>
 template <typename U>
-constexpr Vector3<T>::Vector3(const Vector3<U>& vector) :
-x(static_cast<T>(vector.x)),
-y(static_cast<T>(vector.y)),
-z(static_cast<T>(vector.z))
+constexpr Vector3<T>::operator Vector3<U>() const
 {
+    return Vector3<U>(static_cast<U>(x), static_cast<U>(y), static_cast<U>(z));
 }
 
 

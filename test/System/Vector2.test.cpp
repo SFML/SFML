@@ -36,8 +36,10 @@ TEMPLATE_TEST_CASE("[System] sf::Vector2", "", int, float)
             STATIC_CHECK(vector.y == 2);
         }
 
-        SECTION("Conversion constructor")
+        SECTION("Conversion operator")
         {
+            STATIC_CHECK(!std::is_convertible_v<sf::Vector2f, sf::Vector2i>);
+
             constexpr sf::Vector2f sourceVector(1.0f, 2.0f);
             constexpr sf::Vector2i vector(sourceVector);
 
