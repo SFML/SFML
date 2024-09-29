@@ -210,7 +210,7 @@ constexpr bool operator==(Vector2<T> left, Vector2<T> right)
 template <typename T>
 constexpr bool operator!=(Vector2<T> left, Vector2<T> right)
 {
-    return (left.x != right.x) || (left.y != right.y);
+    return !(left == right);
 }
 
 

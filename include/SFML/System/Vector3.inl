@@ -210,7 +210,7 @@ constexpr bool operator==(const Vector3<T>& left, const Vector3<T>& right)
 template <typename T>
 constexpr bool operator!=(const Vector3<T>& left, const Vector3<T>& right)
 {
-    return (left.x != right.x) || (left.y != right.y) || (left.z != right.z);
+    return !(left == right);
 }
 
 } // namespace sf
