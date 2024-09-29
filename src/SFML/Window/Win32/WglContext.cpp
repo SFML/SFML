@@ -237,7 +237,7 @@ void WglContext::setVerticalSyncEnabled(bool enabled)
 
     if (SF_GLAD_WGL_EXT_swap_control)
     {
-        if (wglSwapIntervalEXT(enabled ? 1 : 0) == FALSE)
+        if (wglSwapIntervalEXT(enabled) == FALSE)
             err() << "Setting vertical sync failed: " << getErrorString(GetLastError()) << std::endl;
     }
     else

@@ -263,15 +263,15 @@ void GlxContext::setVerticalSyncEnabled(bool enabled)
     // which would require us to link in an additional library
     if (SF_GLAD_GLX_EXT_swap_control)
     {
-        glXSwapIntervalEXT(m_display.get(), m_pbuffer ? m_pbuffer : m_window, enabled ? 1 : 0);
+        glXSwapIntervalEXT(m_display.get(), m_pbuffer ? m_pbuffer : m_window, enabled);
     }
     else if (SF_GLAD_GLX_MESA_swap_control)
     {
-        result = glXSwapIntervalMESA(enabled ? 1 : 0);
+        result = glXSwapIntervalMESA(enabled);
     }
     else if (SF_GLAD_GLX_SGI_swap_control)
     {
-        result = glXSwapIntervalSGI(enabled ? 1 : 0);
+        result = glXSwapIntervalSGI(enabled);
     }
     else
     {
