@@ -49,8 +49,9 @@ constexpr Vector2<T>::Vector2(T x, T y) : x(x), y(y)
 ////////////////////////////////////////////////////////////
 template <typename T>
 template <typename U>
-constexpr Vector2<T>::Vector2(Vector2<U> vector) : x(static_cast<T>(vector.x)), y(static_cast<T>(vector.y))
+constexpr Vector2<T>::operator Vector2<U>() const
 {
+    return Vector2<U>(static_cast<U>(x), static_cast<U>(y));
 }
 
 

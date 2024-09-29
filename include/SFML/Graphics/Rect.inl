@@ -40,8 +40,9 @@ constexpr Rect<T>::Rect(Vector2<T> thePosition, Vector2<T> theSize) : position(t
 ////////////////////////////////////////////////////////////
 template <typename T>
 template <typename U>
-constexpr Rect<T>::Rect(const Rect<U>& rectangle) : position(rectangle.position), size(rectangle.size)
+constexpr Rect<T>::operator Rect<U>() const
 {
+    return Rect<U>(Vector2<U>(position), Vector2<U>(size));
 }
 
 

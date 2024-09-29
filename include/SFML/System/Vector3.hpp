@@ -57,18 +57,11 @@ public:
     constexpr Vector3(T x, T y, T z);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Construct the vector from another type of vector
-    ///
-    /// This constructor doesn't replace the copy constructor,
-    /// it's called only when U != T.
-    /// A call to this constructor will fail to compile if U
-    /// is not convertible to T.
-    ///
-    /// \param vector Vector to convert
+    /// \brief Converts the vector to another type of vector
     ///
     ////////////////////////////////////////////////////////////
     template <typename U>
-    constexpr explicit Vector3(const Vector3<U>& vector);
+    constexpr explicit operator Vector3<U>() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Length of the vector <i><b>(floating-point)</b></i>.
