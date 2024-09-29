@@ -710,25 +710,19 @@ Out Utf<32>::encodeWide(std::uint32_t codepoint, Out output, wchar_t replacement
     // For UCS-2 we need to check if the source characters fits in (UCS-2 is a subset of UCS-4).
     // For UCS-4 we can do a direct copy (UCS-4 *is* UTF-32).
 
-    switch (sizeof(wchar_t))
+    if constexpr (sizeof(wchar_t) == 4)
     {
-        case 4:
+        *output++ = static_cast<wchar_t>(codepoint);
+    }
+    else
+    {
+        if ((codepoint <= 0xFFFF) && ((codepoint < 0xD800) || (codepoint > 0xDFFF)))
         {
             *output++ = static_cast<wchar_t>(codepoint);
-            break;
         }
-
-        default:
+        else if (replacement)
         {
-            if ((codepoint <= 0xFFFF) && ((codepoint < 0xD800) || (codepoint > 0xDFFF)))
-            {
-                *output++ = static_cast<wchar_t>(codepoint);
-            }
-            else if (replacement)
-            {
-                *output++ = replacement;
-            }
-            break;
+            *output++ = replacement;
         }
     }
 
