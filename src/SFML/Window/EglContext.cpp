@@ -253,7 +253,7 @@ void EglContext::display()
 ////////////////////////////////////////////////////////////
 void EglContext::setVerticalSyncEnabled(bool enabled)
 {
-    eglCheck(eglSwapInterval(m_display, enabled ? 1 : 0));
+    eglCheck(eglSwapInterval(m_display, enabled));
 }
 
 

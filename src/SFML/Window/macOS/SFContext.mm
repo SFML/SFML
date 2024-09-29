@@ -146,7 +146,7 @@ void SFContext::display()
 void SFContext::setVerticalSyncEnabled(bool enabled)
 {
     const AutoreleasePool pool;
-    const GLint           swapInterval = enabled ? 1 : 0;
+    const GLint           swapInterval = enabled;
 
     [m_context setValues:&swapInterval forParameter:NSOpenGLCPSwapInterval];
 }
