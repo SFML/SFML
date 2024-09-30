@@ -308,7 +308,7 @@ template <typename T>
 template <typename T>
 [[nodiscard]] constexpr bool operator!=(const Vector3<T>& left, const Vector3<T>& right);
 
-// Define the most common types
+// Aliases for the most common types
 using Vector3i = Vector3<int>;
 using Vector3f = Vector3<float>;
 

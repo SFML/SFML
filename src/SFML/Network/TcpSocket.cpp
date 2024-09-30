@@ -45,7 +45,7 @@
 
 namespace
 {
-// Define the low-level send/receive flags, which depend on the OS
+// Low-level send/receive flags (OS-dependent)
 #ifdef SFML_SYSTEM_LINUX
 const int flags = MSG_NOSIGNAL;
 #else

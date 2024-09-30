@@ -76,8 +76,7 @@ using WindowHandle = "platform-specific";
 /// \typedef sf::WindowHandle
 /// \ingroup window
 ///
-/// Define a low-level window handle type, specific to
-/// each platform.
+/// Low-level window handle type, specific to each platform.
 ///
 /// Platform        | Type
 /// ----------------|------------------------------------------------------------

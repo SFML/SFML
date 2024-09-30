@@ -37,8 +37,7 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-// Define the low-level socket handle type, specific to
-// each platform
+// Low-level socket handle type, specific to each platform
 ////////////////////////////////////////////////////////////
 #if defined(SFML_SYSTEM_WINDOWS)
 

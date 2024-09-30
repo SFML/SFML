@@ -45,7 +45,7 @@ namespace sf
 class RenderTarget;
 
 ////////////////////////////////////////////////////////////
-/// \brief Define a set of one or more 2D primitives
+/// \brief Set of one or more 2D primitives
 ///
 ////////////////////////////////////////////////////////////
 class SFML_GRAPHICS_API VertexArray : public Drawable
