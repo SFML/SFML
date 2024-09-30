@@ -63,7 +63,7 @@ public:
         T length{}; //!< The length of the time range
     };
 
-    // Define the relevant Span types
+    // Associated `Span` type
     using TimeSpan = Span<Time>;
 
     ////////////////////////////////////////////////////////////

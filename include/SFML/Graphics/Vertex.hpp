@@ -35,7 +35,7 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// \brief Define a point with color and texture coordinates
+/// \brief Point with color and texture coordinates
 ///
 /// By default, the vertex color is white and texture coordinates are (0, 0).
 ///

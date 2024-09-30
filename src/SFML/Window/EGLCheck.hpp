@@ -53,7 +53,7 @@ namespace sf::priv
 bool eglCheckError(const std::filesystem::path& file, unsigned int line, std::string_view expression);
 
 ////////////////////////////////////////////////////////////
-/// Define a macro to quickly check every EGL API call
+/// Macro to quickly check every EGL API call
 ////////////////////////////////////////////////////////////
 #ifdef SFML_DEBUG
 
