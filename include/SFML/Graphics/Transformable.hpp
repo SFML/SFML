@@ -31,9 +31,30 @@
 #include <SFML/Graphics/Export.hpp>
 #include <SFML/Graphics/Transform.hpp>
 
+#include "RenderWindow.hpp"
+
 
 namespace sf
 {
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Enum representing alignment points on an object
+    ///
+    /// Defines locations like corners and center for alignment.
+    ///
+    ////////////////////////////////////////////////////////////
+    enum Location {
+        TopLeft,    ///< Top-left corner
+        TopMid,     ///< Top center
+        TopRight,   ///< Top-right corner
+        MidLeft,    ///< Middle left
+        MidMid,     ///< Center
+        MidRight,   ///< Middle right
+        BottomLeft, ///< Bottom-left corner
+        BottomMid,  ///< Bottom center
+        BottomRight ///< Bottom-right corner
+    };
+
 ////////////////////////////////////////////////////////////
 /// \brief Decomposed transform defined by a position, a rotation and a scale
 ///
@@ -82,6 +103,43 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     void setPosition(const Vector2f& position);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the position of the object relative to another transformable
+    ///
+    /// This function completely overwrites the previous position of the object.
+    /// The position is set based on the specified origin point of the current object
+    /// and the reference origin point of the provided transformable object.
+    /// For example, you can align the top-left corner of the current object with
+    /// the center of the reference transformable.
+    ///
+    /// \param origin Location on this object to be aligned (e.g., TopLeft, MidMid)
+    /// \param refOrigin Location on the reference transformable to align with
+    /// \param transformableRef The reference transformable to align this object with
+    ///
+    /// \see move, getPosition, Location
+    ///
+    ////////////////////////////////////////////////////////////
+    void setPosition(Location origin, Location refOrigin, sf::Transformable& transformableRef);
+
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the position of the object relative to a window
+    ///
+    /// This function completely overwrites the previous position of the object.
+    /// The position is set based on the specified origin point of the current object
+    /// and the reference origin point of the provided render window.
+    /// For example, you can align the top-left corner of the object with the center
+    /// of the render window.
+    ///
+    /// \param origin Location on this object to be aligned (e.g., TopLeft, MidMid)
+    /// \param refOrigin Location in the render window to align the object with
+    /// \param windowRef The render window to align this object with
+    ///
+    /// \see move, getPosition, Location
+    ///
+    ////////////////////////////////////////////////////////////
+    void setPosition(Location origin, Location refOrigin, const sf::RenderWindow& windowRef);
 
     ////////////////////////////////////////////////////////////
     /// \brief set the orientation of the object
