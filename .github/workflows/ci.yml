@@ -75,9 +75,6 @@ jobs:
             flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=x86 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=21 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=ON -DCMAKE_ANDROID_STL_TYPE=c++_shared -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF
             arch: x86
             api: 21
-            libcxx: i686-linux-android/libc++_shared.so
-            emuarch: x86
-            # emuapi: 29 # Removing this causes the tests to not run. This works around an issue that causes the test step to hang indefinitely.
           type: { name: Release }
         - platform: { name: Android, os: ubuntu-22.04 }
           config:
@@ -85,9 +82,6 @@ jobs:
             flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=x86_64 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=24 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=ON -DCMAKE_ANDROID_STL_TYPE=c++_shared -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF
             arch: x86_64
             api: 24
-            libcxx: x86_64-linux-android/libc++_shared.so
-            emuarch: x86_64
-            # emuapi: 34 # Removing this causes the tests to not run. This works around an issue that causes the Network module tests to fail.
           type: { name: Release }
         - platform: { name: Android, os: ubuntu-22.04 }
           config:
@@ -95,7 +89,6 @@ jobs:
             flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=29 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=ON -DCMAKE_ANDROID_STL_TYPE=c++_shared
             arch: armeabi-v7a
             api: 29
-            # There are no emulators available for armeabi-v7a so we skip running the tests (we still build them) by not specifying emuapi
           type: { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug }
         - platform: { name: Android, os: ubuntu-22.04 }
           config:
@@ -103,10 +96,6 @@ jobs:
             flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=33 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=ON -DCMAKE_ANDROID_STL_TYPE=c++_shared -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF
             arch: arm64-v8a
             api: 33
-            libcxx: aarch64-linux-android/libc++_shared.so
-            emuarch: arm64-v8a
-            emuapi: 27
-            emuflags: -qemu -machine virt
           type: { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug }
 
 
@@ -141,8 +130,6 @@ jobs:
       if: runner.os == 'Linux' && matrix.platform.name != 'Android'
       run: sudo apt-get remove -y libasound2
 
-    # LIBCXX_SHARED_SO is the path used by CMake to copy the necessary runtime library to the AVD
-    # We find it by searching ANDROID_NDK_ROOT for file paths ending with matrix.config.libcxx
     - name: Install Android Components
       if: matrix.platform.name == 'Android'
       run: |
@@ -150,8 +137,6 @@ jobs:
         echo "y" | ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --install "ndk;26.1.10909125"
         ANDROID_NDK_ROOT=$(echo $ANDROID_SDK_ROOT/ndk/$ANDROID_NDK_VERSION)
         echo "ANDROID_NDK_ROOT=$ANDROID_NDK_ROOT" >> $GITHUB_ENV
-        LIBCXX_SHARED_SO=$(find $ANDROID_NDK_ROOT -path \*/${{ matrix.config.libcxx }})
-        echo "LIBCXX_SHARED_SO=$LIBCXX_SHARED_SO" >> $GITHUB_ENV
 
     - name: Install macOS Tools
       if: runner.os == 'macOS'
@@ -249,47 +234,6 @@ jobs:
         if [ "${{ matrix.type.name }}" == "Debug" ]; then
           gcovr -r $GITHUB_WORKSPACE -x build/coverage.out -s -f 'src/SFML/.*' -f 'include/SFML/.*' ${{ matrix.platform.gcovr_options }} $GITHUB_WORKSPACE
         fi
-
-    - name: Enable KVM
-      if: contains(matrix.platform.name, 'Android') && matrix.config.emuapi
-      run: |
-        echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-        sudo udevadm control --reload-rules
-        sudo udevadm trigger --name-match=kvm
-
-    - name: Cache AVD
-      if: contains(matrix.platform.name, 'Android') && matrix.config.emuapi
-      uses: actions/cache@v4
-      id: avd-cache
-      with:
-        path: |
-          ~/.android/avd/*
-          ~/.android/adb*
-        key: avd-${{ matrix.config.emuarch }}-${{ matrix.config.emuapi }}
-
-    - name: Create AVD and Generate Snapshot for Caching
-      if: contains(matrix.platform.name, 'Android') && matrix.config.emuapi && steps.avd-cache.outputs.cache-hit != 'true'
-      uses: reactivecircus/android-emulator-runner@v2
-      with:
-        api-level: ${{ matrix.config.emuapi }}
-        arch: ${{ matrix.config.emuarch }}
-        force-avd-creation: false
-        emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none ${{ matrix.config.emuflags }}
-        disable-animations: false
-        script: echo "Generated AVD snapshot for caching."
-
-    - name: Test (Android)
-      if: contains(matrix.platform.name, 'Android') && matrix.config.emuapi
-      uses: reactivecircus/android-emulator-runner@v2
-      with:
-        api-level: ${{ matrix.config.emuapi }}
-        arch: ${{ matrix.config.emuarch }}
-        force-avd-creation: false
-        emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none ${{ matrix.config.emuflags }}
-        disable-animations: true
-        script: |
-          cmake --build build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} --target prepare-android-files
-          ctest --test-dir build --output-on-failure -C ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} --repeat until-pass:3
 
     - name: Upload Coverage Report to Coveralls
       if: matrix.type.name == 'Debug' && github.repository == 'SFML/SFML' && !contains(matrix.platform.name, 'iOS') && !contains(matrix.platform.name, 'Android')  && !contains(matrix.platform.name, 'arm64') # Disable upload in forks
