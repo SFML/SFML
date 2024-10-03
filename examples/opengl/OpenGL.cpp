@@ -1,3 +1,4 @@
+#include "SFML/Graphics/CircleShape.hpp"
 #include "SFML/Graphics/Font.hpp"
 #include "SFML/Graphics/Image.hpp"
 #include "SFML/Graphics/RenderStates.hpp"
@@ -14,18 +15,33 @@
 #include <random>
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include <cstddef>
 
+std::mt19937 rng(std::random_device{}());
 
 float getRndFloat(float min, float max)
 {
-    static std::mt19937 rng(std::random_device{}());
     return std::uniform_real_distribution<float>{min, max}(rng);
+}
+
+unsigned int getRndUInt(unsigned int min, unsigned int max)
+{
+    return std::uniform_int_distribution<unsigned int>{min, max}(rng);
+}
+
+unsigned char getRndU8(unsigned char min, unsigned char max)
+{
+    return static_cast<unsigned char>(getRndUInt(min, max));
 }
 
 int main()
 {
+
+std::cout << sizeof(sf::Transform) << '\n';
+std::cout << sizeof(sf::Transformable) << '\n';
+std::cout << sizeof(sf::Sprite) << '\n';
 
     //
     //
@@ -69,10 +85,11 @@ int main()
 
     struct Entity
     {
-        sf::Text     text;
-        sf::Sprite   sprite;
-        sf::Vector2f velocity;
-        float        torque{};
+        sf::Text        text;
+        sf::Sprite      sprite;
+        sf::Vector2f    velocity;
+        float           torque{};
+        sf::CircleShape circleShape;
     };
 
     std::vector<Entity> entities;
@@ -95,12 +112,20 @@ int main()
 
             const auto label = std::string{names[i % 6u]} + " #" + std::to_string((i / (type + 1)) + 1);
 
+            sf::CircleShape circleShape(getRndFloat(3.f, 8.f), static_cast<std::size_t>(getRndFloat(3.f, 8.f)));
+            circleShape.setFillColor(
+                {getRndU8(0.f, 255.f), getRndU8(0.f, 255.f), getRndU8(0.f, 255.f), getRndU8(125.f, 255.f)});
+            circleShape.setOutlineColor(
+                {getRndU8(0.f, 255.f), getRndU8(0.f, 255.f), getRndU8(0.f, 255.f), getRndU8(125.f, 255.f)});
+            circleShape.setOutlineThickness(3.f);
+
             entities.push_back({sf::Text{i % 2u == 0u ? fontTuffy : fontMouldyCheese, label},
                                 sf::Sprite{texture},
                                 sf::Vector2f{getRndFloat(-2.5f, 2.5f), getRndFloat(-2.5f, 2.5f)},
-                                getRndFloat(-0.05f, 0.05f)});
+                                getRndFloat(-0.05f, 0.05f),
+                                circleShape});
 
-            auto& [text, sprite, velocity, torque] = entities.back();
+            auto& [text, sprite, velocity, torque, cs] = entities.back();
 
             sprite.setOrigin(sf::Vector2f(texture.getSize()) / 2.f);
             sprite.setRotation(sf::degrees(getRndFloat(0.f, 360.f)));
@@ -115,16 +140,18 @@ int main()
             text.setOutlineColor(sf::Color::White);
             text.setOutlineThickness(5.f);
 
-            text.setOrigin(text.getLocalBounds().size / 2.f);
+            text.setOrigin(text.getLocalBounds().getCenter());
+            circleShape.setOrigin(circleShape.getLocalBounds().getCenter());
         }
     };
 
     //
     //
     // Set up UI elements
-    bool drawSprites = true;
-    bool drawText    = true;
-    int  numEntities = 10000;
+    bool drawSprites = false;
+    bool drawText    = false;
+    bool drawShapes  = true;
+    int  numEntities = 20000;
 
     //
     //
@@ -186,7 +213,7 @@ int main()
         {
             clock.restart();
 
-            for (auto& [text, sprite, velocity, torque] : entities)
+            for (auto& [text, sprite, velocity, torque, circleShape] : entities)
             {
                 sprite.move(velocity);
                 sprite.rotate(sf::radians(torque));
@@ -200,6 +227,9 @@ int main()
                     velocity.y = -velocity.y;
 
                 text.setPosition(sprite.getPosition() - sf::Vector2f{0.f, 250.f * sprite.getScale().x});
+
+                circleShape.setPosition(sprite.getPosition());
+                circleShape.setRotation(sprite.getRotation());
             }
 
             recordUs(samplesUpdateMs, clock.getElapsedTime().asSeconds() * 1000.f);
@@ -219,6 +249,9 @@ int main()
 
                 if (drawText)
                     window.draw(entity.text);
+
+                if (drawShapes)
+                    window.draw(entity.circleShape);
             }
 
             recordUs(samplesDrawMs, clock.getElapsedTime().asSeconds() * 1000.f);

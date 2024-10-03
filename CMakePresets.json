@@ -1,17 +1,111 @@
 {
   "version": 3,
-  "configurePresets":[
+  "configurePresets": [
     {
-      "name": "dev",
-      "binaryDir": "build",
-      "installDir": "${sourceDir}/build/install",
+      "name": "build_base",
+      "hidden": true,
+      "generator": "Ninja",
       "cacheVariables": {
+        "CMAKE_COLOR_DIAGNOSTICS": "ON",
+        "CMAKE_CXX_COMPILER_LAUNCHER": "ccache",
         "CMAKE_CXX_EXTENSIONS": "OFF",
         "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
         "SFML_BUILD_EXAMPLES": "ON",
         "SFML_BUILD_TEST_SUITE": "ON",
-        "SFML_ENABLE_STDLIB_ASSERTIONS": "ON",
-        "SFML_WARNINGS_AS_ERRORS": "ON"
+        "SFML_ENABLE_PCH": "OFF",
+        "SFML_WARNINGS_AS_ERRORS": "OFF"
+      },
+      "environment": {
+        "CXX_WARNINGS": "-Wall -Wextra -Wpedantic -Wno-ignored-attributes -Wno-unused-command-line-argument"
+      }
+    },
+    {
+      "name": "build_base_debug",
+      "hidden": true,
+      "inherits": "build_base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "DEBUG",
+        "SFML_ENABLE_LIFETIME_TRACKING": "ON",
+        "SFML_ENABLE_STACK_TRACES": "ON",
+        "SFML_ENABLE_STDLIB_ASSERTIONS": "ON"
+      }
+    },
+    {
+      "name": "build_base_release",
+      "hidden": true,
+      "inherits": "build_base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "RELEASE",
+        "SFML_ENABLE_LIFETIME_TRACKING": "OFF",
+        "SFML_ENABLE_STACK_TRACES": "OFF",
+        "SFML_ENABLE_STDLIB_ASSERTIONS": "OFF"
+      }
+    },
+    {
+      "name": "vrdev_clang",
+      "inherits": "build_base_debug",
+      "binaryDir": "build_vrdev_clang",
+      "installDir": "${sourceDir}/build_vrdev_clang/install",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_CXX_FLAGS": "-fuse-ld=lld -ftime-trace $env{CXX_WARNINGS}"
+      }
+    },
+    {
+      "name": "vrdev_gcc",
+      "inherits": "build_base_debug",
+      "binaryDir": "build_vrdev_gcc",
+      "installDir": "${sourceDir}/build_vrdev_gcc/install",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "g++",
+        "CMAKE_CXX_FLAGS": "-fuse-ld=lld -Wnrvo $env{CXX_WARNINGS}"
+      }
+    },
+    {
+      "name": "vrdev_emcc",
+      "inherits": "build_base_debug",
+      "binaryDir": "build_vrdev_emcc",
+      "installDir": "${sourceDir}/build_vrdev_emcc/install",
+      "cacheVariables": {
+        "CMAKE_CROSSCOMPILING_EMULATOR": "C:/msys64/clang64/bin/node.exe",
+        "CMAKE_CXX_COMPILER_LAUNCHER": "",
+        "CMAKE_CXX_FLAGS": "$env{CXX_WARNINGS}",
+        "CMAKE_TOOLCHAIN_FILE": "C:/msys64/clang64/lib/emscripten/cmake/Modules/Platform/Emscripten.cmake",
+        "SFML_ENABLE_STACK_TRACES": "OFF",
+        "SFML_OPENGL_ES": "ON"
+      }
+    },
+    {
+      "name": "vrdev_gcc_rel",
+      "inherits": "build_base_release",
+      "binaryDir": "build_vrdev_gcc_rel",
+      "installDir": "${sourceDir}/build_vrdev_gcc_rel/install",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "g++",
+        "CMAKE_CXX_FLAGS": "-fuse-ld=lld -Wnrvo -Ofast $env{CXX_WARNINGS}"
+      }
+    },
+    {
+      "name": "vrdev_clang_rel",
+      "inherits": "build_base_release",
+      "binaryDir": "build_vrdev_clang_rel",
+      "installDir": "${sourceDir}/build_vrdev_clang_rel/install",
+      "cacheVariables": {
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_CXX_FLAGS": "-fuse-ld=lld -ftime-trace -Ofast $env{CXX_WARNINGS}"
+      }
+    },
+    {
+      "name": "vrdev_emcc_rel",
+      "inherits": "build_base_release",
+      "binaryDir": "build_vrdev_emcc_rel",
+      "installDir": "${sourceDir}/build_vrdev_emcc_rel/install",
+      "cacheVariables": {
+        "CMAKE_CROSSCOMPILING_EMULATOR": "C:/msys64/clang64/bin/node.exe",
+        "CMAKE_CXX_COMPILER_LAUNCHER": "",
+        "CMAKE_CXX_FLAGS": "-Ofast $env{CXX_WARNINGS}",
+        "CMAKE_TOOLCHAIN_FILE": "C:/msys64/clang64/lib/emscripten/cmake/Modules/Platform/Emscripten.cmake",
+        "SFML_OPENGL_ES": "ON"
       }
     }
   ]
