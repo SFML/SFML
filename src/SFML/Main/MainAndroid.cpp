@@ -305,7 +305,7 @@ void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* window)
 
     // Wait for the event to be taken into account by SFML
     states.updated = false;
-    while (!(states.updated | states.terminated))
+    while (!(states.updated || states.terminated))
     {
         states.mutex.unlock();
         sf::sleep(sf::milliseconds(10));
@@ -327,7 +327,7 @@ void onNativeWindowDestroyed(ANativeActivity* activity, ANativeWindow* /* window
 
     // Wait for the event to be taken into account by SFML
     states.updated = false;
-    while (!(states.updated | states.terminated))
+    while (!(states.updated || states.terminated))
     {
         states.mutex.unlock();
         sf::sleep(sf::milliseconds(10));
@@ -512,7 +512,7 @@ JNIEXPORT void ANativeActivity_onCreate(ANativeActivity* activity, void* savedSt
     // Wait for the main thread to be initialized
     states->mutex.lock();
 
-    while (!(states->initialized | states->terminated))
+    while (!(states->initialized || states->terminated))
     {
         states->mutex.unlock();
         sf::sleep(sf::milliseconds(20));

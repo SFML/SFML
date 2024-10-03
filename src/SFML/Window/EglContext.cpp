@@ -67,7 +67,7 @@ EGLDisplay getInitializedDisplay()
 
     return states.display;
 
-#endif
+#else
 
     static EGLDisplay display = EGL_NO_DISPLAY;
 
@@ -78,6 +78,8 @@ EGLDisplay getInitializedDisplay()
     }
 
     return display;
+
+#endif
 }
 
 

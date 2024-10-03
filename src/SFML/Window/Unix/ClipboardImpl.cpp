@@ -74,21 +74,18 @@ void ClipboardImpl::processEvents()
 
 
 ////////////////////////////////////////////////////////////
-ClipboardImpl::ClipboardImpl()
+ClipboardImpl::ClipboardImpl() :
+// Open a connection with the X server
+m_display(openDisplay()),
+// Create a hidden window that will broker our clipboard interactions with X
+m_window(XCreateSimpleWindow(m_display.get(), DefaultRootWindow(m_display.get()), 0, 0, 1, 1, 0, 0, 0)),
+// Get the atoms we need to make use of the clipboard
+m_clipboard(getAtom("CLIPBOARD", false)),
+m_targets(getAtom("TARGETS", false)),
+m_text(getAtom("TEXT", false)),
+m_utf8String(getAtom("UTF8_STRING", true)),
+m_targetProperty(getAtom("SFML_CLIPBOARD_TARGET_PROPERTY", false))
 {
-    // Open a connection with the X server
-    m_display = openDisplay();
-
-    // Get the atoms we need to make use of the clipboard
-    m_clipboard      = getAtom("CLIPBOARD", false);
-    m_targets        = getAtom("TARGETS", false);
-    m_text           = getAtom("TEXT", false);
-    m_utf8String     = getAtom("UTF8_STRING", true);
-    m_targetProperty = getAtom("SFML_CLIPBOARD_TARGET_PROPERTY", false);
-
-    // Create a hidden window that will broker our clipboard interactions with X
-    m_window = XCreateSimpleWindow(m_display.get(), DefaultRootWindow(m_display.get()), 0, 0, 1, 1, 0, 0, 0);
-
     // Register the events we are interested in
     XSelectInput(m_display.get(), m_window, SelectionNotify | SelectionClear | SelectionRequest);
 }

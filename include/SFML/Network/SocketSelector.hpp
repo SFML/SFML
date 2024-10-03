@@ -100,7 +100,7 @@ public:
     /// \see `remove`, `clear`
     ///
     ////////////////////////////////////////////////////////////
-    void add(Socket& socket);
+    void add(const Socket& socket);
 
     ////////////////////////////////////////////////////////////
     /// \brief Remove a socket from the selector
@@ -113,7 +113,7 @@ public:
     /// \see `add`, `clear`
     ///
     ////////////////////////////////////////////////////////////
-    void remove(Socket& socket);
+    void remove(const Socket& socket);
 
     ////////////////////////////////////////////////////////////
     /// \brief Remove all the sockets stored in the selector
@@ -162,7 +162,7 @@ public:
     /// \see `isReady`
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool isReady(Socket& socket) const;
+    [[nodiscard]] bool isReady(const Socket& socket) const;
 
 private:
     struct SocketSelectorImpl;
