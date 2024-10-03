@@ -202,15 +202,6 @@ public:
     ////////////////////////////////////////////////////////////
     T x{}; //!< X coordinate of the vector
     T y{}; //!< Y coordinate of the vector
-
-
-    ////////////////////////////////////////////////////////////
-    // Static member data
-    ////////////////////////////////////////////////////////////
-    // NOLINTBEGIN(readability-identifier-naming)
-    static const Vector2 UnitX; //!< The X unit vector (1, 0), usually facing right
-    static const Vector2 UnitY; //!< The Y unit vector (0, 1), usually facing down
-    // NOLINTEND(readability-identifier-naming)
 };
 
 // Define the most common types

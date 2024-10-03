@@ -214,15 +214,4 @@ constexpr bool operator!=(Vector2<T> left, Vector2<T> right)
     return !(left == right);
 }
 
-
-////////////////////////////////////////////////////////////
-// Static member data
-////////////////////////////////////////////////////////////
-
-template <typename T>
-const Vector2<T> Vector2<T>::UnitX(static_cast<T>(1), static_cast<T>(0));
-
-template <typename T>
-const Vector2<T> Vector2<T>::UnitY(static_cast<T>(0), static_cast<T>(1));
-
 } // namespace sf
