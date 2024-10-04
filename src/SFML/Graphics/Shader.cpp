@@ -326,7 +326,7 @@ Shader& Shader::operator=(Shader&& right) noexcept
     {
         return *this;
     }
-    // Explicit scope for RAII
+
     if (m_shaderProgram)
     {
         // Destroy effect program
