@@ -146,7 +146,7 @@ void Image::resize(Vector2u size, Color color)
         // Fill it with the specified color
         std::uint8_t* ptr = newPixels.data();
         std::uint8_t* end = ptr + newPixels.size();
-        while (ptr < end)
+        while (ptr != end)
         {
             *ptr++ = color.r;
             *ptr++ = color.g;
@@ -424,7 +424,7 @@ void Image::createMaskFromColor(Color color, std::uint8_t alpha)
         // Replace the alpha of the pixels that match the transparent color
         std::uint8_t* ptr = m_pixels.data();
         std::uint8_t* end = ptr + m_pixels.size();
-        while (ptr < end)
+        while (ptr != end)
         {
             if ((ptr[0] == color.r) && (ptr[1] == color.g) && (ptr[2] == color.b) && (ptr[3] == color.a))
                 ptr[3] = alpha;
