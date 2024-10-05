@@ -110,10 +110,6 @@ public:
     static const Time Zero; //!< Predefined "zero" time value
 
 private:
-    friend constexpr Time seconds(float);
-    friend constexpr Time milliseconds(std::int32_t);
-    friend constexpr Time microseconds(std::int64_t);
-
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
