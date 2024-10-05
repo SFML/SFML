@@ -29,40 +29,40 @@
 #include <SFML/Window/Mouse.hpp>
 
 
-namespace sf
+namespace sf::Mouse
 {
 ////////////////////////////////////////////////////////////
-bool Mouse::isButtonPressed(Button button)
+bool isButtonPressed(Button button)
 {
     return priv::InputImpl::isMouseButtonPressed(button);
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2i Mouse::getPosition()
+Vector2i getPosition()
 {
     return priv::InputImpl::getMousePosition();
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2i Mouse::getPosition(const WindowBase& relativeTo)
+Vector2i getPosition(const WindowBase& relativeTo)
 {
     return priv::InputImpl::getMousePosition(relativeTo);
 }
 
 
 ////////////////////////////////////////////////////////////
-void Mouse::setPosition(Vector2i position)
+void setPosition(Vector2i position)
 {
     priv::InputImpl::setMousePosition(position);
 }
 
 
 ////////////////////////////////////////////////////////////
-void Mouse::setPosition(Vector2i position, const WindowBase& relativeTo)
+void setPosition(Vector2i position, const WindowBase& relativeTo)
 {
     priv::InputImpl::setMousePosition(position, relativeTo);
 }
 
-} // namespace sf
+} // namespace sf::Mouse

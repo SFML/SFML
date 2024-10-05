@@ -29,26 +29,26 @@
 #include <SFML/Window/Touch.hpp>
 
 
-namespace sf
+namespace sf::Touch
 {
 ////////////////////////////////////////////////////////////
-bool Touch::isDown(unsigned int finger)
+bool isDown(unsigned int finger)
 {
     return priv::InputImpl::isTouchDown(finger);
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2i Touch::getPosition(unsigned int finger)
+Vector2i getPosition(unsigned int finger)
 {
     return priv::InputImpl::getTouchPosition(finger);
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2i Touch::getPosition(unsigned int finger, const WindowBase& relativeTo)
+Vector2i getPosition(unsigned int finger, const WindowBase& relativeTo)
 {
     return priv::InputImpl::getTouchPosition(finger, relativeTo);
 }
 
-} // namespace sf
+} // namespace sf::Touch

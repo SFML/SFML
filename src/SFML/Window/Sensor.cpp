@@ -29,25 +29,25 @@
 #include <SFML/Window/SensorManager.hpp>
 
 
-namespace sf
+namespace sf::Sensor
 {
 
 ////////////////////////////////////////////////////////////
-bool Sensor::isAvailable(Type sensor)
+bool isAvailable(Type sensor)
 {
     return priv::SensorManager::getInstance().isAvailable(sensor);
 }
 
 ////////////////////////////////////////////////////////////
-void Sensor::setEnabled(Type sensor, bool enabled)
+void setEnabled(Type sensor, bool enabled)
 {
     priv::SensorManager::getInstance().setEnabled(sensor, enabled);
 }
 
 ////////////////////////////////////////////////////////////
-Vector3f Sensor::getValue(Type sensor)
+Vector3f getValue(Type sensor)
 {
     return priv::SensorManager::getInstance().getValue(sensor);
 }
 
-} // namespace sf
+} // namespace sf::Sensor
