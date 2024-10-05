@@ -48,8 +48,7 @@ void U8StringCharTraits::assign(char_type& c1, char_type c2) noexcept
 ////////////////////////////////////////////////////////////
 U8StringCharTraits::char_type* U8StringCharTraits::assign(char_type* s, std::size_t n, char_type c)
 {
-    return reinterpret_cast<U8StringCharTraits::char_type*>(
-        std::char_traits<char>::assign(reinterpret_cast<char*>(s), n, static_cast<char>(c)));
+    return reinterpret_cast<char_type*>(std::char_traits<char>::assign(reinterpret_cast<char*>(s), n, static_cast<char>(c)));
 }
 
 
@@ -100,7 +99,7 @@ std::size_t U8StringCharTraits::length(const char_type* s)
 ////////////////////////////////////////////////////////////
 const U8StringCharTraits::char_type* U8StringCharTraits::find(const char_type* s, std::size_t n, const char_type& c)
 {
-    return reinterpret_cast<const U8StringCharTraits::char_type*>(
+    return reinterpret_cast<const char_type*>(
         std::char_traits<char>::find(reinterpret_cast<const char*>(s), n, static_cast<char>(c)));
 }
 
