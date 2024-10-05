@@ -732,8 +732,6 @@ protected:
         float a2{};
         float b1{};
         float b2{};
-        float c0{};
-        float d0{};
     };
 
     using Processing::Processing;

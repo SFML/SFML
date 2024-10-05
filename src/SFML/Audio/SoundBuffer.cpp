@@ -77,12 +77,11 @@ SoundBuffer::SoundBuffer(const std::int16_t*              samples,
 
 
 ////////////////////////////////////////////////////////////
-SoundBuffer::SoundBuffer(const SoundBuffer& copy)
+SoundBuffer::SoundBuffer(const SoundBuffer& copy) :
+// don't copy the attached sounds
+m_samples(copy.m_samples),
+m_duration(copy.m_duration)
 {
-    // don't copy the attached sounds
-    m_samples  = copy.m_samples;
-    m_duration = copy.m_duration;
-
     // Update the internal buffer with the new samples
     if (!update(copy.getChannelCount(), copy.getSampleRate(), copy.getChannelMap()))
         err() << "Failed to update copy-constructed sound buffer" << std::endl;

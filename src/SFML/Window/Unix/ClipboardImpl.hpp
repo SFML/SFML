@@ -135,8 +135,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    ::Window                   m_window{};          ///< X identifier defining our window
     std::shared_ptr<::Display> m_display;           ///< Pointer to the display
+    ::Window                   m_window;            ///< X identifier defining our window
     Atom                       m_clipboard;         ///< X Atom identifying the CLIPBOARD selection
     Atom                       m_targets;           ///< X Atom identifying TARGETS
     Atom                       m_text;              ///< X Atom identifying TEXT

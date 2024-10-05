@@ -21,7 +21,7 @@
 /// \return True if operation was successful, false otherwise
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] bool initialize(sf::Window& window)
+[[nodiscard]] bool initialize(const sf::Window& window)
 {
     // Activate the window
     if (!window.setActive())
@@ -73,7 +73,7 @@
 /// \return True if operation was successful, false otherwise
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] bool draw(sf::Window& window, float elapsedTime)
+[[nodiscard]] bool draw(const sf::Window& window, float elapsedTime)
 {
     // Activate the window
     if (!window.setActive())

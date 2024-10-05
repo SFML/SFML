@@ -422,8 +422,8 @@ void Image::createMaskFromColor(Color color, std::uint8_t alpha)
     if (!m_pixels.empty())
     {
         // Replace the alpha of the pixels that match the transparent color
-        std::uint8_t* ptr = m_pixels.data();
-        std::uint8_t* end = ptr + m_pixels.size();
+        std::uint8_t*       ptr = m_pixels.data();
+        const std::uint8_t* end = ptr + m_pixels.size();
         while (ptr < end)
         {
             if ((ptr[0] == color.r) && (ptr[1] == color.g) && (ptr[2] == color.b) && (ptr[3] == color.a))

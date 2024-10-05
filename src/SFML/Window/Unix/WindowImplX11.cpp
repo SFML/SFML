@@ -343,7 +343,7 @@ bool getEWMHFrameExtents(::Display* disp, ::Window win, long& xFrameExtent, long
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wcast-align"
-        long* extents = reinterpret_cast<long*>(data);
+        const long* extents = reinterpret_cast<long*>(data);
 #pragma GCC diagnostic pop
 
         xFrameExtent = extents[0]; // Left.
@@ -1178,7 +1178,7 @@ void WindowImplX11::requestFocus()
 
     {
         const std::lock_guard lock(allWindowsMutex);
-        for (sf::priv::WindowImplX11* windowPtr : allWindows)
+        for (const sf::priv::WindowImplX11* windowPtr : allWindows)
         {
             if (windowPtr->hasFocus())
             {
@@ -1693,6 +1693,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                 XSetICFocus(m_inputContext);
 
             // Grab cursor
+            // TODO: ???
             if (m_cursorGrabbed)
             {
                 // Try multiple times to grab the cursor
@@ -1718,6 +1719,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                     sf::sleep(sf::milliseconds(50));
                 }
 
+                // TODO: ???
                 if (!m_cursorGrabbed)
                     err() << "Failed to grab mouse cursor" << std::endl;
             }

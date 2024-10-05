@@ -445,13 +445,13 @@ void checkInit()
         deviceString = nullptr;
 
     // Use environment variable "SFML_DRM_MODE" (or nullptr if not set)
-    char* modeString = std::getenv("SFML_DRM_MODE");
+    const char* modeString = std::getenv("SFML_DRM_MODE");
 
     // Use environment variable "SFML_DRM_REFRESH" (or 0 if not set)
     // Use in combination with mode to request specific refresh rate for the mode
     // if multiple refresh rates for same mode might be supported
     unsigned int refreshRate   = 0;
-    char*        refreshString = std::getenv("SFML_DRM_REFRESH");
+    const char*  refreshString = std::getenv("SFML_DRM_REFRESH");
 
     if (refreshString)
         refreshRate = static_cast<unsigned int>(atoi(refreshString));
@@ -513,15 +513,13 @@ EGLDisplay getInitializedDisplay()
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-DRMContext::DRMContext(DRMContext* shared)
+DRMContext::DRMContext(DRMContext* shared) :
+// Get the initialized EGL display
+m_display(getInitializedDisplay()),
+// Get the best EGL config matching the default video settings
+m_config(getBestConfig(m_display, VideoMode::getDesktopMode().bitsPerPixel, ContextSettings{}))
 {
     contextCount++;
-
-    // Get the initialized EGL display
-    m_display = getInitializedDisplay();
-
-    // Get the best EGL config matching the default video settings
-    m_config = getBestConfig(m_display, VideoMode::getDesktopMode().bitsPerPixel, ContextSettings{});
     updateSettings();
 
     // Create EGL context
@@ -535,15 +533,13 @@ DRMContext::DRMContext(DRMContext* shared)
 
 
 ////////////////////////////////////////////////////////////
-DRMContext::DRMContext(DRMContext* shared, const ContextSettings& settings, const WindowImpl& owner, unsigned int bitsPerPixel)
+DRMContext::DRMContext(DRMContext* shared, const ContextSettings& settings, const WindowImpl& owner, unsigned int bitsPerPixel) :
+// Get the initialized EGL display
+m_display(getInitializedDisplay()),
+// Get the best EGL config matching the requested video settings
+m_config(getBestConfig(m_display, bitsPerPixel, settings))
 {
     contextCount++;
-
-    // Get the initialized EGL display
-    m_display = getInitializedDisplay();
-
-    // Get the best EGL config matching the requested video settings
-    m_config = getBestConfig(m_display, bitsPerPixel, settings);
     updateSettings();
 
     // Create EGL context
@@ -555,15 +551,13 @@ DRMContext::DRMContext(DRMContext* shared, const ContextSettings& settings, cons
 
 
 ////////////////////////////////////////////////////////////
-DRMContext::DRMContext(DRMContext* shared, const ContextSettings& settings, Vector2u size)
+DRMContext::DRMContext(DRMContext* shared, const ContextSettings& settings, Vector2u size) :
+// Get the initialized EGL display
+m_display(getInitializedDisplay()),
+// Get the best EGL config matching the requested video settings
+m_config(getBestConfig(m_display, VideoMode::getDesktopMode().bitsPerPixel, settings))
 {
     contextCount++;
-
-    // Get the initialized EGL display
-    m_display = getInitializedDisplay();
-
-    // Get the best EGL config matching the requested video settings
-    m_config = getBestConfig(m_display, VideoMode::getDesktopMode().bitsPerPixel, settings);
     updateSettings();
 
     // Create EGL context

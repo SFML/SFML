@@ -421,8 +421,9 @@ void SoundRecorder::setChannelCount(unsigned int channelCount)
         {
             m_impl->channelMap = {SoundChannel::Mono};
         }
-        else if (channelCount == 2)
+        else
         {
+            assert(channelCount == 2);
             m_impl->channelMap = {SoundChannel::FrontLeft, SoundChannel::FrontRight};
         }
     }

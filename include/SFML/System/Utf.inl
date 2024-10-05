@@ -27,6 +27,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Utf.hpp> // NOLINT(misc-header-include-cycle)
 
+#include <cassert>
+
 
 ////////////////////////////////////////////////////////////
 // References:
@@ -127,10 +129,10 @@ Out Utf<8>::encode(std::uint32_t input, Out output, std::uint8_t replacement)
         std::size_t bytestoWrite = 1;
 
         // clang-format off
-        if      (input <  0x80)       bytestoWrite = 1;
-        else if (input <  0x800)      bytestoWrite = 2;
-        else if (input <  0x10000)    bytestoWrite = 3;
-        else if (input <= 0x0010FFFF) bytestoWrite = 4;
+        if      (input <  0x80)     {                              bytestoWrite = 1; }
+        else if (input <  0x800)    {                              bytestoWrite = 2; }
+        else if (input <  0x10000)  {                              bytestoWrite = 3; }
+        else                        { assert(input <= 0x0010FFFF); bytestoWrite = 4; }
         // clang-format on
 
         // Extract the bytes to write
