@@ -3,14 +3,36 @@
 SFML 3 is coming soon!
 For a sneak peak at what has changed, check out the [migration guide](migration.md).
 
-## Unreleased
+## Unreleased SFML 2.6.2
 
 ### General
 
 -   Ensure GNUInstallDirs cache vars are included before first used (#2778, #2779)
 -   [macOS] Fix incorrect variable expansion (#2780)
--   Issue warning when trying to use UCRT MinGW with precompiled MSVCRT depenencies (#2821)
--   Fix Nix pkg-config support
+-   Replace deprecated CMake command `exec_program` (#2888)
+-   Fix Doxygen Generation (#2986, #2812, #2813)
+-   [iOS] Use built-in iOS support for CMake (#3113)
+-   [Windows] Fix `SFML_USE_STATIC_STD_LIBS` behavior (#3131)
+-   [Windows] Add support for UCRT MinGW (#2289, #2821, #3054, #3115)
+-   [Windows] Add support for Windows ARM64 (#3111, #3176)
+-   Fix Nix pkg-config support (#2835)
+
+### Window
+
+**Bugfixes**
+
+-   Fix joystickButton being used for Joystick(Dis)Connected event (#2957)
+-   [Windows] Close the clipboard if we fail to empty it (#3043)
+-   [Android] Remove use of deprecated `ALooper_pollAll` (#3181, #3189)
+-   [macOS] Fix how macOS fullscreen video modes are detected (#2300, #3151)
+-   [macOS] Prevent unnecessary macOS input monitoring permission prompts (#2843, #3235)
+
+### Graphics
+
+**Bugfixes**
+
+-   [Windows] Fix MSVC warning about uninitialized `sf::Glyph` members (#2929)
+-   Prevent crash when setting empty uniform array (#3185, #3186)
 
 ### Audio
 
