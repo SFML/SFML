@@ -140,23 +140,20 @@ U8StringCharTraits::int_type U8StringCharTraits::not_eof(int_type i) noexcept
 
 
 ////////////////////////////////////////////////////////////
-String::String(char ansiChar, const std::locale& locale)
+String::String(char ansiChar, const std::locale& locale) : m_string(1, Utf32::decodeAnsi(ansiChar, locale))
 {
-    m_string += Utf32::decodeAnsi(ansiChar, locale);
 }
 
 
 ////////////////////////////////////////////////////////////
-String::String(wchar_t wideChar)
+String::String(wchar_t wideChar) : m_string(1, Utf32::decodeWide(wideChar))
 {
-    m_string += Utf32::decodeWide(wideChar);
 }
 
 
 ////////////////////////////////////////////////////////////
-String::String(char32_t utf32Char)
+String::String(char32_t utf32Char) : m_string(1, utf32Char)
 {
-    m_string += utf32Char;
 }
 
 
@@ -207,10 +204,8 @@ String::String(const std::wstring& wideString)
 
 
 ////////////////////////////////////////////////////////////
-String::String(const char32_t* utf32String)
+String::String(const char32_t* utf32String) : m_string(utf32String ? utf32String : U"")
 {
-    if (utf32String)
-        m_string = utf32String;
 }
 
 
