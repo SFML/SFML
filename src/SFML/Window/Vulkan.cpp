@@ -53,10 +53,10 @@
 #endif
 
 
-namespace sf
+namespace sf::Vulkan
 {
 ////////////////////////////////////////////////////////////
-bool Vulkan::isAvailable([[maybe_unused]] bool requireGraphics)
+bool isAvailable([[maybe_unused]] bool requireGraphics)
 {
 #if defined(SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE)
 
@@ -71,7 +71,7 @@ bool Vulkan::isAvailable([[maybe_unused]] bool requireGraphics)
 
 
 ////////////////////////////////////////////////////////////
-VulkanFunctionPointer Vulkan::getFunction([[maybe_unused]] const char* name)
+VulkanFunctionPointer getFunction([[maybe_unused]] const char* name)
 {
     assert(name && "Name cannot be a null pointer");
 
@@ -88,7 +88,7 @@ VulkanFunctionPointer Vulkan::getFunction([[maybe_unused]] const char* name)
 
 
 ////////////////////////////////////////////////////////////
-const std::vector<const char*>& Vulkan::getGraphicsRequiredInstanceExtensions()
+const std::vector<const char*>& getGraphicsRequiredInstanceExtensions()
 {
 #if defined(SFML_VULKAN_IMPLEMENTATION_NOT_AVAILABLE)
 
@@ -103,4 +103,4 @@ const std::vector<const char*>& Vulkan::getGraphicsRequiredInstanceExtensions()
 #endif
 }
 
-} // namespace sf
+} // namespace sf::Vulkan
