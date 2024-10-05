@@ -41,12 +41,6 @@ namespace sf
 class SFML_SYSTEM_API Exception : public std::runtime_error
 {
 public:
-    ////////////////////////////////////////////////////////////
-    /// \brief Construct with message
-    ///
-    /// \param message Exception message
-    ///
-    ////////////////////////////////////////////////////////////
-    explicit Exception(const std::string& message);
+    using std::runtime_error::runtime_error;
 };
 } // namespace sf

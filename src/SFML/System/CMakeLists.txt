@@ -10,7 +10,6 @@ set(SRC
     ${SRCROOT}/EnumArray.hpp
     ${SRCROOT}/Err.cpp
     ${INCROOT}/Err.hpp
-    ${SRCROOT}/Exception.cpp
     ${INCROOT}/Exception.hpp
     ${INCROOT}/Export.hpp
     ${INCROOT}/InputStream.hpp
