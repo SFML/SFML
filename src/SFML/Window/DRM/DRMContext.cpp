@@ -484,7 +484,7 @@ EGLDisplay getInitializedDisplay()
     {
         gladLoaderLoadEGL(EGL_NO_DISPLAY);
 
-        eglCheck(display = eglGetDisplay(reinterpret_cast<EGLNativeDisplayType>(gbmDevice)));
+        display = eglCheck(eglGetDisplay(reinterpret_cast<EGLNativeDisplayType>(gbmDevice)));
 
         EGLint major = 0;
         EGLint minor = 0;
@@ -576,8 +576,7 @@ DRMContext::DRMContext(DRMContext* shared, const ContextSettings& settings, Vect
 DRMContext::~DRMContext()
 {
     // Deactivate the current context
-    EGLContext currentContext = nullptr;
-    eglCheck(currentContext = eglGetCurrentContext());
+    const EGLContext currentContext = eglCheck(eglGetCurrentContext());
 
     if (currentContext == m_context)
     {
@@ -618,7 +617,7 @@ bool DRMContext::makeCurrent(bool current)
 {
     const EGLSurface surface = current ? m_surface : EGL_NO_SURFACE;
     const EGLContext context = current ? m_context : EGL_NO_CONTEXT;
-    return m_surface != EGL_NO_SURFACE && eglMakeCurrent(m_display, surface, surface, context);
+    return m_surface != EGL_NO_SURFACE && eglCheck(eglMakeCurrent(m_display, surface, surface, context));
 }
 
 
@@ -700,10 +699,10 @@ void DRMContext::createContext(DRMContext* shared)
         toShared = EGL_NO_CONTEXT;
 
     if (toShared != EGL_NO_CONTEXT)
-        eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        eglCheck(eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
 
     // Create EGL context
-    eglCheck(m_context = eglCreateContext(m_display, m_config, toShared, contextVersion));
+    m_context = eglCheck(eglCreateContext(m_display, m_config, toShared, contextVersion));
     if (m_context == EGL_NO_CONTEXT)
         err() << "Failed to create EGL context" << std::endl;
 }
