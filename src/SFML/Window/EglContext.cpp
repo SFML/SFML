@@ -73,7 +73,7 @@ EGLDisplay getInitializedDisplay()
 
     if (display == EGL_NO_DISPLAY)
     {
-        eglCheck(display = eglGetDisplay(EGL_DEFAULT_DISPLAY));
+        display = eglCheck(eglGetDisplay(EGL_DEFAULT_DISPLAY));
         eglCheck(eglInitialize(display, nullptr, nullptr));
     }
 
@@ -128,7 +128,7 @@ EglContext::EglContext(EglContext* shared)
     // but this is resulting in a segfault. Bug in Android?
     EGLint attribList[] = {EGL_WIDTH, 1, EGL_HEIGHT, 1, EGL_NONE};
 
-    eglCheck(m_surface = eglCreatePbufferSurface(m_display, m_config, attribList));
+    m_surface = eglCheck(eglCreatePbufferSurface(m_display, m_config, attribList));
 
     // Create EGL context
     createContext(shared);
@@ -190,8 +190,7 @@ EglContext::~EglContext()
     cleanupUnsharedResources();
 
     // Deactivate the current context
-    EGLContext currentContext = EGL_NO_CONTEXT;
-    eglCheck(currentContext = eglGetCurrentContext());
+    const EGLContext currentContext = eglCheck(eglGetCurrentContext());
 
     if (currentContext == m_context)
     {
@@ -227,18 +226,10 @@ bool EglContext::makeCurrent(bool current)
     if (m_surface == EGL_NO_SURFACE)
         return false;
 
-    EGLBoolean result = EGL_FALSE;
-
     if (current)
-    {
-        eglCheck(result = eglMakeCurrent(m_display, m_surface, m_surface, m_context));
-    }
-    else
-    {
-        eglCheck(result = eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
-    }
+        return EGL_FALSE != eglCheck(eglMakeCurrent(m_display, m_surface, m_surface, m_context));
 
-    return result != EGL_FALSE;
+    return EGL_FALSE != eglCheck(eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
 }
 
 
@@ -270,17 +261,17 @@ void EglContext::createContext(EglContext* shared)
         toShared = EGL_NO_CONTEXT;
 
     if (toShared != EGL_NO_CONTEXT)
-        eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        eglCheck(eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
 
     // Create EGL context
-    eglCheck(m_context = eglCreateContext(m_display, m_config, toShared, contextVersion));
+    m_context = eglCheck(eglCreateContext(m_display, m_config, toShared, contextVersion));
 }
 
 
 ////////////////////////////////////////////////////////////
 void EglContext::createSurface(EGLNativeWindowType window)
 {
-    eglCheck(m_surface = eglCreateWindowSurface(m_display, m_config, window, nullptr));
+    m_surface = eglCheck(eglCreateWindowSurface(m_display, m_config, window, nullptr));
 }
 
 
@@ -378,29 +369,18 @@ void EglContext::updateSettings()
     m_settings.stencilBits       = 0;
     m_settings.antiAliasingLevel = 0;
 
-    EGLBoolean result = EGL_FALSE;
-    EGLint     tmp    = 0;
+    EGLint tmp = 0;
 
     // Update the internal context settings with the current config
-    eglCheck(result = eglGetConfigAttrib(m_display, m_config, EGL_DEPTH_SIZE, &tmp));
-
-    if (result != EGL_FALSE)
+    if (eglCheck(eglGetConfigAttrib(m_display, m_config, EGL_DEPTH_SIZE, &tmp)) != EGL_FALSE)
         m_settings.depthBits = static_cast<unsigned int>(tmp);
 
-    eglCheck(result = eglGetConfigAttrib(m_display, m_config, EGL_STENCIL_SIZE, &tmp));
-
-    if (result != EGL_FALSE)
+    if (eglCheck(eglGetConfigAttrib(m_display, m_config, EGL_STENCIL_SIZE, &tmp)) != EGL_FALSE)
         m_settings.stencilBits = static_cast<unsigned int>(tmp);
 
-    eglCheck(result = eglGetConfigAttrib(m_display, m_config, EGL_SAMPLE_BUFFERS, &tmp));
-
-    if ((result != EGL_FALSE) && tmp)
-    {
-        eglCheck(result = eglGetConfigAttrib(m_display, m_config, EGL_SAMPLES, &tmp));
-
-        if (result != EGL_FALSE)
-            m_settings.antiAliasingLevel = static_cast<unsigned int>(tmp);
-    }
+    if (eglCheck(eglGetConfigAttrib(m_display, m_config, EGL_SAMPLE_BUFFERS, &tmp)) != EGL_FALSE && tmp &&
+        eglCheck(eglGetConfigAttrib(m_display, m_config, EGL_SAMPLES, &tmp)) != EGL_FALSE)
+        m_settings.antiAliasingLevel = static_cast<unsigned int>(tmp);
 }
 
 
