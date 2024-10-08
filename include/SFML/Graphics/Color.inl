@@ -74,7 +74,7 @@ constexpr bool operator!=(Color left, Color right)
 ////////////////////////////////////////////////////////////
 constexpr Color operator+(Color left, Color right)
 {
-    const auto clampedAdd = [](std::uint8_t lhs, std::uint8_t rhs) -> std::uint8_t
+    const auto clampedAdd = [](std::uint8_t lhs, std::uint8_t rhs)
     {
         const int intResult = int{lhs} + int{rhs};
         return static_cast<std::uint8_t>(intResult < 255 ? intResult : 255);
@@ -90,7 +90,7 @@ constexpr Color operator+(Color left, Color right)
 ////////////////////////////////////////////////////////////
 constexpr Color operator-(Color left, Color right)
 {
-    const auto clampedSub = [](std::uint8_t lhs, std::uint8_t rhs) -> std::uint8_t
+    const auto clampedSub = [](std::uint8_t lhs, std::uint8_t rhs)
     {
         const int intResult = int{lhs} - int{rhs};
         return static_cast<std::uint8_t>(intResult > 0 ? intResult : 0);
@@ -106,7 +106,7 @@ constexpr Color operator-(Color left, Color right)
 ////////////////////////////////////////////////////////////
 constexpr Color operator*(Color left, Color right)
 {
-    const auto scaledMul = [](std::uint8_t lhs, std::uint8_t rhs) -> std::uint8_t
+    const auto scaledMul = [](std::uint8_t lhs, std::uint8_t rhs)
     {
         const auto uint16Result = static_cast<std::uint16_t>(std::uint16_t{lhs} * std::uint16_t{rhs});
         return static_cast<std::uint8_t>(uint16Result / 255u);
