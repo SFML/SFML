@@ -82,7 +82,7 @@ public:
     /// and device using the currently selected device name as
     /// returned by sf::PlaybackDevice::getDevice.
     ///
-    /// \return True if reinitialization was successful, false otherwise
+    /// \return `true` if reinitialization was successful, `false` otherwise
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] static bool reinitialize();
@@ -121,7 +121,7 @@ public:
     ///
     /// \param name The name of the audio playback device
     ///
-    /// \return True, if it was able to set the requested device
+    /// \return `true`, if it was able to set the requested device
     ///
     /// \see getAvailableDevices, getDefaultDevice
     ///
@@ -336,7 +336,7 @@ private:
     ////////////////////////////////////////////////////////////
     /// \brief Initialize the audio device and engine
     ///
-    /// \return True if initialization was successful, false if it failed
+    /// \return `true` if initialization was successful, `false` if it failed
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool initialize();

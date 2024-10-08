@@ -75,7 +75,7 @@ public:
     /// \param textureId  OpenGL identifier of the target texture
     /// \param settings   Context settings to create render-texture with
     ///
-    /// \return True if creation has been successful
+    /// \return `true` if creation has been successful
     ///
     ////////////////////////////////////////////////////////////
     virtual bool create(Vector2u size, unsigned int textureId, const ContextSettings& settings) = 0;
@@ -83,9 +83,9 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Activate or deactivate the render texture for rendering
     ///
-    /// \param active True to activate, false to deactivate
+    /// \param active `true` to activate, `false` to deactivate
     ///
-    /// \return True on success, false on failure
+    /// \return `true` on success, `false` on failure
     ///
     ////////////////////////////////////////////////////////////
     virtual bool activate(bool active) = 0;
@@ -96,7 +96,7 @@ public:
     /// You can request sRGB encoding for a render-texture
     /// by having the sRgbCapable flag set for the context parameter of create() method
     ///
-    /// \return True if the render-texture use sRGB encoding, false otherwise
+    /// \return `true` if the render-texture use sRGB encoding, `false` otherwise
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] virtual bool isSrgb() const = 0;

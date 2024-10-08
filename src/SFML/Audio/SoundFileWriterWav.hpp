@@ -50,7 +50,7 @@ public:
     ///
     /// \param filename Path of the sound file to check
     ///
-    /// \return True if the file can be written by this writer
+    /// \return `true` if the file can be written by this writer
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] static bool check(const std::filesystem::path& filename);
@@ -69,7 +69,7 @@ public:
     /// \param channelCount Number of channels of the sound
     /// \param channelMap   Map of position in sample frame to sound channel
     ///
-    /// \return True if the file was successfully opened
+    /// \return `true` if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool open(const std::filesystem::path&     filename,

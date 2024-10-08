@@ -56,7 +56,7 @@ public:
     ///
     /// \param stream Source stream to check
     ///
-    /// \return True if the file is supported by this reader
+    /// \return `true` if the file is supported by this reader
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] static bool check(InputStream& stream);

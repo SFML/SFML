@@ -41,7 +41,7 @@
 ///
 /// \param interfaceOrientation Orientation to check
 ///
-/// \return True if auto-rotation is supported, false otherwise
+/// \return `true` if auto-rotation is supported, `false` otherwise
 ///
 ////////////////////////////////////////////////////////////
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation;
@@ -49,7 +49,7 @@
 ////////////////////////////////////////////////////////////
 /// \brief Tells if the controller supports auto-rotation (iOS >= 6)
 ///
-/// \return True if auto-rotation is supported, false otherwise
+/// \return `true` if auto-rotation is supported, `false` otherwise
 ///
 ////////////////////////////////////////////////////////////
 - (BOOL)shouldAutorotate;

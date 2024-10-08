@@ -253,7 +253,7 @@ private:
     ///
     /// \param elements HID elements mapping to this key
     ///
-    /// \return True if the key is pressed, false otherwise
+    /// \return `true` if the key is pressed, `false` otherwise
     ///
     /// \see isKeyPressed, isMouseButtonPressed
     ///

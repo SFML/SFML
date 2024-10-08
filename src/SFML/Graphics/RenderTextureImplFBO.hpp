@@ -69,7 +69,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Check whether the system supports FBOs or not
     ///
-    /// \return True if FBO render textures are supported
+    /// \return `true` if FBO render textures are supported
     ///
     ////////////////////////////////////////////////////////////
     static bool isAvailable();
@@ -96,7 +96,7 @@ private:
     /// \param textureId  OpenGL identifier of the target texture
     /// \param settings   Context settings to create render-texture with
     ///
-    /// \return True if creation has been successful
+    /// \return `true` if creation has been successful
     ///
     ////////////////////////////////////////////////////////////
     bool create(Vector2u size, unsigned int textureId, const ContextSettings& settings) override;
@@ -104,7 +104,7 @@ private:
     ////////////////////////////////////////////////////////////
     /// \brief Create an FBO in the current context
     ///
-    /// \return True if creation has been successful
+    /// \return `true` if creation has been successful
     ///
     ////////////////////////////////////////////////////////////
     bool createFrameBuffer();
@@ -112,9 +112,9 @@ private:
     ////////////////////////////////////////////////////////////
     /// \brief Activate or deactivate the render texture for rendering
     ///
-    /// \param active True to activate, false to deactivate
+    /// \param active `true` to activate, `false` to deactivate
     ///
-    /// \return True on success, false on failure
+    /// \return `true` on success, `false` on failure
     ///
     ////////////////////////////////////////////////////////////
     bool activate(bool active) override;
@@ -125,7 +125,7 @@ private:
     /// You can request sRGB encoding for a render-texture
     /// by having the sRgbCapable flag set for the context parameter of create() method
     ///
-    /// \return True if the render-texture use sRGB encoding, false otherwise
+    /// \return `true` if the render-texture use sRGB encoding, `false` otherwise
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool isSrgb() const override;

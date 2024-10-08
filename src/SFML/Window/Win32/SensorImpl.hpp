@@ -56,7 +56,7 @@ public:
     ///
     /// \param sensor Sensor to check
     ///
-    /// \return True if the sensor is available, false otherwise
+    /// \return `true` if the sensor is available, `false` otherwise
     ///
     ////////////////////////////////////////////////////////////
     static bool isAvailable(Sensor::Type sensor);
@@ -66,7 +66,7 @@ public:
     ///
     /// \param sensor Type of the sensor
     ///
-    /// \return True on success, false on failure
+    /// \return `true` on success, `false` on failure
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool open(Sensor::Type sensor);
@@ -88,7 +88,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable the sensor
     ///
-    /// \param enabled True to enable, false to disable
+    /// \param enabled `true` to enable, `false` to disable
     ///
     ////////////////////////////////////////////////////////////
     void setEnabled(bool enabled);

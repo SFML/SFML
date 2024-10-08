@@ -180,7 +180,7 @@ struct Sound::Impl : priv::MiniaudioUtils::SoundBase
     ////////////////////////////////////////////////////////////
     static constexpr ma_data_source_vtable vtable{read, seek, getFormat, getCursor, getLength, setLooping, 0};
     std::size_t                            cursor{};  //!< The current playing position
-    bool                                   looping{}; //!< True if we are looping the sound
+    bool                                   looping{}; //!< `true` if we are looping the sound
     const SoundBuffer*                     buffer{};  //!< Sound buffer bound to the source
 };
 
