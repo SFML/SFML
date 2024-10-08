@@ -80,7 +80,7 @@ bool glCheckError(const std::filesystem::path& file, unsigned int line, std::str
             while (!sf::priv::glCheckError(__FILE__, static_cast<unsigned int>(__LINE__), #__VA_ARGS__))            \
                 /* no-op */;                                                                                        \
         }                                                                                                           \
-    }([&]() { return __VA_ARGS__; })
+    }([&] { return __VA_ARGS__; })
 #else
 
 // Else, we don't add any overhead
