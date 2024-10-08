@@ -60,7 +60,7 @@ public:
     ///
     /// \param index Index of the joystick to check
     ///
-    /// \return True if the joystick is connected, false otherwise
+    /// \return `true` if the joystick is connected, `false` otherwise
     ///
     ////////////////////////////////////////////////////////////
     static bool isConnected(unsigned int index);
@@ -84,7 +84,7 @@ public:
     ///
     /// \param index Index assigned to the joystick
     ///
-    /// \return True on success, false on failure
+    /// \return `true` on success, `false` on failure
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool open(unsigned int index);
@@ -136,7 +136,7 @@ public:
     ///
     /// \param index Index of the joystick to check
     ///
-    /// \return True if the joystick is connected, false otherwise
+    /// \return `true` if the joystick is connected, `false` otherwise
     ///
     ////////////////////////////////////////////////////////////
     static bool isConnectedDInput(unsigned int index);
@@ -152,7 +152,7 @@ public:
     ///
     /// \param index Index assigned to the joystick
     ///
-    /// \return True on success, false on failure
+    /// \return `true` on success, `false` on failure
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool openDInput(unsigned int index);
@@ -221,7 +221,7 @@ private:
     int m_buttons[Joystick::ButtonCount]{}; //!< Offsets to the bytes containing the button states, -1 if not available
     Joystick::Identification m_identification; //!< Joystick identification
     JoystickState            m_state;          //!< Buffered joystick state
-    bool                     m_buffered{};     //!< true if the device uses buffering, false if the device uses polling
+    bool                     m_buffered{}; //!< `true` if the device uses buffering, `false` if the device uses polling
 };
 
 } // namespace sf::priv

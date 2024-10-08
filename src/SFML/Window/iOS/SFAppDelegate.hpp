@@ -51,7 +51,7 @@
 ////////////////////////////////////////////////////////////
 /// \brief Show or hide the virtual keyboard
 ///
-/// \param visible True to show, false to hide
+/// \param visible `true` to show, `false` to hide
 ///
 ////////////////////////////////////////////////////////////
 - (void)setVirtualKeyboardVisible:(bool)visible;

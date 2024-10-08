@@ -43,12 +43,12 @@ namespace sf::priv::VulkanImpl
 /// any attempt to use Vulkan will fail.
 ///
 /// If only compute is required, set \a requireGraphics
-/// to false to skip checking for the extensions necessary
+/// to `false` to skip checking for the extensions necessary
 /// for graphics rendering.
 ///
 /// \param requireGraphics
 ///
-/// \return True if Vulkan is supported, false otherwise
+/// \return `true` if Vulkan is supported, `false` otherwise
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] bool isAvailable(bool requireGraphics = true);
@@ -79,7 +79,7 @@ namespace sf::priv::VulkanImpl
 /// \param surface      Created surface
 /// \param allocator    Allocator to use
 ///
-/// \return True if surface creation was successful, false otherwise
+/// \return `true` if surface creation was successful, `false` otherwise
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] bool createVulkanSurface(const VkInstance&            instance,

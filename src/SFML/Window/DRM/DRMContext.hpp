@@ -101,7 +101,7 @@ public:
     ///
     /// \param current Whether to make the context current or no longer current
     ///
-    /// \return True on success, false if any error happened
+    /// \return `true` on success, `false` if any error happened
     ///
     ////////////////////////////////////////////////////////////
     bool makeCurrent(bool current) override;
@@ -120,7 +120,7 @@ public:
     /// This can avoid some visual artifacts, and limit the framerate
     /// to a good value (but not constant across different computers).
     ///
-    /// \param enabled: True to enable v-sync, false to deactivate
+    /// \param enabled: `true` to enable v-sync, `false` to deactivate
     ///
     ////////////////////////////////////////////////////////////
     void setVerticalSyncEnabled(bool enabled) override;
@@ -140,7 +140,7 @@ public:
     ///
     /// \param size    Back buffer width and height, in pixels
     /// \param bpp     Pixel depth, in bits per pixel
-    /// \param scanout True to present the surface to the screen
+    /// \param scanout `true` to present the surface to the screen
     ///
     ////////////////////////////////////////////////////////////
     void createSurface(Vector2u size, unsigned int bpp, bool scanout);

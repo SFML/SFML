@@ -81,7 +81,7 @@ void setVirtualKeyboardVisible(bool visible);
 ///
 /// \param button Button to check
 ///
-/// \return True if the button is pressed, false otherwise
+/// \return `true` if the button is pressed, `false` otherwise
 ///
 ////////////////////////////////////////////////////////////
 bool isMouseButtonPressed(Mouse::Button button);
@@ -141,7 +141,7 @@ void setMousePosition(Vector2i position, const WindowBase& relativeTo);
 ///
 /// \param finger Finger index
 ///
-/// \return True if \a finger is currently touching the screen, false otherwise
+/// \return `true` if \a finger is currently touching the screen, `false` otherwise
 ///
 ////////////////////////////////////////////////////////////
 bool isTouchDown(unsigned int finger);

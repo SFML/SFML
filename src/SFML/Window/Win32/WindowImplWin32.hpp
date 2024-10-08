@@ -137,7 +137,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the window
     ///
-    /// \param visible True to show, false to hide
+    /// \param visible `true` to show, `false` to hide
     ///
     ////////////////////////////////////////////////////////////
     void setVisible(bool visible) override;
@@ -145,7 +145,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the mouse cursor
     ///
-    /// \param visible True to show, false to hide
+    /// \param visible `true` to show, `false` to hide
     ///
     ////////////////////////////////////////////////////////////
     void setMouseCursorVisible(bool visible) override;
@@ -153,7 +153,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Grab or release the mouse cursor
     ///
-    /// \param grabbed True to enable, false to disable
+    /// \param grabbed `true` to enable, `false` to disable
     ///
     ////////////////////////////////////////////////////////////
     void setMouseCursorGrabbed(bool grabbed) override;
@@ -169,7 +169,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable automatic key-repeat
     ///
-    /// \param enabled True to enable, false to disable
+    /// \param enabled `true` to enable, `false` to disable
     ///
     ////////////////////////////////////////////////////////////
     void setKeyRepeatEnabled(bool enabled) override;
@@ -184,7 +184,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Check whether the window has the input focus
     ///
-    /// \return True if window has focus, false otherwise
+    /// \return `true` if window has focus, `false` otherwise
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool hasFocus() const override;
@@ -230,7 +230,7 @@ private:
     ////////////////////////////////////////////////////////////
     /// \brief Enables or disables tracking for the mouse cursor leaving the window
     ///
-    /// \param track True to enable, false to disable
+    /// \param track `true` to enable, `false` to disable
     ///
     ////////////////////////////////////////////////////////////
     void setTracking(bool track);
@@ -243,7 +243,7 @@ private:
     /// for example, to release the cursor when switching to
     /// another application.
     ///
-    /// \param grabbed True to enable, false to disable
+    /// \param grabbed `true` to enable, `false` to disable
     ///
     ////////////////////////////////////////////////////////////
     void grabCursor(bool grabbed);
@@ -277,7 +277,7 @@ private:
     /// \param wParam  First parameter of the message
     /// \param lParam  Second parameter of the message
     ///
-    /// \return True to discard the event after it has been processed
+    /// \return `true` to discard the event after it has been processed
     ///
     ////////////////////////////////////////////////////////////
     static LRESULT CALLBACK globalOnEvent(HWND handle, UINT message, WPARAM wParam, LPARAM lParam);

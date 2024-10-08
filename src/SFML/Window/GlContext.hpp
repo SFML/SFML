@@ -135,7 +135,7 @@ public:
     ///
     /// \param name Name of the extension to check for
     ///
-    /// \return True if available, false if unavailable
+    /// \return `true` if available, `false` if unavailable
     ///
     ////////////////////////////////////////////////////////////
     static bool isExtensionAvailable(std::string_view name);
@@ -208,9 +208,9 @@ public:
     /// Only one context can be active on a thread at a time, thus
     /// the context previously active (if any) automatically gets deactivated.
     ///
-    /// \param active True to activate, false to deactivate
+    /// \param active `true` to activate, `false` to deactivate
     ///
-    /// \return True if operation was successful, false otherwise
+    /// \return `true` if operation was successful, `false` otherwise
     ///
     ////////////////////////////////////////////////////////////
     bool setActive(bool active);
@@ -229,7 +229,7 @@ public:
     /// This can avoid some visual artifacts, and limit the framerate
     /// to a good value (but not constant across different computers).
     ///
-    /// \param enabled True to enable v-sync, false to deactivate
+    /// \param enabled `true` to enable v-sync, `false` to deactivate
     ///
     ////////////////////////////////////////////////////////////
     virtual void setVerticalSyncEnabled(bool enabled) = 0;
@@ -249,7 +249,7 @@ protected:
     ///
     /// \param current Whether to make the context current or no longer current
     ///
-    /// \return True on success, false if any error happened
+    /// \return `true` on success, `false` if any error happened
     ///
     ////////////////////////////////////////////////////////////
     virtual bool makeCurrent(bool current) = 0;

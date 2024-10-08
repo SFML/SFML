@@ -67,7 +67,7 @@ public:
     ///
     /// \param sensor Sensor to check
     ///
-    /// \return True if the sensor is available, false otherwise
+    /// \return `true` if the sensor is available, `false` otherwise
     ///
     ////////////////////////////////////////////////////////////
     bool isAvailable(Sensor::Type sensor);
@@ -86,7 +86,7 @@ public:
     ///
     /// \param sensor Sensor to check
     ///
-    /// \return True if the sensor is enabled, false otherwise
+    /// \return `true` if the sensor is enabled, `false` otherwise
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool isEnabled(Sensor::Type sensor) const;

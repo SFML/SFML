@@ -100,7 +100,7 @@ public:
     ///
     /// \param current Whether to make the context current or no longer current
     ///
-    /// \return True on success, false if any error happened
+    /// \return `true` on success, `false` if any error happened
     ///
     ////////////////////////////////////////////////////////////
     bool makeCurrent(bool current) override;
@@ -119,7 +119,7 @@ public:
     /// This can avoid some visual artifacts, and limit the framerate
     /// to a good value (but not constant across different computers).
     ///
-    /// \param enabled: True to enable v-sync, false to deactivate
+    /// \param enabled: `true` to enable v-sync, `false` to deactivate
     ///
     ////////////////////////////////////////////////////////////
     void setVerticalSyncEnabled(bool enabled) override;
