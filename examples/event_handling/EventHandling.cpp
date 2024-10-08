@@ -11,7 +11,7 @@ namespace
 std::string vec2ToString(const sf::Vector2i vec2)
 {
     return '(' + std::to_string(vec2.x) + ", " + std::to_string(vec2.y) + ')';
-};
+}
 } // namespace
 
 
