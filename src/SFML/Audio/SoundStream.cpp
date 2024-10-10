@@ -86,7 +86,7 @@ struct SoundStream::Impl : priv::MiniaudioUtils::SoundBase
             err() << "Failed to seek sound to frame 0: " << ma_result_description(result) << std::endl;
     }
 
-    static ma_result read(ma_data_source* dataSource, void* framesOut, ma_uint64 frameCount, ma_uint64* framesRead)
+    static ma_result read(ma_data_source* dataSource, void* framesOut, std::uint64_t frameCount, std::uint64_t* framesRead)
     {
         auto& impl  = *static_cast<Impl*>(dataSource);
         auto* owner = impl.owner;
@@ -109,8 +109,8 @@ struct SoundStream::Impl : priv::MiniaudioUtils::SoundBase
         if (!impl.sampleBuffer.empty())
         {
             // Determine how many frames we can read
-            *framesRead = std::min<ma_uint64>(frameCount,
-                                              (impl.sampleBuffer.size() - impl.sampleBufferCursor) / impl.channelCount);
+            *framesRead = std::min<std::uint64_t>(frameCount,
+                                                  (impl.sampleBuffer.size() - impl.sampleBufferCursor) / impl.channelCount);
 
             const auto sampleCount = *framesRead * impl.channelCount;
 
@@ -146,7 +146,7 @@ struct SoundStream::Impl : priv::MiniaudioUtils::SoundBase
         return MA_SUCCESS;
     }
 
-    static ma_result seek(ma_data_source* dataSource, ma_uint64 frameIndex)
+    static ma_result seek(ma_data_source* dataSource, std::uint64_t frameIndex)
     {
         auto& impl  = *static_cast<Impl*>(dataSource);
         auto* owner = impl.owner;
@@ -170,8 +170,8 @@ struct SoundStream::Impl : priv::MiniaudioUtils::SoundBase
 
     static ma_result getFormat(ma_data_source* dataSource,
                                ma_format*      format,
-                               ma_uint32*      channels,
-                               ma_uint32*      sampleRate,
+                               std::uint32_t*  channels,
+                               std::uint32_t*  sampleRate,
                                ma_channel*,
                                size_t)
     {
@@ -185,7 +185,7 @@ struct SoundStream::Impl : priv::MiniaudioUtils::SoundBase
         return MA_SUCCESS;
     }
 
-    static ma_result getCursor(ma_data_source* dataSource, ma_uint64* cursor)
+    static ma_result getCursor(ma_data_source* dataSource, std::uint64_t* cursor)
     {
         auto& impl = *static_cast<Impl*>(dataSource);
         *cursor    = impl.channelCount ? impl.samplesProcessed / impl.channelCount : 0;
@@ -193,7 +193,7 @@ struct SoundStream::Impl : priv::MiniaudioUtils::SoundBase
         return MA_SUCCESS;
     }
 
-    static ma_result getLength(ma_data_source*, ma_uint64* length)
+    static ma_result getLength(ma_data_source*, std::uint64_t* length)
     {
         *length = 0;
 

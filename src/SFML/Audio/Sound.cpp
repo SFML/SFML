@@ -83,7 +83,7 @@ struct Sound::Impl : priv::MiniaudioUtils::SoundBase
             err() << "Failed to seek sound to frame 0: " << ma_result_description(result) << std::endl;
     }
 
-    static ma_result read(ma_data_source* dataSource, void* framesOut, ma_uint64 frameCount, ma_uint64* framesRead)
+    static ma_result read(ma_data_source* dataSource, void* framesOut, std::uint64_t frameCount, std::uint64_t* framesRead)
     {
         auto&       impl   = *static_cast<Impl*>(dataSource);
         const auto* buffer = impl.buffer;
@@ -92,7 +92,7 @@ struct Sound::Impl : priv::MiniaudioUtils::SoundBase
             return MA_NO_DATA_AVAILABLE;
 
         // Determine how many frames we can read
-        *framesRead = std::min<ma_uint64>(frameCount, (buffer->getSampleCount() - impl.cursor) / buffer->getChannelCount());
+        *framesRead = std::min(frameCount, (buffer->getSampleCount() - impl.cursor) / buffer->getChannelCount());
 
         // Copy the samples to the output
         const auto sampleCount = *framesRead * buffer->getChannelCount();
@@ -110,7 +110,7 @@ struct Sound::Impl : priv::MiniaudioUtils::SoundBase
         return MA_SUCCESS;
     }
 
-    static ma_result seek(ma_data_source* dataSource, ma_uint64 frameIndex)
+    static ma_result seek(ma_data_source* dataSource, std::uint64_t frameIndex)
     {
         auto&       impl   = *static_cast<Impl*>(dataSource);
         const auto* buffer = impl.buffer;
@@ -125,8 +125,8 @@ struct Sound::Impl : priv::MiniaudioUtils::SoundBase
 
     static ma_result getFormat(ma_data_source* dataSource,
                                ma_format*      format,
-                               ma_uint32*      channels,
-                               ma_uint32*      sampleRate,
+                               std::uint32_t*  channels,
+                               std::uint32_t*  sampleRate,
                                ma_channel*,
                                size_t)
     {
@@ -141,7 +141,7 @@ struct Sound::Impl : priv::MiniaudioUtils::SoundBase
         return MA_SUCCESS;
     }
 
-    static ma_result getCursor(ma_data_source* dataSource, ma_uint64* cursor)
+    static ma_result getCursor(ma_data_source* dataSource, std::uint64_t* cursor)
     {
         const auto& impl   = *static_cast<const Impl*>(dataSource);
         const auto* buffer = impl.buffer;
@@ -154,7 +154,7 @@ struct Sound::Impl : priv::MiniaudioUtils::SoundBase
         return MA_SUCCESS;
     }
 
-    static ma_result getLength(ma_data_source* dataSource, ma_uint64* length)
+    static ma_result getLength(ma_data_source* dataSource, std::uint64_t* length)
     {
         const auto& impl   = *static_cast<const Impl*>(dataSource);
         const auto* buffer = impl.buffer;

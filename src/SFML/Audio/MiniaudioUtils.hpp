@@ -78,7 +78,7 @@ struct SoundBase
     ~SoundBase();
     void initialize(ma_sound_end_proc endCallback);
     void deinitialize();
-    void processEffect(const float** framesIn, ma_uint32& frameCountIn, float** framesOut, ma_uint32& frameCountOut) const;
+    void processEffect(const float** framesIn, std::uint32_t& frameCountIn, float** framesOut, std::uint32_t& frameCountOut) const;
     void connectEffect(bool connect);
 
     ////////////////////////////////////////////////////////////
@@ -86,9 +86,9 @@ struct SoundBase
     ////////////////////////////////////////////////////////////
     struct EffectNode
     {
-        ma_node_base base{};
-        SoundBase*   impl{};
-        ma_uint32    channelCount{};
+        ma_node_base  base{};
+        SoundBase*    impl{};
+        std::uint32_t channelCount{};
     };
 
     ma_data_source_base dataSourceBase{}; //!< The struct that makes this object a miniaudio data source (must be first member)
@@ -102,10 +102,10 @@ struct SoundBase
     MiniaudioUtils::SavedSettings savedSettings; //!< Saved settings used to restore ma_sound state in case we need to recreate it
 };
 
-[[nodiscard]] ma_channel   soundChannelToMiniaudioChannel(SoundChannel soundChannel);
-[[nodiscard]] SoundChannel miniaudioChannelToSoundChannel(ma_channel soundChannel);
-[[nodiscard]] Time         getPlayingOffset(ma_sound& sound);
-[[nodiscard]] ma_uint64    getFrameIndex(ma_sound& sound, Time timeOffset);
+[[nodiscard]] ma_channel    soundChannelToMiniaudioChannel(SoundChannel soundChannel);
+[[nodiscard]] SoundChannel  miniaudioChannelToSoundChannel(ma_channel soundChannel);
+[[nodiscard]] Time          getPlayingOffset(ma_sound& sound);
+[[nodiscard]] std::uint64_t getFrameIndex(ma_sound& sound, Time timeOffset);
 
 } // namespace priv::MiniaudioUtils
 } // namespace sf

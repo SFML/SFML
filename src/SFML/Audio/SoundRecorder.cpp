@@ -80,7 +80,7 @@ struct SoundRecorder::Impl
         captureDeviceConfig.capture.format    = ma_format_s16;
         captureDeviceConfig.sampleRate        = sampleRate;
         captureDeviceConfig.pUserData         = this;
-        captureDeviceConfig.dataCallback      = [](ma_device* device, void*, const void* input, ma_uint32 frameCount)
+        captureDeviceConfig.dataCallback = [](ma_device* device, void*, const void* input, std::uint32_t frameCount)
         {
             auto& impl = *static_cast<Impl*>(device->pUserData);
 
@@ -127,7 +127,7 @@ struct SoundRecorder::Impl
 
         // Enumerate the capture devices
         ma_device_info* deviceInfos = nullptr;
-        ma_uint32       deviceCount = 0;
+        std::uint32_t   deviceCount = 0;
 
         if (const auto result = ma_context_get_devices(&context, nullptr, nullptr, &deviceInfos, &deviceCount);
             result != MA_SUCCESS)
@@ -175,7 +175,7 @@ SoundRecorder::SoundRecorder() : m_impl(std::make_unique<Impl>(this))
     // Register our logging callback to output any warning/error messages
     if (const auto result = ma_log_register_callback(&*m_impl->log,
                                                      ma_log_callback_init(
-                                                         [](void*, ma_uint32 level, const char* message)
+                                                         [](void*, std::uint32_t level, const char* message)
                                                          {
                                                              if (level <= MA_LOG_LEVEL_WARNING)
                                                                  err() << "miniaudio " << ma_log_level_to_string(level)
@@ -190,7 +190,7 @@ SoundRecorder::SoundRecorder() : m_impl(std::make_unique<Impl>(this))
 
     auto contextConfig                                 = ma_context_config_init();
     contextConfig.pLog                                 = &*m_impl->log;
-    ma_uint32                              deviceCount = 0;
+    std::uint32_t                          deviceCount = 0;
     const auto                             nullBackend = ma_backend_null;
     const std::array<const ma_backend*, 2> backendLists{nullptr, &nullBackend};
 
