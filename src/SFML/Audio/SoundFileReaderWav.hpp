@@ -107,7 +107,7 @@ private:
     // Member data
     ////////////////////////////////////////////////////////////
     std::optional<ma_decoder> m_decoder;        //!< wav decoder
-    ma_uint32                 m_channelCount{}; //!< Number of channels
+    std::uint32_t             m_channelCount{}; //!< Number of channels
 };
 
 } // namespace sf::priv

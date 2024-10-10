@@ -76,7 +76,7 @@ AudioDevice::AudioDevice()
     // Register our logging callback to output any warning/error messages
     if (const auto result = ma_log_register_callback(&*m_log,
                                                      ma_log_callback_init(
-                                                         [](void*, ma_uint32 level, const char* message)
+                                                         [](void*, std::uint32_t level, const char* message)
                                                          {
                                                              if (level <= MA_LOG_LEVEL_WARNING)
                                                                  err() << "miniaudio " << ma_log_level_to_string(level)
@@ -91,7 +91,7 @@ AudioDevice::AudioDevice()
 
     auto contextConfig                                 = ma_context_config_init();
     contextConfig.pLog                                 = &*m_log;
-    ma_uint32                              deviceCount = 0;
+    std::uint32_t                          deviceCount = 0;
     const auto                             nullBackend = ma_backend_null;
     const std::array<const ma_backend*, 2> backendLists{nullptr, &nullBackend};
 
@@ -217,7 +217,7 @@ std::vector<AudioDevice::DeviceEntry> AudioDevice::getAvailableDevices()
     const auto getDevices = [](auto& context)
     {
         ma_device_info* deviceInfos{};
-        ma_uint32       deviceCount{};
+        std::uint32_t   deviceCount{};
 
         // Get the playback devices
         if (const auto result = ma_context_get_devices(&context, &deviceInfos, &deviceCount, nullptr, nullptr);
@@ -482,7 +482,7 @@ bool AudioDevice::initialize()
     m_playbackDevice.emplace();
 
     auto playbackDeviceConfig         = ma_device_config_init(ma_device_type_playback);
-    playbackDeviceConfig.dataCallback = [](ma_device* device, void* output, const void*, ma_uint32 frameCount)
+    playbackDeviceConfig.dataCallback = [](ma_device* device, void* output, const void*, std::uint32_t frameCount)
     {
         auto& audioDevice = *static_cast<AudioDevice*>(device->pUserData);
 

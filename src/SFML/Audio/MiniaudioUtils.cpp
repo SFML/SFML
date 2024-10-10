@@ -165,7 +165,7 @@ void MiniaudioUtils::SoundBase::initialize(ma_sound_end_proc endCallback)
 
     // Initialize the custom effect node
     effectNodeVTable.onProcess =
-        [](ma_node* node, const float** framesIn, ma_uint32* frameCountIn, float** framesOut, ma_uint32* frameCountOut)
+        [](ma_node* node, const float** framesIn, std::uint32_t* frameCountIn, float** framesOut, std::uint32_t* frameCountOut)
     { static_cast<EffectNode*>(node)->impl->processEffect(framesIn, *frameCountIn, framesOut, *frameCountOut); };
     effectNodeVTable.onGetRequiredInputFrameCount = nullptr;
     effectNodeVTable.inputBusCount                = 1;
@@ -205,10 +205,10 @@ void MiniaudioUtils::SoundBase::deinitialize()
 
 
 ////////////////////////////////////////////////////////////
-void MiniaudioUtils::SoundBase::processEffect(const float** framesIn,
-                                              ma_uint32&    frameCountIn,
-                                              float**       framesOut,
-                                              ma_uint32&    frameCountOut) const
+void MiniaudioUtils::SoundBase::processEffect(const float**  framesIn,
+                                              std::uint32_t& frameCountIn,
+                                              float**        framesOut,
+                                              std::uint32_t& frameCountOut) const
 {
     // If a processor is set, call it
     if (effectProcessor)
@@ -392,15 +392,15 @@ Time MiniaudioUtils::getPlayingOffset(ma_sound& sound)
 
 
 ////////////////////////////////////////////////////////////
-ma_uint64 MiniaudioUtils::getFrameIndex(ma_sound& sound, Time timeOffset)
+std::uint64_t MiniaudioUtils::getFrameIndex(ma_sound& sound, Time timeOffset)
 {
-    ma_uint32 sampleRate{};
+    std::uint32_t sampleRate{};
 
     if (const ma_result result = ma_sound_get_data_format(&sound, nullptr, nullptr, &sampleRate, nullptr, 0);
         result != MA_SUCCESS)
         err() << "Failed to get sound data format: " << ma_result_description(result) << std::endl;
 
-    const auto frameIndex = static_cast<ma_uint64>(timeOffset.asSeconds() * static_cast<float>(sampleRate));
+    const auto frameIndex = static_cast<std::uint64_t>(timeOffset.asSeconds() * static_cast<float>(sampleRate));
 
     if (const ma_result result = ma_sound_seek_to_pcm_frame(&sound, frameIndex); result != MA_SUCCESS)
         err() << "Failed to seek sound to pcm frame: " << ma_result_description(result) << std::endl;
