@@ -53,7 +53,7 @@ ma_result onRead(ma_decoder* decoder, void* buffer, size_t bytesToRead, size_t* 
     return MA_SUCCESS;
 }
 
-ma_result onSeek(ma_decoder* decoder, ma_int64 byteOffset, ma_seek_origin origin)
+ma_result onSeek(ma_decoder* decoder, std::int64_t byteOffset, ma_seek_origin origin)
 {
     auto* stream = static_cast<sf::InputStream*>(decoder->pUserData);
 
@@ -141,7 +141,7 @@ std::optional<SoundFileReader::Info> SoundFileReaderWav::open(InputStream& strea
         return std::nullopt;
     }
 
-    ma_uint64 frameCount{};
+    std::uint64_t frameCount{};
     if (const ma_result result = ma_decoder_get_available_frames(&*m_decoder, &frameCount); result != MA_SUCCESS)
     {
         err() << "Failed to get available frames from wav decoder: " << ma_result_description(result) << std::endl;
@@ -149,7 +149,7 @@ std::optional<SoundFileReader::Info> SoundFileReaderWav::open(InputStream& strea
     }
 
     auto                       format = ma_format_unknown;
-    ma_uint32                  sampleRate{};
+    std::uint32_t              sampleRate{};
     std::array<ma_channel, 20> channelMap{};
     if (const ma_result result = ma_decoder_get_data_format(&*m_decoder,
                                                             &format,
@@ -189,7 +189,7 @@ std::uint64_t SoundFileReaderWav::read(std::int16_t* samples, std::uint64_t maxC
 {
     assert(m_decoder && "wav decoder not initialized. Call SoundFileReaderWav::open() to initialize it.");
 
-    ma_uint64 framesRead{};
+    std::uint64_t framesRead{};
 
     if (const ma_result result = ma_decoder_read_pcm_frames(&*m_decoder, samples, maxCount / m_channelCount, &framesRead);
         result != MA_SUCCESS)
