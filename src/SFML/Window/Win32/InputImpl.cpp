@@ -703,8 +703,7 @@ Vector2i getMousePosition()
 ////////////////////////////////////////////////////////////
 Vector2i getMousePosition(const WindowBase& relativeTo)
 {
-    WindowHandle handle = relativeTo.getNativeHandle();
-    if (handle)
+    if (const WindowHandle handle = relativeTo.getNativeHandle())
     {
         POINT point;
         GetCursorPos(&point);
@@ -726,8 +725,7 @@ void setMousePosition(Vector2i position)
 ////////////////////////////////////////////////////////////
 void setMousePosition(Vector2i position, const WindowBase& relativeTo)
 {
-    WindowHandle handle = relativeTo.getNativeHandle();
-    if (handle)
+    if (const WindowHandle handle = relativeTo.getNativeHandle())
     {
         POINT point = {position.x, position.y};
         ClientToScreen(handle, &point);

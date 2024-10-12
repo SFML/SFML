@@ -398,7 +398,7 @@ int main()
     std::optional edgeEffect       = tryLoadEdge();
     std::optional geometryEffect   = tryLoadGeometry();
 
-    const auto optionalToPtr = [&](auto& effect) -> Effect* { return effect.has_value() ? &*effect : nullptr; };
+    const auto optionalToPtr = [](auto& effect) -> Effect* { return effect.has_value() ? &*effect : nullptr; };
 
     const std::array<Effect*, 5> effects{optionalToPtr(pixelateEffect),
                                          optionalToPtr(waveBlurEffect),

@@ -213,12 +213,10 @@ bool Image::loadFromFile(const std::filesystem::path& filename)
     m_pixels.clear();
 
     // Load the image and get a pointer to the pixels in memory
-    int        width    = 0;
-    int        height   = 0;
-    int        channels = 0;
-    const auto ptr      = StbPtr(stbi_load(filename.string().c_str(), &width, &height, &channels, STBI_rgb_alpha));
-
-    if (ptr)
+    int width    = 0;
+    int height   = 0;
+    int channels = 0;
+    if (const auto ptr = StbPtr(stbi_load(filename.string().c_str(), &width, &height, &channels, STBI_rgb_alpha)))
     {
         // Assign the image properties
         m_size = Vector2u(Vector2i(width, height));
@@ -251,10 +249,8 @@ bool Image::loadFromMemory(const void* data, std::size_t size)
         int         height   = 0;
         int         channels = 0;
         const auto* buffer   = static_cast<const unsigned char*>(data);
-        const auto  ptr      = StbPtr(
-            stbi_load_from_memory(buffer, static_cast<int>(size), &width, &height, &channels, STBI_rgb_alpha));
-
-        if (ptr)
+        if (const auto ptr = StbPtr(
+                stbi_load_from_memory(buffer, static_cast<int>(size), &width, &height, &channels, STBI_rgb_alpha)))
         {
             // Assign the image properties
             m_size = Vector2u(Vector2i(width, height));
@@ -296,12 +292,10 @@ bool Image::loadFromStream(InputStream& stream)
     callbacks.eof  = eof;
 
     // Load the image and get a pointer to the pixels in memory
-    int        width    = 0;
-    int        height   = 0;
-    int        channels = 0;
-    const auto ptr = StbPtr(stbi_load_from_callbacks(&callbacks, &stream, &width, &height, &channels, STBI_rgb_alpha));
-
-    if (ptr)
+    int width    = 0;
+    int height   = 0;
+    int channels = 0;
+    if (const auto ptr = StbPtr(stbi_load_from_callbacks(&callbacks, &stream, &width, &height, &channels, STBI_rgb_alpha)))
     {
         // Assign the image properties
         m_size = Vector2u(Vector2i(width, height));

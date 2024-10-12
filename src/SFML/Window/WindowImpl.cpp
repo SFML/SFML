@@ -228,7 +228,7 @@ void WindowImpl::setMaximumSize(const std::optional<Vector2u>& maximumSize)
 ////////////////////////////////////////////////////////////
 std::optional<Event> WindowImpl::waitEvent(Time timeout)
 {
-    const auto timedOut = [&, startTime = std::chrono::steady_clock::now()]
+    const auto timedOut = [timeout, startTime = std::chrono::steady_clock::now()]
     {
         const bool infiniteTimeout = timeout == Time::Zero;
         return !infiniteTimeout && (std::chrono::steady_clock::now() - startTime) >= timeout.toDuration();

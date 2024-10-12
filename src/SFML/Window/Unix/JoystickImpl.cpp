@@ -120,9 +120,7 @@ bool isJoystick(udev_device* udevDevice)
 
     // On some platforms (older udev), ID_INPUT_ properties are not present, instead
     // the system makes use of the ID_CLASS property to identify the device class
-    const char* idClass = udev_device_get_property_value(udevDevice, "ID_CLASS");
-
-    if (idClass)
+    if (const char* idClass = udev_device_get_property_value(udevDevice, "ID_CLASS"))
     {
         // Check if the device class matches joystick
         if (std::strstr(idClass, "joystick"))
@@ -144,9 +142,7 @@ void updatePluggedList(udev_device* udevDevice = nullptr)
 {
     if (udevDevice)
     {
-        const char* action = udev_device_get_action(udevDevice);
-
-        if (action)
+        if (const char* action = udev_device_get_action(udevDevice))
         {
             if (isJoystick(udevDevice))
             {
@@ -300,13 +296,10 @@ unsigned int getUsbAttributeUint(udev_device* udevDevice, const std::string& att
     if (!udevDevice)
         return 0;
 
-    const char*  attribute = getUsbAttribute(udevDevice, attributeName);
-    unsigned int value     = 0;
+    if (const char* attribute = getUsbAttribute(udevDevice, attributeName))
+        return static_cast<unsigned int>(std::strtoul(attribute, nullptr, 16));
 
-    if (attribute)
-        value = static_cast<unsigned int>(std::strtoul(attribute, nullptr, 16));
-
-    return value;
+    return 0;
 }
 
 // Get a udev property value for a joystick as an unsigned int
@@ -315,13 +308,10 @@ unsigned int getUdevAttributeUint(udev_device* udevDevice, const std::string& at
     if (!udevDevice)
         return 0;
 
-    const char*  attribute = getUdevAttribute(udevDevice, attributeName);
-    unsigned int value     = 0;
+    if (const char* attribute = getUdevAttribute(udevDevice, attributeName))
+        return static_cast<unsigned int>(std::strtoul(attribute, nullptr, 16));
 
-    if (attribute)
-        value = static_cast<unsigned int>(std::strtoul(attribute, nullptr, 16));
-
-    return value;
+    return 0;
 }
 
 // Get the joystick vendor id
@@ -408,14 +398,10 @@ std::string getJoystickName(unsigned int index)
 
     // Fall back to manual USB chain walk via udev
     if (udevContext)
-    {
-        const auto udevDevice = UdevPtr<udev_device>(
-            udev_device_new_from_syspath(udevContext.get(), joystickList[index].systemPath.c_str()));
-
-        if (udevDevice)
+        if (const auto udevDevice = UdevPtr<udev_device>(
+                udev_device_new_from_syspath(udevContext.get(), joystickList[index].systemPath.c_str())))
             if (const char* product = getUsbAttribute(udevDevice.get(), "product"))
                 return {product};
-    }
 
     sf::err() << "Unable to get name for joystick " << devnode << std::endl;
 

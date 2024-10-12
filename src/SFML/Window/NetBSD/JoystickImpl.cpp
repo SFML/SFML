@@ -112,9 +112,7 @@ void updatePluggedList()
      * and check if they are joysticks. The index of JoystickImpl::open
      * does not match the /dev/uhid<index> device!
      */
-    DIR* directory = opendir("/dev");
-
-    if (directory)
+    if (DIR* directory = opendir("/dev"))
     {
         unsigned int   joystickCount  = 0;
         struct dirent* directoryEntry = readdir(directory);
