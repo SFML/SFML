@@ -90,10 +90,8 @@ void ClipboardImpl::setString(const String& text)
     }
 
     // Create a Win32-compatible string
-    const std::size_t stringSize   = (text.getSize() + 1) * sizeof(WCHAR);
-    HANDLE            stringHandle = GlobalAlloc(GMEM_MOVEABLE, stringSize);
-
-    if (stringHandle)
+    const std::size_t stringSize = (text.getSize() + 1) * sizeof(WCHAR);
+    if (const HANDLE stringHandle = GlobalAlloc(GMEM_MOVEABLE, stringSize))
     {
         std::memcpy(GlobalLock(stringHandle), text.toWideString().data(), stringSize);
         GlobalUnlock(stringHandle);

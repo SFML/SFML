@@ -69,9 +69,7 @@ const GUID guidDevinterfaceHid = {0x4d1e55b2, 0xf16f, 0x11cf, {0x88, 0xcb, 0x00,
 void setProcessDpiAware()
 {
     // Try SetProcessDpiAwareness first
-    HINSTANCE shCoreDll = LoadLibrary(L"Shcore.dll");
-
-    if (shCoreDll)
+    if (const HINSTANCE shCoreDll = LoadLibrary(L"Shcore.dll"))
     {
         enum ProcessDpiAwareness
         {
@@ -109,9 +107,7 @@ void setProcessDpiAware()
 
     // Fall back to SetProcessDPIAware if SetProcessDpiAwareness
     // is not available on this system
-    HINSTANCE user32Dll = LoadLibrary(L"user32.dll");
-
-    if (user32Dll)
+    if (const HINSTANCE user32Dll = LoadLibrary(L"user32.dll"))
     {
         using SetProcessDPIAwareFuncType = BOOL(WINAPI*)();
         auto setProcessDPIAwareFunc      = reinterpret_cast<SetProcessDPIAwareFuncType>(

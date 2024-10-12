@@ -139,8 +139,7 @@ Vector2i getMousePosition()
 ////////////////////////////////////////////////////////////
 Vector2i getMousePosition(const WindowBase& relativeTo)
 {
-    const WindowHandle handle = relativeTo.getNativeHandle();
-    if (handle)
+    if (const WindowHandle handle = relativeTo.getNativeHandle())
     {
         // Open a connection with the X server
         const auto display = openDisplay();
@@ -180,8 +179,7 @@ void setMousePosition(Vector2i position, const WindowBase& relativeTo)
     // Open a connection with the X server
     const auto display = openDisplay();
 
-    const WindowHandle handle = relativeTo.getNativeHandle();
-    if (handle)
+    if (const WindowHandle handle = relativeTo.getNativeHandle())
     {
         XWarpPointer(display.get(), None, handle, 0, 0, 0, 0, position.x, position.y);
         XFlush(display.get());

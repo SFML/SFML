@@ -215,9 +215,7 @@ void SFContext::createContext(SFContext* shared, unsigned int bitsPerPixel, cons
 
     // 1.x/2.x are mapped to 2.1 since Apple only support that legacy version.
     // >=3.0 are mapped to a 3.2 core profile.
-    const bool legacy = m_settings.majorVersion < 3;
-
-    if (legacy)
+    if (m_settings.majorVersion < 3)
     {
         m_settings.attributeFlags &= ~static_cast<unsigned int>(ContextSettings::Core);
         m_settings.majorVersion = 2;

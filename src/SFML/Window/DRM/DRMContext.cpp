@@ -225,10 +225,8 @@ std::uint32_t findCrtcForConnector(const sf::priv::Drm& drm, const drmModeRes& r
 {
     for (int i = 0; i < connector.count_encoders; ++i)
     {
-        const std::uint32_t     encoderId = connector.encoders[i];
-        const drmModeEncoderPtr encoder   = drmModeGetEncoder(drm.fileDescriptor, encoderId);
-
-        if (encoder)
+        const std::uint32_t encoderId = connector.encoders[i];
+        if (auto* encoder = drmModeGetEncoder(drm.fileDescriptor, encoderId))
         {
             const std::uint32_t crtcId = findCrtcForEncoder(resources, *encoder);
 
@@ -450,11 +448,9 @@ void checkInit()
     // Use environment variable "SFML_DRM_REFRESH" (or 0 if not set)
     // Use in combination with mode to request specific refresh rate for the mode
     // if multiple refresh rates for same mode might be supported
-    unsigned int refreshRate   = 0;
-    char*        refreshString = std::getenv("SFML_DRM_REFRESH");
-
-    if (refreshString)
-        refreshRate = static_cast<unsigned int>(atoi(refreshString));
+    unsigned int refreshRate = 0;
+    if (const char* refreshString = std::getenv("SFML_DRM_REFRESH"))
+        refreshRate = static_cast<unsigned int>(std::atoi(refreshString));
 
     if (initDrm(drmNode,
                 deviceString,     // device

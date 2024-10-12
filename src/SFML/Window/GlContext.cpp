@@ -269,9 +269,7 @@ struct GlContext::SharedContext
         if (glGetErrorFunc() == GL_INVALID_ENUM || !majorVersion || !glGetStringiFunc)
         {
             // Try to load the < 3.0 way
-            const char* extensionString = reinterpret_cast<const char*>(glGetStringFunc(GL_EXTENSIONS));
-
-            if (extensionString)
+            if (const char* extensionString = reinterpret_cast<const char*>(glGetStringFunc(GL_EXTENSIONS)))
             {
                 extensions.clear();
 
@@ -297,12 +295,8 @@ struct GlContext::SharedContext
                 extensions.clear();
 
                 for (unsigned int i = 0; i < static_cast<unsigned int>(numExtensions); ++i)
-                {
-                    const char* extensionString = reinterpret_cast<const char*>(glGetStringiFunc(GL_EXTENSIONS, i));
-
-                    if (extensionString)
+                    if (const char* extensionString = reinterpret_cast<const char*>(glGetStringiFunc(GL_EXTENSIONS, i)))
                         extensions.emplace_back(extensionString);
-                }
             }
         }
     }
@@ -496,7 +490,7 @@ void GlContext::unregisterUnsharedGlObject(std::shared_ptr<void> object)
         // in unshared objects should be the only one existing
         const auto iter = std::find_if(unsharedGlObjects->begin(),
                                        unsharedGlObjects->end(),
-                                       [&](const Impl::UnsharedGlObject& obj) {
+                                       [&object](const Impl::UnsharedGlObject& obj) {
                                            return (obj.object == object) &&
                                                   (obj.contextId == GlContextImpl::CurrentContext::get().id);
                                        });
@@ -917,8 +911,7 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
         m_settings.majorVersion = 1;
         m_settings.minorVersion = 1;
 
-        const char* version = reinterpret_cast<const char*>(glGetStringFunc(GL_VERSION));
-        if (version)
+        if (const char* version = reinterpret_cast<const char*>(glGetStringFunc(GL_VERSION)))
         {
             // OpenGL ES Common Lite profile: The beginning of the returned string is "OpenGL ES-CL major.minor"
             // OpenGL ES Common profile:      The beginning of the returned string is "OpenGL ES-CM major.minor"

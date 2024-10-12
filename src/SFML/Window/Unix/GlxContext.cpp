@@ -299,9 +299,8 @@ XVisualInfo GlxContext::selectBestVisual(::Display* display, unsigned int bitsPe
     const int screen = DefaultScreen(display);
 
     // Retrieve all the visuals
-    int        count   = 0;
-    const auto visuals = X11Ptr<XVisualInfo[]>(XGetVisualInfo(display, 0, nullptr, &count));
-    if (visuals)
+    int count = 0;
+    if (const auto visuals = X11Ptr<XVisualInfo[]>(XGetVisualInfo(display, 0, nullptr, &count)))
     {
         // Evaluate all the returned visuals, and pick the best one
         int         bestScore  = 0x7FFFFFFF;
