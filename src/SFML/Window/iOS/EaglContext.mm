@@ -86,7 +86,7 @@ void ensureInit()
             sf::priv::EaglContext::getFunction("glRenderbufferStorageOES"));
     }
 }
-}
+} // namespace
 
 
 namespace sf::priv

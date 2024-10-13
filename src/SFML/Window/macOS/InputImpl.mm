@@ -115,7 +115,7 @@ SFOpenGLView* getSFOpenGLViewFromSFMLWindow(const sf::WindowBase& window)
 
     return view;
 }
-}
+} // namespace
 
 namespace sf::priv::InputImpl
 {
@@ -263,4 +263,4 @@ Vector2i getTouchPosition(unsigned int /*finger*/, const WindowBase& /*relativeT
     return {};
 }
 
-} // namespace sf::priv
+} // namespace sf::priv::InputImpl

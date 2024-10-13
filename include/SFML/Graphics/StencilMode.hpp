@@ -110,7 +110,7 @@ struct SFML_GRAPHICS_API StencilMode
         StencilUpdateOperation::Keep}; //!< The update operation to perform if the stencil test passes
     StencilValue stencilReference{0};  //!< The reference value we're performing the stencil test with
     StencilValue stencilMask{~0u}; //!< The mask to apply to both the reference value and the value in the stencil buffer
-    bool         stencilOnly{};    //!< Whether we should update the color buffer in addition to the stencil buffer
+    bool stencilOnly{};            //!< Whether we should update the color buffer in addition to the stencil buffer
 };
 
 ////////////////////////////////////////////////////////////

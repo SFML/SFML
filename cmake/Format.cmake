@@ -13,8 +13,8 @@ endif()
 execute_process(COMMAND ${CLANG_FORMAT_EXECUTABLE} --version OUTPUT_VARIABLE CLANG_FORMAT_VERSION)
 string(REGEX MATCH "clang-format version ([0-9]+)" CLANG_FORMAT_VERSION ${CLANG_FORMAT_VERSION})
 unset(CLANG_FORMAT_VERSION)
-if(NOT CMAKE_MATCH_1 EQUAL 14)
-    message(FATAL_ERROR "clang-format version ${CMAKE_MATCH_1} not supported. Must use version 14")
+if(NOT CMAKE_MATCH_1 EQUAL 17)
+    message(FATAL_ERROR "clang-format version ${CMAKE_MATCH_1} not supported. Must use version 17")
 endif()
 
 # Run

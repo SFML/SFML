@@ -474,7 +474,7 @@ bool Image::copy(const Image& source, Vector2u dest, const IntRect& sourceRect, 
     const unsigned int dstStride = m_size.x * 4;
 
     const std::uint8_t* srcPixels = source.m_pixels.data() + (srcRect.position.x + srcRect.position.y * source.m_size.x) * 4;
-    std::uint8_t*       dstPixels = m_pixels.data() + (dest.x + dest.y * m_size.x) * 4;
+    std::uint8_t* dstPixels = m_pixels.data() + (dest.x + dest.y * m_size.x) * 4;
 
     // Copy the pixels
     if (applyAlpha)

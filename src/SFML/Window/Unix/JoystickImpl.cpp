@@ -579,7 +579,7 @@ JoystickCaps JoystickImpl::getCapabilities() const
     {
         switch (m_mapping[static_cast<std::size_t>(i)])
         {
-            // clang-format off
+                // clang-format off
             case ABS_X:        caps.axes[Joystick::Axis::X]    = true; break;
             case ABS_Y:        caps.axes[Joystick::Axis::Y]    = true; break;
             case ABS_Z:
