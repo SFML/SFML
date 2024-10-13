@@ -80,8 +80,8 @@ bool CursorImpl::loadFromPixelsARGB(const std::uint8_t* pixels, Vector2u size, V
 {
     // Create cursor image, convert from RGBA to ARGB.
     const auto cursorImage = X11Ptr<XcursorImage>(XcursorImageCreate(static_cast<int>(size.x), static_cast<int>(size.y)));
-    cursorImage->xhot      = hotspot.x;
-    cursorImage->yhot      = hotspot.y;
+    cursorImage->xhot = hotspot.x;
+    cursorImage->yhot = hotspot.y;
 
     const std::size_t numPixels = std::size_t{size.x} * std::size_t{size.y};
     for (std::size_t pixelIndex = 0; pixelIndex < numPixels; ++pixelIndex)

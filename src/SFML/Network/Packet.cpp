@@ -441,7 +441,7 @@ Packet& Packet::operator<<(std::int64_t data)
                           static_cast<std::uint8_t>((data >> 24) & 0xFF),
                           static_cast<std::uint8_t>((data >> 16) & 0xFF),
                           static_cast<std::uint8_t>((data >> 8) & 0xFF),
-                          static_cast<std::uint8_t>((data)&0xFF)};
+                          static_cast<std::uint8_t>((data) & 0xFF)};
 
     append(&toWrite, sizeof(toWrite));
     return *this;
@@ -461,7 +461,7 @@ Packet& Packet::operator<<(std::uint64_t data)
                           static_cast<std::uint8_t>((data >> 24) & 0xFF),
                           static_cast<std::uint8_t>((data >> 16) & 0xFF),
                           static_cast<std::uint8_t>((data >> 8) & 0xFF),
-                          static_cast<std::uint8_t>((data)&0xFF)};
+                          static_cast<std::uint8_t>((data) & 0xFF)};
 
     append(&toWrite, sizeof(toWrite));
     return *this;

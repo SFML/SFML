@@ -529,7 +529,7 @@ if(SFML_BUILD_TEST_SUITE)
     endif()
 endif()
 
-sfml_set_option(CLANG_FORMAT_EXECUTABLE clang-format STRING "Override clang-format executable, requires version 14")
+sfml_set_option(CLANG_FORMAT_EXECUTABLE clang-format STRING "Override clang-format executable, requires version 17")
 add_custom_target(format
     COMMAND ${CMAKE_COMMAND} -DCLANG_FORMAT_EXECUTABLE=${CLANG_FORMAT_EXECUTABLE} -P ./cmake/Format.cmake
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR} VERBATIM)

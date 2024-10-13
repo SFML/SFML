@@ -131,7 +131,7 @@ void processLeftRightModifiers(
     processOneModifier(modifiers, leftMask, leftWasDown, leftKey, leftCode, requester);
     processOneModifier(modifiers, rightMask, rightWasDown, rightKey, rightCode, requester);
 }
-}
+} // namespace
 
 
 ////////////////////////////////////////////////////////

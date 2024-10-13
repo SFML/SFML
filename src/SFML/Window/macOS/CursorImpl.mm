@@ -45,7 +45,7 @@ NSCursor* loadFromSelector(SEL selector)
     return nil;
 }
 
-}
+} // namespace
 
 namespace sf::priv
 {

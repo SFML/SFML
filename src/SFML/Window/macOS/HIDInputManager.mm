@@ -37,7 +37,7 @@ namespace
 {
 const std::uint8_t unknownVirtualCode = 0xff;
 const bool         isIsoKeyboard      = (KBGetLayoutType(LMGetKbdType()) == kKeyboardISO);
-}
+} // namespace
 
 namespace sf::priv
 {

@@ -93,7 +93,7 @@ void showMouseCursor()
         isCursorHidden = false;
     }
 }
-}
+} // namespace
 
 #pragma mark
 #pragma mark WindowImplCocoa's ctor/dtor

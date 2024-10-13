@@ -171,7 +171,7 @@ void goToFullscreenMode(ANativeActivity& activity)
     // API Level 19
     if (apiLevel >= 19)
     {
-        jfieldID   fieldSystemUiFlagImmersiveSticky = lJNIEnv->GetStaticFieldID(classView,
+        jfieldID fieldSystemUiFlagImmersiveSticky = lJNIEnv->GetStaticFieldID(classView,
                                                                               "SYSTEM_UI_FLAG_IMMERSIVE_STICKY",
                                                                               "I");
         const jint systemUiFlagImmersiveSticky = lJNIEnv->GetStaticIntField(classView, fieldSystemUiFlagImmersiveSticky);

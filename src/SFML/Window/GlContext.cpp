@@ -1046,7 +1046,7 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
 void GlContext::checkSettings(const ContextSettings& requestedSettings) const
 {
     // Perform checks to inform the user if they are getting a context they might not have expected
-    const int version          = static_cast<int>(m_settings.majorVersion * 10u + m_settings.minorVersion);
+    const int version = static_cast<int>(m_settings.majorVersion * 10u + m_settings.minorVersion);
     const int requestedVersion = static_cast<int>(requestedSettings.majorVersion * 10u + requestedSettings.minorVersion);
 
     if ((m_settings.attributeFlags != requestedSettings.attributeFlags) || (version < requestedVersion) ||
