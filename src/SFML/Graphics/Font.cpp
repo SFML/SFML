@@ -608,7 +608,7 @@ Glyph Font::loadGlyph(std::uint32_t codePoint, unsigned int characterSize, bool 
         glyph.bounds.size     = Vector2f(Vector2u(bitmap.width, bitmap.rows));
 
         // Resize the pixel buffer to the new size and fill it with transparent white pixels
-        m_pixelBuffer.resize(static_cast<std::size_t>(size.x) * static_cast<std::size_t>(size.y) * 4);
+        m_pixelBuffer.resize(std::size_t{size.x} * std::size_t{size.y} * 4);
 
         std::uint8_t* current = m_pixelBuffer.data();
         std::uint8_t* end     = current + size.x * size.y * 4;
