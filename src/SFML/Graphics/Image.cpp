@@ -141,7 +141,7 @@ void Image::resize(Vector2u size, Color color)
     if (size.x && size.y)
     {
         // Create a new pixel buffer first for exception safety's sake
-        std::vector<std::uint8_t> newPixels(static_cast<std::size_t>(size.x) * static_cast<std::size_t>(size.y) * 4);
+        std::vector<std::uint8_t> newPixels(std::size_t{size.x} * std::size_t{size.y} * 4);
 
         // Fill it with the specified color
         std::uint8_t* ptr = newPixels.data();
