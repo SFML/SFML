@@ -36,6 +36,7 @@
 #include <OpenGLES/EAGL.h>
 #include <OpenGLES/EAGLDrawable.h>
 #include <QuartzCore/CAEAGLLayer.h>
+#include <array>
 #include <dlfcn.h>
 #include <ostream>
 
@@ -162,12 +163,11 @@ GlFunctionPointer EaglContext::getFunction(const char* name)
 {
     static void* module = nullptr;
 
-    const int   libCount       = 3;
-    const char* libs[libCount] = {"libGLESv1_CM.dylib",
-                                  "/System/Library/Frameworks/OpenGLES.framework/OpenGLES",
-                                  "OpenGLES.framework/OpenGLES"};
+    static constexpr std::array libs = {"libGLESv1_CM.dylib",
+                                        "/System/Library/Frameworks/OpenGLES.framework/OpenGLES",
+                                        "OpenGLES.framework/OpenGLES"};
 
-    for (auto& lib : libs)
+    for (const auto& lib : libs)
     {
         if (!module)
             module = dlopen(lib, RTLD_LAZY | RTLD_LOCAL);

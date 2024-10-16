@@ -31,6 +31,7 @@
 #include <SFML/System/Utils.hpp>
 
 #include <algorithm>
+#include <array>
 #include <iterator>
 #include <limits>
 #include <ostream>
@@ -375,12 +376,12 @@ Http::Response Http::sendRequest(const Http::Request& request, Time timeout)
             if (m_connection.send(requestStr.c_str(), requestStr.size()) == Socket::Status::Done)
             {
                 // Wait for the server's response
-                std::string receivedStr;
-                std::size_t size = 0;
-                char        buffer[1024];
-                while (m_connection.receive(buffer, sizeof(buffer), size) == Socket::Status::Done)
+                std::string            receivedStr;
+                std::size_t            size = 0;
+                std::array<char, 1024> buffer{};
+                while (m_connection.receive(buffer.data(), buffer.size(), size) == Socket::Status::Done)
                 {
-                    receivedStr.append(buffer, buffer + size);
+                    receivedStr.append(buffer.data(), buffer.data() + size);
                 }
 
                 // Build the Response object from the received data

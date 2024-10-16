@@ -36,6 +36,7 @@
 // dbt.h is lowercase here, as a cross-compile on linux with mingw-w64
 // expects lowercase, and a native compile on windows, whether via msvc
 // or mingw-w64 addresses files in a case insensitive manner.
+#include <array>
 #include <dbt.h>
 #include <ostream>
 #include <vector>
@@ -863,8 +864,8 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
                     if ((character >= 0xDC00) && (character <= 0xDFFF))
                     {
                         // Convert the UTF-16 surrogate pair to a single UTF-32 value
-                        std::uint16_t utf16[] = {m_surrogate, static_cast<std::uint16_t>(character)};
-                        sf::Utf16::toUtf32(utf16, utf16 + 2, &character);
+                        const std::array utf16 = {m_surrogate, static_cast<std::uint16_t>(character)};
+                        sf::Utf16::toUtf32(utf16.begin(), utf16.end(), &character);
                         m_surrogate = 0;
                     }
 

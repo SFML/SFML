@@ -35,6 +35,7 @@
 
 #include <SFML/Window/Context.hpp>
 
+#include <SFML/System/EnumArray.hpp>
 #include <SFML/System/Err.hpp>
 
 #include <algorithm>
@@ -889,8 +890,9 @@ void RenderTarget::setupDraw(bool useVertexCache, const RenderStates& states)
 void RenderTarget::drawPrimitives(PrimitiveType type, std::size_t firstVertex, std::size_t vertexCount)
 {
     // Find the OpenGL primitive type
-    static constexpr GLenum modes[] = {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN};
-    const GLenum mode = modes[static_cast<std::size_t>(type)];
+    static constexpr priv::EnumArray<PrimitiveType, GLenum, 6> modes =
+        {GL_POINTS, GL_LINES, GL_LINE_STRIP, GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN};
+    const GLenum mode = modes[type];
 
     // Draw the primitives
     glCheck(glDrawArrays(mode, static_cast<GLint>(firstVertex), static_cast<GLsizei>(vertexCount)));

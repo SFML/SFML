@@ -78,8 +78,8 @@ TEST_CASE("[System] sf::U8StringCharTraits")
 
     SECTION("assign(char_type*, std::size_t, char_type)")
     {
-        sf::U8StringCharTraits::char_type s[] = {'a', 'b', 'c', '\0'};
-        CHECK(sf::U8StringCharTraits::assign(s, 2, 'd') == &s[0]);
+        std::array<sf::U8StringCharTraits::char_type, 4> s = {'a', 'b', 'c', '\0'};
+        CHECK(sf::U8StringCharTraits::assign(s.data(), 2, 'd') == s.data());
         CHECK(s[0] == 'd');
         CHECK(s[1] == 'd');
         CHECK(s[2] == 'c');
@@ -103,9 +103,9 @@ TEST_CASE("[System] sf::U8StringCharTraits")
 
     SECTION("move()")
     {
-        sf::U8StringCharTraits::char_type       s1[] = {'a', 'b', 'c', '\0'};
-        const sf::U8StringCharTraits::char_type s2[] = {'d', 'e', 'f', '\0'};
-        CHECK(sf::U8StringCharTraits::move(s1, s2, std::size(s2)) == s1);
+        std::array<sf::U8StringCharTraits::char_type, 4>       s1 = {'a', 'b', 'c', '\0'};
+        const std::array<sf::U8StringCharTraits::char_type, 4> s2 = {'d', 'e', 'f', '\0'};
+        CHECK(sf::U8StringCharTraits::move(s1.data(), s2.data(), s2.size()) == s1.data());
         CHECK(s1[0] == 'd');
         CHECK(s1[1] == 'e');
         CHECK(s1[2] == 'f');
@@ -116,9 +116,9 @@ TEST_CASE("[System] sf::U8StringCharTraits")
 
     SECTION("copy()")
     {
-        sf::U8StringCharTraits::char_type       s1[] = {'a', 'b', 'c', '\0'};
-        const sf::U8StringCharTraits::char_type s2[] = {'d', 'e', 'f', '\0'};
-        CHECK(sf::U8StringCharTraits::copy(s1, s2, std::size(s2)) == s1);
+        std::array<sf::U8StringCharTraits::char_type, 4>       s1 = {'a', 'b', 'c', '\0'};
+        const std::array<sf::U8StringCharTraits::char_type, 4> s2 = {'d', 'e', 'f', '\0'};
+        CHECK(sf::U8StringCharTraits::copy(s1.data(), s2.data(), s2.size()) == s1.data());
         CHECK(s1[0] == 'd');
         CHECK(s1[1] == 'e');
         CHECK(s1[2] == 'f');
@@ -129,27 +129,27 @@ TEST_CASE("[System] sf::U8StringCharTraits")
 
     SECTION("compare()")
     {
-        const sf::U8StringCharTraits::char_type s1[] = {'a', 'b', 'c', '\0'};
-        const sf::U8StringCharTraits::char_type s2[] = {'a', 'b', 'c', '\0'};
-        const sf::U8StringCharTraits::char_type s3[] = {'d', 'e', 'f', '\0'};
-        CHECK(sf::U8StringCharTraits::compare(s1, s2, std::size(s1)) == 0);
-        CHECK(sf::U8StringCharTraits::compare(s1, s3, std::size(s1)) < 0);
-        CHECK(sf::U8StringCharTraits::compare(s3, s1, std::size(s3)) > 0);
+        const std::array<sf::U8StringCharTraits::char_type, 4> s1 = {'a', 'b', 'c', '\0'};
+        const std::array<sf::U8StringCharTraits::char_type, 4> s2 = {'a', 'b', 'c', '\0'};
+        const std::array<sf::U8StringCharTraits::char_type, 4> s3 = {'d', 'e', 'f', '\0'};
+        CHECK(sf::U8StringCharTraits::compare(s1.data(), s2.data(), s1.size()) == 0);
+        CHECK(sf::U8StringCharTraits::compare(s1.data(), s3.data(), s1.size()) < 0);
+        CHECK(sf::U8StringCharTraits::compare(s3.data(), s1.data(), s3.size()) > 0);
     }
 
     SECTION("length()")
     {
-        const sf::U8StringCharTraits::char_type s1[] = {'a', '\0'};
-        const sf::U8StringCharTraits::char_type s2[] = {'a', 'b', 'c', 'd', 'e', '\0'};
-        CHECK(sf::U8StringCharTraits::length(s1) == 1);
-        CHECK(sf::U8StringCharTraits::length(s2) == 5);
+        const std::array<sf::U8StringCharTraits::char_type, 2> s1 = {'a', '\0'};
+        const std::array<sf::U8StringCharTraits::char_type, 6> s2 = {'a', 'b', 'c', 'd', 'e', '\0'};
+        CHECK(sf::U8StringCharTraits::length(s1.data()) == 1);
+        CHECK(sf::U8StringCharTraits::length(s2.data()) == 5);
     }
 
     SECTION("find()")
     {
-        const sf::U8StringCharTraits::char_type s[] = {'a', 'b', 'c', 'd', 'e'};
-        CHECK(*sf::U8StringCharTraits::find(s, std::size(s), 'a') == 'a');
-        CHECK(sf::U8StringCharTraits::find(s, std::size(s), 'f') == nullptr);
+        const std::array<sf::U8StringCharTraits::char_type, 5> s = {'a', 'b', 'c', 'd', 'e'};
+        CHECK(*sf::U8StringCharTraits::find(s.data(), s.size(), 'a') == 'a');
+        CHECK(sf::U8StringCharTraits::find(s.data(), s.size(), 'f') == nullptr);
     }
 
     SECTION("to_char_type()")

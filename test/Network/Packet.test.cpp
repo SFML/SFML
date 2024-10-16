@@ -239,7 +239,7 @@ TEST_CASE("[Network] sf::Packet")
 
         SECTION("char*")
         {
-            const char string[] = "testing";
+            const char string[] = "testing"; // NOLINT(cppcoreguidelines-avoid-c-arrays,modernize-avoid-c-arrays)
             CHECK_PACKET_STRING_STREAM_OPERATORS(string, std::strlen(string) + 4);
         }
 
@@ -251,7 +251,7 @@ TEST_CASE("[Network] sf::Packet")
 
         SECTION("wchar_t*")
         {
-            const wchar_t string[] = L"testing";
+            const wchar_t string[] = L"testing"; // NOLINT(cppcoreguidelines-avoid-c-arrays,modernize-avoid-c-arrays)
             CHECK_PACKET_STRING_STREAM_OPERATORS(string, 4 * std::wcslen(string) + 4);
         }
 
