@@ -6,6 +6,7 @@
 #include <SFML/Audio.hpp>
 
 #include <algorithm>
+#include <array>
 #include <iostream>
 #include <limits>
 #include <memory>
@@ -1018,7 +1019,7 @@ private:
     {
     public:
         ReverbFilter(unsigned int sampleRate, float feedbackGain) :
-        m_allPass{{sampleRate / 10, 0.6f}, {sampleRate / 30, -0.6f}, {sampleRate / 90, 0.6f}, {sampleRate / 270, -0.6f}},
+        m_allPass{{{sampleRate / 10, 0.6f}, {sampleRate / 30, -0.6f}, {sampleRate / 90, 0.6f}, {sampleRate / 270, -0.6f}}},
         m_fir({0.003369f,  0.002810f,  0.001758f,  0.000340f,  -0.001255f, -0.002793f, -0.004014f, -0.004659f,
                -0.004516f, -0.003464f, -0.001514f, 0.001148f,  0.004157f,  0.006986f,  0.009003f,  0.009571f,
                0.008173f,  0.004560f,  -0.001120f, -0.008222f, -0.015581f, -0.021579f, -0.024323f, -0.021933f,
@@ -1052,12 +1053,12 @@ private:
         }
 
     private:
-        AllPassFilter<T>  m_allPass[4];
-        FIRFilter<T>      m_fir;
-        std::vector<T>    m_buffer;
-        std::size_t       m_cursor{};
-        const std::size_t m_interval{m_buffer.size() / 3};
-        const float       m_feedbackGain{};
+        std::array<AllPassFilter<T>, 4> m_allPass;
+        FIRFilter<T>                    m_fir;
+        std::vector<T>                  m_buffer;
+        std::size_t                     m_cursor{};
+        const std::size_t               m_interval{m_buffer.size() / 3};
+        const float                     m_feedbackGain{};
     };
 };
 

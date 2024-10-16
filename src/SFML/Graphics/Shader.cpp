@@ -635,7 +635,7 @@ void Shader::setUniform(const std::string& name, const Glsl::Mat3& matrix)
 {
     const UniformBinder binder(*this, name);
     if (binder.location != -1)
-        glCheck(GLEXT_glUniformMatrix3fv(binder.location, 1, GL_FALSE, matrix.array));
+        glCheck(GLEXT_glUniformMatrix3fv(binder.location, 1, GL_FALSE, matrix.array.data()));
 }
 
 
@@ -644,7 +644,7 @@ void Shader::setUniform(const std::string& name, const Glsl::Mat4& matrix)
 {
     const UniformBinder binder(*this, name);
     if (binder.location != -1)
-        glCheck(GLEXT_glUniformMatrix4fv(binder.location, 1, GL_FALSE, matrix.array));
+        glCheck(GLEXT_glUniformMatrix4fv(binder.location, 1, GL_FALSE, matrix.array.data()));
 }
 
 
@@ -741,11 +741,11 @@ void Shader::setUniformArray(const std::string& name, const Glsl::Vec4* vectorAr
 ////////////////////////////////////////////////////////////
 void Shader::setUniformArray(const std::string& name, const Glsl::Mat3* matrixArray, std::size_t length)
 {
-    const std::size_t matrixSize = 3 * 3;
+    static const std::size_t matrixSize = matrixArray[0].array.size();
 
     std::vector<float> contiguous(matrixSize * length);
     for (std::size_t i = 0; i < length; ++i)
-        priv::copyMatrix(matrixArray[i].array, matrixSize, &contiguous[matrixSize * i]);
+        priv::copyMatrix(matrixArray[i].array.data(), matrixSize, &contiguous[matrixSize * i]);
 
     const UniformBinder binder(*this, name);
     if (binder.location != -1)
@@ -756,11 +756,11 @@ void Shader::setUniformArray(const std::string& name, const Glsl::Mat3* matrixAr
 ////////////////////////////////////////////////////////////
 void Shader::setUniformArray(const std::string& name, const Glsl::Mat4* matrixArray, std::size_t length)
 {
-    const std::size_t matrixSize = 4 * 4;
+    static const std::size_t matrixSize = matrixArray[0].array.size();
 
     std::vector<float> contiguous(matrixSize * length);
     for (std::size_t i = 0; i < length; ++i)
-        priv::copyMatrix(matrixArray[i].array, matrixSize, &contiguous[matrixSize * i]);
+        priv::copyMatrix(matrixArray[i].array.data(), matrixSize, &contiguous[matrixSize * i]);
 
     const UniformBinder binder(*this, name);
     if (binder.location != -1)
@@ -884,7 +884,7 @@ bool Shader::compile(std::string_view vertexShaderCode, std::string_view geometr
         if (success == GL_FALSE)
         {
             std::array<char, 1024> log{};
-            glCheck(GLEXT_glGetInfoLog(shader, sizeof(log), nullptr, log.data()));
+            glCheck(GLEXT_glGetInfoLog(shader, static_cast<GLsizei>(log.size()), nullptr, log.data()));
             err() << "Failed to compile " << shaderTypeStr << " shader:" << '\n' << log.data() << std::endl;
             glCheck(GLEXT_glDeleteObject(shader));
             glCheck(GLEXT_glDeleteObject(shaderProgram));
@@ -921,7 +921,7 @@ bool Shader::compile(std::string_view vertexShaderCode, std::string_view geometr
     if (success == GL_FALSE)
     {
         std::array<char, 1024> log{};
-        glCheck(GLEXT_glGetInfoLog(shaderProgram, sizeof(log), nullptr, log.data()));
+        glCheck(GLEXT_glGetInfoLog(shaderProgram, static_cast<GLsizei>(log.size()), nullptr, log.data()));
         err() << "Failed to link shader:" << '\n' << log.data() << std::endl;
         glCheck(GLEXT_glDeleteObject(shaderProgram));
         return false;

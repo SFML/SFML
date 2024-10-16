@@ -1836,13 +1836,13 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             {
                 if (m_inputContext)
                 {
-                    Status       status = 0;
-                    std::uint8_t keyBuffer[64];
+                    Status                       status = 0;
+                    std::array<std::uint8_t, 64> keyBuffer{};
 
                     const int length = Xutf8LookupString(m_inputContext,
                                                          &windowEvent.xkey,
-                                                         reinterpret_cast<char*>(keyBuffer),
-                                                         sizeof(keyBuffer),
+                                                         reinterpret_cast<char*>(keyBuffer.data()),
+                                                         keyBuffer.size(),
                                                          nullptr,
                                                          &status);
 
@@ -1856,10 +1856,10 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                         // There might be more than 1 characters in this event,
                         // so we must iterate it
                         std::uint32_t unicode = 0;
-                        std::uint8_t* iter    = keyBuffer;
-                        while (iter < keyBuffer + length)
+                        std::uint8_t* iter    = keyBuffer.data();
+                        while (iter < keyBuffer.data() + length)
                         {
-                            iter = Utf8::decode(iter, keyBuffer + length, unicode, 0);
+                            iter = Utf8::decode(iter, keyBuffer.data() + length, unicode, 0);
                             if (unicode != 0)
                                 pushEvent(Event::TextEntered{unicode});
                         }
@@ -1868,8 +1868,8 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                 else
                 {
                     static XComposeStatus status;
-                    char                  keyBuffer[16];
-                    if (XLookupString(&windowEvent.xkey, keyBuffer, sizeof(keyBuffer), nullptr, &status))
+                    std::array<char, 16>  keyBuffer{};
+                    if (XLookupString(&windowEvent.xkey, keyBuffer.data(), keyBuffer.size(), nullptr, &status))
                         pushEvent(Event::TextEntered{static_cast<std::uint32_t>(keyBuffer[0])});
                 }
             }

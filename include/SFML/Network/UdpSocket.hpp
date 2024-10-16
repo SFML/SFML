@@ -262,12 +262,12 @@ private:
 /// socket.send(message.c_str(), message.size() + 1, "192.168.1.50", 55002);
 ///
 /// // Receive an answer (most likely from 192.168.1.50, but could be anyone else)
-/// char buffer[1024];
+/// std::array<char, 1024> buffer;
 /// std::size_t received = 0;
 /// std::optional<sf::IpAddress> sender;
 /// unsigned short port;
-/// if (socket.receive(buffer, sizeof(buffer), received, sender, port) == sf::Socket::Status::Done)
-///     std::cout << sender->toString() << " said: " << buffer << std::endl;
+/// if (socket.receive(buffer.data(), buffer.size(), received, sender, port) == sf::Socket::Status::Done)
+///     std::cout << sender->toString() << " said: " << buffer.data() << std::endl;
 ///
 /// // ----- The server -----
 ///
@@ -276,12 +276,12 @@ private:
 /// socket.bind(55002);
 ///
 /// // Receive a message from anyone
-/// char buffer[1024];
+/// std::array<char, 1024> buffer;
 /// std::size_t received = 0;
 /// std::optional<sf::IpAddress> sender;
 /// unsigned short port;
-/// if (socket.receive(buffer, sizeof(buffer), received, sender, port) == sf::Socket::Status::Done)
-///     std::cout << sender->toString() << " said: " << buffer << std::endl;
+/// if (socket.receive(buffer.data(), buffer.size(), received, sender, port) == sf::Socket::Status::Done)
+///     std::cout << sender->toString() << " said: " << buffer.data() << std::endl;
 ///
 /// // Send an answer
 /// std::string message = "Welcome " + sender.toString();
