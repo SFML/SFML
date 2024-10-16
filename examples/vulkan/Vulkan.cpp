@@ -29,18 +29,18 @@ namespace
 using Matrix = std::array<std::array<float, 4>, 4>;
 
 // Multiply 2 matrices
-void matrixMultiply(Matrix& result, const Matrix& left, const Matrix& right)
+Matrix matrixMultiply(const Matrix& left, const Matrix& right)
 {
-    Matrix temp;
+    Matrix matrix;
 
-    for (std::size_t i = 0; i < temp.size(); ++i)
+    for (std::size_t i = 0; i < matrix.size(); ++i)
     {
-        for (std::size_t j = 0; j < temp[0].size(); ++j)
-            temp[i][j] = left[0][j] * right[i][0] + left[1][j] * right[i][1] + left[2][j] * right[i][2] +
-                         left[3][j] * right[i][3];
+        for (std::size_t j = 0; j < matrix[0].size(); ++j)
+            matrix[i][j] = left[0][j] * right[i][0] + left[1][j] * right[i][1] + left[2][j] * right[i][2] +
+                           left[3][j] * right[i][3];
     }
 
-    result = temp;
+    return matrix;
 }
 
 // Rotate a matrix around the x-axis
@@ -57,7 +57,7 @@ void matrixRotateX(Matrix& result, sf::Angle angle)
     }};
     // clang-format on
 
-    matrixMultiply(result, result, matrix);
+    result = matrixMultiply(result, matrix);
 }
 
 // Rotate a matrix around the y-axis
@@ -74,7 +74,7 @@ void matrixRotateY(Matrix& result, sf::Angle angle)
     }};
     // clang-format on
 
-    matrixMultiply(result, result, matrix);
+    result = matrixMultiply(result, matrix);
 }
 
 // Rotate a matrix around the z-axis
@@ -91,11 +91,11 @@ void matrixRotateZ(Matrix& result, sf::Angle angle)
     }};
     // clang-format on
 
-    matrixMultiply(result, result, matrix);
+    result = matrixMultiply(result, matrix);
 }
 
 // Construct a lookat view matrix
-void matrixLookAt(Matrix& result, const sf::Vector3f& eye, const sf::Vector3f& center, const sf::Vector3f& up)
+Matrix matrixLookAt(const sf::Vector3f& eye, const sf::Vector3f& center, const sf::Vector3f& up)
 {
     // Forward-looking vector
     const sf::Vector3f forward = (center - eye).normalized();
@@ -103,6 +103,7 @@ void matrixLookAt(Matrix& result, const sf::Vector3f& eye, const sf::Vector3f& c
     // Side vector (Forward cross product Up)
     const sf::Vector3f side = forward.cross(up).normalized();
 
+    Matrix result;
     result[0][0] = side.x;
     result[0][1] = side.y * forward.z - side.z * forward.y;
     result[0][2] = -forward.x;
@@ -122,13 +123,16 @@ void matrixLookAt(Matrix& result, const sf::Vector3f& eye, const sf::Vector3f& c
     result[3][1] = (-eye.x) * result[0][1] + (-eye.y) * result[1][1] + (-eye.z) * result[2][1];
     result[3][2] = (-eye.x) * result[0][2] + (-eye.y) * result[1][2] + (-eye.z) * result[2][2];
     result[3][3] = (-eye.x) * result[0][3] + (-eye.y) * result[1][3] + (-eye.z) * result[2][3] + 1.0f;
+
+    return result;
 }
 
 // Construct a perspective projection matrix
-void matrixPerspective(Matrix& result, sf::Angle fov, float aspect, float nearPlane, float farPlane)
+Matrix matrixPerspective(sf::Angle fov, float aspect, float nearPlane, float farPlane)
 {
     const float a = 1.f / std::tan(fov.asRadians() / 2.f);
 
+    Matrix result;
     result[0][0] = a / aspect;
     result[0][1] = 0.f;
     result[0][2] = 0.f;
@@ -148,6 +152,8 @@ void matrixPerspective(Matrix& result, sf::Angle fov, float aspect, float nearPl
     result[3][1] = 0.f;
     result[3][2] = -((2.f * farPlane * nearPlane) / (farPlane - nearPlane));
     result[3][3] = 0.f;
+
+    return result;
 }
 
 // Helper function we pass to GLAD to load Vulkan functions via SFML
@@ -2412,8 +2418,7 @@ public:
         const sf::Vector3f center(0.0f, 0.0f, 0.0f);
         const sf::Vector3f up(0.0f, 0.0f, 1.0f);
 
-        Matrix view;
-        matrixLookAt(view, eye, center, up);
+        const Matrix view = matrixLookAt(eye, center, up);
 
         // Construct the projection matrix
         const sf::Angle fov    = sf::degrees(45);
@@ -2421,9 +2426,7 @@ public:
         const float     nearPlane = 0.1f;
         const float     farPlane  = 10.0f;
 
-        Matrix projection;
-
-        matrixPerspective(projection, fov, aspect, nearPlane, farPlane);
+        const Matrix projection = matrixPerspective(fov, aspect, nearPlane, farPlane);
 
         char* ptr = nullptr;
 
