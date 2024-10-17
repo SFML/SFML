@@ -295,21 +295,27 @@ int WglContext::selectBestPixelFormat(HDC deviceContext, unsigned int bitsPerPix
     if (SF_GLAD_WGL_ARB_pixel_format)
     {
         // Define the basic attributes we want for our window
-        int intAttributes[] = {WGL_DRAW_TO_WINDOW_ARB,
-                               GL_TRUE,
-                               WGL_SUPPORT_OPENGL_ARB,
-                               GL_TRUE,
-                               WGL_DOUBLE_BUFFER_ARB,
-                               GL_TRUE,
-                               WGL_PIXEL_TYPE_ARB,
-                               WGL_TYPE_RGBA_ARB,
-                               0,
-                               0};
+        static constexpr std::array intAttributes =
+            {WGL_DRAW_TO_WINDOW_ARB,
+             GL_TRUE,
+             WGL_SUPPORT_OPENGL_ARB,
+             GL_TRUE,
+             WGL_DOUBLE_BUFFER_ARB,
+             GL_TRUE,
+             WGL_PIXEL_TYPE_ARB,
+             WGL_TYPE_RGBA_ARB,
+             0,
+             0};
 
         // Check how many formats are supporting our requirements
-        int formats[512];
+        std::array<int, 512> formats{};
         UINT nbFormats = 0; // We must initialize to 0 otherwise broken drivers might fill with garbage in the following call
-        const bool isValid = wglChoosePixelFormatARB(deviceContext, intAttributes, nullptr, 512, formats, &nbFormats) != FALSE;
+        const bool isValid = wglChoosePixelFormatARB(deviceContext,
+                                                     intAttributes.data(),
+                                                     nullptr,
+                                                     static_cast<UINT>(formats.size()),
+                                                     formats.data(),
+                                                     &nbFormats) != FALSE;
 
         if (!isValid)
             err() << "Failed to enumerate pixel formats: " << getErrorString(GetLastError()) << std::endl;
@@ -321,28 +327,38 @@ int WglContext::selectBestPixelFormat(HDC deviceContext, unsigned int bitsPerPix
             for (UINT i = 0; i < nbFormats; ++i)
             {
                 // Extract the components of the current format
-                int       values[7];
-                const int attributes[] = {WGL_RED_BITS_ARB,
-                                          WGL_GREEN_BITS_ARB,
-                                          WGL_BLUE_BITS_ARB,
-                                          WGL_ALPHA_BITS_ARB,
-                                          WGL_DEPTH_BITS_ARB,
-                                          WGL_STENCIL_BITS_ARB,
-                                          WGL_ACCELERATION_ARB};
+                std::array<int, 7>          values{};
+                static constexpr std::array attributes =
+                    {WGL_RED_BITS_ARB,
+                     WGL_GREEN_BITS_ARB,
+                     WGL_BLUE_BITS_ARB,
+                     WGL_ALPHA_BITS_ARB,
+                     WGL_DEPTH_BITS_ARB,
+                     WGL_STENCIL_BITS_ARB,
+                     WGL_ACCELERATION_ARB};
 
-                if (wglGetPixelFormatAttribivARB(deviceContext, formats[i], PFD_MAIN_PLANE, 7, attributes, values) == FALSE)
+                if (wglGetPixelFormatAttribivARB(deviceContext,
+                                                 formats[i],
+                                                 PFD_MAIN_PLANE,
+                                                 static_cast<UINT>(values.size()),
+                                                 attributes.data(),
+                                                 values.data()) == FALSE)
                 {
                     err() << "Failed to retrieve pixel format information: " << getErrorString(GetLastError()) << std::endl;
                     break;
                 }
 
-                int sampleValues[2] = {0, 0};
+                std::array sampleValues = {0, 0};
                 if (SF_GLAD_WGL_ARB_multisample)
                 {
-                    const int sampleAttributes[] = {WGL_SAMPLE_BUFFERS_ARB, WGL_SAMPLES_ARB};
+                    static constexpr std::array sampleAttributes = {WGL_SAMPLE_BUFFERS_ARB, WGL_SAMPLES_ARB};
 
-                    if (wglGetPixelFormatAttribivARB(deviceContext, formats[i], PFD_MAIN_PLANE, 2, sampleAttributes, sampleValues) ==
-                        FALSE)
+                    if (wglGetPixelFormatAttribivARB(deviceContext,
+                                                     formats[i],
+                                                     PFD_MAIN_PLANE,
+                                                     static_cast<UINT>(sampleAttributes.size()),
+                                                     sampleAttributes.data(),
+                                                     sampleValues.data()) == FALSE)
                     {
                         err() << "Failed to retrieve pixel format multisampling information: "
                               << getErrorString(GetLastError()) << std::endl;
@@ -366,12 +382,16 @@ int WglContext::selectBestPixelFormat(HDC deviceContext, unsigned int bitsPerPix
 
                 if (pbuffer)
                 {
-                    const int pbufferAttributes[] = {WGL_DRAW_TO_PBUFFER_ARB};
+                    static constexpr std::array pbufferAttributes = {WGL_DRAW_TO_PBUFFER_ARB};
 
                     int pbufferValue = 0;
 
-                    if (wglGetPixelFormatAttribivARB(deviceContext, formats[i], PFD_MAIN_PLANE, 1, pbufferAttributes, &pbufferValue) ==
-                        FALSE)
+                    if (wglGetPixelFormatAttribivARB(deviceContext,
+                                                     formats[i],
+                                                     PFD_MAIN_PLANE,
+                                                     static_cast<UINT>(pbufferAttributes.size()),
+                                                     pbufferAttributes.data(),
+                                                     &pbufferValue) == FALSE)
                     {
                         err() << "Failed to retrieve pixel format pbuffer information: " << getErrorString(GetLastError())
                               << std::endl;
@@ -501,10 +521,15 @@ void WglContext::updateSettingsFromPixelFormat()
 
     if (SF_GLAD_WGL_ARB_pixel_format)
     {
-        const int attributes[] = {WGL_DEPTH_BITS_ARB, WGL_STENCIL_BITS_ARB};
-        int       values[2];
+        static constexpr std::array attributes = {WGL_DEPTH_BITS_ARB, WGL_STENCIL_BITS_ARB};
+        std::array<int, 2>          values{};
 
-        if (wglGetPixelFormatAttribivARB(m_deviceContext, format, PFD_MAIN_PLANE, 2, attributes, values) == TRUE)
+        if (wglGetPixelFormatAttribivARB(m_deviceContext,
+                                         format,
+                                         PFD_MAIN_PLANE,
+                                         static_cast<UINT>(attributes.size()),
+                                         attributes.data(),
+                                         values.data()) == TRUE)
         {
             m_settings.depthBits   = static_cast<unsigned int>(values[0]);
             m_settings.stencilBits = static_cast<unsigned int>(values[1]);
@@ -518,11 +543,15 @@ void WglContext::updateSettingsFromPixelFormat()
 
         if (SF_GLAD_WGL_ARB_multisample)
         {
-            const int sampleAttributes[] = {WGL_SAMPLE_BUFFERS_ARB, WGL_SAMPLES_ARB};
-            int       sampleValues[2];
+            static constexpr std::array sampleAttributes = {WGL_SAMPLE_BUFFERS_ARB, WGL_SAMPLES_ARB};
+            std::array<int, 2>          sampleValues{};
 
-            if (wglGetPixelFormatAttribivARB(m_deviceContext, format, PFD_MAIN_PLANE, 2, sampleAttributes, sampleValues) ==
-                TRUE)
+            if (wglGetPixelFormatAttribivARB(m_deviceContext,
+                                             format,
+                                             PFD_MAIN_PLANE,
+                                             static_cast<UINT>(sampleAttributes.size()),
+                                             sampleAttributes.data(),
+                                             sampleValues.data()) == TRUE)
             {
                 m_settings.antiAliasingLevel = static_cast<unsigned int>(sampleValues[0] ? sampleValues[1] : 0);
             }
@@ -540,11 +569,15 @@ void WglContext::updateSettingsFromPixelFormat()
 
         if (SF_GLAD_WGL_ARB_framebuffer_sRGB || SF_GLAD_WGL_EXT_framebuffer_sRGB)
         {
-            const int sRgbCapableAttribute = WGL_FRAMEBUFFER_SRGB_CAPABLE_ARB;
-            int       sRgbCapableValue     = 0;
+            static constexpr std::array sRgbCapableAttribute = {WGL_FRAMEBUFFER_SRGB_CAPABLE_ARB};
+            int                         sRgbCapableValue     = 0;
 
-            if (wglGetPixelFormatAttribivARB(m_deviceContext, format, PFD_MAIN_PLANE, 1, &sRgbCapableAttribute, &sRgbCapableValue) ==
-                TRUE)
+            if (wglGetPixelFormatAttribivARB(m_deviceContext,
+                                             format,
+                                             PFD_MAIN_PLANE,
+                                             static_cast<UINT>(sRgbCapableAttribute.size()),
+                                             sRgbCapableAttribute.data(),
+                                             &sRgbCapableValue) == TRUE)
             {
                 m_settings.sRgbCapable = (sRgbCapableValue == TRUE);
             }
@@ -579,13 +612,13 @@ void WglContext::createSurface(WglContext* shared, Vector2u size, unsigned int b
 
         if (bestFormat > 0)
         {
-            int attributes[] = {0, 0};
+            static constexpr std::array attributes = {0, 0};
 
             m_pbuffer = wglCreatePbufferARB(shared->m_deviceContext,
                                             bestFormat,
                                             static_cast<int>(size.x),
                                             static_cast<int>(size.y),
-                                            attributes);
+                                            attributes.data());
 
             if (m_pbuffer)
             {

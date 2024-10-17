@@ -247,16 +247,16 @@ void SoundFileWriterWav::writeHeader(unsigned int sampleRate, unsigned int chann
     assert(m_file.good() && "Most recent I/O operation failed");
 
     // Write the main chunk ID
-    std::array mainChunkId = {'R', 'I', 'F', 'F'};
+    static constexpr std::array mainChunkId = {'R', 'I', 'F', 'F'};
     m_file.write(mainChunkId.data(), mainChunkId.size());
 
     // Write the main chunk header
     encode(m_file, std::uint32_t{0}); // 0 is a placeholder, will be written later
-    std::array mainChunkFormat = {'W', 'A', 'V', 'E'};
+    static constexpr std::array mainChunkFormat = {'W', 'A', 'V', 'E'};
     m_file.write(mainChunkFormat.data(), mainChunkFormat.size());
 
     // Write the sub-chunk 1 ("format") id and size
-    std::array fmtChunkId = {'f', 'm', 't', ' '};
+    static constexpr std::array fmtChunkId = {'f', 'm', 't', ' '};
     m_file.write(fmtChunkId.data(), fmtChunkId.size());
 
     if (channelCount > 2)
@@ -295,13 +295,13 @@ void SoundFileWriterWav::writeHeader(unsigned int sampleRate, unsigned int chann
         encode(m_file, bitsPerSample);
         encode(m_file, channelMask);
         // Write the subformat (PCM)
-        std::array subformat =
+        static constexpr std::array subformat =
             {'\x01', '\x00', '\x00', '\x00', '\x00', '\x00', '\x10', '\x00', '\x80', '\x00', '\x00', '\xAA', '\x00', '\x38', '\x9B', '\x71'};
         m_file.write(subformat.data(), subformat.size());
     }
 
     // Write the sub-chunk 2 ("data") id and size
-    std::array dataChunkId = {'d', 'a', 't', 'a'};
+    static constexpr std::array dataChunkId = {'d', 'a', 't', 'a'};
     m_file.write(dataChunkId.data(), dataChunkId.size());
     const std::uint32_t dataChunkSize = 0; // placeholder, will be written later
     encode(m_file, dataChunkSize);

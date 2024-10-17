@@ -2,6 +2,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <array>
 #include <filesystem>
 #include <fstream>
 #include <sstream>
@@ -72,8 +73,8 @@ TEST_CASE("[System] sf::FileInputStream")
         STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::FileInputStream>);
     }
 
-    const TemporaryFile temporaryFile("Hello world");
-    char                buffer[32];
+    const TemporaryFile  temporaryFile("Hello world");
+    std::array<char, 32> buffer{};
 
     SECTION("Construction")
     {
@@ -89,10 +90,10 @@ TEST_CASE("[System] sf::FileInputStream")
         SECTION("File path constructor")
         {
             sf::FileInputStream fileInputStream(temporaryFile.getPath());
-            CHECK(fileInputStream.read(buffer, 5) == 5);
+            CHECK(fileInputStream.read(buffer.data(), 5) == 5);
             CHECK(fileInputStream.tell() == 5);
             CHECK(fileInputStream.getSize() == 11);
-            CHECK(std::string_view(buffer, 5) == "Hello"sv);
+            CHECK(std::string_view(buffer.data(), 5) == "Hello"sv);
             CHECK(fileInputStream.seek(6) == 6);
             CHECK(fileInputStream.tell() == 6);
         }
@@ -104,10 +105,10 @@ TEST_CASE("[System] sf::FileInputStream")
         {
             sf::FileInputStream movedFileInputStream(temporaryFile.getPath());
             sf::FileInputStream fileInputStream = std::move(movedFileInputStream);
-            CHECK(fileInputStream.read(buffer, 6) == 6);
+            CHECK(fileInputStream.read(buffer.data(), 6) == 6);
             CHECK(fileInputStream.tell() == 6);
             CHECK(fileInputStream.getSize() == 11);
-            CHECK(std::string_view(buffer, 6) == "Hello "sv);
+            CHECK(std::string_view(buffer.data(), 6) == "Hello "sv);
         }
 
         SECTION("Move assignment")
@@ -116,10 +117,10 @@ TEST_CASE("[System] sf::FileInputStream")
             const TemporaryFile temporaryFile2("Hello world the sequel");
             sf::FileInputStream fileInputStream(temporaryFile2.getPath());
             fileInputStream = std::move(movedFileInputStream);
-            CHECK(fileInputStream.read(buffer, 6) == 6);
+            CHECK(fileInputStream.read(buffer.data(), 6) == 6);
             CHECK(fileInputStream.tell() == 6);
             CHECK(fileInputStream.getSize() == 11);
-            CHECK(std::string_view(buffer, 6) == "Hello "sv);
+            CHECK(std::string_view(buffer.data(), 6) == "Hello "sv);
         }
     }
 
@@ -127,10 +128,10 @@ TEST_CASE("[System] sf::FileInputStream")
     {
         sf::FileInputStream fileInputStream;
         REQUIRE(fileInputStream.open(temporaryFile.getPath()));
-        CHECK(fileInputStream.read(buffer, 5) == 5);
+        CHECK(fileInputStream.read(buffer.data(), 5) == 5);
         CHECK(fileInputStream.tell() == 5);
         CHECK(fileInputStream.getSize() == 11);
-        CHECK(std::string_view(buffer, 5) == "Hello"sv);
+        CHECK(std::string_view(buffer.data(), 5) == "Hello"sv);
         CHECK(fileInputStream.seek(6) == 6);
         CHECK(fileInputStream.tell() == 6);
     }
@@ -138,10 +139,10 @@ TEST_CASE("[System] sf::FileInputStream")
     SECTION("Temporary file stream create")
     {
         sf::FileInputStream fileInputStream(temporaryFile.getPath());
-        CHECK(fileInputStream.read(buffer, 5) == 5);
+        CHECK(fileInputStream.read(buffer.data(), 5) == 5);
         CHECK(fileInputStream.tell() == 5);
         CHECK(fileInputStream.getSize() == 11);
-        CHECK(std::string_view(buffer, 5) == "Hello"sv);
+        CHECK(std::string_view(buffer.data(), 5) == "Hello"sv);
         CHECK(fileInputStream.seek(6) == 6);
         CHECK(fileInputStream.tell() == 6);
     }

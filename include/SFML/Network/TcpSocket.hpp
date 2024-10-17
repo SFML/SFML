@@ -285,10 +285,10 @@ private:
 /// socket.send(message.c_str(), message.size() + 1);
 ///
 /// // Receive an answer from the server
-/// char buffer[1024];
+/// std::array<char, 1024> buffer;
 /// std::size_t received = 0;
-/// socket.receive(buffer, sizeof(buffer), received);
-/// std::cout << "The server said: " << buffer << std::endl;
+/// socket.receive(buffer.data(), buffer.size(), received);
+/// std::cout << "The server said: " << buffer.data() << std::endl;
 ///
 /// // ----- The server -----
 ///
@@ -302,10 +302,10 @@ private:
 /// std::cout << "New client connected: " << socket.getRemoteAddress().value() << std::endl;
 ///
 /// // Receive a message from the client
-/// char buffer[1024];
+/// std::array<char, 1024> buffer;
 /// std::size_t received = 0;
-/// socket.receive(buffer, sizeof(buffer), received);
-/// std::cout << "The client said: " << buffer << std::endl;
+/// socket.receive(buffer.data(), buffer.size(), received);
+/// std::cout << "The client said: " << buffer.data() << std::endl;
 ///
 /// // Send an answer
 /// std::string message = "Welcome, client";

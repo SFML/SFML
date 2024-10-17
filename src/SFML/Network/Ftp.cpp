@@ -31,6 +31,7 @@
 #include <SFML/System/Err.hpp>
 
 #include <algorithm>
+#include <array>
 #include <fstream>
 #include <ostream>
 #include <sstream>
@@ -381,23 +382,23 @@ Ftp::Response Ftp::getResponse()
     for (;;)
     {
         // Receive the response from the server
-        char        buffer[1024];
-        std::size_t length = 0;
+        std::array<char, 1024> buffer{};
+        std::size_t            length = 0;
 
         if (m_receiveBuffer.empty())
         {
-            if (m_commandSocket.receive(buffer, sizeof(buffer), length) != Socket::Status::Done)
+            if (m_commandSocket.receive(buffer.data(), buffer.size(), length) != Socket::Status::Done)
                 return Response(Response::Status::ConnectionClosed);
         }
         else
         {
-            std::copy(m_receiveBuffer.begin(), m_receiveBuffer.end(), buffer);
+            std::copy(m_receiveBuffer.begin(), m_receiveBuffer.end(), buffer.data());
             length = m_receiveBuffer.size();
             m_receiveBuffer.clear();
         }
 
         // There can be several lines inside the received buffer, extract them all
-        std::istringstream in(std::string(buffer, length), std::ios_base::binary);
+        std::istringstream in(std::string(buffer.data(), length), std::ios_base::binary);
         while (in)
         {
             // Try to extract the code
@@ -451,7 +452,7 @@ Ftp::Response Ftp::getResponse()
                         }
 
                         // Save the remaining data for the next time getResponse() is called
-                        m_receiveBuffer.assign(buffer + static_cast<std::size_t>(in.tellg()),
+                        m_receiveBuffer.assign(buffer.data() + static_cast<std::size_t>(in.tellg()),
                                                length - static_cast<std::size_t>(in.tellg()));
 
                         // Return the response code and message
@@ -526,9 +527,9 @@ Ftp::Response Ftp::DataChannel::open(Ftp::TransferMode mode)
         const std::string::size_type begin = response.getMessage().find_first_of("0123456789");
         if (begin != std::string::npos)
         {
-            std::uint8_t data[6] = {0, 0, 0, 0, 0, 0};
-            std::string  str     = response.getMessage().substr(begin);
-            std::size_t  index   = 0;
+            std::array<std::uint8_t, 6> data{};
+            std::string                 str   = response.getMessage().substr(begin);
+            std::size_t                 index = 0;
             for (unsigned char& datum : data)
             {
                 // Extract the current number
@@ -584,11 +585,11 @@ Ftp::Response Ftp::DataChannel::open(Ftp::TransferMode mode)
 void Ftp::DataChannel::receive(std::ostream& stream)
 {
     // Receive data
-    char        buffer[1024];
-    std::size_t received = 0;
-    while (m_dataSocket.receive(buffer, sizeof(buffer), received) == Socket::Status::Done)
+    std::array<char, 1024> buffer{};
+    std::size_t            received = 0;
+    while (m_dataSocket.receive(buffer.data(), buffer.size(), received) == Socket::Status::Done)
     {
-        stream.write(buffer, static_cast<std::streamsize>(received));
+        stream.write(buffer.data(), static_cast<std::streamsize>(received));
 
         if (!stream.good())
         {
@@ -606,13 +607,13 @@ void Ftp::DataChannel::receive(std::ostream& stream)
 void Ftp::DataChannel::send(std::istream& stream)
 {
     // Send data
-    char        buffer[1024];
-    std::size_t count = 0;
+    std::array<char, 1024> buffer{};
+    std::size_t            count = 0;
 
     for (;;)
     {
         // read some data from the stream
-        stream.read(buffer, sizeof(buffer));
+        stream.read(buffer.data(), buffer.size());
 
         if (!stream.good() && !stream.eof())
         {
@@ -625,7 +626,7 @@ void Ftp::DataChannel::send(std::istream& stream)
         if (count > 0)
         {
             // we could read more data from the stream: send them
-            if (m_dataSocket.send(buffer, count) != Socket::Status::Done)
+            if (m_dataSocket.send(buffer.data(), count) != Socket::Status::Done)
                 break;
         }
         else

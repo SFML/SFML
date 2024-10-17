@@ -400,11 +400,11 @@ SFML_GRAPHICS_API void swap(VertexBuffer& left, VertexBuffer& right) noexcept;
 ///
 /// Example:
 /// \code
-/// sf::Vertex vertices[15];
+/// std::array<sf::Vertex, 15> vertices;
 /// ...
 /// sf::VertexBuffer triangles(sf::PrimitiveType::Triangles);
-/// triangles.create(15);
-/// triangles.update(vertices);
+/// triangles.create(vertices.size());
+/// triangles.update(vertices.data());
 /// ...
 /// window.draw(triangles);
 /// \endcode

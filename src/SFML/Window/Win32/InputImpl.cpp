@@ -634,9 +634,8 @@ String getDescription(Keyboard::Scancode code)
     if (const auto consumerKeyName = sfScanToConsumerKeyName(code))
         return *consumerKeyName;
 
-    WORD      winCode = sfScanToWinScanExtended(code);
-    const int bufSize = 1024;
-    WCHAR     name[bufSize];
+    WORD                    winCode = sfScanToWinScanExtended(code);
+    std::array<WCHAR, 1024> name{};
 
     // Remap F13-F23 to values supported by GetKeyNameText
     if ((winCode >= 0x64) && (winCode <= 0x6E))
@@ -645,11 +644,9 @@ String getDescription(Keyboard::Scancode code)
     if (winCode == 0x76)
         winCode = 0x87;
 
-    const int result = GetKeyNameText(winCode << 16, name, bufSize);
-    if (result > 0)
-    {
-        return name;
-    }
+    if (GetKeyNameText(winCode << 16, name.data(), static_cast<int>(name.size())) > 0)
+        return name.data();
+
     return "Unknown";
 }
 

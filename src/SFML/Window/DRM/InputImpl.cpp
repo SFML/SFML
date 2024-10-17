@@ -32,6 +32,7 @@
 #include <SFML/System/Err.hpp>
 
 #include <algorithm>
+#include <array>
 #include <fcntl.h>
 #include <linux/input.h>
 #include <mutex>
@@ -107,15 +108,15 @@ void uninitFileDescriptors()
 // Joysticks are handled in /src/SFML/Window/Unix/JoystickImpl.cpp
 bool keepFileDescriptor(int fileDesc)
 {
-    unsigned long bitmaskEv[NBITS(EV_MAX)];
-    unsigned long bitmaskKey[NBITS(KEY_MAX)];
-    unsigned long bitmaskAbs[NBITS(ABS_MAX)];
-    unsigned long bitmaskRel[NBITS(REL_MAX)];
+    std::array<unsigned long, NBITS(EV_MAX)>  bitmaskEv{};
+    std::array<unsigned long, NBITS(KEY_MAX)> bitmaskKey{};
+    std::array<unsigned long, NBITS(ABS_MAX)> bitmaskAbs{};
+    std::array<unsigned long, NBITS(REL_MAX)> bitmaskRel{};
 
-    ioctl(fileDesc, EVIOCGBIT(0, sizeof(bitmaskEv)), &bitmaskEv);
-    ioctl(fileDesc, EVIOCGBIT(EV_KEY, sizeof(bitmaskKey)), &bitmaskKey);
-    ioctl(fileDesc, EVIOCGBIT(EV_ABS, sizeof(bitmaskAbs)), &bitmaskAbs);
-    ioctl(fileDesc, EVIOCGBIT(EV_REL, sizeof(bitmaskRel)), &bitmaskRel);
+    ioctl(fileDesc, EVIOCGBIT(0, sizeof(bitmaskEv)), bitmaskEv.data());
+    ioctl(fileDesc, EVIOCGBIT(EV_KEY, sizeof(bitmaskKey)), bitmaskKey.data());
+    ioctl(fileDesc, EVIOCGBIT(EV_ABS, sizeof(bitmaskAbs)), bitmaskAbs.data());
+    ioctl(fileDesc, EVIOCGBIT(EV_REL, sizeof(bitmaskRel)), bitmaskRel.data());
 
     // This is the keyboard test used by SDL.
     // The first 32 bits are ESC, numbers and Q to D;  If we have any of those,
@@ -514,8 +515,8 @@ std::optional<sf::Event> eventProcess()
         ready = select(STDIN_FILENO + 1, &readFDSet, nullptr, nullptr, &timeout);
         if (ready > 0 && FD_ISSET(STDIN_FILENO, &readFDSet))
         {
-            unsigned char tempBuffer[16];
-            bytesRead = read(STDIN_FILENO, tempBuffer, 16);
+            std::array<unsigned char, 16> tempBuffer{};
+            bytesRead = read(STDIN_FILENO, tempBuffer.data(), tempBuffer.size());
             code      = 0;
         }
     }

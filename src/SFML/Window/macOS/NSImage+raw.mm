@@ -28,6 +28,8 @@
 ////////////////////////////////////////////////////////////
 #import <SFML/Window/macOS/NSImage+raw.h>
 
+#include <array>
+
 @implementation NSImage (raw)
 
 + (NSImage*)imageWithRawData:(const std::uint8_t*)pixels andSize:(NSSize)size
@@ -50,8 +52,8 @@
     {
         for (unsigned int x = 0; x < size.width; ++x, pixels += 4)
         {
-            NSUInteger pixel[4] = {pixels[0], pixels[1], pixels[2], pixels[3]};
-            [bitmap setPixel:pixel atX:x y:y];
+            std::array<NSUInteger, 4> pixel = {pixels[0], pixels[1], pixels[2], pixels[3]};
+            [bitmap setPixel:pixel.data() atX:x y:y];
         }
     }
 
