@@ -81,6 +81,6 @@ CheckOptions:
   - { key: readability-identifier-naming.PrivateMemberCase,   value: camelBack }
   - { key: readability-identifier-naming.ProtectedMemberPrefix, value: m_ }
   - { key: readability-identifier-naming.PrivateMemberPrefix,   value: m_ }
-HeaderFilterRegex: '.*'
+HeaderFilterRegex: '((.*/(src|include)/SFML/.*)|(.*/(test|examples)/.*))'
 WarningsAsErrors: '*'
 UseColor: true
