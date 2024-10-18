@@ -48,6 +48,8 @@ set(CODECS_SRC
     ${SRCROOT}/SoundFileReaderMp3.cpp
     ${SRCROOT}/SoundFileReaderOgg.hpp
     ${SRCROOT}/SoundFileReaderOgg.cpp
+    ${SRCROOT}/SoundFileReaderOpus.hpp
+    ${SRCROOT}/SoundFileReaderOpus.cpp
     ${SRCROOT}/SoundFileReaderWav.hpp
     ${SRCROOT}/SoundFileReaderWav.cpp
     ${INCROOT}/SoundFileWriter.hpp
@@ -55,6 +57,8 @@ set(CODECS_SRC
     ${SRCROOT}/SoundFileWriterFlac.cpp
     ${SRCROOT}/SoundFileWriterOgg.hpp
     ${SRCROOT}/SoundFileWriterOgg.cpp
+    ${SRCROOT}/SoundFileWriterOpus.hpp
+    ${SRCROOT}/SoundFileWriterOpus.cpp
     ${SRCROOT}/SoundFileWriterWav.hpp
     ${SRCROOT}/SoundFileWriterWav.cpp
 )
@@ -77,6 +81,7 @@ endif()
 # find external libraries
 find_package(Vorbis REQUIRED)
 find_package(FLAC REQUIRED)
+find_package(Opus REQUIRED)
 
 # define the sfml-audio target
 sfml_add_library(Audio
@@ -94,7 +99,7 @@ target_compile_definitions(sfml-audio PRIVATE MA_USE_STDINT)
 # setup dependencies
 target_link_libraries(sfml-audio
                       PUBLIC SFML::System
-                      PRIVATE Vorbis::vorbis FLAC::FLAC)
+                      PRIVATE Vorbis::vorbis FLAC::FLAC Opus::opus)
 if(SFML_OS_IOS)
     target_link_libraries(sfml-audio PRIVATE "-framework Foundation" "-framework CoreFoundation" "-framework CoreAudio" "-framework AudioToolbox" "-framework AVFoundation")
 else()
