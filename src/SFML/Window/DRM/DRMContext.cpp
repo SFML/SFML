@@ -174,13 +174,8 @@ DrmFb* drmFbGetFromBo(gbm_bo& bo)
         modifiers[static_cast<std::size_t>(i)] = modifiers[0];
     }
 
-    std::uint32_t flags = 0;
-    if (modifiers[0])
-    {
-        flags = DRM_MODE_FB_MODIFIERS;
-    }
-
-    int result = drmModeAddFB2WithModifiers(drmFd,
+    const std::uint32_t flags  = modifiers[0] ? DRM_MODE_FB_MODIFIERS : 0;
+    int                 result = drmModeAddFB2WithModifiers(drmFd,
                                             width,
                                             height,
                                             format,
@@ -695,13 +690,7 @@ void DRMContext::createContext(DRMContext* shared)
 {
     static constexpr std::array contextVersion = {EGL_CONTEXT_CLIENT_VERSION, 1, EGL_NONE};
 
-    EGLContext toShared = nullptr;
-
-    if (shared)
-        toShared = shared->m_context;
-    else
-        toShared = EGL_NO_CONTEXT;
-
+    const EGLContext toShared = shared ? shared->m_context : EGL_NO_CONTEXT;
     if (toShared != EGL_NO_CONTEXT)
         eglCheck(eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
 

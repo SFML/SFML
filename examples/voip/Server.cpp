@@ -16,8 +16,8 @@
 #include <cstring>
 
 
-const std::uint8_t serverAudioData   = 1;
-const std::uint8_t serverEndOfStream = 2;
+constexpr std::uint8_t serverAudioData   = 1;
+constexpr std::uint8_t serverEndOfStream = 2;
 
 
 ////////////////////////////////////////////////////////////

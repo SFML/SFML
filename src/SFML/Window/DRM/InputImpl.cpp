@@ -71,7 +71,7 @@ std::vector<TouchSlot> touchSlots;      // track the state of each touch "slot"
 int                    currentSlot = 0; // which slot are we currently updating?
 
 std::queue<sf::Event> eventQueue;    // events received and waiting to be consumed
-const int             maxQueue = 64; // The maximum size we let eventQueue grow to
+constexpr int         maxQueue = 64; // The maximum size we let eventQueue grow to
 
 termios newTerminalConfig, oldTerminalConfig; // Terminal configurations
 
