@@ -131,7 +131,7 @@ const auto onClose = [&window](const sf::Event::Closed&)
     window.close();
 };
 
-const auto onKeyPressed = [&window](const sf::Event::KeyPresssed& keyPressed)
+const auto onKeyPressed = [&window](const sf::Event::KeyPressed& keyPressed)
 {
     if (keyPressed.scancode == sf::Keyboard::Scancode::Escape)
         window.close();
