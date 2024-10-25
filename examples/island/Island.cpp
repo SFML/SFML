@@ -8,9 +8,9 @@
 
 #include <algorithm>
 #include <array>
-#include <deque>
 #include <iostream>
 #include <mutex>
+#include <queue>
 #include <sstream>
 #include <thread>
 #include <vector>
@@ -40,7 +40,7 @@ struct WorkItem
     unsigned int index{};
 };
 
-std::deque<WorkItem>     workQueue;
+std::queue<WorkItem>     workQueue;
 std::vector<std::thread> threads;
 int                      pendingWorkCount    = 0;
 bool                     workPending         = true;
@@ -356,7 +356,7 @@ void threadFunction()
             if (!workQueue.empty())
             {
                 workItem = workQueue.front();
-                workQueue.pop_front();
+                workQueue.pop();
             }
         }
 
@@ -409,7 +409,7 @@ void generateTerrain(sf::Vertex* buffer)
         for (unsigned int i = 0; i < blockCount; ++i)
         {
             const WorkItem workItem = {buffer, i};
-            workQueue.push_back(workItem);
+            workQueue.push(workItem);
         }
 
         pendingWorkCount = blockCount;
