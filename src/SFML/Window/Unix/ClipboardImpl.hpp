@@ -33,8 +33,8 @@
 
 #include <X11/Xlib.h>
 
-#include <deque>
 #include <memory>
+#include <queue>
 
 
 namespace sf::priv
@@ -143,7 +143,7 @@ private:
     Atom                       m_utf8String;        ///< X Atom identifying UTF8_STRING
     Atom                       m_targetProperty;    ///< X Atom identifying our destination window property
     String                     m_clipboardContents; ///< Our clipboard contents
-    std::deque<XEvent>         m_events;            ///< Queue we use to store pending events for this window
+    std::queue<XEvent>         m_events;            ///< Queue we use to store pending events for this window
     bool m_requestResponded{}; ///< Holds whether our selection request has been responded to or not
 };
 
