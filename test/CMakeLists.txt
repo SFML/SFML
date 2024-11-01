@@ -140,6 +140,7 @@ sfml_add_test(test-sfml-network "${NETWORK_SRC}" SFML::Network)
 set(AUDIO_SRC
     Audio/AudioResource.test.cpp
     Audio/InputSoundFile.test.cpp
+    Audio/Listener.test.cpp
     Audio/Music.test.cpp
     Audio/OutputSoundFile.test.cpp
     Audio/Sound.test.cpp
