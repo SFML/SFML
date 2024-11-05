@@ -72,6 +72,22 @@ circle.setPosition({10, 20});
 sf::IntRect rect({250, 400}, {50, 100});
 ```
 
+## Fixed Width Integers
+
+SFML 2 contained various typedefs for fixed width integers.
+Those are now replaced with the fixed width integers provided in the `<cstdint>` header from the standard library.
+
+| v2           | v3              |
+| ------------ | --------------- |
+| `sf::Int8`   | `std::int8_t`   |
+| `sf::Uint8`  | `std::uint8_t`  |
+| `sf::Int16`  | `std::int16_t`  |
+| `sf::Uint16` | `std::uint16_t` |
+| `sf::Int32`  | `std::int32_t`  |
+| `sf::Uint32` | `std::uint32_t` |
+| `sf::Int64`  | `std::int64_t`  |
+| `sf::Uint64` | `std::uint64_t` |
+
 ## `sf::Event`
 
 SFML 3 uses `std::variant` under the hood to implement a totally new, type-safe API for events.
@@ -276,6 +292,19 @@ They can be replaced by the corresponding constructors which accept a resource t
 Now that these classes are guaranteed to be holding a reference to their corresponding resource type, the functions used to access to those resources can return a reference instead of a pointer.
 These functions are `sf::Sound::getBuffer()`, `sf::Text::getFont()`, and `sf::Sprite::getTexture()`.
 
+v2:
+```cpp
+const sf::SoundBuffer soundBuffer("sound.flac");
+sf::Sound sound;
+sound.setBuffer(soundBuffer);
+```
+
+v3:
+```cpp
+const sf::SoundBuffer soundBuffer("sound.flac");
+sf::Sound sound(soundBuffer);
+```
+
 ## `std::optional` Usage
 
 SFML 3 makes liberal use of `std::optional` to express when a given function may not return a value.
@@ -291,22 +320,6 @@ Instead of returning `-1` to signal an error, `std::nullopt` can be returned.
 
 LearnCpp.com is a great place to learn more about using `std::optional`.
 Read more about that [here](https://www.learncpp.com/cpp-tutorial/stdoptional/).
-
-## Fixed Width Integers
-
-SFML 2 contained various typedefs for fixed width integers.
-Those are now replaced with the fixed width integers provided in the `<cstdint>` header from the standard library.
-
-| v2           | v3              |
-| ------------ | --------------- |
-| `sf::Int8`   | `std::int8_t`   |
-| `sf::Uint8`  | `std::uint8_t`  |
-| `sf::Int16`  | `std::int16_t`  |
-| `sf::Uint16` | `std::uint16_t` |
-| `sf::Int32`  | `std::int32_t`  |
-| `sf::Uint32` | `std::uint32_t` |
-| `sf::Int64`  | `std::int64_t`  |
-| `sf::Uint64` | `std::uint64_t` |
 
 ## New Constructors for Loading Resources
 
@@ -429,7 +442,9 @@ SFML 3 includes various smaller changes that ought to be mentioned.
 * Reverted to default value of CMake's `BUILD_SHARED_LIBS` which means SFML now builds static libraries by default
 * Changed `sf::String` interface to use `std::u16string` and `std::u32string`
 * Removed `sf::ContextSettings` constructor in favor of aggregate initialization
-* Removed `sf::View::reset` in favor of `sf::View::operator=`
+* Removed `sf::View::reset` in favor of assigning from a new `sf::View` object
 * Added new `sf::CoordinateType` enumeration to `sf::RenderStates::RenderStates`
 * Removed `sf::Vertex` constructors in favor of aggregate initialization
 * Renamed `sf::Mouse::Button::XButton1` and `sf::Mouse::Button::XButton2` enumerators to `sf::Mouse::Button::Extra1` and `sf::Mouse::Button::Extra2`
+* Removed NonCopyable.hpp header in favor of using built-in language features for disabling copy operators
+* Converted the following classes to namespaces: `sf::Clipboard`, `sf::Keyboard`, `sf::Joystick`, `sf::Listener`, `sf::Mouse`, `sf::Sensor`, `sf::Touch`, `sf::Vulkan`
