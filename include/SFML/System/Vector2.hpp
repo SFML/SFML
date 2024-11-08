@@ -242,7 +242,7 @@ constexpr Vector2<T>& operator+=(Vector2<T>& left, Vector2<T> right);
 /// \brief Overload of binary `operator-=`
 ///
 /// This operator performs a member-wise subtraction of both vectors,
-/// and assigns the result to \a `left.
+/// and assigns the result to \a `left`.
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a vector)
