@@ -932,7 +932,7 @@ private:
 /// for SFML.
 ///
 /// Like any C/C++ program, a GLSL shader has its own variables
-/// called \a `uniforms` that you can set from your C++ application.
+/// called _uniforms_ that you can set from your C++ application.
 /// `sf::Shader` handles different types of uniforms:
 /// \li scalars: \p float, \p int, \p bool
 /// \li vectors (2, 3 or 4 components)
