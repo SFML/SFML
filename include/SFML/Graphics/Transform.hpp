@@ -277,7 +277,7 @@ private:
 };
 
 ////////////////////////////////////////////////////////////
-/// \relates `sf::Transform`
+/// \relates sf::Transform
 /// \brief Overload of binary `operator*` to combine two transforms
 ///
 /// This call is equivalent to calling `Transform(left).combine(right)`.
@@ -291,7 +291,7 @@ private:
 [[nodiscard]] constexpr Transform operator*(const Transform& left, const Transform& right);
 
 ////////////////////////////////////////////////////////////
-/// \relates `sf::Transform`
+/// \relates sf::Transform
 /// \brief Overload of binary `operator*=` to combine two transforms
 ///
 /// This call is equivalent to calling `left.combine(right)`.
@@ -305,7 +305,7 @@ private:
 constexpr Transform& operator*=(Transform& left, const Transform& right);
 
 ////////////////////////////////////////////////////////////
-/// \relates `sf::Transform`
+/// \relates sf::Transform
 /// \brief Overload of binary `operator*` to transform a point
 ///
 /// This call is equivalent to calling `left.transformPoint(right)`.
@@ -319,7 +319,7 @@ constexpr Transform& operator*=(Transform& left, const Transform& right);
 [[nodiscard]] constexpr Vector2f operator*(const Transform& left, Vector2f right);
 
 ////////////////////////////////////////////////////////////
-/// \relates `sf::Transform`
+/// \relates sf::Transform
 /// \brief Overload of binary `operator==` to compare two transforms
 ///
 /// Performs an element-wise comparison of the elements of the
@@ -334,7 +334,7 @@ constexpr Transform& operator*=(Transform& left, const Transform& right);
 [[nodiscard]] constexpr bool operator==(const Transform& left, const Transform& right);
 
 ////////////////////////////////////////////////////////////
-/// \relates `sf::Transform`
+/// \relates sf::Transform
 /// \brief Overload of binary `operator!=` to compare two transforms
 ///
 /// This call is equivalent to `!(left == right)`.
