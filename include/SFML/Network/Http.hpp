@@ -236,7 +236,7 @@ public:
         ////////////////////////////////////////////////////////////
         /// \brief Get the value of a field
         ///
-        /// If the field \a `field` is not found in the response header,
+        /// If the field `field` is not found in the response header,
         /// the empty string is returned. This function uses
         /// case-insensitive comparisons.
         ///

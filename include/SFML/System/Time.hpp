@@ -186,7 +186,7 @@ private:
 /// \param left  Left operand (a time)
 /// \param right Right operand (a time)
 ///
-/// \return `true` if \a `left` is lesser than \a `right`
+/// \return `true` if `left` is lesser than `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr bool operator<(Time left, Time right);
@@ -198,7 +198,7 @@ private:
 /// \param left  Left operand (a time)
 /// \param right Right operand (a time)
 ///
-/// \return `true` if \a `left` is greater than \a `right`
+/// \return `true` if `left` is greater than `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr bool operator>(Time left, Time right);
@@ -210,7 +210,7 @@ private:
 /// \param left  Left operand (a time)
 /// \param right Right operand (a time)
 ///
-/// \return `true` if \a `left` is lesser or equal than \a `right`
+/// \return `true` if `left` is lesser or equal than `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr bool operator<=(Time left, Time right);
@@ -222,7 +222,7 @@ private:
 /// \param left  Left operand (a time)
 /// \param right Right operand (a time)
 ///
-/// \return `true` if \a `left` is greater or equal than \a `right`
+/// \return `true` if `left` is greater or equal than `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr bool operator>=(Time left, Time right);
@@ -293,7 +293,7 @@ constexpr Time& operator-=(Time& left, Time right);
 /// \param left  Left operand (a time)
 /// \param right Right operand (a number)
 ///
-/// \return \a `left` multiplied by \a `right`
+/// \return `left` multiplied by `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr Time operator*(Time left, float right);
@@ -305,7 +305,7 @@ constexpr Time& operator-=(Time& left, Time right);
 /// \param left  Left operand (a time)
 /// \param right Right operand (a number)
 ///
-/// \return \a `left` multiplied by \a `right`
+/// \return `left` multiplied by `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr Time operator*(Time left, std::int64_t right);
@@ -317,7 +317,7 @@ constexpr Time& operator-=(Time& left, Time right);
 /// \param left  Left operand (a number)
 /// \param right Right operand (a time)
 ///
-/// \return \a `left` multiplied by \a `right`
+/// \return `left` multiplied by `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr Time operator*(float left, Time right);
@@ -329,7 +329,7 @@ constexpr Time& operator-=(Time& left, Time right);
 /// \param left  Left operand (a number)
 /// \param right Right operand (a time)
 ///
-/// \return \a `left` multiplied by \a `right`
+/// \return `left` multiplied by `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr Time operator*(std::int64_t left, Time right);
@@ -341,7 +341,7 @@ constexpr Time& operator-=(Time& left, Time right);
 /// \param left  Left operand (a time)
 /// \param right Right operand (a number)
 ///
-/// \return \a `left` multiplied by \a `right`
+/// \return `left` multiplied by `right`
 ///
 ////////////////////////////////////////////////////////////
 constexpr Time& operator*=(Time& left, float right);
@@ -353,7 +353,7 @@ constexpr Time& operator*=(Time& left, float right);
 /// \param left  Left operand (a time)
 /// \param right Right operand (a number)
 ///
-/// \return \a `left` multiplied by \a `right`
+/// \return `left` multiplied by `right`
 ///
 ////////////////////////////////////////////////////////////
 constexpr Time& operator*=(Time& left, std::int64_t right);
@@ -365,7 +365,7 @@ constexpr Time& operator*=(Time& left, std::int64_t right);
 /// \param left  Left operand (a time)
 /// \param right Right operand (a number)
 ///
-/// \return \a `left` divided by \a `right`
+/// \return `left` divided by `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr Time operator/(Time left, float right);
@@ -377,7 +377,7 @@ constexpr Time& operator*=(Time& left, std::int64_t right);
 /// \param left  Left operand (a time)
 /// \param right Right operand (a number)
 ///
-/// \return \a `left` divided by \a `right`
+/// \return `left` divided by `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr Time operator/(Time left, std::int64_t right);
@@ -389,7 +389,7 @@ constexpr Time& operator*=(Time& left, std::int64_t right);
 /// \param left  Left operand (a time)
 /// \param right Right operand (a number)
 ///
-/// \return \a `left` divided by \a `right`
+/// \return `left` divided by `right`
 ///
 ////////////////////////////////////////////////////////////
 constexpr Time& operator/=(Time& left, float right);
@@ -401,7 +401,7 @@ constexpr Time& operator/=(Time& left, float right);
 /// \param left  Left operand (a time)
 /// \param right Right operand (a number)
 ///
-/// \return \a `left` divided by \a `right`
+/// \return `left` divided by `right`
 ///
 ////////////////////////////////////////////////////////////
 constexpr Time& operator/=(Time& left, std::int64_t right);
@@ -413,7 +413,7 @@ constexpr Time& operator/=(Time& left, std::int64_t right);
 /// \param left  Left operand (a time)
 /// \param right Right operand (a time)
 ///
-/// \return \a `left` divided by \a `right`
+/// \return `left` divided by `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr float operator/(Time left, Time right);
@@ -425,7 +425,7 @@ constexpr Time& operator/=(Time& left, std::int64_t right);
 /// \param left  Left operand (a time)
 /// \param right Right operand (a time)
 ///
-/// \return \a `left` modulo \a `right`
+/// \return `left` modulo `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr Time operator%(Time left, Time right);
@@ -437,7 +437,7 @@ constexpr Time& operator/=(Time& left, std::int64_t right);
 /// \param left  Left operand (a time)
 /// \param right Right operand (a time)
 ///
-/// \return \a `left` modulo \a `right`
+/// \return `left` modulo `right`
 ///
 ////////////////////////////////////////////////////////////
 constexpr Time& operator%=(Time& left, Time right);

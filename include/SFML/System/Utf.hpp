@@ -123,7 +123,7 @@ public:
     /// \brief Convert an ANSI characters range to UTF-8
     ///
     /// The current global locale will be used by default, unless you
-    /// pass a custom one in the \a `locale` parameter.
+    /// pass a custom one in the `locale` parameter.
     ///
     /// \param begin  Iterator pointing to the beginning of the input sequence
     /// \param end    Iterator pointing to the end of the input sequence
@@ -166,7 +166,7 @@ public:
     /// \brief Convert an UTF-8 characters range to ANSI characters
     ///
     /// The current global locale will be used by default, unless you
-    /// pass a custom one in the \a `locale` parameter.
+    /// pass a custom one in the `locale` parameter.
     ///
     /// \param begin       Iterator pointing to the beginning of the input sequence
     /// \param end         Iterator pointing to the end of the input sequence
@@ -329,7 +329,7 @@ public:
     /// \brief Convert an ANSI characters range to UTF-16
     ///
     /// The current global locale will be used by default, unless you
-    /// pass a custom one in the \a `locale` parameter.
+    /// pass a custom one in the `locale` parameter.
     ///
     /// \param begin  Iterator pointing to the beginning of the input sequence
     /// \param end    Iterator pointing to the end of the input sequence
@@ -372,7 +372,7 @@ public:
     /// \brief Convert an UTF-16 characters range to ANSI characters
     ///
     /// The current global locale will be used by default, unless you
-    /// pass a custom one in the \a `locale` parameter.
+    /// pass a custom one in the `locale` parameter.
     ///
     /// \param begin       Iterator pointing to the beginning of the input sequence
     /// \param end         Iterator pointing to the end of the input sequence
@@ -536,7 +536,7 @@ public:
     /// \brief Convert an ANSI characters range to UTF-32
     ///
     /// The current global locale will be used by default, unless you
-    /// pass a custom one in the \a `locale` parameter.
+    /// pass a custom one in the `locale` parameter.
     ///
     /// \param begin  Iterator pointing to the beginning of the input sequence
     /// \param end    Iterator pointing to the end of the input sequence
@@ -579,7 +579,7 @@ public:
     /// \brief Convert an UTF-32 characters range to ANSI characters
     ///
     /// The current global locale will be used by default, unless you
-    /// pass a custom one in the \a `locale` parameter.
+    /// pass a custom one in the `locale` parameter.
     ///
     /// \param begin       Iterator pointing to the beginning of the input sequence
     /// \param end         Iterator pointing to the end of the input sequence

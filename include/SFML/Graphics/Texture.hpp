@@ -116,10 +116,10 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Construct the texture from a sub-rectangle of a file on disk
     ///
-    /// The \a `area` argument can be used to load only a sub-rectangle
+    /// The `area` argument can be used to load only a sub-rectangle
     /// of the whole image. If you want the entire image then leave
     /// the default value (which is an empty `IntRect`).
-    /// If the \a `area` rectangle crosses the bounds of the image, it
+    /// If the `area` rectangle crosses the bounds of the image, it
     /// is adjusted to fit the image size.
     ///
     /// The maximum size for a texture depends on the graphics
@@ -156,10 +156,10 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Construct the texture from a sub-rectangle of a file in memory
     ///
-    /// The \a `area` argument can be used to load only a sub-rectangle
+    /// The `area` argument can be used to load only a sub-rectangle
     /// of the whole image. If you want the entire image then leave
     /// the default value (which is an empty `IntRect`).
-    /// If the \a `area` rectangle crosses the bounds of the image, it
+    /// If the `area` rectangle crosses the bounds of the image, it
     /// is adjusted to fit the image size.
     ///
     /// The maximum size for a texture depends on the graphics
@@ -196,10 +196,10 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Construct the texture from a sub-rectangle of a custom stream
     ///
-    /// The \a `area` argument can be used to load only a sub-rectangle
+    /// The `area` argument can be used to load only a sub-rectangle
     /// of the whole image. If you want the entire image then leave
     /// the default value (which is an empty `IntRect`).
-    /// If the \a `area` rectangle crosses the bounds of the image, it
+    /// If the `area` rectangle crosses the bounds of the image, it
     /// is adjusted to fit the image size.
     ///
     /// The maximum size for a texture depends on the graphics
@@ -235,9 +235,9 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Construct the texture from a sub-rectangle of an image
     ///
-    /// The \a `area` argument is used to load only a sub-rectangle
+    /// The `area` argument is used to load only a sub-rectangle
     /// of the whole image.
-    /// If the \a `area` rectangle crosses the bounds of the image, it
+    /// If the `area` rectangle crosses the bounds of the image, it
     /// is adjusted to fit the image size.
     ///
     /// The maximum size for a texture depends on the graphics
@@ -281,10 +281,10 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from a file on disk
     ///
-    /// The \a `area` argument can be used to load only a sub-rectangle
+    /// The `area` argument can be used to load only a sub-rectangle
     /// of the whole image. If you want the entire image then leave
     /// the default value (which is an empty `IntRect`).
-    /// If the \a `area` rectangle crosses the bounds of the image, it
+    /// If the `area` rectangle crosses the bounds of the image, it
     /// is adjusted to fit the image size.
     ///
     /// The maximum size for a texture depends on the graphics
@@ -306,10 +306,10 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from a file in memory
     ///
-    /// The \a `area` argument can be used to load only a sub-rectangle
+    /// The `area` argument can be used to load only a sub-rectangle
     /// of the whole image. If you want the entire image then leave
     /// the default value (which is an empty `IntRect`).
-    /// If the \a `area` rectangle crosses the bounds of the image, it
+    /// If the `area` rectangle crosses the bounds of the image, it
     /// is adjusted to fit the image size.
     ///
     /// The maximum size for a texture depends on the graphics
@@ -332,10 +332,10 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from a custom stream
     ///
-    /// The \a `area` argument can be used to load only a sub-rectangle
+    /// The `area` argument can be used to load only a sub-rectangle
     /// of the whole image. If you want the entire image then leave
     /// the default value (which is an empty `IntRect`).
-    /// If the \a `area` rectangle crosses the bounds of the image, it
+    /// If the `area` rectangle crosses the bounds of the image, it
     /// is adjusted to fit the image size.
     ///
     /// The maximum size for a texture depends on the graphics
@@ -357,10 +357,10 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Load the texture from an image
     ///
-    /// The \a `area` argument can be used to load only a sub-rectangle
+    /// The `area` argument can be used to load only a sub-rectangle
     /// of the whole image. If you want the entire image then leave
     /// the default value (which is an empty `IntRect`).
-    /// If the \a `area` rectangle crosses the bounds of the image, it
+    /// If the `area` rectangle crosses the bounds of the image, it
     /// is adjusted to fit the image size.
     ///
     /// The maximum size for a texture depends on the graphics
@@ -406,13 +406,13 @@ public:
     /// \brief Update the whole texture from an array of pixels
     ///
     /// The pixel array is assumed to have the same size as
-    /// the \a `area` rectangle, and to contain 32-bits RGBA pixels.
+    /// the `area` rectangle, and to contain 32-bits RGBA pixels.
     ///
     /// No additional check is performed on the size of the pixel
     /// array. Passing invalid arguments will lead to an undefined
     /// behavior.
     ///
-    /// This function does nothing if \a `pixels` is `nullptr`
+    /// This function does nothing if `pixels` is `nullptr`
     /// or if the texture was not previously created.
     ///
     /// \param pixels Array of pixels to copy to the texture
@@ -423,18 +423,18 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Update a part of the texture from an array of pixels
     ///
-    /// The size of the pixel array must match the \a `size` argument,
+    /// The size of the pixel array must match the `size` argument,
     /// and it must contain 32-bits RGBA pixels.
     ///
     /// No additional check is performed on the size of the pixel
     /// array or the bounds of the area to update. Passing invalid
     /// arguments will lead to an undefined behavior.
     ///
-    /// This function does nothing if \a `pixels` is null or if the
+    /// This function does nothing if `pixels` is null or if the
     /// texture was not previously created.
     ///
     /// \param pixels Array of pixels to copy to the texture
-    /// \param size   Width and height of the pixel region contained in \a `pixels`
+    /// \param size   Width and height of the pixel region contained in `pixels`
     /// \param dest   Coordinates of the destination position
     ///
     ////////////////////////////////////////////////////////////
@@ -684,7 +684,7 @@ public:
     /// // draw OpenGL stuff that use no texture...
     /// \endcode
     ///
-    /// The \a `coordinateType` argument controls how texture
+    /// The `coordinateType` argument controls how texture
     /// coordinates will be interpreted. If Normalized (the default), they
     /// must be in range [0 .. 1], which is the default way of handling
     /// texture coordinates with OpenGL. If Pixels, they must be given

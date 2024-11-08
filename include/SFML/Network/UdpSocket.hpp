@@ -116,7 +116,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Send raw data to a remote peer
     ///
-    /// Make sure that \a `size` is not greater than
+    /// Make sure that `size` is not greater than
     /// `UdpSocket::MaxDatagramSize`, otherwise this function will
     /// fail and no data will be sent.
     ///

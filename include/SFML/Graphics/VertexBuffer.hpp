@@ -125,11 +125,11 @@ public:
     /// \brief Create the vertex buffer
     ///
     /// Creates the vertex buffer and allocates enough graphics
-    /// memory to hold \a `vertexCount` vertices. Any previously
+    /// memory to hold `vertexCount` vertices. Any previously
     /// allocated memory is freed in the process.
     ///
     /// In order to deallocate previously allocated memory pass 0
-    /// as \a `vertexCount`. Don't forget to recreate with a non-zero
+    /// as `vertexCount`. Don't forget to recreate with a non-zero
     /// value when graphics memory should be allocated again.
     ///
     /// \param vertexCount Number of vertices worth of memory to allocate
@@ -157,7 +157,7 @@ public:
     /// array. Passing invalid arguments will lead to undefined
     /// behavior.
     ///
-    /// This function does nothing if \a `vertices` is null or if the
+    /// This function does nothing if `vertices` is null or if the
     /// buffer was not previously created.
     ///
     /// \param vertices Array of vertices to copy to the buffer
@@ -170,21 +170,21 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Update a part of the buffer from an array of vertices
     ///
-    /// \a `offset` is specified as the number of vertices to skip
+    /// `offset` is specified as the number of vertices to skip
     /// from the beginning of the buffer.
     ///
-    /// If \a `offset` is 0 and \a `vertexCount` is equal to the size of
+    /// If `offset` is 0 and `vertexCount` is equal to the size of
     /// the currently created buffer, its whole contents are replaced.
     ///
-    /// If \a `offset` is 0 and \a `vertexCount` is greater than the
+    /// If `offset` is 0 and `vertexCount` is greater than the
     /// size of the currently created buffer, a new buffer is created
     /// containing the vertex data.
     ///
-    /// If \a `offset` is 0 and \a `vertexCount` is less than the size of
+    /// If `offset` is 0 and `vertexCount` is less than the size of
     /// the currently created buffer, only the corresponding region
     /// is updated.
     ///
-    /// If \a `offset` is not 0 and \a `offset` + \a `vertexCount` is greater
+    /// If `offset` is not 0 and `offset` + `vertexCount` is greater
     /// than the size of the currently created buffer, the update fails.
     ///
     /// No additional check is performed on the size of the vertex

@@ -105,12 +105,12 @@ public:
     [[nodiscard]] SFML_SYSTEM_API Vector2 normalized() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Signed angle from `*this` to \a `rhs` <i><b>(floating-point)</b></i>.
+    /// \brief Signed angle from `*this` to `rhs` <i><b>(floating-point)</b></i>.
     ///
     /// \return The smallest angle which rotates `*this` in positive
-    /// or negative direction, until it has the same direction as \a `rhs`.
+    /// or negative direction, until it has the same direction as `rhs`.
     /// The result has a sign and lies in the range [-180, 180) degrees.
-    /// \pre Neither `*this` nor \a `rhs` is a zero vector.
+    /// \pre Neither `*this` nor `rhs` is a zero vector.
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] SFML_SYSTEM_API Angle angleTo(Vector2 rhs) const;
@@ -132,16 +132,16 @@ public:
     /// Returns a vector with same length but different direction.
     ///
     /// In SFML's default coordinate system with +X right and +Y down,
-    /// this amounts to a clockwise rotation by \a `phi`.
+    /// this amounts to a clockwise rotation by `phi`.
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] SFML_SYSTEM_API Vector2 rotatedBy(Angle phi) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Projection of this vector onto \a `axis` <i><b>(floating-point)</b></i>.
+    /// \brief Projection of this vector onto `axis` <i><b>(floating-point)</b></i>.
     ///
     /// \param axis Vector being projected onto. Need not be normalized.
-    /// \pre \a `axis` must not have length zero.
+    /// \pre `axis` must not have length zero.
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] SFML_SYSTEM_API Vector2 projectedOnto(Vector2 axis) const;
@@ -174,7 +174,7 @@ public:
     [[nodiscard]] constexpr T cross(Vector2 rhs) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Component-wise multiplication of `*this` and \a `rhs`.
+    /// \brief Component-wise multiplication of `*this` and `rhs`.
     ///
     /// Computes `(lhs.x*rhs.x, lhs.y*rhs.y)`.
     ///
@@ -185,13 +185,13 @@ public:
     [[nodiscard]] constexpr Vector2 componentWiseMul(Vector2 rhs) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Component-wise division of `*this` and \a `rhs`.
+    /// \brief Component-wise division of `*this` and `rhs`.
     ///
     /// Computes `(lhs.x/rhs.x, lhs.y/rhs.y)`.
     ///
     /// Scaling is the most common use case for component-wise multiplication/division.
     ///
-    /// \pre Neither component of \a `rhs` is zero.
+    /// \pre Neither component of `rhs` is zero.
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] constexpr Vector2 componentWiseDiv(Vector2 rhs) const;
@@ -226,12 +226,12 @@ template <typename T>
 /// \brief Overload of binary `operator+=`
 ///
 /// This operator performs a member-wise addition of both vectors,
-/// and assigns the result to \a `left`.
+/// and assigns the result to `left`.
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a vector)
 ///
-/// \return Reference to \a `left`
+/// \return Reference to `left`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -242,7 +242,7 @@ constexpr Vector2<T>& operator+=(Vector2<T>& left, Vector2<T> right);
 /// \brief Overload of binary `operator-=`
 ///
 /// This operator performs a member-wise subtraction of both vectors,
-/// and assigns the result to \a `left`.
+/// and assigns the result to `left`.
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a vector)
@@ -286,7 +286,7 @@ template <typename T>
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a scalar value)
 ///
-/// \return Member-wise multiplication by \a `right`
+/// \return Member-wise multiplication by `right`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -299,7 +299,7 @@ template <typename T>
 /// \param left  Left operand (a scalar value)
 /// \param right Right operand (a vector)
 ///
-/// \return Member-wise multiplication by \a `left`
+/// \return Member-wise multiplication by `left`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -309,13 +309,13 @@ template <typename T>
 /// \relates Vector2
 /// \brief Overload of binary `operator*=`
 ///
-/// This operator performs a member-wise multiplication by \a `right`,
-/// and assigns the result to \a `left`.
+/// This operator performs a member-wise multiplication by `right`,
+/// and assigns the result to `left`.
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a scalar value)
 ///
-/// \return Reference to \a `left`
+/// \return Reference to `left`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -328,7 +328,7 @@ constexpr Vector2<T>& operator*=(Vector2<T>& left, T right);
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a scalar value)
 ///
-/// \return Member-wise division by \a `right`
+/// \return Member-wise division by `right`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -338,13 +338,13 @@ template <typename T>
 /// \relates Vector2
 /// \brief Overload of binary `operator/=`
 ///
-/// This operator performs a member-wise division by \a `right`,
-/// and assigns the result to \a `left`.
+/// This operator performs a member-wise division by `right`,
+/// and assigns the result to `left`.
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a scalar value)
 ///
-/// \return Reference to \a `left`
+/// \return Reference to `left`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -359,7 +359,7 @@ constexpr Vector2<T>& operator/=(Vector2<T>& left, T right);
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a vector)
 ///
-/// \return `true` if \a `left` is equal to \a `right`
+/// \return `true` if `left` is equal to `right`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -374,7 +374,7 @@ template <typename T>
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a vector)
 ///
-/// \return `true` if \a `left` is not equal to \a `right`
+/// \return `true` if `left` is not equal to `right`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>

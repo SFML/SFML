@@ -100,7 +100,7 @@ public:
     [[nodiscard]] constexpr Vector3 cross(const Vector3& rhs) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Component-wise multiplication of `*this` and \a `rhs`.
+    /// \brief Component-wise multiplication of `*this` and `rhs`.
     ///
     /// Computes `(lhs.x*rhs.x, lhs.y*rhs.y, lhs.z*rhs.z)`.
     ///
@@ -111,13 +111,13 @@ public:
     [[nodiscard]] constexpr Vector3 componentWiseMul(const Vector3& rhs) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Component-wise division of `*this` and \a `rhs`.
+    /// \brief Component-wise division of `*this` and `rhs`.
     ///
     /// Computes `(lhs.x/rhs.x, lhs.y/rhs.y, lhs.z/rhs.z)`.
     ///
     /// Scaling is the most common use case for component-wise multiplication/division.
     ///
-    /// \pre Neither component of \a `rhs` is zero.
+    /// \pre Neither component of `rhs` is zero.
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] constexpr Vector3 componentWiseDiv(const Vector3& rhs) const;
@@ -147,12 +147,12 @@ template <typename T>
 /// \brief Overload of binary `operator+=`
 ///
 /// This operator performs a member-wise addition of both vectors,
-/// and assigns the result to \a `left`.
+/// and assigns the result to `left`.
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a vector)
 ///
-/// \return Reference to \a `left`
+/// \return Reference to `left`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -163,12 +163,12 @@ constexpr Vector3<T>& operator+=(Vector3<T>& left, const Vector3<T>& right);
 /// \brief Overload of binary `operator-=`
 ///
 /// This operator performs a member-wise subtraction of both vectors,
-/// and assigns the result to \a `left`.
+/// and assigns the result to `left`.
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a vector)
 ///
-/// \return Reference to \a `left`
+/// \return Reference to `left`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -207,7 +207,7 @@ template <typename T>
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a scalar value)
 ///
-/// \return Member-wise multiplication by \a `right`
+/// \return Member-wise multiplication by `right`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -220,7 +220,7 @@ template <typename T>
 /// \param left  Left operand (a scalar value)
 /// \param right Right operand (a vector)
 ///
-/// \return Member-wise multiplication by \a `left`
+/// \return Member-wise multiplication by `left`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -230,13 +230,13 @@ template <typename T>
 /// \relates Vector3
 /// \brief Overload of binary `operator*=`
 ///
-/// This operator performs a member-wise multiplication by \a `right`,
-/// and assigns the result to \a `left`.
+/// This operator performs a member-wise multiplication by `right`,
+/// and assigns the result to `left`.
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a scalar value)
 ///
-/// \return Reference to \a `left`
+/// \return Reference to `left`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -249,7 +249,7 @@ constexpr Vector3<T>& operator*=(Vector3<T>& left, T right);
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a scalar value)
 ///
-/// \return Member-wise division by \a `right`
+/// \return Member-wise division by `right`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -259,13 +259,13 @@ template <typename T>
 /// \relates Vector3
 /// \brief Overload of binary `operator/=`
 ///
-/// This operator performs a member-wise division by \a `right`,
-/// and assigns the result to \a `left`.
+/// This operator performs a member-wise division by `right`,
+/// and assigns the result to `left`.
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a scalar value)
 ///
-/// \return Reference to \a `left`
+/// \return Reference to `left`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -280,7 +280,7 @@ constexpr Vector3<T>& operator/=(Vector3<T>& left, T right);
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a vector)
 ///
-/// \return `true` if \a `left` is equal to \a `right`
+/// \return `true` if `left` is equal to `right`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -295,7 +295,7 @@ template <typename T>
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a vector)
 ///
-/// \return `true` if \a `left` is not equal to \a `right`
+/// \return `true` if `left` is not equal to `right`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>

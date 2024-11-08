@@ -57,14 +57,14 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Change the source texture of the shape
     ///
-    /// The \a `texture` argument refers to a texture that must
+    /// The `texture` argument refers to a texture that must
     /// exist as long as the shape uses it. Indeed, the shape
     /// doesn't store its own copy of the texture, but rather keeps
     /// a pointer to the one that you passed to this function.
     /// If the source texture is destroyed and the shape tries to
     /// use it, the behavior is undefined.
-    /// \a `texture` can be a null pointer to disable texturing.
-    /// If \a `resetRect` is `true`, the `TextureRect` property of
+    /// `texture` can be a null pointer to disable texturing.
+    /// If `resetRect` is `true`, the `TextureRect` property of
     /// the shape is automatically adjusted to the size of the new
     /// texture. If it is `false`, the texture rect is left unchanged.
     ///
@@ -204,7 +204,7 @@ public:
     /// The returned point is in local coordinates, that is,
     /// the shape's transforms (position, rotation, scale) are
     /// not taken into account.
-    /// The result is undefined if \a `index` is out of the valid range.
+    /// The result is undefined if `index` is out of the valid range.
     ///
     /// \param index Index of the point to get, in range [0 .. getPointCount() - 1]
     ///

@@ -673,7 +673,7 @@ public:
     /// ...
     /// shader.setUniform("the_texture", texture);
     /// \endcode
-    /// It is important to note that \a `texture` must remain alive as long
+    /// It is important to note that `texture` must remain alive as long
     /// as the shader uses it, no copy is made internally.
     ///
     /// To use the texture of the object being drawn, which cannot be
