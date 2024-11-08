@@ -426,7 +426,7 @@ namespace Literals
 {
 
 ////////////////////////////////////////////////////////////
-/// \relates `sf::Angle`
+/// \relates sf::Angle
 /// \brief User defined literal for angles in degrees, e.g. `10.5_deg`
 ///
 /// \param angle Angle in degrees
@@ -437,7 +437,7 @@ namespace Literals
 [[nodiscard]] constexpr Angle operator""_deg(long double angle);
 
 ////////////////////////////////////////////////////////////
-/// \relates `sf::Angle`
+/// \relates sf::Angle
 /// \brief User defined literal for angles in degrees, e.g. `90_deg`
 ///
 /// \param angle Angle in degrees
@@ -448,7 +448,7 @@ namespace Literals
 [[nodiscard]] constexpr Angle operator""_deg(unsigned long long int angle);
 
 ////////////////////////////////////////////////////////////
-/// \relates `sf::Angle`
+/// \relates sf::Angle
 /// \brief User defined literal for angles in radians, e.g. `0.1_rad`
 ///
 /// \param angle Angle in radians
@@ -459,7 +459,7 @@ namespace Literals
 [[nodiscard]] constexpr Angle operator""_rad(long double angle);
 
 ////////////////////////////////////////////////////////////
-/// \relates `sf::Angle`
+/// \relates sf::Angle
 /// \brief User defined literal for angles in radians, e.g. `2_rad`
 ///
 /// \param angle Angle in radians
