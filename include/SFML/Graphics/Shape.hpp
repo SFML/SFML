@@ -250,7 +250,7 @@ public:
     /// In other words, this function returns the bounds of the
     /// shape in the global 2D world's coordinate system.
     ///
-    /// This function does not necessarily return the \a `minimal`
+    /// This function does not necessarily return the _minimal_
     /// bounding rectangle. It merely ensures that the returned
     /// rectangle covers all the vertices (but possibly more).
     /// This allows for a fast approximation of the bounds as a
