@@ -135,7 +135,7 @@ public:
     /// \brief Combine the current transform with another one
     ///
     /// The result is a transform that is equivalent to applying
-    /// \a `transform` followed by `*this`. Mathematically, it is
+    /// `transform` followed by `*this`. Mathematically, it is
     /// equivalent to a matrix multiplication `(*this) * transform`.
     ///
     /// These two statements are equivalent:

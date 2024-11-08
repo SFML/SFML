@@ -325,7 +325,7 @@ constexpr Angle& operator-=(Angle& left, Angle right);
 /// \param left  Left operand (an angle)
 /// \param right Right operand (a number)
 ///
-/// \return \a `left` multiplied by \a `right`
+/// \return `left` multiplied by `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr Angle operator*(Angle left, float right);
@@ -337,7 +337,7 @@ constexpr Angle& operator-=(Angle& left, Angle right);
 /// \param left  Left operand (a number)
 /// \param right Right operand (an angle)
 ///
-/// \return \a `left` multiplied by \a `right`
+/// \return `left` multiplied by `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr Angle operator*(float left, Angle right);
@@ -349,7 +349,7 @@ constexpr Angle& operator-=(Angle& left, Angle right);
 /// \param left  Left operand (an angle)
 /// \param right Right operand (a number)
 ///
-/// \return \a `left` multiplied by \a `right`
+/// \return `left` multiplied by `right`
 ///
 ////////////////////////////////////////////////////////////
 constexpr Angle& operator*=(Angle& left, float right);
@@ -361,7 +361,7 @@ constexpr Angle& operator*=(Angle& left, float right);
 /// \param left  Left operand (an angle)
 /// \param right Right operand (a number)
 ///
-/// \return \a `left` divided by \a `right`
+/// \return `left` divided by `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr Angle operator/(Angle left, float right);
@@ -373,7 +373,7 @@ constexpr Angle& operator*=(Angle& left, float right);
 /// \param left  Left operand (an angle)
 /// \param right Right operand (a number)
 ///
-/// \return \a `left` divided by \a `right`
+/// \return `left` divided by `right`
 ///
 ////////////////////////////////////////////////////////////
 constexpr Angle& operator/=(Angle& left, float right);
@@ -385,7 +385,7 @@ constexpr Angle& operator/=(Angle& left, float right);
 /// \param left  Left operand (an angle)
 /// \param right Right operand (an angle)
 ///
-/// \return \a `left` divided by \a `right`
+/// \return `left` divided by `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr float operator/(Angle left, Angle right);
@@ -405,7 +405,7 @@ constexpr Angle& operator/=(Angle& left, float right);
 /// \param left  Left operand (an angle)
 /// \param right Right operand (an angle)
 ///
-/// \return \a `left` modulo \a `right`
+/// \return `left` modulo `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr Angle operator%(Angle left, Angle right);
@@ -417,7 +417,7 @@ constexpr Angle& operator/=(Angle& left, float right);
 /// \param left  Left operand (an angle)
 /// \param right Right operand (an angle)
 ///
-/// \return \a `left` modulo \a `right`
+/// \return `left` modulo `right`
 ///
 ////////////////////////////////////////////////////////////
 constexpr Angle& operator%=(Angle& left, Angle right);

@@ -127,7 +127,7 @@ public:
     /// of supported formats.
     ///
     /// \warning Since the music is not loaded at once but rather
-    /// streamed continuously, the \a `stream` must remain accessible
+    /// streamed continuously, the `stream` must remain accessible
     /// until the `sf::Music` object loads a new music or is destroyed.
     ///
     /// \param stream Source stream to read from
@@ -187,7 +187,7 @@ public:
     /// of supported formats.
     ///
     /// \warning Since the music is not loaded at once but rather streamed
-    /// continuously, the \a `data` buffer must remain accessible until
+    /// continuously, the `data` buffer must remain accessible until
     /// the `sf::Music` object loads a new music or is destroyed. That is,
     /// you can't deallocate the buffer right after calling this function.
     ///
@@ -210,7 +210,7 @@ public:
     /// of supported formats.
     ///
     /// \warning Since the music is not loaded at once but rather
-    /// streamed continuously, the \a `stream` must remain accessible
+    /// streamed continuously, the `stream` must remain accessible
     /// until the `sf::Music` object loads a new music or is destroyed.
     ///
     /// \param stream Source stream to read from

@@ -57,7 +57,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Start the capture
     ///
-    /// The \a `sampleRate` parameter defines the number of audio samples
+    /// The `sampleRate` parameter defines the number of audio samples
     /// captured per second. The higher, the better the quality
     /// (for example, 44100 samples/sec is CD quality).
     /// This function uses its own thread so that it doesn't block
@@ -125,7 +125,7 @@ public:
     /// \brief Set the audio capture device
     ///
     /// This function sets the audio capture device to the device
-    /// with the given \a `name`. It can be called on the fly (i.e:
+    /// with the given `name`. It can be called on the fly (i.e:
     /// while recording). If you do so while recording and
     /// opening the device fails, it stops the recording.
     ///
@@ -229,7 +229,7 @@ protected:
     /// it over the network, etc.).
     ///
     /// \param samples     Pointer to the new chunk of recorded samples
-    /// \param sampleCount Number of samples pointed by \a `samples`
+    /// \param sampleCount Number of samples pointed by `samples`
     ///
     /// \return `true` to continue the capture, or `false` to stop it
     ///

@@ -191,7 +191,7 @@ SFML_GRAPHICS_API extern const BlendMode BlendNone;     //!< Overwrite dest with
 ///
 /// The blend factors and equations correspond to their OpenGL equivalents.
 /// In general, the color of the resulting pixel is calculated according
-/// to the following formula (\a `src` is the color of the source pixel, \a `dst`
+/// to the following formula (`src` is the color of the source pixel, `dst`
 /// the color of the destination pixel, the other variables correspond to the
 /// public members, with the equations being + or - operators):
 /// \code
