@@ -208,7 +208,7 @@ public:
     ///
     /// \param index Index of the point to get, in range [0 .. getPointCount() - 1]
     ///
-    /// \return index-th point of the shape
+    /// \return `index`-th point of the shape
     ///
     /// \see `getPointCount`
     ///

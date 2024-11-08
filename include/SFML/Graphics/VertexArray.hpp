@@ -85,7 +85,7 @@ public:
     ///
     /// \param index Index of the vertex to get
     ///
-    /// \return Reference to the index-th vertex
+    /// \return Reference to the `index`-th vertex
     ///
     /// \see `getVertexCount`
     ///
@@ -101,7 +101,7 @@ public:
     ///
     /// \param index Index of the vertex to get
     ///
-    /// \return Const reference to the index-th vertex
+    /// \return Const reference to the `index`-th vertex
     ///
     /// \see `getVertexCount`
     ///
