@@ -92,7 +92,7 @@ public:
     ///
     /// \param index Index of the point to get, in range [0 .. 3]
     ///
-    /// \return index-th point of the shape
+    /// \return `index`-th point of the shape
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Vector2f getPoint(std::size_t index) const override;
