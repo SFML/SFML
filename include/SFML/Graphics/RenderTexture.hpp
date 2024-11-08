@@ -66,7 +66,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Construct a render-texture
     ///
-    /// The last parameter, \a `settings`, is useful if you want to enable
+    /// The last parameter, `settings`, is useful if you want to enable
     /// multi-sampling or use the render-texture for OpenGL rendering that
     /// requires a depth or stencil buffer. Otherwise it is unnecessary, and
     /// you should leave this parameter at its default value.
@@ -115,7 +115,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Resize the render-texture
     ///
-    /// The last parameter, \a `settings`, is useful if you want to enable
+    /// The last parameter, `settings`, is useful if you want to enable
     /// multi-sampling or use the render-texture for OpenGL rendering that
     /// requires a depth or stencil buffer. Otherwise it is unnecessary, and
     /// you should leave this parameter at its default value.

@@ -69,7 +69,7 @@ namespace Vulkan
 /// the Vulkan features. If it returns `false`, then
 /// any attempt to use Vulkan will fail.
 ///
-/// If only compute is required, set \a `requireGraphics`
+/// If only compute is required, set `requireGraphics`
 /// to `false` to skip checking for the extensions necessary
 /// for graphics rendering.
 ///

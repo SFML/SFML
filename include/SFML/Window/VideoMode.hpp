@@ -134,7 +134,7 @@ public:
 /// \param left  Left operand (a video mode)
 /// \param right Right operand (a video mode)
 ///
-/// \return `true` if \a `left` is lesser than \a `right`
+/// \return `true` if `left` is lesser than `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_WINDOW_API bool operator<(const VideoMode& left, const VideoMode& right);
@@ -146,7 +146,7 @@ public:
 /// \param left  Left operand (a video mode)
 /// \param right Right operand (a video mode)
 ///
-/// \return `true` if \a `left` is greater than \a `right`
+/// \return `true` if `left` is greater than `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_WINDOW_API bool operator>(const VideoMode& left, const VideoMode& right);
@@ -158,7 +158,7 @@ public:
 /// \param left  Left operand (a video mode)
 /// \param right Right operand (a video mode)
 ///
-/// \return `true` if \a `left` is lesser or equal than \a `right`
+/// \return `true` if `left` is lesser or equal than `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_WINDOW_API bool operator<=(const VideoMode& left, const VideoMode& right);
@@ -170,7 +170,7 @@ public:
 /// \param left  Left operand (a video mode)
 /// \param right Right operand (a video mode)
 ///
-/// \return `true` if \a `left` is greater or equal than \a `right`
+/// \return `true` if `left` is greater or equal than `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_WINDOW_API bool operator>=(const VideoMode& left, const VideoMode& right);

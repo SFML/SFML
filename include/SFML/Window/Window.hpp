@@ -68,10 +68,10 @@ public:
     /// \brief Construct a new window
     ///
     /// This constructor creates the window with the size and pixel
-    /// depth defined in \a `mode`. An optional style can be passed to
+    /// depth defined in `mode`. An optional style can be passed to
     /// customize the look and behavior of the window (borders,
     /// title bar, resizable, closable, ...). An optional state can
-    /// be provided. If \a `state` is `State::Fullscreen`, then \a `mode`
+    /// be provided. If `state` is `State::Fullscreen`, then `mode`
     /// must be a valid video mode.
     ///
     /// The last parameter is an optional structure specifying
@@ -95,8 +95,8 @@ public:
     /// \brief Construct a new window
     ///
     /// This constructor creates the window with the size and pixel
-    /// depth defined in \a `mode`. If \a `state` is `State::Fullscreen`,
-    /// then \a `mode` must be a valid video mode.
+    /// depth defined in `mode`. If `state` is `State::Fullscreen`,
+    /// then `mode` must be a valid video mode.
     ///
     /// The last parameter is an optional structure specifying
     /// advanced OpenGL context settings such as anti-aliasing,
@@ -162,7 +162,7 @@ public:
     /// \brief Create (or recreate) the window
     ///
     /// If the window was already created, it closes it first.
-    /// If \a `state` is `State::Fullscreen`, then \a `mode` must be
+    /// If `state` is `State::Fullscreen`, then `mode` must be
     /// a valid video mode.
     ///
     /// \param mode     Video mode to use (defines the width, height and depth of the rendering area of the window)
@@ -177,7 +177,7 @@ public:
     /// \brief Create (or recreate) the window
     ///
     /// If the window was already created, it closes it first.
-    /// If \a `state` is `State::Fullscreen`, then \a `mode` must be
+    /// If `state` is `State::Fullscreen`, then `mode` must be
     /// a valid video mode.
     ///
     /// The last parameter is a structure specifying advanced OpenGL
@@ -196,7 +196,7 @@ public:
     /// \brief Create (or recreate) the window
     ///
     /// If the window was already created, it closes it first.
-    /// If \a `state` is `State::Fullscreen`, then \a `mode` must be
+    /// If `state` is `State::Fullscreen`, then `mode` must be
     /// a valid video mode.
     ///
     /// \param mode     Video mode to use (defines the width, height and depth of the rendering area of the window)
@@ -210,7 +210,7 @@ public:
     /// \brief Create (or recreate) the window
     ///
     /// If the window was already created, it closes it first.
-    /// If \a `state` is `State::Fullscreen`, then \a `mode` must be
+    /// If `state` is `State::Fullscreen`, then `mode` must be
     /// a valid video mode.
     ///
     /// The last parameter is a structure specifying advanced OpenGL

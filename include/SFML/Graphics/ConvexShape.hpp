@@ -56,7 +56,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Set the number of points of the polygon
     ///
-    /// For the shape to be rendered as expected, \a `count` must
+    /// For the shape to be rendered as expected, `count` must
     /// be greater or equal to 3.
     ///
     /// \param count New number of points of the polygon
@@ -86,7 +86,7 @@ public:
     /// when not drawn (e.g. during shape initialization).
     ///
     /// Point count must be specified beforehand. The behavior is
-    /// undefined if \a `index` is greater than or equal to getPointCount.
+    /// undefined if `index` is greater than or equal to getPointCount.
     ///
     /// \param index Index of the point to change, in range [0 .. getPointCount() - 1]
     /// \param point New position of the point
@@ -102,7 +102,7 @@ public:
     /// The returned point is in local coordinates, that is,
     /// the shape's transforms (position, rotation, scale) are
     /// not taken into account.
-    /// The result is undefined if \a `index` is out of the valid range.
+    /// The result is undefined if `index` is out of the valid range.
     ///
     /// \param index Index of the point to get, in range [0 .. getPointCount() - 1]
     ///

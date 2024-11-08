@@ -61,7 +61,7 @@ struct Cone
 ////////////////////////////////////////////////////////////
 /// \brief Change the global volume of all the sounds and musics
 ///
-/// \a `volume` is a number between 0 and 100; it is combined
+/// `volume` is a number between 0 and 100; it is combined
 /// with the individual volume of each sound / music.
 /// The default value for the volume is 100 (maximum).
 ///

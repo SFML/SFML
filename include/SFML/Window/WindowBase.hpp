@@ -75,10 +75,10 @@ public:
     /// \brief Construct a new window
     ///
     /// This constructor creates the window with the size and pixel
-    /// depth defined in \a `mode`. An optional style can be passed to
+    /// depth defined in `mode`. An optional style can be passed to
     /// customize the look and behavior of the window (borders,
     /// title bar, resizable, closable, ...). An optional state can
-    /// be provided. If \a `state` is `State::Fullscreen`, then \a `mode`
+    /// be provided. If `state` is `State::Fullscreen`, then `mode`
     /// must be a valid video mode.
     ///
     /// \param mode  Video mode to use (defines the width, height and depth of the rendering area of the window)
@@ -93,7 +93,7 @@ public:
     /// \brief Construct a new window
     ///
     /// This constructor creates the window with the size and pixel
-    /// depth defined in \a `mode`.
+    /// depth defined in `mode`.
     ///
     /// \param mode  Video mode to use (defines the width, height and depth of the rendering area of the window)
     /// \param title Title of the window
@@ -146,7 +146,7 @@ public:
     /// \brief Create (or recreate) the window
     ///
     /// If the window was already created, it closes it first.
-    /// If \a `state` is `State::Fullscreen`, then \a `mode` must be
+    /// If `state` is `State::Fullscreen`, then `mode` must be
     /// a valid video mode.
     ///
     /// \param mode  Video mode to use (defines the width, height and depth of the rendering area of the window)
@@ -161,7 +161,7 @@ public:
     /// \brief Create (or recreate) the window
     ///
     /// If the window was already created, it closes it first.
-    /// If \a `state` is `State::Fullscreen`, then \a `mode` must be
+    /// If `state` is `State::Fullscreen`, then `mode` must be
     /// a valid video mode.
     ///
     /// \param mode  Video mode to use (defines the width, height and depth of the rendering area of the window)
@@ -409,7 +409,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Change the window's icon
     ///
-    /// \a `pixels` must be an array of \a `size` pixels
+    /// `pixels` must be an array of `size` pixels
     /// in 32-bits RGBA format.
     ///
     /// The OS default icon is used by default.

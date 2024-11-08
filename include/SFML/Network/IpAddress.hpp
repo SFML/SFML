@@ -207,7 +207,7 @@ private:
 /// \param left  Left operand (a IP address)
 /// \param right Right operand (a IP address)
 ///
-/// \return `true` if \a `left` is lesser than \a `right`
+/// \return `true` if `left` is lesser than `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_NETWORK_API bool operator<(IpAddress left, IpAddress right);
@@ -218,7 +218,7 @@ private:
 /// \param left  Left operand (a IP address)
 /// \param right Right operand (a IP address)
 ///
-/// \return `true` if \a `left` is greater than \a `right`
+/// \return `true` if `left` is greater than `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_NETWORK_API bool operator>(IpAddress left, IpAddress right);
@@ -240,7 +240,7 @@ private:
 /// \param left  Left operand (a IP address)
 /// \param right Right operand (a IP address)
 ///
-/// \return `true` if \a `left` is greater or equal than \a `right`
+/// \return `true` if `left` is greater or equal than `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_NETWORK_API bool operator>=(IpAddress left, IpAddress right);

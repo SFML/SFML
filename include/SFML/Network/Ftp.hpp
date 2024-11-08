@@ -356,7 +356,7 @@ public:
     ///
     /// This function retrieves the sub-directories and files
     /// contained in the given directory. It is not recursive.
-    /// The \a `directory` parameter is relative to the current
+    /// The `directory` parameter is relative to the current
     /// working directory.
     ///
     /// \param directory Directory to list
@@ -514,7 +514,7 @@ public:
     /// functions in the `sf::Ftp` class, this method can be used
     /// to send any FTP command to the server. If the command
     /// requires one or more parameters, they can be specified
-    /// in \a `parameter`. If the server returns information, you
+    /// in `parameter`. If the server returns information, you
     /// can extract it from the response using `Response::getMessage()`.
     ///
     /// \param command   Command to send

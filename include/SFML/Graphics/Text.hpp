@@ -95,7 +95,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Set the text's string
     ///
-    /// The \a `string` argument is a `sf::String`, which can
+    /// The `string` argument is a `sf::String`, which can
     /// automatically be constructed from standard string types.
     /// So, the following calls are all valid:
     /// \code
@@ -116,7 +116,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Set the text's font
     ///
-    /// The \a `font` argument refers to a font that must
+    /// The `font` argument refers to a font that must
     /// exist as long as the text uses it. Indeed, the text
     /// doesn't store its own copy of the font, but rather keeps
     /// a pointer to the one that you passed to this function.
@@ -346,13 +346,13 @@ public:
     [[nodiscard]] float getOutlineThickness() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Return the position of the \a `index`-th character
+    /// \brief Return the position of the `index`-th character
     ///
     /// This function computes the visual position of a character
     /// from its index in the string. The returned position is
     /// in global coordinates (translation, rotation, scale and
     /// origin are applied).
-    /// If \a `index` is out of range, the position of the end of
+    /// If `index` is out of range, the position of the end of
     /// the string is returned.
     ///
     /// \param index Index of the character

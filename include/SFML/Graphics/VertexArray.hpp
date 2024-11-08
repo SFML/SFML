@@ -79,7 +79,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Get a read-write access to a vertex by its index
     ///
-    /// This function doesn't check \a `index`, it must be in range
+    /// This function doesn't check `index`, it must be in range
     /// [0, `getVertexCount()` - 1]. The behavior is undefined
     /// otherwise.
     ///
@@ -95,7 +95,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Get a read-only access to a vertex by its index
     ///
-    /// This function doesn't check \a `index`, it must be in range
+    /// This function doesn't check `index`, it must be in range
     /// [0, `getVertexCount()` - 1]. The behavior is undefined
     /// otherwise.
     ///
@@ -122,10 +122,10 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Resize the vertex array
     ///
-    /// If \a `vertexCount` is greater than the current size, the previous
+    /// If `vertexCount` is greater than the current size, the previous
     /// vertices are kept and new (default-constructed) vertices are
     /// added.
-    /// If \a `vertexCount` is less than the current size, existing vertices
+    /// If `vertexCount` is less than the current size, existing vertices
     /// are removed from the array.
     ///
     /// \param vertexCount New size of the array (number of vertices)

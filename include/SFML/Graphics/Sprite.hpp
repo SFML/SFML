@@ -86,13 +86,13 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Change the source texture of the sprite
     ///
-    /// The \a `texture` argument refers to a texture that must
+    /// The `texture` argument refers to a texture that must
     /// exist as long as the sprite uses it. Indeed, the sprite
     /// doesn't store its own copy of the texture, but rather keeps
     /// a pointer to the one that you passed to this function.
     /// If the source texture is destroyed and the sprite tries to
     /// use it, the behavior is undefined.
-    /// If \a `resetRect` is `true`, the `TextureRect` property of
+    /// If `resetRect` is `true`, the `TextureRect` property of
     /// the sprite is automatically adjusted to the size of the new
     /// texture. If it is `false`, the texture rect is left unchanged.
     ///

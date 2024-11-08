@@ -83,7 +83,7 @@ namespace sf::PlaybackDevice
 /// \brief Set the audio playback device
 ///
 /// This function sets the audio playback device to the device
-/// with the given \a `name`. It can be called on the fly (i.e:
+/// with the given `name`. It can be called on the fly (i.e:
 /// while sounds are playing).
 ///
 /// If there are sounds playing when the audio playback
