@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased SFML 2.6.2
+## SFML 2.6.2
 
 ### General
 
@@ -23,6 +23,8 @@
 -   [Android] Remove use of deprecated `ALooper_pollAll` (#3181, #3189)
 -   [macOS] Fix how macOS fullscreen video modes are detected (#2300, #3151)
 -   [macOS] Prevent unnecessary macOS input monitoring permission prompts (#2843, #3235)
+-   [Linux] Fix DRM mode setting to use SFML window dimensions (#3136)
+-   [Android] Fix wrong fullscreen resolution (#1349, #1559, #2396)
 
 ### Graphics
 
