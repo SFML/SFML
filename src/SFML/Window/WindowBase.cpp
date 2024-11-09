@@ -112,6 +112,9 @@ void WindowBase::create(VideoMode mode, const String& title, State state)
 ////////////////////////////////////////////////////////////
 void WindowBase::create(WindowHandle handle)
 {
+    // Ensure the open window is closed first
+    close();
+
     // Recreate the window implementation
     m_impl = priv::WindowImpl::create(handle);
 

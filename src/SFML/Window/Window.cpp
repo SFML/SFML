@@ -84,6 +84,9 @@ void Window::create(VideoMode mode, const String& title, std::uint32_t style, St
 ////////////////////////////////////////////////////////////
 void Window::create(VideoMode mode, const String& title, std::uint32_t style, State state, const ContextSettings& settings)
 {
+    // Ensure the open window is closed first
+    close();
+
     // Recreate the window implementation
     m_impl = priv::WindowImpl::create(mode, title, style, state, settings);
 
