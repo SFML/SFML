@@ -22,27 +22,42 @@
 //
 ////////////////////////////////////////////////////////////
 
-#pragma once
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
+#include <SFML/System/Sleep.hpp>
+#include <SFML/System/Time.hpp>
+#include <SFML/System/Win32/WindowsHeader.hpp>
 
+#include <mmsystem.h>
 
 namespace sf
 {
-class Time;
+////////////////////////////////////////////////////////////
+void sleep(Time duration)
+{
+    // Note that 'std::this_thread::sleep_for' is intentionally not used here
+    // as it results in inconsistent sleeping times under MinGW-w64.
+
+    if (duration == Time::Zero)
+        return;
+
+    // Get the minimum supported timer resolution on this system
+    static const UINT periodMin = []
+    {
+        TIMECAPS tc;
+        timeGetDevCaps(&tc, sizeof(TIMECAPS));
+        return tc.wPeriodMin;
+    }();
+
+    // Set the timer resolution to the minimum for the Sleep call
+    timeBeginPeriod(periodMin);
+
+    // Wait...
+    ::Sleep(static_cast<DWORD>(duration.asMilliseconds()));
+
+    // Reset the timer resolution back to the system default
+    timeEndPeriod(periodMin);
 }
 
-namespace sf::priv
-{
-////////////////////////////////////////////////////////////
-/// \brief Unix implementation of sf::Sleep
-///
-/// \param time Time to sleep
-///
-////////////////////////////////////////////////////////////
-void sleepImpl(Time time);
-
-} // namespace sf::priv
+} // namespace sf

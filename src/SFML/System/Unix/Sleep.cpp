@@ -28,11 +28,8 @@
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/Time.hpp>
 
-#if defined(SFML_SYSTEM_WINDOWS)
-#include <SFML/System/Win32/SleepImpl.hpp>
-#else
-#include <SFML/System/Unix/SleepImpl.hpp>
-#endif
+#include <cerrno>
+#include <ctime>
 
 
 namespace sf
@@ -40,11 +37,24 @@ namespace sf
 ////////////////////////////////////////////////////////////
 void sleep(Time duration)
 {
-    // Note that 'std::this_thread::sleep_for' is intentionally not used here
-    // as it results in inconsistent sleeping times under MinGW-w64.
+    if (duration == Time::Zero)
+        return;
 
-    if (duration >= Time::Zero)
-        priv::sleepImpl(duration);
+    const std::int64_t usecs = duration.asMicroseconds();
+
+    // Construct the time to wait
+    timespec ti{};
+    ti.tv_sec  = static_cast<time_t>(usecs / 1'000'000);
+    ti.tv_nsec = static_cast<long>((usecs % 1'000'000) * 1'000);
+
+    // Wait...
+    // If nanosleep returns -1, we check errno. If it is EINTR
+    // nanosleep was interrupted and has set ti to the remaining
+    // duration. We continue sleeping until the complete duration
+    // has passed. We stop sleeping if it was due to an error.
+    while ((nanosleep(&ti, &ti) == -1) && (errno == EINTR))
+    {
+    }
 }
 
 } // namespace sf

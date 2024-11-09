@@ -14,7 +14,6 @@ set(SRC
     ${INCROOT}/Export.hpp
     ${INCROOT}/InputStream.hpp
     ${INCROOT}/NativeActivity.hpp
-    ${SRCROOT}/Sleep.cpp
     ${INCROOT}/Sleep.hpp
     ${SRCROOT}/String.cpp
     ${INCROOT}/String.hpp
@@ -42,14 +41,12 @@ source_group("" FILES ${SRC})
 # add platform specific sources
 if(SFML_OS_WINDOWS)
     set(PLATFORM_SRC
-        ${SRCROOT}/Win32/SleepImpl.cpp
-        ${SRCROOT}/Win32/SleepImpl.hpp
+        ${SRCROOT}/Win32/Sleep.cpp
     )
     source_group("windows" FILES ${PLATFORM_SRC})
 else()
     set(PLATFORM_SRC
-        ${SRCROOT}/Unix/SleepImpl.cpp
-        ${SRCROOT}/Unix/SleepImpl.hpp
+        ${SRCROOT}/Unix/Sleep.cpp
     )
 
     if(SFML_OS_ANDROID)
