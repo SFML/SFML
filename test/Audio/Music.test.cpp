@@ -241,11 +241,42 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
 
     SECTION("setLoopPoints()")
     {
-        sf::Music music("Audio/killdeer.wav");
-        music.setLoopPoints({sf::seconds(1), sf::seconds(2)});
-        const auto [offset, length] = music.getLoopPoints();
-        CHECK(offset == sf::seconds(1));
-        CHECK(length == sf::seconds(2));
+        sf::Music music;
+
+        SECTION("Uninitalized")
+        {
+            music.setLoopPoints({sf::seconds(1), sf::seconds(2)});
+            const auto [offset, length] = music.getLoopPoints();
+            CHECK(offset == sf::seconds(0));
+            CHECK(length == sf::seconds(0));
+        }
+
+        REQUIRE(music.openFromFile("Audio/killdeer.wav"));
+
+        SECTION("Within range")
+        {
+            music.setLoopPoints({sf::seconds(1), sf::seconds(2)});
+            const auto [offset, length] = music.getLoopPoints();
+            CHECK(offset == sf::seconds(1));
+            CHECK(length == sf::seconds(2));
+        }
+
+        SECTION("Duration too long")
+        {
+            music.setLoopPoints({sf::seconds(1), sf::seconds(1'000)});
+            const auto [offset, length] = music.getLoopPoints();
+            CHECK(offset == sf::seconds(1));
+            CHECK(length == sf::microseconds(4'122'040));
+        }
+
+        SECTION("Offset too long")
+        {
+            music.setLoopPoints({sf::seconds(1'000), sf::milliseconds(10)});
+            const auto [offset, length] = music.getLoopPoints();
+            CHECK(offset == sf::seconds(0));
+            CHECK(length == sf::microseconds(5'122'040));
+        }
+
         CHECK(music.getChannelCount() == 1);
         CHECK(music.getSampleRate() == 22050);
         CHECK(music.getStatus() == sf::Music::Status::Stopped);
