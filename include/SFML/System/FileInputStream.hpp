@@ -100,7 +100,7 @@ public:
     ///
     /// \param filename Name of the file to open
     ///
-    /// \throws `sf::Exception` on error
+    /// \throws sf::Exception on error
     ///
     ////////////////////////////////////////////////////////////
     explicit FileInputStream(const std::filesystem::path& filename);

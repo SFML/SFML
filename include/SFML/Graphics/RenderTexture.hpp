@@ -77,7 +77,7 @@ public:
     /// \param size     Width and height of the render-texture
     /// \param settings Additional settings for the underlying OpenGL texture and context
     ///
-    /// \throws `sf::Exception` if creation was unsuccessful
+    /// \throws sf::Exception if creation was unsuccessful
     ///
     ////////////////////////////////////////////////////////////
     RenderTexture(Vector2u size, const ContextSettings& settings = {});
