@@ -89,6 +89,7 @@ For a closer look at breaking changes and how to migrate from SFML 2, check out 
 -   [Windows] Changed `sf::Context::getFunction` to return `nullptr` when called on Windows without an active context (#2925)
 -   [Linux] Fixed broken joystick axis mappings under Linux (#3167)
 -   [macOS] Fixed how macOS fullscreen video modes are detected (#3151)
+-   [macOS] Avoided unnecessary permission request prompts (#3232)
 
 ### Graphics
 
@@ -117,6 +118,7 @@ For a closer look at breaking changes and how to migrate from SFML 2, check out 
 -   Fixed shader loading check for empty streams (#2869)
 -   Added sanity checks for OpenGL extensions to make sure the required entry points are actually available (#3052)
 -   Fixed cache state not correctly being ignored when switching between `sf::RenderTarget`s within a single context (#3114)
+-   Correctly drained OpenGL errors in [E]GLCheck (#3247)
 
 ### Audio
 
