@@ -95,7 +95,7 @@ public:
     ///
     /// \param filename Path of the image file to load
     ///
-    /// \throws `sf::Exception` if loading was unsuccessful
+    /// \throws sf::Exception if loading was unsuccessful
     ///
     /// \see `loadFromFile`, `loadFromMemory`, `loadFromStream`
     ///
@@ -112,7 +112,7 @@ public:
     /// \param data Pointer to the file data in memory
     /// \param size Size of the data to load, in bytes
     ///
-    /// \throws `sf::Exception` if loading was unsuccessful
+    /// \throws sf::Exception if loading was unsuccessful
     ///
     /// \see `loadFromFile`, `loadFromMemory`, `loadFromStream`
     ///
@@ -128,7 +128,7 @@ public:
     ///
     /// \param stream Source stream to read from
     ///
-    /// \throws `sf::Exception` if loading was unsuccessful
+    /// \throws sf::Exception if loading was unsuccessful
     ///
     /// \see `loadFromFile`, `loadFromMemory`, `loadFromStream`
     ///
