@@ -100,18 +100,18 @@ void onStart(ANativeActivity* /* activity */)
 ////////////////////////////////////////////////////////////
 int getAndroidApiLevel(ANativeActivity& activity)
 {
-    JNIEnv* lJNIEnv = activity.env;
+    JNIEnv& lJNIEnv = *activity.env;
 
-    jclass versionClass = lJNIEnv->FindClass("android/os/Build$VERSION");
+    jclass versionClass = lJNIEnv.FindClass("android/os/Build$VERSION");
     if (versionClass == nullptr)
         return 0;
 
-    jfieldID sdkIntFieldID = lJNIEnv->GetStaticFieldID(versionClass, "SDK_INT", "I");
+    jfieldID sdkIntFieldID = lJNIEnv.GetStaticFieldID(versionClass, "SDK_INT", "I");
     if (sdkIntFieldID == nullptr)
         return 0;
 
     jint sdkInt = 0;
-    sdkInt      = lJNIEnv->GetStaticIntField(versionClass, sdkIntFieldID);
+    sdkInt      = lJNIEnv.GetStaticIntField(versionClass, sdkIntFieldID);
 
     return sdkInt;
 }
@@ -133,19 +133,19 @@ void goToFullscreenMode(ANativeActivity& activity)
     ANativeActivity_setWindowFlags(&activity, AWINDOW_FLAG_FULLSCREEN, AWINDOW_FLAG_FULLSCREEN);
 
     // Hide the navigation bar
-    JNIEnv* lJNIEnv = activity.env;
+    JNIEnv& lJNIEnv = *activity.env;
 
     jobject objectActivity = activity.clazz;
-    jclass  classActivity  = lJNIEnv->GetObjectClass(objectActivity);
+    jclass  classActivity  = lJNIEnv.GetObjectClass(objectActivity);
 
-    jmethodID methodGetWindow = lJNIEnv->GetMethodID(classActivity, "getWindow", "()Landroid/view/Window;");
-    jobject   objectWindow    = lJNIEnv->CallObjectMethod(objectActivity, methodGetWindow);
+    jmethodID methodGetWindow = lJNIEnv.GetMethodID(classActivity, "getWindow", "()Landroid/view/Window;");
+    jobject   objectWindow    = lJNIEnv.CallObjectMethod(objectActivity, methodGetWindow);
 
-    jclass    classWindow        = lJNIEnv->FindClass("android/view/Window");
-    jmethodID methodGetDecorView = lJNIEnv->GetMethodID(classWindow, "getDecorView", "()Landroid/view/View;");
-    jobject   objectDecorView    = lJNIEnv->CallObjectMethod(objectWindow, methodGetDecorView);
+    jclass    classWindow        = lJNIEnv.FindClass("android/view/Window");
+    jmethodID methodGetDecorView = lJNIEnv.GetMethodID(classWindow, "getDecorView", "()Landroid/view/View;");
+    jobject   objectDecorView    = lJNIEnv.CallObjectMethod(objectWindow, methodGetDecorView);
 
-    jclass classView = lJNIEnv->FindClass("android/view/View");
+    jclass classView = lJNIEnv.FindClass("android/view/View");
 
     // Default flags
     jint flags = 0;
@@ -153,33 +153,33 @@ void goToFullscreenMode(ANativeActivity& activity)
     // API Level 14
     if (apiLevel >= 14)
     {
-        jfieldID   fieldSystemUiFlagLowProfile = lJNIEnv->GetStaticFieldID(classView,
-                                                                         "SYSTEM_UI_FLAG_HIDE_NAVIGATION",
-                                                                         "I");
-        const jint systemUiFlagLowProfile      = lJNIEnv->GetStaticIntField(classView, fieldSystemUiFlagLowProfile);
+        jfieldID   fieldSystemUiFlagLowProfile = lJNIEnv.GetStaticFieldID(classView,
+                                                                        "SYSTEM_UI_FLAG_HIDE_NAVIGATION",
+                                                                        "I");
+        const jint systemUiFlagLowProfile      = lJNIEnv.GetStaticIntField(classView, fieldSystemUiFlagLowProfile);
         flags |= systemUiFlagLowProfile;
     }
 
     // API Level 16
     if (apiLevel >= 16)
     {
-        jfieldID   fieldSystemUiFlagFullscreen = lJNIEnv->GetStaticFieldID(classView, "SYSTEM_UI_FLAG_FULLSCREEN", "I");
-        const jint systemUiFlagFullscreen      = lJNIEnv->GetStaticIntField(classView, fieldSystemUiFlagFullscreen);
+        jfieldID   fieldSystemUiFlagFullscreen = lJNIEnv.GetStaticFieldID(classView, "SYSTEM_UI_FLAG_FULLSCREEN", "I");
+        const jint systemUiFlagFullscreen      = lJNIEnv.GetStaticIntField(classView, fieldSystemUiFlagFullscreen);
         flags |= systemUiFlagFullscreen;
     }
 
     // API Level 19
     if (apiLevel >= 19)
     {
-        jfieldID fieldSystemUiFlagImmersiveSticky = lJNIEnv->GetStaticFieldID(classView,
-                                                                              "SYSTEM_UI_FLAG_IMMERSIVE_STICKY",
-                                                                              "I");
-        const jint systemUiFlagImmersiveSticky = lJNIEnv->GetStaticIntField(classView, fieldSystemUiFlagImmersiveSticky);
+        jfieldID   fieldSystemUiFlagImmersiveSticky = lJNIEnv.GetStaticFieldID(classView,
+                                                                             "SYSTEM_UI_FLAG_IMMERSIVE_STICKY",
+                                                                             "I");
+        const jint systemUiFlagImmersiveSticky = lJNIEnv.GetStaticIntField(classView, fieldSystemUiFlagImmersiveSticky);
         flags |= systemUiFlagImmersiveSticky;
     }
 
-    jmethodID methodsetSystemUiVisibility = lJNIEnv->GetMethodID(classView, "setSystemUiVisibility", "(I)V");
-    lJNIEnv->CallVoidMethod(objectDecorView, methodsetSystemUiVisibility, flags);
+    jmethodID methodsetSystemUiVisibility = lJNIEnv.GetMethodID(classView, "setSystemUiVisibility", "(I)V");
+    lJNIEnv.CallVoidMethod(objectDecorView, methodsetSystemUiVisibility, flags);
 }
 
 ////////////////////////////////////////////////////////////
@@ -190,35 +190,35 @@ void getScreenSizeInPixels(ANativeActivity& activity, int& width, int& height)
     // DisplayMetrics dm = new DisplayMetrics();
     // getWindowManager().getDefaultDisplay().getMetrics(dm);
 
-    JNIEnv* lJNIEnv = activity.env;
+    JNIEnv& lJNIEnv = *activity.env;
 
     jobject objectActivity = activity.clazz;
-    jclass  classActivity  = lJNIEnv->GetObjectClass(objectActivity);
+    jclass  classActivity  = lJNIEnv.GetObjectClass(objectActivity);
 
-    jclass    classDisplayMetrics  = lJNIEnv->FindClass("android/util/DisplayMetrics");
-    jmethodID initDisplayMetrics   = lJNIEnv->GetMethodID(classDisplayMetrics, "<init>", "()V");
-    jobject   objectDisplayMetrics = lJNIEnv->NewObject(classDisplayMetrics, initDisplayMetrics);
+    jclass    classDisplayMetrics  = lJNIEnv.FindClass("android/util/DisplayMetrics");
+    jmethodID initDisplayMetrics   = lJNIEnv.GetMethodID(classDisplayMetrics, "<init>", "()V");
+    jobject   objectDisplayMetrics = lJNIEnv.NewObject(classDisplayMetrics, initDisplayMetrics);
 
-    jmethodID methodGetWindowManager = lJNIEnv->GetMethodID(classActivity,
-                                                            "getWindowManager",
-                                                            "()Landroid/view/WindowManager;");
-    jobject   objectWindowManager    = lJNIEnv->CallObjectMethod(objectActivity, methodGetWindowManager);
+    jmethodID methodGetWindowManager = lJNIEnv.GetMethodID(classActivity,
+                                                           "getWindowManager",
+                                                           "()Landroid/view/WindowManager;");
+    jobject   objectWindowManager    = lJNIEnv.CallObjectMethod(objectActivity, methodGetWindowManager);
 
-    jclass    classWindowManager      = lJNIEnv->FindClass("android/view/WindowManager");
-    jmethodID methodGetDefaultDisplay = lJNIEnv->GetMethodID(classWindowManager,
-                                                             "getDefaultDisplay",
-                                                             "()Landroid/view/Display;");
-    jobject   objectDisplay           = lJNIEnv->CallObjectMethod(objectWindowManager, methodGetDefaultDisplay);
+    jclass    classWindowManager      = lJNIEnv.FindClass("android/view/WindowManager");
+    jmethodID methodGetDefaultDisplay = lJNIEnv.GetMethodID(classWindowManager,
+                                                            "getDefaultDisplay",
+                                                            "()Landroid/view/Display;");
+    jobject   objectDisplay           = lJNIEnv.CallObjectMethod(objectWindowManager, methodGetDefaultDisplay);
 
-    jclass    classDisplay     = lJNIEnv->FindClass("android/view/Display");
-    jmethodID methodGetMetrics = lJNIEnv->GetMethodID(classDisplay, "getMetrics", "(Landroid/util/DisplayMetrics;)V");
-    lJNIEnv->CallVoidMethod(objectDisplay, methodGetMetrics, objectDisplayMetrics);
+    jclass    classDisplay     = lJNIEnv.FindClass("android/view/Display");
+    jmethodID methodGetMetrics = lJNIEnv.GetMethodID(classDisplay, "getMetrics", "(Landroid/util/DisplayMetrics;)V");
+    lJNIEnv.CallVoidMethod(objectDisplay, methodGetMetrics, objectDisplayMetrics);
 
-    jfieldID fieldWidthPixels  = lJNIEnv->GetFieldID(classDisplayMetrics, "widthPixels", "I");
-    jfieldID fieldHeightPixels = lJNIEnv->GetFieldID(classDisplayMetrics, "heightPixels", "I");
+    jfieldID fieldWidthPixels  = lJNIEnv.GetFieldID(classDisplayMetrics, "widthPixels", "I");
+    jfieldID fieldHeightPixels = lJNIEnv.GetFieldID(classDisplayMetrics, "heightPixels", "I");
 
-    width  = lJNIEnv->GetIntField(objectDisplayMetrics, fieldWidthPixels);
-    height = lJNIEnv->GetIntField(objectDisplayMetrics, fieldHeightPixels);
+    width  = lJNIEnv.GetIntField(objectDisplayMetrics, fieldWidthPixels);
+    height = lJNIEnv.GetIntField(objectDisplayMetrics, fieldHeightPixels);
 }
 
 
@@ -230,41 +230,41 @@ void getFullScreenSizeInPixels(ANativeActivity& activity, int& width, int& heigh
     // DisplayMetrics dm = new DisplayMetrics();
     // getWindowManager().getDefaultDisplay().getRealMetrics(dm);
 
-    JNIEnv* lJNIEnv = activity.env;
+    JNIEnv& lJNIEnv = *activity.env;
 
     jobject objectActivity = activity.clazz;
-    jclass  classActivity  = lJNIEnv->GetObjectClass(objectActivity);
+    jclass  classActivity  = lJNIEnv.GetObjectClass(objectActivity);
 
-    jclass    classDisplayMetrics  = lJNIEnv->FindClass("android/util/DisplayMetrics");
-    jmethodID initDisplayMetrics   = lJNIEnv->GetMethodID(classDisplayMetrics, "<init>", "()V");
-    jobject   objectDisplayMetrics = lJNIEnv->NewObject(classDisplayMetrics, initDisplayMetrics);
+    jclass    classDisplayMetrics  = lJNIEnv.FindClass("android/util/DisplayMetrics");
+    jmethodID initDisplayMetrics   = lJNIEnv.GetMethodID(classDisplayMetrics, "<init>", "()V");
+    jobject   objectDisplayMetrics = lJNIEnv.NewObject(classDisplayMetrics, initDisplayMetrics);
 
-    jmethodID methodGetWindowManager = lJNIEnv->GetMethodID(classActivity,
-                                                            "getWindowManager",
-                                                            "()Landroid/view/WindowManager;");
-    jobject   objectWindowManager    = lJNIEnv->CallObjectMethod(objectActivity, methodGetWindowManager);
+    jmethodID methodGetWindowManager = lJNIEnv.GetMethodID(classActivity,
+                                                           "getWindowManager",
+                                                           "()Landroid/view/WindowManager;");
+    jobject   objectWindowManager    = lJNIEnv.CallObjectMethod(objectActivity, methodGetWindowManager);
 
-    jclass    classWindowManager      = lJNIEnv->FindClass("android/view/WindowManager");
-    jmethodID methodGetDefaultDisplay = lJNIEnv->GetMethodID(classWindowManager,
-                                                             "getDefaultDisplay",
-                                                             "()Landroid/view/Display;");
-    jobject   objectDisplay           = lJNIEnv->CallObjectMethod(objectWindowManager, methodGetDefaultDisplay);
+    jclass    classWindowManager      = lJNIEnv.FindClass("android/view/WindowManager");
+    jmethodID methodGetDefaultDisplay = lJNIEnv.GetMethodID(classWindowManager,
+                                                            "getDefaultDisplay",
+                                                            "()Landroid/view/Display;");
+    jobject   objectDisplay           = lJNIEnv.CallObjectMethod(objectWindowManager, methodGetDefaultDisplay);
 
-    jclass    classDisplay     = lJNIEnv->FindClass("android/view/Display");
+    jclass    classDisplay     = lJNIEnv.FindClass("android/view/Display");
     jmethodID methodGetMetrics = nullptr;
 
     // getRealMetrics is only supported on API level 17 and above, if we are below that, we will fall back to getMetrics
     if (getAndroidApiLevel(activity) >= 17)
-        methodGetMetrics = lJNIEnv->GetMethodID(classDisplay, "getRealMetrics", "(Landroid/util/DisplayMetrics;)V");
+        methodGetMetrics = lJNIEnv.GetMethodID(classDisplay, "getRealMetrics", "(Landroid/util/DisplayMetrics;)V");
     else
-        methodGetMetrics = lJNIEnv->GetMethodID(classDisplay, "getMetrics", "(Landroid/util/DisplayMetrics;)V");
-    lJNIEnv->CallVoidMethod(objectDisplay, methodGetMetrics, objectDisplayMetrics);
+        methodGetMetrics = lJNIEnv.GetMethodID(classDisplay, "getMetrics", "(Landroid/util/DisplayMetrics;)V");
+    lJNIEnv.CallVoidMethod(objectDisplay, methodGetMetrics, objectDisplayMetrics);
 
-    jfieldID fieldWidthPixels  = lJNIEnv->GetFieldID(classDisplayMetrics, "widthPixels", "I");
-    jfieldID fieldHeightPixels = lJNIEnv->GetFieldID(classDisplayMetrics, "heightPixels", "I");
+    jfieldID fieldWidthPixels  = lJNIEnv.GetFieldID(classDisplayMetrics, "widthPixels", "I");
+    jfieldID fieldHeightPixels = lJNIEnv.GetFieldID(classDisplayMetrics, "heightPixels", "I");
 
-    width  = lJNIEnv->GetIntField(objectDisplayMetrics, fieldWidthPixels);
-    height = lJNIEnv->GetIntField(objectDisplayMetrics, fieldHeightPixels);
+    width  = lJNIEnv.GetIntField(objectDisplayMetrics, fieldWidthPixels);
+    height = lJNIEnv.GetIntField(objectDisplayMetrics, fieldHeightPixels);
 }
 
 
