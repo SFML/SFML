@@ -166,6 +166,8 @@ For a closer look at breaking changes and how to migrate from SFML 2, check out 
 -   [Android] Removed use of deprecated `ALooper_pollAll` (#3181, #3189)
 -   [macOS] Fix how macOS fullscreen video modes are detected (#2300, #3151)
 -   [macOS] Prevent unnecessary macOS input monitoring permission prompts (#2843, #3235)
+-   [Linux] Fix DRM mode setting to use SFML window dimensions (#3136)
+-   [Android] Fix wrong fullscreen resolution (#1349, #1559, #2396)
 
 ### Graphics
 
