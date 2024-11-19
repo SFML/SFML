@@ -221,6 +221,53 @@ void getScreenSizeInPixels(ANativeActivity& activity, int& width, int& height)
     height = lJNIEnv->GetIntField(objectDisplayMetrics, fieldHeightPixels);
 }
 
+
+////////////////////////////////////////////////////////////
+void getFullScreenSizeInPixels(ANativeActivity& activity, int& width, int& height)
+{
+    // Perform the following Java code:
+    //
+    // DisplayMetrics dm = new DisplayMetrics();
+    // getWindowManager().getDefaultDisplay().getRealMetrics(dm);
+
+    JNIEnv* lJNIEnv = activity.env;
+
+    jobject objectActivity = activity.clazz;
+    jclass  classActivity  = lJNIEnv->GetObjectClass(objectActivity);
+
+    jclass    classDisplayMetrics  = lJNIEnv->FindClass("android/util/DisplayMetrics");
+    jmethodID initDisplayMetrics   = lJNIEnv->GetMethodID(classDisplayMetrics, "<init>", "()V");
+    jobject   objectDisplayMetrics = lJNIEnv->NewObject(classDisplayMetrics, initDisplayMetrics);
+
+    jmethodID methodGetWindowManager = lJNIEnv->GetMethodID(classActivity,
+                                                            "getWindowManager",
+                                                            "()Landroid/view/WindowManager;");
+    jobject   objectWindowManager    = lJNIEnv->CallObjectMethod(objectActivity, methodGetWindowManager);
+
+    jclass    classWindowManager      = lJNIEnv->FindClass("android/view/WindowManager");
+    jmethodID methodGetDefaultDisplay = lJNIEnv->GetMethodID(classWindowManager,
+                                                             "getDefaultDisplay",
+                                                             "()Landroid/view/Display;");
+    jobject   objectDisplay           = lJNIEnv->CallObjectMethod(objectWindowManager, methodGetDefaultDisplay);
+
+    jclass    classDisplay     = lJNIEnv->FindClass("android/view/Display");
+    jmethodID methodGetMetrics = nullptr;
+
+    // getRealMetrics is only supported on API level 17 and above, if we are below that, we will fall back to getMetrics
+    if (getAndroidApiLevel(activity) >= 17)
+        methodGetMetrics = lJNIEnv->GetMethodID(classDisplay, "getRealMetrics", "(Landroid/util/DisplayMetrics;)V");
+    else
+        methodGetMetrics = lJNIEnv->GetMethodID(classDisplay, "getMetrics", "(Landroid/util/DisplayMetrics;)V");
+    lJNIEnv->CallVoidMethod(objectDisplay, methodGetMetrics, objectDisplayMetrics);
+
+    jfieldID fieldWidthPixels  = lJNIEnv->GetFieldID(classDisplayMetrics, "widthPixels", "I");
+    jfieldID fieldHeightPixels = lJNIEnv->GetFieldID(classDisplayMetrics, "heightPixels", "I");
+
+    width  = lJNIEnv->GetIntField(objectDisplayMetrics, fieldWidthPixels);
+    height = lJNIEnv->GetIntField(objectDisplayMetrics, fieldHeightPixels);
+}
+
+
 ////////////////////////////////////////////////////////////
 void onResume(ANativeActivity* activity)
 {
@@ -502,6 +549,7 @@ JNIEXPORT void ANativeActivity_onCreate(ANativeActivity* activity, void* savedSt
     eglInitialize(states->display, nullptr, nullptr);
 
     getScreenSizeInPixels(*activity, states->screenSize.x, states->screenSize.y);
+    getFullScreenSizeInPixels(*activity, states->fullScreenSize.x, states->fullScreenSize.y);
 
     // Redirect error messages to logcat
     sf::err().rdbuf(&states->logcat);
