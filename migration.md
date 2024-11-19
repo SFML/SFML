@@ -448,3 +448,4 @@ SFML 3 includes various smaller changes that ought to be mentioned.
 * Renamed `sf::Mouse::Button::XButton1` and `sf::Mouse::Button::XButton2` enumerators to `sf::Mouse::Button::Extra1` and `sf::Mouse::Button::Extra2`
 * Removed NonCopyable.hpp header in favor of using built-in language features for disabling copy operators
 * Converted the following classes to namespaces: `sf::Clipboard`, `sf::Keyboard`, `sf::Joystick`, `sf::Listener`, `sf::Mouse`, `sf::Sensor`, `sf::Touch`, `sf::Vulkan`
+* Removed `sf::SoundStream::setProcessingInterval` as miniaudio matches the internal processing rate to the underlying backend

@@ -278,12 +278,6 @@ private:
 /// \li `onStart` is called before the capture happens, to perform custom initializations
 /// \li `onStop` is called after the capture ends, to perform custom cleanup
 ///
-/// A derived class can also control the frequency of the onProcessSamples
-/// calls, with the `setProcessingInterval` protected function. The default
-/// interval is chosen so that recording thread doesn't consume too much
-/// CPU, but it can be changed to a smaller value if you need to process
-/// the recorded data in real time, for example.
-///
 /// The audio capture feature may not be supported or activated
 /// on every platform, thus it is recommended to check its
 /// availability with the isAvailable() function. If it returns
