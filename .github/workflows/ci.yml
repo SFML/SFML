@@ -259,7 +259,7 @@ jobs:
     name: Finalize Coverage Upload
     needs: build
     runs-on: ubuntu-22.04
-    if: github.repository == 'SFML/SFML' && github.event_name == 'pull_request' # Only run for PRs to main repository
+    if: github.repository == 'SFML/SFML' # Disable upload in forks
 
     steps:
     - name: Coveralls Finished
