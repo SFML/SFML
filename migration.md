@@ -7,6 +7,19 @@ This document will walk you through how to upgrade your SFML 2 application to SF
 One of the headline changes in SFML 3 is raising the C++ standard to C++17 thus bringing SFML into the world of modern C++!
 This change has enabled a vast number of internal improvements as well as new opportunities for improving the API that will be discussed in this document.
 
+## Compiler Requirements
+
+Along with the upgrade from C++03 to C++17 you may need to upgrade your compiler.
+C++17 support has been widespread in all major compiler implementations for years prior to SFML 3's release so in all likelihood the compiler you're already using will work.
+In case you do need to upgrade, here are the minimum compiler versions.
+
+| Compiler   | Version      |
+| ---------- | ------------ |
+| MSVC       | 16 (VS 2019) |
+| GCC        | 9            |
+| Clang      | 9            |
+| AppleClang | 12           |
+
 ## CMake Targets
 
 SFML 3 uses modern CMake convention for library targets which entails having a namespace in front of the target name.
