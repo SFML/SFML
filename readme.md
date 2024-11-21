@@ -1,4 +1,4 @@
-[![SFML logo](https://www.sfml-dev.org/images/logo.png)](https://www.sfml-dev.org) [![Gurubase](https://img.shields.io/badge/Gurubase-Ask%20SFML%20Guru-006BFF)](https://gurubase.io/g/sfml)
+[![SFML logo](https://www.sfml-dev.org/images/logo.png)](https://www.sfml-dev.org)
 
 # SFML — Simple and Fast Multimedia Library
 
@@ -34,6 +34,7 @@ There are several places to learn SFML:
 -   The [official tutorials](https://www.sfml-dev.org/tutorials/)
 -   The [online API documentation](https://www.sfml-dev.org/documentation/)
 -   The [community wiki](https://github.com/SFML/SFML/wiki/)
+-   The [SFML Guru](https://gurubase.io/g/sfml), it is a third-party AI agent designed to answer your questions about SFML.
 
 ## Community
 
