@@ -1,4 +1,4 @@
-[![SFML logo](https://www.sfml-dev.org/images/logo.png)](https://www.sfml-dev.org)
+[![SFML logo](https://www.sfml-dev.org/images/logo.png)](https://www.sfml-dev.org) [![Gurubase](https://img.shields.io/badge/Gurubase-Ask%20SFML%20Guru-006BFF)](https://gurubase.io/g/sfml)
 
 # SFML — Simple and Fast Multimedia Library
 
