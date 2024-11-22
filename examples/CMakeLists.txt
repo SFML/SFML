@@ -44,6 +44,7 @@ if(SFML_BUILD_GRAPHICS)
 endif()
 if(SFML_BUILD_GRAPHICS AND SFML_BUILD_AUDIO)
     add_subdirectory(tennis)
+    add_subdirectory(keyboard)
 
     if(NOT SFML_OPENGL_ES)
         add_subdirectory(sound_effects)
