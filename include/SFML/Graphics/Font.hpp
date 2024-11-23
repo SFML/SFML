@@ -237,10 +237,7 @@ public:
     /// \return The glyph corresponding to `codePoint` and `characterSize`
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] const Glyph& getGlyph(std::uint32_t codePoint,
-                                        unsigned int  characterSize,
-                                        bool          bold,
-                                        float         outlineThickness = 0) const;
+    [[nodiscard]] const Glyph& getGlyph(char32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness = 0) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Determine if this font has a glyph representing the requested code point
@@ -258,7 +255,7 @@ public:
     /// \return `true` if the codepoint has a glyph representation, `false` otherwise
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool hasGlyph(std::uint32_t codePoint) const;
+    [[nodiscard]] bool hasGlyph(char32_t codePoint) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the kerning offset of two glyphs
@@ -423,7 +420,7 @@ private:
     /// \return The glyph corresponding to `codePoint` and `characterSize`
     ///
     ////////////////////////////////////////////////////////////
-    Glyph loadGlyph(std::uint32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness) const;
+    Glyph loadGlyph(char32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Find a suitable rectangle within the texture for a glyph

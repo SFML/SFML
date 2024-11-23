@@ -249,7 +249,7 @@ private:
     /// \return The Unicode value
     ///
     ////////////////////////////////////////////////////////////
-    static int getUnicode(AInputEvent* event);
+    static char32_t getUnicode(AInputEvent* event);
 
     Vector2u m_size;
     bool     m_windowBeingCreated{};

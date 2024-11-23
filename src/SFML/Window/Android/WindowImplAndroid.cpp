@@ -430,8 +430,8 @@ int WindowImplAndroid::processKeyEvent(AInputEvent* inputEvent, ActivityStates& 
         case AKEY_EVENT_ACTION_UP:
             forwardKeyEvent(Event::KeyReleased{});
 
-            if (auto unicode = static_cast<std::uint32_t>(getUnicode(inputEvent)))
-                forwardEvent(Event::TextEntered{static_cast<std::uint32_t>(unicode)});
+            if (const auto unicode = getUnicode(inputEvent))
+                forwardEvent(Event::TextEntered{unicode});
             return 1;
         case AKEY_EVENT_ACTION_MULTIPLE:
             // Since complex inputs don't get separate key down/up events
@@ -447,9 +447,9 @@ int WindowImplAndroid::processKeyEvent(AInputEvent* inputEvent, ActivityStates& 
                 // https://code.google.com/p/android/issues/detail?id=33998
                 return 0;
             }
-            if (auto unicode = static_cast<std::uint32_t>(getUnicode(inputEvent))) // This is a repeated sequence
+            if (const auto unicode = getUnicode(inputEvent)) // This is a repeated sequence
             {
-                const Event event(Event::TextEntered{static_cast<std::uint32_t>(unicode)});
+                const Event event(Event::TextEntered{unicode});
 
                 const std::int32_t repeats = AKeyEvent_getRepeatCount(inputEvent);
                 for (std::int32_t i = 0; i < repeats; ++i)
@@ -676,7 +676,7 @@ Keyboard::Key WindowImplAndroid::androidKeyToSF(std::int32_t key)
 
 
 ////////////////////////////////////////////////////////////
-int WindowImplAndroid::getUnicode(AInputEvent* event)
+char32_t WindowImplAndroid::getUnicode(AInputEvent* event)
 {
     // Retrieve activity states
     ActivityStates&       states = getActivity();
@@ -736,7 +736,7 @@ int WindowImplAndroid::getUnicode(AInputEvent* event)
     // Detach this thread from the JVM
     lJavaVM->DetachCurrentThread();
 
-    return unicode;
+    return static_cast<char32_t>(unicode);
 }
 
 } // namespace sf::priv

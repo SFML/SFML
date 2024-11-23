@@ -106,7 +106,7 @@ public:
     /// US keyboard layouts.)
     ///
     ////////////////////////////////////////////////////////////
-    static Keyboard::Key localizedKey(UniChar ch);
+    static Keyboard::Key localizedKey(char16_t ch);
 
     ////////////////////////////////////////////////////////////
     /// \brief Opposite transformation as localizedKeys
@@ -116,7 +116,7 @@ public:
     /// Some returned value are specific to macOS.
     ///
     ////////////////////////////////////////////////////////////
-    static UniChar toUnicode(Keyboard::Key key);
+    static char16_t toUnicode(Keyboard::Key key);
 
     ////////////////////////////////////////////////////////////
     /// \brief Try to convert a virtual keycode (HID level) into a
@@ -125,7 +125,7 @@ public:
     /// Return `sf::Keyboard::Scan::Unknown` if the keycode is unknown.
     ///
     ////////////////////////////////////////////////////////////
-    static Keyboard::Scancode nonLocalizedKey(UniChar virtualKeycode);
+    static Keyboard::Scancode nonLocalizedKey(char16_t virtualKeycode);
 
     ////////////////////////////////////////////////////////////
     /// \copydoc sf::Keyboard::isKeyPressed(Key)

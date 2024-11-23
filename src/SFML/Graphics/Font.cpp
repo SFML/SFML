@@ -338,7 +338,7 @@ const Font::Info& Font::getInfo() const
 
 
 ////////////////////////////////////////////////////////////
-const Glyph& Font::getGlyph(std::uint32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness) const
+const Glyph& Font::getGlyph(char32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness) const
 {
     // Get the page corresponding to the character size
     GlyphTable& glyphs = loadPage(characterSize).glyphs;
@@ -362,7 +362,7 @@ const Glyph& Font::getGlyph(std::uint32_t codePoint, unsigned int characterSize,
 
 
 ////////////////////////////////////////////////////////////
-bool Font::hasGlyph(std::uint32_t codePoint) const
+bool Font::hasGlyph(char32_t codePoint) const
 {
     return FT_Get_Char_Index(m_fontHandles ? m_fontHandles->face : nullptr, codePoint) != 0;
 }
@@ -503,7 +503,7 @@ Font::Page& Font::loadPage(unsigned int characterSize) const
 
 
 ////////////////////////////////////////////////////////////
-Glyph Font::loadGlyph(std::uint32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness) const
+Glyph Font::loadGlyph(char32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness) const
 {
     // The glyph to return
     Glyph glyph;
