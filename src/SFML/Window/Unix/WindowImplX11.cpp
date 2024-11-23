@@ -1855,7 +1855,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                     {
                         // There might be more than 1 characters in this event,
                         // so we must iterate it
-                        std::uint32_t unicode = 0;
+                        char32_t      unicode = 0;
                         std::uint8_t* iter    = keyBuffer.data();
                         while (iter < keyBuffer.data() + length)
                         {
@@ -1870,7 +1870,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                     static XComposeStatus status;
                     std::array<char, 16>  keyBuffer{};
                     if (XLookupString(&windowEvent.xkey, keyBuffer.data(), keyBuffer.size(), nullptr, &status))
-                        pushEvent(Event::TextEntered{static_cast<std::uint32_t>(keyBuffer[0])});
+                        pushEvent(Event::TextEntered{static_cast<char32_t>(keyBuffer[0])});
                 }
             }
 

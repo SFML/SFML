@@ -70,7 +70,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     template <typename In>
-    static In decode(In begin, In end, std::uint32_t& output, std::uint32_t replacement = 0);
+    static In decode(In begin, In end, char32_t& output, char32_t replacement = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Encode a single UTF-8 character
@@ -86,7 +86,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     template <typename Out>
-    static Out encode(std::uint32_t input, Out output, std::uint8_t replacement = 0);
+    static Out encode(char32_t input, Out output, std::uint8_t replacement = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Advance to the next UTF-8 character
@@ -276,7 +276,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     template <typename In>
-    static In decode(In begin, In end, std::uint32_t& output, std::uint32_t replacement = 0);
+    static In decode(In begin, In end, char32_t& output, char32_t replacement = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Encode a single UTF-16 character
@@ -292,7 +292,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     template <typename Out>
-    static Out encode(std::uint32_t input, Out output, std::uint16_t replacement = 0);
+    static Out encode(char32_t input, Out output, char16_t replacement = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Advance to the next UTF-16 character
@@ -483,7 +483,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     template <typename In>
-    static In decode(In begin, In end, std::uint32_t& output, std::uint32_t replacement = 0);
+    static In decode(In begin, In end, char32_t& output, char32_t replacement = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Encode a single UTF-32 character
@@ -500,7 +500,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     template <typename Out>
-    static Out encode(std::uint32_t input, Out output, std::uint32_t replacement = 0);
+    static Out encode(char32_t input, Out output, char32_t replacement = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Advance to the next UTF-32 character
@@ -679,7 +679,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     template <typename In>
-    static std::uint32_t decodeAnsi(In input, const std::locale& locale = {});
+    static char32_t decodeAnsi(In input, const std::locale& locale = {});
 
     ////////////////////////////////////////////////////////////
     /// \brief Decode a single wide character to UTF-32
@@ -694,7 +694,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     template <typename In>
-    static std::uint32_t decodeWide(In input);
+    static char32_t decodeWide(In input);
 
     ////////////////////////////////////////////////////////////
     /// \brief Encode a single UTF-32 character to ANSI
@@ -712,7 +712,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     template <typename Out>
-    static Out encodeAnsi(std::uint32_t codepoint, Out output, char replacement = 0, const std::locale& locale = {});
+    static Out encodeAnsi(char32_t codepoint, Out output, char replacement = 0, const std::locale& locale = {});
 
     ////////////////////////////////////////////////////////////
     /// \brief Encode a single UTF-32 character to wide
@@ -729,7 +729,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     template <typename Out>
-    static Out encodeWide(std::uint32_t codepoint, Out output, wchar_t replacement = 0);
+    static Out encodeWide(char32_t codepoint, Out output, wchar_t replacement = 0);
 };
 
 // Make type aliases to get rid of the template syntax

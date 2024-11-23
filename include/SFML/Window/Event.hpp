@@ -85,7 +85,7 @@ public:
     ////////////////////////////////////////////////////////////
     struct TextEntered
     {
-        std::uint32_t unicode{}; //!< UTF-32 Unicode value of the character
+        char32_t unicode{}; //!< UTF-32 Unicode value of the character
     };
 
     ////////////////////////////////////////////////////////////

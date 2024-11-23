@@ -730,7 +730,7 @@ sf::String keyEventDescription(sf::String text, const KeyEventType& keyEvent)
 sf::String textEventDescription(const sf::Event::TextEntered& textEntered)
 {
     sf::String text = "Text Entered\n\n";
-    text += static_cast<char32_t>(textEntered.unicode);
+    text += textEntered.unicode;
     text += "\nU+";
 
     std::ostringstream oss;

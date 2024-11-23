@@ -26,7 +26,7 @@ auto select(const std::basic_string<T>& string16, const std::basic_string<T>& st
         return string32;
 }
 
-auto toHex(const std::uint32_t character)
+auto toHex(const char32_t character)
 {
     std::ostringstream stream;
     stream << "[\\x" << std::uppercase << std::hex << character << ']';
@@ -445,8 +445,8 @@ TEST_CASE("[System] sf::String")
 
     SECTION("fromUtf16()")
     {
-        constexpr std::array<std::uint16_t, 4> characters{0xF1, 'x', 'y', 'z'};
-        const sf::String                       string = sf::String::fromUtf16(characters.begin(), characters.end());
+        constexpr std::array<char16_t, 4> characters{0xF1, 'x', 'y', 'z'};
+        const sf::String                  string = sf::String::fromUtf16(characters.begin(), characters.end());
         CHECK(std::string(string) == select("\xF1xyz"s, "\0xyz"s));
         CHECK(std::wstring(string) == L"\xF1xyz"s);
         CHECK(string.toAnsiString() == select("\xF1xyz"s, "\0xyz"s));
@@ -461,8 +461,8 @@ TEST_CASE("[System] sf::String")
 
     SECTION("fromUtf32()")
     {
-        constexpr std::array<std::uint32_t, 4> characters{'w', 0x104321, 'y', 'z'};
-        const sf::String                       string = sf::String::fromUtf32(characters.begin(), characters.end());
+        constexpr std::array<char32_t, 4> characters{'w', 0x104321, 'y', 'z'};
+        const sf::String                  string = sf::String::fromUtf32(characters.begin(), characters.end());
         CHECK(std::string(string) == "w\0yz"s);
         CHECK(std::wstring(string) == select(L"wyz"s, L"w\U00104321yz"s));
         CHECK(string.toAnsiString() == "w\0yz"s);
