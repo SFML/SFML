@@ -223,8 +223,7 @@ Here is a complete list of all enumerations which have undergone this change:
 
 ## `sf::Rect<T>`
 
-`sf::Rect<T>` has been refactored from 4 scalar values into 2 `sf::Vector2<T>`s.
-Its two data members are `sf::Vector2<T>`s named `position` and `size`.
+`sf::Rect<T>` has been refactored from the four scalar values `top`, `left`, `width`, and `height` into two `sf::Vector2<T>`s named `position` and `size`.
 This means that `sf::Rect<T>::getPosition()` and `sf::Rect<T>::getSize()` have been removed in favor of directly accessing the `position` and `size` data members.
 The 4-parameter constructor was also removed in favor of the constructor which takes two `sf::Vector2<T>`s.
 
