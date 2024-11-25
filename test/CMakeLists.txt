@@ -61,6 +61,7 @@ set(SYSTEM_SRC
     System/Sleep.test.cpp
     System/String.test.cpp
     System/Time.test.cpp
+    System/Utf.test.cpp
     System/Vector2.test.cpp
     System/Vector3.test.cpp
 )
