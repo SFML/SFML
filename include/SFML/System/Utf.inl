@@ -557,7 +557,7 @@ In Utf<32>::next(In begin, In /*end*/)
 template <typename In>
 std::size_t Utf<32>::count(In begin, In end)
 {
-    return begin - end;
+    return static_cast<std::size_t>(end - begin);
 }
 
 
