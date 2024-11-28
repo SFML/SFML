@@ -51,6 +51,7 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
     }
 
     VideoMode desktop = getDesktopMode();
+    modes.push_back(desktop);
 
     // Loop on each mode and convert it into a sf::VideoMode object.
     const CFIndex modesCount = CFArrayGetCount(cgmodes);
