@@ -129,7 +129,8 @@ Atom getAtom(const std::string& name, bool onlyIfExists)
 
     const auto display = openDisplay();
     const Atom atom    = XInternAtom(display.get(), name.c_str(), onlyIfExists ? True : False);
-    atoms[name]        = atom;
+    if (atom)
+        atoms[name] = atom;
 
     return atom;
 }
