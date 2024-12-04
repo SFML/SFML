@@ -338,6 +338,9 @@ static constexpr unsigned int ScancodeCount{static_cast<unsigned int>(Scan::Laun
 ////////////////////////////////////////////////////////////
 /// \brief Check if a key is pressed
 ///
+/// \warning On macOS you're required to grant input monitoring access for
+///          your application in order for `isKeyPressed` to work.
+///
 /// \param key Key to check
 ///
 /// \return `true` if the key is pressed, `false` otherwise
@@ -347,6 +350,9 @@ static constexpr unsigned int ScancodeCount{static_cast<unsigned int>(Scan::Laun
 
 ////////////////////////////////////////////////////////////
 /// \brief Check if a key is pressed
+///
+/// \warning On macOS you're required to grant input monitoring access for
+///          your application in order for `isKeyPressed` to work.
 ///
 /// \param code Scancode to check
 ///
