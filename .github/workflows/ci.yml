@@ -36,10 +36,10 @@ jobs:
         - { name: Windows VS2022 ClangCL MSBuild, os: windows-2022, flags: -DSFML_USE_MESA3D=ON -T ClangCL } # ninja doesn't support specifying the toolset, so use the ClangCL toolset to test building with MSBuild as well
         - { name: Windows VS2022 OpenGL ES,       os: windows-2022, flags: -DSFML_USE_MESA3D=ON -DSFML_OPENGL_ES=ON -GNinja }
         - { name: Windows VS2022 Unity,           os: windows-2022, flags: -DSFML_USE_MESA3D=ON -DCMAKE_UNITY_BUILD=ON -GNinja }
-        - { name: Windows LLVM/Clang,             os: windows-2022, flags: -DSFML_USE_MESA3D=ON -DCMAKE_CXX_COMPILER=clang++ -GNinja }
-        - { name: Windows MinGW,                  os: windows-2022, flags: -DSFML_USE_MESA3D=ON -DCMAKE_CXX_COMPILER=g++ -GNinja }
+        - { name: Windows LLVM/Clang,             os: windows-2022, flags: -DSFML_USE_MESA3D=ON -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -GNinja }
+        - { name: Windows MinGW,                  os: windows-2022, flags: -DSFML_USE_MESA3D=ON -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -GNinja }
         - { name: Linux GCC,                      os: ubuntu-22.04, flags: -GNinja }
-        - { name: Linux Clang,                    os: ubuntu-22.04, flags: -DCMAKE_CXX_COMPILER=clang++ -GNinja , gcovr_options: '--gcov-executable="llvm-cov-$CLANG_VERSION gcov"' }
+        - { name: Linux Clang,                    os: ubuntu-22.04, flags: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -GNinja , gcovr_options: '--gcov-executable="llvm-cov-$CLANG_VERSION gcov"' }
         - { name: Linux GCC DRM,                  os: ubuntu-22.04, flags: -DSFML_USE_DRM=ON -DSFML_RUN_DISPLAY_TESTS=OFF -GNinja }
         - { name: Linux GCC OpenGL ES,            os: ubuntu-22.04, flags: -DSFML_OPENGL_ES=ON -DSFML_RUN_DISPLAY_TESTS=OFF -GNinja }
         - { name: macOS x64,                      os: macos-13, flags: -GNinja }
@@ -60,7 +60,7 @@ jobs:
         - platform: { name: Linux GCC, os: ubuntu-22.04 }
           config: { name: Static with PCH (GCC), flags: -GNinja -DCMAKE_CXX_COMPILER=g++ -DBUILD_SHARED_LIBS=OFF -DSFML_ENABLE_PCH=ON }
         - platform: { name: Linux Clang, os: ubuntu-22.04 }
-          config: { name: Static with PCH (Clang), flags: -GNinja -DCMAKE_CXX_COMPILER=clang++ -DBUILD_SHARED_LIBS=OFF -DSFML_ENABLE_PCH=ON }
+          config: { name: Static with PCH (Clang), flags: -GNinja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DBUILD_SHARED_LIBS=OFF -DSFML_ENABLE_PCH=ON }
         - platform: { name: Linux GCC, os: ubuntu-22.04 }
           config: { name: Bundled Deps Static, flags: -GNinja -DCMAKE_CXX_COMPILER=g++ -DBUILD_SHARED_LIBS=OFF -DSFML_USE_SYSTEM_DEPS=OFF }
         - platform: { name: Linux GCC, os: ubuntu-22.04 }
@@ -331,7 +331,7 @@ jobs:
         echo "$(brew --prefix llvm@18)/bin" >> $GITHUB_PATH
 
     - name: Configure
-      run: cmake --preset dev -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_UNITY_BUILD=ON ${{matrix.platform.flags}}
+      run: cmake --preset dev -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_UNITY_BUILD=ON ${{matrix.platform.flags}}
 
     - name: Analyze Code
       run: cmake --build build --target tidy
@@ -363,7 +363,7 @@ jobs:
       run: sudo apt-get update && sudo apt-get install xorg-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev xvfb fluxbox && sudo apt-get remove -y libasound2
 
     - name: Configure
-      run: cmake --preset dev -GNinja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_COMPILER=clang++ -DSFML_BUILD_EXAMPLES=OFF -DSFML_ENABLE_SANITIZERS=ON ${{matrix.platform.flags}}
+      run: cmake --preset dev -GNinja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DSFML_BUILD_EXAMPLES=OFF -DSFML_ENABLE_SANITIZERS=ON ${{matrix.platform.flags}}
 
     - name: Build
       run: cmake --build build

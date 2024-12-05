@@ -29,7 +29,7 @@ sfml_set_option(CMAKE_BUILD_TYPE Release STRING "Choose the type of build (Debug
 sfml_set_option(CMAKE_OSX_DEPLOYMENT_TARGET "13.0" STRING "The minimal iOS version that will be able to run the built binaries. Cannot be lower than 13.0")
 
 # project name
-project(SFML VERSION 3.0.0 LANGUAGES CXX)
+project(SFML VERSION 3.0.0)
 
 set(VERSION_IS_RELEASE OFF)
 
