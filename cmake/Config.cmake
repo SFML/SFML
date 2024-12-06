@@ -47,7 +47,7 @@ elseif(CMAKE_SYSTEM_NAME MATCHES "^NetBSD$")
     set(OPENGL_ES 0)
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "iOS")
     set(SFML_OS_IOS 1)
-    
+
     # use the OpenGL ES implementation on iOS
     set(OPENGL_ES 1)
 elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Darwin")
@@ -84,19 +84,11 @@ elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(SFML_COMPILER_CLANG 1)
 
     execute_process(COMMAND "${CMAKE_CXX_COMPILER}" "-v" OUTPUT_VARIABLE CLANG_COMPILER_VERSION ERROR_VARIABLE CLANG_COMPILER_VERSION)
-
-    if("${CLANG_COMPILER_VERSION}" MATCHES "ucrt")
-        set(SFML_RUNTIME_UCRT 1)
-    endif()
 elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     set(SFML_COMPILER_GCC 1)
 
     execute_process(COMMAND "${CMAKE_CXX_COMPILER}" "-v" OUTPUT_VARIABLE GCC_COMPILER_VERSION ERROR_VARIABLE GCC_COMPILER_VERSION)
     string(REGEX MATCHALL ".*(tdm[64]*-[1-9]).*" SFML_COMPILER_GCC_TDM "${GCC_COMPILER_VERSION}")
-
-    if("${GCC_COMPILER_VERSION}" MATCHES "ucrt")
-        set(SFML_RUNTIME_UCRT 1)
-    endif()
 else()
     message(WARNING "Unrecognized compiler: ${CMAKE_CXX_COMPILER_ID}. Use at your own risk.")
 endif()
