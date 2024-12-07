@@ -120,9 +120,9 @@ TEST_CASE("[Network] sf::IpAddress")
         {
             CHECK(sf::IpAddress(1) < sf::IpAddress(2));
             CHECK(sf::IpAddress(0, 0, 0, 0) < sf::IpAddress(1, 0, 0, 0));
-            CHECK(sf::IpAddress(1, 0, 0, 0) < sf::IpAddress(0, 1, 0, 0));
-            CHECK(sf::IpAddress(0, 1, 0, 0) < sf::IpAddress(0, 0, 1, 0));
-            CHECK(sf::IpAddress(0, 0, 1, 0) < sf::IpAddress(0, 0, 0, 1));
+            CHECK(sf::IpAddress(0, 1, 0, 0) < sf::IpAddress(1, 0, 0, 0));
+            CHECK(sf::IpAddress(0, 0, 1, 0) < sf::IpAddress(0, 1, 0, 0));
+            CHECK(sf::IpAddress(0, 0, 0, 1) < sf::IpAddress(0, 0, 1, 0));
             CHECK(sf::IpAddress(0, 0, 0, 1) < sf::IpAddress(1, 0, 0, 1));
         }
 
@@ -130,9 +130,9 @@ TEST_CASE("[Network] sf::IpAddress")
         {
             CHECK(sf::IpAddress(2) > sf::IpAddress(1));
             CHECK(sf::IpAddress(1, 0, 0, 0) > sf::IpAddress(0, 0, 0, 0));
-            CHECK(sf::IpAddress(0, 1, 0, 0) > sf::IpAddress(1, 0, 0, 0));
-            CHECK(sf::IpAddress(0, 0, 1, 0) > sf::IpAddress(0, 1, 0, 0));
-            CHECK(sf::IpAddress(0, 0, 0, 1) > sf::IpAddress(0, 0, 1, 0));
+            CHECK(sf::IpAddress(1, 0, 0, 0) > sf::IpAddress(0, 1, 0, 0));
+            CHECK(sf::IpAddress(0, 1, 0, 0) > sf::IpAddress(0, 0, 1, 0));
+            CHECK(sf::IpAddress(0, 0, 1, 0) > sf::IpAddress(0, 0, 0, 1));
             CHECK(sf::IpAddress(1, 0, 0, 1) > sf::IpAddress(0, 0, 0, 1));
         }
 
@@ -140,9 +140,9 @@ TEST_CASE("[Network] sf::IpAddress")
         {
             CHECK(sf::IpAddress(1) <= sf::IpAddress(2));
             CHECK(sf::IpAddress(0, 0, 0, 0) <= sf::IpAddress(1, 0, 0, 0));
-            CHECK(sf::IpAddress(1, 0, 0, 0) <= sf::IpAddress(0, 1, 0, 0));
-            CHECK(sf::IpAddress(0, 1, 0, 0) <= sf::IpAddress(0, 0, 1, 0));
-            CHECK(sf::IpAddress(0, 0, 1, 0) <= sf::IpAddress(0, 0, 0, 1));
+            CHECK(sf::IpAddress(0, 1, 0, 0) <= sf::IpAddress(1, 0, 0, 0));
+            CHECK(sf::IpAddress(0, 0, 1, 0) <= sf::IpAddress(0, 1, 0, 0));
+            CHECK(sf::IpAddress(0, 0, 0, 1) <= sf::IpAddress(0, 0, 1, 0));
             CHECK(sf::IpAddress(0, 0, 0, 1) <= sf::IpAddress(1, 0, 0, 1));
 
             CHECK(sf::IpAddress(0xC6, 0x33, 0x64, 0x7B) <= sf::IpAddress(0xC633647B));
@@ -153,9 +153,9 @@ TEST_CASE("[Network] sf::IpAddress")
         {
             CHECK(sf::IpAddress(2) >= sf::IpAddress(1));
             CHECK(sf::IpAddress(1, 0, 0, 0) >= sf::IpAddress(0, 0, 0, 0));
-            CHECK(sf::IpAddress(0, 1, 0, 0) >= sf::IpAddress(1, 0, 0, 0));
-            CHECK(sf::IpAddress(0, 0, 1, 0) >= sf::IpAddress(0, 1, 0, 0));
-            CHECK(sf::IpAddress(0, 0, 0, 1) >= sf::IpAddress(0, 0, 1, 0));
+            CHECK(sf::IpAddress(1, 0, 0, 0) >= sf::IpAddress(0, 1, 0, 0));
+            CHECK(sf::IpAddress(0, 1, 0, 0) >= sf::IpAddress(0, 0, 1, 0));
+            CHECK(sf::IpAddress(0, 0, 1, 0) >= sf::IpAddress(0, 0, 0, 1));
             CHECK(sf::IpAddress(1, 0, 0, 1) >= sf::IpAddress(0, 0, 0, 1));
 
             CHECK(sf::IpAddress(0xC6, 0x33, 0x64, 0x7B) >= sf::IpAddress(0xC633647B));

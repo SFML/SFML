@@ -143,6 +143,7 @@ For a closer look at breaking changes and how to migrate from SFML 2, check out 
 
 -   Removed invalid internal state from `sf::IpAddress` (#2145)
 -   Fixed sockets not closing before being moved into (#2758)
+-   Fixed how `sf::IpAddress`'s internal representation is stored on big endian systems (#3339)
 
 ## SFML 2.6.2
 
