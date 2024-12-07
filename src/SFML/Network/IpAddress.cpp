@@ -93,13 +93,13 @@ std::optional<IpAddress> IpAddress::resolve(std::string_view address)
 
 ////////////////////////////////////////////////////////////
 IpAddress::IpAddress(std::uint8_t byte0, std::uint8_t byte1, std::uint8_t byte2, std::uint8_t byte3) :
-m_address(htonl(static_cast<std::uint32_t>((byte0 << 24) | (byte1 << 16) | (byte2 << 8) | byte3)))
+m_address(static_cast<std::uint32_t>((byte0 << 24) | (byte1 << 16) | (byte2 << 8) | byte3))
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-IpAddress::IpAddress(std::uint32_t address) : m_address(htonl(address))
+IpAddress::IpAddress(std::uint32_t address) : m_address(address)
 {
 }
 
@@ -108,7 +108,7 @@ IpAddress::IpAddress(std::uint32_t address) : m_address(htonl(address))
 std::string IpAddress::toString() const
 {
     in_addr address{};
-    address.s_addr = m_address;
+    address.s_addr = htonl(m_address);
 
     return inet_ntoa(address);
 }
@@ -117,7 +117,7 @@ std::string IpAddress::toString() const
 ////////////////////////////////////////////////////////////
 std::uint32_t IpAddress::toInteger() const
 {
-    return ntohl(m_address);
+    return m_address;
 }
 
 
