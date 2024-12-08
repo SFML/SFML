@@ -135,6 +135,7 @@ For a closer look at breaking changes and how to migrate from SFML 2, check out 
 
 -   Fixed `sf::SoundStream::play` bug (#2037)
 -   Fixed poor `sf::SoundStream::setPlayingOffset` precision (#3101)
+-   Fixed a bug when reading Ogg files on big endian systems (#3340)
 
 ### Network
 

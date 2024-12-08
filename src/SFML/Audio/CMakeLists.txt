@@ -169,6 +169,9 @@ target_compile_definitions(sfml-audio PRIVATE MA_NO_MP3 MA_NO_FLAC MA_NO_ENCODIN
 # use standard fixed-width integer types
 target_compile_definitions(sfml-audio PRIVATE MA_USE_STDINT)
 
+# detect the endianness as required by Ogg
+target_compile_definitions(sfml-audio PRIVATE SFML_IS_BIG_ENDIAN=$<STREQUAL:${CMAKE_CXX_BYTE_ORDER},BIG_ENDIAN>)
+
 # setup dependencies
 target_link_libraries(sfml-audio
                       PUBLIC SFML::System
