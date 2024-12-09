@@ -99,12 +99,16 @@ else()
             GIT_REPOSITORY https://github.com/xiph/ogg.git
             GIT_TAG v1.3.5
             GIT_SHALLOW ON
+            EXCLUDE_FROM_ALL
+            SYSTEM
             # patch CMAKE_DEBUG_POSTFIX into the Ogg CMake configuration
             PATCH_COMMAND ${CMAKE_COMMAND} -DOGG_DIR=${FETCHCONTENT_BASE_DIR}/ogg-src -P ${PROJECT_SOURCE_DIR}/tools/ogg/PatchOgg.cmake)
         FetchContent_Declare(flac
             GIT_REPOSITORY https://github.com/xiph/flac.git
             GIT_TAG 1.4.3
             GIT_SHALLOW ON
+            EXCLUDE_FROM_ALL
+            SYSTEM
             # patch out the annoying parts of the FLAC CMake configuration:
             # - adding unnecessary libraries that aren't even used
             # - installing FLAC++ headers even though BUILD_CXXLIBS is OFF
@@ -114,6 +118,8 @@ else()
             GIT_REPOSITORY https://github.com/xiph/vorbis.git
             GIT_TAG v1.3.7
             GIT_SHALLOW ON
+            EXCLUDE_FROM_ALL
+            SYSTEM
             # patch out the annoying parts of the Vorbis CMake configuration:
             # - Vorbis doesn't check if the Ogg::ogg target exists before calling find_package
             # - add CMAKE_DEBUG_POSTFIX
