@@ -7,6 +7,11 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules/")
 # set the output directory for SFML libraries
 set(LIBRARY_OUTPUT_PATH "${PROJECT_BINARY_DIR}/lib")
 
+# disable FetchContent_Populate deprecation notice
+if(POLICY CMP0169)
+    cmake_policy(SET CMP0169 OLD)
+endif()
+
 # add the modules subdirectories
 
 # sfml-system

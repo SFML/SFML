@@ -101,6 +101,8 @@ else()
             GIT_SHALLOW ON
             # patch CMAKE_DEBUG_POSTFIX into the Ogg CMake configuration
             PATCH_COMMAND ${CMAKE_COMMAND} -DOGG_DIR=${FETCHCONTENT_BASE_DIR}/ogg-src -P ${PROJECT_SOURCE_DIR}/tools/ogg/PatchOgg.cmake)
+        FetchContent_Populate(ogg)
+        add_subdirectory(${ogg_SOURCE_DIR} ${ogg_BINARY_DIR} EXCLUDE_FROM_ALL)
         FetchContent_Declare(flac
             GIT_REPOSITORY https://github.com/xiph/flac.git
             GIT_TAG 1.4.3
@@ -110,6 +112,8 @@ else()
             # - installing FLAC++ headers even though BUILD_CXXLIBS is OFF
             # - add CMAKE_DEBUG_POSTFIX
             PATCH_COMMAND ${CMAKE_COMMAND} -DFLAC_DIR=${FETCHCONTENT_BASE_DIR}/flac-src -P ${PROJECT_SOURCE_DIR}/tools/flac/PatchFLAC.cmake)
+        FetchContent_Populate(flac)
+        add_subdirectory(${flac_SOURCE_DIR} ${flac_BINARY_DIR} EXCLUDE_FROM_ALL)
         FetchContent_Declare(vorbis
             GIT_REPOSITORY https://github.com/xiph/vorbis.git
             GIT_TAG v1.3.7
@@ -118,7 +122,8 @@ else()
             # - Vorbis doesn't check if the Ogg::ogg target exists before calling find_package
             # - add CMAKE_DEBUG_POSTFIX
             PATCH_COMMAND ${CMAKE_COMMAND} -DVORBIS_DIR=${FETCHCONTENT_BASE_DIR}/vorbis-src -P ${PROJECT_SOURCE_DIR}/tools/vorbis/PatchVorbis.cmake)
-        FetchContent_MakeAvailable(ogg flac vorbis)
+        FetchContent_Populate(vorbis)
+        add_subdirectory(${vorbis_SOURCE_DIR} ${vorbis_BINARY_DIR} EXCLUDE_FROM_ALL)
 
         set_target_properties(ogg FLAC vorbis vorbisenc vorbisfile PROPERTIES FOLDER "Dependencies")
 

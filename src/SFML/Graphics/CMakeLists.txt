@@ -130,7 +130,8 @@ else()
             GIT_REPOSITORY https://github.com/freetype/freetype.git
             GIT_TAG VER-2-13-2
             GIT_SHALLOW ON)
-        FetchContent_MakeAvailable(Freetype)
+        FetchContent_Populate(Freetype)
+        add_subdirectory(${freetype_SOURCE_DIR} ${freetype_BINARY_DIR} EXCLUDE_FROM_ALL)
 
         set_target_properties(freetype PROPERTIES FOLDER "Dependencies")
 
