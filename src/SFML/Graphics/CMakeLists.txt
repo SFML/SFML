@@ -129,7 +129,9 @@ else()
         FetchContent_Declare(Freetype
             GIT_REPOSITORY https://github.com/freetype/freetype.git
             GIT_TAG VER-2-13-2
-            GIT_SHALLOW ON)
+            GIT_SHALLOW ON
+            EXCLUDE_FROM_ALL
+            SYSTEM)
         FetchContent_MakeAvailable(Freetype)
 
         set_target_properties(freetype PROPERTIES FOLDER "Dependencies")
