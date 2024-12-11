@@ -120,7 +120,7 @@ jobs:
     - name: Get CMake and Ninja
       uses: lukka/get-cmake@latest
       with:
-        cmakeVersion: ${{ runner.os == 'Windows' && '3.25' || '3.22' }}
+        cmakeVersion: 3.28
         ninjaVersion: latest
 
     - name: Install Linux Dependencies and Tools
