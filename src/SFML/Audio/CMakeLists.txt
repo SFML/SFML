@@ -91,6 +91,9 @@ else()
         set(BUILD_UTILS OFF)
         set(BUILD_DOCS OFF)
         set(INSTALL_MANPAGES OFF)
+        set(INSTALL_DOCS OFF)
+        set(INSTALL_PKG_CONFIG_MODULE OFF)
+        set(INSTALL_PKGCONFIG_MODULES OFF)
         set(WITH_FORTIFY_SOURCE OFF)
         set(WITH_STACK_PROTECTOR OFF)
         set(WITH_AVX OFF) # LLVM/Clang on Windows has issues with AVX2
@@ -99,23 +102,26 @@ else()
             GIT_REPOSITORY https://github.com/xiph/ogg.git
             GIT_TAG v1.3.5
             GIT_SHALLOW ON
-            # patch CMAKE_DEBUG_POSTFIX into the Ogg CMake configuration
+            # patch out parts we don't want of the Ogg CMake configuration
+            # - installing headers & pkgconfig files
+            # - add CMAKE_DEBUG_POSTFIX
             PATCH_COMMAND ${CMAKE_COMMAND} -DOGG_DIR=${FETCHCONTENT_BASE_DIR}/ogg-src -P ${PROJECT_SOURCE_DIR}/tools/ogg/PatchOgg.cmake)
         FetchContent_Declare(flac
             GIT_REPOSITORY https://github.com/xiph/flac.git
             GIT_TAG 1.4.3
             GIT_SHALLOW ON
-            # patch out the annoying parts of the FLAC CMake configuration:
+            # patch out parts we don't want of the FLAC CMake configuration:
             # - adding unnecessary libraries that aren't even used
-            # - installing FLAC++ headers even though BUILD_CXXLIBS is OFF
+            # - installing headers & pkgconfig files
             # - add CMAKE_DEBUG_POSTFIX
             PATCH_COMMAND ${CMAKE_COMMAND} -DFLAC_DIR=${FETCHCONTENT_BASE_DIR}/flac-src -P ${PROJECT_SOURCE_DIR}/tools/flac/PatchFLAC.cmake)
         FetchContent_Declare(vorbis
             GIT_REPOSITORY https://github.com/xiph/vorbis.git
             GIT_TAG v1.3.7
             GIT_SHALLOW ON
-            # patch out the annoying parts of the Vorbis CMake configuration:
+            # patch out parts we don't want of the Vorbis CMake configuration:
             # - Vorbis doesn't check if the Ogg::ogg target exists before calling find_package
+            # - installing headers & pkgconfig files
             # - add CMAKE_DEBUG_POSTFIX
             PATCH_COMMAND ${CMAKE_COMMAND} -DVORBIS_DIR=${FETCHCONTENT_BASE_DIR}/vorbis-src -P ${PROJECT_SOURCE_DIR}/tools/vorbis/PatchVorbis.cmake)
         FetchContent_MakeAvailable(ogg flac vorbis)
