@@ -119,6 +119,7 @@ else()
 
         set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
         set(BUILD_SHARED_LIBS OFF)
+        set(SKIP_INSTALL_HEADERS ON)
         set(FT_DISABLE_ZLIB ON)
         set(FT_DISABLE_BZIP2 ON)
         set(FT_DISABLE_PNG ON)
@@ -129,7 +130,10 @@ else()
         FetchContent_Declare(Freetype
             GIT_REPOSITORY https://github.com/freetype/freetype.git
             GIT_TAG VER-2-13-2
-            GIT_SHALLOW ON)
+            GIT_SHALLOW ON
+            # patch out parts we don't want of the FreeType CMake configuration
+            # - installing pkgconfig files
+            PATCH_COMMAND ${CMAKE_COMMAND} -DFREETYPE_DIR=${FETCHCONTENT_BASE_DIR}/freetype-src -P ${PROJECT_SOURCE_DIR}/tools/freetype/PatchFreetype.cmake)
         FetchContent_MakeAvailable(Freetype)
 
         set_target_properties(freetype PROPERTIES FOLDER "Dependencies")
