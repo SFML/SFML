@@ -13,8 +13,8 @@ TEST_CASE("[System] sf::Clock")
 
     SECTION("Type traits")
     {
-        STATIC_CHECK(std::is_copy_constructible_v<sf::Clock>);
-        STATIC_CHECK(std::is_copy_assignable_v<sf::Clock>);
+        STATIC_CHECK(std::is_trivially_copy_constructible_v<sf::Clock>);
+        STATIC_CHECK(std::is_trivially_copy_assignable_v<sf::Clock>);
         STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Clock>);
         STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Clock>);
     }

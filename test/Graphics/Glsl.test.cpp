@@ -16,8 +16,8 @@ TEST_CASE("[Graphics] sf::Glsl")
     {
         SECTION("Type traits")
         {
-            STATIC_CHECK(std::is_copy_constructible_v<sf::Glsl::Vec2>);
-            STATIC_CHECK(std::is_copy_assignable_v<sf::Glsl::Vec2>);
+            STATIC_CHECK(std::is_trivially_copy_constructible_v<sf::Glsl::Vec2>);
+            STATIC_CHECK(std::is_trivially_copy_assignable_v<sf::Glsl::Vec2>);
             STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Glsl::Vec2>);
             STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Glsl::Vec2>);
         }
@@ -31,8 +31,8 @@ TEST_CASE("[Graphics] sf::Glsl")
     {
         SECTION("Type traits")
         {
-            STATIC_CHECK(std::is_copy_constructible_v<sf::Glsl::Ivec2>);
-            STATIC_CHECK(std::is_copy_assignable_v<sf::Glsl::Ivec2>);
+            STATIC_CHECK(std::is_trivially_copy_constructible_v<sf::Glsl::Ivec2>);
+            STATIC_CHECK(std::is_trivially_copy_assignable_v<sf::Glsl::Ivec2>);
             STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Glsl::Ivec2>);
             STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Glsl::Ivec2>);
         }
@@ -46,8 +46,8 @@ TEST_CASE("[Graphics] sf::Glsl")
     {
         SECTION("Type traits")
         {
-            STATIC_CHECK(std::is_copy_constructible_v<sf::Glsl::Bvec2>);
-            STATIC_CHECK(std::is_copy_assignable_v<sf::Glsl::Bvec2>);
+            STATIC_CHECK(std::is_trivially_copy_constructible_v<sf::Glsl::Bvec2>);
+            STATIC_CHECK(std::is_trivially_copy_assignable_v<sf::Glsl::Bvec2>);
             STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Glsl::Bvec2>);
             STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Glsl::Bvec2>);
         }
@@ -61,8 +61,8 @@ TEST_CASE("[Graphics] sf::Glsl")
     {
         SECTION("Type traits")
         {
-            STATIC_CHECK(std::is_copy_constructible_v<sf::Glsl::Vec3>);
-            STATIC_CHECK(std::is_copy_assignable_v<sf::Glsl::Vec3>);
+            STATIC_CHECK(std::is_trivially_copy_constructible_v<sf::Glsl::Vec3>);
+            STATIC_CHECK(std::is_trivially_copy_assignable_v<sf::Glsl::Vec3>);
             STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Glsl::Vec3>);
             STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Glsl::Vec3>);
         }
@@ -77,8 +77,8 @@ TEST_CASE("[Graphics] sf::Glsl")
     {
         SECTION("Type traits")
         {
-            STATIC_CHECK(std::is_copy_constructible_v<sf::Glsl::Ivec3>);
-            STATIC_CHECK(std::is_copy_assignable_v<sf::Glsl::Ivec3>);
+            STATIC_CHECK(std::is_trivially_copy_constructible_v<sf::Glsl::Ivec3>);
+            STATIC_CHECK(std::is_trivially_copy_assignable_v<sf::Glsl::Ivec3>);
             STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Glsl::Ivec3>);
             STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Glsl::Ivec3>);
         }
@@ -93,8 +93,8 @@ TEST_CASE("[Graphics] sf::Glsl")
     {
         SECTION("Type traits")
         {
-            STATIC_CHECK(std::is_copy_constructible_v<sf::Glsl::Bvec3>);
-            STATIC_CHECK(std::is_copy_assignable_v<sf::Glsl::Bvec3>);
+            STATIC_CHECK(std::is_trivially_copy_constructible_v<sf::Glsl::Bvec3>);
+            STATIC_CHECK(std::is_trivially_copy_assignable_v<sf::Glsl::Bvec3>);
             STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Glsl::Bvec3>);
             STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Glsl::Bvec3>);
         }
@@ -109,8 +109,8 @@ TEST_CASE("[Graphics] sf::Glsl")
     {
         SECTION("Type traits")
         {
-            STATIC_CHECK(std::is_copy_constructible_v<sf::Glsl::Vec4>);
-            STATIC_CHECK(std::is_copy_assignable_v<sf::Glsl::Vec4>);
+            STATIC_CHECK(std::is_trivially_copy_constructible_v<sf::Glsl::Vec4>);
+            STATIC_CHECK(std::is_trivially_copy_assignable_v<sf::Glsl::Vec4>);
             STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Glsl::Vec4>);
             STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Glsl::Vec4>);
         }
@@ -159,8 +159,8 @@ TEST_CASE("[Graphics] sf::Glsl")
     {
         SECTION("Type traits")
         {
-            STATIC_CHECK(std::is_copy_constructible_v<sf::Glsl::Ivec4>);
-            STATIC_CHECK(std::is_copy_assignable_v<sf::Glsl::Ivec4>);
+            STATIC_CHECK(std::is_trivially_copy_constructible_v<sf::Glsl::Ivec4>);
+            STATIC_CHECK(std::is_trivially_copy_assignable_v<sf::Glsl::Ivec4>);
             STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Glsl::Ivec4>);
             STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Glsl::Ivec4>);
         }
@@ -209,8 +209,8 @@ TEST_CASE("[Graphics] sf::Glsl")
     {
         SECTION("Type traits")
         {
-            STATIC_CHECK(std::is_copy_constructible_v<sf::Glsl::Bvec4>);
-            STATIC_CHECK(std::is_copy_assignable_v<sf::Glsl::Bvec4>);
+            STATIC_CHECK(std::is_trivially_copy_constructible_v<sf::Glsl::Bvec4>);
+            STATIC_CHECK(std::is_trivially_copy_assignable_v<sf::Glsl::Bvec4>);
             STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Glsl::Bvec4>);
             STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Glsl::Bvec4>);
         }
@@ -250,8 +250,8 @@ TEST_CASE("[Graphics] sf::Glsl")
     {
         SECTION("Type traits")
         {
-            STATIC_CHECK(std::is_copy_constructible_v<sf::Glsl::Mat3>);
-            STATIC_CHECK(std::is_copy_assignable_v<sf::Glsl::Mat3>);
+            STATIC_CHECK(std::is_trivially_copy_constructible_v<sf::Glsl::Mat3>);
+            STATIC_CHECK(std::is_trivially_copy_assignable_v<sf::Glsl::Mat3>);
             STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Glsl::Mat3>);
             STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Glsl::Mat3>);
         }
@@ -291,8 +291,8 @@ TEST_CASE("[Graphics] sf::Glsl")
     {
         SECTION("Type traits")
         {
-            STATIC_CHECK(std::is_copy_constructible_v<sf::Glsl::Mat4>);
-            STATIC_CHECK(std::is_copy_assignable_v<sf::Glsl::Mat4>);
+            STATIC_CHECK(std::is_trivially_copy_constructible_v<sf::Glsl::Mat4>);
+            STATIC_CHECK(std::is_trivially_copy_assignable_v<sf::Glsl::Mat4>);
             STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Glsl::Mat4>);
             STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Glsl::Mat4>);
         }

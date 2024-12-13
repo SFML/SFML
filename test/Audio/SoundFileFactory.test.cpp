@@ -63,8 +63,8 @@ TEST_CASE("[Audio] sf::SoundFileFactory")
 {
     SECTION("Type traits")
     {
-        STATIC_CHECK(std::is_copy_constructible_v<sf::SoundFileFactory>);
-        STATIC_CHECK(std::is_copy_assignable_v<sf::SoundFileFactory>);
+        STATIC_CHECK(std::is_trivially_copy_constructible_v<sf::SoundFileFactory>);
+        STATIC_CHECK(std::is_trivially_copy_assignable_v<sf::SoundFileFactory>);
         STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::SoundFileFactory>);
         STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::SoundFileFactory>);
     }
