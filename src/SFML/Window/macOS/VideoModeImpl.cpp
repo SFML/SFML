@@ -40,18 +40,17 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 {
-    std::vector<VideoMode> modes;
-
     // Retrieve all modes available for main screen only.
     CFArrayRef cgmodes = CGDisplayCopyAllDisplayModes(CGMainDisplayID(), nullptr);
 
     if (cgmodes == nullptr)
     {
         sf::err() << "Couldn't get VideoMode for main display." << std::endl;
-        return modes;
+        return {};
     }
 
-    const VideoMode desktop = getDesktopMode();
+    const VideoMode        desktop = getDesktopMode();
+    std::vector<VideoMode> modes   = {desktop};
 
     // Loop on each mode and convert it into a sf::VideoMode object.
     const CFIndex modesCount = CFArrayGetCount(cgmodes);
