@@ -407,6 +407,12 @@ private:
 /// used by a `sf::Sound` (i.e. never write a function that
 /// uses a local `sf::SoundBuffer` instance for loading a sound).
 ///
+/// When loading sound samples from an array, a channel map needs to be
+/// provided, which specifies the mapping of the position in the sample frame
+/// to the sound channel. For example when you have six samples in a frame and
+/// a 5.1 sound system, the channel map defines how each of those samples map
+/// to which speaker channel.
+///
 /// Usage example:
 /// \code
 /// // Load a new sound buffer from a file
@@ -424,6 +430,21 @@ private:
 /// // Play it with a higher pitch -- the first sound remains unchanged
 /// sound2.setPitch(2);
 /// sound2.play();
+///
+/// // Load samples with a channel map
+/// auto samples = std::vector<std::int16_t>();
+/// // ...
+/// auto channelMap = std::vector<sf::SoundChannel>{
+///     sf::SoundChannel::FrontLeft,
+///     sf::SoundChannel::FrontCenter,
+///     sf::SoundChannel::FrontRight,
+///     sf::SoundChannel::BackRight,
+///     sf::SoundChannel::BackCenter,
+///     sf::SoundChannel::BackLeft,
+///     sf::SoundChannel::LowFrequencyEffects
+/// };
+/// auto soundBuffer = sf::SoundBuffer(samples.data(), samples.size(), 6, 44100, channelMap);
+/// auto sound = sf::Sound(soundBuffer);
 /// \endcode
 ///
 /// \see `sf::Sound`, `sf::SoundBufferRecorder`
