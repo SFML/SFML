@@ -417,6 +417,38 @@ The standard library provides multiple options for threads, locks, and mutexes a
 | `sf::ThreadLocal`    | `thread_local`                                   |
 | `sf::ThreadLocalPtr` | `thread_local`                                   |
 
+## Sound Samples and Channel Map
+
+SFML 3 introduces the concept of a Channel Map which defines the mapping of the position in sample frame to the sound channel.
+For example, if you have a sound frame with six different samples for a 5.1 sound system, the Channel Map defines how each of those samples map to which speaker channel.
+
+SFML 2 always assumed the order as specified by OpenAL.
+
+```cpp
+auto samples = std::vector<std::int16_t>();
+// ...
+
+auto channelMap = std::vector<sf::SoundChannel>{
+    sf::SoundChannel::FrontLeft,
+    sf::SoundChannel::FrontCenter,
+    sf::SoundChannel::FrontRight,
+    sf::SoundChannel::BackRight,
+    sf::SoundChannel::BackCenter,
+    sf::SoundChannel::BackLeft,
+    sf::SoundChannel::LowFrequencyEffects
+};
+auto soundBuffer = sf::SoundBuffer(samples.data(), samples.size(), 6, 44100, channelMap);
+auto sound = sf::Sound(soundBuffer);
+```
+
+This a breaking change for the following APIs:
+
+- `bool sf::SoundBuffer::loadFromSamples(...)`
+- `bool sf::SoundBuffer::update(...)`
+- `void sf::SoundStream::initialize(...)`
+- `bool sf::OutputSoundFile::openFromFile(...)`
+- `bool sf::SoundFileWriter::open(...)`
+
 ## Deprecated APIs
 
 SFML 3 removes all of the deprecated APIs in SFML 2.
