@@ -433,11 +433,10 @@ auto channelMap = std::vector<sf::SoundChannel>{
     sf::SoundChannel::FrontCenter,
     sf::SoundChannel::FrontRight,
     sf::SoundChannel::BackRight,
-    sf::SoundChannel::BackCenter,
     sf::SoundChannel::BackLeft,
     sf::SoundChannel::LowFrequencyEffects
 };
-auto soundBuffer = sf::SoundBuffer(samples.data(), samples.size(), 6, 44100, channelMap);
+auto soundBuffer = sf::SoundBuffer(samples.data(), samples.size(), channelMap.size(), 44100, channelMap);
 auto sound = sf::Sound(soundBuffer);
 ```
 
