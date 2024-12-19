@@ -439,6 +439,9 @@ public:
     ///
     /// The mouse cursor is visible by default.
     ///
+    /// \warning On Windows, this function needs to be called from the
+    ///          thread that created the window.
+    ///
     /// \param visible `true` to show the mouse cursor, `false` to hide it
     ///
     ////////////////////////////////////////////////////////////
