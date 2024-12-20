@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased SFML 3.0.0
+## SFML 3.0.0
 
 For a closer look at breaking changes and how to migrate from SFML 2, check out the [migration guide](migration.md).
 
