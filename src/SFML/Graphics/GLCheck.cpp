@@ -36,11 +36,11 @@
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-bool glCheckError(const std::filesystem::path& file, unsigned int line, std::string_view expression)
+bool glCheckError(std::string_view file, unsigned int line, std::string_view expression)
 {
     const auto logError = [&](const char* error, const char* description)
     {
-        err() << "An internal OpenGL call failed in " << file.filename() << "(" << line << ")."
+        err() << "An internal OpenGL call failed in " << std::filesystem::path(file).filename() << "(" << line << ")."
               << "\nExpression:\n   " << expression << "\nError description:\n   " << error << "\n   " << description << '\n'
               << std::endl;
 
