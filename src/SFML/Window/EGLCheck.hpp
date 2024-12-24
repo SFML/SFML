@@ -50,7 +50,7 @@ namespace sf::priv
 /// \return `false` if an error occurred, `true` otherwise
 ///
 ////////////////////////////////////////////////////////////
-bool eglCheckError(const std::filesystem::path& file, unsigned int line, std::string_view expression);
+bool eglCheckError(std::string_view file, unsigned int line, std::string_view expression);
 
 ////////////////////////////////////////////////////////////
 /// Macro to quickly check every EGL API call
