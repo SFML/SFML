@@ -33,6 +33,7 @@
 
 #include <SFML/System/Err.hpp>
 
+#include <ostream>
 #include <string_view>
 #include <type_traits>
 
