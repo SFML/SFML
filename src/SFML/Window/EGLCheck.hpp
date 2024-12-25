@@ -33,7 +33,6 @@
 
 #include <glad/egl.h>
 
-#include <filesystem>
 #include <string_view>
 #include <type_traits>
 
