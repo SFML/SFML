@@ -325,6 +325,17 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     template <typename TEventSubtype>
+    [[nodiscard]] TEventSubtype* getIf();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Attempt to get specified event subtype
+    ///
+    /// \tparam `TEventSubtype` Type of the desired event subtype
+    ///
+    /// \return Address of current event subtype, otherwise `nullptr`
+    ///
+    ////////////////////////////////////////////////////////////
+    template <typename TEventSubtype>
     [[nodiscard]] const TEventSubtype* getIf() const;
 
     ////////////////////////////////////////////////////////////
