@@ -194,7 +194,7 @@ public:
     [[nodiscard]] const FloatRect& getScissor() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Move the view relatively to its current position
+    /// \brief Move the view relative to its current position
     ///
     /// \param offset Move offset
     ///
@@ -204,7 +204,7 @@ public:
     void move(Vector2f offset);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Rotate the view relatively to its current orientation
+    /// \brief Rotate the view relative to its current orientation
     ///
     /// \param angle Angle to rotate
     ///
@@ -214,7 +214,7 @@ public:
     void rotate(Angle angle);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Resize the view rectangle relatively to its current size
+    /// \brief Resize the view rectangle relative to its current size
     ///
     /// Resizing the view simulates a zoom, as the zone displayed on
     /// screen grows or shrinks.
