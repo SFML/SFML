@@ -34,8 +34,6 @@
 
 namespace sf
 {
-using ContextDestroyCallback = void (*)(void*);
-
 ////////////////////////////////////////////////////////////
 /// \brief Base class for classes that require an OpenGL context
 ///
