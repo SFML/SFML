@@ -34,8 +34,8 @@ namespace sf
 {
 namespace priv
 {
-constexpr float pi  = 3.141592654f;
-constexpr float tau = pi * 2.f;
+inline constexpr float pi  = 3.141592654f;
+inline constexpr float tau = pi * 2.f;
 
 constexpr float positiveRemainder(float a, float b)
 {
