@@ -389,6 +389,19 @@ private:
 
     template <typename T>
     static constexpr bool isEventSubtype = isInParameterPack<T>(decltype (&m_data)(nullptr));
+
+    template <typename Handler, typename... Ts>
+    static constexpr bool isInvokableWithAnyOf(std::variant<Ts...>*)
+    {
+        return (std::is_invocable_v<Handler, const Ts&> || ...);
+    }
+
+public:
+    template <typename Handler>
+    static constexpr bool isValidHandler()
+    {
+        return isInvokableWithAnyOf<Handler>(static_cast<decltype(m_data)*>(nullptr));
+    }
 };
 
 } // namespace sf
