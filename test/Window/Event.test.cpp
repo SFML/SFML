@@ -24,6 +24,11 @@ struct
         return "Resized";
     }
 
+    std::string_view operator()(const sf::Event::WindowMoved&) const
+    {
+        return "WindowMoved";
+    }
+
     std::string_view operator()(sf::Event::KeyPressed) const
     {
         return "KeyPressed";
@@ -50,13 +55,21 @@ TEST_CASE("[Window] sf::Event")
 
     SECTION("Construction")
     {
-        SECTION("Template constructor")
+        SECTION("Template constructor resize")
         {
             const sf::Event event = sf::Event::Resized{{1, 2}};
             CHECK(event.is<sf::Event::Resized>());
             CHECK(event.getIf<sf::Event::Resized>());
             const auto& resized = *event.getIf<sf::Event::Resized>();
             CHECK(resized.size == sf::Vector2u(1, 2));
+        }
+        SECTION("Template constructor window move")
+        {
+            const sf::Event event = sf::Event::WindowMoved{{1, 2}};
+            CHECK(event.is<sf::Event::WindowMoved>());
+            CHECK(event.getIf<sf::Event::WindowMoved>());
+            const auto& windowMoved = *event.getIf<sf::Event::WindowMoved>();
+            CHECK(windowMoved.position == sf::Vector2i(1, 2));
         }
     }
 
@@ -71,6 +84,12 @@ TEST_CASE("[Window] sf::Event")
         CHECK(event.getIf<sf::Event::Resized>());
         const auto& resized = *event.getIf<sf::Event::Resized>();
         CHECK(resized.size == sf::Vector2u(1, 2));
+
+        event = sf::Event::WindowMoved{{3, 4}};
+        CHECK(event.is<sf::Event::WindowMoved>());
+        CHECK(event.getIf<sf::Event::WindowMoved>());
+        const auto& windowMoved = *event.getIf<sf::Event::WindowMoved>();
+        CHECK(windowMoved.position == sf::Vector2i(3, 4));
 
         event = sf::Event::FocusLost{};
         CHECK(event.is<sf::Event::FocusLost>());
@@ -226,6 +245,9 @@ TEST_CASE("[Window] sf::Event")
         const sf::Event::Resized resized;
         CHECK(resized.size == sf::Vector2u());
 
+        const sf::Event::WindowMoved windowMoved;
+        CHECK(windowMoved.position == sf::Vector2i());
+
         const sf::Event::TextEntered textEntered;
         CHECK(textEntered.unicode == 0);
 
@@ -307,6 +329,12 @@ TEST_CASE("[Window] sf::Event")
         REQUIRE(mouseMoved);
         mouseMoved->position = sf::Vector2i(6, 9);
         CHECK(mouseMoved->position == sf::Vector2i(6, 9));
+
+        event               = sf::Event::WindowMoved{{1, 2}};
+        auto* windowMoved   = event.getIf<sf::Event::WindowMoved>();
+        REQUIRE(windowMoved);
+        windowMoved->position = sf::Vector2i(3, 4);
+        CHECK(windowMoved->position == sf::Vector2i(3, 4));
     }
 
     SECTION("visit()")
