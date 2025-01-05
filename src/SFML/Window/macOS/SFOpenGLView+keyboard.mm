@@ -31,8 +31,6 @@
 #import <SFML/Window/macOS/SFOpenGLView+keyboard_priv.h>
 #include <SFML/Window/macOS/WindowImplCocoa.hpp>
 
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-
 ////////////////////////////////////////////////////////////
 /// In this file, we implement keyboard handling for SFOpenGLView
 ///

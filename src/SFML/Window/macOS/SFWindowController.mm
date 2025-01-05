@@ -177,7 +177,7 @@
     NSRect              windowRect = NSMakeRect(0, 0, desktop.size.x, desktop.size.y);
     m_window                       = [[SFWindow alloc]
         initWithContentRect:windowRect
-                  styleMask:NSBorderlessWindowMask
+                  styleMask:NSWindowStyleMaskBorderless
                     backing:NSBackingStoreBuffered
                       defer:NO];
 
@@ -243,13 +243,13 @@
     NSRect rect = NSMakeRect(0, 0, mode.size.x, mode.size.y);
 
     // Convert the SFML window style to Cocoa window style.
-    unsigned int nsStyle = NSBorderlessWindowMask;
+    unsigned int nsStyle = NSWindowStyleMaskBorderless;
     if (style & sf::Style::Titlebar)
-        nsStyle |= NSTitledWindowMask | NSMiniaturizableWindowMask;
+        nsStyle |= NSWindowStyleMaskTitled | NSWindowStyleMaskMiniaturizable;
     if (style & sf::Style::Resize)
-        nsStyle |= NSResizableWindowMask;
+        nsStyle |= NSWindowStyleMaskResizable;
     if (style & sf::Style::Close)
-        nsStyle |= NSClosableWindowMask;
+        nsStyle |= NSWindowStyleMaskClosable;
 
     // Create the window.
     m_window = [[SFWindow alloc]
@@ -352,17 +352,17 @@
 - (void)setCursorGrabbed:(BOOL)grabbed
 {
     // Remove or restore resizeable style if needed
-    BOOL resizeable = (([m_window styleMask] & NSResizableWindowMask) != 0) ? YES : NO;
+    BOOL resizeable = (([m_window styleMask] & NSWindowStyleMaskResizable) != 0) ? YES : NO;
     if (grabbed && resizeable)
     {
         m_restoreResize     = YES;
-        NSUInteger newStyle = [m_window styleMask] & ~NSResizableWindowMask;
+        NSUInteger newStyle = [m_window styleMask] & ~NSWindowStyleMaskResizable;
         [m_window setStyleMask:newStyle];
     }
     else if (!grabbed && m_restoreResize)
     {
         m_restoreResize     = NO;
-        NSUInteger newStyle = [m_window styleMask] | NSResizableWindowMask;
+        NSUInteger newStyle = [m_window styleMask] | NSWindowStyleMaskResizable;
         [m_window setStyleMask:newStyle];
     }
 

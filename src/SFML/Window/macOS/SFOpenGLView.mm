@@ -33,8 +33,6 @@
 
 #include <SFML/System/Err.hpp>
 
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-
 
 ////////////////////////////////////////////////////////////
 /// SFOpenGLView class: Privates Methods Declaration

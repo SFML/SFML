@@ -350,8 +350,8 @@
             // is dissociated from its position.
 
             // Ignore any non-move related event
-            if (([eventOrNil type] == NSMouseMoved) || ([eventOrNil type] == NSLeftMouseDragged) ||
-                ([eventOrNil type] == NSRightMouseDragged) || ([eventOrNil type] == NSOtherMouseDragged))
+            if (([eventOrNil type] == NSEventTypeMouseMoved) || ([eventOrNil type] == NSEventTypeLeftMouseDragged) ||
+                ([eventOrNil type] == NSEventTypeRightMouseDragged) || ([eventOrNil type] == NSEventTypeOtherMouseDragged))
             {
                 // Without this factor, the cursor flies around waaay too fast!
                 // But I don't know if it because of retina display or because

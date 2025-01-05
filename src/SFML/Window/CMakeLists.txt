@@ -335,6 +335,10 @@ elseif(SFML_OS_ANDROID)
     target_link_libraries(sfml-window PRIVATE android)
 endif()
 
+if(SFML_OS_MACOS OR SFML_OS_IOS)
+    target_compile_definitions(sfml-window PRIVATE GL_SILENCE_DEPRECATION)
+endif()
+
 # on some platforms (e.g. Raspberry Pi 3 armhf), GCC requires linking libatomic to use <atomic> features
 # that aren't supported by native CPU instructions (64-bit atomic operations on 32-bit architecture)
 if(SFML_COMPILER_GCC)

@@ -32,9 +32,6 @@
 #include <SFML/Window/WindowEnums.hpp>
 #include <SFML/Window/WindowImpl.hpp>
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-
 ////////////////////////////////////////////////////////////
 /// Predefine OBJ-C classes
 ////////////////////////////////////////////////////////////
@@ -387,5 +384,3 @@ private:
 } // namespace priv
 
 } // namespace sf
-
-#pragma GCC diagnostic pop

@@ -34,8 +34,6 @@
 #define GREEN @"Green"
 #define RED   @"Red"
 
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-
 // Our PIMPL
 struct SFMLmainWindow
 {
@@ -195,7 +193,7 @@ struct SFMLmainWindow
 - (IBAction)visibleChanged:(NSButton*)sender
 {
     if (self.initialized)
-        self.visible = [sender state] == NSOnState;
+        self.visible = [sender state] == NSControlStateValueOn;
 }
 
 - (IBAction)textChanged:(NSTextField*)sender

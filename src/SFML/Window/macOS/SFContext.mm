@@ -77,7 +77,7 @@ SFContext::SFContext(SFContext* shared, const ContextSettings& settings, Vector2
     // Create a dummy window/view pair (hidden) and assign it our context.
     m_window = [[NSWindow alloc]
         initWithContentRect:NSMakeRect(0, 0, size.x, size.y)
-                  styleMask:NSBorderlessWindowMask
+                  styleMask:NSWindowStyleMaskBorderless
                     backing:NSBackingStoreBuffered
                       defer:NO]; // Don't defer it!
     m_view   = [[NSOpenGLView alloc] initWithFrame:NSMakeRect(0, 0, size.x, size.y)];
@@ -148,7 +148,7 @@ void SFContext::setVerticalSyncEnabled(bool enabled)
     const AutoreleasePool pool;
     const GLint           swapInterval = enabled;
 
-    [m_context setValues:&swapInterval forParameter:NSOpenGLCPSwapInterval];
+    [m_context setValues:&swapInterval forParameter:NSOpenGLContextParameterSwapInterval];
 }
 
 

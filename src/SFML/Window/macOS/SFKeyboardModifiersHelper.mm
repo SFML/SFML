@@ -29,8 +29,6 @@
 #import <SFML/Window/macOS/SFKeyboardModifiersHelper.h>
 #include <SFML/Window/macOS/WindowImplCocoa.hpp>
 
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-
 
 ////////////////////////////////////////////////////////////
 /// Here are define the mask value for the 'modifiers'
@@ -163,10 +161,10 @@ sf::Event::KeyPressed keyPressedEventWithModifiers(NSUInteger modifiers, sf::Key
     sf::Event::KeyPressed event;
     event.code     = key;
     event.scancode = code;
-    event.alt      = modifiers & NSAlternateKeyMask;
-    event.control  = modifiers & NSControlKeyMask;
-    event.shift    = modifiers & NSShiftKeyMask;
-    event.system   = modifiers & NSCommandKeyMask;
+    event.alt      = modifiers & NSEventModifierFlagOption;
+    event.control  = modifiers & NSEventModifierFlagControl;
+    event.shift    = modifiers & NSEventModifierFlagShift;
+    event.system   = modifiers & NSEventModifierFlagCommand;
     return event;
 }
 
@@ -177,10 +175,10 @@ sf::Event::KeyReleased keyReleasedEventWithModifiers(NSUInteger modifiers, sf::K
     sf::Event::KeyReleased event;
     event.code     = key;
     event.scancode = code;
-    event.alt      = modifiers & NSAlternateKeyMask;
-    event.control  = modifiers & NSControlKeyMask;
-    event.shift    = modifiers & NSShiftKeyMask;
-    event.system   = modifiers & NSCommandKeyMask;
+    event.alt      = modifiers & NSEventModifierFlagOption;
+    event.control  = modifiers & NSEventModifierFlagControl;
+    event.shift    = modifiers & NSEventModifierFlagShift;
+    event.system   = modifiers & NSEventModifierFlagCommand;
     return event;
 }
 

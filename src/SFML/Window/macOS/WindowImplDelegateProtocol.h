@@ -36,9 +36,6 @@
 
 #include <cstdint>
 
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-
 namespace sf::priv
 {
 class WindowImplCocoa;
@@ -252,5 +249,3 @@ class WindowImplCocoa;
 - (void)applyContext:(NSOpenGLContext*)context;
 
 @end
-
-#pragma GCC diagnostic pop

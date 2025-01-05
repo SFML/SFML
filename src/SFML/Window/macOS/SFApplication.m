@@ -28,8 +28,6 @@
 ////////////////////////////////////////////////////////////
 #import <SFML/Window/macOS/SFApplication.h>
 
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-
 
 ////////////////////////////////////////////////////////////
 @implementation SFApplication
@@ -41,7 +39,7 @@
     [SFApplication sharedApplication]; // Make sure NSApp exists
     NSEvent* event = nil;
 
-    while ((event = [NSApp nextEventMatchingMask:NSAnyEventMask
+    while ((event = [NSApp nextEventMatchingMask:NSEventMaskAny
                                        untilDate:[NSDate distantPast]
                                           inMode:NSDefaultRunLoopMode
                                          dequeue:YES])) // Remove the event from the queue
@@ -142,7 +140,7 @@
         addItemWithTitle:@"Hide Others"
                   action:@selector(hideOtherApplications:)
            keyEquivalent:@"h"];
-    [hideOtherItem setKeyEquivalentModifierMask:(NSAlternateKeyMask | NSCommandKeyMask)];
+    [hideOtherItem setKeyEquivalentModifierMask:(NSEventModifierFlagOption | NSEventModifierFlagCommand)];
 
     // SHOW ALL
     [appleMenu addItemWithTitle:@"Show All" action:@selector(unhideAllApplications:) keyEquivalent:@""];
@@ -253,7 +251,7 @@
     // custom OpenGL view. See -[SFOpenGLView sfKeyUp:] for more details.
 
     id firstResponder = [[anEvent window] firstResponder];
-    if (([anEvent type] != NSKeyUp) || (![firstResponder tryToPerform:@selector(sfKeyUp:) with:anEvent]))
+    if (([anEvent type] != NSEventTypeKeyUp) || (![firstResponder tryToPerform:@selector(sfKeyUp:) with:anEvent]))
     {
         // It's either not a key up event or no responder has a sfKeyUp
         // message implemented.
