@@ -6,8 +6,7 @@ set(SRC Island.cpp)
 # define the island target
 sfml_add_example(island GUI_APP
                  SOURCES ${SRC}
-                 DEPENDS SFML::Graphics
-                 RESOURCES_DIR resources)
+                 DEPENDS SFML::Graphics)
 
 # external dependency headers
 target_include_directories(island SYSTEM PRIVATE ${PROJECT_SOURCE_DIR}/examples/island)

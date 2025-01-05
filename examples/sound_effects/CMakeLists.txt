@@ -12,5 +12,4 @@ endif()
 sfml_add_example(sound-effects GUI_APP
                  SOURCES ${SRC}
                  BUNDLE_RESOURCES ${RESOURCES}
-                 DEPENDS SFML::Audio SFML::Graphics
-                 RESOURCES_DIR resources)
+                 DEPENDS SFML::Audio SFML::Graphics)
