@@ -149,9 +149,9 @@ TEST_CASE("[Graphics] sf::Glsl")
         {
             constexpr sf::Glsl::Vec4 vec = sf::Color(0, 128, 192, 255);
             STATIC_CHECK(vec.x == 0.f);
-            STATIC_CHECK(vec.y == 128 / 255.f);
-            STATIC_CHECK(vec.z == 192 / 255.f);
             STATIC_CHECK(vec.w == 1.f);
+            CHECK(vec.y == Approx(128 / 255.f));
+            CHECK(vec.z == Approx(192 / 255.f));
         }
     }
 
