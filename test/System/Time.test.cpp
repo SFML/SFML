@@ -50,7 +50,7 @@ TEST_CASE("[System] sf::Time")
         SECTION("Construct from milliseconds")
         {
             constexpr sf::Time time = sf::milliseconds(42);
-            STATIC_CHECK(time.asSeconds() == 0.042f);
+            CHECK(time.asSeconds() == Approx(0.042f));
             STATIC_CHECK(time.asMilliseconds() == 42);
             STATIC_CHECK(time.asMicroseconds() == 42'000);
         }
@@ -58,7 +58,7 @@ TEST_CASE("[System] sf::Time")
         SECTION("Construct from microseconds")
         {
             constexpr sf::Time time = sf::microseconds(987654);
-            STATIC_CHECK(time.asSeconds() == 0.987654f);
+            CHECK(time.asSeconds() == Approx(0.987654f));
             STATIC_CHECK(time.asMilliseconds() == 987);
             STATIC_CHECK(time.asMicroseconds() == 987'654);
         }
@@ -79,13 +79,13 @@ TEST_CASE("[System] sf::Time")
             }
             {
                 constexpr sf::Time time = 10ms;
-                STATIC_CHECK(time.asSeconds() == 0.01f);
+                CHECK(time.asSeconds() == Approx(0.01f));
                 STATIC_CHECK(time.asMilliseconds() == 10);
                 STATIC_CHECK(time.asMicroseconds() == 10'000);
             }
             {
                 constexpr sf::Time time = 2048us;
-                STATIC_CHECK(time.asSeconds() == 0.002048f);
+                CHECK(time.asSeconds() == Approx(0.002048f));
                 STATIC_CHECK(time.asMilliseconds() == 2);
                 STATIC_CHECK(time.asMicroseconds() == 2048);
             }
