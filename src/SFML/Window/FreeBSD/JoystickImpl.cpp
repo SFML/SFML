@@ -304,8 +304,8 @@ JoystickState JoystickImpl::JoystickImpl::update()
         if (!data)
             continue;
 
-        int        buttonIndex = 0;
-        hid_item_t item;
+        std::size_t buttonIndex = 0;
+        hid_item_t  item;
 
         while (hid_get_item(data, &item))
         {
