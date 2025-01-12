@@ -274,6 +274,7 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y cmake ninja-build pkg-config libxrandr-dev libxcursor-dev libxi-dev
         sudo apt-get install -y libgl1-mesa-dev
+        sudo apt-get install libudev-dev
 
     # Here we will Configure CMake with pkg-config enabled
     - name: Configure CMake
