@@ -258,6 +258,46 @@ jobs:
       run: |
         cmake -S test/install -B test/install/build -DCMAKE_PREFIX_PATH=$GITHUB_WORKSPACE/build/install -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} ${{matrix.platform.flags}} ${{matrix.config.flags}} ${{matrix.type.flags}}
         cmake --build test/install/build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }}
+  
+  test-config:
+    name: Test SFML_INSTALL_PKGCONFIG_FILES
+    runs-on: ubuntu-22.04
+
+    steps:
+    # Here we are retrieving the source code
+    - name: Retrieve Code
+      uses: actions/checkout@v4
+
+    # Here we will install the dependencies
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake ninja-build pkg-config 
+
+    # Here we will Configure CMake with pkg-config enabled
+    - name: Configure CMake
+      run: |
+        cmake -S . -B build \
+              -DSFML_INSTALL_PKGCONFIG_FILES=ON \
+              -DCMAKE_INSTALL_PREFIX=/usr/local \
+              -GNinja
+
+    # Here we build SFML
+    - name: Build SFML
+      run: |
+        cmake --build build
+
+    # Install SFML
+    - name: Install SFML
+      run: sudo cmake --install build
+
+    # Verify if pkg-config files are installed
+    - name: Verify pkg-config files
+      run: |
+        echo "Checking sfml-system.pc files" 
+        pkg-config --modversion sfml-system
+        pkg-config --cflags sfml-system
+        pkg-config --libs sfml-system  
 
   coverage:
     name: Finalize Coverage Upload
