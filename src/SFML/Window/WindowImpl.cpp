@@ -30,6 +30,7 @@
 #include <SFML/Window/JoystickManager.hpp>
 #include <SFML/Window/SensorManager.hpp>
 #include <SFML/Window/WindowImpl.hpp>
+#include <SFML/Window/WindowBase.hpp>
 
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Sleep.hpp>
@@ -118,7 +119,8 @@ std::unique_ptr<WindowImpl> WindowImpl::create(
     const String&          title,
     std::uint32_t          style,
     State                  state,
-    const ContextSettings& settings)
+    const ContextSettings& settings,
+    EventSink*             sink)
 {
     // Fullscreen style requires some tests
     if (state == State::Fullscreen)
@@ -151,7 +153,7 @@ std::unique_ptr<WindowImpl> WindowImpl::create(
         style |= Style::Titlebar;
 #endif
 
-    auto windowImpl = std::make_unique<WindowImplType>(mode, title, style, state, settings);
+    auto windowImpl = std::make_unique<WindowImplType>(mode, title, style, state, settings, sink);
     if (state == State::Fullscreen)
         WindowImplImpl::fullscreenWindow = windowImpl.get();
     return windowImpl;
@@ -159,14 +161,14 @@ std::unique_ptr<WindowImpl> WindowImpl::create(
 
 
 ////////////////////////////////////////////////////////////
-std::unique_ptr<WindowImpl> WindowImpl::create(WindowHandle handle)
+std::unique_ptr<WindowImpl> WindowImpl::create(WindowHandle handle, EventSink* sink)
 {
-    return std::make_unique<WindowImplType>(handle);
+    return std::make_unique<WindowImplType>(handle, sink);
 }
 
 
 ////////////////////////////////////////////////////////////
-WindowImpl::WindowImpl() : m_joystickStatesImpl(std::make_unique<JoystickStatesImpl>())
+WindowImpl::WindowImpl(EventSink* sink) : m_joystickStatesImpl(std::make_unique<JoystickStatesImpl>()), m_sink(sink)
 {
     // Get the initial joystick states
     JoystickManager::getInstance().update();
@@ -225,61 +227,63 @@ void WindowImpl::setMaximumSize(const std::optional<Vector2u>& maximumSize)
 }
 
 
-////////////////////////////////////////////////////////////
-std::optional<Event> WindowImpl::waitEvent(Time timeout)
-{
-    const auto timedOut = [timeout, startTime = std::chrono::steady_clock::now()]
-    {
-        const bool infiniteTimeout = timeout == Time::Zero;
-        return !infiniteTimeout && (std::chrono::steady_clock::now() - startTime) >= timeout.toDuration();
-    };
-
-    // If the event queue is empty, let's first check if new events are available from the OS
-    if (m_events.empty())
-        populateEventQueue();
-
-    // Here we use a manual wait loop instead of the optimized wait-event provided by the OS,
-    // so that we don't skip joystick events (which require polling)
-    while (m_events.empty() && !timedOut())
-    {
-        sleep(milliseconds(10));
-        populateEventQueue();
-    }
-
-    return popEvent();
-}
-
-
-////////////////////////////////////////////////////////////
-std::optional<Event> WindowImpl::pollEvent()
-{
-    // If the event queue is empty, let's first check if new events are available from the OS
-    if (m_events.empty())
-        populateEventQueue();
-
-    return popEvent();
-}
+//////////////////////////////////////////////////////////////
+//std::optional<Event> WindowImpl::waitEvent(Time timeout)
+//{
+//    const auto timedOut = [timeout, startTime = std::chrono::steady_clock::now()]
+//    {
+//        const bool infiniteTimeout = timeout == Time::Zero;
+//        return !infiniteTimeout && (std::chrono::steady_clock::now() - startTime) >= timeout.toDuration();
+//    };
+//
+//    // If the event queue is empty, let's first check if new events are available from the OS
+//    if (m_events.empty())
+//        populateEventQueue();
+//
+//    // Here we use a manual wait loop instead of the optimized wait-event provided by the OS,
+//    // so that we don't skip joystick events (which require polling)
+//    while (m_events.empty() && !timedOut())
+//    {
+//        sleep(milliseconds(10));
+//        populateEventQueue();
+//    }
+//
+//    return popEvent();
+//}
 
 
-////////////////////////////////////////////////////////////
-std::optional<Event> WindowImpl::popEvent()
-{
-    std::optional<Event> event; // Use a single local variable for NRVO
+//////////////////////////////////////////////////////////////
+//std::optional<Event> WindowImpl::pollEvent()
+//{
+//    // If the event queue is empty, let's first check if new events are available from the OS
+//    if (m_events.empty())
+//        populateEventQueue();
+//
+//    return popEvent();
+//}
 
-    if (!m_events.empty())
-    {
-        event.emplace(m_events.front());
-        m_events.pop();
-    }
 
-    return event;
-}
+//////////////////////////////////////////////////////////////
+//std::optional<Event> WindowImpl::popEvent()
+//{
+//    std::optional<Event> event; // Use a single local variable for NRVO
+//
+//    if (!m_events.empty())
+//    {
+//        event.emplace(m_events.front());
+//        m_events.pop();
+//    }
+//
+//    return event;
+//}
 
 
 ////////////////////////////////////////////////////////////
 void WindowImpl::pushEvent(const Event& event)
 {
-    m_events.push(event);
+    m_sink->pushEvent(event);
+    //__debugbreak();
+    //m_events.push(event);
 }
 
 
