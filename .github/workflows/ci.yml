@@ -45,8 +45,8 @@ jobs:
         - { name: macOS x64,                      os: macos-13, flags: -GNinja }
         - { name: macOS x64 Xcode,                os: macos-13, flags: -GXcode }
         - { name: macOS arm64,                    os: macos-14, flags: -GNinja -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF }
-        - { name: iOS,                            os: macos-13, flags: -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=arm64 }
-        - { name: iOS Xcode,                      os: macos-13, flags: -DCMAKE_SYSTEM_NAME=iOS -GXcode -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO }
+        - { name: iOS,                            os: macos-14, flags: -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=arm64 }
+        - { name: iOS Xcode,                      os: macos-14, flags: -DCMAKE_SYSTEM_NAME=iOS -GXcode -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO }
         config:
         - { name: Shared, flags: -DBUILD_SHARED_LIBS=ON }
         - { name: Static, flags: -DBUILD_SHARED_LIBS=OFF }
@@ -69,9 +69,9 @@ jobs:
           config: { name: Static Standard Libraries, flags: -GNinja -DSFML_USE_MESA3D=ON -DCMAKE_CXX_COMPILER=g++ -DSFML_USE_STATIC_STD_LIBS=ON }
         - platform: { name: Windows MinGW, os: windows-2022 }
           config: { name: Static with PCH (GCC), flags: -GNinja -DSFML_USE_MESA3D=ON -DCMAKE_CXX_COMPILER=g++ -DBUILD_SHARED_LIBS=OFF -DSFML_ENABLE_PCH=ON -DSFML_ENABLE_STDLIB_ASSERTIONS=OFF } # disabling stdlib assertions due to false positive
-        - platform: { name: macOS, os: macos-13 }
+        - platform: { name: macOS, os: macos-14 }
           config: { name: Frameworks, flags: -GNinja -DSFML_BUILD_FRAMEWORKS=ON -DBUILD_SHARED_LIBS=ON }
-        - platform: { name: macOS , os: macos-13 }
+        - platform: { name: macOS , os: macos-14 }
           config: { name: System Deps, flags: -GNinja -DBUILD_SHARED_LIBS=ON -DSFML_USE_SYSTEM_DEPS=ON }
         - platform: { name: Android, os: ubuntu-22.04 }
           config:
@@ -300,8 +300,8 @@ jobs:
         - { name: Linux,           os: ubuntu-24.04 }
         - { name: Linux DRM,       os: ubuntu-24.04, flags: -DSFML_USE_DRM=ON }
         - { name: Linux OpenGL ES, os: ubuntu-24.04, flags: -DSFML_OPENGL_ES=ON }
-        - { name: macOS,           os: macos-13 }
-        - { name: iOS,             os: macos-13,     flags: -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=arm64 }
+        - { name: macOS,           os: macos-14 }
+        - { name: iOS,             os: macos-14,     flags: -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=arm64 }
         - { name: Android,         os: ubuntu-24.04, flags: -DCMAKE_ANDROID_ARCH_ABI=x86_64 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=21 -DCMAKE_ANDROID_NDK=$ANDROID_NDK -DCMAKE_ANDROID_STL_TYPE=c++_shared }
 
     steps:
