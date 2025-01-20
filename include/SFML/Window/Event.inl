@@ -82,7 +82,8 @@ const TEventSubtype* Event::getIf() const
 template <typename T>
 decltype(auto) Event::visit(T&& visitor) const
 {
-    return std::visit(std::forward<T>(visitor), m_data);
+    auto data = m_data; // Copy event to allow visitors to take it by non-const reference
+    return std::visit(std::forward<T>(visitor), data);
 }
 
 } // namespace sf

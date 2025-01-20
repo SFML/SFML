@@ -30,6 +30,17 @@ struct
         return "Other";
     }
 } visitor;
+
+template <typename... Ts>
+struct OverloadSet : Ts...
+{
+    using Ts::operator()...;
+#if defined(_MSC_VER) && !defined(__clang__)
+    unsigned char dummy; // Dummy variable to ensure that this struct is not empty thus avoiding a crash due to an MSVC bug
+#endif
+};
+template <typename... Ts>
+OverloadSet(Ts...) -> OverloadSet<Ts...>;
 } // namespace
 
 TEST_CASE("[Window] sf::Event")
@@ -306,10 +317,34 @@ TEST_CASE("[Window] sf::Event")
 
     SECTION("visit()")
     {
-        CHECK(sf::Event(sf::Event::Closed{}).visit(visitor) == "Closed");
-        CHECK(sf::Event(sf::Event::Resized{}).visit(visitor) == "Resized");
-        CHECK(sf::Event(sf::Event::FocusLost{}).visit(visitor) == "Other");
-        CHECK(sf::Event(sf::Event::FocusGained{}).visit(visitor) == "Other");
-        CHECK(sf::Event(sf::Event::KeyPressed{}).visit(visitor) == "KeyPressed");
+        SECTION("Exhaustive visitor")
+        {
+            // Using a non-void return type requires providing callbacks for all types
+            CHECK(sf::Event(sf::Event::Closed{}).visit(visitor) == "Closed");
+            CHECK(sf::Event(sf::Event::Resized{}).visit(visitor) == "Resized");
+            CHECK(sf::Event(sf::Event::FocusLost{}).visit(visitor) == "Other");
+            CHECK(sf::Event(sf::Event::FocusGained{}).visit(visitor) == "Other");
+            CHECK(sf::Event(sf::Event::KeyPressed{}).visit(visitor) == "KeyPressed");
+        }
+
+        SECTION("Non-exhausive visitor")
+        {
+            const auto matchAll = [](auto) {};
+
+            // If you omit certain callbacks then the callbacks cannot have a return value
+            const sf::Event event = sf::Event::Closed{};
+
+            bool closedVisited = false;
+            event.visit(OverloadSet{[&closedVisited](sf::Event::Closed) { closedVisited = true; }, matchAll});
+            CHECK(closedVisited);
+
+            bool resizedVisited = false;
+            event.visit(OverloadSet{[&resizedVisited](sf::Event::Resized) { resizedVisited = true; }, matchAll});
+            CHECK(!resizedVisited);
+
+            bool closedVisitedByRef = false;
+            event.visit(OverloadSet{[&closedVisitedByRef](sf::Event::Closed&) { closedVisitedByRef = true; }, matchAll});
+            CHECK(closedVisitedByRef);
+        }
     }
 }

@@ -213,6 +213,7 @@ TEST_CASE("[Window] sf::WindowBase", runDisplayTests())
 
         // Should compile if user provides only a specific handler
         windowBase.handleEvents([](const sf::Event::Closed&) {});
+        windowBase.handleEvents([](sf::Event::Closed) {});
 
         // Should compile if user provides only a catch-all
         windowBase.handleEvents([](const auto&) {});
