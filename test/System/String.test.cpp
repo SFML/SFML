@@ -29,7 +29,7 @@ auto select(const std::basic_string<T>& string16, const std::basic_string<T>& st
 auto toHex(const char32_t character)
 {
     std::ostringstream stream;
-    stream << "[\\x" << std::uppercase << std::hex << character << ']';
+    stream << "[\\x" << std::uppercase << std::hex << std::uint32_t{character} << ']';
     return stream.str();
 }
 } // namespace
