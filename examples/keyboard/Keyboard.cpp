@@ -734,7 +734,7 @@ sf::String textEventDescription(const sf::Event::TextEntered& textEntered)
     text += "\nU+";
 
     std::ostringstream oss;
-    oss << std::hex << std::setw(4) << std::setfill('0') << textEntered.unicode;
+    oss << std::hex << std::setw(4) << std::setfill('0') << std::uint32_t{textEntered.unicode};
     text += oss.str();
 
     return text;
