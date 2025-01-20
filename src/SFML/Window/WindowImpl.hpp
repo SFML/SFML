@@ -59,6 +59,14 @@ class Time;
 
 namespace priv
 {
+class EventSink;
+//{
+//public:
+//    virtual ~EventSink()                       = default;
+//    virtual void pushEvent(const Event& event) = 0;
+//};
+
+
 ////////////////////////////////////////////////////////////
 /// \brief Abstract base class for OS-specific window implementation
 ///
@@ -82,7 +90,8 @@ public:
                                               const String&          title,
                                               std::uint32_t          style,
                                               State                  state,
-                                              const ContextSettings& settings);
+                                              const ContextSettings& settings,
+                                              EventSink* sink);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new window depending on to the current OS
@@ -92,7 +101,7 @@ public:
     /// \return Pointer to the created window
     ///
     ////////////////////////////////////////////////////////////
-    static std::unique_ptr<WindowImpl> create(WindowHandle handle);
+    static std::unique_ptr<WindowImpl> create(WindowHandle handle, EventSink* sink);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
@@ -132,7 +141,7 @@ public:
     /// \return The event on success, `std::nullopt` otherwise
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] std::optional<Event> waitEvent(Time timeout);
+    //[[nodiscard]] std::optional<Event> waitEvent(Time timeout);
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the next window event, if available
@@ -143,7 +152,7 @@ public:
     /// \return The event if available, `std::nullopt` otherwise
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] std::optional<Event> pollEvent();
+    //[[nodiscard]] std::optional<Event> pollEvent();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the OS-specific handle of the window
@@ -305,12 +314,18 @@ public:
     ////////////////////////////////////////////////////////////
     bool createVulkanSurface(const VkInstance& instance, VkSurfaceKHR& surface, const VkAllocationCallbacks* allocator) const;
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Process incoming events from the operating system
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void processEvents() = 0;
+
 protected:
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
     ////////////////////////////////////////////////////////////
-    WindowImpl();
+    explicit WindowImpl(EventSink* sink);
 
     ////////////////////////////////////////////////////////////
     /// \brief Push a new event into the event queue
@@ -324,12 +339,6 @@ protected:
     ////////////////////////////////////////////////////////////
     void pushEvent(const Event& event);
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Process incoming events from the operating system
-    ///
-    ////////////////////////////////////////////////////////////
-    virtual void processEvents() = 0;
-
 private:
     struct JoystickStatesImpl;
 
@@ -337,7 +346,7 @@ private:
     /// \return First event of the queue if available, `std::nullopt` otherwise
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] std::optional<Event> popEvent();
+    //[[nodiscard]] std::optional<Event> popEvent();
 
     ////////////////////////////////////////////////////////////
     /// \brief Read the joysticks state and generate the appropriate events
@@ -360,7 +369,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::queue<Event>                                m_events;             //!< Queue of available events
+    //std::queue<Event>                                m_events;             //!< Queue of available events
     std::unique_ptr<JoystickStatesImpl>              m_joystickStatesImpl; //!< Previous state of the joysticks (PImpl)
     EnumArray<Sensor::Type, Vector3f, Sensor::Count> m_sensorValue;        //!< Previous value of the sensors
     float m_joystickThreshold{0.1f}; //!< Joystick threshold (minimum motion for "move" event to be generated)
@@ -368,6 +377,7 @@ private:
         m_previousAxes{}; //!< Position of each axis last time a move event triggered, in range [-100, 100]
     std::optional<Vector2u> m_minimumSize; //!< Minimum window size
     std::optional<Vector2u> m_maximumSize; //!< Maximum window size
+    EventSink*              m_sink;        //!< Event sink
 };
 
 } // namespace priv

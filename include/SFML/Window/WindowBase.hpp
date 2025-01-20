@@ -40,6 +40,7 @@
 #include <optional>
 
 #include <cstdint>
+#include <functional>
 
 
 namespace sf
@@ -47,21 +48,33 @@ namespace sf
 class Cursor;
 class String;
 class VideoMode;
+class Event;
 
 namespace priv
 {
 class WindowImpl;
+
+class EventSink
+{
+public:
+    virtual ~EventSink()                       = default;
+    virtual void pushEvent(const Event& event) = 0;
+};
 }
 
-class Event;
 
 ////////////////////////////////////////////////////////////
 /// \brief Window that serves as a base for other windows
 ///
 ////////////////////////////////////////////////////////////
-class SFML_WINDOW_API WindowBase
+class SFML_WINDOW_API WindowBase : priv::EventSink
 {
 public:
+
+    using EventHandler = std::function<void(const sf::Event&)>;
+
+
+
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -223,7 +236,8 @@ public:
     /// \see `waitEvent`, `handleEvents`
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] std::optional<Event> pollEvent();
+    //[[nodiscard]] std::optional<Event> pollEvent();
+    void processEvents();
 
     ////////////////////////////////////////////////////////////
     /// \brief Wait for an event and return it
@@ -249,7 +263,7 @@ public:
     /// \see `pollEvent`, `handleEvents`
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] std::optional<Event> waitEvent(Time timeout = Time::Zero);
+    //[[nodiscard]] std::optional<Event> waitEvent(Time timeout = Time::Zero);
 
     ////////////////////////////////////////////////////////////
     /// \brief Handle all pending events
@@ -328,6 +342,10 @@ public:
     ////////////////////////////////////////////////////////////
     template <typename... Ts>
     void handleEvents(Ts&&... handlers);
+
+
+    void eventLoop(const EventHandler& handler);
+
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of the window
@@ -582,6 +600,10 @@ protected:
     ////////////////////////////////////////////////////////////
     virtual void onResize();
 
+    //virtual void onIdleMessage();
+
+    void pushEvent(const Event& event) override;
+
 private:
     friend class Window;
 
@@ -610,6 +632,7 @@ private:
     ////////////////////////////////////////////////////////////
     std::unique_ptr<priv::WindowImpl> m_impl; //!< Platform-specific implementation of the window
     Vector2u                          m_size; //!< Current size of the window
+    EventHandler                      m_handler;
 };
 
 } // namespace sf

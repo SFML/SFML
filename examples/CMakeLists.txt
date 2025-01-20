@@ -20,6 +20,7 @@ endif()
 
 if(SFML_BUILD_GRAPHICS)
     add_subdirectory(event_handling)
+    add_subdirectory(message_loop)
     add_subdirectory(opengl)
     add_subdirectory(stencil)
 

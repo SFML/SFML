@@ -95,7 +95,8 @@ void WindowBase::create(VideoMode mode, const String& title, std::uint32_t style
                                                       /* majorVersion */ 0,
                                                       /* minorVersion */ 0,
                                                       /* attributeFlags */ 0xFFFFFFFF,
-                                                      /* sRgbCapable */ false});
+                                                      /* sRgbCapable */ false},
+                                      this);
 
     // Perform common initializations
     initialize();
@@ -116,7 +117,7 @@ void WindowBase::create(WindowHandle handle)
     close();
 
     // Recreate the window implementation
-    m_impl = priv::WindowImpl::create(handle);
+    m_impl = priv::WindowImpl::create(handle, this);
 
     // Perform common initializations
     initialize();
@@ -138,38 +139,59 @@ bool WindowBase::isOpen() const
 }
 
 
-////////////////////////////////////////////////////////////
-std::optional<Event> WindowBase::pollEvent()
+//////////////////////////////////////////////////////////////
+//bool WindowBase::processEvents()
+//{
+//    //std::optional<sf::Event> event; // Use a single local variable for NRVO
+//
+//    if (m_impl == nullptr)
+//        return false; // Empty optional
+//
+//    return m_impl->processEvents();
+//
+//    //if (event.has_value())
+//    //    filterEvent(*event);
+//
+//    //return event;
+//}
+
+
+//////////////////////////////////////////////////////////////
+//std::optional<Event> WindowBase::waitEvent(Time timeout)
+//{
+//    std::optional<sf::Event> event; // Use a single local variable for NRVO
+//
+//    if (m_impl == nullptr)
+//        return event; // Empty optional
+//
+//    event = m_impl->waitEvent(timeout);
+//
+//    if (event.has_value())
+//        filterEvent(*event);
+//
+//    return event;
+//}
+
+void WindowBase::eventLoop(const EventHandler& handler)
 {
-    std::optional<sf::Event> event; // Use a single local variable for NRVO
+    m_handler = handler;
+    while (isOpen())
+    {
+        m_impl->processEvents();
+        //while (const std::optional event = pollEvent())
+        //{
+        //    handler(*event);
+        //    if (event->is<sf::Event::Closed>())
+        //    {
+        //        close();
+        //    }
+        //}
 
-    if (m_impl == nullptr)
-        return event; // Empty optional
-
-    event = m_impl->pollEvent();
-
-    if (event.has_value())
-        filterEvent(*event);
-
-    return event;
+        pushEvent(sf::Event::Idle());
+    }
+    m_handler = nullptr;
 }
 
-
-////////////////////////////////////////////////////////////
-std::optional<Event> WindowBase::waitEvent(Time timeout)
-{
-    std::optional<sf::Event> event; // Use a single local variable for NRVO
-
-    if (m_impl == nullptr)
-        return event; // Empty optional
-
-    event = m_impl->waitEvent(timeout);
-
-    if (event.has_value())
-        filterEvent(*event);
-
-    return event;
-}
 
 
 ////////////////////////////////////////////////////////////
@@ -366,6 +388,24 @@ void WindowBase::onResize()
     // Nothing by default
 }
 
+////////////////////////////////////////////////////////////
+//void WindowBase::onIdleMessage()
+//{
+//    if (m_handler)
+//    {
+//        m_handler(sf::Event::Idle{});
+//    }
+//}
+
+void WindowBase::pushEvent(const Event& event)
+{
+    filterEvent(event);
+    if (m_handler)
+    {
+        m_handler(event);
+    }
+}
+
 
 ////////////////////////////////////////////////////////////
 void WindowBase::filterEvent(const Event& event)
@@ -379,6 +419,10 @@ void WindowBase::filterEvent(const Event& event)
         // Notify the derived class
         onResize();
     }
+    //else if (const auto* closed = event.getIf<Event::Closed>())
+    //{
+    //    close();
+    //}
 }
 
 

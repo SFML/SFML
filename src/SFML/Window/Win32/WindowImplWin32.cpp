@@ -66,6 +66,7 @@ const wchar_t*             className        = L"SFML_Window";
 sf::priv::WindowImplWin32* fullscreenWindow = nullptr;
 
 constexpr GUID guidDevinterfaceHid = {0x4d1e55b2, 0xf16f, 0x11cf, {0x88, 0xcb, 0x00, 0x11, 0x11, 0x00, 0x00, 0x30}};
+constexpr UINT_PTR idleTimerId         = 0x4D4A;
 
 void setProcessDpiAware()
 {
@@ -138,7 +139,7 @@ void initRawMouse()
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-WindowImplWin32::WindowImplWin32(WindowHandle handle) : m_handle(handle)
+WindowImplWin32::WindowImplWin32(WindowHandle handle, EventSink* sink) : WindowImpl(sink), m_handle(handle)
 {
     // Set that this process is DPI aware and can handle DPI scaling
     setProcessDpiAware();
@@ -167,7 +168,9 @@ WindowImplWin32::WindowImplWin32(VideoMode     mode,
                                  const String& title,
                                  std::uint32_t style,
                                  State         state,
-                                 const ContextSettings& /*settings*/) :
+                                 const ContextSettings& /*settings*/,
+                                 EventSink* sink) :
+WindowImpl(sink),
 m_lastSize(mode.size),
 m_fullscreen(state == State::Fullscreen),
 m_cursorGrabbed(m_fullscreen)
@@ -267,6 +270,8 @@ WindowImplWin32::~WindowImplWin32()
     // If it's the last window handle we have to poll for joysticks again
     if (m_handle)
     {
+        SetWindowLongPtrW(m_handle, GWLP_USERDATA, 0L);
+
         --handleCount;
 
         if (handleCount == 0)
@@ -724,6 +729,11 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
     if (m_handle == nullptr)
         return;
 
+    //if (m_resizing)
+    //{
+    //    printf("msg: %d\n", message);
+    //}
+
     switch (message)
     {
         // Destroy event
@@ -771,18 +781,51 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             break;
         }
 
+        case WM_TIMER:
+        {
+            if (wParam == idleTimerId)
+            {
+                pushEvent(Event::Idle{});
+            }
+            break;
+        }
+
+        case WM_MOVING:
+        {
+            //pushEvent(Event::Moving{});
+            break;
+        }
+        case WM_SIZING:
+        {
+            //pushEvent(Event::Sizing{});
+            break;
+        }
+
+        case WM_NCLBUTTONDOWN:
+        {
+            grabCursor(false);
+            printf("WM_NCLBUTTONDOWN\n");
+            //SetTimer(m_handle, idleTimerId, 1000 / 60, nullptr);
+            //m_resizing = true;
+            break;
+        }
+
         // Start resizing
         case WM_ENTERSIZEMOVE:
         {
+            printf("WM_ENTERSIZEMOVE\n");
             m_resizing = true;
             grabCursor(false);
+            SetTimer(m_handle, idleTimerId, 1000 / 60, nullptr);
             break;
         }
 
         // Stop resizing
         case WM_EXITSIZEMOVE:
         {
+            printf("WM_EXITSIZEMOVE\n");
             m_resizing = false;
+            KillTimer(m_handle, idleTimerId);
 
             // Ignore cases where the window has only been moved
             if (m_lastSize != getSize())
@@ -1301,6 +1344,10 @@ LRESULT CALLBACK WindowImplWin32::globalOnEvent(HWND handle, UINT message, WPARA
         // Set as the "user data" parameter of the window
         SetWindowLongPtrW(handle, GWLP_USERDATA, window);
     }
+    //else if (message == WM_DESTROY)
+    //{
+    //    SetWindowLongPtrW(handle, GWLP_USERDATA, 0L);
+    //}
 
     // Get the WindowImpl instance corresponding to the window handle
     WindowImplWin32* window = handle ? reinterpret_cast<WindowImplWin32*>(GetWindowLongPtr(handle, GWLP_USERDATA)) : nullptr;
@@ -1308,10 +1355,11 @@ LRESULT CALLBACK WindowImplWin32::globalOnEvent(HWND handle, UINT message, WPARA
     // Forward the event to the appropriate function
     if (window)
     {
+        LONG_PTR callback = window->m_callback;
         window->processEvent(message, wParam, lParam);
 
-        if (window->m_callback)
-            return CallWindowProcW(reinterpret_cast<WNDPROC>(window->m_callback), handle, message, wParam, lParam);
+        if (callback)
+            return CallWindowProcW(reinterpret_cast<WNDPROC>(callback), handle, message, wParam, lParam);
     }
 
     // We don't forward the WM_CLOSE message to prevent the OS from automatically destroying the window

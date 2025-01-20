@@ -88,7 +88,7 @@ void Window::create(VideoMode mode, const String& title, std::uint32_t style, St
     close();
 
     // Recreate the window implementation
-    m_impl = priv::WindowImpl::create(mode, title, style, state, settings);
+    m_impl = priv::WindowImpl::create(mode, title, style, state, settings, this);
 
     // Recreate the context
     m_context = priv::GlContext::create(settings, *m_impl, mode.bitsPerPixel);
