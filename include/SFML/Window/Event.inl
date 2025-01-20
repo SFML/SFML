@@ -80,6 +80,14 @@ const TEventSubtype* Event::getIf() const
 
 ////////////////////////////////////////////////////////////
 template <typename T>
+decltype(auto) Event::visit(T&& visitor)
+{
+    return std::visit(std::forward<T>(visitor), m_data);
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
 decltype(auto) Event::visit(T&& visitor) const
 {
     return std::visit(std::forward<T>(visitor), m_data);
