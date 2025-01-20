@@ -68,7 +68,7 @@ void WindowBase::handleEvents(Ts&&... handlers) // NOLINT(cppcoreguidelines-miss
     // NOLINTNEXTLINE(misc-const-correctness)
     priv::OverloadSet overloadSet{std::forward<Ts>(handlers)..., [](const priv::DelayOverloadResolution&) { /* ignore */ }};
 
-    while (const std::optional event = pollEvent())
+    while (std::optional event = pollEvent())
         event->visit(overloadSet);
 }
 
