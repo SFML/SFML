@@ -35,17 +35,6 @@ namespace sf
 {
 namespace priv
 {
-template <typename... Ts>
-struct OverloadSet : Ts...
-{
-    using Ts::operator()...;
-#if defined(_MSC_VER) && !defined(__clang__)
-    unsigned char dummy; // Dummy variable to ensure that this struct is not empty thus avoiding a crash due to an MSVC bug
-#endif
-};
-template <typename... Ts>
-OverloadSet(Ts...) -> OverloadSet<Ts...>;
-
 struct DelayOverloadResolution
 {
     template <typename T>
@@ -55,21 +44,14 @@ struct DelayOverloadResolution
 };
 } // namespace priv
 
-
 ////////////////////////////////////////////////////////////
-template <typename... Ts>
-void WindowBase::handleEvents(Ts&&... handlers) // NOLINT(cppcoreguidelines-missing-std-forward)
+template <typename... Handlers>
+void WindowBase::handleEvents(Handlers&&... handlers)
 {
-    static_assert(sizeof...(Ts) > 0, "Must provide at least one handler");
-
-    // Disable misc-const-correctness for this line since clang-tidy
-    // complains about it even though the code would become uncompilable
-
-    // NOLINTNEXTLINE(misc-const-correctness)
-    priv::OverloadSet overloadSet{std::forward<Ts>(handlers)..., [](const priv::DelayOverloadResolution&) { /* ignore */ }};
+    static_assert(sizeof...(Handlers) > 0, "Must provide at least one handler");
 
     while (std::optional event = pollEvent())
-        event->visit(overloadSet);
+        event->visit(std::forward<Handlers>(handlers)..., [](priv::DelayOverloadResolution) { /* ignore */ });
 }
 
 } // namespace sf

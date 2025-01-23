@@ -34,6 +34,7 @@
 
 #include <SFML/System/Vector2.hpp>
 
+#include <type_traits>
 #include <variant>
 
 
@@ -339,26 +340,26 @@ public:
     [[nodiscard]] const TEventSubtype* getIf() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Apply a visitor to the event
+    /// \brief Apply handlers to the event
     ///
-    /// \param visitor The visitor to apply
+    /// \param handlers Handlers to apply
     ///
-    /// \return The result of applying the visitor to the event
+    /// \return The result of applying the handlers to the event
     ///
     ////////////////////////////////////////////////////////////
-    template <typename T>
-    decltype(auto) visit(T&& visitor);
+    template <typename... Handlers>
+    decltype(auto) visit(Handlers&&... handlers);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Apply a visitor to the event
+    /// \brief Apply handlers to the event
     ///
-    /// \param visitor The visitor to apply
+    /// \param handlers Handlers to apply
     ///
-    /// \return The result of applying the visitor to the event
+    /// \return The result of applying the handlers to the event
     ///
     ////////////////////////////////////////////////////////////
-    template <typename T>
-    decltype(auto) visit(T&& visitor) const;
+    template <typename... Handlers>
+    decltype(auto) visit(Handlers&&... handlers) const;
 
 private:
     ////////////////////////////////////////////////////////////
@@ -395,11 +396,20 @@ private:
     template <typename T, typename... Ts>
     [[nodiscard]] static constexpr bool isInParameterPack(const std::variant<Ts...>*)
     {
-        return (std::is_same_v<T, Ts> || ...);
+        return std::disjunction_v<std::is_same<T, Ts>...>;
     }
 
     template <typename T>
-    static constexpr bool isEventSubtype = isInParameterPack<T>(decltype (&m_data)(nullptr));
+    static constexpr bool isEventSubtype = isInParameterPack<T>(static_cast<decltype(&m_data)>(nullptr));
+
+    template <typename Handler, typename... Ts>
+    static constexpr bool isInvokableWithAnyOf(std::variant<Ts...>*)
+    {
+        return std::disjunction_v<std::is_invocable<Handler, Ts&>...>;
+    }
+
+    template <typename Handler>
+    static constexpr bool isValidHandler = isInvokableWithAnyOf<Handler>(static_cast<decltype(&m_data)>(nullptr));
 };
 
 } // namespace sf
