@@ -496,8 +496,8 @@ void ensureMapping()
         keycodeToScancode[static_cast<KeyCode>(keycode)] = scancode;
     }
 
-    XkbFreeNames(descriptor, XkbKeyNamesMask, True);
-    XkbFreeKeyboard(descriptor, 0, True);
+    XkbFreeNames(descriptor, XkbKeyNamesMask, true);
+    XkbFreeKeyboard(descriptor, 0, true);
 
     // Phase 3: Translate un-translated keycodes using traditional X11 KeySym lookups
     for (int keycode = 8; keycode < maxKeyCode; ++keycode)

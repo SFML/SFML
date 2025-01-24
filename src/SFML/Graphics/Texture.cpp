@@ -656,10 +656,10 @@ void Texture::update(const Texture& texture, Vector2u dest)
         {
             // Scissor testing affects framebuffer blits as well
             // Since we don't want scissor testing to interfere with our copying, we temporarily disable it for the blit if it is enabled
-            GLboolean scissorEnabled = GL_FALSE;
+            GLboolean scissorEnabled = false;
             glCheck(glGetBooleanv(GL_SCISSOR_TEST, &scissorEnabled));
 
-            if (scissorEnabled == GL_TRUE)
+            if (scissorEnabled)
                 glCheck(glDisable(GL_SCISSOR_TEST));
 
             // Blit the texture contents from the source to the destination texture
@@ -675,7 +675,7 @@ void Texture::update(const Texture& texture, Vector2u dest)
                                             GL_NEAREST));
 
             // Re-enable scissor testing if it was previously enabled
-            if (scissorEnabled == GL_TRUE)
+            if (scissorEnabled)
                 glCheck(glEnable(GL_SCISSOR_TEST));
         }
         else
@@ -924,7 +924,7 @@ void Texture::bind(const Texture* texture, CoordinateType coordinateType)
     if (texture && texture->m_texture)
     {
         // When debugging, ensure that the texture name is valid
-        assert((glIsTexture(texture->m_texture) == GL_TRUE) &&
+        assert(glIsTexture(texture->m_texture) &&
                "Texture to be bound is invalid, check if the texture is still being used after it has been destroyed");
 
         // Bind the texture

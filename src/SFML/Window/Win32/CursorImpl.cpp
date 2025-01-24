@@ -99,7 +99,7 @@ bool CursorImpl::loadFromPixels(const std::uint8_t* pixels, Vector2u size, Vecto
 
     // Create the structure that describes our cursor
     auto cursorInfo     = ICONINFO();
-    cursorInfo.fIcon    = FALSE; // This is a cursor and not an icon
+    cursorInfo.fIcon    = false; // This is a cursor and not an icon
     cursorInfo.xHotspot = hotspot.x;
     cursorInfo.yHotspot = hotspot.y;
     cursorInfo.hbmColor = color;

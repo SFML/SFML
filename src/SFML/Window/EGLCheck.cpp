@@ -35,6 +35,10 @@
 #include <filesystem>
 #include <ostream>
 
+// NOLINTBEGIN(readability-simplify-boolean-expr)
+static_assert(EGL_TRUE == true);
+static_assert(EGL_FALSE == false);
+// NOLINTEND(readability-simplify-boolean-expr)
 
 namespace sf::priv
 {

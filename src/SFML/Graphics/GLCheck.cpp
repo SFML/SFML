@@ -33,6 +33,10 @@
 #include <filesystem>
 #include <ostream>
 
+// NOLINTBEGIN(readability-simplify-boolean-expr)
+static_assert(GL_TRUE == true);
+static_assert(GL_FALSE == false);
+// NOLINTEND(readability-simplify-boolean-expr)
 
 namespace sf::priv
 {

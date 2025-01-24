@@ -130,7 +130,7 @@ void initRawMouse()
 {
     const RAWINPUTDEVICE rawMouse{0x01, 0x02, 0, nullptr}; // HID usage: mouse device class, no flags, follow keyboard focus
 
-    if (RegisterRawInputDevices(&rawMouse, 1, sizeof(rawMouse)) != TRUE)
+    if (!RegisterRawInputDevices(&rawMouse, 1, sizeof(rawMouse)))
         sf::err() << "Failed to initialize raw mouse input" << std::endl;
 }
 } // namespace

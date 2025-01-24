@@ -228,9 +228,9 @@ bool EglContext::makeCurrent(bool current)
         return false;
 
     if (current)
-        return EGL_FALSE != eglCheck(eglMakeCurrent(m_display, m_surface, m_surface, m_context));
+        return eglCheck(eglMakeCurrent(m_display, m_surface, m_surface, m_context));
 
-    return EGL_FALSE != eglCheck(eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
+    return eglCheck(eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
 }
 
 
@@ -368,14 +368,14 @@ void EglContext::updateSettings()
     EGLint tmp = 0;
 
     // Update the internal context settings with the current config
-    if (eglCheck(eglGetConfigAttrib(m_display, m_config, EGL_DEPTH_SIZE, &tmp)) != EGL_FALSE)
+    if (eglCheck(eglGetConfigAttrib(m_display, m_config, EGL_DEPTH_SIZE, &tmp)))
         m_settings.depthBits = static_cast<unsigned int>(tmp);
 
-    if (eglCheck(eglGetConfigAttrib(m_display, m_config, EGL_STENCIL_SIZE, &tmp)) != EGL_FALSE)
+    if (eglCheck(eglGetConfigAttrib(m_display, m_config, EGL_STENCIL_SIZE, &tmp)))
         m_settings.stencilBits = static_cast<unsigned int>(tmp);
 
-    if (eglCheck(eglGetConfigAttrib(m_display, m_config, EGL_SAMPLE_BUFFERS, &tmp)) != EGL_FALSE && tmp &&
-        eglCheck(eglGetConfigAttrib(m_display, m_config, EGL_SAMPLES, &tmp)) != EGL_FALSE)
+    if (eglCheck(eglGetConfigAttrib(m_display, m_config, EGL_SAMPLE_BUFFERS, &tmp)) && tmp &&
+        eglCheck(eglGetConfigAttrib(m_display, m_config, EGL_SAMPLES, &tmp)))
         m_settings.antiAliasingLevel = static_cast<unsigned int>(tmp);
 }
 

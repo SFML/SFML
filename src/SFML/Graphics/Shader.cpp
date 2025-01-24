@@ -635,7 +635,7 @@ void Shader::setUniform(const std::string& name, const Glsl::Mat3& matrix)
 {
     const UniformBinder binder(*this, name);
     if (binder.location != -1)
-        glCheck(GLEXT_glUniformMatrix3fv(binder.location, 1, GL_FALSE, matrix.array.data()));
+        glCheck(GLEXT_glUniformMatrix3fv(binder.location, 1, false, matrix.array.data()));
 }
 
 
@@ -644,7 +644,7 @@ void Shader::setUniform(const std::string& name, const Glsl::Mat4& matrix)
 {
     const UniformBinder binder(*this, name);
     if (binder.location != -1)
-        glCheck(GLEXT_glUniformMatrix4fv(binder.location, 1, GL_FALSE, matrix.array.data()));
+        glCheck(GLEXT_glUniformMatrix4fv(binder.location, 1, false, matrix.array.data()));
 }
 
 
@@ -749,7 +749,7 @@ void Shader::setUniformArray(const std::string& name, const Glsl::Mat3* matrixAr
 
     const UniformBinder binder(*this, name);
     if (binder.location != -1)
-        glCheck(GLEXT_glUniformMatrix3fv(binder.location, static_cast<GLsizei>(length), GL_FALSE, contiguous.data()));
+        glCheck(GLEXT_glUniformMatrix3fv(binder.location, static_cast<GLsizei>(length), false, contiguous.data()));
 }
 
 
@@ -764,7 +764,7 @@ void Shader::setUniformArray(const std::string& name, const Glsl::Mat4* matrixAr
 
     const UniformBinder binder(*this, name);
     if (binder.location != -1)
-        glCheck(GLEXT_glUniformMatrix4fv(binder.location, static_cast<GLsizei>(length), GL_FALSE, contiguous.data()));
+        glCheck(GLEXT_glUniformMatrix4fv(binder.location, static_cast<GLsizei>(length), false, contiguous.data()));
 }
 
 
@@ -881,7 +881,7 @@ bool Shader::compile(std::string_view vertexShaderCode, std::string_view geometr
         // Check the compile log
         GLint success = 0;
         glCheck(GLEXT_glGetObjectParameteriv(shader, GLEXT_GL_OBJECT_COMPILE_STATUS, &success));
-        if (success == GL_FALSE)
+        if (!success)
         {
             std::array<char, 1024> log{};
             glCheck(GLEXT_glGetInfoLog(shader, static_cast<GLsizei>(log.size()), nullptr, log.data()));
@@ -918,7 +918,7 @@ bool Shader::compile(std::string_view vertexShaderCode, std::string_view geometr
     // Check the link log
     GLint success = 0;
     glCheck(GLEXT_glGetObjectParameteriv(shaderProgram, GLEXT_GL_OBJECT_LINK_STATUS, &success));
-    if (success == GL_FALSE)
+    if (!success)
     {
         std::array<char, 1024> log{};
         glCheck(GLEXT_glGetInfoLog(shaderProgram, static_cast<GLsizei>(log.size()), nullptr, log.data()));

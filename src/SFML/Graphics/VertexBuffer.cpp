@@ -252,7 +252,7 @@ bool VertexBuffer::update([[maybe_unused]] const VertexBuffer& vertexBuffer)
 
     glCheck(GLEXT_glBindBuffer(GLEXT_GL_ARRAY_BUFFER, 0));
 
-    return (sourceResult == GL_TRUE) && (destinationResult == GL_TRUE);
+    return sourceResult && destinationResult;
 
 #endif // SFML_OPENGL_ES
 }

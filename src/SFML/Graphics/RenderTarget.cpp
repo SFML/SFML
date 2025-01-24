@@ -611,7 +611,7 @@ void RenderTarget::resetGLStates()
         glCheck(glEnableClientState(GL_VERTEX_ARRAY));
         glCheck(glEnableClientState(GL_COLOR_ARRAY));
         glCheck(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
-        glCheck(glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE));
+        glCheck(glColorMask(true, true, true, true));
         m_cache.scissorEnabled = false;
         m_cache.stencilEnabled = false;
         m_cache.glStatesSet    = true;
@@ -760,7 +760,7 @@ void RenderTarget::applyStencilMode(const StencilMode& mode)
         if (!m_cache.enable || m_cache.stencilEnabled)
         {
             glCheck(glDisable(GL_STENCIL_TEST));
-            glCheck(glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE));
+            glCheck(glColorMask(true, true, true, true));
 
             m_cache.stencilEnabled = false;
         }
@@ -860,7 +860,7 @@ void RenderTarget::setupDraw(bool useVertexCache, const RenderStates& states)
 
     // Mask the color buffer off if necessary
     if (states.stencilMode.stencilOnly)
-        glCheck(glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE));
+        glCheck(glColorMask(false, false, false, false));
 
     // Apply the texture
     if (!m_cache.enable || (states.texture && states.texture->m_fboAttachment))
@@ -913,7 +913,7 @@ void RenderTarget::cleanupDraw(const RenderStates& states)
 
     // Mask the color buffer back on if necessary
     if (states.stencilMode.stencilOnly)
-        glCheck(glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE));
+        glCheck(glColorMask(true, true, true, true));
 
     // Re-enable the cache at the end of the draw if it was disabled
     m_cache.enable = true;

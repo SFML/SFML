@@ -37,6 +37,10 @@
 #include <ostream>
 #include <vector>
 
+// NOLINTBEGIN(readability-simplify-boolean-expr)
+static_assert(True == true);
+static_assert(False == false);
+// NOLINTEND(readability-simplify-boolean-expr)
 
 namespace
 {
@@ -229,7 +233,7 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
                                                   m_targetProperty,
                                                   0,
                                                   0x7fffffff,
-                                                  False,
+                                                  false,
                                                   AnyPropertyType,
                                                   &type,
                                                   &format,
@@ -308,7 +312,7 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
 
                     XSendEvent(m_display.get(),
                                selectionRequestEvent.requestor,
-                               True,
+                               true,
                                NoEventMask,
                                reinterpret_cast<XEvent*>(&selectionEvent));
 
@@ -334,7 +338,7 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
 
                     XSendEvent(m_display.get(),
                                selectionRequestEvent.requestor,
-                               True,
+                               true,
                                NoEventMask,
                                reinterpret_cast<XEvent*>(&selectionEvent));
 
@@ -361,7 +365,7 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
 
                     XSendEvent(m_display.get(),
                                selectionRequestEvent.requestor,
-                               True,
+                               true,
                                NoEventMask,
                                reinterpret_cast<XEvent*>(&selectionEvent));
 
@@ -375,7 +379,7 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
 
             XSendEvent(m_display.get(),
                        selectionRequestEvent.requestor,
-                       True,
+                       true,
                        NoEventMask,
                        reinterpret_cast<XEvent*>(&selectionEvent));
 

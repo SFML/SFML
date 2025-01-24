@@ -1029,7 +1029,7 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
         glEnableFunc(GL_FRAMEBUFFER_SRGB);
 
         // Check to see if the enable was successful
-        if (glIsEnabledFunc(GL_FRAMEBUFFER_SRGB) == GL_FALSE)
+        if (!glIsEnabledFunc(GL_FRAMEBUFFER_SRGB))
         {
             err() << "Warning: Failed to enable GL_FRAMEBUFFER_SRGB" << std::endl;
             m_settings.sRgbCapable = false;

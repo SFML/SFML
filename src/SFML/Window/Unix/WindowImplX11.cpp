@@ -534,7 +534,7 @@ m_cursorGrabbed(m_fullscreen)
     XSetWindowAttributes attributes;
     attributes.colormap   = XCreateColormap(m_display.get(), DefaultRootWindow(m_display.get()), visual, AllocNone);
     attributes.event_mask = eventMask;
-    attributes.override_redirect = (m_fullscreen && !ewmhSupported()) ? True : False;
+    attributes.override_redirect = m_fullscreen && !ewmhSupported();
 
     m_window = XCreateWindow(m_display.get(),
                              DefaultRootWindow(m_display.get()),
@@ -1132,7 +1132,7 @@ void WindowImplX11::setMouseCursorGrabbed(bool grabbed)
         // Try multiple times to grab the cursor
         for (unsigned int trial = 0; trial < maxTrialsCount; ++trial)
         {
-            const int result = XGrabPointer(m_display.get(), m_window, True, None, GrabModeAsync, GrabModeAsync, m_window, None, CurrentTime);
+            const int result = XGrabPointer(m_display.get(), m_window, true, None, GrabModeAsync, GrabModeAsync, m_window, None, CurrentTime);
 
             if (result == GrabSuccess)
             {
@@ -1695,7 +1695,7 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                 {
                     const int result = XGrabPointer(m_display.get(),
                                                     m_window,
-                                                    True,
+                                                    true,
                                                     None,
                                                     GrabModeAsync,
                                                     GrabModeAsync,

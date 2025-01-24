@@ -92,7 +92,7 @@ public:
 
     ~GlxErrorHandler()
     {
-        XSync(m_display, False);
+        XSync(m_display, false);
         XSetErrorHandler(m_previousHandler);
     }
 
@@ -360,14 +360,7 @@ XVisualInfo GlxContext::selectBestVisual(::Display* display, unsigned int bitsPe
 
             // Evaluate the visual
             const int color = red + green + blue + alpha;
-            const int score = evaluateFormat(bitsPerPixel,
-                                             settings,
-                                             color,
-                                             depth,
-                                             stencil,
-                                             multiSampling ? samples : 0,
-                                             accelerated,
-                                             sRgb == True);
+            const int score = evaluateFormat(bitsPerPixel, settings, color, depth, stencil, multiSampling ? samples : 0, accelerated, sRgb);
 
             // If it's better than the current best, make it the new best
             if (score < bestScore)
@@ -422,7 +415,7 @@ void GlxContext::updateSettingsFromVisualInfo(XVisualInfo* visualInfo)
     m_settings.depthBits         = static_cast<unsigned int>(depth);
     m_settings.stencilBits       = static_cast<unsigned int>(stencil);
     m_settings.antiAliasingLevel = multiSampling ? static_cast<unsigned int>(samples) : 0;
-    m_settings.sRgbCapable       = (sRgb == True);
+    m_settings.sRgbCapable       = sRgb;
 }
 
 
