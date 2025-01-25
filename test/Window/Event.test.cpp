@@ -2,6 +2,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <memory>
 #include <string_view>
 #include <type_traits>
 
@@ -339,6 +340,14 @@ TEST_CASE("[Window] sf::Event")
 
             const sf::Event focusLost = sf::Event::FocusLost{};
             CHECK(focusLost.visit(visitor) == "Other");
+        }
+
+        SECTION("Move-only visitor")
+        {
+            auto moveOnlyVisitor = [ptr = std::make_unique<std::string_view>("It works")](const auto&) { return *ptr; };
+
+            const sf::Event closed = sf::Event::Closed{};
+            CHECK(closed.visit(moveOnlyVisitor) == "It works");
         }
     }
 }
