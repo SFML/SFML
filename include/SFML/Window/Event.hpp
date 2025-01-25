@@ -335,8 +335,8 @@ public:
     /// \return The result of applying the visitor to the event
     ///
     ////////////////////////////////////////////////////////////
-    template <typename T>
-    decltype(auto) visit(T&& visitor) const;
+    template <typename Visitor>
+    decltype(auto) visit(Visitor&& visitor) const;
 
 private:
     ////////////////////////////////////////////////////////////
