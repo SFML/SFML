@@ -34,6 +34,7 @@
 
 #include <SFML/System/Vector2.hpp>
 
+#include <type_traits>
 #include <variant>
 
 
@@ -373,11 +374,22 @@ private:
     template <typename T, typename... Ts>
     [[nodiscard]] static constexpr bool isInParameterPack(const std::variant<Ts...>*)
     {
-        return (std::is_same_v<T, Ts> || ...);
+        return std::disjunction_v<std::is_same<T, Ts>...>;
     }
 
     template <typename T>
     static constexpr bool isEventSubtype = isInParameterPack<T>(decltype (&m_data)(nullptr));
+
+    friend class WindowBase;
+
+    template <typename Handler, typename... Ts>
+    [[nodiscard]] static constexpr bool isInvocableWithEventSubtype(const std::variant<Ts...>*)
+    {
+        return std::disjunction_v<std::is_invocable<Handler&, Ts&>...>;
+    }
+
+    template <typename Handler>
+    static constexpr bool isEventHandler = isInvocableWithEventSubtype<Handler>(decltype (&m_data)(nullptr));
 };
 
 } // namespace sf
