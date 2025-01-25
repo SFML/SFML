@@ -28,6 +28,7 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowBase.hpp> // NOLINT(misc-header-include-cycle)
 
+#include <type_traits>
 #include <utility>
 
 
@@ -53,6 +54,40 @@ struct DelayOverloadResolution
     {
     }
 };
+
+// Wrapper providing a callable type suitable as OverloadSet base type for different kinds of handlers.
+// By default, we derive from the handler type and inherit its call operators.
+template <typename Handler>
+struct Caller : Handler
+{
+    using Handler::operator();
+};
+
+// Inheritance is not possible with reference types.
+// In this case, we capture the reference and forward arguments to it.
+template <typename Handler>
+struct Caller<Handler&>
+{
+    // Use SFINAE so that the call operator exists only for arguments the captured handler accepts
+    template <typename Argument, std::enable_if_t<std::is_invocable_v<Handler&, Argument>, int> = 0>
+    decltype(auto) operator()(Argument&& argument)
+    {
+        return handler(std::forward<Argument>(argument));
+    }
+    Handler& handler;
+};
+
+// Inheritance is not possible with function pointers either.
+// In this case, we capture the function pointer to call it.
+template <typename Return, typename Argument>
+struct Caller<Return (*)(Argument)>
+{
+    Return operator()(Argument&& argument)
+    {
+        return function(std::forward<Argument>(argument));
+    }
+    Return (*function)(Argument);
+};
 } // namespace priv
 
 
@@ -67,7 +102,7 @@ void WindowBase::handleEvents(Handlers&&... handlers)
     // complains about it even though the code would become incorrect
 
     // NOLINTNEXTLINE(misc-const-correctness)
-    priv::OverloadSet overloadSet{std::forward<Handlers>(handlers)...,
+    priv::OverloadSet overloadSet{priv::Caller<Handlers>{std::forward<Handlers>(handlers)}...,
                                   [](const priv::DelayOverloadResolution&) { /* ignore */ }};
 
     while (std::optional event = pollEvent())

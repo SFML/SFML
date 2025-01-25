@@ -12,6 +12,7 @@
 #include <chrono>
 #include <memory>
 #include <type_traits>
+#include <utility>
 
 TEST_CASE("[Window] sf::WindowBase", runDisplayTests())
 {
@@ -240,5 +241,13 @@ TEST_CASE("[Window] sf::WindowBase", runDisplayTests())
             void operator()(const sf::Event::Closed&) && = delete;
         };
         windowBase.handleEvents(LvalueOnlyHandler{});
+
+        // Should compile if user provides a reference to a handler
+        auto handler = [](const sf::Event::Closed&) {};
+        windowBase.handleEvents(handler);
+        windowBase.handleEvents(std::as_const(handler));
+
+        // Should compile if user provides a function pointer
+        windowBase.handleEvents(+[](const sf::Event::Closed&) {});
     };
 }
