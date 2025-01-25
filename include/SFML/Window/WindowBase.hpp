@@ -326,8 +326,8 @@ public:
     /// \see `waitEvent`, `pollEvent`
     ///
     ////////////////////////////////////////////////////////////
-    template <typename... Ts>
-    void handleEvents(Ts&&... handlers);
+    template <typename... Handlers>
+    void handleEvents(Handlers&&... handlers);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of the window
