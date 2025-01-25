@@ -61,6 +61,7 @@ template <typename... Handlers>
 void WindowBase::handleEvents(Handlers&&... handlers)
 {
     static_assert(sizeof...(Handlers) > 0, "Must provide at least one handler");
+    static_assert((Event::isEventHandler<Handlers> && ...), "Handlers must accept at least one subtype of sf::Event");
 
     // Disable misc-const-correctness for this line since clang-tidy
     // complains about it even though the code would become incorrect

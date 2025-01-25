@@ -10,6 +10,7 @@
 
 #include <WindowUtil.hpp>
 #include <chrono>
+#include <memory>
 #include <type_traits>
 
 TEST_CASE("[Window] sf::WindowBase", runDisplayTests())
@@ -219,5 +220,25 @@ TEST_CASE("[Window] sf::WindowBase", runDisplayTests())
 
         // Should compile if user provides both a specific handler and a catch-all
         windowBase.handleEvents([](const sf::Event::Closed&) {}, [](const auto&) {});
+
+        // Should compile if user provides a handler taking an event subtype by value or reference,
+        // but not rvalue reference because it would never be called.
+        windowBase.handleEvents([](sf::Event::Closed) {});
+        windowBase.handleEvents([](const sf::Event::Closed) {});
+        windowBase.handleEvents([](sf::Event::Closed&) {});
+        windowBase.handleEvents([](const sf::Event::Closed&) {});
+
+        // Should compile if user provides a move-only handler
+        windowBase.handleEvents([p = std::make_unique<int>()](const sf::Event::Closed&) {});
+
+        // Should compile if user provides a handler with deleted rvalue ref-qualified call operator
+        struct LvalueOnlyHandler
+        {
+            void operator()(const sf::Event::Closed&) &
+            {
+            }
+            void operator()(const sf::Event::Closed&) && = delete;
+        };
+        windowBase.handleEvents(LvalueOnlyHandler{});
     };
 }
