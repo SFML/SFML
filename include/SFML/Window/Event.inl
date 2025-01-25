@@ -38,20 +38,6 @@
 
 namespace sf
 {
-namespace priv
-{
-template <typename... Ts>
-struct OverloadSet : Ts...
-{
-    using Ts::operator()...;
-#if defined(_MSC_VER) && !defined(__clang__)
-    unsigned char dummy; // Dummy variable to ensure that this struct is not empty thus avoiding a crash due to an MSVC bug
-#endif
-};
-template <typename... Ts>
-OverloadSet(Ts...) -> OverloadSet<Ts...>;
-} // namespace priv
-
 ////////////////////////////////////////////////////////////
 template <typename TEventSubtype>
 Event::Event(const TEventSubtype& eventSubtype)
@@ -93,20 +79,18 @@ const TEventSubtype* Event::getIf() const
 
 
 ////////////////////////////////////////////////////////////
-template <typename... Handlers>
-decltype(auto) Event::visit(Handlers&&... handlers)
+template <typename T>
+decltype(auto) Event::visit(T&& visitor)
 {
-    static_assert((isValidHandler<Handlers> && ...), "All handlers must accept a single event subtype parameter");
-    return std::visit(priv::OverloadSet{std::forward<Handlers>(handlers)...}, m_data);
+    return std::visit(std::forward<T>(visitor), m_data);
 }
 
 
 ////////////////////////////////////////////////////////////
-template <typename... Handlers>
-decltype(auto) Event::visit(Handlers&&... handlers) const
+template <typename T>
+decltype(auto) Event::visit(T&& visitor) const
 {
-    static_assert((isValidHandler<Handlers> && ...), "All handlers must accept a single event subtype parameter");
-    return std::visit(priv::OverloadSet{std::forward<Handlers>(handlers)...}, m_data);
+    return std::visit(std::forward<T>(visitor), m_data);
 }
 
 } // namespace sf
