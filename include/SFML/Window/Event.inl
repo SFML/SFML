@@ -69,10 +69,10 @@ const TEventSubtype* Event::getIf() const
 
 
 ////////////////////////////////////////////////////////////
-template <typename T>
-decltype(auto) Event::visit(T&& visitor) const
+template <typename Visitor>
+decltype(auto) Event::visit(Visitor&& visitor) const
 {
-    return std::visit(std::forward<T>(visitor), m_data);
+    return std::visit(std::forward<Visitor>(visitor), m_data);
 }
 
 } // namespace sf
