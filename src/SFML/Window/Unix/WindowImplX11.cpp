@@ -1757,6 +1757,13 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                 m_previousSize.x = windowEvent.xconfigure.width;
                 m_previousSize.y = windowEvent.xconfigure.height;
             }
+            if (windowEvent.xconfigure.x != m_previousPosition.x || windowEvent.xconfigure.y != m_previousPosition.y)
+            {
+                pushEvent(Event::WindowMoved{Vector2i(windowEvent.xconfigure.x, windowEvent.xconfigure.y)});
+
+                m_previousPosition.x = windowEvent.xconfigure.x;
+                m_previousPosition.y = windowEvent.xconfigure.y;
+            }
             break;
         }
 
