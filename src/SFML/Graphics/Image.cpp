@@ -42,6 +42,7 @@
 #include <stb_image_write.h>
 
 #include <algorithm>
+#include <fstream>
 #include <iomanip>
 #include <memory>
 #include <ostream>
@@ -318,34 +319,45 @@ bool Image::saveToFile(const std::filesystem::path& filename) const
     // Make sure the image is not empty
     if (!m_pixels.empty() && m_size.x > 0 && m_size.y > 0)
     {
-        // Deduce the image type from its extension
+        stbi_write_func* writeToFile = [](void* context, void* data, int size)
+        {
+            assert(context);
+            std::ofstream& file = *static_cast<std::ofstream*>(context);
+            file.write(static_cast<const char*>(data), size);
+        };
 
         // Extract the extension
         const std::filesystem::path extension     = filename.extension();
         const Vector2i              convertedSize = Vector2i(m_size);
 
+        // Deduce the image type from its extension
+        std::ofstream file;
         if (extension == ".bmp")
         {
             // BMP format
-            if (stbi_write_bmp(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, m_pixels.data()))
+            file.open(filename, std::ios::binary);
+            if (stbi_write_bmp_to_func(writeToFile, &file, convertedSize.x, convertedSize.y, 4, m_pixels.data()) && file)
                 return true;
         }
         else if (extension == ".tga")
         {
             // TGA format
-            if (stbi_write_tga(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, m_pixels.data()))
+            file.open(filename, std::ios::binary);
+            if (stbi_write_tga_to_func(writeToFile, &file, convertedSize.x, convertedSize.y, 4, m_pixels.data()) && file)
                 return true;
         }
         else if (extension == ".png")
         {
             // PNG format
-            if (stbi_write_png(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, m_pixels.data(), 0))
+            file.open(filename, std::ios::binary);
+            if (stbi_write_png_to_func(writeToFile, &file, convertedSize.x, convertedSize.y, 4, m_pixels.data(), 0))
                 return true;
         }
         else if (extension == ".jpg" || extension == ".jpeg")
         {
             // JPG format
-            if (stbi_write_jpg(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, m_pixels.data(), 90))
+            file.open(filename, std::ios::binary);
+            if (stbi_write_jpg_to_func(writeToFile, &file, convertedSize.x, convertedSize.y, 4, m_pixels.data(), 90))
                 return true;
         }
         else

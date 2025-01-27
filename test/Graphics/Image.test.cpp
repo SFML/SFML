@@ -415,13 +415,13 @@ TEST_CASE("[Graphics] sf::Image")
 
             SECTION("To .tga")
             {
-                filename /= "test.tga";
+                filename /= "test_áíúéóüñ.tga";
                 CHECK(image.saveToFile(filename));
             }
 
             SECTION("To .png")
             {
-                filename /= "test.png";
+                filename /= "test_日本語.png";
                 CHECK(image.saveToFile(filename));
             }
 
