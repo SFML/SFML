@@ -132,10 +132,11 @@
 #define SFML_API_EXPORT __declspec(dllexport)
 #define SFML_API_IMPORT __declspec(dllimport)
 
-// For Visual C++ compilers, we also need to turn off this annoying C4251 warning
+// For Visual C++ compilers, we also need to turn off this annoying C4251 & C4275 warning
 #ifdef _MSC_VER
 
-#pragma warning(disable : 4251)
+#pragma warning(disable : 4251) // Using standard library types in our own exported types is okay
+#pragma warning(disable : 4275) // Exporting types derived from the standard library is okay
 
 #endif
 
