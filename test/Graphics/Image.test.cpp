@@ -265,6 +265,18 @@ TEST_CASE("[Graphics] sf::Image")
             CHECK(!image.loadFromFile("."));
             CHECK(!image.loadFromFile("this/does/not/exist.jpg"));
 
+            // small n with tilde, from Spanish, outside of ASCII, inside common Latin 1 codepage
+            CHECK(!image.loadFromFile(std::filesystem::path(U"missing-file-\u00f1.png")));
+
+            // small n with acute accent, from Polish, outside of Latin 1 codepage
+            CHECK(!image.loadFromFile(std::filesystem::path(U"missing-file-\u0144.png")));
+
+            // CJK symbol for Sun, outside of any European language codepage
+            CHECK(!image.loadFromFile(std::filesystem::path(U"missing-file-\u65E5.png")));
+
+            // snail emoji, outside of Unicode Basic Multilingual Plane
+            CHECK(!image.loadFromFile(std::filesystem::path(U"missing-file-\U0001F40C.png")));
+
             CHECK(image.getSize() == sf::Vector2u(0, 0));
             CHECK(image.getPixelsPtr() == nullptr);
         }
@@ -410,22 +422,46 @@ TEST_CASE("[Graphics] sf::Image")
             SECTION("To .bmp")
             {
                 filename /= "test.bmp";
-                CHECK(image.saveToFile(filename));
             }
 
             SECTION("To .tga")
             {
                 filename /= "test.tga";
-                CHECK(image.saveToFile(filename));
             }
 
             SECTION("To .png")
             {
                 filename /= "test.png";
-                CHECK(image.saveToFile(filename));
+            }
+
+            SECTION("To Spanish Latin1 filename .png")
+            {
+                // small n with tilde, from Spanish, outside of ASCII, inside common Latin 1 codepage
+                filename /= U"test-\u00f1.png";
+            }
+
+            SECTION("To Polish filename .png")
+            {
+                // small n with acute accent, from Polish, outside of Latin 1 codepage
+                filename /= U"test-\u0144.png";
+            }
+
+            SECTION("To Japanese CJK filename .png")
+            {
+                // CJK symbol for Sun, outside of any European language codepage
+                filename /= U"test-\u65E5.png";
+            }
+
+            SECTION("To emoji non-BMP Unicode filename .png")
+            {
+                // snail emoji, outside of Unicode Basic Multilingual Plane
+                filename /= U"test-\U0001F40C.png";
             }
 
             // Cannot test JPEG encoding due to it triggering UB in stbiw__jpg_writeBits
+
+            REQUIRE(image.saveToFile(filename));
+            REQUIRE(std::filesystem::exists(filename));
 
             const sf::Image loadedImage(filename);
             CHECK(loadedImage.getSize() == sf::Vector2u(256, 256));
