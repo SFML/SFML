@@ -42,6 +42,7 @@
 #include <stb_image_write.h>
 
 #include <algorithm>
+#include <fstream>
 #include <iomanip>
 #include <memory>
 #include <ostream>
@@ -212,11 +213,41 @@ bool Image::loadFromFile(const std::filesystem::path& filename)
     // Clear the array (just in case)
     m_pixels.clear();
 
+    // Set up the stb_image callbacks for the std::ifstream
+    const auto readStdIfStream = [](void* user, char* data, int size)
+    {
+        auto& file = *static_cast<std::ifstream*>(user);
+        file.read(data, size);
+        return static_cast<int>(file.gcount());
+    };
+    const auto skipStdIfStream = [](void* user, int size)
+    {
+        auto& file = *static_cast<std::ifstream*>(user);
+        if (!file.seekg(size, std::ios_base::cur))
+            err() << "Failed to seek image loader std::ifstream" << std::endl;
+    };
+    const auto eofStdIfStream = [](void* user)
+    {
+        auto& file = *static_cast<std::ifstream*>(user);
+        return static_cast<int>(file.eof());
+    };
+    const stbi_io_callbacks callbacks{readStdIfStream, skipStdIfStream, eofStdIfStream};
+
+    // Open file
+    std::ifstream file(filename, std::ios::binary);
+    if (!file.is_open())
+    {
+        // Error, failed to open the file
+        err() << "Failed to load image\n"
+              << formatDebugPathInfo(filename) << "\nReason: " << std::strerror(errno) << std::endl;
+        return false;
+    }
+
     // Load the image and get a pointer to the pixels in memory
     int width    = 0;
     int height   = 0;
     int channels = 0;
-    if (const auto ptr = StbPtr(stbi_load(filename.string().c_str(), &width, &height, &channels, STBI_rgb_alpha)))
+    if (const auto ptr = StbPtr(stbi_load_from_callbacks(&callbacks, &file, &width, &height, &channels, STBI_rgb_alpha)))
     {
         // Assign the image properties
         m_size = Vector2u(Vector2i(width, height));
@@ -324,28 +355,42 @@ bool Image::saveToFile(const std::filesystem::path& filename) const
         const std::filesystem::path extension     = filename.extension();
         const Vector2i              convertedSize = Vector2i(m_size);
 
+        // Callback to write to std::ofstream
+        auto writeStdOfstream = [](void* context, void* data, int size)
+        {
+            auto& file = *static_cast<std::ofstream*>(context);
+            if (file)
+                file.write(static_cast<const char*>(data), static_cast<std::streamsize>(size));
+        };
+
         if (extension == ".bmp")
         {
             // BMP format
-            if (stbi_write_bmp(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, m_pixels.data()))
+            std::ofstream file(filename, std::ios::binary);
+            if (stbi_write_bmp_to_func(writeStdOfstream, &file, convertedSize.x, convertedSize.y, 4, m_pixels.data()) && file)
                 return true;
         }
         else if (extension == ".tga")
         {
             // TGA format
-            if (stbi_write_tga(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, m_pixels.data()))
+            std::ofstream file(filename, std::ios::binary);
+            if (stbi_write_tga_to_func(writeStdOfstream, &file, convertedSize.x, convertedSize.y, 4, m_pixels.data()) && file)
                 return true;
         }
         else if (extension == ".png")
         {
             // PNG format
-            if (stbi_write_png(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, m_pixels.data(), 0))
+            std::ofstream file(filename, std::ios::binary);
+            if (stbi_write_png_to_func(writeStdOfstream, &file, convertedSize.x, convertedSize.y, 4, m_pixels.data(), 0) &&
+                file)
                 return true;
         }
         else if (extension == ".jpg" || extension == ".jpeg")
         {
             // JPG format
-            if (stbi_write_jpg(filename.string().c_str(), convertedSize.x, convertedSize.y, 4, m_pixels.data(), 90))
+            std::ofstream file(filename, std::ios::binary);
+            if (stbi_write_jpg_to_func(writeStdOfstream, &file, convertedSize.x, convertedSize.y, 4, m_pixels.data(), 90) &&
+                file)
                 return true;
         }
         else
