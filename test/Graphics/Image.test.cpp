@@ -309,6 +309,17 @@ TEST_CASE("[Graphics] sf::Image")
             CHECK(image.getSize() == sf::Vector2u(1001, 304));
             CHECK(image.getPixelsPtr() != nullptr);
         }
+
+        SECTION("Successful then unsuccessful load")
+        {
+            REQUIRE(image.loadFromFile("Graphics/sfml-logo-big.jpg"));
+            CHECK(image.getSize() == sf::Vector2u(1001, 304));
+            CHECK(image.getPixelsPtr() != nullptr);
+
+            REQUIRE(!image.loadFromFile("does-not-exist.jpg"));
+            CHECK(image.getSize() == sf::Vector2u(1001, 304));
+            CHECK(image.getPixelsPtr() != nullptr);
+        }
     }
 
     SECTION("loadFromMemory()")
@@ -343,20 +354,31 @@ TEST_CASE("[Graphics] sf::Image")
             CHECK(!image.loadFromMemory(memory.data(), memory.size()));
         }
 
+        const auto memory = []()
+        {
+            sf::Image savedImage;
+            savedImage.resize({24, 24}, sf::Color::Green);
+            return savedImage.saveToMemory("png").value();
+        }();
+
         SECTION("Successful load")
         {
-            const auto memory = []()
-            {
-                sf::Image savedImage;
-                savedImage.resize({24, 24}, sf::Color::Green);
-                return savedImage.saveToMemory("png").value();
-            }();
-
             CHECK(image.loadFromMemory(memory.data(), memory.size()));
             CHECK(image.getSize() == sf::Vector2u(24, 24));
             CHECK(image.getPixelsPtr() != nullptr);
             CHECK(image.getPixel({0, 0}) == sf::Color::Green);
             CHECK(image.getPixel({23, 23}) == sf::Color::Green);
+        }
+
+        SECTION("Successful then unsuccessful load")
+        {
+            REQUIRE(image.loadFromMemory(memory.data(), memory.size()));
+            CHECK(image.getSize() == sf::Vector2u(24, 24));
+            CHECK(image.getPixelsPtr() != nullptr);
+
+            REQUIRE(!image.loadFromMemory(memory.data(), 1));
+            CHECK(image.getSize() == sf::Vector2u(24, 24));
+            CHECK(image.getPixelsPtr() != nullptr);
         }
     }
 
@@ -370,14 +392,27 @@ TEST_CASE("[Graphics] sf::Image")
             CHECK(!image.loadFromStream(stream));
         }
 
+        REQUIRE(stream.open("Graphics/sfml-logo-big.png"));
+
         SECTION("Successful load")
         {
-            CHECK(stream.open("Graphics/sfml-logo-big.png"));
             REQUIRE(image.loadFromStream(stream));
             CHECK(image.getSize() == sf::Vector2u(1001, 304));
             CHECK(image.getPixelsPtr() != nullptr);
             CHECK(image.getPixel({0, 0}) == sf::Color(255, 255, 255, 0));
             CHECK(image.getPixel({200, 150}) == sf::Color(144, 208, 62));
+        }
+
+        SECTION("Successful then unsuccessful load")
+        {
+            REQUIRE(image.loadFromStream(stream));
+            CHECK(image.getSize() == sf::Vector2u(1001, 304));
+            CHECK(image.getPixelsPtr() != nullptr);
+
+            sf::FileInputStream emptyStream;
+            REQUIRE(!image.loadFromStream(emptyStream));
+            CHECK(image.getSize() == sf::Vector2u(1001, 304));
+            CHECK(image.getPixelsPtr() != nullptr);
         }
     }
 

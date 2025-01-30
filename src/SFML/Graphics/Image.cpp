@@ -210,9 +210,6 @@ bool Image::loadFromFile(const std::filesystem::path& filename)
 
 #endif
 
-    // Clear the array (just in case)
-    m_pixels.clear();
-
     // Set up the stb_image callbacks for the std::ifstream
     const auto readStdIfStream = [](void* user, char* data, int size)
     {
@@ -267,9 +264,6 @@ bool Image::loadFromMemory(const void* data, std::size_t size)
     // Check input parameters
     if (data && size)
     {
-        // Clear the array (just in case)
-        m_pixels.clear();
-
         // Load the image and get a pointer to the pixels in memory
         Vector2i    imageSize;
         int         channels = 0;
@@ -295,9 +289,6 @@ bool Image::loadFromMemory(const void* data, std::size_t size)
 ////////////////////////////////////////////////////////////
 bool Image::loadFromStream(InputStream& stream)
 {
-    // Clear the array (just in case)
-    m_pixels.clear();
-
     // Make sure that the stream's reading position is at the beginning
     if (!stream.seek(0).has_value())
     {
