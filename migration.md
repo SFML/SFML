@@ -63,7 +63,7 @@ target_link_libraries(my_app PRIVATE SFML::Graphics SFML::Audio SFML::Network)
 ## Linux Dependencies
 
 When using X11 as the backend on Linux, as opposed to DRM, `libxi-dev` is a newly required dependency.
-This was introduces with the [raw mouse input support](https://www.sfml-dev.org/documentation/3.0.0/structsf_1_1Event_1_1MouseMovedRaw.html).
+This was introduced with the [raw mouse input support](https://www.sfml-dev.org/documentation/3.0.0/structsf_1_1Event_1_1MouseMovedRaw.html).
 
 ## `sf::Vector2<T>` Parameters
 
