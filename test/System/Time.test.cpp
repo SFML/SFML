@@ -13,8 +13,8 @@ TEST_CASE("[System] sf::Time")
     {
         STATIC_CHECK(std::is_trivially_copy_constructible_v<sf::Time>);
         STATIC_CHECK(std::is_trivially_copy_assignable_v<sf::Time>);
-        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Time>);
-        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Time>);
+        STATIC_CHECK(std::is_trivially_move_constructible_v<sf::Time>);
+        STATIC_CHECK(std::is_trivially_move_assignable_v<sf::Time>);
         STATIC_CHECK(std::is_trivially_copyable_v<sf::Time>);
     }
 
