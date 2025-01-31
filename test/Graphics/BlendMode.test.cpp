@@ -11,8 +11,8 @@ TEST_CASE("[Graphics] sf::BlendMode")
     {
         STATIC_CHECK(std::is_trivially_copy_constructible_v<sf::BlendMode>);
         STATIC_CHECK(std::is_trivially_copy_assignable_v<sf::BlendMode>);
-        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::BlendMode>);
-        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::BlendMode>);
+        STATIC_CHECK(std::is_trivially_move_constructible_v<sf::BlendMode>);
+        STATIC_CHECK(std::is_trivially_move_assignable_v<sf::BlendMode>);
     }
 
     SECTION("Construction")

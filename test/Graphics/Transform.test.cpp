@@ -17,8 +17,8 @@ TEST_CASE("[Graphics] sf::Transform")
     {
         STATIC_CHECK(std::is_trivially_copy_constructible_v<sf::Transform>);
         STATIC_CHECK(std::is_trivially_copy_assignable_v<sf::Transform>);
-        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Transform>);
-        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Transform>);
+        STATIC_CHECK(std::is_trivially_move_constructible_v<sf::Transform>);
+        STATIC_CHECK(std::is_trivially_move_assignable_v<sf::Transform>);
     }
 
     SECTION("Construction")

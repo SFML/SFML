@@ -63,8 +63,8 @@ TEST_CASE("[System] sf::U8StringCharTraits")
     {
         STATIC_CHECK(std::is_trivially_copy_constructible_v<sf::U8StringCharTraits>);
         STATIC_CHECK(std::is_trivially_copy_assignable_v<sf::U8StringCharTraits>);
-        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::U8StringCharTraits>);
-        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::U8StringCharTraits>);
+        STATIC_CHECK(std::is_trivially_move_constructible_v<sf::U8StringCharTraits>);
+        STATIC_CHECK(std::is_trivially_move_assignable_v<sf::U8StringCharTraits>);
     }
 
     SECTION("assign(char_type&, const char_type&)")

@@ -11,8 +11,8 @@ TEST_CASE("[Graphics] sf::Glyph")
     {
         STATIC_CHECK(std::is_trivially_copy_constructible_v<sf::Glyph>);
         STATIC_CHECK(std::is_trivially_copy_assignable_v<sf::Glyph>);
-        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Glyph>);
-        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Glyph>);
+        STATIC_CHECK(std::is_trivially_move_constructible_v<sf::Glyph>);
+        STATIC_CHECK(std::is_trivially_move_assignable_v<sf::Glyph>);
     }
 
     SECTION("Construction")

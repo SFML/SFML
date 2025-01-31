@@ -15,8 +15,8 @@ TEST_CASE("[System] sf::Clock")
     {
         STATIC_CHECK(std::is_trivially_copy_constructible_v<sf::Clock>);
         STATIC_CHECK(std::is_trivially_copy_assignable_v<sf::Clock>);
-        STATIC_CHECK(std::is_nothrow_move_constructible_v<sf::Clock>);
-        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Clock>);
+        STATIC_CHECK(std::is_trivially_move_constructible_v<sf::Clock>);
+        STATIC_CHECK(std::is_trivially_move_assignable_v<sf::Clock>);
     }
 
     SECTION("Construction")
