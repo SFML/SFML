@@ -164,7 +164,21 @@ TEST_CASE("[Audio] sf::InputSoundFile")
         {
             SECTION("flac")
             {
-                REQUIRE(inputSoundFile.openFromFile("Audio/ding.flac"));
+                SECTION("ASCII filename")
+                {
+                    REQUIRE(inputSoundFile.openFromFile("Audio/ding.flac"));
+                }
+
+                SECTION("Polish filename")
+                {
+                    REQUIRE(inputSoundFile.openFromFile(U"Audio/ding-\u0144.flac"));
+                }
+
+                SECTION("Emoji filename")
+                {
+                    REQUIRE(inputSoundFile.openFromFile(U"Audio/ding-\U0001F40C.flac"));
+                }
+
                 CHECK(inputSoundFile.getSampleCount() == 87'798);
                 CHECK(inputSoundFile.getChannelCount() == 1);
                 CHECK(inputSoundFile.getSampleRate() == 44'100);
@@ -175,7 +189,21 @@ TEST_CASE("[Audio] sf::InputSoundFile")
 
             SECTION("mp3")
             {
-                REQUIRE(inputSoundFile.openFromFile("Audio/ding.mp3"));
+                SECTION("ASCII filename")
+                {
+                    REQUIRE(inputSoundFile.openFromFile("Audio/ding.mp3"));
+                }
+
+                SECTION("Polish filename")
+                {
+                    REQUIRE(inputSoundFile.openFromFile(U"Audio/ding-\u0144.mp3"));
+                }
+
+                SECTION("Emoji filename")
+                {
+                    REQUIRE(inputSoundFile.openFromFile(U"Audio/ding-\U0001F40C.mp3"));
+                }
+
                 CHECK(inputSoundFile.getSampleCount() == 87'798);
                 CHECK(inputSoundFile.getChannelCount() == 1);
                 CHECK(inputSoundFile.getSampleRate() == 44'100);
@@ -186,7 +214,21 @@ TEST_CASE("[Audio] sf::InputSoundFile")
 
             SECTION("ogg")
             {
-                REQUIRE(inputSoundFile.openFromFile("Audio/doodle_pop.ogg"));
+                SECTION("ASCII filename")
+                {
+                    REQUIRE(inputSoundFile.openFromFile("Audio/doodle_pop.ogg"));
+                }
+
+                SECTION("Polish filename")
+                {
+                    REQUIRE(inputSoundFile.openFromFile(U"Audio/doodle_pop-\u0144.ogg"));
+                }
+
+                SECTION("Emoji filename")
+                {
+                    REQUIRE(inputSoundFile.openFromFile(U"Audio/doodle_pop-\U0001F40C.ogg"));
+                }
+
                 CHECK(inputSoundFile.getSampleCount() == 2'116'992);
                 CHECK(inputSoundFile.getChannelCount() == 2);
                 CHECK(inputSoundFile.getSampleRate() == 44'100);
@@ -197,7 +239,21 @@ TEST_CASE("[Audio] sf::InputSoundFile")
 
             SECTION("wav")
             {
-                REQUIRE(inputSoundFile.openFromFile("Audio/killdeer.wav"));
+                SECTION("ASCII filename")
+                {
+                    REQUIRE(inputSoundFile.openFromFile("Audio/killdeer.wav"));
+                }
+
+                SECTION("Polish filename")
+                {
+                    REQUIRE(inputSoundFile.openFromFile(U"Audio/killdeer-\u0144.wav"));
+                }
+
+                SECTION("Emoji filename")
+                {
+                    REQUIRE(inputSoundFile.openFromFile(U"Audio/killdeer-\U0001F40C.wav"));
+                }
+
                 CHECK(inputSoundFile.getSampleCount() == 112'941);
                 CHECK(inputSoundFile.getChannelCount() == 1);
                 CHECK(inputSoundFile.getSampleRate() == 22'050);
