@@ -7,10 +7,10 @@
 #include <SFML/System/FileInputStream.hpp>
 
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/generators/catch_generators.hpp>
 
 #include <GraphicsUtil.hpp>
 #include <WindowUtil.hpp>
-#include <fstream>
 #include <type_traits>
 
 TEST_CASE("[Graphics] sf::Font", runDisplayTests())
@@ -146,7 +146,11 @@ TEST_CASE("[Graphics] sf::Font", runDisplayTests())
 
         SECTION("Successful load")
         {
-            REQUIRE(font.openFromFile("Graphics/tuffy.ttf"));
+            const std::u32string        filenameSuffix = GENERATE(U"", U"-ń", U"-🐌");
+            const std::filesystem::path filename       = U"Graphics/tuffy" + filenameSuffix + U".ttf";
+            INFO("Filename: " << reinterpret_cast<const char*>(filename.u8string().c_str()));
+
+            REQUIRE(font.openFromFile(filename));
             CHECK(font.getInfo().family == "Tuffy");
             const auto& glyph = font.getGlyph(0x45, 16, false);
             CHECK(glyph.advance == 9);
