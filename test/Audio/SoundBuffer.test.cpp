@@ -122,7 +122,21 @@ TEST_CASE("[Audio] sf::SoundBuffer", runAudioDeviceTests())
 
         SECTION("Valid file")
         {
-            REQUIRE(soundBuffer.loadFromFile("Audio/ding.flac"));
+            SECTION("ASCII filename")
+            {
+                REQUIRE(soundBuffer.loadFromFile("Audio/ding.flac"));
+            }
+
+            SECTION("Polish filename")
+            {
+                REQUIRE(soundBuffer.loadFromFile(U"Audio/ding-\u0144.flac"));
+            }
+
+            SECTION("Emoji filename")
+            {
+                REQUIRE(soundBuffer.loadFromFile(U"Audio/ding-\U0001F40C.flac"));
+            }
+
             CHECK(soundBuffer.getSamples() != nullptr);
             CHECK(soundBuffer.getSampleCount() == 87798);
             CHECK(soundBuffer.getSampleRate() == 44100);
