@@ -133,7 +133,21 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
 
         SECTION("Valid file")
         {
-            REQUIRE(music.openFromFile("Audio/ding.mp3"));
+            SECTION("ASCII filename")
+            {
+                REQUIRE(music.openFromFile("Audio/ding.mp3"));
+            }
+
+            SECTION("Polish filename")
+            {
+                REQUIRE(music.openFromFile(U"Audio/ding-\u0144.mp3"));
+            }
+
+            SECTION("Emoji filename")
+            {
+                REQUIRE(music.openFromFile(U"Audio/ding-\U0001F40C.mp3"));
+            }
+
             CHECK(music.getDuration() == sf::microseconds(1990884));
             const auto [offset, length] = music.getLoopPoints();
             CHECK(offset == sf::Time::Zero);
