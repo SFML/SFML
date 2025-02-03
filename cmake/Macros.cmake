@@ -274,6 +274,10 @@ macro(sfml_add_library module)
         target_compile_definitions(${target} PUBLIC "SFML_STATIC")
     endif()
 
+    # Enable support for UTF-8 characters in source code
+    if(SFML_COMPILER_MSVC)
+        target_compile_options(${target} PRIVATE /utf-8)
+    endif()
 endmacro()
 
 # add a new target which is a SFML example
@@ -350,6 +354,11 @@ macro(sfml_add_example target)
     if(SFML_OS_WINDOWS AND SFML_USE_MESA3D)
         add_dependencies(${target} "install-mesa3d")
     endif()
+
+    # Enable support for UTF-8 characters in source code
+    if(SFML_COMPILER_MSVC)
+        target_compile_options(${target} PRIVATE /utf-8)
+    endif()
 endmacro()
 
 # add a new target which is a SFML test
@@ -405,6 +414,11 @@ function(sfml_add_test target SOURCES DEPENDS)
         if(SFML_OS_ANDROID)
             set_target_properties(${target} PROPERTIES CROSSCOMPILING_EMULATOR "${PROJECT_BINARY_DIR}/run-in-adb-shell.sh")
         endif()
+    endif()
+
+    # Enable support for UTF-8 characters in source code
+    if(SFML_COMPILER_MSVC)
+        target_compile_options(${target} PRIVATE /utf-8)
     endif()
 
     # Add the test
