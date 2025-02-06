@@ -5,6 +5,7 @@
 #include <SFML/System/FileInputStream.hpp>
 
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/generators/catch_generators.hpp>
 
 #include <AudioUtil.hpp>
 #include <SystemUtil.hpp>
@@ -133,21 +134,11 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
 
         SECTION("Valid file")
         {
-            SECTION("ASCII filename")
-            {
-                REQUIRE(music.openFromFile("Audio/ding.mp3"));
-            }
+            const std::u32string        filenameSuffix = GENERATE(U"", U"-ń", U"-🐌");
+            const std::filesystem::path filename       = U"Audio/ding" + filenameSuffix + U".mp3";
+            INFO("Filename: " << reinterpret_cast<const char*>(filename.u8string().c_str()));
 
-            SECTION("Polish filename")
-            {
-                REQUIRE(music.openFromFile(U"Audio/ding-ń.mp3"));
-            }
-
-            SECTION("Emoji filename")
-            {
-                REQUIRE(music.openFromFile(U"Audio/ding-🐌.mp3"));
-            }
-
+            REQUIRE(music.openFromFile(filename));
             CHECK(music.getDuration() == sf::microseconds(1990884));
             const auto [offset, length] = music.getLoopPoints();
             CHECK(offset == sf::Time::Zero);

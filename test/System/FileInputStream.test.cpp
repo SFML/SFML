@@ -1,6 +1,7 @@
 #include <SFML/System/FileInputStream.hpp>
 
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/generators/catch_generators.hpp>
 
 #include <array>
 #include <string_view>
@@ -93,22 +94,12 @@ TEST_CASE("[System] sf::FileInputStream")
 
     SECTION("open()")
     {
+        const std::u32string        filenameSuffix = GENERATE(U"", U"-ń", U"-🐌");
+        const std::filesystem::path filename       = U"System/test" + filenameSuffix + U".txt";
+        INFO("Filename: " << reinterpret_cast<const char*>(filename.u8string().c_str()));
+
         sf::FileInputStream fileInputStream;
-
-        SECTION("From ASCII filename")
-        {
-            REQUIRE(fileInputStream.open("System/test.txt"));
-        }
-
-        SECTION("From Polish filename")
-        {
-            REQUIRE(fileInputStream.open(U"System/test-ń.txt"));
-        }
-
-        SECTION("From emoji filename")
-        {
-            REQUIRE(fileInputStream.open(U"System/test-🐌.txt"));
-        }
+        CHECK(fileInputStream.open(filename));
 
         CHECK(fileInputStream.read(buffer.data(), 5) == 5);
         CHECK(fileInputStream.tell() == 5);
