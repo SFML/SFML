@@ -6,10 +6,10 @@
 #include <SFML/System/Time.hpp>
 
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/generators/catch_generators.hpp>
 
 #include <SystemUtil.hpp>
 #include <array>
-#include <fstream>
 #include <type_traits>
 
 TEST_CASE("[Audio] sf::InputSoundFile")
@@ -162,23 +162,14 @@ TEST_CASE("[Audio] sf::InputSoundFile")
 
         SECTION("Valid file")
         {
+            const std::u32string filenameSuffix = GENERATE(U"", U"-ń", U"-🐌");
+
             SECTION("flac")
             {
-                SECTION("ASCII filename")
-                {
-                    REQUIRE(inputSoundFile.openFromFile("Audio/ding.flac"));
-                }
+                const std::filesystem::path filename = U"Audio/ding" + filenameSuffix + U".flac";
+                INFO("Filename: " << reinterpret_cast<const char*>(filename.u8string().c_str()));
 
-                SECTION("Polish filename")
-                {
-                    REQUIRE(inputSoundFile.openFromFile(U"Audio/ding-ń.flac"));
-                }
-
-                SECTION("Emoji filename")
-                {
-                    REQUIRE(inputSoundFile.openFromFile(U"Audio/ding-🐌.flac"));
-                }
-
+                REQUIRE(inputSoundFile.openFromFile(filename));
                 CHECK(inputSoundFile.getSampleCount() == 87'798);
                 CHECK(inputSoundFile.getChannelCount() == 1);
                 CHECK(inputSoundFile.getSampleRate() == 44'100);
@@ -189,21 +180,10 @@ TEST_CASE("[Audio] sf::InputSoundFile")
 
             SECTION("mp3")
             {
-                SECTION("ASCII filename")
-                {
-                    REQUIRE(inputSoundFile.openFromFile("Audio/ding.mp3"));
-                }
+                const std::filesystem::path filename = U"Audio/ding" + filenameSuffix + U".mp3";
+                INFO("Filename: " << reinterpret_cast<const char*>(filename.u8string().c_str()));
 
-                SECTION("Polish filename")
-                {
-                    REQUIRE(inputSoundFile.openFromFile(U"Audio/ding-ń.mp3"));
-                }
-
-                SECTION("Emoji filename")
-                {
-                    REQUIRE(inputSoundFile.openFromFile(U"Audio/ding-🐌.mp3"));
-                }
-
+                REQUIRE(inputSoundFile.openFromFile(filename));
                 CHECK(inputSoundFile.getSampleCount() == 87'798);
                 CHECK(inputSoundFile.getChannelCount() == 1);
                 CHECK(inputSoundFile.getSampleRate() == 44'100);
@@ -214,21 +194,10 @@ TEST_CASE("[Audio] sf::InputSoundFile")
 
             SECTION("ogg")
             {
-                SECTION("ASCII filename")
-                {
-                    REQUIRE(inputSoundFile.openFromFile("Audio/doodle_pop.ogg"));
-                }
+                const std::filesystem::path filename = U"Audio/doodle_pop" + filenameSuffix + U".ogg";
+                INFO("Filename: " << reinterpret_cast<const char*>(filename.u8string().c_str()));
 
-                SECTION("Polish filename")
-                {
-                    REQUIRE(inputSoundFile.openFromFile(U"Audio/doodle_pop-ń.ogg"));
-                }
-
-                SECTION("Emoji filename")
-                {
-                    REQUIRE(inputSoundFile.openFromFile(U"Audio/doodle_pop-🐌.ogg"));
-                }
-
+                REQUIRE(inputSoundFile.openFromFile(filename));
                 CHECK(inputSoundFile.getSampleCount() == 2'116'992);
                 CHECK(inputSoundFile.getChannelCount() == 2);
                 CHECK(inputSoundFile.getSampleRate() == 44'100);
@@ -239,21 +208,10 @@ TEST_CASE("[Audio] sf::InputSoundFile")
 
             SECTION("wav")
             {
-                SECTION("ASCII filename")
-                {
-                    REQUIRE(inputSoundFile.openFromFile("Audio/killdeer.wav"));
-                }
+                const std::filesystem::path filename = U"Audio/killdeer" + filenameSuffix + U".wav";
+                INFO("Filename: " << reinterpret_cast<const char*>(filename.u8string().c_str()));
 
-                SECTION("Polish filename")
-                {
-                    REQUIRE(inputSoundFile.openFromFile(U"Audio/killdeer-ń.wav"));
-                }
-
-                SECTION("Emoji filename")
-                {
-                    REQUIRE(inputSoundFile.openFromFile(U"Audio/killdeer-🐌.wav"));
-                }
-
+                REQUIRE(inputSoundFile.openFromFile(filename));
                 CHECK(inputSoundFile.getSampleCount() == 112'941);
                 CHECK(inputSoundFile.getChannelCount() == 1);
                 CHECK(inputSoundFile.getSampleRate() == 22'050);

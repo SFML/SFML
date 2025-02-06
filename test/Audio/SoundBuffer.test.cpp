@@ -5,6 +5,7 @@
 #include <SFML/System/FileInputStream.hpp>
 
 #include <catch2/catch_test_macros.hpp>
+#include <catch2/generators/catch_generators.hpp>
 
 #include <AudioUtil.hpp>
 #include <SystemUtil.hpp>
@@ -122,21 +123,11 @@ TEST_CASE("[Audio] sf::SoundBuffer", runAudioDeviceTests())
 
         SECTION("Valid file")
         {
-            SECTION("ASCII filename")
-            {
-                REQUIRE(soundBuffer.loadFromFile("Audio/ding.flac"));
-            }
+            const std::u32string        filenameSuffix = GENERATE(U"", U"-ń", U"-🐌");
+            const std::filesystem::path filename       = U"Audio/ding" + filenameSuffix + U".flac";
+            INFO("Filename: " << reinterpret_cast<const char*>(filename.u8string().c_str()));
 
-            SECTION("Polish filename")
-            {
-                REQUIRE(soundBuffer.loadFromFile(U"Audio/ding-ń.flac"));
-            }
-
-            SECTION("Emoji filename")
-            {
-                REQUIRE(soundBuffer.loadFromFile(U"Audio/ding-🐌.flac"));
-            }
-
+            REQUIRE(soundBuffer.loadFromFile(filename));
             CHECK(soundBuffer.getSamples() != nullptr);
             CHECK(soundBuffer.getSampleCount() == 87798);
             CHECK(soundBuffer.getSampleRate() == 44100);
