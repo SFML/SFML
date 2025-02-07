@@ -17,7 +17,7 @@ TEST_CASE("[Audio] sf::OutputSoundFile")
     }
 
     const std::u32string stem      = GENERATE(U"tmp", U"tmp-ń", U"tmp-🐌");
-    const std::u32string extension = GENERATE(U".wav", U".ogg"); // , U".flac"); FLAC fails to handle Unicode strings
+    const std::u32string extension = GENERATE(U".wav", U".ogg", U".flac");
     const auto           filename  = std::filesystem::temp_directory_path() / std::filesystem::path(stem + extension);
     const std::vector<sf::SoundChannel> channelMap{sf::SoundChannel::FrontLeft, sf::SoundChannel::FrontRight};
 
