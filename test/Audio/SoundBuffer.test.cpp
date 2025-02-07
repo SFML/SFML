@@ -183,12 +183,13 @@ TEST_CASE("[Audio] sf::SoundBuffer", runAudioDeviceTests())
 
     SECTION("saveToFile()")
     {
-        const auto filename = std::filesystem::temp_directory_path() / "ding.flac";
+        const std::u32string stem      = GENERATE(U"tmp", U"tmp-ń", U"tmp-🐌");
+        const std::u32string extension = GENERATE(U".wav", U".ogg", U".flac");
+        const auto filename = std::filesystem::temp_directory_path() / std::filesystem::path(stem + extension);
 
-        {
-            const sf::SoundBuffer soundBuffer("Audio/ding.flac");
-            REQUIRE(soundBuffer.saveToFile(filename));
-        }
+        INFO("Filename: " << reinterpret_cast<const char*>(filename.u8string().c_str()));
+
+        REQUIRE(sf::SoundBuffer("Audio/ding.flac").saveToFile(filename));
 
         const sf::SoundBuffer soundBuffer(filename);
         CHECK(soundBuffer.getSamples() != nullptr);
