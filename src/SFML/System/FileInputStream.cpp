@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Exception.hpp>
 #include <SFML/System/FileInputStream.hpp>
+#include <SFML/System/Utils.hpp>
 #ifdef SFML_SYSTEM_ANDROID
 #include <SFML/System/Android/Activity.hpp>
 #include <SFML/System/Android/ResourceStream.hpp>
@@ -78,11 +79,7 @@ bool FileInputStream::open(const std::filesystem::path& filename)
         return m_androidFile->tell().has_value();
     }
 #endif
-#ifdef SFML_SYSTEM_WINDOWS
-    m_file.reset(_wfopen(filename.c_str(), L"rb"));
-#else
-    m_file.reset(std::fopen(filename.c_str(), "rb"));
-#endif
+    m_file.reset(openFile(filename, "rb"));
     return m_file != nullptr;
 }
 
