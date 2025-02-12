@@ -226,8 +226,7 @@ void WglContext::display()
 {
     if (m_deviceContext && m_context)
     {
-        bool success = SwapBuffers(m_deviceContext);
-        if (!success)
+        if (!SwapBuffers(m_deviceContext))
         {
             err() << "SwapBuffers error: " << GetLastError() << std::endl;
             ReleaseDC(m_window, m_deviceContext);
