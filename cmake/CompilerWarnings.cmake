@@ -4,11 +4,29 @@
 
 # Helper function to enable compiler warnings for a specific target
 function(set_target_warnings target)
-    option(SFML_WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
+    option(SFML_WARNINGS_AS_ERRORS "Enable and enforce compiler warnings" OFF)
+
+    # Disable certain deprecation warnings
+    if(SFML_OS_WINDOWS)
+        target_compile_definitions(${target} PRIVATE -D_CRT_SECURE_NO_WARNINGS)
+        target_compile_definitions(${target} PRIVATE -D_WINSOCK_DEPRECATED_NO_WARNINGS)
+    endif()
+
+    if(SFML_COMPILER_CLANG OR SFML_COMPILER_CLANG_CL)
+        target_compile_options(${target} PRIVATE
+            -Wno-unknown-warning-option # do not warn on GCC-specific warning diagnostic pragmas
+            -Wno-c++20-extensions # work around https://github.com/catchorg/Catch2/issues/2910
+        )
+    endif()
+
+    # Short-circuit function to prevent adding any warnings
+    if(NOT SFML_WARNINGS_AS_ERRORS)
+        return()
+    endif()
 
     if(SFML_COMPILER_MSVC)
         target_compile_options(${target} PRIVATE
-            $<$<BOOL:${SFML_WARNINGS_AS_ERRORS}>:/WX>
+            /WX
             /W4 # Baseline reasonable warnings
             /w14242 # 'identifier': conversion from 'type1' to 'type1', possible loss of data
             /w14254 # 'operator': conversion from 'type1:field_bits' to 'type2:field_bits', possible loss of data
@@ -41,7 +59,7 @@ function(set_target_warnings target)
 
     if(SFML_COMPILER_GCC OR SFML_COMPILER_CLANG)
         target_compile_options(${target} PRIVATE
-            $<$<BOOL:${SFML_WARNINGS_AS_ERRORS}>:-Werror>
+            -Werror
             -Wall
             -Wextra # reasonable and standard
             -Wshadow # warn the user if a variable declaration shadows one from a parent context
@@ -72,18 +90,5 @@ function(set_target_warnings target)
             # -Wuseless-cast # warn if you perform a cast to the same type (disabled because it is not portable as some type aliases might vary between platforms)
             $<$<VERSION_GREATER_EQUAL:${CMAKE_CXX_COMPILER_VERSION},8.1>:-Wduplicated-branches> # warn if if / else branches have duplicated code
         )
-    endif()
-
-    if(SFML_COMPILER_CLANG OR SFML_COMPILER_CLANG_CL)
-        target_compile_options(${target} PRIVATE
-            -Wno-unknown-warning-option # do not warn on GCC-specific warning diagnostic pragmas
-            -Wno-c++20-extensions # work around https://github.com/catchorg/Catch2/issues/2910
-        )
-    endif()
-
-    # Disable certain deprecation warnings
-    if(SFML_OS_WINDOWS)
-        target_compile_definitions(${target} PRIVATE -D_CRT_SECURE_NO_WARNINGS)
-        target_compile_definitions(${target} PRIVATE -D_WINSOCK_DEPRECATED_NO_WARNINGS)
     endif()
 endfunction()
