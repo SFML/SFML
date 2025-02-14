@@ -27,6 +27,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Utf.hpp> // NOLINT(misc-header-include-cycle)
 
+#include <iterator>
+
 
 ////////////////////////////////////////////////////////////
 // References:
@@ -44,13 +46,33 @@ namespace sf
 namespace priv
 {
 ////////////////////////////////////////////////////////////
-template <typename InputIt, typename OutputIt>
-OutputIt copy(InputIt first, InputIt last, OutputIt dFirst)
+template <typename In, typename Out>
+Out copyBits(In begin, In end, Out output)
 {
-    while (first != last)
-        *dFirst++ = static_cast<typename OutputIt::container_type::value_type>(*first++);
+    using InputType  = typename std::iterator_traits<In>::value_type;
+    using OutputType = typename Out::container_type::value_type;
 
-    return dFirst;
+    static_assert(sizeof(OutputType) >= sizeof(InputType));
+    static_assert(std::is_integral_v<InputType>);
+    static_assert(std::is_integral_v<OutputType>);
+
+    // The goal is to copy the byte representation of the input into the output type.
+    // A single static_cast will try to preserve the value as opposed to the byte representation
+    // which leads to issues when the input is signed and has a negative value. That will get
+    // wrapped to a very large unsigned value which is incorrect. To address this, we first
+    // cast the input to its unsigned equivalent then cast that to the destination type which has
+    // the property of preserving the byte representation of the input. A simple memcpy seems
+    // like a viable solution but copying the bytes of a type into a larger type yields different
+    // results on big versus little endian machines so it's not a possibility.
+    //
+    // Why do this? For example take the Latin1 character é. It has a byte representation of 0xE9
+    // and a signed integer value of -23. If you cast -23 to a char32_t, you get a value of
+    // 4294967273 which is not a valid Unicode codepoint. What we actually wanted was a char32_t
+    // with the byte representation 0x000000E9.
+    while (begin != end)
+        *output++ = static_cast<OutputType>(static_cast<std::make_unsigned_t<InputType>>(*begin++));
+
+    return output;
 }
 } // namespace priv
 
@@ -137,20 +159,20 @@ Out Utf<8>::encode(char32_t input, Out output, std::uint8_t replacement)
         // clang-format on
 
         // Extract the bytes to write
-        std::array<std::byte, 4> bytes{};
+        std::array<std::uint8_t, 4> bytes{};
 
         // clang-format off
         switch (bytestoWrite)
         {
-            case 4: bytes[3] = static_cast<std::byte>((input | 0x80) & 0xBF); input >>= 6; [[fallthrough]];
-            case 3: bytes[2] = static_cast<std::byte>((input | 0x80) & 0xBF); input >>= 6; [[fallthrough]];
-            case 2: bytes[1] = static_cast<std::byte>((input | 0x80) & 0xBF); input >>= 6; [[fallthrough]];
-            case 1: bytes[0] = static_cast<std::byte> (input | firstBytes[bytestoWrite]);
+            case 4: bytes[3] = static_cast<std::uint8_t>((input | 0x80) & 0xBF); input >>= 6; [[fallthrough]];
+            case 3: bytes[2] = static_cast<std::uint8_t>((input | 0x80) & 0xBF); input >>= 6; [[fallthrough]];
+            case 2: bytes[1] = static_cast<std::uint8_t>((input | 0x80) & 0xBF); input >>= 6; [[fallthrough]];
+            case 1: bytes[0] = static_cast<std::uint8_t> (input | firstBytes[bytestoWrite]);
         }
         // clang-format on
 
         // Add them to the output
-        output = priv::copy(bytes.data(), bytes.data() + bytestoWrite, output);
+        output = priv::copyBits(bytes.data(), bytes.data() + bytestoWrite, output);
     }
 
     return output;
@@ -216,7 +238,7 @@ Out Utf<8>::fromLatin1(In begin, In end, Out output)
     // Latin-1 is directly compatible with Unicode encodings,
     // and can thus be treated as (a sub-range of) UTF-32
     while (begin != end)
-        output = encode(*begin++, output);
+        output = encode(static_cast<std::uint8_t>(*begin++), output);
 
     return output;
 }
@@ -273,7 +295,7 @@ Out Utf<8>::toLatin1(In begin, In end, Out output, char replacement)
 template <typename In, typename Out>
 Out Utf<8>::toUtf8(In begin, In end, Out output)
 {
-    return priv::copy(begin, end, output);
+    return priv::copyBits(begin, end, output);
 }
 
 
@@ -442,7 +464,7 @@ Out Utf<16>::fromLatin1(In begin, In end, Out output)
 {
     // Latin-1 is directly compatible with Unicode encodings,
     // and can thus be treated as (a sub-range of) UTF-32
-    return priv::copy(begin, end, output);
+    return priv::copyBits(begin, end, output);
 }
 
 
@@ -511,7 +533,7 @@ Out Utf<16>::toUtf8(In begin, In end, Out output)
 template <typename In, typename Out>
 Out Utf<16>::toUtf16(In begin, In end, Out output)
 {
-    return priv::copy(begin, end, output);
+    return priv::copyBits(begin, end, output);
 }
 
 
@@ -592,7 +614,7 @@ Out Utf<32>::fromLatin1(In begin, In end, Out output)
 {
     // Latin-1 is directly compatible with Unicode encodings,
     // and can thus be treated as (a sub-range of) UTF-32
-    return priv::copy(begin, end, output);
+    return priv::copyBits(begin, end, output);
 }
 
 
@@ -659,7 +681,7 @@ Out Utf<32>::toUtf16(In begin, In end, Out output)
 template <typename In, typename Out>
 Out Utf<32>::toUtf32(In begin, In end, Out output)
 {
-    return priv::copy(begin, end, output);
+    return priv::copyBits(begin, end, output);
 }
 
 
