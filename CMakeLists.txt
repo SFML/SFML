@@ -184,8 +184,14 @@ endif()
 option(SFML_ENABLE_STDLIB_ASSERTIONS "Enable standard library assertions" OFF)
 if(SFML_ENABLE_STDLIB_ASSERTIONS)
     # intentionally using `add_definitions` here to propagate defines to subdirectories
-    add_definitions(-D_GLIBCXX_ASSERTIONS=1)                                   # see https://gcc.gnu.org/wiki/LibstdcxxDebugMode
-    add_definitions(-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_EXTENSIVE) # see https://libcxx.llvm.org/Hardening.html
+    add_compile_definitions(_GLIBCXX_ASSERTIONS=1)                                   # see https://gcc.gnu.org/wiki/LibstdcxxDebugMode
+
+    # Xcode has a property to control this - adding the define ourselves causes multiple definitions
+    if (XCODE)
+        set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_STANDARD_LIBRARY_HARDENING "Yes (extensive)")
+    else()
+        add_compile_definitions(_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_EXTENSIVE) # see https://libcxx.llvm.org/Hardening.html
+    endif()
 endif()
 
 # set the output directory for SFML DLLs and executables
