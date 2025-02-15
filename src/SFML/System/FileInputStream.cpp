@@ -75,7 +75,9 @@ bool FileInputStream::open(const std::filesystem::path& filename)
 #ifdef SFML_SYSTEM_ANDROID
     if (priv::getActivityStatesPtr() != nullptr)
     {
-        m_androidFile = std::make_unique<priv::ResourceStream>(filename);
+        m_androidFile = std::make_unique<priv::ResourceStream>();
+        if (!m_androidFile->open(filename))
+            return false;
         return m_androidFile->tell().has_value();
     }
 #endif
