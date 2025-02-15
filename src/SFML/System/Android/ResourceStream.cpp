@@ -34,20 +34,20 @@
 
 namespace sf::priv
 {
-
 ////////////////////////////////////////////////////////////
-ResourceStream::ResourceStream(const std::filesystem::path& filename)
+bool ResourceStream::open(const std::filesystem::path& filename)
 {
     ActivityStates&       states = getActivity();
     const std::lock_guard lock(states.mutex);
     m_file.reset(AAssetManager_open(states.activity->assetManager, filename.c_str(), AASSET_MODE_UNKNOWN));
-    assert(m_file && "Failed to initialize ResourceStream file");
+    return m_file != nullptr;
 }
 
 
 ////////////////////////////////////////////////////////////
 std::optional<std::size_t> ResourceStream::read(void* data, std::size_t size)
 {
+    assert(m_file && "ResourceStream::read() cannot be called when file is not initialized");
     const auto numBytesRead = AAsset_read(m_file.get(), data, size);
     if (numBytesRead < 0)
         return std::nullopt;
@@ -58,6 +58,7 @@ std::optional<std::size_t> ResourceStream::read(void* data, std::size_t size)
 ////////////////////////////////////////////////////////////
 std::optional<std::size_t> ResourceStream::seek(std::size_t position)
 {
+    assert(m_file && "ResourceStream::seek() cannot be called when file is not initialized");
     const auto newPosition = AAsset_seek(m_file.get(), static_cast<off_t>(position), SEEK_SET);
     if (newPosition < 0)
         return std::nullopt;
@@ -68,6 +69,7 @@ std::optional<std::size_t> ResourceStream::seek(std::size_t position)
 ////////////////////////////////////////////////////////////
 std::optional<std::size_t> ResourceStream::tell()
 {
+    assert(m_file && "ResourceStream::tell() cannot be called when file is not initialized");
     return getSize().value() - static_cast<std::size_t>(AAsset_getRemainingLength(m_file.get()));
 }
 
@@ -75,6 +77,7 @@ std::optional<std::size_t> ResourceStream::tell()
 ////////////////////////////////////////////////////////////
 std::optional<std::size_t> ResourceStream::getSize()
 {
+    assert(m_file && "ResourceStream::getSize() cannot be called when file is not initialized");
     return AAsset_getLength(m_file.get());
 }
 
