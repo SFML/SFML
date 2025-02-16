@@ -30,6 +30,8 @@ add_library(sfml-test-main STATIC
     TestUtilities/GraphicsUtil.cpp
     TestUtilities/AudioUtil.hpp
     TestUtilities/AudioUtil.cpp
+    TestUtilities/NetworkUtil.hpp
+    TestUtilities/NetworkUtil.cpp
 )
 target_include_directories(sfml-test-main PUBLIC TestUtilities)
 target_link_libraries(sfml-test-main PUBLIC SFML::System Catch2::Catch2WithMain)
@@ -48,6 +50,11 @@ endif()
 sfml_set_option(SFML_RUN_AUDIO_DEVICE_TESTS ON BOOL "ON to run tests that require an audio device, OFF to ignore it")
 if(SFML_RUN_AUDIO_DEVICE_TESTS)
     target_compile_definitions(sfml-test-main PRIVATE SFML_RUN_AUDIO_DEVICE_TESTS)
+endif()
+
+sfml_set_option(SFML_RUN_INTERNET_TESTS ON BOOL "ON to run tests that require internet access, OFF to ignore it")
+if(SFML_RUN_INTERNET_TESTS)
+    target_compile_definitions(sfml-test-main PRIVATE SFML_RUN_INTERNET_TESTS)
 endif()
 
 set(SYSTEM_SRC
