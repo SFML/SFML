@@ -198,8 +198,8 @@ Out Utf<8>::fromWide(In begin, In end, Out output)
 {
     while (begin != end)
     {
-        char32_t codepoint = Utf<32>::decodeWide(*begin++);
-        output             = encode(codepoint, output);
+        const char32_t codepoint = Utf<32>::decodeWide(*begin++);
+        output                   = encode(codepoint, output);
     }
 
     return output;
@@ -411,8 +411,8 @@ Out Utf<16>::fromAnsi(In begin, In end, Out output, const std::locale& locale)
 {
     while (begin != end)
     {
-        char32_t codepoint = Utf<32>::decodeAnsi(*begin++, locale);
-        output             = encode(codepoint, output);
+        const char32_t codepoint = Utf<32>::decodeAnsi(*begin++, locale);
+        output                   = encode(codepoint, output);
     }
 
     return output;
@@ -425,8 +425,8 @@ Out Utf<16>::fromWide(In begin, In end, Out output)
 {
     while (begin != end)
     {
-        char32_t codepoint = Utf<32>::decodeWide(*begin++);
-        output             = encode(codepoint, output);
+        const char32_t codepoint = Utf<32>::decodeWide(*begin++);
+        output                   = encode(codepoint, output);
     }
 
     return output;
