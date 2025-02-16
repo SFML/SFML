@@ -2,6 +2,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <NetworkUtil.hpp>
 #include <sstream>
 #include <string_view>
 #include <type_traits>
@@ -66,27 +67,6 @@ TEST_CASE("[Network] sf::IpAddress")
             const sf::IpAddress ipAddress(0xCB00719A);
             CHECK(ipAddress.toString() == "203.0.113.154"s);
             CHECK(ipAddress.toInteger() == 0xCB00719A);
-        }
-    }
-
-    SECTION("Static functions")
-    {
-        SECTION("getLocalAddress")
-        {
-            const std::optional<sf::IpAddress> ipAddress = sf::IpAddress::getLocalAddress();
-            REQUIRE(ipAddress.has_value());
-            CHECK(ipAddress->toString() != "0.0.0.0");
-            CHECK(ipAddress->toInteger() != 0);
-        }
-
-        SECTION("getPublicAddress")
-        {
-            const std::optional<sf::IpAddress> ipAddress = sf::IpAddress::getPublicAddress(sf::seconds(1));
-            if (ipAddress.has_value())
-            {
-                CHECK(ipAddress->toString() != "0.0.0.0");
-                CHECK(ipAddress->toInteger() != 0);
-            }
         }
     }
 
@@ -184,6 +164,30 @@ TEST_CASE("[Network] sf::IpAddress")
             std::ostringstream out;
             out << sf::IpAddress(192, 0, 2, 10);
             CHECK(out.str() == "192.0.2.10"s);
+        }
+    }
+}
+
+TEST_CASE("[Network] sf::IpAddress (internet)", runInternetTests())
+{
+    SECTION("Static functions")
+    {
+        SECTION("getLocalAddress")
+        {
+            const std::optional<sf::IpAddress> ipAddress = sf::IpAddress::getLocalAddress();
+            REQUIRE(ipAddress.has_value());
+            CHECK(ipAddress->toString() != "0.0.0.0");
+            CHECK(ipAddress->toInteger() != 0);
+        }
+
+        SECTION("getPublicAddress")
+        {
+            const std::optional<sf::IpAddress> ipAddress = sf::IpAddress::getPublicAddress(sf::seconds(1));
+            if (ipAddress.has_value())
+            {
+                CHECK(ipAddress->toString() != "0.0.0.0");
+                CHECK(ipAddress->toInteger() != 0);
+            }
         }
     }
 }
