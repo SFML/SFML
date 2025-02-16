@@ -124,7 +124,7 @@ std::uint32_t IpAddress::toInteger() const
 ////////////////////////////////////////////////////////////
 std::optional<IpAddress> IpAddress::getLocalAddress()
 {
-    // The method here is to connect a UDP socket to anyone (here to localhost),
+    // The method here is to connect a UDP socket to a public ip,
     // and get the local socket address with the getsockname function.
     // UDP connection will not send anything to the network, so this function won't cause any overhead.
 
@@ -136,8 +136,10 @@ std::optional<IpAddress> IpAddress::getLocalAddress()
         return std::nullopt;
     }
 
-    // Connect the socket to localhost on any port
-    sockaddr_in address = priv::SocketImpl::createAddress(ntohl(INADDR_LOOPBACK), 9);
+    // Connect the socket to a public ip (here 1.1.1.1) on any
+    // port. This will give the local address of the network interface
+    // used for default routing which is usually what we want.
+    sockaddr_in address = priv::SocketImpl::createAddress(0x01010101, 9);
     if (connect(sock, reinterpret_cast<sockaddr*>(&address), sizeof(address)) == -1)
     {
         priv::SocketImpl::close(sock);
