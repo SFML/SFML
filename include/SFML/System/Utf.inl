@@ -41,15 +41,18 @@
 
 namespace sf
 {
+namespace priv
+{
 ////////////////////////////////////////////////////////////
 template <typename InputIt, typename OutputIt>
-OutputIt priv::copy(InputIt first, InputIt last, OutputIt dFirst)
+OutputIt copy(InputIt first, InputIt last, OutputIt dFirst)
 {
     while (first != last)
         *dFirst++ = static_cast<typename OutputIt::container_type::value_type>(*first++);
 
     return dFirst;
 }
+} // namespace priv
 
 template <typename In>
 In Utf<8>::decode(In begin, In end, char32_t& output, char32_t replacement)
