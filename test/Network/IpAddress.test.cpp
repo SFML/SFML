@@ -71,15 +71,19 @@ TEST_CASE("[Network] sf::IpAddress")
 
     SECTION("Static functions")
     {
-        SECTION("getLocalAddress")
+        // These functions require external network access to work thus imposing an additional
+        // requirement on our test suite of internet access. This causes issues for developers
+        // trying to work offline and for package managers who may be building and running the
+        // tests offline as well.
+        (void)[]
         {
             const std::optional<sf::IpAddress> ipAddress = sf::IpAddress::getLocalAddress();
             REQUIRE(ipAddress.has_value());
             CHECK(ipAddress->toString() != "0.0.0.0");
             CHECK(ipAddress->toInteger() != 0);
-        }
+        };
 
-        SECTION("getPublicAddress")
+        (void)[]
         {
             const std::optional<sf::IpAddress> ipAddress = sf::IpAddress::getPublicAddress(sf::seconds(1));
             if (ipAddress.has_value())
@@ -87,7 +91,7 @@ TEST_CASE("[Network] sf::IpAddress")
                 CHECK(ipAddress->toString() != "0.0.0.0");
                 CHECK(ipAddress->toInteger() != 0);
             }
-        }
+        };
     }
 
     SECTION("Static constants")
