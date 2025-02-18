@@ -386,7 +386,6 @@ function(sfml_add_test target SOURCES DEPENDS)
     sfml_set_stdlib(${target})
 
     set_target_properties(${target} PROPERTIES 
-    
         VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} # set the Visual Studio startup path for debugging
         VS_DEBUGGER_COMMAND_ARGUMENTS "-b" # Break into debugger
 
