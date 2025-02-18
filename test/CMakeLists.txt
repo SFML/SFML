@@ -30,14 +30,14 @@ add_library(sfml-test-main STATIC
     TestUtilities/GraphicsUtil.cpp
     TestUtilities/AudioUtil.hpp
     TestUtilities/AudioUtil.cpp
+    TestUtilities/MainUtil.cpp
 )
 target_include_directories(sfml-test-main PUBLIC TestUtilities)
-target_link_libraries(sfml-test-main PUBLIC SFML::System Catch2::Catch2WithMain)
+target_link_libraries(sfml-test-main PUBLIC SFML::Main SFML::System Catch2::Catch2)
 set_target_warnings(sfml-test-main)
 
 # set the target flags to use the appropriate C++ standard library
 sfml_set_stdlib(Catch2)
-sfml_set_stdlib(Catch2WithMain)
 sfml_set_stdlib(sfml-test-main)
 
 sfml_set_option(SFML_RUN_DISPLAY_TESTS ON BOOL "ON to run tests that require a display, OFF to ignore it")
@@ -72,6 +72,17 @@ target_compile_definitions(test-sfml-system PRIVATE
     EXPECTED_SFML_VERSION_PATCH=${SFML_VERSION_PATCH}
     EXPECTED_SFML_VERSION_IS_RELEASE=$<IF:$<BOOL:${VERSION_IS_RELEASE}>,true,false>
 )
+
+if(XCODE AND IOS)
+    set(RESOURCES 
+        System/test.txt
+        System/test2.txt
+        System/test-ń.txt
+        System/test-🐌.txt
+    )
+    target_sources(test-sfml-system PRIVATE ${RESOURCES})
+    set_source_files_properties(${RESOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION "System")
+endif()
 
 set(WINDOW_SRC
     Window/Clipboard.test.cpp
@@ -161,6 +172,25 @@ set(AUDIO_SRC
     Audio/SoundStream.test.cpp
 )
 sfml_add_test(test-sfml-audio "${AUDIO_SRC}" SFML::Audio)
+
+if(SFML_OS_IOS)
+    set(RESOURCES
+        Audio/ding-🐌.flac
+        Audio/ding-🐌.mp3
+        Audio/ding-ń.flac
+        Audio/ding-ń.mp3
+        Audio/ding.flac
+        Audio/ding.mp3
+        Audio/doodle_pop-🐌.ogg
+        Audio/doodle_pop-ń.ogg
+        Audio/doodle_pop.ogg
+        Audio/killdeer-🐌.wav
+        Audio/killdeer-ń.wav
+        Audio/killdeer.wav
+    )
+    target_sources(test-sfml-audio PRIVATE ${RESOURCES})
+    set_source_files_properties(${RESOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION "Audio")
+endif()
 
 if(SFML_OS_ANDROID AND DEFINED ENV{LIBCXX_SHARED_SO})
     # Because we can only write to the tmp directory on the Android virtual device we will need to build our directory tree under it
