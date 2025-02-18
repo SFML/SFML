@@ -379,8 +379,13 @@ function(sfml_add_test target SOURCES DEPENDS)
     # set the target flags to use the appropriate C++ standard library
     sfml_set_stdlib(${target})
 
-    # set the Visual Studio startup path for debugging
-    set_target_properties(${target} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+    set_target_properties(${target} PROPERTIES 
+        VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} # set the Visual Studio startup path for debugging
+        VS_DEBUGGER_COMMAND_ARGUMENTS "-b" # Break into debugger
+
+        XCODE_GENERATE_SCHEME ON # Required to set arguments
+        XCODE_SCHEME_ARGUMENTS "-b" # Break into debugger
+    )
 
     # link the target to its SFML dependencies
     target_link_libraries(${target} PRIVATE ${DEPENDS} sfml-test-main)
