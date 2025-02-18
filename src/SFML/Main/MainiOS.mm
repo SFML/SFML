@@ -42,6 +42,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
+#include <SFML/Window/iOS/SFAppDelegate.hpp>
 
 #include <UIKit/UIKit.h>
 
@@ -49,11 +50,10 @@
 ////////////////////////////////////////////////////////////
 int main(int argc, char** argv)
 {
-    // Note: we intentionally drop command line arguments,
-    // there's no such thing as a command line on an iOS device :)
-
-    // Important: "SFAppDelegate" must always match the name of the
-    // application delegate class defined in sfml-window
-
-    return UIApplicationMain(argc, argv, nil, @"SFAppDelegate");
+    NSString * appDelegateClassName;
+    @autoreleasepool {
+        // Setup code that might create autoreleased objects goes here.
+        appDelegateClassName = NSStringFromClass([SFAppDelegate class]);
+    }
+    return UIApplicationMain(argc, argv, nil, appDelegateClassName);
 }
