@@ -30,7 +30,6 @@ add_library(sfml-test-main STATIC
     TestUtilities/GraphicsUtil.cpp
     TestUtilities/AudioUtil.hpp
     TestUtilities/AudioUtil.cpp
-    TestUtilities/MainUtil.cpp
 )
 target_include_directories(sfml-test-main PUBLIC TestUtilities)
 target_link_libraries(sfml-test-main PUBLIC SFML::Main SFML::System Catch2::Catch2)
@@ -88,17 +87,24 @@ set(WINDOW_SRC
     Window/Clipboard.test.cpp
     Window/Context.test.cpp
     Window/ContextSettings.test.cpp
-    Window/Cursor.test.cpp
     Window/Event.test.cpp
     Window/GlResource.test.cpp
     Window/Joystick.test.cpp
     Window/Keyboard.test.cpp
     Window/Mouse.test.cpp
     Window/VideoMode.test.cpp
-    Window/Vulkan.test.cpp
     Window/Window.test.cpp
     Window/WindowBase.test.cpp
 )
+
+# Some modules are not supported on iOS
+if(NOT SFML_OS_IOS)
+    list(APPEND WINDOW_SRC
+        Window/Cursor.test.cpp
+        Window/Keyboard.test.cpp
+        Window/Vulkan.test.cpp
+    )
+endif()
 sfml_add_test(test-sfml-window "${WINDOW_SRC}" SFML::Window)
 
 set(GRAPHICS_SRC
