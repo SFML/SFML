@@ -150,20 +150,20 @@ endif()
 
 if (XCODE AND SFML_OS_IOS)
     set(GRAPHICS_RESOURCE
-        test/Graphics/invalid_shader.vert
-        test/Graphics/sfml-logo-big.bmp
-        test/Graphics/sfml-logo-big.gif
-        test/Graphics/sfml-logo-big.jpg
-        test/Graphics/sfml-logo-big.png
-        test/Graphics/sfml-logo-big.psd
-        test/Graphics/shader-🐌.vert
-        test/Graphics/shader-ń.vert
-        test/Graphics/shader.frag
-        test/Graphics/shader.geom
-        test/Graphics/shader.vert
-        test/Graphics/tuffy-🐌.ttf
-        test/Graphics/tuffy-ń.ttf
-        test/Graphics/tuffy.ttf
+        Graphics/invalid_shader.vert
+        Graphics/sfml-logo-big.bmp
+        Graphics/sfml-logo-big.gif
+        Graphics/sfml-logo-big.jpg
+        Graphics/sfml-logo-big.png
+        Graphics/sfml-logo-big.psd
+        Graphics/shader-🐌.vert
+        Graphics/shader-ń.vert
+        Graphics/shader.frag
+        Graphics/shader.geom
+        Graphics/shader.vert
+        Graphics/tuffy-🐌.ttf
+        Graphics/tuffy-ń.ttf
+        Graphics/tuffy.ttf
     )
     target_sources(test-sfml-graphics PRIVATE ${GRAPHICS_RESOURCE})
     set_source_files_properties(${GRAPHICS_RESOURCE} MACOSX_PACKAGE_LOCATION "Graphics")
