@@ -44,7 +44,10 @@ TEST_CASE("[Window] sf::Window", runDisplayTests())
         {
             const sf::Window window(sf::VideoMode({360, 240}), "Window Tests");
             CHECK(window.isOpen());
+#ifndef SFML_SYSTEM_IOS
+            // Fails on iOS as the window size always returns the display size
             CHECK(window.getSize() == sf::Vector2u(360, 240));
+#endif
             CHECK(window.getNativeHandle() != sf::WindowHandle());
             CHECK(window.getSettings().attributeFlags == sf::ContextSettings::Default);
         }
@@ -53,7 +56,10 @@ TEST_CASE("[Window] sf::Window", runDisplayTests())
         {
             const sf::Window window(sf::VideoMode({360, 240}), "Window Tests", sf::Style::Resize);
             CHECK(window.isOpen());
+#ifndef SFML_SYSTEM_IOS
+            // Fails on iOS as the window size always returns the display size
             CHECK(window.getSize() == sf::Vector2u(360, 240));
+#endif
             CHECK(window.getNativeHandle() != sf::WindowHandle());
             CHECK(window.getSettings().attributeFlags == sf::ContextSettings::Default);
         }
@@ -62,7 +68,10 @@ TEST_CASE("[Window] sf::Window", runDisplayTests())
         {
             const sf::Window window(sf::VideoMode({360, 240}), "Window Tests", sf::Style::Resize, sf::State::Windowed);
             CHECK(window.isOpen());
+#ifndef SFML_SYSTEM_IOS
+            // Fails on iOS as the window size always returns the display size
             CHECK(window.getSize() == sf::Vector2u(360, 240));
+#endif
             CHECK(window.getNativeHandle() != sf::WindowHandle());
             CHECK(window.getSettings().attributeFlags == sf::ContextSettings::Default);
         }
@@ -75,7 +84,10 @@ TEST_CASE("[Window] sf::Window", runDisplayTests())
                                     sf::State::Windowed,
                                     sf::ContextSettings{/* depthBits*/ 1, /* stencilBits */ 1, /* antiAliasingLevel */ 1});
             CHECK(window.isOpen());
+#ifndef SFML_SYSTEM_IOS
+            // Fails on iOS as the window size always returns the display size
             CHECK(window.getSize() == sf::Vector2u(360, 240));
+#endif
             CHECK(window.getNativeHandle() != sf::WindowHandle());
             CHECK(window.getSettings().depthBits >= 1);
             CHECK(window.getSettings().stencilBits >= 1);
@@ -86,7 +98,10 @@ TEST_CASE("[Window] sf::Window", runDisplayTests())
         {
             const sf::Window window(sf::VideoMode({360, 240}), "Window Tests", sf::State::Windowed);
             CHECK(window.isOpen());
+#ifndef SFML_SYSTEM_IOS
+            // Fails on iOS as the window size always returns the display size
             CHECK(window.getSize() == sf::Vector2u(360, 240));
+#endif
             CHECK(window.getNativeHandle() != sf::WindowHandle());
             CHECK(window.getSettings().attributeFlags == sf::ContextSettings::Default);
         }
@@ -98,7 +113,10 @@ TEST_CASE("[Window] sf::Window", runDisplayTests())
                                     sf::State::Windowed,
                                     sf::ContextSettings{/* depthBits*/ 1, /* stencilBits */ 1, /* antiAliasingLevel */ 1});
             CHECK(window.isOpen());
+#ifndef SFML_SYSTEM_IOS
+            // Fails on iOS as the window size always returns the display size
             CHECK(window.getSize() == sf::Vector2u(360, 240));
+#endif
             CHECK(window.getNativeHandle() != sf::WindowHandle());
             CHECK(window.getSettings().depthBits >= 1);
             CHECK(window.getSettings().stencilBits >= 1);
@@ -114,7 +132,10 @@ TEST_CASE("[Window] sf::Window", runDisplayTests())
         {
             window.create(sf::VideoMode({240, 360}), "Window Tests");
             CHECK(window.isOpen());
+#ifndef SFML_SYSTEM_IOS
+            // Fails on iOS as the window size always returns the display size
             CHECK(window.getSize() == sf::Vector2u(240, 360));
+#endif
             CHECK(window.getNativeHandle() != sf::WindowHandle());
             CHECK(window.getSettings().attributeFlags == sf::ContextSettings::Default);
         }
@@ -123,7 +144,10 @@ TEST_CASE("[Window] sf::Window", runDisplayTests())
         {
             window.create(sf::VideoMode({240, 360}), "Window Tests", sf::Style::Resize);
             CHECK(window.isOpen());
+#ifndef SFML_SYSTEM_IOS
+            // Fails on iOS as the window size always returns the display size
             CHECK(window.getSize() == sf::Vector2u(240, 360));
+#endif
             CHECK(window.getNativeHandle() != sf::WindowHandle());
             CHECK(window.getSettings().attributeFlags == sf::ContextSettings::Default);
         }
@@ -132,7 +156,10 @@ TEST_CASE("[Window] sf::Window", runDisplayTests())
         {
             window.create(sf::VideoMode({240, 360}), "Window Tests", sf::Style::Resize, sf::State::Windowed);
             CHECK(window.isOpen());
+#ifndef SFML_SYSTEM_IOS
+            // Fails on iOS as the window size always returns the display size
             CHECK(window.getSize() == sf::Vector2u(240, 360));
+#endif
             CHECK(window.getNativeHandle() != sf::WindowHandle());
             CHECK(window.getSettings().attributeFlags == sf::ContextSettings::Default);
         }
@@ -145,7 +172,10 @@ TEST_CASE("[Window] sf::Window", runDisplayTests())
                           sf::State::Windowed,
                           sf::ContextSettings{/* depthBits*/ 1, /* stencilBits */ 1, /* antiAliasingLevel */ 1});
             CHECK(window.isOpen());
+#ifndef SFML_SYSTEM_IOS
+            // Fails on iOS as the window size always returns the display size
             CHECK(window.getSize() == sf::Vector2u(240, 360));
+#endif
             CHECK(window.getNativeHandle() != sf::WindowHandle());
             CHECK(window.getSettings().depthBits >= 1);
             CHECK(window.getSettings().stencilBits >= 1);
@@ -156,7 +186,10 @@ TEST_CASE("[Window] sf::Window", runDisplayTests())
         {
             window.create(sf::VideoMode({240, 360}), "Window Tests", sf::State::Windowed);
             CHECK(window.isOpen());
+#ifndef SFML_SYSTEM_IOS
+            // Fails on iOS as the window size always returns the display size
             CHECK(window.getSize() == sf::Vector2u(240, 360));
+#endif
             CHECK(window.getNativeHandle() != sf::WindowHandle());
             CHECK(window.getSettings().attributeFlags == sf::ContextSettings::Default);
         }
@@ -168,7 +201,10 @@ TEST_CASE("[Window] sf::Window", runDisplayTests())
                           sf::State::Windowed,
                           sf::ContextSettings{/* depthBits*/ 1, /* stencilBits */ 1, /* antiAliasingLevel */ 1});
             CHECK(window.isOpen());
+#ifndef SFML_SYSTEM_IOS
+            // Fails on iOS as the window size always returns the display size
             CHECK(window.getSize() == sf::Vector2u(240, 360));
+#endif
             CHECK(window.getNativeHandle() != sf::WindowHandle());
             CHECK(window.getSettings().depthBits >= 1);
             CHECK(window.getSettings().stencilBits >= 1);
