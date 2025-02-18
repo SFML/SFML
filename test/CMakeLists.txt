@@ -72,15 +72,15 @@ target_compile_definitions(test-sfml-system PRIVATE
     EXPECTED_SFML_VERSION_IS_RELEASE=$<IF:$<BOOL:${VERSION_IS_RELEASE}>,true,false>
 )
 
-if(XCODE AND IOS)
-    set(RESOURCES 
+if(XCODE AND SFML_OS_IOS)
+    set(SYSTEM_RESOURCE 
         System/test.txt
         System/test2.txt
         System/test-ń.txt
         System/test-🐌.txt
     )
-    target_sources(test-sfml-system PRIVATE ${RESOURCES})
-    set_source_files_properties(${RESOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION "System")
+    target_sources(test-sfml-system PRIVATE ${SYSTEM_RESOURCE})
+    set_source_files_properties(${SYSTEM_RESOURCE} PROPERTIES MACOSX_PACKAGE_LOCATION "System")
 endif()
 
 set(WINDOW_SRC
@@ -148,6 +148,27 @@ if(SFML_RUN_DISPLAY_TESTS)
     target_compile_definitions(test-sfml-graphics PRIVATE SFML_RUN_DISPLAY_TESTS)
 endif()
 
+if (XCODE AND SFML_OS_IOS)
+    set(GRAPHICS_RESOURCE
+        test/Graphics/invalid_shader.vert
+        test/Graphics/sfml-logo-big.bmp
+        test/Graphics/sfml-logo-big.gif
+        test/Graphics/sfml-logo-big.jpg
+        test/Graphics/sfml-logo-big.png
+        test/Graphics/sfml-logo-big.psd
+        test/Graphics/shader-🐌.vert
+        test/Graphics/shader-ń.vert
+        test/Graphics/shader.frag
+        test/Graphics/shader.geom
+        test/Graphics/shader.vert
+        test/Graphics/tuffy-🐌.ttf
+        test/Graphics/tuffy-ń.ttf
+        test/Graphics/tuffy.ttf
+    )
+    target_sources(test-sfml-graphics PRIVATE ${GRAPHICS_RESOURCE})
+    set_source_files_properties(${GRAPHICS_RESOURCE} MACOSX_PACKAGE_LOCATION "Graphics")
+endif()
+
 set(NETWORK_SRC
     Network/Ftp.test.cpp
     Network/Http.test.cpp
@@ -180,7 +201,7 @@ set(AUDIO_SRC
 sfml_add_test(test-sfml-audio "${AUDIO_SRC}" SFML::Audio)
 
 if(SFML_OS_IOS)
-    set(RESOURCES
+    set(AUDIO_RESOURCE
         Audio/ding-🐌.flac
         Audio/ding-🐌.mp3
         Audio/ding-ń.flac
@@ -194,8 +215,8 @@ if(SFML_OS_IOS)
         Audio/killdeer-ń.wav
         Audio/killdeer.wav
     )
-    target_sources(test-sfml-audio PRIVATE ${RESOURCES})
-    set_source_files_properties(${RESOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION "Audio")
+    target_sources(test-sfml-audio PRIVATE ${AUDIO_RESOURCE})
+    set_source_files_properties(${AUDIO_RESOURCE} PROPERTIES MACOSX_PACKAGE_LOCATION "Audio")
 endif()
 
 if(SFML_OS_ANDROID AND DEFINED ENV{LIBCXX_SHARED_SO})
