@@ -12,11 +12,31 @@ TEST_CASE("[Window] sf::Clipboard", runDisplayTests())
     // Capture current clipboard state
     const auto currentClipboard = sf::Clipboard::getString();
 
-    SECTION("Set/get string")
+    sf::String string;
+
+    SECTION("ASCII")
     {
-        sf::Clipboard::setString("Welcome to SFML!");
-        CHECK(sf::Clipboard::getString() == "Welcome to SFML!");
+        string = "Snail";
     }
+
+    SECTION("Latin1")
+    {
+        string = U"Limacé";
+    }
+
+    SECTION("Basic Multilingual Plane")
+    {
+        string = U"カタツムリ";
+    }
+
+    SECTION("Emoji")
+    {
+        string = U"🐌";
+    }
+
+    INFO("String: " << reinterpret_cast<const char*>(string.toUtf8().c_str()));
+    sf::Clipboard::setString(string);
+    CHECK(sf::Clipboard::getString() == string);
 
     // Restore clipboard
     sf::Clipboard::setString(currentClipboard);
