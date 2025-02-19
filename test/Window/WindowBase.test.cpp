@@ -41,7 +41,10 @@ TEST_CASE("[Window] sf::WindowBase", runDisplayTests())
         {
             const sf::WindowBase windowBase(sf::VideoMode({360, 240}), "WindowBase Tests");
             CHECK(windowBase.isOpen());
+#ifndef SFML_SYSTEM_IOS
+            // Fails on iOS as the window size always returns the display size
             CHECK(windowBase.getSize() == sf::Vector2u(360, 240));
+#endif
             CHECK(windowBase.getNativeHandle() != sf::WindowHandle());
         }
 
@@ -49,7 +52,10 @@ TEST_CASE("[Window] sf::WindowBase", runDisplayTests())
         {
             const sf::WindowBase windowBase(sf::VideoMode({360, 240}), "WindowBase Tests", sf::Style::Resize);
             CHECK(windowBase.isOpen());
+#ifndef SFML_SYSTEM_IOS
+            // Fails on iOS as the window size always returns the display size
             CHECK(windowBase.getSize() == sf::Vector2u(360, 240));
+#endif
             CHECK(windowBase.getNativeHandle() != sf::WindowHandle());
         }
 
@@ -57,7 +63,10 @@ TEST_CASE("[Window] sf::WindowBase", runDisplayTests())
         {
             const sf::WindowBase windowBase(sf::VideoMode({360, 240}), "WindowBase Tests", sf::Style::Resize, sf::State::Windowed);
             CHECK(windowBase.isOpen());
+#ifndef SFML_SYSTEM_IOS
+            // Fails on iOS as the window size always returns the display size
             CHECK(windowBase.getSize() == sf::Vector2u(360, 240));
+#endif
             CHECK(windowBase.getNativeHandle() != sf::WindowHandle());
         }
 
@@ -65,7 +74,10 @@ TEST_CASE("[Window] sf::WindowBase", runDisplayTests())
         {
             const sf::WindowBase windowBase(sf::VideoMode({360, 240}), "WindowBase Tests", sf::State::Windowed);
             CHECK(windowBase.isOpen());
+#ifndef SFML_SYSTEM_IOS
+            // Fails on iOS as the window size always returns the display size
             CHECK(windowBase.getSize() == sf::Vector2u(360, 240));
+#endif
             CHECK(windowBase.getNativeHandle() != sf::WindowHandle());
         }
     }
@@ -78,7 +90,10 @@ TEST_CASE("[Window] sf::WindowBase", runDisplayTests())
         {
             windowBase.create(sf::VideoMode({240, 360}), "WindowBase Tests");
             CHECK(windowBase.isOpen());
+#ifndef SFML_SYSTEM_IOS
+            // Fails on iOS as the window size always returns the display size
             CHECK(windowBase.getSize() == sf::Vector2u(240, 360));
+#endif
             CHECK(windowBase.getNativeHandle() != sf::WindowHandle());
         }
 
@@ -86,7 +101,10 @@ TEST_CASE("[Window] sf::WindowBase", runDisplayTests())
         {
             windowBase.create(sf::VideoMode({240, 360}), "WindowBase Tests", sf::Style::Resize);
             CHECK(windowBase.isOpen());
+#ifndef SFML_SYSTEM_IOS
+            // Fails on iOS as the window size always returns the display size
             CHECK(windowBase.getSize() == sf::Vector2u(240, 360));
+#endif
             CHECK(windowBase.getNativeHandle() != sf::WindowHandle());
         }
 
@@ -94,7 +112,10 @@ TEST_CASE("[Window] sf::WindowBase", runDisplayTests())
         {
             windowBase.create(sf::VideoMode({240, 360}), "WindowBase Tests", sf::State::Windowed);
             CHECK(windowBase.isOpen());
+#ifndef SFML_SYSTEM_IOS
+            // Fails on iOS as the window size always returns the display size
             CHECK(windowBase.getSize() == sf::Vector2u(240, 360));
+#endif
             CHECK(windowBase.getNativeHandle() != sf::WindowHandle());
         }
 
@@ -102,7 +123,10 @@ TEST_CASE("[Window] sf::WindowBase", runDisplayTests())
         {
             windowBase.create(sf::VideoMode({240, 360}), "WindowBase Tests", sf::Style::Resize, sf::State::Windowed);
             CHECK(windowBase.isOpen());
+#ifndef SFML_SYSTEM_IOS
+            // Fails on iOS as the window size always returns the display size
             CHECK(windowBase.getSize() == sf::Vector2u(240, 360));
+#endif
             CHECK(windowBase.getNativeHandle() != sf::WindowHandle());
         }
     }
