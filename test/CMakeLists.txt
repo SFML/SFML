@@ -32,7 +32,16 @@ add_library(sfml-test-main STATIC
     TestUtilities/AudioUtil.cpp
 )
 target_include_directories(sfml-test-main PUBLIC TestUtilities)
-target_link_libraries(sfml-test-main PUBLIC SFML::System Catch2::Catch2WithMain)
+
+target_link_libraries(sfml-test-main PUBLIC SFML::System)
+
+# Main is required on some platforms and is completely removed on others, so we can only depend on it when it exists
+if(TARGET SFML::Main)
+    target_link_libraries(sfml-test-main PUBLIC SFML::Main Catch2::Catch2)
+else()
+    target_link_libraries(sfml-test-main PUBLIC Catch2::Catch2WithMain)
+endif()
+
 set_target_warnings(sfml-test-main)
 
 # set the target flags to use the appropriate C++ standard library
@@ -73,20 +82,37 @@ target_compile_definitions(test-sfml-system PRIVATE
     EXPECTED_SFML_VERSION_IS_RELEASE=$<IF:$<BOOL:${VERSION_IS_RELEASE}>,true,false>
 )
 
+if(XCODE AND IOS)
+    set(RESOURCES 
+        System/test.txt
+        System/test2.txt
+        System/test-ń.txt
+        System/test-🐌.txt
+    )
+    target_sources(test-sfml-system PRIVATE ${RESOURCES})
+    set_source_files_properties(${RESOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION "System")
+endif()
+
 set(WINDOW_SRC
     Window/Clipboard.test.cpp
     Window/Context.test.cpp
     Window/ContextSettings.test.cpp
-    Window/Cursor.test.cpp
     Window/Event.test.cpp
     Window/GlResource.test.cpp
     Window/Joystick.test.cpp
-    Window/Keyboard.test.cpp
     Window/VideoMode.test.cpp
-    Window/Vulkan.test.cpp
     Window/Window.test.cpp
     Window/WindowBase.test.cpp
 )
+
+# Some modules are not supported on iOS
+if(NOT SFML_OS_IOS)
+    list(APPEND WINDOW_SRC
+        Window/Cursor.test.cpp
+        Window/Keyboard.test.cpp
+        Window/Vulkan.test.cpp
+    )
+endif()
 sfml_add_test(test-sfml-window "${WINDOW_SRC}" SFML::Window)
 
 set(GRAPHICS_SRC
@@ -155,6 +181,25 @@ set(AUDIO_SRC
     Audio/SoundStream.test.cpp
 )
 sfml_add_test(test-sfml-audio "${AUDIO_SRC}" SFML::Audio)
+
+if(SFML_OS_IOS)
+    set(RESOURCES
+        Audio/ding-🐌.flac
+        Audio/ding-🐌.mp3
+        Audio/ding-ń.flac
+        Audio/ding-ń.mp3
+        Audio/ding.flac
+        Audio/ding.mp3
+        Audio/doodle_pop-🐌.ogg
+        Audio/doodle_pop-ń.ogg
+        Audio/doodle_pop.ogg
+        Audio/killdeer-🐌.wav
+        Audio/killdeer-ń.wav
+        Audio/killdeer.wav
+    )
+    target_sources(test-sfml-audio PRIVATE ${RESOURCES})
+    set_source_files_properties(${RESOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION "Audio")
+endif()
 
 if(SFML_OS_ANDROID AND DEFINED ENV{LIBCXX_SHARED_SO})
     # Because we can only write to the tmp directory on the Android virtual device we will need to build our directory tree under it
