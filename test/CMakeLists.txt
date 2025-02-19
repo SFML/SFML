@@ -88,6 +88,11 @@ set(WINDOW_SRC
     Window/Window.test.cpp
     Window/WindowBase.test.cpp
 )
+if(SFML_OS_WINDOWS)
+    list(APPEND WINDOW_SRC
+        Window/WindowBaseWin32.test.cpp
+    )
+endif()
 sfml_add_test(test-sfml-window "${WINDOW_SRC}" SFML::Window)
 
 set(GRAPHICS_SRC
