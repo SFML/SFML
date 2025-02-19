@@ -213,7 +213,7 @@ m_cursorGrabbed(m_fullscreen)
 
     // Create the window
     m_handle = CreateWindowW(className,
-                             title.toWideString().c_str(),
+                             reinterpret_cast<const wchar_t*>(title.toUtf16().c_str()),
                              win32Style,
                              left,
                              top,
@@ -358,7 +358,7 @@ void WindowImplWin32::setSize(Vector2u size)
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::setTitle(const String& title)
 {
-    SetWindowTextW(m_handle, title.toWideString().c_str());
+    SetWindowTextW(m_handle, reinterpret_cast<const wchar_t*>(title.toUtf16().c_str()));
 }
 
 
