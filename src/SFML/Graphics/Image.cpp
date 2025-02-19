@@ -116,7 +116,7 @@ Image::Image(Vector2u size, const std::uint8_t* pixels)
 Image::Image(const std::filesystem::path& filename)
 {
     if (!loadFromFile(filename))
-        throw sf::Exception("Failed to open image from file");
+        throw Exception("Failed to open image from file");
 }
 
 
@@ -124,7 +124,7 @@ Image::Image(const std::filesystem::path& filename)
 Image::Image(const void* data, std::size_t size)
 {
     if (!loadFromMemory(data, size))
-        throw sf::Exception("Failed to open image from memory");
+        throw Exception("Failed to open image from memory");
 }
 
 
@@ -132,7 +132,7 @@ Image::Image(const void* data, std::size_t size)
 Image::Image(InputStream& stream)
 {
     if (!loadFromStream(stream))
-        throw sf::Exception("Failed to open image from stream");
+        throw Exception("Failed to open image from stream");
 }
 
 
