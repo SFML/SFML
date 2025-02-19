@@ -44,7 +44,7 @@ OutputSoundFile::OutputSoundFile(const std::filesystem::path&     filename,
                                  const std::vector<SoundChannel>& channelMap)
 {
     if (!openFromFile(filename, sampleRate, channelCount, channelMap))
-        throw sf::Exception("Failed to open output sound file");
+        throw Exception("Failed to open output sound file");
 }
 
 

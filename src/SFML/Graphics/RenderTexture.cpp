@@ -48,7 +48,7 @@ RenderTexture::RenderTexture() = default;
 RenderTexture::RenderTexture(Vector2u size, const ContextSettings& settings)
 {
     if (!resize(size, settings))
-        throw sf::Exception("Failed to create render texture");
+        throw Exception("Failed to create render texture");
 }
 
 

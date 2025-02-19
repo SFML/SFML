@@ -44,7 +44,7 @@ namespace sf
 SoundBuffer::SoundBuffer(const std::filesystem::path& filename)
 {
     if (!loadFromFile(filename))
-        throw sf::Exception("Failed to open sound buffer from file");
+        throw Exception("Failed to open sound buffer from file");
 }
 
 
@@ -52,7 +52,7 @@ SoundBuffer::SoundBuffer(const std::filesystem::path& filename)
 SoundBuffer::SoundBuffer(const void* data, std::size_t sizeInBytes)
 {
     if (!loadFromMemory(data, sizeInBytes))
-        throw sf::Exception("Failed to open sound buffer from memory");
+        throw Exception("Failed to open sound buffer from memory");
 }
 
 
@@ -60,7 +60,7 @@ SoundBuffer::SoundBuffer(const void* data, std::size_t sizeInBytes)
 SoundBuffer::SoundBuffer(InputStream& stream)
 {
     if (!loadFromStream(stream))
-        throw sf::Exception("Failed to open sound buffer from stream");
+        throw Exception("Failed to open sound buffer from stream");
 }
 
 
@@ -72,7 +72,7 @@ SoundBuffer::SoundBuffer(const std::int16_t*              samples,
                          const std::vector<SoundChannel>& channelMap)
 {
     if (!loadFromSamples(samples, sampleCount, channelCount, sampleRate, channelMap))
-        throw sf::Exception("Failed to open sound buffer from samples");
+        throw Exception("Failed to open sound buffer from samples");
 }
 
 
