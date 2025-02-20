@@ -1190,7 +1190,7 @@ void WindowImplX11::requestFocus()
     XWindowAttributes attributes;
     if (XGetWindowAttributes(m_display.get(), m_window, &attributes) == 0)
     {
-        sf::err() << "Failed to check if window is viewable while requesting focus" << std::endl;
+        err() << "Failed to check if window is viewable while requesting focus" << std::endl;
         return; // error getting attribute
     }
 
@@ -1588,7 +1588,7 @@ void WindowImplX11::initialize()
     if (allWindows.empty())
     {
         if (!initRawMouse(m_display.get()))
-            sf::err() << "Failed to initialize raw mouse input" << std::endl;
+            err() << "Failed to initialize raw mouse input" << std::endl;
     }
 
     // Show the window

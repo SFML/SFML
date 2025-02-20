@@ -419,7 +419,7 @@ void JoystickImpl::initialize()
 
     if (!udevContext)
     {
-        sf::err() << "Failed to create udev context, joystick support not available" << std::endl;
+        err() << "Failed to create udev context, joystick support not available" << std::endl;
         return;
     }
 
