@@ -571,6 +571,8 @@ Packet& Packet::operator<<(const String& data)
 ////////////////////////////////////////////////////////////
 bool Packet::checkSize(std::size_t size)
 {
+    // Unsigned overflow is defined behavior
+    m_isValid = m_isValid && !(m_readPos + size < m_readPos);
     m_isValid = m_isValid && (m_readPos + size <= m_data.size());
 
     return m_isValid;
