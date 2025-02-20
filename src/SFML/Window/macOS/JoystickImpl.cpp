@@ -268,9 +268,9 @@ bool JoystickImpl::open(unsigned int index)
 
                             if (min != 0 || max != 7)
                             {
-                                sf::err() << std::hex << "Joystick (vendor/product id: 0x" << m_identification.vendorId
-                                          << "/0x" << m_identification.productId << std::dec
-                                          << ") range is an unexpected one: [" << min << ", " << max << "]" << std::endl;
+                                err() << std::hex << "Joystick (vendor/product id: 0x" << m_identification.vendorId
+                                      << "/0x" << m_identification.productId << std::dec
+                                      << ") range is an unexpected one: [" << min << ", " << max << "]" << std::endl;
                             }
                             else
                             {
@@ -285,16 +285,16 @@ bool JoystickImpl::open(unsigned int index)
                         // See §3.4.3 Usage Types (Collection) of HUT v1.12
                         if (IOHIDElementGetCollectionType(element) != kIOHIDElementCollectionTypeApplication)
                         {
-                            sf::err() << std::hex << "Gamepage (vendor/product id: 0x" << m_identification.vendorId
-                                      << "/0x" << m_identification.productId << ") is not an CA but a 0x"
-                                      << IOHIDElementGetCollectionType(element) << std::dec << std::endl;
+                            err() << std::hex << "Gamepage (vendor/product id: 0x" << m_identification.vendorId << "/0x"
+                                  << m_identification.productId << ") is not an CA but a 0x"
+                                  << IOHIDElementGetCollectionType(element) << std::dec << std::endl;
                         }
                         break;
 
                     default:
 #ifdef SFML_DEBUG
-                        sf::err() << "Unexpected usage for element of Page Generic Desktop: 0x" << std::hex
-                                  << IOHIDElementGetUsage(element) << std::dec << std::endl;
+                        err() << "Unexpected usage for element of Page Generic Desktop: 0x" << std::hex
+                              << IOHIDElementGetUsage(element) << std::dec << std::endl;
 #endif
                         break;
                 }

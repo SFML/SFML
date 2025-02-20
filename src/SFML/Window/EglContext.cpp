@@ -178,9 +178,9 @@ EglContext::EglContext(EglContext* /*shared*/, const ContextSettings& /*settings
 {
     EglContextImpl::ensureInit();
 
-    sf::err() << "Warning: context has not been initialized. The constructor EglContext(shared, settings, size) is "
-                 "currently not implemented."
-              << std::endl;
+    err() << "Warning: context has not been initialized. The constructor EglContext(shared, settings, size) is "
+             "currently not implemented."
+          << std::endl;
 }
 
 
