@@ -573,7 +573,7 @@ bool Packet::checkSize(std::size_t size)
 {
     // Determine if size is big enough to trigger an overflow
     const bool overflowDetected = m_readPos + size < m_readPos;
-    m_isValid = m_isValid && (m_readPos + size <= m_data.size()) && ! overflowDetected
+    m_isValid = m_isValid && (m_readPos + size <= m_data.size()) && ! overflowDetected;
 
     return m_isValid;
 }
