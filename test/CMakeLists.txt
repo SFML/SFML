@@ -90,7 +90,7 @@ set(WINDOW_SRC
 )
 if(SFML_OS_WINDOWS)
     list(APPEND WINDOW_SRC
-        Window/WindowBaseWin32.test.cpp
+        Window/WindowHandleWin32.test.cpp
     )
 endif()
 sfml_add_test(test-sfml-window "${WINDOW_SRC}" SFML::Window)
