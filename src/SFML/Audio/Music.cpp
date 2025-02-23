@@ -317,9 +317,10 @@ std::uint64_t Music::timeToSamples(Time position) const
 {
     // Always ROUND, no unchecked truncation, hence the addition in the numerator.
     // This avoids most precision errors arising from "samples => Time => samples" conversions
-    // Original rounding calculation is ((Micros * Freq * Channels) / 1000000) + 0.5
+    // Original rounding calculation is ((Micros * Freq * Channels) / 1'000'000) + 0.5
     // We refactor it to keep std::int64_t as the data type throughout the whole operation.
-    return ((static_cast<std::uint64_t>(position.asMicroseconds()) * getSampleRate() * getChannelCount()) + 500000) / 1000000;
+    return ((static_cast<std::uint64_t>(position.asMicroseconds()) * getSampleRate() * getChannelCount()) + 500'000) /
+           1'000'000;
 }
 
 
@@ -330,7 +331,7 @@ Time Music::samplesToTime(std::uint64_t samples) const
 
     // Make sure we don't divide by 0
     if (getSampleRate() != 0 && getChannelCount() != 0)
-        position = microseconds(static_cast<std::int64_t>((samples * 1000000) / (getChannelCount() * getSampleRate())));
+        position = microseconds(static_cast<std::int64_t>((samples * 1'000'000) / (getChannelCount() * getSampleRate())));
 
     return position;
 }

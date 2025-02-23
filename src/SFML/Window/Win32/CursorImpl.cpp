@@ -57,10 +57,10 @@ bool CursorImpl::loadFromPixels(const std::uint8_t* pixels, Vector2u size, Vecto
     bitmapHeader.bV5Planes      = 1;
     bitmapHeader.bV5BitCount    = 32;
     bitmapHeader.bV5Compression = BI_BITFIELDS;
-    bitmapHeader.bV5RedMask     = 0x00ff0000;
-    bitmapHeader.bV5GreenMask   = 0x0000ff00;
-    bitmapHeader.bV5BlueMask    = 0x000000ff;
-    bitmapHeader.bV5AlphaMask   = 0xff000000;
+    bitmapHeader.bV5RedMask     = 0x00'ff'00'00;
+    bitmapHeader.bV5GreenMask   = 0x00'00'ff'00;
+    bitmapHeader.bV5BlueMask    = 0x00'00'00'ff;
+    bitmapHeader.bV5AlphaMask   = 0xff'00'00'00;
 
     std::uint32_t* bitmapData = nullptr;
 

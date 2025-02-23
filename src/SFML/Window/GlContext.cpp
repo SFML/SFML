@@ -814,21 +814,21 @@ int GlContext::evaluateFormat(
     int antiAliasingDiff = static_cast<int>(settings.antiAliasingLevel) - antiAliasing;
 
     // Weight sub-scores so that better settings don't score equally as bad as worse settings
-    colorDiff *= ((colorDiff > 0) ? 100000 : 1);
-    depthDiff *= ((depthDiff > 0) ? 100000 : 1);
-    stencilDiff *= ((stencilDiff > 0) ? 100000 : 1);
-    antiAliasingDiff *= ((antiAliasingDiff > 0) ? 100000 : 1);
+    colorDiff *= ((colorDiff > 0) ? 100'000 : 1);
+    depthDiff *= ((depthDiff > 0) ? 100'000 : 1);
+    stencilDiff *= ((stencilDiff > 0) ? 100'000 : 1);
+    antiAliasingDiff *= ((antiAliasingDiff > 0) ? 100'000 : 1);
 
     // Aggregate the scores
     int score = std::abs(colorDiff) + std::abs(depthDiff) + std::abs(stencilDiff) + std::abs(antiAliasingDiff);
 
     // If the user wants an sRGB capable format, try really hard to get one
     if (settings.sRgbCapable && !sRgb)
-        score += 10000000;
+        score += 10'000'000;
 
     // Make sure we prefer hardware acceleration over features
     if (!accelerated)
-        score += 100000000;
+        score += 100'000'000;
 
     return score;
 }

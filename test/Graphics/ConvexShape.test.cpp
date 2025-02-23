@@ -101,10 +101,10 @@ TEST_CASE("[Graphics] sf::ConvexShape")
     SECTION("Geometric center for three points with a small area")
     {
         sf::ConvexShape convex(3);
-        convex.setPoint(0, {-100000.f, 0.f});
-        convex.setPoint(1, {100000.f, 0.f});
-        convex.setPoint(2, {100000.f, 0.000001f});
-        CHECK(convex.getGeometricCenter().x == Catch::Approx(100000. / 3.).margin(1e-2));
+        convex.setPoint(0, {-100'000.f, 0.f});
+        convex.setPoint(1, {100'000.f, 0.f});
+        convex.setPoint(2, {100'000.f, 0.000001f});
+        CHECK(convex.getGeometricCenter().x == Catch::Approx(100'000. / 3.).margin(1e-2));
         CHECK(convex.getGeometricCenter().y == Catch::Approx(0).margin(1e-5));
     }
 

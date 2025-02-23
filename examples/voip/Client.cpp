@@ -133,9 +133,9 @@ void doClient(unsigned short port)
     NetworkRecorder recorder(server.value(), port);
 
     // Wait for user input...
-    std::cin.ignore(10000, '\n');
+    std::cin.ignore(10'000, '\n');
     std::cout << "Press enter to start recording audio";
-    std::cin.ignore(10000, '\n');
+    std::cin.ignore(10'000, '\n');
 
     // Start capturing audio data
     if (!recorder.start(44100))
@@ -145,6 +145,6 @@ void doClient(unsigned short port)
     }
 
     std::cout << "Recording... press enter to stop";
-    std::cin.ignore(10000, '\n');
+    std::cin.ignore(10'000, '\n');
     recorder.stop();
 }

@@ -176,8 +176,8 @@ Socket::Status TcpSocket::connect(IpAddress remoteAddress, unsigned short remote
 
         // Setup the timeout
         timeval time{};
-        time.tv_sec  = static_cast<long>(timeout.asMicroseconds() / 1000000);
-        time.tv_usec = static_cast<int>(timeout.asMicroseconds() % 1000000);
+        time.tv_sec  = static_cast<long>(timeout.asMicroseconds() / 1'000'000);
+        time.tv_usec = static_cast<int>(timeout.asMicroseconds() % 1'000'000);
 
         // Wait for something to write on our socket (which means that the connection request has returned)
         if (select(static_cast<int>(getNativeHandle() + 1), nullptr, &selector, nullptr, &time) > 0)
