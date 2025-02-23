@@ -571,7 +571,9 @@ Packet& Packet::operator<<(const String& data)
 ////////////////////////////////////////////////////////////
 bool Packet::checkSize(std::size_t size)
 {
-    m_isValid = m_isValid && (m_readPos + size <= m_data.size());
+    // Determine if size is big enough to trigger an overflow
+    const bool overflowDetected = m_readPos + size < m_readPos;
+    m_isValid                   = m_isValid && (m_readPos + size <= m_data.size()) && !overflowDetected;
 
     return m_isValid;
 }
