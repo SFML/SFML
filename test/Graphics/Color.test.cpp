@@ -48,17 +48,17 @@ TEST_CASE("[Graphics] sf::Color")
 
         SECTION("std::int32_t constructor")
         {
-            STATIC_CHECK(sf::Color(0x00000000) == sf::Color(0, 0, 0, 0));
-            STATIC_CHECK(sf::Color(0x01020304) == sf::Color(1, 2, 3, 4));
-            STATIC_CHECK(sf::Color(0xFFFFFFFF) == sf::Color(255, 255, 255, 255));
+            STATIC_CHECK(sf::Color(0x00'00'00'00) == sf::Color(0, 0, 0, 0));
+            STATIC_CHECK(sf::Color(0x01'02'03'04) == sf::Color(1, 2, 3, 4));
+            STATIC_CHECK(sf::Color(0xFF'FF'FF'FF) == sf::Color(255, 255, 255, 255));
         }
     }
 
     SECTION("toInteger()")
     {
-        STATIC_CHECK(sf::Color(0, 0, 0, 0).toInteger() == 0x00000000);
-        STATIC_CHECK(sf::Color(1, 2, 3, 4).toInteger() == 0x01020304);
-        STATIC_CHECK(sf::Color(255, 255, 255, 255).toInteger() == 0xFFFFFFFF);
+        STATIC_CHECK(sf::Color(0, 0, 0, 0).toInteger() == 0x00'00'00'00);
+        STATIC_CHECK(sf::Color(1, 2, 3, 4).toInteger() == 0x01'02'03'04);
+        STATIC_CHECK(sf::Color(255, 255, 255, 255).toInteger() == 0xFF'FF'FF'FF);
     }
 
     SECTION("Operations")

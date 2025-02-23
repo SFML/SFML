@@ -42,10 +42,10 @@ a(alpha)
 
 ////////////////////////////////////////////////////////////
 constexpr Color::Color(std::uint32_t color) :
-r(static_cast<std::uint8_t>((color & 0xff000000) >> 24)),
-g(static_cast<std::uint8_t>((color & 0x00ff0000) >> 16)),
-b(static_cast<std::uint8_t>((color & 0x0000ff00) >> 8)),
-a(static_cast<std::uint8_t>(color & 0x000000ff))
+r(static_cast<std::uint8_t>((color & 0xff'00'00'00) >> 24)),
+g(static_cast<std::uint8_t>((color & 0x00'ff'00'00) >> 16)),
+b(static_cast<std::uint8_t>((color & 0x00'00'ff'00) >> 8)),
+a(static_cast<std::uint8_t>((color & 0x00'00'00'ff) >> 0))
 {
 }
 

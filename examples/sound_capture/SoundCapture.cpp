@@ -43,7 +43,7 @@ int main()
         do
         {
             std::cin >> deviceIndex;
-            std::cin.ignore(10000, '\n');
+            std::cin.ignore(10'000, '\n');
         } while (deviceIndex >= devices.size());
     }
 
@@ -51,11 +51,11 @@ int main()
     unsigned int sampleRate = 0;
     std::cout << "Please choose the sample rate for sound capture (44100 is CD quality): ";
     std::cin >> sampleRate;
-    std::cin.ignore(10000, '\n');
+    std::cin.ignore(10'000, '\n');
 
     // Wait for user input...
     std::cout << "Press enter to start recording audio";
-    std::cin.ignore(10000, '\n');
+    std::cin.ignore(10'000, '\n');
 
     // Here we'll use an integrated custom recorder, which saves the captured data into a SoundBuffer
     sf::SoundBufferRecorder recorder;
@@ -74,7 +74,7 @@ int main()
     }
 
     std::cout << "Recording... press enter to stop";
-    std::cin.ignore(10000, '\n');
+    std::cin.ignore(10'000, '\n');
     recorder.stop();
 
     // Get the buffer containing the captured data
@@ -90,7 +90,7 @@ int main()
     char choice = 0;
     std::cout << "What do you want to do with captured sound (p = play, s = save) ? ";
     std::cin >> choice;
-    std::cin.ignore(10000, '\n');
+    std::cin.ignore(10'000, '\n');
 
     if (choice == 's')
     {
@@ -126,5 +126,5 @@ int main()
 
     // Wait until the user presses 'enter' key
     std::cout << "Press enter to exit..." << std::endl;
-    std::cin.ignore(10000, '\n');
+    std::cin.ignore(10'000, '\n');
 }

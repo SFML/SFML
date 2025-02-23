@@ -477,13 +477,13 @@ constexpr Time& operator%=(Time& left, Time right);
 /// std::int32_t milli = t1.asMilliseconds(); // 100
 ///
 /// sf::Time t2 = sf::milliseconds(30);
-/// std::int64_t micro = t2.asMicroseconds(); // 30000
+/// std::int64_t micro = t2.asMicroseconds(); // 30'000
 ///
-/// sf::Time t3 = sf::microseconds(-800000);
+/// sf::Time t3 = sf::microseconds(-800'000);
 /// float sec = t3.asSeconds(); // -0.8
 ///
 /// sf::Time t4 = std::chrono::milliseconds(250);
-/// std::chrono::microseconds micro2 = t4.toDuration(); // 250000us
+/// std::chrono::microseconds micro2 = t4.toDuration(); // 250'000us
 /// \endcode
 ///
 /// \code
