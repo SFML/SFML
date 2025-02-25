@@ -4,6 +4,7 @@
 #include <SFML/Window/Window.hpp>
 #include <SFML/Window/WindowBase.hpp>
 
+#include <catch2/catch_template_test_macros.hpp>
 #include <catch2/catch_test_macros.hpp>
 
 #include <SystemUtil.hpp>
@@ -36,26 +37,84 @@ LRESULT WINAPI wndProc(HWND handle, UINT message, WPARAM wParam, LPARAM lParam)
     }
     return DefWindowProcW(handle, message, wParam, lParam);
 }
+
+struct NormalWindow
+{
+};
+struct NormalMenuWindow
+{
+};
+struct ExStyleWindow
+{
+};
+struct ExStyleMenuWindow
+{
+};
+
+template <typename WindowType>
+HWND createWindow(LPWSTR className, HINSTANCE hInstance);
+
+HWND createWindowWrapper(LPWSTR className, HINSTANCE hInstance, DWORD dwExStyle, HMENU hMenu)
+{
+    return CreateWindowExW(dwExStyle,
+                           className,
+                           L"WindowHandle Tests",
+                           WS_OVERLAPPEDWINDOW,
+                           CW_USEDEFAULT,
+                           CW_USEDEFAULT,
+                           640,
+                           480,
+                           nullptr,
+                           hMenu,
+                           hInstance,
+                           nullptr);
+}
+
+
+template <>
+HWND createWindow<NormalWindow>(LPWSTR className, HINSTANCE hInstance)
+{
+    return createWindowWrapper(className, hInstance, 0, nullptr);
+}
+
+template <>
+HWND createWindow<NormalMenuWindow>(LPWSTR className, HINSTANCE hInstance)
+{
+    HMENU menu = CreateMenu();
+    AppendMenuW(menu, MF_STRING, 1, L"Test");
+    return createWindowWrapper(className, hInstance, 0, menu);
+}
+
+template <>
+HWND createWindow<ExStyleWindow>(LPWSTR className, HINSTANCE hInstance)
+{
+    return createWindowWrapper(className, hInstance, WS_EX_TOOLWINDOW | WS_EX_CLIENTEDGE, nullptr);
+}
+
+template <>
+HWND createWindow<ExStyleMenuWindow>(LPWSTR className, HINSTANCE hInstance)
+{
+    HMENU menu = CreateMenu();
+    AppendMenuW(menu, MF_STRING, 1, L"Test");
+    return createWindowWrapper(className, hInstance, WS_EX_TOOLWINDOW | WS_EX_CLIENTEDGE, menu);
+}
+
 } // namespace
 
-TEST_CASE("[Window] sf::WindowHandle (Win32)")
+TEMPLATE_TEST_CASE("[Window] sf::WindowHandle (Win32)",
+                   "[!mayfail][!nonportable]",
+                   NormalWindow,
+                   NormalMenuWindow,
+                   ExStyleWindow,
+                   ExStyleMenuWindow)
 {
     const WNDCLASSW classInfo{{}, wndProc, {}, {}, GetModuleHandleW(nullptr), {}, {}, {}, {}, L"sfml_WindowHandleTests"};
 
     const ATOM winClassId = RegisterClassW(&classInfo);
     REQUIRE(winClassId);
 
-    const sf::WindowHandle handle = CreateWindowW(reinterpret_cast<LPWSTR>(static_cast<ULONG_PTR>(winClassId)),
-                                                  L"WindowHandle Tests",
-                                                  WS_OVERLAPPEDWINDOW,
-                                                  CW_USEDEFAULT,
-                                                  CW_USEDEFAULT,
-                                                  640,
-                                                  480,
-                                                  nullptr,
-                                                  nullptr,
-                                                  classInfo.hInstance,
-                                                  nullptr);
+    const sf::WindowHandle handle = createWindow<TestType>(reinterpret_cast<LPWSTR>(static_cast<ULONG_PTR>(winClassId)),
+                                                           classInfo.hInstance);
     REQUIRE(handle);
     REQUIRE(!gotWmShowWindow);
     REQUIRE(IsWindow(handle));
@@ -66,7 +125,8 @@ TEST_CASE("[Window] sf::WindowHandle (Win32)")
 
     RECT clientRect{};
     REQUIRE(GetClientRect(handle, &clientRect));
-    const auto size = sf::Vector2u(sf::Vector2(clientRect.right - clientRect.left, clientRect.bottom - clientRect.top));
+    const auto initialSize = sf::Vector2u(
+        sf::Vector2(clientRect.right - clientRect.left, clientRect.bottom - clientRect.top));
 
     SECTION("sf::WindowBase")
     {
@@ -84,8 +144,17 @@ TEST_CASE("[Window] sf::WindowHandle (Win32)")
 
         CHECK(windowBase->isOpen());
         CHECK(windowBase->getPosition() == position);
-        CHECK(windowBase->getSize() == size);
+        CHECK(windowBase->getSize() == initialSize);
         CHECK(windowBase->getNativeHandle() == handle);
+
+        sf::Vector2u newSize{640, 480};
+        CHECK(windowBase->getSize() != newSize);
+        windowBase->setSize(newSize);
+
+        REQUIRE(GetClientRect(handle, &clientRect));
+        const auto size = sf::Vector2u(sf::Vector2(clientRect.right - clientRect.left, clientRect.bottom - clientRect.top));
+        CHECK(size == newSize);               // Validate that the actual client rect is indeed what we asked for
+        CHECK(windowBase->getSize() == size); // Validate that the `getSize` also returns the _actual_ client size
     }
 
     SECTION("sf::Window")
@@ -128,8 +197,17 @@ TEST_CASE("[Window] sf::WindowHandle (Win32)")
 
         CHECK(window->isOpen());
         CHECK(window->getPosition() == position);
-        CHECK(window->getSize() == size);
+        CHECK(window->getSize() == initialSize);
         CHECK(window->getNativeHandle() == handle);
+
+        sf::Vector2u newSize{640, 480};
+        CHECK(window->getSize() != newSize);
+        window->setSize(newSize);
+
+        REQUIRE(GetClientRect(handle, &clientRect));
+        const auto size = sf::Vector2u(sf::Vector2(clientRect.right - clientRect.left, clientRect.bottom - clientRect.top));
+        CHECK(size == newSize);           // Validate that the actual client rect is indeed what we asked for
+        CHECK(window->getSize() == size); // Validate that the `getSize` also returns the _actual_ client size
     }
 
     CHECK(gotWmShowWindow);
