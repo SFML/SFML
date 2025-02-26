@@ -237,6 +237,16 @@ macro(sfml_add_library module)
             ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT devel
             FRAMEWORK DESTINATION "." COMPONENT bin)
 
+    # install pkgconfig
+    if(SFML_INSTALL_PKGCONFIG_FILES)
+        configure_file(
+            "${PROJECT_SOURCE_DIR}/tools/pkg-config/${target}.pc.in"
+            "${CMAKE_CURRENT_BINARY_DIR}/tools/pkg-config/${target}.pc"
+            @ONLY)
+        install(FILES "${CMAKE_CURRENT_BINARY_DIR}/tools/pkg-config/${target}.pc"
+            DESTINATION "${SFML_PKGCONFIG_INSTALL_DIR}")
+    endif()
+
     # because the frameworks directory hierarchy has to be set up before any target files
     # are installed we can't call install(EXPORT ...Targets) here
     # this is because frameworks are only set up after all modules directories have already been added
@@ -379,7 +389,7 @@ function(sfml_add_test target SOURCES DEPENDS)
     # set the target flags to use the appropriate C++ standard library
     sfml_set_stdlib(${target})
 
-    set_target_properties(${target} PROPERTIES 
+    set_target_properties(${target} PROPERTIES
         VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} # set the Visual Studio startup path for debugging
         VS_DEBUGGER_COMMAND_ARGUMENTS "-b" # Break into debugger
 
