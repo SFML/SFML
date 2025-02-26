@@ -227,14 +227,14 @@ if(SFML_INSTALL_PKGCONFIG_FILES)
 
     sfml_set_option(SFML_PKGCONFIG_INSTALL_DIR "${SFML_PKGCONFIG_DIR}" PATH "Install directory for SFML's pkg-config .pc files")
 
-    foreach(sfml_module IN ITEMS all system window graphics audio network)
+    if(SFML_BUILD_AUDIO AND SFML_BUILD_NETWORK AND SFML_BUILD_GRAPHICS AND SFML_BUILD_WINDOW)
         configure_file(
-            "tools/pkg-config/sfml-${sfml_module}.pc.in"
-            "tools/pkg-config/sfml-${sfml_module}.pc"
+            "tools/pkg-config/sfml-all.pc.in"
+            "tools/pkg-config/sfml-all.pc"
             @ONLY)
-        install(FILES "${CMAKE_CURRENT_BINARY_DIR}/tools/pkg-config/sfml-${sfml_module}.pc"
+        install(FILES "${CMAKE_CURRENT_BINARY_DIR}/tools/pkg-config/sfml-all.pc"
             DESTINATION "${SFML_PKGCONFIG_INSTALL_DIR}")
-    endforeach()
+    endif()
 endif()
 
 # option to enable precompiled headers
