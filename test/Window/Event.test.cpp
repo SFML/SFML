@@ -2,6 +2,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <SystemUtil.hpp>
 #include <memory>
 #include <string_view>
 #include <type_traits>
