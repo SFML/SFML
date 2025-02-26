@@ -58,6 +58,8 @@ function(set_target_warnings target)
             -Wnull-dereference # warn if a null dereference is detected
             -Wold-style-cast # warn for c-style casts
             -Wpedantic # warn if non-standard C++ is used
+            -Wodr # Warn about One Definition Rule violations during link-time optimization
+            -flto-odr-type-merging
             $<$<BOOL:${SFML_OS_ANDROID}>:-Wno-main> # allow main() to be called
         )
     endif()
