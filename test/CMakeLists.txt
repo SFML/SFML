@@ -33,6 +33,7 @@ add_library(sfml-test-main STATIC
 )
 target_include_directories(sfml-test-main PUBLIC TestUtilities)
 target_link_libraries(sfml-test-main PUBLIC SFML::System Catch2::Catch2WithMain)
+target_compile_definitions(sfml-test-main PUBLIC CATCH_CONFIG_ENABLE_ALL_STRINGMAKERS)
 set_target_warnings(sfml-test-main)
 
 # set the target flags to use the appropriate C++ standard library
