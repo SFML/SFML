@@ -58,24 +58,24 @@ TEST_CASE("[Window] sf::Cursor", runDisplayTests())
         CHECK(!sf::Cursor::createFromPixels(nullptr, {}, {}));
         CHECK(!sf::Cursor::createFromPixels(pixels.data(), {0, 1}, {}));
         CHECK(!sf::Cursor::createFromPixels(pixels.data(), {1, 0}, {}));
-        CHECK(sf::Cursor::createFromPixels(pixels.data(), {1, 1}, {}));
+        CHECK(sf::Cursor::createFromPixels(pixels.data(), {1, 1}, {}).has_value());
     }
 
     SECTION("loadFromSystem()")
     {
-        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::Hand));
-        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::SizeHorizontal));
-        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::SizeVertical));
-        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::SizeLeft));
-        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::SizeRight));
-        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::SizeTop));
-        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::SizeBottom));
-        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::SizeTopLeft));
-        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::SizeTopRight));
-        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::SizeBottomLeft));
-        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::SizeBottomRight));
-        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::Cross));
-        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::Help));
-        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::NotAllowed));
+        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::Hand).has_value());
+        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::SizeHorizontal).has_value());
+        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::SizeVertical).has_value());
+        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::SizeLeft).has_value());
+        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::SizeRight).has_value());
+        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::SizeTop).has_value());
+        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::SizeBottom).has_value());
+        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::SizeTopLeft).has_value());
+        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::SizeTopRight).has_value());
+        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::SizeBottomLeft).has_value());
+        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::SizeBottomRight).has_value());
+        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::Cross).has_value());
+        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::Help).has_value());
+        CHECK(sf::Cursor::createFromSystem(sf::Cursor::Type::NotAllowed).has_value());
     }
 }

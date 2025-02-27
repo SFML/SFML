@@ -152,7 +152,7 @@ TEST_CASE("[Window] sf::WindowBase", runDisplayTests())
             REQUIRE(elapsed < (timeout + sf::milliseconds(100)).toDuration());
 
             if (elapsed <= timeout.toDuration())
-                CHECK(event);
+                CHECK(event.has_value());
             else
                 CHECK(!event);
         }

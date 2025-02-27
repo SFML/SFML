@@ -5,6 +5,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <SystemUtil.hpp>
 #include <array>
 #include <limits>
 #include <type_traits>

@@ -8,7 +8,6 @@
 
 #include <SystemUtil.hpp>
 #include <fstream>
-#include <iomanip>
 #include <limits>
 
 #include <cassert>
@@ -29,7 +28,7 @@ std::ostream& operator<<(std::ostream& os, const Angle& angle)
 
 std::ostream& operator<<(std::ostream& os, const String& string)
 {
-    return os << string.toAnsiString();
+    return os << reinterpret_cast<const char*>(string.toUtf8().data());
 }
 
 std::ostream& operator<<(std::ostream& os, Time time)
@@ -59,6 +58,31 @@ template std::ostream& operator<<(std::ostream&, const Vector3<int>&);
 template std::ostream& operator<<(std::ostream&, const Vector3<unsigned int>&);
 template std::ostream& operator<<(std::ostream&, const Vector3<float>&);
 } // namespace sf
+
+namespace Catch
+{
+std::string StringMaker<sf::String>::convert(const sf::String& string)
+{
+    return '"' + string.toAnsiString() + '"';
+}
+
+#ifdef __cpp_char8_t
+std::string StringMaker<char8_t>::convert(char8_t char8)
+{
+    return std::to_string(char8);
+}
+#endif
+
+std::string StringMaker<char16_t>::convert(char16_t char16)
+{
+    return std::to_string(char16);
+}
+
+std::string StringMaker<char32_t>::convert(char32_t char32)
+{
+    return std::to_string(char32);
+}
+} // namespace Catch
 
 bool operator==(const float& lhs, const Approx<float>& rhs)
 {
