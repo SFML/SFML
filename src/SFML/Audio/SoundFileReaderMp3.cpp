@@ -46,11 +46,24 @@ std::size_t readCallback(void* userData, void* bufferOut, std::size_t bytesToRea
     return static_cast<std::size_t>(stream->read(bufferOut, static_cast<sf::Int64>(bytesToRead)));
 }
 
-drmp3_bool32 seekCallback(void* userData, int offset, drmp3_seek_origin /* origin */)
+drmp3_bool32 seekCallback(void* userData, int offset, drmp3_seek_origin origin)
 {
     sf::InputStream* stream = static_cast<sf::InputStream*>(userData);
+
+    if (origin == drmp3_seek_origin::drmp3_seek_origin_current)
+        offset = static_cast<int>(stream->tell()) + offset;
+    else if (origin == drmp3_seek_origin::drmp3_seek_origin_end)
+        offset = static_cast<int>(stream->getSize()) + offset;
+
     const sf::Int64 position = stream->seek(static_cast<sf::Int64>(offset));
     return position >= 0;
+}
+
+drmp3_bool32 tellCallback(void* userData, drmp3_int64* pCursor)
+{
+    sf::InputStream* stream = static_cast<sf::InputStream*>(userData);
+    *pCursor = static_cast<drmp3_int64>(stream->tell());
+    return *pCursor != -1;
 }
 
 bool hasValidId3Tag(const sf::Uint8* header)
@@ -100,7 +113,7 @@ SoundFileReaderMp3::~SoundFileReaderMp3()
 bool SoundFileReaderMp3::open(InputStream& stream, Info& info)
 {
     // Init mp3 decoder
-    if (drmp3_init(&m_decoder, readCallback, seekCallback, &stream, NULL) != 1)
+    if (drmp3_init(&m_decoder, readCallback, seekCallback, tellCallback, NULL, &stream, NULL) != 1)
         return false;
 
     // Retrieve the music attributes
@@ -117,7 +130,7 @@ bool SoundFileReaderMp3::open(InputStream& stream, Info& info)
 void SoundFileReaderMp3::seek(Uint64 sampleOffset)
 {
     m_position = std::min(sampleOffset, m_numSamples);
-    drmp3_seek_to_pcm_frame(&m_decoder, m_position);
+    drmp3_seek_to_pcm_frame(&m_decoder, m_position / m_decoder.channels);
 }
 
 
