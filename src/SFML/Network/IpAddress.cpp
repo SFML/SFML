@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -29,10 +29,12 @@
 #include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/SocketImpl.hpp>
 
-#include <cstring>
+#include <SFML/System/Err.hpp>
+
 #include <istream>
 #include <ostream>
-#include <utility>
+
+#include <cstring>
 
 
 namespace sf
@@ -49,7 +51,10 @@ std::optional<IpAddress> IpAddress::resolve(std::string_view address)
     using namespace std::string_view_literals;
 
     if (address.empty())
+    {
+        // Not generating en error message here as resolution failure is a valid outcome.
         return std::nullopt;
+    }
 
     if (address == "255.255.255.255"sv)
     {
@@ -72,7 +77,7 @@ std::optional<IpAddress> IpAddress::resolve(std::string_view address)
     addrinfo* result = nullptr;
     if (getaddrinfo(address.data(), nullptr, &hints, &result) == 0 && result != nullptr)
     {
-        sockaddr_in sin;
+        sockaddr_in sin{};
         std::memcpy(&sin, result->ai_addr, sizeof(*result->ai_addr));
 
         const std::uint32_t ip = sin.sin_addr.s_addr;
@@ -81,19 +86,20 @@ std::optional<IpAddress> IpAddress::resolve(std::string_view address)
         return IpAddress(ntohl(ip));
     }
 
+    // Not generating en error message here as resolution failure is a valid outcome.
     return std::nullopt;
 }
 
 
 ////////////////////////////////////////////////////////////
 IpAddress::IpAddress(std::uint8_t byte0, std::uint8_t byte1, std::uint8_t byte2, std::uint8_t byte3) :
-m_address(htonl(static_cast<std::uint32_t>((byte0 << 24) | (byte1 << 16) | (byte2 << 8) | byte3)))
+m_address(static_cast<std::uint32_t>((byte0 << 24) | (byte1 << 16) | (byte2 << 8) | byte3))
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-IpAddress::IpAddress(std::uint32_t address) : m_address(htonl(address))
+IpAddress::IpAddress(std::uint32_t address) : m_address(address)
 {
 }
 
@@ -101,8 +107,8 @@ IpAddress::IpAddress(std::uint32_t address) : m_address(htonl(address))
 ////////////////////////////////////////////////////////////
 std::string IpAddress::toString() const
 {
-    in_addr address;
-    address.s_addr = m_address;
+    in_addr address{};
+    address.s_addr = htonl(m_address);
 
     return inet_ntoa(address);
 }
@@ -111,27 +117,34 @@ std::string IpAddress::toString() const
 ////////////////////////////////////////////////////////////
 std::uint32_t IpAddress::toInteger() const
 {
-    return ntohl(m_address);
+    return m_address;
 }
 
 
 ////////////////////////////////////////////////////////////
 std::optional<IpAddress> IpAddress::getLocalAddress()
 {
-    // The method here is to connect a UDP socket to anyone (here to localhost),
+    // The method here is to connect a UDP socket to a public ip,
     // and get the local socket address with the getsockname function.
     // UDP connection will not send anything to the network, so this function won't cause any overhead.
 
     // Create the socket
-    SocketHandle sock = socket(PF_INET, SOCK_DGRAM, 0);
+    const SocketHandle sock = socket(PF_INET, SOCK_DGRAM, 0);
     if (sock == priv::SocketImpl::invalidSocket())
+    {
+        err() << "Failed to retrieve local address (invalid socket)" << std::endl;
         return std::nullopt;
+    }
 
-    // Connect the socket to localhost on any port
-    sockaddr_in address = priv::SocketImpl::createAddress(ntohl(INADDR_LOOPBACK), 9);
+    // Connect the socket to a public ip (here 1.1.1.1) on any
+    // port. This will give the local address of the network interface
+    // used for default routing which is usually what we want.
+    sockaddr_in address = priv::SocketImpl::createAddress(0x01010101, 9);
     if (connect(sock, reinterpret_cast<sockaddr*>(&address), sizeof(address)) == -1)
     {
         priv::SocketImpl::close(sock);
+
+        err() << "Failed to retrieve local address (socket connection failure)" << std::endl;
         return std::nullopt;
     }
 
@@ -140,6 +153,8 @@ std::optional<IpAddress> IpAddress::getLocalAddress()
     if (getsockname(sock, reinterpret_cast<sockaddr*>(&address), &size) == -1)
     {
         priv::SocketImpl::close(sock);
+
+        err() << "Failed to retrieve local address (socket local address retrieval failure)" << std::endl;
         return std::nullopt;
     }
 
@@ -160,54 +175,59 @@ std::optional<IpAddress> IpAddress::getPublicAddress(Time timeout)
     // and parse the result to extract our IP address
     // (not very hard: the web page contains only our IP address).
 
-    Http           server("www.sfml-dev.org");
-    Http::Request  request("/ip-provider.php", Http::Request::Method::Get);
-    Http::Response page = server.sendRequest(request, timeout);
-    if (page.getStatus() == Http::Response::Status::Ok)
+    Http                 server("www.sfml-dev.org");
+    const Http::Request  request("/ip-provider.php", Http::Request::Method::Get);
+    const Http::Response page = server.sendRequest(request, timeout);
+
+    const Http::Response::Status status = page.getStatus();
+
+    if (status == Http::Response::Status::Ok)
         return IpAddress::resolve(page.getBody());
 
-    // Something failed: return an invalid address
+    err() << "Failed to retrieve public address from external IP resolution server (HTTP response status "
+          << static_cast<int>(status) << ")" << std::endl;
+
     return std::nullopt;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator==(const IpAddress& left, const IpAddress& right)
+bool operator==(IpAddress left, IpAddress right)
 {
     return !(left < right) && !(right < left);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator!=(const IpAddress& left, const IpAddress& right)
+bool operator!=(IpAddress left, IpAddress right)
 {
     return !(left == right);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator<(const IpAddress& left, const IpAddress& right)
+bool operator<(IpAddress left, IpAddress right)
 {
     return left.m_address < right.m_address;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator>(const IpAddress& left, const IpAddress& right)
+bool operator>(IpAddress left, IpAddress right)
 {
     return right < left;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator<=(const IpAddress& left, const IpAddress& right)
+bool operator<=(IpAddress left, IpAddress right)
 {
     return !(right < left);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool operator>=(const IpAddress& left, const IpAddress& right)
+bool operator>=(IpAddress left, IpAddress right)
 {
     return !(left < right);
 }
@@ -225,7 +245,7 @@ std::istream& operator>>(std::istream& stream, std::optional<IpAddress>& address
 
 
 ////////////////////////////////////////////////////////////
-std::ostream& operator<<(std::ostream& stream, const IpAddress& address)
+std::ostream& operator<<(std::ostream& stream, IpAddress address)
 {
     return stream << address.toString();
 }

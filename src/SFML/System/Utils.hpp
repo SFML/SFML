@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,35 +22,37 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_UTILS_HPP
-#define SFML_UTILS_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cctype>
+#include <SFML/System/Export.hpp>
+
 #include <filesystem>
-#include <sstream>
 #include <string>
+#include <string_view>
+
+#include <cstddef>
+#include <cstdio>
 
 
 namespace sf
 {
-[[nodiscard]] inline std::string toLower(std::string str)
+[[nodiscard]] SFML_SYSTEM_API std::string toLower(std::string str);
+[[nodiscard]] SFML_SYSTEM_API std::string formatDebugPathInfo(const std::filesystem::path& path);
+
+// Convert byte sequence into integer
+// toInteger<int>(0x12, 0x34, 0x56) == 0x563412
+template <typename IntegerType, typename... Bytes>
+[[nodiscard]] constexpr IntegerType toInteger(Bytes... byte)
 {
-    for (char& c : str)
-        c = static_cast<char>(std::tolower(static_cast<unsigned char>(c)));
-    return str;
+    static_assert(sizeof(IntegerType) >= sizeof...(Bytes), "IntegerType not large enough to contain bytes");
+
+    IntegerType integer = 0;
+    std::size_t index   = 0;
+    return ((integer |= static_cast<IntegerType>(static_cast<IntegerType>(byte) << 8 * index++)), ...);
 }
 
-[[nodiscard]] inline std::string formatDebugPathInfo(const std::filesystem::path& path)
-{
-    std::ostringstream stream;
-    stream << "    Provided path: " << path << '\n';
-    stream << "    Absolute path: " << std::filesystem::absolute(path);
-    return stream.str();
-}
-
+[[nodiscard]] SFML_SYSTEM_API std::FILE* openFile(const std::filesystem::path& filename, std::string_view mode);
 } // namespace sf
-
-#endif // SFML_UTILS_HPP

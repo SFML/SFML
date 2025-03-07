@@ -1,68 +1,70 @@
 #include <SFML/System/Vector3.hpp>
 
-#include <doctest/doctest.h>
+#include <catch2/catch_template_test_macros.hpp>
 
 #include <SystemUtil.hpp>
 #include <type_traits>
 
-// Use sf::Vector3i for tests (except for float vector algebra).
-// Test coverage is given, as there are no template specializations.
-
-static_assert(std::is_copy_constructible_v<sf::Vector3i>);
-static_assert(std::is_copy_assignable_v<sf::Vector3i>);
-static_assert(std::is_nothrow_move_constructible_v<sf::Vector3i>);
-static_assert(std::is_nothrow_move_assignable_v<sf::Vector3i>);
-
-TEST_CASE("[System] sf::Vector3")
+TEMPLATE_TEST_CASE("[System] sf::Vector3", "", int, float)
 {
-    SUBCASE("Construction")
+    SECTION("Type traits")
     {
-        SUBCASE("Default constructor")
+        STATIC_CHECK(std::is_trivially_copy_constructible_v<sf::Vector3<TestType>>);
+        STATIC_CHECK(std::is_trivially_copy_assignable_v<sf::Vector3<TestType>>);
+        STATIC_CHECK(std::is_trivially_move_constructible_v<sf::Vector3<TestType>>);
+        STATIC_CHECK(std::is_trivially_move_assignable_v<sf::Vector3<TestType>>);
+    }
+
+    SECTION("Construction")
+    {
+        SECTION("Default constructor")
         {
-            const sf::Vector3i vector;
-            CHECK(vector.x == 0);
-            CHECK(vector.y == 0);
-            CHECK(vector.z == 0);
+            constexpr sf::Vector3<TestType> vector;
+            STATIC_CHECK(vector.x == 0);
+            STATIC_CHECK(vector.y == 0);
+            STATIC_CHECK(vector.z == 0);
         }
 
-        SUBCASE("(x, y, z) coordinate constructor")
+        SECTION("(x, y, z) coordinate constructor")
         {
-            const sf::Vector3i vector(1, 2, 3);
-            CHECK(vector.x == 1);
-            CHECK(vector.y == 2);
-            CHECK(vector.z == 3);
+            constexpr sf::Vector3<TestType> vector(1, 2, 3);
+            STATIC_CHECK(vector.x == 1);
+            STATIC_CHECK(vector.y == 2);
+            STATIC_CHECK(vector.z == 3);
         }
 
-        SUBCASE("Conversion constructor")
+        SECTION("Conversion operator")
         {
-            const sf::Vector3f sourceVector(1.0f, 2.0f, 3.0f);
-            const sf::Vector3i vector(sourceVector);
+            STATIC_CHECK(!std::is_convertible_v<sf::Vector3f, sf::Vector3i>);
 
-            CHECK(vector.x == static_cast<int>(sourceVector.x));
-            CHECK(vector.y == static_cast<int>(sourceVector.y));
-            CHECK(vector.z == static_cast<int>(sourceVector.z));
+            constexpr sf::Vector3f sourceVector(1.0f, 2.0f, 3.0f);
+            constexpr sf::Vector3i vector(sourceVector);
+
+            STATIC_CHECK(vector.x == static_cast<int>(sourceVector.x));
+            STATIC_CHECK(vector.y == static_cast<int>(sourceVector.y));
+            STATIC_CHECK(vector.z == static_cast<int>(sourceVector.z));
         }
     }
 
-    SUBCASE("Unary operations")
+    SECTION("Unary operations")
     {
-        SUBCASE("-vector")
+        SECTION("-vector")
         {
-            const sf::Vector3i vector(1, 2, 3);
-            const sf::Vector3i negatedVector = -vector;
+            constexpr sf::Vector3<TestType> vector(1, 2, 3);
+            constexpr sf::Vector3<TestType> negatedVector = -vector;
 
-            CHECK(negatedVector.x == -1);
-            CHECK(negatedVector.y == -2);
-            CHECK(negatedVector.z == -3);
+            STATIC_CHECK(negatedVector.x == -1);
+            STATIC_CHECK(negatedVector.y == -2);
+            STATIC_CHECK(negatedVector.z == -3);
         }
     }
 
-    SUBCASE("Arithmetic operations between two vectors")
+    SECTION("Arithmetic operations between two vectors")
     {
-        sf::Vector3i       firstVector(2, 5, 6);
-        const sf::Vector3i secondVector(8, 3, 7);
+        sf::Vector3<TestType>           firstVector(2, 5, 6);
+        constexpr sf::Vector3<TestType> secondVector(8, 3, 7);
 
-        SUBCASE("vector += vector")
+        SECTION("vector += vector")
         {
             firstVector += secondVector;
 
@@ -71,7 +73,7 @@ TEST_CASE("[System] sf::Vector3")
             CHECK(firstVector.z == 13);
         }
 
-        SUBCASE("vector -= vector")
+        SECTION("vector -= vector")
         {
             firstVector -= secondVector;
 
@@ -80,18 +82,18 @@ TEST_CASE("[System] sf::Vector3")
             CHECK(firstVector.z == -1);
         }
 
-        SUBCASE("vector + vector")
+        SECTION("vector + vector")
         {
-            const sf::Vector3i result = firstVector + secondVector;
+            const sf::Vector3<TestType> result = firstVector + secondVector;
 
             CHECK(result.x == 10);
             CHECK(result.y == 8);
             CHECK(result.z == 13);
         }
 
-        SUBCASE("vector - vector")
+        SECTION("vector - vector")
         {
-            const sf::Vector3i result = firstVector - secondVector;
+            const sf::Vector3<TestType> result = firstVector - secondVector;
 
             CHECK(result.x == -6);
             CHECK(result.y == 2);
@@ -99,30 +101,30 @@ TEST_CASE("[System] sf::Vector3")
         }
     }
 
-    SUBCASE("Arithmetic operations between vector and scalar value")
+    SECTION("Arithmetic operations between vector and scalar value")
     {
-        sf::Vector3i vector(26, 12, 6);
-        const int    scalar = 2;
+        sf::Vector3<TestType> vector(26, 12, 6);
+        constexpr TestType    scalar = 2;
 
-        SUBCASE("vector * scalar")
+        SECTION("vector * scalar")
         {
-            sf::Vector3i result = vector * scalar;
+            const sf::Vector3<TestType> result = vector * scalar;
 
             CHECK(result.x == 52);
             CHECK(result.y == 24);
             CHECK(result.z == 12);
         }
 
-        SUBCASE("scalar * vector")
+        SECTION("scalar * vector")
         {
-            sf::Vector3i result = scalar * vector;
+            const sf::Vector3<TestType> result = scalar * vector;
 
             CHECK(result.x == 52);
             CHECK(result.y == 24);
             CHECK(result.z == 12);
         }
 
-        SUBCASE("vector *= scalar")
+        SECTION("vector *= scalar")
         {
             vector *= scalar;
 
@@ -131,16 +133,16 @@ TEST_CASE("[System] sf::Vector3")
             CHECK(vector.z == 12);
         }
 
-        SUBCASE("vector / scalar")
+        SECTION("vector / scalar")
         {
-            sf::Vector3i result = vector / scalar;
+            const sf::Vector3<TestType> result = vector / scalar;
 
             CHECK(result.x == 13);
             CHECK(result.y == 6);
             CHECK(result.z == 3);
         }
 
-        SUBCASE("vector /= scalar")
+        SECTION("vector /= scalar")
         {
             vector /= scalar;
 
@@ -150,30 +152,30 @@ TEST_CASE("[System] sf::Vector3")
         }
     }
 
-    SUBCASE("Comparison operations (two equal and one different vector)")
+    SECTION("Comparison operations (two equal and one different vector)")
     {
-        const sf::Vector3i firstEqualVector(1, 5, 6);
-        const sf::Vector3i secondEqualVector(1, 5, 6);
-        const sf::Vector3i differentVector(6, 9, 7);
+        constexpr sf::Vector3<TestType> firstEqualVector(1, 5, 6);
+        constexpr sf::Vector3<TestType> secondEqualVector(1, 5, 6);
+        constexpr sf::Vector3<TestType> differentVector(6, 9, 7);
 
-        SUBCASE("vector == vector")
+        SECTION("vector == vector")
         {
-            CHECK(firstEqualVector == secondEqualVector);
-            CHECK_FALSE(firstEqualVector == differentVector);
+            STATIC_CHECK(firstEqualVector == secondEqualVector);
+            STATIC_CHECK_FALSE(firstEqualVector == differentVector);
         }
 
-        SUBCASE("vector != vector")
+        SECTION("vector != vector")
         {
-            CHECK(firstEqualVector != differentVector);
-            CHECK_FALSE(firstEqualVector != secondEqualVector);
+            STATIC_CHECK(firstEqualVector != differentVector);
+            STATIC_CHECK_FALSE(firstEqualVector != secondEqualVector);
         }
     }
 
-    SUBCASE("Structured bindings")
+    SECTION("Structured bindings")
     {
-        sf::Vector3i vector(1, 2, 3);
+        sf::Vector3<TestType> vector(1, 2, 3); // NOLINT(misc-const-correctness)
 
-        SUBCASE("destructure by value")
+        SECTION("destructure by value")
         {
             auto [x, y, z] = vector;
 
@@ -181,7 +183,7 @@ TEST_CASE("[System] sf::Vector3")
             CHECK(y == 2);
             CHECK(z == 3);
 
-            static_assert(std::is_same_v<decltype(x), decltype(vector.x)>);
+            STATIC_CHECK(std::is_same_v<decltype(x), decltype(vector.x)>);
 
             x = 3;
 
@@ -189,7 +191,7 @@ TEST_CASE("[System] sf::Vector3")
             CHECK(vector.x == 1);
         }
 
-        SUBCASE("destructure by ref")
+        SECTION("destructure by ref")
         {
             auto& [x, y, z] = vector;
 
@@ -197,7 +199,7 @@ TEST_CASE("[System] sf::Vector3")
             CHECK(y == 2);
             CHECK(z == 3);
 
-            static_assert(std::is_same_v<decltype(x), decltype(vector.x)>);
+            STATIC_CHECK(std::is_same_v<decltype(x), decltype(vector.x)>);
 
             x = 3;
 
@@ -206,19 +208,19 @@ TEST_CASE("[System] sf::Vector3")
         }
     }
 
-    SUBCASE("Length and normalization")
+    SECTION("Length and normalization")
     {
-        const sf::Vector3f v(2.4f, 3.0f, 5.2f);
+        constexpr sf::Vector3f v(2.4f, 3.0f, 5.2f);
 
         CHECK(v.length() == Approx(6.46529f));
-        CHECK(v.lengthSq() == Approx(41.79997f));
+        CHECK(v.lengthSquared() == Approx(41.79997f));
         CHECK(v.normalized() == Approx(sf::Vector3f(0.37121f, 0.46401f, 0.80429f)));
     }
 
-    SUBCASE("Products and quotients")
+    SECTION("Products and quotients")
     {
-        const sf::Vector3f v(2.4f, 3.0f, 5.2f);
-        const sf::Vector3f w(-0.7f, -2.2f, -4.8f);
+        constexpr sf::Vector3f v(2.4f, 3.0f, 5.2f);
+        constexpr sf::Vector3f w(-0.7f, -2.2f, -4.8f);
 
         CHECK(v.dot(w) == Approx(-33.24f));
         CHECK(w.dot(v) == Approx(-33.24f));
@@ -226,18 +228,9 @@ TEST_CASE("[System] sf::Vector3")
         CHECK(v.cross(w) == Approx(sf::Vector3f(-2.96f, 7.88f, -3.18f)));
         CHECK(w.cross(v) == Approx(sf::Vector3f(2.96f, -7.88f, 3.18f)));
 
-        CHECK(v.cwiseMul(w) == Approx(sf::Vector3f(-1.68f, -6.6f, -24.96f)));
-        CHECK(w.cwiseMul(v) == Approx(sf::Vector3f(-1.68f, -6.6f, -24.96f)));
-        CHECK(v.cwiseDiv(w) == Approx(sf::Vector3f(-3.428571f, -1.363636f, -1.0833333f)));
-        CHECK(w.cwiseDiv(v) == Approx(sf::Vector3f(-0.291666f, -0.733333f, -0.9230769f)));
-    }
-
-    SUBCASE("Constexpr support")
-    {
-        constexpr sf::Vector3i vector(1, 2, 3);
-        static_assert(vector.x == 1);
-        static_assert(vector.y == 2);
-        static_assert(vector.z == 3);
-        static_assert(vector + sf::Vector3i(3, 2, 1) == sf::Vector3i(4, 4, 4));
+        CHECK(v.componentWiseMul(w) == Approx(sf::Vector3f(-1.68f, -6.6f, -24.96f)));
+        CHECK(w.componentWiseMul(v) == Approx(sf::Vector3f(-1.68f, -6.6f, -24.96f)));
+        CHECK(v.componentWiseDiv(w) == Approx(sf::Vector3f(-3.428571f, -1.363636f, -1.0833333f)));
+        CHECK(w.componentWiseDiv(v) == Approx(sf::Vector3f(-0.291666f, -0.733333f, -0.9230769f)));
     }
 }

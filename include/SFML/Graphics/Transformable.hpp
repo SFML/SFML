@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_TRANSFORMABLE_HPP
-#define SFML_TRANSFORMABLE_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -31,6 +30,7 @@
 #include <SFML/Graphics/Export.hpp>
 
 #include <SFML/Graphics/Transform.hpp>
+
 #include <SFML/System/Angle.hpp>
 
 
@@ -47,13 +47,13 @@ public:
     /// \brief Default constructor
     ///
     ////////////////////////////////////////////////////////////
-    Transformable();
+    Transformable() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Virtual destructor
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~Transformable();
+    virtual ~Transformable() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief set the position of the object
@@ -64,10 +64,10 @@ public:
     ///
     /// \param position New position
     ///
-    /// \see move, getPosition
+    /// \see `move`, `getPosition`
     ///
     ////////////////////////////////////////////////////////////
-    void setPosition(const Vector2f& position);
+    void setPosition(Vector2f position);
 
     ////////////////////////////////////////////////////////////
     /// \brief set the orientation of the object
@@ -78,7 +78,7 @@ public:
     ///
     /// \param angle New rotation
     ///
-    /// \see rotate, getRotation
+    /// \see `rotate`, `getRotation`
     ///
     ////////////////////////////////////////////////////////////
     void setRotation(Angle angle);
@@ -92,10 +92,10 @@ public:
     ///
     /// \param factors New scale factors
     ///
-    /// \see scale, getScale
+    /// \see `scale`, `getScale`
     ///
     ////////////////////////////////////////////////////////////
-    void setScale(const Vector2f& factors);
+    void setScale(Vector2f factors);
 
     ////////////////////////////////////////////////////////////
     /// \brief set the local origin of the object
@@ -109,20 +109,20 @@ public:
     ///
     /// \param origin New origin
     ///
-    /// \see getOrigin
+    /// \see `getOrigin`
     ///
     ////////////////////////////////////////////////////////////
-    void setOrigin(const Vector2f& origin);
+    void setOrigin(Vector2f origin);
 
     ////////////////////////////////////////////////////////////
     /// \brief get the position of the object
     ///
     /// \return Current position
     ///
-    /// \see setPosition
+    /// \see `setPosition`
     ///
     ////////////////////////////////////////////////////////////
-    const Vector2f& getPosition() const;
+    [[nodiscard]] Vector2f getPosition() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief get the orientation of the object
@@ -131,36 +131,36 @@ public:
     ///
     /// \return Current rotation
     ///
-    /// \see setRotation
+    /// \see `setRotation`
     ///
     ////////////////////////////////////////////////////////////
-    Angle getRotation() const;
+    [[nodiscard]] Angle getRotation() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief get the current scale of the object
     ///
     /// \return Current scale factors
     ///
-    /// \see setScale
+    /// \see `setScale`
     ///
     ////////////////////////////////////////////////////////////
-    const Vector2f& getScale() const;
+    [[nodiscard]] Vector2f getScale() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief get the local origin of the object
     ///
     /// \return Current origin
     ///
-    /// \see setOrigin
+    /// \see `setOrigin`
     ///
     ////////////////////////////////////////////////////////////
-    const Vector2f& getOrigin() const;
+    [[nodiscard]] Vector2f getOrigin() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Move the object by a given offset
     ///
     /// This function adds to the current position of the object,
-    /// unlike setPosition which overwrites it.
+    /// unlike `setPosition` which overwrites it.
     /// Thus, it is equivalent to the following code:
     /// \code
     /// object.setPosition(object.getPosition() + offset);
@@ -168,16 +168,16 @@ public:
     ///
     /// \param offset Offset
     ///
-    /// \see setPosition
+    /// \see `setPosition`
     ///
     ////////////////////////////////////////////////////////////
-    void move(const Vector2f& offset);
+    void move(Vector2f offset);
 
     ////////////////////////////////////////////////////////////
     /// \brief Rotate the object
     ///
     /// This function adds to the current rotation of the object,
-    /// unlike setRotation which overwrites it.
+    /// unlike `setRotation` which overwrites it.
     /// Thus, it is equivalent to the following code:
     /// \code
     /// object.setRotation(object.getRotation() + angle);
@@ -192,7 +192,7 @@ public:
     /// \brief Scale the object
     ///
     /// This function multiplies the current scale of the object,
-    /// unlike setScale which overwrites it.
+    /// unlike `setScale` which overwrites it.
     /// Thus, it is equivalent to the following code:
     /// \code
     /// sf::Vector2f scale = object.getScale();
@@ -201,58 +201,55 @@ public:
     ///
     /// \param factor Scale factors
     ///
-    /// \see setScale
+    /// \see `setScale`
     ///
     ////////////////////////////////////////////////////////////
-    void scale(const Vector2f& factor);
+    void scale(Vector2f factor);
 
     ////////////////////////////////////////////////////////////
     /// \brief get the combined transform of the object
     ///
     /// \return Transform combining the position/rotation/scale/origin of the object
     ///
-    /// \see getInverseTransform
+    /// \see `getInverseTransform`
     ///
     ////////////////////////////////////////////////////////////
-    const Transform& getTransform() const;
+    [[nodiscard]] const Transform& getTransform() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief get the inverse of the combined transform of the object
     ///
     /// \return Inverse of the combined transformations applied to the object
     ///
-    /// \see getTransform
+    /// \see `getTransform`
     ///
     ////////////////////////////////////////////////////////////
-    const Transform& getInverseTransform() const;
+    [[nodiscard]] const Transform& getInverseTransform() const;
 
 private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Vector2f          m_origin;                     //!< Origin of translation/rotation/scaling of the object
-    Vector2f          m_position;                   //!< Position of the object in the 2D world
-    Angle             m_rotation;                   //!< Orientation of the object
-    Vector2f          m_scale;                      //!< Scale of the object
-    mutable Transform m_transform;                  //!< Combined transformation of the object
-    mutable bool      m_transformNeedUpdate;        //!< Does the transform need to be recomputed?
-    mutable Transform m_inverseTransform;           //!< Combined transformation of the object
-    mutable bool      m_inverseTransformNeedUpdate; //!< Does the transform need to be recomputed?
+    Vector2f          m_origin;                           //!< Origin of translation/rotation/scaling of the object
+    Vector2f          m_position;                         //!< Position of the object in the 2D world
+    Angle             m_rotation;                         //!< Orientation of the object
+    Vector2f          m_scale{1, 1};                      //!< Scale of the object
+    mutable Transform m_transform;                        //!< Combined transformation of the object
+    mutable Transform m_inverseTransform;                 //!< Combined transformation of the object
+    mutable bool      m_transformNeedUpdate{true};        //!< Does the transform need to be recomputed?
+    mutable bool      m_inverseTransformNeedUpdate{true}; //!< Does the transform need to be recomputed?
 };
 
 } // namespace sf
-
-
-#endif // SFML_TRANSFORMABLE_HPP
 
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Transformable
 /// \ingroup graphics
 ///
-/// This class is provided for convenience, on top of sf::Transform.
+/// This class is provided for convenience, on top of `sf::Transform`.
 ///
-/// sf::Transform, as a low-level class, offers a great level of
+/// `sf::Transform`, as a low-level class, offers a great level of
 /// flexibility but it is not always convenient to manage. Indeed,
 /// one can easily combine any kind of operation, such as a translation
 /// followed by a rotation followed by a scaling, but once the result
@@ -264,44 +261,43 @@ private:
 /// rotation. This is a tedious operation, and it requires to store
 /// all the individual components of the final transform.
 ///
-/// That's exactly what sf::Transformable was written for: it hides
+/// That's exactly what `sf::Transformable` was written for: it hides
 /// these variables and the composed transform behind an easy to use
 /// interface. You can set or get any of the individual components
 /// without worrying about the others. It also provides the composed
-/// transform (as a sf::Transform), and keeps it up-to-date.
+/// transform (as a `sf::Transform`), and keeps it up-to-date.
 ///
-/// In addition to the position, rotation and scale, sf::Transformable
+/// In addition to the position, rotation and scale, `sf::Transformable`
 /// provides an "origin" component, which represents the local origin
 /// of the three other components. Let's take an example with a 10x10
 /// pixels sprite. By default, the sprite is positioned/rotated/scaled
-/// relatively to its top-left corner, because it is the local point
+/// relative to its top-left corner, because it is the local point
 /// (0, 0). But if we change the origin to be (5, 5), the sprite will
 /// be positioned/rotated/scaled around its center instead. And if
 /// we set the origin to (10, 10), it will be transformed around its
 /// bottom-right corner.
 ///
-/// To keep the sf::Transformable class simple, there's only one
+/// To keep the `sf::Transformable` class simple, there's only one
 /// origin for all the components. You cannot position the sprite
-/// relatively to its top-left corner while rotating it around its
-/// center, for example. To do such things, use sf::Transform directly.
+/// relative to its top-left corner while rotating it around its
+/// center, for example. To do such things, use `sf::Transform` directly.
 ///
-/// sf::Transformable can be used as a base class. It is often
-/// combined with sf::Drawable -- that's what SFML's sprites,
+/// `sf::Transformable` can be used as a base class. It is often
+/// combined with `sf::Drawable` -- that's what SFML's sprites,
 /// texts and shapes do.
 /// \code
 /// class MyEntity : public sf::Transformable, public sf::Drawable
 /// {
-///     void draw(sf::RenderTarget& target, const sf::RenderStates& states) const override
+///     void draw(sf::RenderTarget& target, sf::RenderStates states) const override
 ///     {
-///         sf::RenderStates statesCopy(states);
-///         statesCopy.transform *= getTransform();
-///         target.draw(..., statesCopy);
+///         states.transform *= getTransform();
+///         target.draw(..., states);
 ///     }
 /// };
 ///
 /// MyEntity entity;
-/// entity.setPosition(10, 20);
-/// entity.setRotation(45);
+/// entity.setPosition({10, 20});
+/// entity.setRotation(sf::degrees(45));
 /// window.draw(entity);
 /// \endcode
 ///
@@ -332,13 +328,13 @@ private:
 /// such as sprites or texts when rendering. While this allows transitions
 /// like slow movements or rotations to appear smoothly, it can lead to
 /// unwanted results in some cases, for example blurred or distorted objects.
-/// In order to render a sf::Drawable object pixel-perfectly, make sure
+/// In order to render a `sf::Drawable` object pixel-perfectly, make sure
 /// the involved coordinates allow a 1:1 mapping of pixels in the window
 /// to texels (pixels in the texture). More specifically, this means:
 /// * The object's position, origin and scale have no fractional part
 /// * The object's and the view's rotation are a multiple of 90 degrees
 /// * The view's center and size have no fractional part
 ///
-/// \see sf::Transform
+/// \see `sf::Transform`
 ///
 ////////////////////////////////////////////////////////////

@@ -1,24 +1,27 @@
 #include <SFML/Graphics/Glyph.hpp>
 
-#include <doctest/doctest.h>
+#include <catch2/catch_test_macros.hpp>
 
 #include <GraphicsUtil.hpp>
 #include <type_traits>
 
-static_assert(std::is_copy_constructible_v<sf::Glyph>);
-static_assert(std::is_copy_assignable_v<sf::Glyph>);
-static_assert(std::is_nothrow_move_constructible_v<sf::Glyph>);
-static_assert(std::is_nothrow_move_assignable_v<sf::Glyph>);
-
 TEST_CASE("[Graphics] sf::Glyph")
 {
-    SUBCASE("Construction")
+    SECTION("Type traits")
     {
-        const sf::Glyph glyph;
-        CHECK(glyph.advance == 0.f);
-        CHECK(glyph.lsbDelta == 0);
-        CHECK(glyph.rsbDelta == 0);
-        CHECK(glyph.bounds == sf::FloatRect());
-        CHECK(glyph.textureRect == sf::IntRect());
+        STATIC_CHECK(std::is_trivially_copy_constructible_v<sf::Glyph>);
+        STATIC_CHECK(std::is_trivially_copy_assignable_v<sf::Glyph>);
+        STATIC_CHECK(std::is_trivially_move_constructible_v<sf::Glyph>);
+        STATIC_CHECK(std::is_trivially_move_assignable_v<sf::Glyph>);
+    }
+
+    SECTION("Construction")
+    {
+        constexpr sf::Glyph glyph;
+        STATIC_CHECK(glyph.advance == 0.f);
+        STATIC_CHECK(glyph.lsbDelta == 0);
+        STATIC_CHECK(glyph.rsbDelta == 0);
+        STATIC_CHECK(glyph.bounds == sf::FloatRect());
+        STATIC_CHECK(glyph.textureRect == sf::IntRect());
     }
 }

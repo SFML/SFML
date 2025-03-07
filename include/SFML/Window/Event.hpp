@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,18 +22,20 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_EVENT_HPP
-#define SFML_EVENT_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Config.hpp>
-
 #include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include <SFML/Window/Sensor.hpp>
+
+#include <SFML/System/Vector2.hpp>
+
+#include <type_traits>
+#include <variant>
 
 
 namespace sf
@@ -46,219 +48,414 @@ class Event
 {
 public:
     ////////////////////////////////////////////////////////////
-    /// \brief Size events parameters (Resized)
+    /// \brief Closed event subtype
     ///
     ////////////////////////////////////////////////////////////
-    struct SizeEvent
+    struct Closed
     {
-        unsigned int width;  //!< New width, in pixels
-        unsigned int height; //!< New height, in pixels
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Keyboard event parameters (KeyPressed, KeyReleased)
+    /// \brief Resized event subtype
     ///
     ////////////////////////////////////////////////////////////
-    struct KeyEvent
+    struct Resized
     {
-        Keyboard::Key code;    //!< Code of the key that has been pressed
-        bool          alt;     //!< Is the Alt key pressed?
-        bool          control; //!< Is the Control key pressed?
-        bool          shift;   //!< Is the Shift key pressed?
-        bool          system;  //!< Is the System key pressed?
+        Vector2u size; //!< New size, in pixels
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Text event parameters (TextEntered)
+    /// \brief Lost focus event subtype
     ///
     ////////////////////////////////////////////////////////////
-    struct TextEvent
+    struct FocusLost
     {
-        std::uint32_t unicode; //!< UTF-32 Unicode value of the character
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Mouse move event parameters (MouseMoved)
+    /// \brief Gained focus event subtype
     ///
     ////////////////////////////////////////////////////////////
-    struct MouseMoveEvent
+    struct FocusGained
     {
-        int x; //!< X position of the mouse pointer, relative to the left of the owner window
-        int y; //!< Y position of the mouse pointer, relative to the top of the owner window
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Mouse buttons events parameters
-    ///        (MouseButtonPressed, MouseButtonReleased)
+    /// \brief Text event subtype
     ///
     ////////////////////////////////////////////////////////////
-    struct MouseButtonEvent
+    struct TextEntered
     {
-        Mouse::Button button; //!< Code of the button that has been pressed
-        int           x;      //!< X position of the mouse pointer, relative to the left of the owner window
-        int           y;      //!< Y position of the mouse pointer, relative to the top of the owner window
+        char32_t unicode{}; //!< UTF-32 Unicode value of the character
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Mouse wheel events parameters (MouseWheelScrolled)
+    /// \brief Key pressed event subtype
     ///
     ////////////////////////////////////////////////////////////
-    struct MouseWheelScrollEvent
+    struct KeyPressed
     {
-        Mouse::Wheel wheel; //!< Which wheel (for mice with multiple ones)
-        float        delta; //!< Wheel offset (positive is up/left, negative is down/right). High-precision mice may use non-integral offsets.
-        int          x; //!< X position of the mouse pointer, relative to the left of the owner window
-        int          y; //!< Y position of the mouse pointer, relative to the top of the owner window
+        Keyboard::Key      code{};     //!< Code of the key that has been pressed
+        Keyboard::Scancode scancode{}; //!< Physical code of the key that has been pressed
+        bool               alt{};      //!< Is the Alt key pressed?
+        bool               control{};  //!< Is the Control key pressed?
+        bool               shift{};    //!< Is the Shift key pressed?
+        bool               system{};   //!< Is the System key pressed?
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Joystick connection events parameters
-    ///        (JoystickConnected, JoystickDisconnected)
+    /// \brief Key released event subtype
     ///
     ////////////////////////////////////////////////////////////
-    struct JoystickConnectEvent
+    struct KeyReleased
     {
-        unsigned int joystickId; //!< Index of the joystick (in range [0 .. Joystick::Count - 1])
+        Keyboard::Key      code{};     //!< Code of the key that has been released
+        Keyboard::Scancode scancode{}; //!< Physical code of the key that has been released
+        bool               alt{};      //!< Is the Alt key pressed?
+        bool               control{};  //!< Is the Control key pressed?
+        bool               shift{};    //!< Is the Shift key pressed?
+        bool               system{};   //!< Is the System key pressed?
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Joystick axis move event parameters (JoystickMoved)
+    /// \brief Mouse wheel scrolled event subtype
     ///
     ////////////////////////////////////////////////////////////
-    struct JoystickMoveEvent
+    struct MouseWheelScrolled
     {
-        unsigned int   joystickId; //!< Index of the joystick (in range [0 .. Joystick::Count - 1])
-        Joystick::Axis axis;       //!< Axis on which the joystick moved
-        float          position;   //!< New position on the axis (in range [-100 .. 100])
+        Mouse::Wheel wheel{}; //!< Which wheel (for mice with multiple ones)
+        float delta{}; //!< Wheel offset (positive is up/left, negative is down/right). High-precision mice may use non-integral offsets.
+        Vector2i position; //!< Position of the mouse pointer, relative to the top left of the owner window
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Joystick buttons events parameters
-    ///        (JoystickButtonPressed, JoystickButtonReleased)
+    /// \brief Mouse button pressed event subtype
     ///
     ////////////////////////////////////////////////////////////
-    struct JoystickButtonEvent
+    struct MouseButtonPressed
     {
-        unsigned int joystickId; //!< Index of the joystick (in range [0 .. Joystick::Count - 1])
-        unsigned int button; //!< Index of the button that has been pressed (in range [0 .. Joystick::ButtonCount - 1])
+        Mouse::Button button{}; //!< Code of the button that has been pressed
+        Vector2i      position; //!< Position of the mouse pointer, relative to the top left of the owner window
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Touch events parameters (TouchBegan, TouchMoved, TouchEnded)
+    /// \brief Mouse button released event subtype
     ///
     ////////////////////////////////////////////////////////////
-    struct TouchEvent
+    struct MouseButtonReleased
     {
-        unsigned int finger; //!< Index of the finger in case of multi-touch events
-        int          x;      //!< X position of the touch, relative to the left of the owner window
-        int          y;      //!< Y position of the touch, relative to the top of the owner window
+        Mouse::Button button{}; //!< Code of the button that has been released
+        Vector2i      position; //!< Position of the mouse pointer, relative to the top left of the owner window
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Sensor event parameters (SensorChanged)
+    /// \brief Mouse move event subtype
     ///
     ////////////////////////////////////////////////////////////
-    struct SensorEvent
+    struct MouseMoved
     {
-        Sensor::Type type; //!< Type of the sensor
-        float        x;    //!< Current value of the sensor on X axis
-        float        y;    //!< Current value of the sensor on Y axis
-        float        z;    //!< Current value of the sensor on Z axis
+        Vector2i position; //!< Position of the mouse pointer, relative to the top left of the owner window
     };
 
     ////////////////////////////////////////////////////////////
-    /// \brief Enumeration of the different types of events
+    /// \brief Mouse move raw event subtype
+    ///
+    /// Raw mouse input data comes unprocessed from the
+    /// operating system hence "raw". While the MouseMoved
+    /// position value is dependent on the screen resolution,
+    /// raw data is not. If the physical mouse is moved too
+    /// little to cause the screen cursor to move at least a
+    /// single pixel, no MouseMoved event will be generated. In
+    /// contrast, any movement information generated by the
+    /// mouse independent of its sensor resolution will always
+    /// generate a `MouseMovedRaw` event.
+    ///
+    /// In addition to screen resolution independence, raw
+    /// mouse data also does not have mouse acceleration or
+    /// smoothing applied to it as MouseMoved does.
+    ///
+    /// Raw mouse movement data is intended for controlling
+    /// non-cursor movement, e.g. controlling the camera
+    /// orientation in a first person view, whereas MouseMoved
+    /// is intended primarily for controlling things related to
+    /// the screen cursor hence the additional processing
+    /// applied to it.
+    ///
+    /// Currently, raw mouse input events will only be generated
+    /// on Windows and Linux.
     ///
     ////////////////////////////////////////////////////////////
-    enum EventType
+    struct MouseMovedRaw
     {
-        Closed,                 //!< The window requested to be closed (no data)
-        Resized,                //!< The window was resized (data in event.size)
-        LostFocus,              //!< The window lost the focus (no data)
-        GainedFocus,            //!< The window gained the focus (no data)
-        TextEntered,            //!< A character was entered (data in event.text)
-        KeyPressed,             //!< A key was pressed (data in event.key)
-        KeyReleased,            //!< A key was released (data in event.key)
-        MouseWheelScrolled,     //!< The mouse wheel was scrolled (data in event.mouseWheelScroll)
-        MouseButtonPressed,     //!< A mouse button was pressed (data in event.mouseButton)
-        MouseButtonReleased,    //!< A mouse button was released (data in event.mouseButton)
-        MouseMoved,             //!< The mouse cursor moved (data in event.mouseMove)
-        MouseEntered,           //!< The mouse cursor entered the area of the window (no data)
-        MouseLeft,              //!< The mouse cursor left the area of the window (no data)
-        JoystickButtonPressed,  //!< A joystick button was pressed (data in event.joystickButton)
-        JoystickButtonReleased, //!< A joystick button was released (data in event.joystickButton)
-        JoystickMoved,          //!< The joystick moved along an axis (data in event.joystickMove)
-        JoystickConnected,      //!< A joystick was connected (data in event.joystickConnect)
-        JoystickDisconnected,   //!< A joystick was disconnected (data in event.joystickConnect)
-        TouchBegan,             //!< A touch event began (data in event.touch)
-        TouchMoved,             //!< A touch moved (data in event.touch)
-        TouchEnded,             //!< A touch event ended (data in event.touch)
-        SensorChanged,          //!< A sensor value changed (data in event.sensor)
-
-        Count //!< Keep last -- the total number of event types
+        Vector2i delta; ///< Delta movement of the mouse since the last event
     };
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Mouse entered event subtype
+    ///
+    ////////////////////////////////////////////////////////////
+    struct MouseEntered
+    {
+    };
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Mouse left event subtype
+    ///
+    ////////////////////////////////////////////////////////////
+    struct MouseLeft
+    {
+    };
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Joystick button pressed event subtype
+    ///
+    ////////////////////////////////////////////////////////////
+    struct JoystickButtonPressed
+    {
+        unsigned int joystickId{}; //!< Index of the joystick (in range [0 .. Joystick::Count - 1])
+        unsigned int button{}; //!< Index of the button that has been pressed (in range [0 .. Joystick::ButtonCount - 1])
+    };
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Joystick button released event subtype
+    ///
+    ////////////////////////////////////////////////////////////
+    struct JoystickButtonReleased
+    {
+        unsigned int joystickId{}; //!< Index of the joystick (in range [0 .. Joystick::Count - 1])
+        unsigned int button{}; //!< Index of the button that has been released (in range [0 .. Joystick::ButtonCount - 1])
+    };
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Joystick axis move event subtype
+    ///
+    ////////////////////////////////////////////////////////////
+    struct JoystickMoved
+    {
+        unsigned int   joystickId{}; //!< Index of the joystick (in range [0 .. Joystick::Count - 1])
+        Joystick::Axis axis{};       //!< Axis on which the joystick moved
+        float          position{};   //!< New position on the axis (in range [-100 .. 100])
+    };
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Joystick connected event subtype
+    ///
+    ////////////////////////////////////////////////////////////
+    struct JoystickConnected
+    {
+        unsigned int joystickId{}; //!< Index of the joystick (in range [0 .. Joystick::Count - 1])
+    };
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Joystick disconnected event subtype
+    ///
+    ////////////////////////////////////////////////////////////
+    struct JoystickDisconnected
+    {
+        unsigned int joystickId{}; //!< Index of the joystick (in range [0 .. Joystick::Count - 1])
+    };
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Touch began event subtype
+    ///
+    ////////////////////////////////////////////////////////////
+    struct TouchBegan
+    {
+        unsigned int finger{}; //!< Index of the finger in case of multi-touch events
+        Vector2i     position; //!< Start position of the touch, relative to the top left of the owner window
+    };
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Touch moved event subtype
+    ///
+    ////////////////////////////////////////////////////////////
+    struct TouchMoved
+    {
+        unsigned int finger{}; //!< Index of the finger in case of multi-touch events
+        Vector2i     position; //!< Current position of the touch, relative to the top left of the owner window
+    };
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Touch ended event subtype
+    ///
+    ////////////////////////////////////////////////////////////
+    struct TouchEnded
+    {
+        unsigned int finger{}; //!< Index of the finger in case of multi-touch events
+        Vector2i     position; //!< Final position of the touch, relative to the top left of the owner window
+    };
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Sensor event subtype
+    ///
+    ////////////////////////////////////////////////////////////
+    struct SensorChanged
+    {
+        Sensor::Type type{}; //!< Type of the sensor
+        Vector3f     value;  //!< Current value of the sensor on the X, Y, and Z axes
+    };
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct from a given `sf::Event` subtype
+    ///
+    /// \tparam `TEventSubtype` Type of event subtype used to construct the event
+    ///
+    /// \param eventSubtype Event subtype instance used to construct the event
+    ///
+    ////////////////////////////////////////////////////////////
+    template <typename TEventSubtype>
+    Event(const TEventSubtype& eventSubtype);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Check current event subtype
+    ///
+    /// \tparam `TEventSubtype` Type of the event subtype to check against
+    ///
+    /// \return `true` if the current event subtype matches given template parameter
+    ///
+    ////////////////////////////////////////////////////////////
+    template <typename TEventSubtype>
+    [[nodiscard]] bool is() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Attempt to get specified event subtype
+    ///
+    /// \tparam `TEventSubtype` Type of the desired event subtype
+    ///
+    /// \return Address of current event subtype, otherwise `nullptr`
+    ///
+    ////////////////////////////////////////////////////////////
+    template <typename TEventSubtype>
+    [[nodiscard]] TEventSubtype* getIf();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Attempt to get specified event subtype
+    ///
+    /// \tparam `TEventSubtype` Type of the desired event subtype
+    ///
+    /// \return Address of current event subtype, otherwise `nullptr`
+    ///
+    ////////////////////////////////////////////////////////////
+    template <typename TEventSubtype>
+    [[nodiscard]] const TEventSubtype* getIf() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Apply a visitor to the event
+    ///
+    /// \param visitor The visitor to apply
+    ///
+    /// \return The result of applying the visitor to the event
+    ///
+    ////////////////////////////////////////////////////////////
+    template <typename Visitor>
+    decltype(auto) visit(Visitor&& visitor);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Apply a visitor to the event
+    ///
+    /// \param visitor The visitor to apply
+    ///
+    /// \return The result of applying the visitor to the event
+    ///
+    ////////////////////////////////////////////////////////////
+    template <typename Visitor>
+    decltype(auto) visit(Visitor&& visitor) const;
+
+private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    EventType type; //!< Type of the event
+    std::variant<Closed,
+                 Resized,
+                 FocusLost,
+                 FocusGained,
+                 TextEntered,
+                 KeyPressed,
+                 KeyReleased,
+                 MouseWheelScrolled,
+                 MouseButtonPressed,
+                 MouseButtonReleased,
+                 MouseMoved,
+                 MouseMovedRaw,
+                 MouseEntered,
+                 MouseLeft,
+                 JoystickButtonPressed,
+                 JoystickButtonReleased,
+                 JoystickMoved,
+                 JoystickConnected,
+                 JoystickDisconnected,
+                 TouchBegan,
+                 TouchMoved,
+                 TouchEnded,
+                 SensorChanged>
+        m_data; //!< Event data
 
-    union
+    ////////////////////////////////////////////////////////////
+    // Helper functions
+    ////////////////////////////////////////////////////////////
+    template <typename T, typename... Ts>
+    [[nodiscard]] static constexpr bool isInParameterPack(const std::variant<Ts...>*)
     {
-        SizeEvent      size;      //!< Size event parameters (Event::Resized)
-        KeyEvent       key;       //!< Key event parameters (Event::KeyPressed, Event::KeyReleased)
-        TextEvent      text;      //!< Text event parameters (Event::TextEntered)
-        MouseMoveEvent mouseMove; //!< Mouse move event parameters (Event::MouseMoved)
-        MouseButtonEvent mouseButton; //!< Mouse button event parameters (Event::MouseButtonPressed, Event::MouseButtonReleased)
-        MouseWheelScrollEvent mouseWheelScroll; //!< Mouse wheel event parameters (Event::MouseWheelScrolled)
-        JoystickMoveEvent     joystickMove;     //!< Joystick move event parameters (Event::JoystickMoved)
-        JoystickButtonEvent joystickButton; //!< Joystick button event parameters (Event::JoystickButtonPressed, Event::JoystickButtonReleased)
-        JoystickConnectEvent joystickConnect; //!< Joystick (dis)connect event parameters (Event::JoystickConnected, Event::JoystickDisconnected)
-        TouchEvent  touch;  //!< Touch events parameters (Event::TouchBegan, Event::TouchMoved, Event::TouchEnded)
-        SensorEvent sensor; //!< Sensor event parameters (Event::SensorChanged)
-    };
+        return std::disjunction_v<std::is_same<T, Ts>...>;
+    }
+
+    template <typename T>
+    static constexpr bool isEventSubtype = isInParameterPack<T>(decltype (&m_data)(nullptr));
+
+    friend class WindowBase;
+
+    template <typename Handler, typename... Ts>
+    [[nodiscard]] static constexpr bool isInvocableWithEventSubtype(const std::variant<Ts...>*)
+    {
+        return std::disjunction_v<std::is_invocable<Handler&, Ts&>...>;
+    }
+
+    template <typename Handler>
+    static constexpr bool isEventHandler = isInvocableWithEventSubtype<Handler>(decltype (&m_data)(nullptr));
 };
 
 } // namespace sf
 
-
-#endif // SFML_EVENT_HPP
+#include <SFML/Window/Event.inl>
 
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Event
 /// \ingroup window
 ///
-/// sf::Event holds all the informations about a system event
+/// `sf::Event` holds all the information about a system event
 /// that just happened. Events are retrieved using the
-/// sf::Window::pollEvent and sf::Window::waitEvent functions.
+/// `sf::Window::pollEvent` and `sf::Window::waitEvent` functions.
 ///
-/// A sf::Event instance contains the type of the event
+/// A `sf::Event` instance contains the subtype of the event
 /// (mouse moved, key pressed, window closed, ...) as well
-/// as the details about this particular event. Please note that
-/// the event parameters are defined in a union, which means that
-/// only the member matching the type of the event will be properly
-/// filled; all other members will have undefined values and must not
-/// be read if the type of the event doesn't match. For example,
-/// if you received a KeyPressed event, then you must read the
-/// event.key member, all other members such as event.mouseMove
-/// or event.text will have undefined values.
+/// as the details about this particular event. Each event
+/// corresponds to a different subtype struct which contains
+/// the data required to process that event.
 ///
-/// Usage example:
+/// Event subtypes are event types belonging to `sf::Event`,
+/// such as `sf::Event::Closed` or `sf::Event::MouseMoved`.
+///
+/// The way to access the current active event subtype is via
+/// `sf::Event::getIf`. This member function returns the address
+/// of the event subtype struct if the event subtype matches the
+/// active event, otherwise it returns `nullptr`.
+///
+/// `sf::Event::is` is used to check the active event subtype
+/// without actually reading any of the corresponding event data.
+///
 /// \code
-/// for (sf::Event event; window.pollEvent(event);)
+/// while (const std::optional event = window.pollEvent())
 /// {
-///     // Request for closing the window
-///     if (event.type == sf::Event::Closed)
-///         window.close();
-///
-///     // The escape key was pressed
-///     if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape))
+///     // Window closed or escape key pressed: exit
+///     if (event->is<sf::Event::Closed>() ||
+///         (event->is<sf::Event::KeyPressed>() &&
+///          event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Escape))
 ///         window.close();
 ///
 ///     // The window was resized
-///     if (event.type == sf::Event::Resized)
-///         doSomethingWithTheNewSize(event.size.width, event.size.height);
+///     if (const auto* resized = event->getIf<sf::Event::Resized>())
+///         doSomethingWithTheNewSize(resized->size);
 ///
 ///     // etc ...
 /// }

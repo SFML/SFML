@@ -1,4 +1,3 @@
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
@@ -9,9 +8,10 @@
 #include <gl.h>
 
 #include <array>
+#include <iostream>
+
 #include <cmath>
 #include <cstdlib>
-#include <iostream>
 
 ////////////////////////////////////////////////////////////
 /// Initialize OpenGL states into the specified view
@@ -48,7 +48,7 @@
     // Setup a perspective projection
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    float extent = std::tan(sf::degrees(45).asRadians());
+    const float extent = std::tan(sf::degrees(45).asRadians());
 
 #ifdef SFML_OPENGL_ES
     glFrustumf(-extent, extent, -extent, extent, 1.0f, 500.0f);
@@ -165,55 +165,55 @@ int main()
         return EXIT_FAILURE;
 
     // Get the default screen
-    int screen = DefaultScreen(display);
+    const int screen = DefaultScreen(display);
 
-    // Let's create the main window
+    // Create the main window
     XSetWindowAttributes attributes;
     attributes.background_pixel = BlackPixel(display, screen);
     attributes.event_mask       = KeyPressMask;
-    Window window               = XCreateWindow(display,
-                                  RootWindow(display, screen),
-                                  0,
-                                  0,
-                                  650,
-                                  330,
-                                  0,
-                                  DefaultDepth(display, screen),
-                                  InputOutput,
-                                  DefaultVisual(display, screen),
-                                  CWBackPixel | CWEventMask,
-                                  &attributes);
+    const Window window         = XCreateWindow(display,
+                                        RootWindow(display, screen),
+                                        0,
+                                        0,
+                                        650,
+                                        330,
+                                        0,
+                                        DefaultDepth(display, screen),
+                                        InputOutput,
+                                        DefaultVisual(display, screen),
+                                        CWBackPixel | CWEventMask,
+                                        &attributes);
     if (!window)
         return EXIT_FAILURE;
 
     // Set the window's name
     XStoreName(display, window, "SFML Window");
 
-    // Let's create the windows which will serve as containers for our SFML views
-    Window view1 = XCreateWindow(display,
-                                 window,
-                                 10,
-                                 10,
-                                 310,
-                                 310,
-                                 0,
-                                 DefaultDepth(display, screen),
-                                 InputOutput,
-                                 DefaultVisual(display, screen),
-                                 0,
-                                 nullptr);
-    Window view2 = XCreateWindow(display,
-                                 window,
-                                 330,
-                                 10,
-                                 310,
-                                 310,
-                                 0,
-                                 DefaultDepth(display, screen),
-                                 InputOutput,
-                                 DefaultVisual(display, screen),
-                                 0,
-                                 nullptr);
+    // Create the windows which will serve as containers for our SFML views
+    const Window view1 = XCreateWindow(display,
+                                       window,
+                                       10,
+                                       10,
+                                       310,
+                                       310,
+                                       0,
+                                       DefaultDepth(display, screen),
+                                       InputOutput,
+                                       DefaultVisual(display, screen),
+                                       0,
+                                       nullptr);
+    const Window view2 = XCreateWindow(display,
+                                       window,
+                                       330,
+                                       10,
+                                       310,
+                                       310,
+                                       0,
+                                       DefaultDepth(display, screen),
+                                       InputOutput,
+                                       DefaultVisual(display, screen),
+                                       0,
+                                       nullptr);
 
     // Show our windows
     XMapWindow(display, window);
@@ -224,7 +224,7 @@ int main()
     sf::Window sfmlView2(view2);
 
     // Create a clock for measuring elapsed time
-    sf::Clock clock;
+    const sf::Clock clock;
 
     // Load OpenGL or OpenGL ES entry points using glad
     if (!sfmlView1.setActive())
@@ -234,9 +234,9 @@ int main()
     }
 
 #ifdef SFML_OPENGL_ES
-    gladLoadGLES1(reinterpret_cast<GLADloadfunc>(sf::Context::getFunction));
+    gladLoadGLES1(sf::Context::getFunction);
 #else
-    gladLoadGL(reinterpret_cast<GLADloadfunc>(sf::Context::getFunction));
+    gladLoadGL(sf::Context::getFunction);
 #endif
 
     // Initialize our views
@@ -299,6 +299,4 @@ int main()
 
     // Close the display
     XCloseDisplay(display);
-
-    return EXIT_SUCCESS;
 }

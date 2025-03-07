@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,14 +25,12 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Network/Win32/SocketImpl.hpp>
+#include <SFML/Network/SocketImpl.hpp>
 
-#include <cstring>
+#include <cstdint>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 sockaddr_in SocketImpl::createAddress(std::uint32_t address, unsigned short port)
@@ -109,6 +107,4 @@ struct SocketInitializer
 
 SocketInitializer globalInitializer;
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

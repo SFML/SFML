@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,19 +22,19 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CURSORIMPLWIN32_HPP
-#define SFML_CURSORIMPLWIN32_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Cursor.hpp>
 
-namespace sf
-{
+#include <SFML/System/Vector2.hpp>
 
-namespace priv
+#include <cstdint>
+
+
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Win32 implementation of Cursor
@@ -49,7 +49,7 @@ public:
     /// Refer to sf::Cursor::Cursor().
     ///
     ////////////////////////////////////////////////////////////
-    CursorImpl();
+    CursorImpl() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
@@ -74,7 +74,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Create a cursor with the provided image
     ///
-    /// Refer to sf::Cursor::loadFromPixels().
+    /// Refer to sf::Cursor::createFromPixels().
     ///
     ////////////////////////////////////////////////////////////
     bool loadFromPixels(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot);
@@ -82,7 +82,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Create a native system cursor
     ///
-    /// Refer to sf::Cursor::loadFromSystem().
+    /// Refer to sf::Cursor::createFromSystem().
     ///
     ////////////////////////////////////////////////////////////
     bool loadFromSystem(Cursor::Type type);
@@ -99,12 +99,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    void* m_cursor; // Type erasure via `void*` is used here to avoid depending on `windows.h`
-    bool  m_systemCursor;
+    void* m_cursor{}; // Type erasure via `void*` is used here to avoid depending on `windows.h`
+    bool  m_systemCursor{};
 };
 
-} // namespace priv
-
-} // namespace sf
-
-#endif // SFML_CUSROSIMPLWIN32_HPP
+} // namespace sf::priv

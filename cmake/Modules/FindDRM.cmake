@@ -16,3 +16,8 @@ find_library(DRM_LIBRARY NAMES drm)
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(DRM DEFAULT_MSG DRM_LIBRARY DRM_INCLUDE_DIR)
+
+add_library(DRM::DRM IMPORTED UNKNOWN)
+set_target_properties(DRM::DRM PROPERTIES
+    INTERFACE_INCLUDE_DIRECTORIES ${DRM_INCLUDE_DIR}/libdrm
+    IMPORTED_LOCATION ${DRM_LIBRARY})

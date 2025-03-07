@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -28,61 +28,58 @@
 #include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/JoystickManager.hpp>
 
+#include <cassert>
 
-namespace sf
+
+namespace sf::Joystick
 {
 ////////////////////////////////////////////////////////////
-bool Joystick::isConnected(unsigned int joystick)
+bool isConnected(unsigned int joystick)
 {
     return priv::JoystickManager::getInstance().getState(joystick).connected;
 }
 
 
 ////////////////////////////////////////////////////////////
-unsigned int Joystick::getButtonCount(unsigned int joystick)
+unsigned int getButtonCount(unsigned int joystick)
 {
     return priv::JoystickManager::getInstance().getCapabilities(joystick).buttonCount;
 }
 
 
 ////////////////////////////////////////////////////////////
-bool Joystick::hasAxis(unsigned int joystick, Axis axis)
+bool hasAxis(unsigned int joystick, Axis axis)
 {
     return priv::JoystickManager::getInstance().getCapabilities(joystick).axes[axis];
 }
 
 
 ////////////////////////////////////////////////////////////
-bool Joystick::isButtonPressed(unsigned int joystick, unsigned int button)
+bool isButtonPressed(unsigned int joystick, unsigned int button)
 {
+    assert(button < Joystick::ButtonCount && "Button must be less than Joystick::ButtonCount");
     return priv::JoystickManager::getInstance().getState(joystick).buttons[button];
 }
 
 
 ////////////////////////////////////////////////////////////
-float Joystick::getAxisPosition(unsigned int joystick, Axis axis)
+float getAxisPosition(unsigned int joystick, Axis axis)
 {
     return priv::JoystickManager::getInstance().getState(joystick).axes[axis];
 }
 
 
 ////////////////////////////////////////////////////////////
-Joystick::Identification Joystick::getIdentification(unsigned int joystick)
+Identification getIdentification(unsigned int joystick)
 {
     return priv::JoystickManager::getInstance().getIdentification(joystick);
 }
 
 
 ////////////////////////////////////////////////////////////
-void Joystick::update()
+void update()
 {
-    return priv::JoystickManager::getInstance().update();
+    priv::JoystickManager::getInstance().update();
 }
 
-
-////////////////////////////////////////////////////////////
-Joystick::Identification::Identification() : name("No Joystick"), vendorId(0), productId(0)
-{
-}
-
-} // namespace sf
+} // namespace sf::Joystick

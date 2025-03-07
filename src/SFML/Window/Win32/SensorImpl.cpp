@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -28,28 +28,26 @@
 #include <SFML/Window/SensorImpl.hpp>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 void SensorImpl::initialize()
 {
-    // To be implemented
+    // TODO: not implemented
 }
 
 
 ////////////////////////////////////////////////////////////
 void SensorImpl::cleanup()
 {
-    // To be implemented
+    // TODO: not implemented
 }
 
 
 ////////////////////////////////////////////////////////////
 bool SensorImpl::isAvailable(Sensor::Type /*sensor*/)
 {
-    // To be implemented
+    // TODO: not implemented
     return false;
 }
 
@@ -57,7 +55,7 @@ bool SensorImpl::isAvailable(Sensor::Type /*sensor*/)
 ////////////////////////////////////////////////////////////
 bool SensorImpl::open(Sensor::Type /*sensor*/)
 {
-    // To be implemented
+    // TODO: not implemented
     return false;
 }
 
@@ -65,24 +63,22 @@ bool SensorImpl::open(Sensor::Type /*sensor*/)
 ////////////////////////////////////////////////////////////
 void SensorImpl::close()
 {
-    // To be implemented
+    // TODO: not implemented
 }
 
 
 ////////////////////////////////////////////////////////////
 Vector3f SensorImpl::update()
 {
-    // To be implemented
-    return Vector3f(0, 0, 0);
+    // TODO: not implemented
+    return {};
 }
 
 
 ////////////////////////////////////////////////////////////
 void SensorImpl::setEnabled(bool /*enabled*/)
 {
-    // To be implemented
+    // TODO: not implemented
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

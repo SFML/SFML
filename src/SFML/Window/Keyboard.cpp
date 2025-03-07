@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -28,20 +28,45 @@
 #include <SFML/Window/InputImpl.hpp>
 #include <SFML/Window/Keyboard.hpp>
 
+#include <SFML/System/String.hpp>
 
-namespace sf
+
+namespace sf::Keyboard
 {
 ////////////////////////////////////////////////////////////
-bool Keyboard::isKeyPressed(Key key)
+bool isKeyPressed(Key key)
 {
     return priv::InputImpl::isKeyPressed(key);
 }
 
+////////////////////////////////////////////////////////////
+bool isKeyPressed(Scancode code)
+{
+    return priv::InputImpl::isKeyPressed(code);
+}
 
 ////////////////////////////////////////////////////////////
-void Keyboard::setVirtualKeyboardVisible(bool visible)
+Key localize(Scancode code)
+{
+    return priv::InputImpl::localize(code);
+}
+
+////////////////////////////////////////////////////////////
+Scancode delocalize(Key key)
+{
+    return priv::InputImpl::delocalize(key);
+}
+
+////////////////////////////////////////////////////////////
+String getDescription(Scancode code)
+{
+    return priv::InputImpl::getDescription(code);
+}
+
+////////////////////////////////////////////////////////////
+void setVirtualKeyboardVisible(bool visible)
 {
     priv::InputImpl::setVirtualKeyboardVisible(visible);
 }
 
-} // namespace sf
+} // namespace sf::Keyboard

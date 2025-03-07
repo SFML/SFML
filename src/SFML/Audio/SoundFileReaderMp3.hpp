@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SOUNDFILEREADERMP3_HPP
-#define SFML_SOUNDFILEREADERMP3_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -49,12 +48,12 @@
 
 #include <SFML/Audio/SoundFileReader.hpp>
 
-#include <vector>
+#include <optional>
+
+#include <cstdint>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Implementation of sound file reader that handles MP3 files
@@ -68,12 +67,11 @@ public:
     ///
     /// \param stream Source stream to check
     ///
-    /// \return True if the file is supported by this reader
+    /// \return `true` if the file is supported by this reader
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] static bool check(InputStream& stream);
 
-public:
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
@@ -90,12 +88,11 @@ public:
     /// \brief Open a sound file for reading
     ///
     /// \param stream Source stream to read from
-    /// \param info   Structure to fill with the properties of the loaded sound
     ///
-    /// \return True if the file was successfully opened
+    /// \return Properties of the loaded sound if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool open(InputStream& stream, Info& info) override;
+    [[nodiscard]] std::optional<Info> open(InputStream& stream) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current read position to the given sample offset
@@ -127,15 +124,10 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    mp3dec_io_t   m_io;
-    mp3dec_ex_t   m_decoder;
-    std::uint64_t m_numSamples; // Decompressed audio storage size
-    std::uint64_t m_position;   // Position in decompressed audio buffer
+    mp3dec_io_t   m_io{};
+    mp3dec_ex_t   m_decoder{};
+    std::uint64_t m_numSamples{}; // Decompressed audio storage size
+    std::uint64_t m_position{};   // Position in decompressed audio buffer
 };
 
-} // namespace priv
-
-} // namespace sf
-
-
-#endif // SFML_SOUNDFILEREADERMP3_HPP
+} // namespace sf::priv

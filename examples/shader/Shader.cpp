@@ -1,20 +1,33 @@
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+
+#include <SFML/Graphics.hpp>
+
 #include <array>
+#include <iostream>
+#include <optional>
 #include <random>
+#include <string>
 
-#include "Effect.hpp"
-
+#include <cmath>
+#include <cstdint>
+#include <cstdlib>
 
 namespace
 {
 std::random_device rd;
 std::mt19937       rng(rd());
-} // namespace
 
-const sf::Font* Effect::s_font = nullptr;
+
+////////////////////////////////////////////////////////////
+// Base class for effects
+////////////////////////////////////////////////////////////
+struct Effect : sf::Drawable
+{
+    virtual void update(float time, float x, float y) = 0;
+};
+
 
 ////////////////////////////////////////////////////////////
 // "Pixelate" fragment shader
@@ -22,40 +35,26 @@ const sf::Font* Effect::s_font = nullptr;
 class Pixelate : public Effect
 {
 public:
-    Pixelate() : Effect("Pixelate")
+    explicit Pixelate(sf::Texture&& texture, sf::Shader&& shader) :
+    m_texture(std::move(texture)),
+    m_shader(std::move(shader))
     {
-    }
-
-    bool onLoad() override
-    {
-        // Load the texture and initialize the sprite
-        if (!m_texture.loadFromFile("resources/background.jpg"))
-            return false;
-        m_sprite.setTexture(m_texture);
-
-        // Load the shader
-        if (!m_shader.loadFromFile("resources/pixelate.frag", sf::Shader::Fragment))
-            return false;
         m_shader.setUniform("texture", sf::Shader::CurrentTexture);
-
-        return true;
     }
 
-    void onUpdate(float, float x, float y) override
+    void update(float /* time */, float x, float y) override
     {
         m_shader.setUniform("pixel_threshold", (x + y) / 30);
     }
 
-    void onDraw(sf::RenderTarget& target, const sf::RenderStates& states) const override
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
-        sf::RenderStates statesCopy(states);
-        statesCopy.shader = &m_shader;
-        target.draw(m_sprite, statesCopy);
+        states.shader = &m_shader;
+        target.draw(sf::Sprite{m_texture}, states);
     }
 
 private:
     sf::Texture m_texture;
-    sf::Sprite  m_sprite;
     sf::Shader  m_shader;
 };
 
@@ -66,55 +65,43 @@ private:
 class WaveBlur : public Effect
 {
 public:
-    WaveBlur() : Effect("Wave + Blur")
-    {
-    }
-
-    bool onLoad() override
-    {
-        // Create the text
-        m_text.setString(
-            "Praesent suscipit augue in velit pulvinar hendrerit varius purus aliquam.\n"
-            "Mauris mi odio, bibendum quis fringilla a, laoreet vel orci. Proin vitae vulputate tortor.\n"
-            "Praesent cursus ultrices justo, ut feugiat ante vehicula quis.\n"
-            "Donec fringilla scelerisque mauris et viverra.\n"
-            "Maecenas adipiscing ornare scelerisque. Nullam at libero elit.\n"
-            "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.\n"
-            "Nullam leo urna, tincidunt id semper eget, ultricies sed mi.\n"
-            "Morbi mauris massa, commodo id dignissim vel, lobortis et elit.\n"
-            "Fusce vel libero sed neque scelerisque venenatis.\n"
-            "Integer mattis tincidunt quam vitae iaculis.\n"
-            "Vivamus fringilla sem non velit venenatis fermentum.\n"
-            "Vivamus varius tincidunt nisi id vehicula.\n"
-            "Integer ullamcorper, enim vitae euismod rutrum, massa nisl semper ipsum,\n"
-            "vestibulum sodales sem ante in massa.\n"
-            "Vestibulum in augue non felis convallis viverra.\n"
-            "Mauris ultricies dolor sed massa convallis sed aliquet augue fringilla.\n"
-            "Duis erat eros, porta in accumsan in, blandit quis sem.\n"
-            "In hac habitasse platea dictumst. Etiam fringilla est id odio dapibus sit amet semper dui laoreet.\n");
-        m_text.setFont(getFont());
-        m_text.setCharacterSize(22);
-        m_text.setPosition({30.f, 20.f});
-
-        // Load the shader
-        if (!m_shader.loadFromFile("resources/wave.vert", "resources/blur.frag"))
-            return false;
-
-        return true;
-    }
-
-    void onUpdate(float time, float x, float y) override
+    void update(float time, float x, float y) override
     {
         m_shader.setUniform("wave_phase", time);
         m_shader.setUniform("wave_amplitude", sf::Vector2f(x * 40, y * 40));
         m_shader.setUniform("blur_radius", (x + y) * 0.008f);
     }
 
-    void onDraw(sf::RenderTarget& target, const sf::RenderStates& states) const override
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
-        sf::RenderStates statesCopy(states);
-        statesCopy.shader = &m_shader;
-        target.draw(m_text, statesCopy);
+        states.shader = &m_shader;
+        target.draw(m_text, states);
+    }
+
+    explicit WaveBlur(const sf::Font& font, sf::Shader&& shader) :
+    m_text(font,
+           "Praesent suscipit augue in velit pulvinar hendrerit varius purus aliquam.\n"
+           "Mauris mi odio, bibendum quis fringilla a, laoreet vel orci. Proin vitae vulputate tortor.\n"
+           "Praesent cursus ultrices justo, ut feugiat ante vehicula quis.\n"
+           "Donec fringilla scelerisque mauris et viverra.\n"
+           "Maecenas adipiscing ornare scelerisque. Nullam at libero elit.\n"
+           "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.\n"
+           "Nullam leo urna, tincidunt id semper eget, ultricies sed mi.\n"
+           "Morbi mauris massa, commodo id dignissim vel, lobortis et elit.\n"
+           "Fusce vel libero sed neque scelerisque venenatis.\n"
+           "Integer mattis tincidunt quam vitae iaculis.\n"
+           "Vivamus fringilla sem non velit venenatis fermentum.\n"
+           "Vivamus varius tincidunt nisi id vehicula.\n"
+           "Integer ullamcorper, enim vitae euismod rutrum, massa nisl semper ipsum,\n"
+           "vestibulum sodales sem ante in massa.\n"
+           "Vestibulum in augue non felis convallis viverra.\n"
+           "Mauris ultricies dolor sed massa convallis sed aliquet augue fringilla.\n"
+           "Duis erat eros, porta in accumsan in, blandit quis sem.\n"
+           "In hac habitasse platea dictumst. Etiam fringilla est id odio dapibus sit amet semper dui laoreet.\n",
+           22),
+    m_shader(std::move(shader))
+    {
+        m_text.setPosition({30.f, 20.f});
     }
 
 private:
@@ -129,49 +116,42 @@ private:
 class StormBlink : public Effect
 {
 public:
-    StormBlink() : Effect("Storm + Blink")
+    void update(float time, float x, float y) override
     {
-    }
+        const float radius = 200 + std::cos(time) * 150;
 
-    bool onLoad() override
-    {
-        std::uniform_real_distribution<float>        x_distribution(0, 800);
-        std::uniform_real_distribution<float>        y_distribution(0, 600);
-        std::uniform_int_distribution<std::uint16_t> color_distribution(0, 255);
-
-        // Create the points
-        m_points.setPrimitiveType(sf::PrimitiveType::Points);
-        for (int i = 0; i < 40000; ++i)
-        {
-            auto x = x_distribution(rng);
-            auto y = y_distribution(rng);
-            auto r = static_cast<std::uint8_t>(color_distribution(rng));
-            auto g = static_cast<std::uint8_t>(color_distribution(rng));
-            auto b = static_cast<std::uint8_t>(color_distribution(rng));
-            m_points.append(sf::Vertex(sf::Vector2f(x, y), sf::Color(r, g, b)));
-        }
-
-        // Load the shader
-        if (!m_shader.loadFromFile("resources/storm.vert", "resources/blink.frag"))
-            return false;
-
-        return true;
-    }
-
-    void onUpdate(float time, float x, float y) override
-    {
-        float radius = 200 + std::cos(time) * 150;
         m_shader.setUniform("storm_position", sf::Vector2f(x * 800, y * 600));
         m_shader.setUniform("storm_inner_radius", radius / 3);
         m_shader.setUniform("storm_total_radius", radius);
         m_shader.setUniform("blink_alpha", 0.5f + std::cos(time * 3) * 0.25f);
     }
 
-    void onDraw(sf::RenderTarget& target, const sf::RenderStates& states) const override
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
-        sf::RenderStates statesCopy(states);
-        statesCopy.shader = &m_shader;
-        target.draw(m_points, statesCopy);
+        states.shader = &m_shader;
+        target.draw(m_points, states);
+    }
+
+    explicit StormBlink(sf::Shader&& shader) : m_shader(std::move(shader))
+    {
+        std::uniform_real_distribution<float>        xDistribution(0, 800);
+        std::uniform_real_distribution<float>        yDistribution(0, 600);
+        std::uniform_int_distribution<std::uint16_t> colorDistribution(0, 255);
+
+        // Create the points
+        m_points.setPrimitiveType(sf::PrimitiveType::Points);
+
+        for (int i = 0; i < 40'000; ++i)
+        {
+            const auto x = xDistribution(rng);
+            const auto y = yDistribution(rng);
+
+            const auto r = static_cast<std::uint8_t>(colorDistribution(rng));
+            const auto g = static_cast<std::uint8_t>(colorDistribution(rng));
+            const auto b = static_cast<std::uint8_t>(colorDistribution(rng));
+
+            m_points.append({{x, y}, {r, g, b}});
+        }
     }
 
 private:
@@ -186,81 +166,53 @@ private:
 class Edge : public Effect
 {
 public:
-    Edge() : Effect("Edge Post-effect")
-    {
-    }
-
-    bool onLoad() override
-    {
-        // Create the off-screen surface
-        if (!m_surface.create({800, 600}))
-            return false;
-        m_surface.setSmooth(true);
-
-        // Load the textures
-        if (!m_backgroundTexture.loadFromFile("resources/sfml.png"))
-            return false;
-        m_backgroundTexture.setSmooth(true);
-        if (!m_entityTexture.loadFromFile("resources/devices.png"))
-            return false;
-        m_entityTexture.setSmooth(true);
-
-        // Initialize the background sprite
-        m_backgroundSprite.setTexture(m_backgroundTexture);
-        m_backgroundSprite.setPosition({135.f, 100.f});
-
-        // Load the moving entities
-        for (int i = 0; i < 6; ++i)
-        {
-            sf::Sprite entity(m_entityTexture, sf::IntRect({96 * i, 0}, {96, 96}));
-            m_entities.push_back(entity);
-        }
-
-        // Load the shader
-        if (!m_shader.loadFromFile("resources/edge.frag", sf::Shader::Fragment))
-            return false;
-        m_shader.setUniform("texture", sf::Shader::CurrentTexture);
-
-        return true;
-    }
-
-    void onUpdate(float time, float x, float y) override
+    void update(float time, float x, float y) override
     {
         m_shader.setUniform("edge_threshold", 1 - (x + y) / 2);
 
-        // Update the position of the moving entities
-        for (std::size_t i = 0; i < m_entities.size(); ++i)
-        {
-            sf::Vector2f position;
-            position.x = std::cos(0.25f * (time * static_cast<float>(i) + static_cast<float>(m_entities.size() - i))) * 300 +
-                         350;
-            position.y = std::sin(0.25f * (time * static_cast<float>(m_entities.size() - i) + static_cast<float>(i))) * 200 +
-                         250;
-            m_entities[i].setPosition(position);
-        }
-
         // Render the updated scene to the off-screen surface
         m_surface.clear(sf::Color::White);
-        m_surface.draw(m_backgroundSprite);
-        for (const sf::Sprite& entity : m_entities)
+
+        sf::Sprite backgroundSprite{m_backgroundTexture};
+        backgroundSprite.setPosition({135.f, 100.f});
+        m_surface.draw(backgroundSprite);
+
+        // Update the position of the moving entities
+        constexpr int numEntities = 6;
+
+        for (int i = 0; i < 6; ++i)
+        {
+            sf::Sprite entity{m_entityTexture, sf::IntRect({96 * i, 0}, {96, 96})};
+
+            entity.setPosition(
+                {std::cos(0.25f * (time * static_cast<float>(i) + static_cast<float>(numEntities - i))) * 300 + 350,
+                 std::sin(0.25f * (time * static_cast<float>(numEntities - i) + static_cast<float>(i))) * 200 + 250});
+
             m_surface.draw(entity);
+        }
+
         m_surface.display();
     }
 
-    void onDraw(sf::RenderTarget& target, const sf::RenderStates& states) const override
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
-        sf::RenderStates statesCopy(states);
-        statesCopy.shader = &m_shader;
-        target.draw(sf::Sprite(m_surface.getTexture()), statesCopy);
+        states.shader = &m_shader;
+        target.draw(sf::Sprite{m_surface.getTexture()}, states);
+    }
+
+    explicit Edge(sf::RenderTexture&& surface, sf::Texture&& backgroundTexture, sf::Texture&& entityTexture, sf::Shader&& shader) :
+    m_surface(std::move(surface)),
+    m_backgroundTexture(std::move(backgroundTexture)),
+    m_entityTexture(std::move(entityTexture)),
+    m_shader(std::move(shader))
+    {
     }
 
 private:
-    sf::RenderTexture       m_surface;
-    sf::Texture             m_backgroundTexture;
-    sf::Texture             m_entityTexture;
-    sf::Sprite              m_backgroundSprite;
-    std::vector<sf::Sprite> m_entities;
-    sf::Shader              m_shader;
+    sf::RenderTexture m_surface;
+    sf::Texture       m_backgroundTexture;
+    sf::Texture       m_entityTexture;
+    sf::Shader        m_shader;
 };
 
 
@@ -270,67 +222,47 @@ private:
 class Geometry : public Effect
 {
 public:
-    Geometry() : Effect("Geometry Shader Billboards"), m_pointCloud(sf::PrimitiveType::Points, 10000)
-    {
-    }
-
-    bool onLoad() override
-    {
-        // Check if geometry shaders are supported
-        if (!sf::Shader::isGeometryAvailable())
-            return false;
-
-        // Move the points in the point cloud to random positions
-        for (std::size_t i = 0; i < 10000; ++i)
-        {
-            // Spread the coordinates from -480 to +480
-            // So they'll always fill the viewport at 800x600
-            m_pointCloud[i].position.x = static_cast<float>(rand() % 960) - 480.f;
-            m_pointCloud[i].position.y = static_cast<float>(rand() % 960) - 480.f;
-        }
-
-        // Load the texture
-        if (!m_logoTexture.loadFromFile("resources/logo.png"))
-            return false;
-
-        // Load the shader
-        if (!m_shader.loadFromFile("resources/billboard.vert", "resources/billboard.geom", "resources/billboard.frag"))
-            return false;
-        m_shader.setUniform("texture", sf::Shader::CurrentTexture);
-
-        // Set the render resolution (used for proper scaling)
-        m_shader.setUniform("resolution", sf::Vector2f(800, 600));
-
-        return true;
-    }
-
-    void onUpdate(float /*time*/, float x, float y) override
+    void update(float /* time */, float x, float y) override
     {
         // Reset our transformation matrix
         m_transform = sf::Transform::Identity;
+
         // Move to the center of the window
         m_transform.translate({400.f, 300.f});
+
         // Rotate everything based on cursor position
         m_transform.rotate(sf::degrees(x * 360.f));
 
         // Adjust billboard size to scale between 25 and 75
-        float size = 25 + std::abs(y) * 50;
+        const float size = 25 + std::abs(y) * 50;
 
         // Update the shader parameter
-        m_shader.setUniform("size", sf::Vector2f(size, size));
+        m_shader.setUniform("size", sf::Vector2f{size, size});
     }
 
-    void onDraw(sf::RenderTarget& target, const sf::RenderStates& states) const override
+    void draw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
-        sf::RenderStates statesCopy(states);
-
         // Prepare the render state
-        statesCopy.shader    = &m_shader;
-        statesCopy.texture   = &m_logoTexture;
-        statesCopy.transform = m_transform;
+        states.shader    = &m_shader;
+        states.texture   = &m_logoTexture;
+        states.transform = m_transform;
 
         // Draw the point cloud
-        target.draw(m_pointCloud, statesCopy);
+        target.draw(m_pointCloud, states);
+    }
+
+    explicit Geometry(sf::Texture&& logoTexture, sf::Shader&& shader) :
+    m_logoTexture(std::move(logoTexture)),
+    m_shader(std::move(shader)),
+    m_pointCloud(sf::PrimitiveType::Points, 10'000)
+    {
+        // Move the points in the point cloud to random positions
+        for (std::size_t i = 0; i < 10'000; ++i)
+        {
+            // Spread the coordinates from -480 to +480 so they'll always fill the viewport at 800x600
+            std::uniform_real_distribution<float> positionDistribution(-480, 480);
+            m_pointCloud[i].position = {positionDistribution(rng), positionDistribution(rng)};
+        }
     }
 
 private:
@@ -342,6 +274,102 @@ private:
 
 
 ////////////////////////////////////////////////////////////
+// Effect loading factory functions
+////////////////////////////////////////////////////////////
+std::optional<Pixelate> tryLoadPixelate()
+{
+    sf::Texture texture;
+    if (!texture.loadFromFile("resources/background.jpg"))
+        return std::nullopt;
+
+    sf::Shader shader;
+    if (!shader.loadFromFile("resources/pixelate.frag", sf::Shader::Type::Fragment))
+        return std::nullopt;
+
+    return std::make_optional<Pixelate>(std::move(texture), std::move(shader));
+}
+
+std::optional<WaveBlur> tryLoadWaveBlur(const sf::Font& font)
+{
+    sf::Shader shader;
+    if (!shader.loadFromFile("resources/wave.vert", "resources/blur.frag"))
+        return std::nullopt;
+
+    return std::make_optional<WaveBlur>(font, std::move(shader));
+}
+
+std::optional<StormBlink> tryLoadStormBlink()
+{
+    sf::Shader shader;
+    if (!shader.loadFromFile("resources/storm.vert", "resources/blink.frag"))
+        return std::nullopt;
+
+    return std::make_optional<StormBlink>(std::move(shader));
+}
+
+std::optional<Edge> tryLoadEdge()
+{
+    // Create the off-screen surface
+    sf::RenderTexture surface;
+    if (!surface.resize({800, 600}))
+        return std::nullopt;
+
+    surface.setSmooth(true);
+
+    // Load the background texture
+    sf::Texture backgroundTexture;
+    if (!backgroundTexture.loadFromFile("resources/sfml.png"))
+        return std::nullopt;
+
+    backgroundTexture.setSmooth(true);
+
+    // Load the entity texture
+    sf::Texture entityTexture;
+    if (!entityTexture.loadFromFile("resources/devices.png"))
+        return std::nullopt;
+
+    entityTexture.setSmooth(true);
+
+    // Load the shader
+    sf::Shader shader;
+    if (!shader.loadFromFile("resources/edge.frag", sf::Shader::Type::Fragment))
+        return std::nullopt;
+
+    shader.setUniform("texture", sf::Shader::CurrentTexture);
+
+    return std::make_optional<Edge>(std::move(surface), std::move(backgroundTexture), std::move(entityTexture), std::move(shader));
+}
+
+std::optional<Geometry> tryLoadGeometry()
+{
+    // Check if geometry shaders are supported
+    if (!sf::Shader::isGeometryAvailable())
+        return std::nullopt;
+
+    // Load the logo texture
+    sf::Texture logoTexture;
+    if (!logoTexture.loadFromFile("resources/logo.png"))
+        return std::nullopt;
+
+    logoTexture.setSmooth(true);
+
+    // Load the shader
+    sf::Shader shader;
+    if (!shader.loadFromFile("resources/billboard.vert", "resources/billboard.geom", "resources/billboard.frag"))
+        return std::nullopt;
+
+    shader.setUniform("texture", sf::Shader::CurrentTexture);
+
+    // Set the render resolution (used for proper scaling)
+    shader.setUniform("resolution", sf::Vector2f(800, 600));
+
+    return std::make_optional<Geometry>(std::move(logoTexture), std::move(shader));
+}
+
+} // namespace
+
+
+////////////////////////////////////////////////////////////
 /// Entry point of application
 ///
 /// \return Application exit code
@@ -349,110 +377,136 @@ private:
 ////////////////////////////////////////////////////////////
 int main()
 {
+    // Exit early if shaders are not available
+    if (!sf::Shader::isAvailable())
+    {
+        std::cerr << "Shaders not supported on current system, aborting" << std::endl;
+        return EXIT_FAILURE;
+    }
+
     // Create the main window
     sf::RenderWindow window(sf::VideoMode({800, 600}), "SFML Shader", sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
 
-    // Load the application font and pass it to the Effect class
-    sf::Font font;
-    if (!font.loadFromFile("resources/tuffy.ttf"))
-        return EXIT_FAILURE;
-    Effect::setFont(font);
+    // Open the application font
+    const sf::Font font("resources/tuffy.ttf");
 
     // Create the effects
-    Pixelate   pixelateEffect;
-    WaveBlur   waveBlurEffect;
-    StormBlink stormBlinkEffect;
-    Edge       edgeEffect;
-    Geometry   geometryEffect;
+    std::optional pixelateEffect   = tryLoadPixelate();
+    std::optional waveBlurEffect   = tryLoadWaveBlur(font);
+    std::optional stormBlinkEffect = tryLoadStormBlink();
+    std::optional edgeEffect       = tryLoadEdge();
+    std::optional geometryEffect   = tryLoadGeometry();
 
-    const std::array<Effect*, 5> effects{&pixelateEffect, &waveBlurEffect, &stormBlinkEffect, &edgeEffect, &geometryEffect};
+    const auto optionalToPtr = [](auto& effect) -> Effect* { return effect.has_value() ? &*effect : nullptr; };
 
+    const std::array<Effect*, 5> effects{optionalToPtr(pixelateEffect),
+                                         optionalToPtr(waveBlurEffect),
+                                         optionalToPtr(stormBlinkEffect),
+                                         optionalToPtr(edgeEffect),
+                                         optionalToPtr(geometryEffect)};
+
+    const std::array<std::string, 5>
+        effectNames{"Pixelate", "Wave + Blur", "Storm + Blink", "Edge Post-effect", "Geometry Shader Billboards"};
+
+    // Index of currently selected effect
     std::size_t current = 0;
 
-    // Initialize them
-    for (Effect* effect : effects)
-        effect->load();
-
     // Create the messages background
-    sf::Texture textBackgroundTexture;
-    if (!textBackgroundTexture.loadFromFile("resources/text-background.png"))
-        return EXIT_FAILURE;
-    sf::Sprite textBackground(textBackgroundTexture);
+    const sf::Texture textBackgroundTexture("resources/text-background.png");
+    sf::Sprite        textBackground(textBackgroundTexture);
     textBackground.setPosition({0.f, 520.f});
     textBackground.setColor(sf::Color(255, 255, 255, 200));
 
     // Create the description text
-    sf::Text description("Current effect: " + effects[current]->getName(), font, 20);
+    sf::Text description(font, "Current effect: " + effectNames[current], 20);
     description.setPosition({10.f, 530.f});
     description.setFillColor(sf::Color(80, 80, 80));
 
     // Create the instructions text
-    sf::Text instructions("Press left and right arrows to change the current shader", font, 20);
+    sf::Text instructions(font, "Press left and right arrows to change the current shader", 20);
     instructions.setPosition({280.f, 555.f});
     instructions.setFillColor(sf::Color(80, 80, 80));
 
     // Start the game loop
-    sf::Clock clock;
+    const sf::Clock clock;
     while (window.isOpen())
     {
         // Process events
-        for (sf::Event event; window.pollEvent(event);)
+        while (const std::optional event = window.pollEvent())
         {
             // Close window: exit
-            if (event.type == sf::Event::Closed)
-                window.close();
-
-            if (event.type == sf::Event::KeyPressed)
+            if (event->is<sf::Event::Closed>())
             {
-                switch (event.key.code)
+                window.close();
+                break;
+            }
+
+            if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
+            {
+                switch (keyPressed->code)
                 {
                     // Escape key: exit
-                    case sf::Keyboard::Escape:
+                    case sf::Keyboard::Key::Escape:
+                    {
                         window.close();
                         break;
+                    }
 
                     // Left arrow key: previous shader
-                    case sf::Keyboard::Left:
+                    case sf::Keyboard::Key::Left:
+                    {
                         if (current == 0)
                             current = effects.size() - 1;
                         else
                             --current;
-                        description.setString("Current effect: " + effects[current]->getName());
+
                         break;
+                    }
 
                     // Right arrow key: next shader
-                    case sf::Keyboard::Right:
+                    case sf::Keyboard::Key::Right:
+                    {
                         if (current == effects.size() - 1)
                             current = 0;
                         else
                             ++current;
-                        description.setString("Current effect: " + effects[current]->getName());
+
                         break;
+                    }
 
                     default:
                         break;
                 }
+
+                description.setString("Current effect: " + effectNames[current]);
             }
         }
 
-        // Update the current example
-        float x = static_cast<float>(sf::Mouse::getPosition(window).x) / static_cast<float>(window.getSize().x);
-        float y = static_cast<float>(sf::Mouse::getPosition(window).y) / static_cast<float>(window.getSize().y);
-        effects[current]->update(clock.getElapsedTime().asSeconds(), x, y);
-
-        // Clear the window
-        if (effects[current]->getName() == "Edge Post-effect")
+        // If the current example was loaded successfully...
+        if (Effect* currentEffect = effects[current])
         {
-            window.clear(sf::Color::White);
+            // Update the current example
+            const auto [x,
+                        y] = sf::Vector2f(sf::Mouse::getPosition(window)).componentWiseDiv(sf::Vector2f(window.getSize()));
+            currentEffect->update(clock.getElapsedTime().asSeconds(), x, y);
+
+            // Clear the window
+            window.clear(currentEffect == &*edgeEffect ? sf::Color::White : sf::Color(50, 50, 50));
+
+            // Draw the current example
+            window.draw(*currentEffect);
         }
         else
         {
+            // Clear the window to grey to make sure the text is always readable
             window.clear(sf::Color(50, 50, 50));
-        }
 
-        // Draw the current example
-        window.draw(*effects[current]);
+            sf::Text error(font, "Shader not\nsupported", 36);
+            error.setPosition({320.f, 200.f});
+
+            window.draw(error);
+        }
 
         // Draw the text
         window.draw(textBackground);
@@ -462,6 +516,4 @@ int main()
         // Finally, display the rendered frame on screen
         window.display();
     }
-
-    return EXIT_SUCCESS;
 }

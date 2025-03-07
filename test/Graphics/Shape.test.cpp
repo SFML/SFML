@@ -1,20 +1,18 @@
 #include <SFML/Graphics/Shape.hpp>
 
-#include <doctest/doctest.h>
+// Other 1st party headers
+#include <SFML/Graphics/Texture.hpp>
+
+#include <catch2/catch_test_macros.hpp>
 
 #include <GraphicsUtil.hpp>
+#include <WindowUtil.hpp>
 #include <type_traits>
-
-static_assert(!std::is_constructible_v<sf::Shape>);
-static_assert(!std::is_copy_constructible_v<sf::Shape>);
-static_assert(std::is_copy_assignable_v<sf::Shape>);
-static_assert(!std::is_move_constructible_v<sf::Shape>);
-static_assert(std::is_move_assignable_v<sf::Shape>);
 
 class TriangleShape : public sf::Shape
 {
 public:
-    explicit TriangleShape(const sf::Vector2f& size) : m_size(size)
+    explicit TriangleShape(sf::Vector2f size) : m_size(size)
     {
         update();
     }
@@ -30,11 +28,11 @@ public:
         {
             default:
             case 0:
-                return sf::Vector2f(m_size.x / 2, 0);
+                return {m_size.x / 2, 0};
             case 1:
-                return sf::Vector2f(0, m_size.y);
+                return {0, m_size.y};
             case 2:
-                return sf::Vector2f(m_size.x, m_size.y);
+                return {m_size.x, m_size.y};
         }
     }
 
@@ -42,9 +40,19 @@ private:
     sf::Vector2f m_size;
 };
 
-TEST_CASE("[Graphics] sf::Shape")
+TEST_CASE("[Graphics] sf::Shape", runDisplayTests())
 {
-    SUBCASE("Default constructor")
+    SECTION("Type traits")
+    {
+        STATIC_CHECK(!std::is_constructible_v<sf::Shape>);
+        STATIC_CHECK(!std::is_copy_constructible_v<sf::Shape>);
+        STATIC_CHECK(std::is_copy_assignable_v<sf::Shape>);
+        STATIC_CHECK(!std::is_move_constructible_v<sf::Shape>);
+        STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Shape>);
+        STATIC_CHECK(std::has_virtual_destructor_v<sf::Shape>);
+    }
+
+    SECTION("Default constructor")
     {
         const TriangleShape triangleShape({0, 0});
         CHECK(triangleShape.getTexture() == nullptr);
@@ -56,54 +64,71 @@ TEST_CASE("[Graphics] sf::Shape")
         CHECK(triangleShape.getGlobalBounds() == sf::FloatRect());
     }
 
-    SUBCASE("Set/get texture rect")
+    SECTION("Set/get texture")
+    {
+        const sf::Texture texture(sf::Vector2u(64, 64));
+        TriangleShape     triangleShape({});
+        triangleShape.setTexture(&texture, true);
+        CHECK(triangleShape.getTexture() == &texture);
+    }
+
+    SECTION("Set/get texture rect")
     {
         TriangleShape triangleShape({});
         triangleShape.setTextureRect({{4, 5}, {6, 7}});
         CHECK(triangleShape.getTextureRect() == sf::IntRect({4, 5}, {6, 7}));
     }
 
-    SUBCASE("Set/get fill color")
+    SECTION("Set/get fill color")
     {
         TriangleShape triangleShape({});
         triangleShape.setFillColor(sf::Color::Cyan);
         CHECK(triangleShape.getFillColor() == sf::Color::Cyan);
     }
 
-    SUBCASE("Set/get outline color")
+    SECTION("Set/get outline color")
     {
         TriangleShape triangleShape({});
         triangleShape.setOutlineColor(sf::Color::Magenta);
         CHECK(triangleShape.getOutlineColor() == sf::Color::Magenta);
     }
 
-    SUBCASE("Set/get outline thickness")
+    SECTION("Set/get outline thickness")
     {
         TriangleShape triangleShape({});
         triangleShape.setOutlineThickness(3.14f);
         CHECK(triangleShape.getOutlineThickness() == 3.14f);
     }
 
-    SUBCASE("Virtual functions: getPoint, getPointCount")
+    SECTION("Virtual functions: getPoint, getPointCount, getGeometricCenter")
     {
         const TriangleShape triangleShape({2, 2});
         CHECK(triangleShape.getPointCount() == 3);
         CHECK(triangleShape.getPoint(0) == sf::Vector2f(1, 0));
         CHECK(triangleShape.getPoint(1) == sf::Vector2f(0, 2));
         CHECK(triangleShape.getPoint(2) == sf::Vector2f(2, 2));
+        CHECK(triangleShape.getGeometricCenter() == sf::Vector2f(1.f, 4.f / 3.f));
     }
 
-    SUBCASE("Get bounds")
+    SECTION("Get bounds")
     {
-        TriangleShape triangleShape({2, 3});
-        CHECK(triangleShape.getLocalBounds() == sf::FloatRect({0, 0}, {2, 3}));
-        CHECK(triangleShape.getGlobalBounds() == sf::FloatRect({0, 0}, {2, 3}));
-        triangleShape.move({1, 1});
-        triangleShape.rotate(sf::degrees(90));
-        CHECK(triangleShape.getLocalBounds() == sf::FloatRect({0, 0}, {2, 3}));
-        CHECK(triangleShape.getGlobalBounds().left == Approx(-2.f));
-        CHECK(triangleShape.getGlobalBounds().top == Approx(1.f));
-        CHECK(triangleShape.getGlobalBounds().width == Approx(3.f));
-        CHECK(triangleShape.getGlobalBounds().height == Approx(2.f));
+        TriangleShape triangleShape({30, 40});
+        CHECK(triangleShape.getLocalBounds() == sf::FloatRect({0, 0}, {30, 40}));
+        CHECK(triangleShape.getGlobalBounds() == sf::FloatRect({0, 0}, {30, 40}));
+
+        SECTION("Move and rotate")
+        {
+            triangleShape.move({1, 1});
+            triangleShape.rotate(sf::degrees(90));
+            CHECK(triangleShape.getLocalBounds() == sf::FloatRect({0, 0}, {30, 40}));
+            CHECK(triangleShape.getGlobalBounds() == Approx(sf::FloatRect({-39, 1}, {40, 30})));
+        }
+
+        SECTION("Add outline")
+        {
+            triangleShape.setOutlineThickness(5);
+            CHECK(triangleShape.getLocalBounds() == Approx(sf::FloatRect({-7.2150f, -14.2400f}, {44.4300f, 59.2400f})));
+            CHECK(triangleShape.getGlobalBounds() == Approx(sf::FloatRect({-7.2150f, -14.2400f}, {44.4300f, 59.2400f})));
+        }
     }
 }

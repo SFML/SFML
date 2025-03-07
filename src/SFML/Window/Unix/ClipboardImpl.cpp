@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,11 +25,12 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/Unix/ClipboardImpl.hpp>
+#include <SFML/Window/Unix/Display.hpp>
+
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Time.hpp>
-#include <SFML/Window/Unix/ClipboardImpl.hpp>
-#include <SFML/Window/Unix/Display.hpp>
 
 #include <X11/Xatom.h>
 
@@ -40,6 +41,7 @@
 namespace
 {
 // Filter the events received by windows (only allow those matching a specific window)
+// NOLINTNEXTLINE(readability-non-const-parameter)
 Bool checkEvent(::Display*, XEvent* event, XPointer userData)
 {
     // Just check if the event matches the window
@@ -47,9 +49,7 @@ Bool checkEvent(::Display*, XEvent* event, XPointer userData)
 }
 } // namespace
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 
 ////////////////////////////////////////////////////////////
@@ -74,7 +74,7 @@ void ClipboardImpl::processEvents()
 
 
 ////////////////////////////////////////////////////////////
-ClipboardImpl::ClipboardImpl() : m_window(0), m_requestResponded(false)
+ClipboardImpl::ClipboardImpl()
 {
     // Open a connection with the X server
     m_display = openDisplay();
@@ -87,10 +87,10 @@ ClipboardImpl::ClipboardImpl() : m_window(0), m_requestResponded(false)
     m_targetProperty = getAtom("SFML_CLIPBOARD_TARGET_PROPERTY", false);
 
     // Create a hidden window that will broker our clipboard interactions with X
-    m_window = XCreateSimpleWindow(m_display, DefaultRootWindow(m_display), 0, 0, 1, 1, 0, 0, 0);
+    m_window = XCreateSimpleWindow(m_display.get(), DefaultRootWindow(m_display.get()), 0, 0, 1, 1, 0, 0, 0);
 
     // Register the events we are interested in
-    XSelectInput(m_display, m_window, SelectionNotify | SelectionClear | SelectionRequest);
+    XSelectInput(m_display.get(), m_window, SelectionNotify | SelectionClear | SelectionRequest);
 }
 
 
@@ -100,12 +100,9 @@ ClipboardImpl::~ClipboardImpl()
     // Destroy the window
     if (m_window)
     {
-        XDestroyWindow(m_display, m_window);
-        XFlush(m_display);
+        XDestroyWindow(m_display.get(), m_window);
+        XFlush(m_display.get());
     }
-
-    // Close the connection with the X server
-    closeDisplay(m_display);
 }
 
 
@@ -122,7 +119,7 @@ ClipboardImpl& ClipboardImpl::getInstance()
 String ClipboardImpl::getStringImpl()
 {
     // Check if anybody owns the current selection
-    if (XGetSelectionOwner(m_display, m_clipboard) == None)
+    if (XGetSelectionOwner(m_display.get(), m_clipboard) == None)
     {
         m_clipboardContents.clear();
 
@@ -136,12 +133,17 @@ String ClipboardImpl::getStringImpl()
 
     // Request the current selection to be converted to UTF-8 (or STRING
     // if UTF-8 is not available) and written to our window property
-    XConvertSelection(m_display, m_clipboard, (m_utf8String != None) ? m_utf8String : XA_STRING, m_targetProperty, m_window, CurrentTime);
+    XConvertSelection(m_display.get(),
+                      m_clipboard,
+                      (m_utf8String != None) ? m_utf8String : XA_STRING,
+                      m_targetProperty,
+                      m_window,
+                      CurrentTime);
 
-    Clock clock;
+    const Clock clock;
 
-    // Wait for a response for up to 1000ms
-    while (!m_requestResponded && (clock.getElapsedTime().asMilliseconds() < 1000))
+    // Wait for a response for up to 1 second
+    while (!m_requestResponded && (clock.getElapsedTime() < sf::seconds(1)))
         processEvents();
 
     // If no response was received within the time period, clear our clipboard contents
@@ -158,10 +160,10 @@ void ClipboardImpl::setStringImpl(const String& text)
     m_clipboardContents = text;
 
     // Set our window as the current owner of the selection
-    XSetSelectionOwner(m_display, m_clipboard, m_window, CurrentTime);
+    XSetSelectionOwner(m_display.get(), m_clipboard, m_window, CurrentTime);
 
     // Check if setting the selection owner was successful
-    if (XGetSelectionOwner(m_display, m_clipboard) != m_window)
+    if (XGetSelectionOwner(m_display.get(), m_clipboard) != m_window)
         err() << "Cannot set clipboard string: Unable to get ownership of X selection" << std::endl;
 }
 
@@ -172,14 +174,14 @@ void ClipboardImpl::processEventsImpl()
     XEvent event;
 
     // Pick out the events that are interesting for this window
-    while (XCheckIfEvent(m_display, &event, &checkEvent, reinterpret_cast<XPointer>(m_window)))
-        m_events.push_back(event);
+    while (XCheckIfEvent(m_display.get(), &event, &checkEvent, reinterpret_cast<XPointer>(m_window)))
+        m_events.push(event);
 
     // Handle the events for this window that we just picked out
     while (!m_events.empty())
     {
         event = m_events.front();
-        m_events.pop_front();
+        m_events.pop();
         processEvent(event);
     }
 }
@@ -204,7 +206,7 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
             // Notification that the current selection owner
             // has responded to our request
 
-            XSelectionEvent& selectionEvent = windowEvent.xselection;
+            const XSelectionEvent& selectionEvent = windowEvent.xselection;
 
             m_clipboardContents.clear();
 
@@ -214,26 +216,26 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
             if ((selectionEvent.property == None) || (selectionEvent.selection != m_clipboard))
                 break;
 
-            Atom           type;
-            int            format;
-            unsigned long  items;
-            unsigned long  remainingBytes;
-            unsigned char* data = 0;
+            Atom           type           = 0;
+            int            format         = 0;
+            unsigned long  items          = 0;
+            unsigned long  remainingBytes = 0;
+            unsigned char* data           = nullptr;
 
             // The selection owner should have wrote the selection
             // data to the specified window property
-            int result = XGetWindowProperty(m_display,
-                                            m_window,
-                                            m_targetProperty,
-                                            0,
-                                            0x7fffffff,
-                                            False,
-                                            AnyPropertyType,
-                                            &type,
-                                            &format,
-                                            &items,
-                                            &remainingBytes,
-                                            &data);
+            const int result = XGetWindowProperty(m_display.get(),
+                                                  m_window,
+                                                  m_targetProperty,
+                                                  0,
+                                                  0x7fffffff,
+                                                  False,
+                                                  AnyPropertyType,
+                                                  &type,
+                                                  &format,
+                                                  &items,
+                                                  &remainingBytes,
+                                                  &data);
 
             if (result == Success)
             {
@@ -257,7 +259,7 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
                 XFree(data);
 
                 // The selection requestor must always delete the property themselves
-                XDeleteProperty(m_display, m_window, m_targetProperty);
+                XDeleteProperty(m_display.get(), m_window, m_targetProperty);
             }
 
             m_requestResponded = true;
@@ -267,7 +269,7 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
         case SelectionRequest:
         {
             // Respond to a request for our clipboard contents
-            XSelectionRequestEvent& selectionRequestEvent = windowEvent.xselectionrequest;
+            const XSelectionRequestEvent& selectionRequestEvent = windowEvent.xselectionrequest;
 
             // Our reply
             XSelectionEvent selectionEvent;
@@ -292,7 +294,7 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
                     if (m_utf8String != None)
                         targets.push_back(m_utf8String);
 
-                    XChangeProperty(m_display,
+                    XChangeProperty(m_display.get(),
                                     selectionRequestEvent.requestor,
                                     selectionRequestEvent.property,
                                     XA_ATOM,
@@ -304,7 +306,7 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
                     // Notify the requestor that they can read the targets from their window property
                     selectionEvent.target = m_targets;
 
-                    XSendEvent(m_display,
+                    XSendEvent(m_display.get(),
                                selectionRequestEvent.requestor,
                                True,
                                NoEventMask,
@@ -312,13 +314,13 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
 
                     break;
                 }
-                else if ((selectionRequestEvent.target == XA_STRING) ||
-                         ((m_utf8String == None) && (selectionRequestEvent.target == m_text)))
+                if ((selectionRequestEvent.target == XA_STRING) ||
+                    ((m_utf8String == None) && (selectionRequestEvent.target == m_text)))
                 {
                     // Respond to a request for conversion to a Latin-1 string
-                    std::string data = m_clipboardContents.toAnsiString();
+                    const std::string data = m_clipboardContents.toAnsiString();
 
-                    XChangeProperty(m_display,
+                    XChangeProperty(m_display.get(),
                                     selectionRequestEvent.requestor,
                                     selectionRequestEvent.property,
                                     XA_STRING,
@@ -330,7 +332,7 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
                     // Notify the requestor that they can read the data from their window property
                     selectionEvent.target = XA_STRING;
 
-                    XSendEvent(m_display,
+                    XSendEvent(m_display.get(),
                                selectionRequestEvent.requestor,
                                True,
                                NoEventMask,
@@ -338,14 +340,14 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
 
                     break;
                 }
-                else if ((m_utf8String != None) &&
-                         ((selectionRequestEvent.target == m_utf8String) || (selectionRequestEvent.target == m_text)))
+                if ((m_utf8String != None) &&
+                    ((selectionRequestEvent.target == m_utf8String) || (selectionRequestEvent.target == m_text)))
                 {
                     // Respond to a request for conversion to a UTF-8 string
                     // or an encoding of our choosing (we always choose UTF-8)
-                    std::basic_string<std::uint8_t> data = m_clipboardContents.toUtf8();
+                    const auto data = m_clipboardContents.toUtf8();
 
-                    XChangeProperty(m_display,
+                    XChangeProperty(m_display.get(),
                                     selectionRequestEvent.requestor,
                                     selectionRequestEvent.property,
                                     m_utf8String,
@@ -357,7 +359,7 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
                     // Notify the requestor that they can read the data from their window property
                     selectionEvent.target = m_utf8String;
 
-                    XSendEvent(m_display,
+                    XSendEvent(m_display.get(),
                                selectionRequestEvent.requestor,
                                True,
                                NoEventMask,
@@ -371,7 +373,11 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
             selectionEvent.target   = selectionRequestEvent.target;
             selectionEvent.property = None;
 
-            XSendEvent(m_display, selectionRequestEvent.requestor, True, NoEventMask, reinterpret_cast<XEvent*>(&selectionEvent));
+            XSendEvent(m_display.get(),
+                       selectionRequestEvent.requestor,
+                       True,
+                       NoEventMask,
+                       reinterpret_cast<XEvent*>(&selectionEvent));
 
             break;
         }
@@ -380,6 +386,4 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
     }
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

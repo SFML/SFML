@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,13 +22,17 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SOUNDFILEREADER_HPP
-#define SFML_SOUNDFILEREADER_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
+
+#include <SFML/Audio/SoundChannel.hpp>
+
+#include <optional>
+#include <vector>
 
 #include <cstdint>
 
@@ -50,33 +54,31 @@ public:
     ////////////////////////////////////////////////////////////
     struct Info
     {
-        std::uint64_t sampleCount;  //!< Total number of samples in the file
-        unsigned int  channelCount; //!< Number of channels of the sound
-        unsigned int  sampleRate;   //!< Samples rate of the sound, in samples per second
+        std::uint64_t             sampleCount{};  //!< Total number of samples in the file
+        unsigned int              channelCount{}; //!< Number of channels of the sound
+        unsigned int              sampleRate{};   //!< Samples rate of the sound, in samples per second
+        std::vector<SoundChannel> channelMap;     //!< Map of position in sample frame to sound channel
     };
 
     ////////////////////////////////////////////////////////////
     /// \brief Virtual destructor
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~SoundFileReader()
-    {
-    }
+    virtual ~SoundFileReader() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Open a sound file for reading
     ///
     /// The provided stream reference is valid as long as the
-    /// SoundFileReader is alive, so it is safe to use/store it
+    /// `SoundFileReader` is alive, so it is safe to use/store it
     /// during the whole lifetime of the reader.
     ///
     /// \param stream Source stream to read from
-    /// \param info   Structure to fill with the properties of the loaded sound
     ///
-    /// \return True if the file was successfully opened
+    /// \return Properties of the loaded sound if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] virtual bool open(InputStream& stream, Info& info) = 0;
+    [[nodiscard]] virtual std::optional<Info> open(InputStream& stream) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current read position to the given sample offset
@@ -108,9 +110,6 @@ public:
 } // namespace sf
 
 
-#endif // SFML_SOUNDFILEREADER_HPP
-
-
 ////////////////////////////////////////////////////////////
 /// \class sf::SoundFileReader
 /// \ingroup audio
@@ -123,7 +122,7 @@ public:
 /// as well as providing a static check function; the latter is used by
 /// SFML to find a suitable writer for a given input file.
 ///
-/// To register a new reader, use the sf::SoundFileFactory::registerReader
+/// To register a new reader, use the `sf::SoundFileFactory::registerReader`
 /// template function.
 ///
 /// Usage example:
@@ -138,7 +137,7 @@ public:
 ///         // return true if the reader can handle the format
 ///     }
 ///
-///     [[nodiscard]] bool open(sf::InputStream& stream, Info& info) override
+///     [[nodiscard]] std::optional<sf::SoundFileReader::Info> open(sf::InputStream& stream) override
 ///     {
 ///         // read the sound file header and fill the sound attributes
 ///         // (channel count, sample count and sample rate)
@@ -163,6 +162,6 @@ public:
 /// sf::SoundFileFactory::registerReader<MySoundFileReader>();
 /// \endcode
 ///
-/// \see sf::InputSoundFile, sf::SoundFileFactory, sf::SoundFileWriter
+/// \see `sf::InputSoundFile`, `sf::SoundFileFactory`, `sf::SoundFileWriter`
 ///
 ////////////////////////////////////////////////////////////

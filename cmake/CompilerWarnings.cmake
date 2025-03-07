@@ -4,17 +4,11 @@
 
 # Helper function to enable compiler warnings for a specific target
 function(set_target_warnings target)
-    option(WARNINGS_AS_ERRORS "Treat compiler warnings as errors" TRUE)
-
-    # For now if we're using MSVC-like clang interface on Windows
-    # we'll disable warnings as errors 
-    if(SFML_OS_WINDOWS AND SFML_COMPILER_CLANG_CL)
-        set(WARNINGS_AS_ERRORS FALSE)
-    endif()
+    option(SFML_WARNINGS_AS_ERRORS "Treat compiler warnings as errors" OFF)
 
     if(SFML_COMPILER_MSVC)
         target_compile_options(${target} PRIVATE
-            $<$<BOOL:${WARNINGS_AS_ERRORS}>:/WX>
+            $<$<BOOL:${SFML_WARNINGS_AS_ERRORS}>:/WX>
             /W4 # Baseline reasonable warnings
             /w14242 # 'identifier': conversion from 'type1' to 'type1', possible loss of data
             /w14254 # 'operator': conversion from 'type1:field_bits' to 'type2:field_bits', possible loss of data
@@ -38,16 +32,16 @@ function(set_target_warnings target)
             /permissive- # standards conformance mode
 
             # Disables, remove when appropriate
-            /wd4996 # disable warnings about deprecated functions
             /wd4068 # disable warnings about unknown pragmas (e.g. #pragma GCC)
             /wd4505 # disable warnings about unused functions that might be platform-specific
             /wd4800 # disable warnings regarding implicit conversions to bool
+            /wd4275 # disable warnings about exporting non DLL-interface classes
         )
     endif()
 
     if(SFML_COMPILER_GCC OR SFML_COMPILER_CLANG)
         target_compile_options(${target} PRIVATE
-            $<$<BOOL:${WARNINGS_AS_ERRORS}>:-Werror>
+            $<$<BOOL:${SFML_WARNINGS_AS_ERRORS}>:-Werror>
             -Wall
             -Wextra # reasonable and standard
             -Wshadow # warn the user if a variable declaration shadows one from a parent context
@@ -80,9 +74,15 @@ function(set_target_warnings target)
         )
     endif()
 
-    if(SFML_COMPILER_CLANG)
+    if(SFML_COMPILER_CLANG OR SFML_COMPILER_CLANG_CL)
         target_compile_options(${target} PRIVATE
             -Wno-unknown-warning-option # do not warn on GCC-specific warning diagnostic pragmas
         )
+    endif()
+
+    # Disable certain deprecation warnings
+    if(SFML_OS_WINDOWS)
+        target_compile_definitions(${target} PRIVATE -D_CRT_SECURE_NO_WARNINGS)
+        target_compile_definitions(${target} PRIVATE -D_WINSOCK_DEPRECATED_NO_WARNINGS)
     endif()
 endfunction()

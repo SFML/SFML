@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_MEMORYINPUTSTREAM_HPP
-#define SFML_MEMORYINPUTSTREAM_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -34,7 +33,8 @@
 
 #include <SFML/System/InputStream.hpp>
 
-#include <cstdlib>
+#include <cstddef>
+#include <cstdint>
 
 
 namespace sf
@@ -47,19 +47,13 @@ class SFML_SYSTEM_API MemoryInputStream : public InputStream
 {
 public:
     ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    ////////////////////////////////////////////////////////////
-    MemoryInputStream();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Open the stream from its data
+    /// \brief Construct the stream from its data
     ///
     /// \param data        Pointer to the data in memory
     /// \param sizeInBytes Size of the data, in bytes
     ///
     ////////////////////////////////////////////////////////////
-    void open(const void* data, std::size_t sizeInBytes);
+    MemoryInputStream(const void* data, std::size_t sizeInBytes);
 
     ////////////////////////////////////////////////////////////
     /// \brief Read data from the stream
@@ -70,65 +64,62 @@ public:
     /// \param data Buffer where to copy the read data
     /// \param size Desired number of bytes to read
     ///
-    /// \return The number of bytes actually read, or -1 on error
+    /// \return The number of bytes actually read, or `std::nullopt` on error
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] std::int64_t read(void* data, std::int64_t size) override;
+    [[nodiscard]] std::optional<std::size_t> read(void* data, std::size_t size) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current reading position
     ///
     /// \param position The position to seek to, from the beginning
     ///
-    /// \return The position actually sought to, or -1 on error
+    /// \return The position actually sought to, or `std::nullopt` on error
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] std::int64_t seek(std::int64_t position) override;
+    [[nodiscard]] std::optional<std::size_t> seek(std::size_t position) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current reading position in the stream
     ///
-    /// \return The current position, or -1 on error.
+    /// \return The current position, or `std::nullopt` on error.
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] std::int64_t tell() override;
+    [[nodiscard]] std::optional<std::size_t> tell() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the size of the stream
     ///
-    /// \return The total number of bytes available in the stream, or -1 on error
+    /// \return The total number of bytes available in the stream, or `std::nullopt` on error
     ///
     ////////////////////////////////////////////////////////////
-    std::int64_t getSize() override;
+    std::optional<std::size_t> getSize() override;
 
 private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    const char*  m_data{nullptr}; //!< Pointer to the data in memory
-    std::int64_t m_size{0};       //!< Total size of the data
-    std::int64_t m_offset{0};     //!< Current reading position
+    const std::byte* m_data{};   //!< Pointer to the data in memory
+    std::size_t      m_size{};   //!< Total size of the data
+    std::size_t      m_offset{}; //!< Current reading position
 };
 
 } // namespace sf
-
-
-#endif // SFML_MEMORYINPUTSTREAM_HPP
 
 
 ////////////////////////////////////////////////////////////
 /// \class sf::MemoryInputStream
 /// \ingroup system
 ///
-/// This class is a specialization of InputStream that
+/// This class is a specialization of `InputStream` that
 /// reads from data in memory.
 ///
-/// It wraps a memory chunk in the common InputStream interface
+/// It wraps a memory chunk in the common `InputStream` interface
 /// and therefore allows to use generic classes or functions
 /// that accept such a stream, with content already loaded in memory.
 ///
 /// In addition to the virtual functions inherited from
-/// InputStream, MemoryInputStream adds a function to
+/// `InputStream`, `MemoryInputStream` adds a function to
 /// specify the pointer and size of the data in memory.
 ///
 /// SFML resource classes can usually be loaded directly from
@@ -139,11 +130,10 @@ private:
 /// \code
 /// void process(InputStream& stream);
 ///
-/// MemoryInputStream stream;
-/// stream.open(thePtr, theSize);
+/// MemoryInputStream stream(thePtr, theSize);
 /// process(stream);
 /// \endcode
 ///
-/// InputStream, FileInputStream
+/// \see `InputStream`, `FileInputStream`
 ///
 ////////////////////////////////////////////////////////////

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,15 +22,14 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CONFIG_HPP
-#define SFML_CONFIG_HPP
+#pragma once
 
 
 ////////////////////////////////////////////////////////////
-// Define the SFML version
+// SFML version
 ////////////////////////////////////////////////////////////
 #define SFML_VERSION_MAJOR      3
-#define SFML_VERSION_MINOR      0
+#define SFML_VERSION_MINOR      1
 #define SFML_VERSION_PATCH      0
 #define SFML_VERSION_IS_RELEASE false
 
@@ -59,7 +58,7 @@
 
 #elif TARGET_OS_MAC
 
-// MacOS
+// macOS
 #define SFML_SYSTEM_MACOS
 
 #else
@@ -113,7 +112,15 @@
 
 
 ////////////////////////////////////////////////////////////
-// Define a portable debug macro
+// Ensure minimum C++ language standard version is met
+////////////////////////////////////////////////////////////
+#if (defined(_MSVC_LANG) && _MSVC_LANG < 201703L) || (!defined(_MSVC_LANG) && __cplusplus < 201703L)
+#error "Enable C++17 or newer for your compiler (e.g. -std=c++17 for GCC/Clang or /std:c++17 for MSVC)"
+#endif
+
+
+////////////////////////////////////////////////////////////
+// Portable debug macro
 ////////////////////////////////////////////////////////////
 #if !defined(NDEBUG)
 
@@ -123,7 +130,7 @@
 
 
 ////////////////////////////////////////////////////////////
-// Define helpers to create portable import / export macros for each module
+// Helpers to create portable import / export macros for each module
 ////////////////////////////////////////////////////////////
 #if !defined(SFML_STATIC)
 
@@ -133,14 +140,15 @@
 #define SFML_API_EXPORT __declspec(dllexport)
 #define SFML_API_IMPORT __declspec(dllimport)
 
-// For Visual C++ compilers, we also need to turn off this annoying C4251 warning
+// For Visual C++ compilers, we also need to turn off this annoying C4251 & C4275 warning
 #ifdef _MSC_VER
 
-#pragma warning(disable : 4251)
+#pragma warning(disable : 4251) // Using standard library types in our own exported types is okay
+#pragma warning(disable : 4275) // Exporting types derived from the standard library is okay
 
 #endif
 
-#else // Linux, FreeBSD, Mac OS X
+#else // Linux, FreeBSD, macOS
 
 #define SFML_API_EXPORT __attribute__((__visibility__("default")))
 #define SFML_API_IMPORT __attribute__((__visibility__("default")))
@@ -154,6 +162,3 @@
 #define SFML_API_IMPORT
 
 #endif
-
-
-#endif // SFML_CONFIG_HPP

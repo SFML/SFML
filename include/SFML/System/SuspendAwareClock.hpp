@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -23,8 +23,7 @@
 ////////////////////////////////////////////////////////////
 
 
-#ifndef SFML_SUSPENDAWARECLOCK_HPP
-#define SFML_SUSPENDAWARECLOCK_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -39,22 +38,21 @@ namespace sf
 ////////////////////////////////////////////////////////////
 /// \brief Android, chrono-compatible, suspend-aware clock
 ///
-/// Linux steady clock is represented by CLOCK_MONOTONIC.
+/// Linux steady clock is represented by `CLOCK_MONOTONIC`.
 /// However, this implementation does not work properly for
 /// long-running clocks that work in the background when the
 /// system is suspended.
 ///
-/// SuspendAwareClock uses CLOCK_BOOTTIME which is identical
-/// to CLOCK_MONOTONIC, except that it also includes any time
+/// `SuspendAwareClock` uses `CLOCK_BOOTTIME` which is identical
+/// to `CLOCK_MONOTONIC`, except that it also includes any time
 /// that the system is suspended.
 ///
-/// Note: In most cases, CLOCK_MONOTONIC is a better choice.
+/// Note: In most cases, `CLOCK_MONOTONIC` is a better choice.
 /// Make sure this implementation is required for your use case.
 ///
 ////////////////////////////////////////////////////////////
-class SFML_SYSTEM_API SuspendAwareClock
+struct SFML_SYSTEM_API SuspendAwareClock
 {
-public:
     ////////////////////////////////////////////////////////////
     /// \brief Type traits and static members
     ///
@@ -70,11 +68,9 @@ public:
     using period     = duration::period;
     using time_point = std::chrono::time_point<SuspendAwareClock, duration>;
 
-    static constexpr bool is_steady = true;
+    static constexpr bool is_steady = true; // NOLINT(readability-identifier-naming)
 
     static time_point now() noexcept;
 };
 
 } // namespace sf
-
-#endif // SFML_SUSPENDAWARECLOCK_HPP

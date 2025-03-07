@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_JOYSTICKMANAGER_HPP
-#define SFML_JOYSTICKMANAGER_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -31,10 +30,10 @@
 #include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/JoystickImpl.hpp>
 
+#include <array>
 
-namespace sf
-{
-namespace priv
+
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Global joystick manager
@@ -43,6 +42,18 @@ namespace priv
 class JoystickManager
 {
 public:
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    JoystickManager(const JoystickManager&) = delete;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Deleted copy assignment
+    ///
+    ////////////////////////////////////////////////////////////
+    JoystickManager& operator=(const JoystickManager&) = delete;
+
     ////////////////////////////////////////////////////////////
     /// \brief Get the global unique instance of the manager
     ///
@@ -59,7 +70,7 @@ public:
     /// \return Capabilities of the joystick
     ///
     ////////////////////////////////////////////////////////////
-    const JoystickCaps& getCapabilities(unsigned int joystick) const;
+    [[nodiscard]] const JoystickCaps& getCapabilities(unsigned int joystick) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current state of an open joystick
@@ -69,7 +80,7 @@ public:
     /// \return Current state of the joystick
     ///
     ////////////////////////////////////////////////////////////
-    const JoystickState& getState(unsigned int joystick) const;
+    [[nodiscard]] const JoystickState& getState(unsigned int joystick) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the identification for an open joystick
@@ -79,7 +90,7 @@ public:
     /// \return Identification for the joystick
     ///
     ////////////////////////////////////////////////////////////
-    const Joystick::Identification& getIdentification(unsigned int joystick) const;
+    [[nodiscard]] const Joystick::Identification& getIdentification(unsigned int joystick) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the state of all the joysticks
@@ -101,18 +112,6 @@ private:
     ~JoystickManager();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Deleted copy constructor
-    ///
-    ////////////////////////////////////////////////////////////
-    JoystickManager(const JoystickManager&) = delete;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Deleted copy assignment
-    ///
-    ////////////////////////////////////////////////////////////
-    JoystickManager& operator=(const JoystickManager&) = delete;
-
-    ////////////////////////////////////////////////////////////
     /// \brief Joystick information and state
     ///
     ////////////////////////////////////////////////////////////
@@ -127,12 +126,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Item m_joysticks[Joystick::Count]; //!< Joysticks information and state
+    std::array<Item, Joystick::Count> m_joysticks; //!< Joysticks information and state
 };
 
-} // namespace priv
-
-} // namespace sf
-
-
-#endif // SFML_JOYSTICKMANAGER_HPP
+} // namespace sf::priv

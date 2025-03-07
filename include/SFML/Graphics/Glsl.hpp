@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,14 +22,11 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_GLSL_HPP
-#define SFML_GLSL_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Graphics/Color.hpp>
-#include <SFML/Graphics/Transform.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Vector3.hpp>
 
@@ -46,8 +43,6 @@ struct Matrix;
 
 template <typename T>
 struct Vector4;
-
-#include <SFML/Graphics/Glsl.inl>
 
 } // namespace priv
 
@@ -100,7 +95,7 @@ using Bvec3 = Vector3<bool>;
 ////////////////////////////////////////////////////////////
 /// \brief 4D float vector (\p vec4 in GLSL)
 ///
-/// 4D float vectors can be implicitly converted from sf::Color
+/// 4D float vectors can be implicitly converted from `sf::Color`
 /// instances. Each color channel is normalized from integers
 /// in [0, 255] to floating point values in [0, 1].
 /// \code
@@ -114,7 +109,7 @@ using Vec4 = ImplementationDefined;
 ////////////////////////////////////////////////////////////
 /// \brief 4D int vector (\p ivec4 in GLSL)
 ///
-/// 4D int vectors can be implicitly converted from sf::Color
+/// 4D int vectors can be implicitly converted from `sf::Color`
 /// instances. Each color channel remains unchanged inside
 /// the integer interval [0, 255].
 /// \code
@@ -148,7 +143,7 @@ using Bvec4 = ImplementationDefined;
 /// sf::Glsl::Mat3 matrix(array);
 /// \endcode
 ///
-/// Mat3 can also be implicitly converted from sf::Transform:
+/// Mat3 can also be implicitly converted from `sf::Transform`:
 /// \code
 /// sf::Transform transform;
 /// sf::Glsl::Mat3 matrix = transform;
@@ -174,7 +169,7 @@ using Mat3 = ImplementationDefined;
 /// sf::Glsl::Mat4 matrix(array);
 /// \endcode
 ///
-/// Mat4 can also be implicitly converted from sf::Transform:
+/// Mat4 can also be implicitly converted from `sf::Transform`:
 /// \code
 /// sf::Transform transform;
 /// sf::Glsl::Mat4 matrix = transform;
@@ -195,22 +190,22 @@ using Mat4  = priv::Matrix<4, 4>;
 } // namespace Glsl
 } // namespace sf
 
-#endif // SFML_GLSL_HPP
+#include <SFML/Graphics/Glsl.inl>
 
 
 ////////////////////////////////////////////////////////////
 /// \namespace sf::Glsl
 /// \ingroup graphics
 ///
-/// \details The sf::Glsl namespace contains types that match
+/// \details The `sf::Glsl` namespace contains types that match
 /// their equivalents in GLSL, the OpenGL shading language.
-/// These types are exclusively used by the sf::Shader class.
+/// These types are exclusively used by the `sf::Shader` class.
 ///
-/// Types that already exist in SFML, such as \ref sf::Vector2<T>
-/// and \ref sf::Vector3<T>, are reused as type aliases, so you can use
-/// the types in this namespace as well as the original ones.
-/// Others are newly defined, such as Glsl::Vec4 or Glsl::Mat3. Their
-/// actual type is an implementation detail and should not be used.
+/// Types that already exist in SFML, such as `sf::Vector2<T>`
+/// and `sf::Vector3<T>`, are reused as type aliases, so you
+/// can use the types in this namespace as well as the original ones.
+/// Others are newly defined, such as `Glsl::Vec4` or `Glsl::Mat3`.
+/// Their actual type is an implementation detail and should not be used.
 ///
 /// All vector types support a default constructor that
 /// initializes every component to zero, in addition to a
@@ -218,12 +213,12 @@ using Mat4  = priv::Matrix<4, 4>;
 /// The components are stored in member variables called
 /// x, y, z, and w.
 ///
-/// All matrix types support a constructor with a float*
+/// All matrix types support a constructor with a `float*`
 /// parameter that points to a float array of the appropriate
 /// size (that is, 9 in a 3x3 matrix, 16 in a 4x4 matrix).
-/// Furthermore, they can be converted from sf::Transform
+/// Furthermore, they can be converted from `sf::Transform`
 /// objects.
 ///
-/// \see sf::Shader
+/// \see `sf::Shader`
 ///
 ////////////////////////////////////////////////////////////

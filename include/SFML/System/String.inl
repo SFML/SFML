@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,7 +22,16 @@
 //
 ////////////////////////////////////////////////////////////
 
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <SFML/System/String.hpp> // NOLINT(misc-header-include-cycle)
 
+#include <iterator>
+
+
+namespace sf
+{
 ////////////////////////////////////////////////////////////
 template <typename T>
 String String::fromUtf8(T begin, T end)
@@ -51,3 +60,5 @@ String String::fromUtf32(T begin, T end)
     string.m_string.assign(begin, end);
     return string;
 }
+
+} // namespace sf

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_WINDOWSHEADER_HPP
-#define SFML_WINDOWSHEADER_HPP
+#pragma once
 
 #ifndef NOMINMAX
 #define NOMINMAX
@@ -34,7 +33,7 @@
 #endif
 
 #ifndef _WIN32_WINDOWS
-#define _WIN32_WINDOWS 0x0501
+#define _WIN32_WINDOWS 0x0501 // NOLINT(bugprone-reserved-identifier)
 #endif
 
 #ifndef _WIN32_WINNT
@@ -45,6 +44,12 @@
 #define WINVER 0x0501
 #endif
 
-#include <windows.h>
+#ifndef UNICODE
+#define UNICODE 1
+#endif
 
-#endif // SFML_WINDOWSHEADER_HPP
+#ifndef _UNICODE
+#define _UNICODE 1 // NOLINT(bugprone-reserved-identifier)
+#endif
+
+#include <windows.h>

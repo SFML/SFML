@@ -1,14 +1,14 @@
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Network.hpp>
 
-#include <fstream>
 #include <iostream>
 #include <optional>
 
 
+namespace
+{
 ////////////////////////////////////////////////////////////
 /// Print a FTP response into a standard output stream
 ///
@@ -17,6 +17,7 @@ std::ostream& operator<<(std::ostream& stream, const sf::Ftp::Response& response
 {
     return stream << static_cast<int>(response.getStatus()) << response.getMessage();
 }
+} // namespace
 
 
 ////////////////////////////////////////////////////////////
@@ -36,21 +37,22 @@ int main()
     } while (!address.has_value());
 
     // Connect to the server
-    sf::Ftp           server;
-    sf::Ftp::Response connectResponse = server.connect(address.value());
+    sf::Ftp                 server;
+    const sf::Ftp::Response connectResponse = server.connect(address.value());
     std::cout << connectResponse << std::endl;
     if (!connectResponse.isOk())
         return EXIT_FAILURE;
 
     // Ask for user name and password
-    std::string user, password;
+    std::string user;
+    std::string password;
     std::cout << "User name: ";
     std::cin >> user;
     std::cout << "Password: ";
     std::cin >> password;
 
     // Login to the server
-    sf::Ftp::Response loginResponse = server.login(user, password);
+    const sf::Ftp::Response loginResponse = server.login(user, password);
     std::cout << loginResponse << std::endl;
     if (!loginResponse.isOk())
         return EXIT_FAILURE;
@@ -85,14 +87,14 @@ int main()
                 // Wrong choice
                 std::cout << "Invalid choice!" << std::endl;
                 std::cin.clear();
-                std::cin.ignore(10000, '\n');
+                std::cin.ignore(10'000, '\n');
                 break;
             }
 
             case 1:
             {
                 // Print the current server directory
-                sf::Ftp::DirectoryResponse response = server.getWorkingDirectory();
+                const sf::Ftp::DirectoryResponse response = server.getWorkingDirectory();
                 std::cout << response << '\n' << "Current directory is " << response.getDirectory() << std::endl;
                 break;
             }
@@ -100,7 +102,7 @@ int main()
             case 2:
             {
                 // Print the contents of the current server directory
-                sf::Ftp::ListingResponse response = server.getDirectoryListing();
+                const sf::Ftp::ListingResponse response = server.getDirectoryListing();
                 std::cout << response << '\n';
                 for (const std::string& name : response.getListing())
                     std::cout << name << '\n';
@@ -141,7 +143,8 @@ int main()
             case 6:
             {
                 // Rename a file
-                std::string source, destination;
+                std::string source;
+                std::string destination;
                 std::cout << "Name of the file to rename: ";
                 std::cin >> source;
                 std::cout << "New name: ";
@@ -163,7 +166,8 @@ int main()
             case 8:
             {
                 // Download a file from server
-                std::string filename, directory;
+                std::string filename;
+                std::string directory;
                 std::cout << "Filename of the file to download (relative to current directory): ";
                 std::cin >> filename;
                 std::cout << "Directory to download the file to: ";
@@ -175,7 +179,8 @@ int main()
             case 9:
             {
                 // Upload a file to server
-                std::string filename, directory;
+                std::string filename;
+                std::string directory;
                 std::cout << "Path of the file to upload (absolute or relative to working directory): ";
                 std::cin >> filename;
                 std::cout << "Directory to upload the file to (relative to current directory): ";
@@ -198,8 +203,6 @@ int main()
 
     // Wait until the user presses 'enter' key
     std::cout << "Press enter to exit..." << std::endl;
-    std::cin.ignore(10000, '\n');
-    std::cin.ignore(10000, '\n');
-
-    return EXIT_SUCCESS;
+    std::cin.ignore(10'000, '\n');
+    std::cin.ignore(10'000, '\n');
 }

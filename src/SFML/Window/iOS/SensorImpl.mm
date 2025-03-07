@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,25 +25,19 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Angle.hpp>
 #include <SFML/Window/SensorImpl.hpp>
 #include <SFML/Window/iOS/SFAppDelegate.hpp>
+
+#include <SFML/System/Angle.hpp>
 
 
 namespace
 {
 unsigned int deviceMotionEnabledCount = 0;
-
-float toDegrees(float radians)
-{
-    return sf::radians(radians).asDegrees();
-}
 }
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 void SensorImpl::initialize()
@@ -64,18 +58,18 @@ bool SensorImpl::isAvailable(Sensor::Type sensor)
 {
     switch (sensor)
     {
-        case Sensor::Accelerometer:
+        case Sensor::Type::Accelerometer:
             return [SFAppDelegate getInstance].motionManager.accelerometerAvailable;
 
-        case Sensor::Gyroscope:
+        case Sensor::Type::Gyroscope:
             return [SFAppDelegate getInstance].motionManager.gyroAvailable;
 
-        case Sensor::Magnetometer:
+        case Sensor::Type::Magnetometer:
             return [SFAppDelegate getInstance].motionManager.magnetometerAvailable;
 
-        case Sensor::Gravity:
-        case Sensor::UserAcceleration:
-        case Sensor::Orientation:
+        case Sensor::Type::Gravity:
+        case Sensor::Type::UserAcceleration:
+        case Sensor::Type::Orientation:
             return [SFAppDelegate getInstance].motionManager.deviceMotionAvailable;
 
         default:
@@ -97,21 +91,21 @@ bool SensorImpl::open(Sensor::Type sensor)
     constexpr NSTimeInterval updateInterval = 1. / 60.;
     switch (sensor)
     {
-        case Sensor::Accelerometer:
+        case Sensor::Type::Accelerometer:
             [SFAppDelegate getInstance].motionManager.accelerometerUpdateInterval = updateInterval;
             break;
 
-        case Sensor::Gyroscope:
+        case Sensor::Type::Gyroscope:
             [SFAppDelegate getInstance].motionManager.gyroUpdateInterval = updateInterval;
             break;
 
-        case Sensor::Magnetometer:
+        case Sensor::Type::Magnetometer:
             [SFAppDelegate getInstance].motionManager.magnetometerUpdateInterval = updateInterval;
             break;
 
-        case Sensor::Gravity:
-        case Sensor::UserAcceleration:
-        case Sensor::Orientation:
+        case Sensor::Type::Gravity:
+        case Sensor::Type::UserAcceleration:
+        case Sensor::Type::Orientation:
             [SFAppDelegate getInstance].motionManager.deviceMotionUpdateInterval = updateInterval;
             break;
 
@@ -133,51 +127,42 @@ void SensorImpl::close()
 ////////////////////////////////////////////////////////////
 Vector3f SensorImpl::update()
 {
-    Vector3f         value;
-    CMMotionManager* manager = [SFAppDelegate getInstance].motionManager;
+    CMMotionManager* const manager = [SFAppDelegate getInstance].motionManager;
 
     switch (m_sensor)
     {
-        case Sensor::Accelerometer:
+        case Sensor::Type::Accelerometer:
             // Acceleration is given in G, convert to m/s^2
-            value.x = static_cast<float>(manager.accelerometerData.acceleration.x * 9.81);
-            value.y = static_cast<float>(manager.accelerometerData.acceleration.y * 9.81);
-            value.z = static_cast<float>(manager.accelerometerData.acceleration.z * 9.81);
-            break;
+            return Vector3f(9.81 * Vector3(manager.accelerometerData.acceleration.x,
+                                           manager.accelerometerData.acceleration.y,
+                                           manager.accelerometerData.acceleration.z));
 
-        case Sensor::Gyroscope:
-            // Rotation rates are given in rad/s, convert to deg/s
-            value.x = toDegrees(static_cast<float>(manager.gyroData.rotationRate.x));
-            value.y = toDegrees(static_cast<float>(manager.gyroData.rotationRate.y));
-            value.z = toDegrees(static_cast<float>(manager.gyroData.rotationRate.z));
-            break;
+        case Sensor::Type::Gyroscope:
+            // Rotation rates are given in rad/s
+            return Vector3f(
+                Vector3(manager.gyroData.rotationRate.x, manager.gyroData.rotationRate.y, manager.gyroData.rotationRate.z));
 
-        case Sensor::Magnetometer:
+        case Sensor::Type::Magnetometer:
             // Magnetic field is given in microteslas
-            value.x = static_cast<float>(manager.magnetometerData.magneticField.x);
-            value.y = static_cast<float>(manager.magnetometerData.magneticField.y);
-            value.z = static_cast<float>(manager.magnetometerData.magneticField.z);
-            break;
+            return Vector3f(Vector3(manager.magnetometerData.magneticField.x,
+                                    manager.magnetometerData.magneticField.y,
+                                    manager.magnetometerData.magneticField.z));
 
-        case Sensor::UserAcceleration:
+        case Sensor::Type::UserAcceleration:
             // User acceleration is given in G, convert to m/s^2
-            value.x = static_cast<float>(manager.deviceMotion.userAcceleration.x * 9.81);
-            value.y = static_cast<float>(manager.deviceMotion.userAcceleration.y * 9.81);
-            value.z = static_cast<float>(manager.deviceMotion.userAcceleration.z * 9.81);
-            break;
+            return Vector3f(9.81 * Vector3(manager.deviceMotion.userAcceleration.x,
+                                           manager.deviceMotion.userAcceleration.y,
+                                           manager.deviceMotion.userAcceleration.z));
 
-        case Sensor::Orientation:
-            // Absolute rotation (Euler) angles are given in radians, convert to degrees
-            value.x = toDegrees(static_cast<float>(manager.deviceMotion.attitude.yaw));
-            value.y = toDegrees(static_cast<float>(manager.deviceMotion.attitude.pitch));
-            value.z = toDegrees(static_cast<float>(manager.deviceMotion.attitude.roll));
-            break;
+        case Sensor::Type::Orientation:
+            // Absolute rotation (Euler) angles are given in radians
+            return Vector3f(Vector3<double>(manager.deviceMotion.attitude.yaw,
+                                            manager.deviceMotion.attitude.pitch,
+                                            manager.deviceMotion.attitude.roll));
 
         default:
-            break;
+            return {};
     }
-
-    return value;
 }
 
 
@@ -190,30 +175,30 @@ void SensorImpl::setEnabled(bool enabled)
 
     switch (m_sensor)
     {
-        case Sensor::Accelerometer:
+        case Sensor::Type::Accelerometer:
             if (enabled)
                 [[SFAppDelegate getInstance].motionManager startAccelerometerUpdates];
             else
                 [[SFAppDelegate getInstance].motionManager stopAccelerometerUpdates];
             break;
 
-        case Sensor::Gyroscope:
+        case Sensor::Type::Gyroscope:
             if (enabled)
                 [[SFAppDelegate getInstance].motionManager startGyroUpdates];
             else
                 [[SFAppDelegate getInstance].motionManager stopGyroUpdates];
             break;
 
-        case Sensor::Magnetometer:
+        case Sensor::Type::Magnetometer:
             if (enabled)
                 [[SFAppDelegate getInstance].motionManager startMagnetometerUpdates];
             else
                 [[SFAppDelegate getInstance].motionManager stopMagnetometerUpdates];
             break;
 
-        case Sensor::Gravity:
-        case Sensor::UserAcceleration:
-        case Sensor::Orientation:
+        case Sensor::Type::Gravity:
+        case Sensor::Type::UserAcceleration:
+        case Sensor::Type::Orientation:
             // these 3 sensors all share the same implementation, so we must disable
             // it only if the three sensors are disabled
             if (enabled)
@@ -238,6 +223,4 @@ void SensorImpl::setEnabled(bool enabled)
     m_enabled = enabled;
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

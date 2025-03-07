@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_GLCHECK_HPP
-#define SFML_GLCHECK_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -32,34 +31,15 @@
 
 #include <SFML/Graphics/GLExtensions.hpp>
 
-#include <filesystem>
+#include <SFML/System/Err.hpp>
+
+#include <ostream>
+#include <string_view>
+#include <type_traits>
 
 
-namespace sf
+namespace sf::priv
 {
-namespace priv
-{
-////////////////////////////////////////////////////////////
-/// Let's define a macro to quickly check every OpenGL API call
-////////////////////////////////////////////////////////////
-#ifdef SFML_DEBUG
-
-// In debug mode, perform a test on every OpenGL call
-// The do-while loop is needed so that glCheck can be used as a single statement in if/else branches
-#define glCheck(expr)                                      \
-    do                                                     \
-    {                                                      \
-        expr;                                              \
-        sf::priv::glCheckError(__FILE__, __LINE__, #expr); \
-    } while (false)
-
-#else
-
-// Else, we don't add any overhead
-#define glCheck(expr) (expr)
-
-#endif
-
 ////////////////////////////////////////////////////////////
 /// \brief Check the last OpenGL error
 ///
@@ -67,12 +47,45 @@ namespace priv
 /// \param line Line number of the source file where the call is located
 /// \param expression The evaluated expression as a string
 ///
+/// \return `false` if an error occurred, `true` otherwise
+///
 ////////////////////////////////////////////////////////////
-void glCheckError(const std::filesystem::path& file, unsigned int line, const char* expression);
+bool glCheckError(std::string_view file, unsigned int line, std::string_view expression);
 
-} // namespace priv
+////////////////////////////////////////////////////////////
+/// Macro to quickly check every OpenGL API call
+////////////////////////////////////////////////////////////
+#ifdef SFML_DEBUG
+// In debug mode, perform a test on every OpenGL call
+// The lamdba allows us to call glCheck as an expression and acts as a single statement perfect for if/else statements
+#define glCheck(...)                                                                                                \
+    [](auto&& glCheckInternalFunction)                                                                              \
+    {                                                                                                               \
+        if (const GLenum glCheckInternalError = glGetError(); glCheckInternalError != GL_NO_ERROR)                  \
+            sf::err() << "OpenGL error (" << glCheckInternalError << ") detected during glCheck call" << std::endl; \
+                                                                                                                    \
+        if constexpr (!std::is_void_v<decltype(glCheckInternalFunction())>)                                         \
+        {                                                                                                           \
+            const auto glCheckInternalReturnValue = glCheckInternalFunction();                                      \
+                                                                                                                    \
+            while (!sf::priv::glCheckError(__FILE__, static_cast<unsigned int>(__LINE__), #__VA_ARGS__))            \
+                /* no-op */;                                                                                        \
+                                                                                                                    \
+            return glCheckInternalReturnValue;                                                                      \
+        }                                                                                                           \
+        else                                                                                                        \
+        {                                                                                                           \
+            glCheckInternalFunction();                                                                              \
+                                                                                                                    \
+            while (!sf::priv::glCheckError(__FILE__, static_cast<unsigned int>(__LINE__), #__VA_ARGS__))            \
+                /* no-op */;                                                                                        \
+        }                                                                                                           \
+    }([&] { return __VA_ARGS__; })
+#else
 
-} // namespace sf
+// Else, we don't add any overhead
+#define glCheck(...) (__VA_ARGS__)
 
+#endif
 
-#endif // SFML_GLCHECK_HPP
+} // namespace sf::priv

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -35,15 +35,7 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-VideoMode::VideoMode() : size(0, 0), bitsPerPixel(0)
-{
-}
-
-
-////////////////////////////////////////////////////////////
-VideoMode::VideoMode(const Vector2u& modeSize, unsigned int modeBitsPerPixel) :
-size(modeSize),
-bitsPerPixel(modeBitsPerPixel)
+VideoMode::VideoMode(Vector2u modeSize, unsigned int modeBitsPerPixel) : size(modeSize), bitsPerPixel(modeBitsPerPixel)
 {
 }
 
@@ -62,7 +54,7 @@ const std::vector<VideoMode>& VideoMode::getFullscreenModes()
     static const auto modes = []
     {
         std::vector<VideoMode> result = priv::VideoModeImpl::getFullscreenModes();
-        std::sort(result.begin(), result.end(), std::greater<VideoMode>());
+        std::sort(result.begin(), result.end(), std::greater<>());
         return result;
     }();
 
@@ -102,15 +94,11 @@ bool operator<(const VideoMode& left, const VideoMode& right)
         {
             return left.size.y < right.size.y;
         }
-        else
-        {
-            return left.size.x < right.size.x;
-        }
+
+        return left.size.x < right.size.x;
     }
-    else
-    {
-        return left.bitsPerPixel < right.bitsPerPixel;
-    }
+
+    return left.bitsPerPixel < right.bitsPerPixel;
 }
 
 

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,12 +22,16 @@
 //
 ////////////////////////////////////////////////////////////
 
-
 ////////////////////////////////////////////////////////////
-template <typename T>
-constexpr Vector3<T>::Vector3() = default;
+// Headers
+////////////////////////////////////////////////////////////
+#include <SFML/System/Vector3.hpp> // NOLINT(misc-header-include-cycle)
+
+#include <cassert>
 
 
+namespace sf
+{
 ////////////////////////////////////////////////////////////
 #if defined(__GNUC__)
 #pragma GCC diagnostic push
@@ -45,17 +49,15 @@ constexpr Vector3<T>::Vector3(T x, T y, T z) : x(x), y(y), z(z)
 ////////////////////////////////////////////////////////////
 template <typename T>
 template <typename U>
-constexpr Vector3<T>::Vector3(const Vector3<U>& vector) :
-x(static_cast<T>(vector.x)),
-y(static_cast<T>(vector.y)),
-z(static_cast<T>(vector.z))
+constexpr Vector3<T>::operator Vector3<U>() const
 {
+    return Vector3<U>(static_cast<U>(x), static_cast<U>(y), static_cast<U>(z));
 }
 
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr T Vector3<T>::lengthSq() const
+constexpr T Vector3<T>::lengthSquared() const
 {
     return dot(*this);
 }
@@ -79,7 +81,7 @@ constexpr Vector3<T> Vector3<T>::cross(const Vector3<T>& rhs) const
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Vector3<T> Vector3<T>::cwiseMul(const Vector3<T>& rhs) const
+constexpr Vector3<T> Vector3<T>::componentWiseMul(const Vector3<T>& rhs) const
 {
     return Vector3<T>(x * rhs.x, y * rhs.y, z * rhs.z);
 }
@@ -87,11 +89,11 @@ constexpr Vector3<T> Vector3<T>::cwiseMul(const Vector3<T>& rhs) const
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-constexpr Vector3<T> Vector3<T>::cwiseDiv(const Vector3<T>& rhs) const
+constexpr Vector3<T> Vector3<T>::componentWiseDiv(const Vector3<T>& rhs) const
 {
-    assert(rhs.x != 0);
-    assert(rhs.y != 0);
-    assert(rhs.z != 0);
+    assert(rhs.x != 0 && "Vector3::componentWiseDiv() cannot divide by 0");
+    assert(rhs.y != 0 && "Vector3::componentWiseDiv() cannot divide by 0");
+    assert(rhs.z != 0 && "Vector3::componentWiseDiv() cannot divide by 0");
     return Vector3<T>(x / rhs.x, y / rhs.y, z / rhs.z);
 }
 
@@ -176,6 +178,7 @@ constexpr Vector3<T>& operator*=(Vector3<T>& left, T right)
 template <typename T>
 constexpr Vector3<T> operator/(const Vector3<T>& left, T right)
 {
+    assert(right != 0 && "Vector3::operator/ cannot divide by 0");
     return Vector3<T>(left.x / right, left.y / right, left.z / right);
 }
 
@@ -184,6 +187,7 @@ constexpr Vector3<T> operator/(const Vector3<T>& left, T right)
 template <typename T>
 constexpr Vector3<T>& operator/=(Vector3<T>& left, T right)
 {
+    assert(right != 0 && "Vector3::operator/= cannot divide by 0");
     left.x /= right;
     left.y /= right;
     left.z /= right;
@@ -204,5 +208,7 @@ constexpr bool operator==(const Vector3<T>& left, const Vector3<T>& right)
 template <typename T>
 constexpr bool operator!=(const Vector3<T>& left, const Vector3<T>& right)
 {
-    return (left.x != right.x) || (left.y != right.y) || (left.z != right.z);
+    return !(left == right);
 }
+
+} // namespace sf

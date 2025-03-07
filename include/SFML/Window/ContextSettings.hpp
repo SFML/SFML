@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CONTEXTSETTINGS_HPP
-#define SFML_CONTEXTSETTINGS_HPP
+#pragma once
 
 #include <SFML/Config.hpp>
 
@@ -49,52 +48,20 @@ struct ContextSettings
         Debug   = 1 << 2  //!< Debug attribute
     };
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    /// \param depth        Depth buffer bits
-    /// \param stencil      Stencil buffer bits
-    /// \param antialiasing Antialiasing level
-    /// \param major        Major number of the context version
-    /// \param minor        Minor number of the context version
-    /// \param attributes   Attribute flags of the context
-    /// \param sRgb         sRGB capable framebuffer
-    ///
-    ////////////////////////////////////////////////////////////
-    constexpr explicit ContextSettings(
-        unsigned int depth        = 0,
-        unsigned int stencil      = 0,
-        unsigned int antialiasing = 0,
-        unsigned int major        = 1,
-        unsigned int minor        = 1,
-        unsigned int attributes   = Default,
-        bool         sRgb         = false) :
-    depthBits(depth),
-    stencilBits(stencil),
-    antialiasingLevel(antialiasing),
-    majorVersion(major),
-    minorVersion(minor),
-    attributeFlags(attributes),
-    sRgbCapable(sRgb)
-    {
-    }
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int  depthBits;         //!< Bits of the depth buffer
-    unsigned int  stencilBits;       //!< Bits of the stencil buffer
-    unsigned int  antialiasingLevel; //!< Level of antialiasing
-    unsigned int  majorVersion;      //!< Major number of the context version to create
-    unsigned int  minorVersion;      //!< Minor number of the context version to create
-    std::uint32_t attributeFlags;    //!< The attribute flags to create the context with
-    bool          sRgbCapable;       //!< Whether the context framebuffer is sRGB capable
+    unsigned int  depthBits{};                        //!< Bits of the depth buffer
+    unsigned int  stencilBits{};                      //!< Bits of the stencil buffer
+    unsigned int  antiAliasingLevel{};                //!< Level of anti-aliasing
+    unsigned int  majorVersion{1};                    //!< Major number of the context version to create
+    unsigned int  minorVersion{1};                    //!< Minor number of the context version to create
+    std::uint32_t attributeFlags{Attribute::Default}; //!< The attribute flags to create the context with
+    bool          sRgbCapable{};                      //!< Whether the context framebuffer is sRGB capable
 };
 
 } // namespace sf
-
-
-#endif // SFML_CONTEXTSETTINGS_HPP
 
 
 ////////////////////////////////////////////////////////////
@@ -113,7 +80,7 @@ struct ContextSettings
 /// of bits per pixel requested for the (respectively) depth
 /// and stencil buffers.
 ///
-/// antialiasingLevel represents the requested number of
+/// antiAliasingLevel represents the requested number of
 /// multisampling levels for anti-aliasing.
 ///
 /// majorVersion and minorVersion define the version of the
@@ -139,13 +106,13 @@ struct ContextSettings
 /// system, this might be required for advanced OpenGL debugging.
 /// OpenGL debugging is disabled by default.
 ///
-/// <b>Special Note for OS X:</b>
+/// <b>Special Note for macOS:</b>
 /// Apple only supports choosing between either a legacy context
 /// (OpenGL 2.1) or a core context (OpenGL version depends on the
 /// operating system version but is at least 3.2). Compatibility
 /// contexts are not supported. Further information is available on the
 /// <a href="https://developer.apple.com/opengl/capabilities/index.html">
-/// OpenGL Capabilities Tables</a> page. OS X also currently does
+/// OpenGL Capabilities Tables</a> page. macOS also currently does
 /// not support debug contexts.
 ///
 /// Please note that these values are only a hint.
@@ -153,6 +120,6 @@ struct ContextSettings
 /// are not supported by the system; instead, SFML will try to
 /// find the closest valid match. You can then retrieve the
 /// settings that the window actually used to create its context,
-/// with Window::getSettings().
+/// with `Window::getSettings()`.
 ///
 ////////////////////////////////////////////////////////////

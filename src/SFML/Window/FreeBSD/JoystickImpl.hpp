@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_JOYSTICKIMPLFREEBSD_HPP
-#define SFML_JOYSTICKIMPLFREEBSD_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -32,9 +31,7 @@
 #include <usbhid.h>
 #include <vector>
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief FreeBSD implementation of joysticks
@@ -61,7 +58,7 @@ public:
     ///
     /// \param index Index of the joystick to check
     ///
-    /// \return True if the joystick is connected, false otherwise
+    /// \return `true` if the joystick is connected, `false` otherwise
     ///
     ////////////////////////////////////////////////////////////
     static bool isConnected(unsigned int index);
@@ -71,7 +68,7 @@ public:
     ///
     /// \param index Index assigned to the joystick
     ///
-    /// \return True on success, false on failure
+    /// \return `true` on success, `false` on failure
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool open(unsigned int index);
@@ -88,7 +85,7 @@ public:
     /// \return Joystick capabilities
     ///
     ////////////////////////////////////////////////////////////
-    JoystickCaps getCapabilities() const;
+    [[nodiscard]] JoystickCaps getCapabilities() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the joystick identification
@@ -96,7 +93,7 @@ public:
     /// \return Joystick identification
     ///
     ////////////////////////////////////////////////////////////
-    Joystick::Identification getIdentification() const;
+    [[nodiscard]] Joystick::Identification getIdentification() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Update the joystick and get its new state
@@ -119,9 +116,4 @@ private:
     JoystickState            m_state;          ///< Current state of the joystick
 };
 
-} // namespace priv
-
-} // namespace sf
-
-
-#endif // SFML_JOYSTICKIMPLFREEBSD_HPP
+} // namespace sf::priv

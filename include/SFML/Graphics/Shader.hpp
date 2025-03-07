@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SHADER_HPP
-#define SFML_SHADER_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -31,21 +30,21 @@
 #include <SFML/Graphics/Export.hpp>
 
 #include <SFML/Graphics/Glsl.hpp>
-#include <SFML/System/Vector2.hpp>
-#include <SFML/System/Vector3.hpp>
+
 #include <SFML/Window/GlResource.hpp>
 
 #include <filesystem>
 #include <string>
+#include <string_view>
 #include <unordered_map>
+
+#include <cstddef>
 
 
 namespace sf
 {
-class Color;
 class InputStream;
 class Texture;
-class Transform;
 
 ////////////////////////////////////////////////////////////
 /// \brief Shader class (vertex, geometry and fragment)
@@ -58,7 +57,7 @@ public:
     /// \brief Types of shaders
     ///
     ////////////////////////////////////////////////////////////
-    enum Type
+    enum class Type
     {
         Vertex,   //!< %Vertex shader
         Geometry, //!< Geometry shader
@@ -69,7 +68,7 @@ public:
     /// \brief Special type that can be passed to setUniform(),
     ///        and that represents the texture of the object being drawn
     ///
-    /// \see setUniform(const std::string&, CurrentTextureType)
+    /// \see `setUniform(const std::string&, CurrentTextureType)`
     ///
     ////////////////////////////////////////////////////////////
     struct CurrentTextureType
@@ -79,19 +78,22 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Represents the texture of the object being drawn
     ///
-    /// \see setUniform(const std::string&, CurrentTextureType)
+    /// \see `setUniform(const std::string&, CurrentTextureType)`
     ///
     ////////////////////////////////////////////////////////////
-    static CurrentTextureType CurrentTexture;
+    // NOLINTNEXTLINE(readability-identifier-naming)
+    static inline CurrentTextureType CurrentTexture;
 
-public:
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
-    /// This constructor creates an invalid shader.
+    /// This constructor creates an empty shader.
+    ///
+    /// Binding an empty shader has the same effect as not
+    /// binding any shader.
     ///
     ////////////////////////////////////////////////////////////
-    Shader();
+    Shader() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
@@ -112,17 +114,208 @@ public:
     Shader& operator=(const Shader&) = delete;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Defaulted move constructor
+    /// \brief Move constructor
     ///
     ////////////////////////////////////////////////////////////
-    Shader(Shader&&) noexcept = default;
+    Shader(Shader&& source) noexcept;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Defaulted move assignment
+    /// \brief Move assignment
     ///
     ////////////////////////////////////////////////////////////
-    Shader& operator=(Shader&&) noexcept = default;
+    Shader& operator=(Shader&& right) noexcept;
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct from a shader file
+    ///
+    /// This constructor loads a single shader, vertex, geometry or
+    /// fragment, identified by the second argument.
+    /// The source must be a text file containing a valid
+    /// shader in GLSL language. GLSL is a C-like language
+    /// dedicated to OpenGL shaders; you'll probably need to
+    /// read a good documentation for it before writing your
+    /// own shaders.
+    ///
+    /// \param filename Path of the vertex, geometry or fragment shader file to load
+    /// \param type     Type of shader (vertex, geometry or fragment)
+    ///
+    /// \throws sf::Exception if loading was unsuccessful
+    ///
+    /// \see `loadFromFile`, `loadFromMemory`, `loadFromStream`
+    ///
+    ////////////////////////////////////////////////////////////
+    Shader(const std::filesystem::path& filename, Type type);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct from vertex and fragment shader files
+    ///
+    /// This constructor loads both the vertex and the fragment
+    /// shaders. If one of them fails to load, the shader is left
+    /// empty (the valid shader is unloaded).
+    /// The sources must be text files containing valid shaders
+    /// in GLSL language. GLSL is a C-like language dedicated to
+    /// OpenGL shaders; you'll probably need to read a good documentation
+    /// for it before writing your own shaders.
+    ///
+    /// \param vertexShaderFilename   Path of the vertex shader file to load
+    /// \param fragmentShaderFilename Path of the fragment shader file to load
+    ///
+    /// \throws sf::Exception if loading was unsuccessful
+    ///
+    /// \see `loadFromFile`, `loadFromMemory`, `loadFromStream`
+    ///
+    ////////////////////////////////////////////////////////////
+    Shader(const std::filesystem::path& vertexShaderFilename, const std::filesystem::path& fragmentShaderFilename);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct from vertex, geometry and fragment shader files
+    ///
+    /// This constructor loads the vertex, geometry and fragment
+    /// shaders. If one of them fails to load, the shader is left
+    /// empty (the valid shader is unloaded).
+    /// The sources must be text files containing valid shaders
+    /// in GLSL language. GLSL is a C-like language dedicated to
+    /// OpenGL shaders; you'll probably need to read a good documentation
+    /// for it before writing your own shaders.
+    ///
+    /// \param vertexShaderFilename   Path of the vertex shader file to load
+    /// \param geometryShaderFilename Path of the geometry shader file to load
+    /// \param fragmentShaderFilename Path of the fragment shader file to load
+    ///
+    /// \throws sf::Exception if loading was unsuccessful
+    ///
+    /// \see `loadFromFile`, `loadFromMemory`, `loadFromStream`
+    ///
+    ////////////////////////////////////////////////////////////
+    Shader(const std::filesystem::path& vertexShaderFilename,
+           const std::filesystem::path& geometryShaderFilename,
+           const std::filesystem::path& fragmentShaderFilename);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct from shader in memory
+    ///
+    /// This constructor loads a single shader, vertex, geometry
+    /// or fragment, identified by the second argument.
+    /// The source code must be a valid shader in GLSL language.
+    /// GLSL is a C-like language dedicated to OpenGL shaders;
+    /// you'll probably need to read a good documentation for
+    /// it before writing your own shaders.
+    ///
+    /// \param shader String containing the source code of the shader
+    /// \param type   Type of shader (vertex, geometry or fragment)
+    ///
+    /// \throws sf::Exception if loading was unsuccessful
+    ///
+    /// \see `loadFromFile`, `loadFromMemory`, `loadFromStream`
+    ///
+    ////////////////////////////////////////////////////////////
+    Shader(std::string_view shader, Type type);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct from vertex and fragment shaders in memory
+    ///
+    /// This constructor loads both the vertex and the fragment
+    /// shaders. If one of them fails to load, the shader is left
+    /// empty (the valid shader is unloaded).
+    /// The sources must be valid shaders in GLSL language. GLSL is
+    /// a C-like language dedicated to OpenGL shaders; you'll
+    /// probably need to read a good documentation for it before
+    /// writing your own shaders.
+    ///
+    /// \param vertexShader   String containing the source code of the vertex shader
+    /// \param fragmentShader String containing the source code of the fragment shader
+    ///
+    /// \throws sf::Exception if loading was unsuccessful
+    ///
+    /// \see `loadFromFile`, `loadFromMemory`, `loadFromStream`
+    ///
+    ////////////////////////////////////////////////////////////
+    Shader(std::string_view vertexShader, std::string_view fragmentShader);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct from vertex, geometry and fragment shaders in memory
+    ///
+    /// This constructor loads the vertex, geometry and fragment
+    /// shaders. If one of them fails to load, the shader is left
+    /// empty (the valid shader is unloaded).
+    /// The sources must be valid shaders in GLSL language. GLSL is
+    /// a C-like language dedicated to OpenGL shaders; you'll
+    /// probably need to read a good documentation for it before
+    /// writing your own shaders.
+    ///
+    /// \param vertexShader   String containing the source code of the vertex shader
+    /// \param geometryShader String containing the source code of the geometry shader
+    /// \param fragmentShader String containing the source code of the fragment shader
+    ///
+    /// \throws sf::Exception if loading was unsuccessful
+    ///
+    /// \see `loadFromFile`, `loadFromMemory`, `loadFromStream`
+    ///
+    ////////////////////////////////////////////////////////////
+    Shader(std::string_view vertexShader, std::string_view geometryShader, std::string_view fragmentShader);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct from a shader stream
+    ///
+    /// This constructor loads a single shader, vertex, geometry
+    /// or fragment, identified by the second argument.
+    /// The source code must be a valid shader in GLSL language.
+    /// GLSL is a C-like language dedicated to OpenGL shaders;
+    /// you'll probably need to read a good documentation for it
+    /// before writing your own shaders.
+    ///
+    /// \param stream Source stream to read from
+    /// \param type   Type of shader (vertex, geometry or fragment)
+    ///
+    /// \throws sf::Exception if loading was unsuccessful
+    ///
+    /// \see `loadFromFile`, `loadFromMemory`, `loadFromStream`
+    ///
+    ////////////////////////////////////////////////////////////
+    Shader(InputStream& stream, Type type);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct from vertex and fragment shader streams
+    ///
+    /// This constructor loads both the vertex and the fragment
+    /// shaders. If one of them fails to load, the shader is left
+    /// empty (the valid shader is unloaded).
+    /// The source codes must be valid shaders in GLSL language.
+    /// GLSL is a C-like language dedicated to OpenGL shaders;
+    /// you'll probably need to read a good documentation for
+    /// it before writing your own shaders.
+    ///
+    /// \param vertexShaderStream   Source stream to read the vertex shader from
+    /// \param fragmentShaderStream Source stream to read the fragment shader from
+    ///
+    /// \throws sf::Exception if loading was unsuccessful
+    ///
+    /// \see `loadFromFile`, `loadFromMemory`, `loadFromStream`
+    ///
+    ////////////////////////////////////////////////////////////
+    Shader(InputStream& vertexShaderStream, InputStream& fragmentShaderStream);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct from vertex, geometry and fragment shader streams
+    ///
+    /// This constructor loads the vertex, geometry and fragment
+    /// shaders. If one of them fails to load, the shader is left
+    /// empty (the valid shader is unloaded).
+    /// The source codes must be valid shaders in GLSL language.
+    /// GLSL is a C-like language dedicated to OpenGL shaders;
+    /// you'll probably need to read a good documentation for
+    /// it before writing your own shaders.
+    ///
+    /// \param vertexShaderStream   Source stream to read the vertex shader from
+    /// \param geometryShaderStream Source stream to read the geometry shader from
+    /// \param fragmentShaderStream Source stream to read the fragment shader from
+    ///
+    /// \throws sf::Exception if loading was unsuccessful
+    ///
+    /// \see `loadFromFile`, `loadFromMemory`, `loadFromStream`
+    ///
+    ////////////////////////////////////////////////////////////
+    Shader(InputStream& vertexShaderStream, InputStream& geometryShaderStream, InputStream& fragmentShaderStream);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the vertex, geometry or fragment shader from a file
@@ -138,9 +331,9 @@ public:
     /// \param filename Path of the vertex, geometry or fragment shader file to load
     /// \param type     Type of shader (vertex, geometry or fragment)
     ///
-    /// \return True if loading succeeded, false if it failed
+    /// \return `true` if loading succeeded, `false` if it failed
     ///
-    /// \see loadFromMemory, loadFromStream
+    /// \see `loadFromMemory`, `loadFromStream`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool loadFromFile(const std::filesystem::path& filename, Type type);
@@ -159,9 +352,9 @@ public:
     /// \param vertexShaderFilename   Path of the vertex shader file to load
     /// \param fragmentShaderFilename Path of the fragment shader file to load
     ///
-    /// \return True if loading succeeded, false if it failed
+    /// \return `true` if loading succeeded, `false` if it failed
     ///
-    /// \see loadFromMemory, loadFromStream
+    /// \see `loadFromMemory`, `loadFromStream`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool loadFromFile(const std::filesystem::path& vertexShaderFilename,
@@ -182,9 +375,9 @@ public:
     /// \param geometryShaderFilename Path of the geometry shader file to load
     /// \param fragmentShaderFilename Path of the fragment shader file to load
     ///
-    /// \return True if loading succeeded, false if it failed
+    /// \return `true` if loading succeeded, `false` if it failed
     ///
-    /// \see loadFromMemory, loadFromStream
+    /// \see `loadFromMemory`, `loadFromStream`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool loadFromFile(const std::filesystem::path& vertexShaderFilename,
@@ -204,12 +397,12 @@ public:
     /// \param shader String containing the source code of the shader
     /// \param type   Type of shader (vertex, geometry or fragment)
     ///
-    /// \return True if loading succeeded, false if it failed
+    /// \return `true` if loading succeeded, `false` if it failed
     ///
-    /// \see loadFromFile, loadFromStream
+    /// \see `loadFromFile`, `loadFromStream`
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromMemory(const std::string& shader, Type type);
+    [[nodiscard]] bool loadFromMemory(std::string_view shader, Type type);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load both the vertex and fragment shaders from source codes in memory
@@ -225,12 +418,12 @@ public:
     /// \param vertexShader   String containing the source code of the vertex shader
     /// \param fragmentShader String containing the source code of the fragment shader
     ///
-    /// \return True if loading succeeded, false if it failed
+    /// \return `true` if loading succeeded, `false` if it failed
     ///
-    /// \see loadFromFile, loadFromStream
+    /// \see `loadFromFile`, `loadFromStream`
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromMemory(const std::string& vertexShader, const std::string& fragmentShader);
+    [[nodiscard]] bool loadFromMemory(std::string_view vertexShader, std::string_view fragmentShader);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the vertex, geometry and fragment shaders from source codes in memory
@@ -247,14 +440,14 @@ public:
     /// \param geometryShader String containing the source code of the geometry shader
     /// \param fragmentShader String containing the source code of the fragment shader
     ///
-    /// \return True if loading succeeded, false if it failed
+    /// \return `true` if loading succeeded, `false` if it failed
     ///
-    /// \see loadFromFile, loadFromStream
+    /// \see `loadFromFile`, `loadFromStream`
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromMemory(const std::string& vertexShader,
-                                      const std::string& geometryShader,
-                                      const std::string& fragmentShader);
+    [[nodiscard]] bool loadFromMemory(std::string_view vertexShader,
+                                      std::string_view geometryShader,
+                                      std::string_view fragmentShader);
 
     ////////////////////////////////////////////////////////////
     /// \brief Load the vertex, geometry or fragment shader from a custom stream
@@ -269,9 +462,9 @@ public:
     /// \param stream Source stream to read from
     /// \param type   Type of shader (vertex, geometry or fragment)
     ///
-    /// \return True if loading succeeded, false if it failed
+    /// \return `true` if loading succeeded, `false` if it failed
     ///
-    /// \see loadFromFile, loadFromMemory
+    /// \see `loadFromFile`, `loadFromMemory`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool loadFromStream(InputStream& stream, Type type);
@@ -290,9 +483,9 @@ public:
     /// \param vertexShaderStream   Source stream to read the vertex shader from
     /// \param fragmentShaderStream Source stream to read the fragment shader from
     ///
-    /// \return True if loading succeeded, false if it failed
+    /// \return `true` if loading succeeded, `false` if it failed
     ///
-    /// \see loadFromFile, loadFromMemory
+    /// \see `loadFromFile`, `loadFromMemory`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool loadFromStream(InputStream& vertexShaderStream, InputStream& fragmentShaderStream);
@@ -312,9 +505,9 @@ public:
     /// \param geometryShaderStream Source stream to read the geometry shader from
     /// \param fragmentShaderStream Source stream to read the fragment shader from
     ///
-    /// \return True if loading succeeded, false if it failed
+    /// \return `true` if loading succeeded, `false` if it failed
     ///
-    /// \see loadFromFile, loadFromMemory
+    /// \see `loadFromFile`, `loadFromMemory`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool loadFromStream(InputStream& vertexShaderStream,
@@ -337,7 +530,7 @@ public:
     /// \param vector Value of the vec2 vector
     ///
     ////////////////////////////////////////////////////////////
-    void setUniform(const std::string& name, const Glsl::Vec2& vector);
+    void setUniform(const std::string& name, Glsl::Vec2 vector);
 
     ////////////////////////////////////////////////////////////
     /// \brief Specify value for \p vec3 uniform
@@ -351,14 +544,14 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Specify value for \p vec4 uniform
     ///
-    /// This overload can also be called with sf::Color objects
-    /// that are converted to sf::Glsl::Vec4.
+    /// This overload can also be called with `sf::Color` objects
+    /// that are converted to `sf::Glsl::Vec4`.
     ///
     /// It is important to note that the components of the color are
     /// normalized before being passed to the shader. Therefore,
     /// they are converted from range [0 .. 255] to range [0 .. 1].
-    /// For example, a sf::Color(255, 127, 0, 255) will be transformed
-    /// to a vec4(1.0, 0.5, 0.0, 1.0) in the shader.
+    /// For example, a `sf::Color(255, 127, 0, 255)` will be transformed
+    /// to a `vec4(1.0, 0.5, 0.0, 1.0)` in the shader.
     ///
     /// \param name   Name of the uniform variable in GLSL
     /// \param vector Value of the vec4 vector
@@ -382,7 +575,7 @@ public:
     /// \param vector Value of the ivec2 vector
     ///
     ////////////////////////////////////////////////////////////
-    void setUniform(const std::string& name, const Glsl::Ivec2& vector);
+    void setUniform(const std::string& name, Glsl::Ivec2 vector);
 
     ////////////////////////////////////////////////////////////
     /// \brief Specify value for \p ivec3 uniform
@@ -396,13 +589,13 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Specify value for \p ivec4 uniform
     ///
-    /// This overload can also be called with sf::Color objects
-    /// that are converted to sf::Glsl::Ivec4.
+    /// This overload can also be called with `sf::Color` objects
+    /// that are converted to `sf::Glsl::Ivec4`.
     ///
     /// If color conversions are used, the ivec4 uniform in GLSL
-    /// will hold the same values as the original sf::Color
-    /// instance. For example, sf::Color(255, 127, 0, 255) is
-    /// mapped to ivec4(255, 127, 0, 255).
+    /// will hold the same values as the original `sf::Color`
+    /// instance. For example, `sf::Color(255, 127, 0, 255)` is
+    /// mapped to `ivec4(255, 127, 0, 255)`.
     ///
     /// \param name   Name of the uniform variable in GLSL
     /// \param vector Value of the ivec4 vector
@@ -426,7 +619,7 @@ public:
     /// \param vector Value of the bvec2 vector
     ///
     ////////////////////////////////////////////////////////////
-    void setUniform(const std::string& name, const Glsl::Bvec2& vector);
+    void setUniform(const std::string& name, Glsl::Bvec2 vector);
 
     ////////////////////////////////////////////////////////////
     /// \brief Specify value for \p bvec3 uniform
@@ -480,12 +673,12 @@ public:
     /// ...
     /// shader.setUniform("the_texture", texture);
     /// \endcode
-    /// It is important to note that \a texture must remain alive as long
+    /// It is important to note that `texture` must remain alive as long
     /// as the shader uses it, no copy is made internally.
     ///
     /// To use the texture of the object being drawn, which cannot be
     /// known in advance, you can pass the special value
-    /// sf::Shader::CurrentTexture:
+    /// `sf::Shader::CurrentTexture`:
     /// \code
     /// shader.setUniform("the_texture", sf::Shader::CurrentTexture).
     /// \endcode
@@ -497,12 +690,18 @@ public:
     void setUniform(const std::string& name, const Texture& texture);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Disallow setting from a temporary texture
+    ///
+    ////////////////////////////////////////////////////////////
+    void setUniform(const std::string& name, const Texture&& texture) = delete;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Specify current texture as \p sampler2D uniform
     ///
     /// This overload maps a shader texture variable to the
     /// texture of the object being drawn, which cannot be
     /// known in advance. The second argument must be
-    /// sf::Shader::CurrentTexture.
+    /// `sf::Shader::CurrentTexture`.
     /// The corresponding parameter in the shader must be a 2D texture
     /// (\p sampler2D GLSL type).
     ///
@@ -589,14 +788,14 @@ public:
     /// \return OpenGL handle of the shader or 0 if not yet loaded
     ///
     ////////////////////////////////////////////////////////////
-    unsigned int getNativeHandle() const;
+    [[nodiscard]] unsigned int getNativeHandle() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Bind a shader for rendering
     ///
     /// This function is not part of the graphics API, it mustn't be
     /// used when drawing SFML entities. It must be used only if you
-    /// mix sf::Shader with OpenGL code.
+    /// mix `sf::Shader` with OpenGL code.
     ///
     /// \code
     /// sf::Shader s1, s2;
@@ -618,32 +817,32 @@ public:
     /// \brief Tell whether or not the system supports shaders
     ///
     /// This function should always be called before using
-    /// the shader features. If it returns false, then
-    /// any attempt to use sf::Shader will fail.
+    /// the shader features. If it returns `false`, then
+    /// any attempt to use `sf::Shader` will fail.
     ///
-    /// \return True if shaders are supported, false otherwise
+    /// \return `true` if shaders are supported, `false` otherwise
     ///
     ////////////////////////////////////////////////////////////
-    static bool isAvailable();
+    [[nodiscard]] static bool isAvailable();
 
     ////////////////////////////////////////////////////////////
     /// \brief Tell whether or not the system supports geometry shaders
     ///
     /// This function should always be called before using
-    /// the geometry shader features. If it returns false, then
-    /// any attempt to use sf::Shader geometry shader features will fail.
+    /// the geometry shader features. If it returns `false`, then
+    /// any attempt to use `sf::Shader` geometry shader features will fail.
     ///
-    /// This function can only return true if isAvailable() would also
-    /// return true, since shaders in general have to be supported in
+    /// This function can only return `true` if isAvailable() would also
+    /// return `true`, since shaders in general have to be supported in
     /// order for geometry shaders to be supported as well.
     ///
     /// Note: The first call to this function, whether by your
     /// code or SFML will result in a context switch.
     ///
-    /// \return True if geometry shaders are supported, false otherwise
+    /// \return `true` if geometry shaders are supported, `false` otherwise
     ///
     ////////////////////////////////////////////////////////////
-    static bool isGeometryAvailable();
+    [[nodiscard]] static bool isGeometryAvailable();
 
 private:
     ////////////////////////////////////////////////////////////
@@ -656,10 +855,12 @@ private:
     /// \param geometryShaderCode Source code of the geometry shader
     /// \param fragmentShaderCode Source code of the fragment shader
     ///
-    /// \return True on success, false if any error happened
+    /// \return `true` on success, `false` if any error happened
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool compile(const char* vertexShaderCode, const char* geometryShaderCode, const char* fragmentShaderCode);
+    [[nodiscard]] bool compile(std::string_view vertexShaderCode,
+                               std::string_view geometryShaderCode,
+                               std::string_view fragmentShaderCode);
 
     ////////////////////////////////////////////////////////////
     /// \brief Bind all the textures used by the shader
@@ -698,16 +899,13 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int m_shaderProgram;  //!< OpenGL identifier for the program
-    int          m_currentTexture; //!< Location of the current texture in the shader
-    TextureTable m_textures;       //!< Texture variables in the shader, mapped to their location
-    UniformTable m_uniforms;       //!< Parameters location cache
+    unsigned int m_shaderProgram{};    //!< OpenGL identifier for the program
+    int          m_currentTexture{-1}; //!< Location of the current texture in the shader
+    TextureTable m_textures;           //!< Texture variables in the shader, mapped to their location
+    UniformTable m_uniforms;           //!< Parameters location cache
 };
 
 } // namespace sf
-
-
-#endif // SFML_SHADER_HPP
 
 
 ////////////////////////////////////////////////////////////
@@ -723,7 +921,7 @@ private:
 /// \li Geometry shaders, that process primitives
 /// \li Fragment (pixel) shaders, that process pixels
 ///
-/// A sf::Shader can be composed of either a vertex shader
+/// A `sf::Shader` can be composed of either a vertex shader
 /// alone, a geometry shader alone, a fragment shader alone,
 /// or any combination of them. (see the variants of the
 /// load functions).
@@ -734,19 +932,19 @@ private:
 /// for SFML.
 ///
 /// Like any C/C++ program, a GLSL shader has its own variables
-/// called \a uniforms that you can set from your C++ application.
-/// sf::Shader handles different types of uniforms:
+/// called _uniforms_ that you can set from your C++ application.
+/// `sf::Shader` handles different types of uniforms:
 /// \li scalars: \p float, \p int, \p bool
 /// \li vectors (2, 3 or 4 components)
 /// \li matrices (3x3 or 4x4)
 /// \li samplers (textures)
 ///
 /// Some SFML-specific types can be converted:
-/// \li sf::Color as a 4D vector (\p vec4)
-/// \li sf::Transform as matrices (\p mat3 or \p mat4)
+/// \li `sf::Color` as a 4D vector (\p vec4)
+/// \li `sf::Transform` as matrices (\p mat3 or \p mat4)
 ///
 /// Every uniform variable in a shader can be set through one of the
-/// setUniform() or setUniformArray() overloads. For example, if you
+/// `setUniform()` or `setUniformArray()` overloads. For example, if you
 /// have a shader with the following uniforms:
 /// \code
 /// uniform float offset;
@@ -757,7 +955,7 @@ private:
 /// uniform sampler2D current;
 /// \endcode
 /// You can set their values from C++ code as follows, using the types
-/// defined in the sf::Glsl namespace:
+/// defined in the `sf::Glsl` namespace:
 /// \code
 /// shader.setUniform("offset", 2.f);
 /// shader.setUniform("point", sf::Vector3f(0.5f, 0.8f, 0.3f));
@@ -767,12 +965,12 @@ private:
 /// shader.setUniform("current", sf::Shader::CurrentTexture);
 /// \endcode
 ///
-/// The special Shader::CurrentTexture argument maps the
+/// The special `Shader::CurrentTexture` argument maps the
 /// given \p sampler2D uniform to the current texture of the
 /// object being drawn (which cannot be known in advance).
 ///
 /// To apply a shader to a drawable, you must pass it as an
-/// additional parameter to the \ref RenderWindow::draw function:
+/// additional parameter to the `RenderWindow::draw` function:
 /// \code
 /// window.draw(sprite, &shader);
 /// \endcode
@@ -788,22 +986,22 @@ private:
 /// be null (which means "no shader").
 ///
 /// Shaders can be used on any drawable, but some combinations are
-/// not interesting. For example, using a vertex shader on a sf::Sprite
+/// not interesting. For example, using a vertex shader on a `sf::Sprite`
 /// is limited because there are only 4 vertices, the sprite would
 /// have to be subdivided in order to apply wave effects.
-/// Another bad example is a fragment shader with sf::Text: the texture
+/// Another bad example is a fragment shader with `sf::Text`: the texture
 /// of the text is not the actual text that you see on screen, it is
 /// a big texture containing all the characters of the font in an
 /// arbitrary order; thus, texture lookups on pixels other than the
 /// current one may not give you the expected result.
 ///
 /// Shaders can also be used to apply global post-effects to the
-/// current contents of the target (like the old sf::PostFx class
-/// in SFML 1). This can be done in two different ways:
-/// \li draw everything to a sf::RenderTexture, then draw it to
+/// current contents of the target.
+/// This can be done in two different ways:
+/// \li draw everything to a `sf::RenderTexture`, then draw it to
 ///     the main target using the shader
 /// \li draw everything directly to the main target, then use
-///     sf::Texture::update(Window&) to copy its contents to a texture
+///     `sf::Texture::update(Window&)` to copy its contents to a texture
 ///     and draw it to the main target using the shader
 ///
 /// The first technique is more optimized because it doesn't involve
@@ -811,8 +1009,8 @@ private:
 /// second one doesn't impact the rendering process and can be
 /// easily inserted anywhere without impacting all the code.
 ///
-/// Like sf::Texture that can be used as a raw OpenGL texture,
-/// sf::Shader can also be used directly as a raw shader for
+/// Like `sf::Texture` that can be used as a raw OpenGL texture,
+/// `sf::Shader` can also be used directly as a raw shader for
 /// custom OpenGL geometry.
 /// \code
 /// sf::Shader::bind(&shader);
@@ -820,6 +1018,6 @@ private:
 /// sf::Shader::bind(nullptr);
 /// \endcode
 ///
-/// \see sf::Glsl
+/// \see `sf::Glsl`
 ///
 ////////////////////////////////////////////////////////////

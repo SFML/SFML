@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,20 +22,18 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CURSORIMPLDRM_HPP
-#define SFML_CURSORIMPLDRM_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Cursor.hpp>
-#include <SFML/Window/WindowStyle.hpp> // Prevent conflict with macro None from Xlib
+#include <SFML/Window/WindowEnums.hpp> // Prevent conflict with macro None from Xlib
+
+#include <SFML/System/Vector2.hpp>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Unix implementation of Cursor
@@ -50,7 +48,7 @@ public:
     /// Refer to sf::Cursor::Cursor().
     ///
     ////////////////////////////////////////////////////////////
-    CursorImpl();
+    CursorImpl() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Deleted copy constructor
@@ -112,9 +110,4 @@ private:
     void release();
 };
 
-} // namespace priv
-
-} // namespace sf
-
-
-#endif // SFML_CUSROSIMPLDRM_HPP
+} // namespace sf::priv

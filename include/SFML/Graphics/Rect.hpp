@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_RECT_HPP
-#define SFML_RECT_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -47,10 +46,10 @@ public:
     /// \brief Default constructor
     ///
     /// Creates an empty rectangle (it is equivalent to calling
-    /// Rect(0, 0, 0, 0)).
+    /// `Rect({0, 0}, {0, 0})`).
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Rect();
+    constexpr Rect() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the rectangle from position and size
@@ -62,109 +61,86 @@ public:
     /// \param size     Size of the rectangle
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Rect(const Vector2<T>& position, const Vector2<T>& size);
+    constexpr Rect(Vector2<T> position, Vector2<T> size);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Construct the rectangle from another type of rectangle
-    ///
-    /// This constructor doesn't replace the copy constructor,
-    /// it's called only when U != T.
-    /// A call to this constructor will fail to compile if U
-    /// is not convertible to T.
-    ///
-    /// \param rectangle Rectangle to convert
+    /// \brief Converts the rectangle to another type of rectangle
     ///
     ////////////////////////////////////////////////////////////
     template <typename U>
-    constexpr explicit Rect(const Rect<U>& rectangle);
+    constexpr explicit operator Rect<U>() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check if a point is inside the rectangle's area
     ///
     /// This check is non-inclusive. If the point lies on the
-    /// edge of the rectangle, this function will return false.
+    /// edge of the rectangle, this function will return `false`.
     ///
     /// \param point Point to test
     ///
-    /// \return True if the point is inside, false otherwise
+    /// \return `true` if the point is inside, `false` otherwise
     ///
-    /// \see findIntersection
+    /// \see `findIntersection`
     ///
     ////////////////////////////////////////////////////////////
-    constexpr bool contains(const Vector2<T>& point) const;
+    [[nodiscard]] constexpr bool contains(Vector2<T> point) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check the intersection between two rectangles
     ///
     /// \param rectangle Rectangle to test
     ///
-    /// \return Intersection rectangle if intersecting, std::nullopt otherwise
+    /// \return Intersection rectangle if intersecting, `std::nullopt` otherwise
     ///
-    /// \see contains
+    /// \see `contains`
     ///
     ////////////////////////////////////////////////////////////
-    constexpr std::optional<Rect<T>> findIntersection(const Rect<T>& rectangle) const;
+    [[nodiscard]] constexpr std::optional<Rect<T>> findIntersection(const Rect<T>& rectangle) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the position of the rectangle's top-left corner
+    /// \brief Get the position of the center of the rectangle
     ///
-    /// \return Position of rectangle
-    ///
-    /// \see getSize
+    /// \return Center of rectangle
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Vector2<T> getPosition() const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the size of the rectangle
-    ///
-    /// \return Size of rectangle
-    ///
-    /// \see getPosition
-    ///
-    ////////////////////////////////////////////////////////////
-    constexpr Vector2<T> getSize() const;
+    [[nodiscard]] constexpr Vector2<T> getCenter() const;
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    T left;   //!< Left coordinate of the rectangle
-    T top;    //!< Top coordinate of the rectangle
-    T width;  //!< Width of the rectangle
-    T height; //!< Height of the rectangle
+    Vector2<T> position{}; //!< Position of the top-left corner of the rectangle
+    Vector2<T> size{};     //!< Size of the rectangle
 };
 
 ////////////////////////////////////////////////////////////
 /// \relates Rect
-/// \brief Overload of binary operator ==
+/// \brief Overload of binary `operator==`
 ///
 /// This operator compares strict equality between two rectangles.
 ///
-/// \param left  Left operand (a rectangle)
-/// \param right Right operand (a rectangle)
+/// \param lhs Left operand (a rectangle)
+/// \param rhs Right operand (a rectangle)
 ///
-/// \return True if \a left is equal to \a right
+/// \return `true` if \a lhs is equal to \a rhs
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-[[nodiscard]] constexpr bool operator==(const Rect<T>& left, const Rect<T>& right);
+[[nodiscard]] constexpr bool operator==(const Rect<T>& lhs, const Rect<T>& rhs);
 
 ////////////////////////////////////////////////////////////
 /// \relates Rect
-/// \brief Overload of binary operator !=
+/// \brief Overload of binary `operator!=`
 ///
 /// This operator compares strict difference between two rectangles.
 ///
-/// \param left  Left operand (a rectangle)
-/// \param right Right operand (a rectangle)
+/// \param lhs Left operand (a rectangle)
+/// \param rhs Right operand (a rectangle)
 ///
-/// \return True if \a left is not equal to \a right
+/// \return `true` if \a lhs is not equal to \a rhs
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
-[[nodiscard]] constexpr bool operator!=(const Rect<T>& left, const Rect<T>& right);
-
-#include <SFML/Graphics/Rect.inl>
+[[nodiscard]] constexpr bool operator!=(const Rect<T>& lhs, const Rect<T>& rhs);
 
 // Create type aliases for the most common types
 using IntRect   = Rect<int>;
@@ -172,8 +148,7 @@ using FloatRect = Rect<float>;
 
 } // namespace sf
 
-
-#endif // SFML_RECT_HPP
+#include <SFML/Graphics/Rect.inl>
 
 
 ////////////////////////////////////////////////////////////
@@ -182,33 +157,33 @@ using FloatRect = Rect<float>;
 ///
 /// A rectangle is defined by its top-left corner and its size.
 /// It is a very simple class defined for convenience, so
-/// its member variables (left, top, width and height) are public
+/// its member variables (position and size) are public
 /// and can be accessed directly, just like the vector classes
-/// (Vector2 and Vector3).
+/// (`Vector2` and `Vector3`).
 ///
-/// To keep things simple, sf::Rect doesn't define
+/// To keep things simple, `sf::Rect` doesn't define
 /// functions to emulate the properties that are not directly
-/// members (such as right, bottom, center, etc.), it rather
+/// members (such as right, bottom, etc.), it rather
 /// only provides intersection functions.
 ///
-/// sf::Rect uses the usual rules for its boundaries:
+/// `sf::Rect` uses the usual rules for its boundaries:
 /// \li The left and top edges are included in the rectangle's area
-/// \li The right (left + width) and bottom (top + height) edges are excluded from the rectangle's area
+/// \li The right and bottom edges are excluded from the rectangle's area
 ///
-/// This means that sf::IntRect(0, 0, 1, 1) and sf::IntRect(1, 1, 1, 1)
+/// This means that `sf::IntRect({0, 0}, {1, 1})` and `sf::IntRect({1, 1}, {1, 1})`
 /// don't intersect.
 ///
-/// sf::Rect is a template and may be used with any numeric type, but
+/// `sf::Rect` is a template and may be used with any numeric type, but
 /// for simplicity type aliases for the instantiations used by SFML are given:
-/// \li sf::Rect<int> is sf::IntRect
-/// \li sf::Rect<float> is sf::FloatRect
+/// \li `sf::Rect<int>` is `sf::IntRect`
+/// \li `sf::Rect<float>` is `sf::FloatRect`
 ///
 /// So that you don't have to care about the template syntax.
 ///
 /// Usage example:
 /// \code
 /// // Define a rectangle, located at (0, 0) with a size of 20x5
-/// sf::IntRect r1(0, 0, 20, 5);
+/// sf::IntRect r1({0, 0}, {20, 5});
 ///
 /// // Define another rectangle, located at (4, 2) with a size of 18x10
 /// sf::Vector2i position(4, 2);
@@ -216,13 +191,13 @@ using FloatRect = Rect<float>;
 /// sf::IntRect r2(position, size);
 ///
 /// // Test intersections with the point (3, 1)
-/// bool b1 = r1.contains(3, 1); // true
-/// bool b2 = r2.contains(3, 1); // false
+/// bool b1 = r1.contains({3, 1}); // true
+/// bool b2 = r2.contains({3, 1}); // false
 ///
 /// // Test the intersection between r1 and r2
 /// std::optional<sf::IntRect> result = r1.findIntersection(r2);
 /// // result.has_value() == true
-/// // result.value() == (4, 2, 16, 3)
+/// // result.value() == sf::IntRect({4, 2}, {16, 3})
 /// \endcode
 ///
 ////////////////////////////////////////////////////////////

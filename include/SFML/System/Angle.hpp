@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,15 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_ANGLE_HPP
-#define SFML_ANGLE_HPP
-
-////////////////////////////////////////////////////////////
-// Headers
-////////////////////////////////////////////////////////////
-#include <SFML/System/Export.hpp>
-
-#include <cassert>
+#pragma once
 
 
 namespace sf
@@ -48,14 +40,14 @@ public:
     /// Sets the angle value to zero.
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Angle();
+    constexpr Angle() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the angle's value in degrees
     ///
     /// \return Angle in degrees
     ///
-    /// \see asRadians
+    /// \see `asRadians`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] constexpr float asDegrees() const;
@@ -65,7 +57,7 @@ public:
     ///
     /// \return Angle in radians
     ///
-    /// \see asDegrees
+    /// \see `asDegrees`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] constexpr float asRadians() const;
@@ -75,7 +67,7 @@ public:
     ///
     /// Similar to a modulo operation, this returns a copy of the angle
     /// constrained to the range [-180°, 180°) == [-Pi, Pi).
-    /// The resulting angle represents a rotation which is equivalent to *this.
+    /// The resulting angle represents a rotation which is equivalent to `*this`.
     ///
     /// The name "signed" originates from the similarity to signed integers:
     /// <table>
@@ -98,7 +90,7 @@ public:
     ///
     /// \return Signed angle, wrapped to [-180°, 180°)
     ///
-    /// \see wrapUnsigned
+    /// \see `wrapUnsigned`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] constexpr Angle wrapSigned() const;
@@ -108,7 +100,7 @@ public:
     ///
     /// Similar to a modulo operation, this returns a copy of the angle
     /// constrained to the range [0°, 360°) == [0, Tau) == [0, 2*Pi).
-    /// The resulting angle represents a rotation which is equivalent to *this.
+    /// The resulting angle represents a rotation which is equivalent to `*this`.
     ///
     /// The name "unsigned" originates from the similarity to unsigned integers:
     /// <table>
@@ -131,7 +123,7 @@ public:
     ///
     /// \return Unsigned angle, wrapped to [0°, 360°)
     ///
-    /// \see wrapSigned
+    /// \see `wrapSigned`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] constexpr Angle wrapUnsigned() const;
@@ -139,6 +131,7 @@ public:
     ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
+    // NOLINTNEXTLINE(readability-identifier-naming)
     static const Angle Zero; //!< Predefined 0 degree angle value
 
 private:
@@ -146,21 +139,20 @@ private:
     friend constexpr Angle radians(float angle);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Construct from a number of degrees
+    /// \brief Construct from a number of radians
     ///
     /// This function is internal. To construct angle values,
-    /// use sf::radians or sf::degrees instead.
+    /// use `sf::radians` or `sf::degrees` instead.
     ///
-    /// \param degrees Angle in degrees
+    /// \param radians Angle in radians
     ///
     ////////////////////////////////////////////////////////////
-    constexpr explicit Angle(float degrees);
+    constexpr explicit Angle(float radians);
 
-private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    float m_degrees{0}; //!< Angle value stored as degrees
+    float m_radians{}; //!< Angle value stored as radians
 };
 
 ////////////////////////////////////////////////////////////
@@ -170,7 +162,7 @@ private:
 ///
 /// \return Angle value constructed from the number of degrees
 ///
-/// \see radians
+/// \see `radians`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr Angle degrees(float angle);
@@ -182,86 +174,92 @@ private:
 ///
 /// \return Angle value constructed from the number of radians
 ///
-/// \see degrees
+/// \see `degrees`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr Angle radians(float angle);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
-/// \brief Overload of == operator to compare two angle values
+/// \brief Overload of `operator==` to compare two angle values
+/// \note Does not automatically wrap the angle value
 ///
 /// \param left  Left operand (an angle)
 /// \param right Right operand (an angle)
 ///
-/// \return True if both angle values are equal
+/// \return `true` if both angle values are equal
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr bool operator==(Angle left, Angle right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
-/// \brief Overload of != operator to compare two angle values
+/// \brief Overload of `operator!=` to compare two angle values
+/// \note Does not automatically wrap the angle value
 ///
 /// \param left  Left operand (an angle)
 /// \param right Right operand (an angle)
 ///
-/// \return True if both angle values are different
+/// \return `true` if both angle values are different
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr bool operator!=(Angle left, Angle right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
-/// \brief Overload of < operator to compare two angle values
+/// \brief Overload of `operator<` to compare two angle values
+/// \note Does not automatically wrap the angle value
 ///
 /// \param left  Left operand (an angle)
 /// \param right Right operand (an angle)
 ///
-/// \return True if \a left is less than \a right
+/// \return `true` if \a left is less than \a right
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr bool operator<(Angle left, Angle right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
-/// \brief Overload of > operator to compare two angle values
+/// \brief Overload of `operator>` to compare two angle values
+/// \note Does not automatically wrap the angle value
 ///
 /// \param left  Left operand (an angle)
 /// \param right Right operand (an angle)
 ///
-/// \return True if \a left is greater than \a right
+/// \return `true` if \a left is greater than \a right
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr bool operator>(Angle left, Angle right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
-/// \brief Overload of <= operator to compare two angle values
+/// \brief Overload of `operator<=` to compare two angle values
+/// \note Does not automatically wrap the angle value
 ///
 /// \param left  Left operand (an angle)
 /// \param right Right operand (an angle)
 ///
-/// \return True if \a left is less than or equal to \a right
+/// \return `true` if \a left is less than or equal to \a right
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr bool operator<=(Angle left, Angle right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
-/// \brief Overload of >= operator to compare two angle values
+/// \brief Overload of `operator>=` to compare two angle values
+/// \note Does not automatically wrap the angle value
 ///
 /// \param left  Left operand (an angle)
 /// \param right Right operand (an angle)
 ///
-/// \return True if \a left is greater than or equal to \a right
+/// \return `true` if \a left is greater than or equal to \a right
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr bool operator>=(Angle left, Angle right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
-/// \brief Overload of unary - operator to negate an angle value.
+/// \brief Overload of unary `operator-` to negate an angle value.
 ///
 /// Represents a rotation in the opposite direction.
 ///
@@ -274,7 +272,7 @@ private:
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
-/// \brief Overload of binary + operator to add two angle values
+/// \brief Overload of binary `operator+` to add two angle values
 ///
 /// \param left  Left operand (an angle)
 /// \param right Right operand (an angle)
@@ -286,7 +284,7 @@ private:
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
-/// \brief Overload of binary += operator to add/assign two angle values
+/// \brief Overload of binary `operator+=` to add/assign two angle values
 ///
 /// \param left  Left operand (an angle)
 /// \param right Right operand (an angle)
@@ -298,7 +296,7 @@ constexpr Angle& operator+=(Angle& left, Angle right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
-/// \brief Overload of binary - operator to subtract two angle values
+/// \brief Overload of binary `operator-` to subtract two angle values
 ///
 /// \param left  Left operand (an angle)
 /// \param right Right operand (an angle)
@@ -310,7 +308,7 @@ constexpr Angle& operator+=(Angle& left, Angle right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
-/// \brief Overload of binary -= operator to subtract/assign two angle values
+/// \brief Overload of binary `operator-=` to subtract/assign two angle values
 ///
 /// \param left  Left operand (an angle)
 /// \param right Right operand (an angle)
@@ -322,79 +320,79 @@ constexpr Angle& operator-=(Angle& left, Angle right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
-/// \brief Overload of binary * operator to scale an angle value
+/// \brief Overload of binary `operator*` to scale an angle value
 ///
 /// \param left  Left operand (an angle)
 /// \param right Right operand (a number)
 ///
-/// \return \a left multiplied by \a right
+/// \return `left` multiplied by `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr Angle operator*(Angle left, float right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
-/// \brief Overload of binary * operator to scale an angle value
+/// \brief Overload of binary `operator*` to scale an angle value
 ///
 /// \param left  Left operand (a number)
 /// \param right Right operand (an angle)
 ///
-/// \return \a left multiplied by \a right
+/// \return `left` multiplied by `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr Angle operator*(float left, Angle right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
-/// \brief Overload of binary *= operator to scale/assign an angle value
+/// \brief Overload of binary `operator*=` to scale/assign an angle value
 ///
 /// \param left  Left operand (an angle)
 /// \param right Right operand (a number)
 ///
-/// \return \a left multiplied by \a right
+/// \return `left` multiplied by `right`
 ///
 ////////////////////////////////////////////////////////////
 constexpr Angle& operator*=(Angle& left, float right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
-/// \brief Overload of binary / operator to scale an angle value
+/// \brief Overload of binary `operator/` to scale an angle value
 ///
 /// \param left  Left operand (an angle)
 /// \param right Right operand (a number)
 ///
-/// \return \a left divided by \a right
+/// \return `left` divided by `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr Angle operator/(Angle left, float right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
-/// \brief Overload of binary /= operator to scale/assign an angle value
+/// \brief Overload of binary `operator/=` to scale/assign an angle value
 ///
 /// \param left  Left operand (an angle)
 /// \param right Right operand (a number)
 ///
-/// \return \a left divided by \a right
+/// \return `left` divided by `right`
 ///
 ////////////////////////////////////////////////////////////
 constexpr Angle& operator/=(Angle& left, float right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
-/// \brief Overload of binary / operator to compute the ratio of two angle values
+/// \brief Overload of binary `operator/` to compute the ratio of two angle values
 ///
 /// \param left  Left operand (an angle)
 /// \param right Right operand (an angle)
 ///
-/// \return \a left divided by \a right
+/// \return `left` divided by `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr float operator/(Angle left, Angle right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
-/// \brief Overload of binary % operator to compute modulo of an angle value.
+/// \brief Overload of binary `operator%` to compute modulo of an angle value.
 ///
 /// Right hand angle must be greater than zero.
 ///
@@ -407,19 +405,19 @@ constexpr Angle& operator/=(Angle& left, float right);
 /// \param left  Left operand (an angle)
 /// \param right Right operand (an angle)
 ///
-/// \return \a left modulo \a right
+/// \return `left` modulo `right`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] constexpr Angle operator%(Angle left, Angle right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Angle
-/// \brief Overload of binary %= operator to compute/assign remainder of an angle value
+/// \brief Overload of binary `operator%=` to compute/assign remainder of an angle value
 ///
 /// \param left  Left operand (an angle)
 /// \param right Right operand (an angle)
 ///
-/// \return \a left modulo \a right
+/// \return `left` modulo `right`
 ///
 ////////////////////////////////////////////////////////////
 constexpr Angle& operator%=(Angle& left, Angle right);
@@ -429,63 +427,59 @@ namespace Literals
 
 ////////////////////////////////////////////////////////////
 /// \relates sf::Angle
-/// \brief User defined literal for angles in degrees, e.g. 10.5_deg
+/// \brief User defined literal for angles in degrees, e.g.\ `10.5_deg`
 ///
 /// \param angle Angle in degrees
 ///
-/// \return \a Angle
+/// \return Angle
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Angle operator"" _deg(long double angle);
+[[nodiscard]] constexpr Angle operator""_deg(long double angle);
 
 ////////////////////////////////////////////////////////////
 /// \relates sf::Angle
-/// \brief User defined literal for angles in degrees, e.g. 90_deg
+/// \brief User defined literal for angles in degrees, e.g.\ `90_deg`
 ///
 /// \param angle Angle in degrees
 ///
-/// \return \a Angle
+/// \return Angle
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Angle operator"" _deg(unsigned long long int angle);
+[[nodiscard]] constexpr Angle operator""_deg(unsigned long long int angle);
 
 ////////////////////////////////////////////////////////////
 /// \relates sf::Angle
-/// \brief User defined literal for angles in radians, e.g. 0.1_rad
+/// \brief User defined literal for angles in radians, e.g.\ `0.1_rad`
 ///
 /// \param angle Angle in radians
 ///
-/// \return \a Angle
+/// \return Angle
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Angle operator"" _rad(long double angle);
+[[nodiscard]] constexpr Angle operator""_rad(long double angle);
 
 ////////////////////////////////////////////////////////////
 /// \relates sf::Angle
-/// \brief User defined literal for angles in radians, e.g. 2_rad
+/// \brief User defined literal for angles in radians, e.g.\ `2_rad`
 ///
 /// \param angle Angle in radians
 ///
-/// \return \a Angle
+/// \return Angle
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] constexpr Angle operator"" _rad(unsigned long long int angle);
+[[nodiscard]] constexpr Angle operator""_rad(unsigned long long int angle);
 
 } // namespace Literals
-
-#include <SFML/System/Angle.inl>
-
 } // namespace sf
 
-
-#endif // SFML_ANGLE_HPP
+#include <SFML/System/Angle.inl>
 
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Angle
 /// \ingroup system
 ///
-/// sf::Angle encapsulates an angle value in a flexible way.
+/// `sf::Angle` encapsulates an angle value in a flexible way.
 /// It allows for defining an angle value either as a number
 /// of degrees or radians. It also works the other way
 /// around. You can read an angle value as either a number

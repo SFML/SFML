@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -28,15 +28,11 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
 
+#include <cassert>
+
 
 namespace sf
 {
-////////////////////////////////////////////////////////////
-VertexArray::VertexArray() : m_vertices(), m_primitiveType(PrimitiveType::Points)
-{
-}
-
-
 ////////////////////////////////////////////////////////////
 VertexArray::VertexArray(PrimitiveType type, std::size_t vertexCount) : m_vertices(vertexCount), m_primitiveType(type)
 {
@@ -53,6 +49,7 @@ std::size_t VertexArray::getVertexCount() const
 ////////////////////////////////////////////////////////////
 Vertex& VertexArray::operator[](std::size_t index)
 {
+    assert(index < m_vertices.size() && "Index is out of bounds");
     return m_vertices[index];
 }
 
@@ -60,6 +57,7 @@ Vertex& VertexArray::operator[](std::size_t index)
 ////////////////////////////////////////////////////////////
 const Vertex& VertexArray::operator[](std::size_t index) const
 {
+    assert(index < m_vertices.size() && "Index is out of bounds");
     return m_vertices[index];
 }
 
@@ -111,7 +109,7 @@ FloatRect VertexArray::getBounds() const
 
         for (std::size_t i = 1; i < m_vertices.size(); ++i)
         {
-            Vector2f position = m_vertices[i].position;
+            const Vector2f position = m_vertices[i].position;
 
             // Update left and right
             if (position.x < left)
@@ -126,18 +124,16 @@ FloatRect VertexArray::getBounds() const
                 bottom = position.y;
         }
 
-        return FloatRect({left, top}, {right - left, bottom - top});
+        return {{left, top}, {right - left, bottom - top}};
     }
-    else
-    {
-        // Array is empty
-        return FloatRect();
-    }
+
+    // Array is empty
+    return {};
 }
 
 
 ////////////////////////////////////////////////////////////
-void VertexArray::draw(RenderTarget& target, const RenderStates& states) const
+void VertexArray::draw(RenderTarget& target, RenderStates states) const
 {
     if (!m_vertices.empty())
         target.draw(m_vertices.data(), m_vertices.size(), m_primitiveType, states);

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -28,6 +28,7 @@
 #include <SFML/Network/Socket.hpp>
 #include <SFML/Network/SocketImpl.hpp>
 #include <SFML/Network/SocketSelector.hpp>
+
 #include <SFML/System/Err.hpp>
 
 #include <algorithm>
@@ -45,10 +46,10 @@ namespace sf
 ////////////////////////////////////////////////////////////
 struct SocketSelector::SocketSelectorImpl
 {
-    fd_set allSockets;   //!< Set containing all the sockets handles
-    fd_set socketsReady; //!< Set containing handles of the sockets that are ready
-    int    maxSocket;    //!< Maximum socket handle
-    int    socketCount;  //!< Number of socket handles
+    fd_set allSockets{};   //!< Set containing all the sockets handles
+    fd_set socketsReady{}; //!< Set containing handles of the sockets that are ready
+    int    maxSocket{};    //!< Maximum socket handle
+    int    socketCount{};  //!< Number of socket handles
 };
 
 
@@ -60,19 +61,36 @@ SocketSelector::SocketSelector() : m_impl(std::make_unique<SocketSelectorImpl>()
 
 
 ////////////////////////////////////////////////////////////
+SocketSelector::~SocketSelector() = default;
+
+
+////////////////////////////////////////////////////////////
 SocketSelector::SocketSelector(const SocketSelector& copy) : m_impl(std::make_unique<SocketSelectorImpl>(*copy.m_impl))
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-SocketSelector::~SocketSelector() = default;
+SocketSelector& SocketSelector::operator=(const SocketSelector& right)
+{
+    SocketSelector temp(right);
+    std::swap(m_impl, temp.m_impl);
+    return *this;
+}
+
+
+////////////////////////////////////////////////////////////
+SocketSelector::SocketSelector(SocketSelector&&) noexcept = default;
+
+
+////////////////////////////////////////////////////////////]
+SocketSelector& SocketSelector::operator=(SocketSelector&&) noexcept = default;
 
 
 ////////////////////////////////////////////////////////////
 void SocketSelector::add(Socket& socket)
 {
-    SocketHandle handle = socket.getHandle();
+    const SocketHandle handle = socket.getNativeHandle();
     if (handle != priv::SocketImpl::invalidSocket())
     {
 
@@ -114,7 +132,7 @@ void SocketSelector::add(Socket& socket)
 ////////////////////////////////////////////////////////////
 void SocketSelector::remove(Socket& socket)
 {
-    SocketHandle handle = socket.getHandle();
+    const SocketHandle handle = socket.getNativeHandle();
     if (handle != priv::SocketImpl::invalidSocket())
     {
 
@@ -153,16 +171,16 @@ void SocketSelector::clear()
 bool SocketSelector::wait(Time timeout)
 {
     // Setup the timeout
-    timeval time;
-    time.tv_sec  = static_cast<long>(timeout.asMicroseconds() / 1000000);
-    time.tv_usec = static_cast<int>(timeout.asMicroseconds() % 1000000);
+    timeval time{};
+    time.tv_sec  = static_cast<long>(timeout.asMicroseconds() / 1'000'000);
+    time.tv_usec = static_cast<int>(timeout.asMicroseconds() % 1'000'000);
 
     // Initialize the set that will contain the sockets that are ready
     m_impl->socketsReady = m_impl->allSockets;
 
     // Wait until one of the sockets is ready for reading, or timeout is reached
     // The first parameter is ignored on Windows
-    int count = select(m_impl->maxSocket + 1, &m_impl->socketsReady, nullptr, nullptr, timeout != Time::Zero ? &time : nullptr);
+    const int count = select(m_impl->maxSocket + 1, &m_impl->socketsReady, nullptr, nullptr, timeout != Time::Zero ? &time : nullptr);
 
     return count > 0;
 }
@@ -171,7 +189,7 @@ bool SocketSelector::wait(Time timeout)
 ////////////////////////////////////////////////////////////
 bool SocketSelector::isReady(Socket& socket) const
 {
-    SocketHandle handle = socket.getHandle();
+    const SocketHandle handle = socket.getNativeHandle();
     if (handle != priv::SocketImpl::invalidSocket())
     {
 
@@ -186,17 +204,6 @@ bool SocketSelector::isReady(Socket& socket) const
     }
 
     return false;
-}
-
-
-////////////////////////////////////////////////////////////
-SocketSelector& SocketSelector::operator=(const SocketSelector& right)
-{
-    SocketSelector temp(right);
-
-    std::swap(m_impl, temp.m_impl);
-
-    return *this;
 }
 
 } // namespace sf

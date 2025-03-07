@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundBufferRecorder.hpp>
+
 #include <SFML/System/Err.hpp>
 
 #include <algorithm>
@@ -47,7 +48,7 @@ SoundBufferRecorder::~SoundBufferRecorder()
 bool SoundBufferRecorder::onStart()
 {
     m_samples.clear();
-    m_buffer = SoundBuffer();
+    m_buffer = {};
 
     return true;
 }
@@ -68,7 +69,7 @@ void SoundBufferRecorder::onStop()
     if (m_samples.empty())
         return;
 
-    if (!m_buffer.loadFromSamples(m_samples.data(), m_samples.size(), getChannelCount(), getSampleRate()))
+    if (!m_buffer.loadFromSamples(m_samples.data(), m_samples.size(), getChannelCount(), getSampleRate(), getChannelMap()))
         err() << "Failed to stop capturing audio data" << std::endl;
 }
 

@@ -26,149 +26,97 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
 #include <SFML/Window/EGLCheck.hpp>
+
+#include <SFML/System/Err.hpp>
 
 #include <glad/egl.h>
 
+#include <filesystem>
 #include <ostream>
-#include <string>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-void eglCheckError(const std::filesystem::path& file, unsigned int line, const char* expression)
+bool eglCheckError(std::string_view file, unsigned int line, std::string_view expression)
 {
-    // Obtain information about the success or failure of the most recent EGL
-    // function called in the current thread
-    EGLint errorCode = eglGetError();
-
-    if (errorCode != EGL_SUCCESS)
+    const auto logError = [&](const char* error, const char* description)
     {
-        std::string error       = "unknown error";
-        std::string description = "no description";
-
-        // Decode the error code returned
-        switch (errorCode)
-        {
-            case EGL_NOT_INITIALIZED:
-            {
-                error       = "EGL_NOT_INITIALIZED";
-                description = "EGL is not initialized, or could not be initialized, for the specified display";
-                break;
-            }
-
-            case EGL_BAD_ACCESS:
-            {
-                error = "EGL_BAD_ACCESS";
-                description =
-                    "EGL cannot access a requested resource (for example, a context is bound in another thread)";
-                break;
-            }
-
-            case EGL_BAD_ALLOC:
-            {
-                error       = "EGL_BAD_ALLOC";
-                description = "EGL failed to allocate resources for the requested operation";
-                break;
-            }
-            case EGL_BAD_ATTRIBUTE:
-            {
-                error       = "EGL_BAD_ATTRIBUTE";
-                description = "an unrecognized attribute or attribute value was passed in an attribute list";
-                break;
-            }
-
-            case EGL_BAD_CONTEXT:
-            {
-                error       = "EGL_BAD_CONTEXT";
-                description = "an EGLContext argument does not name a valid EGLContext";
-                break;
-            }
-
-            case EGL_BAD_CONFIG:
-            {
-                error       = "EGL_BAD_CONFIG";
-                description = "an EGLConfig argument does not name a valid EGLConfig";
-                break;
-            }
-
-            case EGL_BAD_CURRENT_SURFACE:
-            {
-                error = "EGL_BAD_CURRENT_SURFACE";
-                description =
-                    "the current surface of the calling thread is a window, pbuffer, or pixmap that is no longer valid";
-                break;
-            }
-
-            case EGL_BAD_DISPLAY:
-            {
-                error = "EGL_BAD_DISPLAY";
-                description =
-                    "an EGLDisplay argument does not name a valid EGLDisplay; or, EGL is not initialized on the "
-                    "specified EGLDisplay";
-                break;
-            }
-
-
-            case EGL_BAD_SURFACE:
-            {
-                error = "EGL_BAD_SURFACE";
-                description =
-                    "an EGLSurface argument does not name a valid surface (window, pbuffer, or pixmap) configured for "
-                    "rendering";
-                break;
-            }
-
-            case EGL_BAD_MATCH:
-            {
-                error = "EGL_BAD_MATCH";
-                description =
-                    "arguments are inconsistent; for example, an otherwise valid context requires buffers (e.g. depth "
-                    "or stencil) not allocated by an otherwise valid surface";
-                break;
-            }
-
-            case EGL_BAD_PARAMETER:
-            {
-                error       = "EGL_BAD_PARAMETER";
-                description = "one or more argument values are invalid";
-                break;
-            }
-
-            case EGL_BAD_NATIVE_PIXMAP:
-            {
-                error       = "EGL_BAD_NATIVE_PIXMAP";
-                description = "an EGLNativePixmapType argument does not refer to a valid native pixmap";
-                break;
-            }
-
-            case EGL_BAD_NATIVE_WINDOW:
-            {
-                error       = "EGL_BAD_NATIVE_WINDOW";
-                description = "an EGLNativeWindowType argument does not refer to a valid native window";
-                break;
-            }
-
-            case EGL_CONTEXT_LOST:
-            {
-                error = "EGL_CONTEXT_LOST";
-                description =
-                    "a power management event has occurred. The application must destroy all contexts and reinitialize "
-                    "client API state and objects to continue rendering";
-                break;
-            }
-        }
-
-        // Log the error
-        err() << "An internal EGL call failed in " << file.filename() << " (" << line << ") : "
+        err() << "An internal EGL call failed in " << std::filesystem::path(file).filename() << "(" << line << ")."
               << "\nExpression:\n   " << expression << "\nError description:\n   " << error << "\n   " << description << '\n'
               << std::endl;
+
+        return false;
+    };
+
+    switch (eglGetError())
+    {
+        case EGL_SUCCESS:
+            return true;
+
+        case EGL_NOT_INITIALIZED:
+            return logError("EGL_NOT_INITIALIZED",
+                            "EGL is not initialized, or could not be initialized, for the specified display");
+
+        case EGL_BAD_ACCESS:
+            return logError("EGL_BAD_ACCESS",
+                            "EGL cannot access a requested resource (for example, a context is bound in another "
+                            "thread)");
+
+        case EGL_BAD_ALLOC:
+            return logError("EGL_BAD_ALLOC", "EGL failed to allocate resources for the requested operation");
+
+        case EGL_BAD_ATTRIBUTE:
+            return logError("EGL_BAD_ATTRIBUTE",
+                            "an unrecognized attribute or attribute value was passed in an attribute list");
+
+        case EGL_BAD_CONTEXT:
+            return logError("EGL_BAD_CONTEXT", "an EGLContext argument does not name a valid EGLContext");
+
+        case EGL_BAD_CONFIG:
+            return logError("EGL_BAD_CONFIG", "an EGLConfig argument does not name a valid EGLConfig");
+
+        case EGL_BAD_CURRENT_SURFACE:
+            return logError("EGL_BAD_CURRENT_SURFACE",
+                            "the current surface of the calling thread is a window, pbuffer, or pixmap that is no "
+                            "longer valid");
+
+        case EGL_BAD_DISPLAY:
+            return logError("EGL_BAD_DISPLAY",
+                            "an EGLDisplay argument does not name a valid EGLDisplay; or, EGL is not initialized on "
+                            "the specified EGLDisplay");
+
+
+        case EGL_BAD_SURFACE:
+            return logError("EGL_BAD_SURFACE",
+                            "an EGLSurface argument does not name a valid surface (window, pbuffer, or pixmap) "
+                            "configured for rendering");
+
+        case EGL_BAD_MATCH:
+            return logError("EGL_BAD_MATCH",
+                            "arguments are inconsistent; for example, an otherwise valid context requires buffers "
+                            "(e.g. depth or stencil) not allocated by an otherwise valid surface");
+
+        case EGL_BAD_PARAMETER:
+            return logError("EGL_BAD_PARAMETER", "one or more argument values are invalid");
+
+        case EGL_BAD_NATIVE_PIXMAP:
+            return logError("EGL_BAD_NATIVE_PIXMAP",
+                            "an EGLNativePixmapType argument does not refer to a valid native pixmap");
+
+        case EGL_BAD_NATIVE_WINDOW:
+            return logError("EGL_BAD_NATIVE_WINDOW",
+                            "an EGLNativeWindowType argument does not refer to a valid native window");
+
+        case EGL_CONTEXT_LOST:
+            return logError("EGL_CONTEXT_LOST",
+                            "a power management event has occurred. The application must destroy all contexts and "
+                            "reinitialize client API state and objects to continue rendering");
+
+        default:
+            return logError("Unknown error", "Unknown description");
     }
 }
 
-} // namespace priv
-} // namespace sf
+} // namespace sf::priv

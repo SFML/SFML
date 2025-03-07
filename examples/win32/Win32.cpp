@@ -1,4 +1,3 @@
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
@@ -6,8 +5,9 @@
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
-#include <cmath>
 #include <windows.h>
+
+#include <cmath>
 
 HWND button;
 
@@ -68,7 +68,7 @@ int main()
     windowClass.lpszClassName = TEXT("SFML App");
     RegisterClass(&windowClass);
 
-    // Let's create the main window
+    // Create the main window
     HWND window = CreateWindow(TEXT("SFML App"),
                                TEXT("SFML Win32"),
                                WS_SYSMENU | WS_VISIBLE,
@@ -84,7 +84,7 @@ int main()
     // Add a button for exiting
     button = CreateWindow(TEXT("BUTTON"), TEXT("Quit"), WS_CHILD | WS_VISIBLE, 560, 440, 80, 40, window, nullptr, instance, nullptr);
 
-    // Let's create two SFML views
+    // Create two SFML views
     HWND             view1 = CreateWindow(TEXT("STATIC"),
                               nullptr,
                               WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS,
@@ -107,20 +107,19 @@ int main()
                               nullptr,
                               instance,
                               nullptr);
-    sf::RenderWindow SFMLView1(view1);
-    sf::RenderWindow SFMLView2(view2);
+    sf::RenderWindow sfmlView1(view1);
+    sf::RenderWindow sfmlView2(view2);
 
     // Load some textures to display
-    sf::Texture texture1, texture2;
-    if (!texture1.loadFromFile("resources/image1.jpg") || !texture2.loadFromFile("resources/image2.jpg"))
-        return EXIT_FAILURE;
-    sf::Sprite sprite1(texture1);
-    sf::Sprite sprite2(texture2);
+    const sf::Texture texture1("resources/image1.jpg");
+    const sf::Texture texture2("resources/image2.jpg");
+    sf::Sprite        sprite1(texture1);
+    sf::Sprite        sprite2(texture2);
     sprite1.setOrigin(sf::Vector2f(texture1.getSize()) / 2.f);
     sprite1.setPosition(sprite1.getOrigin());
 
     // Create a clock for measuring elapsed time
-    sf::Clock clock;
+    const sf::Clock clock;
 
     // Loop until a WM_QUIT message is received
     MSG message;
@@ -135,35 +134,33 @@ int main()
         }
         else
         {
-            float time = clock.getElapsedTime().asSeconds();
+            const float time = clock.getElapsedTime().asSeconds();
 
             // Clear views
-            SFMLView1.clear();
-            SFMLView2.clear();
+            sfmlView1.clear();
+            sfmlView2.clear();
 
             // Draw sprite 1 on view 1
             sprite1.setRotation(sf::degrees(time * 100));
-            SFMLView1.draw(sprite1);
+            sfmlView1.draw(sprite1);
 
             // Draw sprite 2 on view 2
             sprite2.setPosition({std::cos(time) * 100.f, 0.f});
-            SFMLView2.draw(sprite2);
+            sfmlView2.draw(sprite2);
 
             // Display each view on screen
-            SFMLView1.display();
-            SFMLView2.display();
+            sfmlView1.display();
+            sfmlView2.display();
         }
     }
 
     // Close our SFML views before destroying the underlying window
-    SFMLView1.close();
-    SFMLView2.close();
+    sfmlView1.close();
+    sfmlView2.close();
 
     // Destroy the main window (all its child controls will be destroyed)
     DestroyWindow(window);
 
     // Don't forget to unregister the window class
     UnregisterClass(TEXT("SFML App"), instance);
-
-    return EXIT_SUCCESS;
 }

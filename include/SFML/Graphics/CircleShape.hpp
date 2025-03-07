@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CIRCLESHAPE_HPP
-#define SFML_CIRCLESHAPE_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -31,6 +30,10 @@
 #include <SFML/Graphics/Export.hpp>
 
 #include <SFML/Graphics/Shape.hpp>
+
+#include <SFML/System/Vector2.hpp>
+
+#include <cstddef>
 
 
 namespace sf
@@ -56,7 +59,7 @@ public:
     ///
     /// \param radius New radius of the circle
     ///
-    /// \see getRadius
+    /// \see `getRadius`
     ///
     ////////////////////////////////////////////////////////////
     void setRadius(float radius);
@@ -66,17 +69,17 @@ public:
     ///
     /// \return Radius of the circle
     ///
-    /// \see setRadius
+    /// \see `setRadius`
     ///
     ////////////////////////////////////////////////////////////
-    float getRadius() const;
+    [[nodiscard]] float getRadius() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the number of points of the circle
     ///
     /// \param count New number of points of the circle
     ///
-    /// \see getPointCount
+    /// \see `getPointCount`
     ///
     ////////////////////////////////////////////////////////////
     void setPointCount(std::size_t count);
@@ -86,10 +89,10 @@ public:
     ///
     /// \return Number of points of the circle
     ///
-    /// \see setPointCount
+    /// \see `setPointCount`
     ///
     ////////////////////////////////////////////////////////////
-    std::size_t getPointCount() const override;
+    [[nodiscard]] std::size_t getPointCount() const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get a point of the circle
@@ -97,14 +100,26 @@ public:
     /// The returned point is in local coordinates, that is,
     /// the shape's transforms (position, rotation, scale) are
     /// not taken into account.
-    /// The result is undefined if \a index is out of the valid range.
+    /// The result is undefined if `index` is out of the valid range.
     ///
     /// \param index Index of the point to get, in range [0 .. getPointCount() - 1]
     ///
-    /// \return index-th point of the shape
+    /// \return `index`-th point of the shape
     ///
     ////////////////////////////////////////////////////////////
-    Vector2f getPoint(std::size_t index) const override;
+    [[nodiscard]] Vector2f getPoint(std::size_t index) const override;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the geometric center of the circle
+    ///
+    /// The returned point is in local coordinates, that is,
+    /// the shape's transforms (position, rotation, scale) are
+    /// not taken into account.
+    ///
+    /// \return The geometric center of the shape
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] Vector2f getGeometricCenter() const override;
 
 private:
     ////////////////////////////////////////////////////////////
@@ -117,16 +132,13 @@ private:
 } // namespace sf
 
 
-#endif // SFML_CIRCLESHAPE_HPP
-
-
 ////////////////////////////////////////////////////////////
 /// \class sf::CircleShape
 /// \ingroup graphics
 ///
-/// This class inherits all the functions of sf::Transformable
+/// This class inherits all the functions of `sf::Transformable`
 /// (position, rotation, scale, bounds, ...) as well as the
-/// functions of sf::Shape (outline, color, texture, ...).
+/// functions of `sf::Shape` (outline, color, texture, ...).
 ///
 /// Usage example:
 /// \code
@@ -134,20 +146,20 @@ private:
 /// circle.setRadius(150);
 /// circle.setOutlineColor(sf::Color::Red);
 /// circle.setOutlineThickness(5);
-/// circle.setPosition(10, 20);
+/// circle.setPosition({10, 20});
 /// ...
 /// window.draw(circle);
 /// \endcode
 ///
 /// Since the graphics card can't draw perfect circles, we have to
 /// fake them with multiple triangles connected to each other. The
-/// "points count" property of sf::CircleShape defines how many of these
+/// "points count" property of `sf::CircleShape` defines how many of these
 /// triangles to use, and therefore defines the quality of the circle.
 ///
 /// The number of points can also be used for another purpose; with
 /// small numbers you can create any regular polygon shape:
 /// equilateral triangle, square, pentagon, hexagon, ...
 ///
-/// \see sf::Shape, sf::RectangleShape, sf::ConvexShape
+/// \see `sf::Shape`, `sf::RectangleShape`, `sf::ConvexShape`
 ///
 ////////////////////////////////////////////////////////////

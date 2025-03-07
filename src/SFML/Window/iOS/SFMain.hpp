@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,13 +22,9 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SFMAIN_HPP
-#define SFML_SFMAIN_HPP
+#pragma once
 
 
 int sfmlMain(int argc, char** argv);
 
 int sfmlMain();
-
-
-#endif // SFML_SFMAIN_HPP

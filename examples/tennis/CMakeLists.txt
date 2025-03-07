@@ -7,9 +7,8 @@ if(SFML_OS_IOS)
     set_source_files_properties(${RESOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
 endif()
 
-# define the pong target
+# define the tennis target
 sfml_add_example(tennis GUI_APP
                  SOURCES ${SRC}
                  BUNDLE_RESOURCES ${RESOURCES}
-                 DEPENDS SFML::Audio SFML::Graphics
-                 RESOURCES_DIR resources)
+                 DEPENDS SFML::Audio SFML::Graphics)

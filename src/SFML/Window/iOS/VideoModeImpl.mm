@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -30,32 +30,25 @@
 
 #include <UIKit/UIKit.h>
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 {
-    VideoMode desktop = getDesktopMode();
+    const VideoMode desktop = getDesktopMode();
 
     // Return both portrait and landscape resolutions
-    std::vector<VideoMode> modes;
-    modes.push_back(desktop);
-    modes.emplace_back(Vector2u(desktop.size.y, desktop.size.x), desktop.bitsPerPixel);
-    return modes;
+    return {desktop, VideoMode(Vector2u(desktop.size.y, desktop.size.x), desktop.bitsPerPixel)};
 }
 
 
 ////////////////////////////////////////////////////////////
 VideoMode VideoModeImpl::getDesktopMode()
 {
-    CGRect bounds       = [[UIScreen mainScreen] bounds];
-    double backingScale = [SFAppDelegate getInstance].backingScaleFactor;
+    const CGRect bounds       = [[UIScreen mainScreen] bounds];
+    const double backingScale = [SFAppDelegate getInstance].backingScaleFactor;
     return VideoMode({static_cast<unsigned int>(bounds.size.width * backingScale),
                       static_cast<unsigned int>(bounds.size.height * backingScale)});
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

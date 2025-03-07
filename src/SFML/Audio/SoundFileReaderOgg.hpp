@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SOUNDFILEREADEROGG_HPP
-#define SFML_SOUNDFILEREADEROGG_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -32,10 +31,17 @@
 
 #include <vorbis/vorbisfile.h>
 
+#include <optional>
+
+#include <cstdint>
+
 
 namespace sf
 {
-namespace priv
+class InputStream;
+}
+
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Implementation of sound file reader that handles OGG/Vorbis files
@@ -49,17 +55,10 @@ public:
     ///
     /// \param stream Source stream to check
     ///
-    /// \return True if the file is supported by this reader
+    /// \return `true` if the file is supported by this reader
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] static bool check(InputStream& stream);
-
-public:
-    ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    ////////////////////////////////////////////////////////////
-    SoundFileReaderOgg();
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
@@ -71,12 +70,11 @@ public:
     /// \brief Open a sound file for reading
     ///
     /// \param stream Source stream to read from
-    /// \param info   Structure to fill with the properties of the loaded sound
     ///
-    /// \return True if the file was successfully opened
+    /// \return Properties of the loaded sound if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool open(InputStream& stream, Info& info) override;
+    [[nodiscard]] std::optional<Info> open(InputStream& stream) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the current read position to the given sample offset
@@ -114,13 +112,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    OggVorbis_File m_vorbis;       // ogg/vorbis file handle
-    unsigned int   m_channelCount; // number of channels of the open sound file
+    OggVorbis_File m_vorbis{};       // ogg/vorbis file handle
+    unsigned int   m_channelCount{}; // number of channels of the open sound file
 };
 
-} // namespace priv
-
-} // namespace sf
-
-
-#endif // SFML_SOUNDFILEREADEROGG_HPP
+} // namespace sf::priv

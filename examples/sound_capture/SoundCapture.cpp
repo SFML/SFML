@@ -1,11 +1,11 @@
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio.hpp>
 
-#include <cstdlib>
 #include <iostream>
+
+#include <cstdlib>
 
 
 ////////////////////////////////////////////////////////////
@@ -17,24 +17,54 @@
 int main()
 {
     // Check that the device can capture audio
-    if (sf::SoundRecorder::isAvailable() == false)
+    if (!sf::SoundRecorder::isAvailable())
     {
         std::cout << "Sorry, audio capture is not supported by your system" << std::endl;
         return EXIT_SUCCESS;
     }
 
+    // List the available capture devices
+    auto devices = sf::SoundRecorder::getAvailableDevices();
+
+    std::cout << "Available capture devices:\n" << std::endl;
+
+    for (auto i = 0u; i < devices.size(); ++i)
+        std::cout << i << ": " << devices[i] << '\n';
+
+    std::cout << std::endl;
+
+    std::size_t deviceIndex = 0;
+
+    // Choose the capture device
+    if (devices.size() > 1)
+    {
+        deviceIndex = devices.size();
+        std::cout << "Please choose the capture device to use [0-" << devices.size() - 1 << "]: ";
+        do
+        {
+            std::cin >> deviceIndex;
+            std::cin.ignore(10'000, '\n');
+        } while (deviceIndex >= devices.size());
+    }
+
     // Choose the sample rate
-    unsigned int sampleRate;
+    unsigned int sampleRate = 0;
     std::cout << "Please choose the sample rate for sound capture (44100 is CD quality): ";
     std::cin >> sampleRate;
-    std::cin.ignore(10000, '\n');
+    std::cin.ignore(10'000, '\n');
 
     // Wait for user input...
     std::cout << "Press enter to start recording audio";
-    std::cin.ignore(10000, '\n');
+    std::cin.ignore(10'000, '\n');
 
     // Here we'll use an integrated custom recorder, which saves the captured data into a SoundBuffer
     sf::SoundBufferRecorder recorder;
+
+    if (!recorder.setDevice(devices[deviceIndex]))
+    {
+        std::cerr << "Failed to set the capture device" << std::endl;
+        return EXIT_FAILURE;
+    }
 
     // Audio capture is done in a separate thread, so we can block the main thread while it is capturing
     if (!recorder.start(sampleRate))
@@ -44,23 +74,23 @@ int main()
     }
 
     std::cout << "Recording... press enter to stop";
-    std::cin.ignore(10000, '\n');
+    std::cin.ignore(10'000, '\n');
     recorder.stop();
 
     // Get the buffer containing the captured data
     const sf::SoundBuffer& buffer = recorder.getBuffer();
 
-    // Display captured sound informations
+    // Display captured sound information
     std::cout << "Sound information:" << '\n'
               << " " << buffer.getDuration().asSeconds() << " seconds" << '\n'
               << " " << buffer.getSampleRate() << " samples / seconds" << '\n'
               << " " << buffer.getChannelCount() << " channels" << std::endl;
 
     // Choose what to do with the recorded sound data
-    char choice;
+    char choice = 0;
     std::cout << "What do you want to do with captured sound (p = play, s = save) ? ";
     std::cin >> choice;
-    std::cin.ignore(10000, '\n');
+    std::cin.ignore(10'000, '\n');
 
     if (choice == 's')
     {
@@ -80,7 +110,7 @@ int main()
         sound.play();
 
         // Wait until finished
-        while (sound.getStatus() == sf::Sound::Playing)
+        while (sound.getStatus() == sf::Sound::Status::Playing)
         {
             // Display the playing position
             std::cout << "\rPlaying... " << sound.getPlayingOffset().asSeconds() << " sec        ";
@@ -96,7 +126,5 @@ int main()
 
     // Wait until the user presses 'enter' key
     std::cout << "Press enter to exit..." << std::endl;
-    std::cin.ignore(10000, '\n');
-
-    return EXIT_SUCCESS;
+    std::cin.ignore(10'000, '\n');
 }

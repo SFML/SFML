@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -26,12 +26,14 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Unix/Display.hpp>
-#include <SFML/Window/Unix/VulkanImplX11.hpp>
+#include <SFML/Window/VulkanImpl.hpp>
 
-#include <cstring>
 #include <dlfcn.h>
-#include <map>
-#include <string>
+#include <string_view>
+#include <vector>
+
+#include <cstdint>
+
 #define VK_USE_PLATFORM_XLIB_KHR
 #define VK_NO_PROTOTYPES
 #include <vulkan.h>
@@ -41,14 +43,6 @@ namespace
 {
 struct VulkanLibraryWrapper
 {
-    VulkanLibraryWrapper() :
-    library(nullptr),
-    vkGetInstanceProcAddr(nullptr),
-    vkEnumerateInstanceLayerProperties(nullptr),
-    vkEnumerateInstanceExtensionProperties(nullptr)
-    {
-    }
-
     ~VulkanLibraryWrapper()
     {
         if (library)
@@ -95,26 +89,24 @@ struct VulkanLibraryWrapper
     {
         entryPoint = reinterpret_cast<T>(dlsym(library, name));
 
-        return (entryPoint != nullptr);
+        return entryPoint != nullptr;
     }
 
-    void* library;
+    void* library{};
 
-    PFN_vkGetInstanceProcAddr                  vkGetInstanceProcAddr;
-    PFN_vkEnumerateInstanceLayerProperties     vkEnumerateInstanceLayerProperties;
-    PFN_vkEnumerateInstanceExtensionProperties vkEnumerateInstanceExtensionProperties;
+    PFN_vkGetInstanceProcAddr                  vkGetInstanceProcAddr{};
+    PFN_vkEnumerateInstanceLayerProperties     vkEnumerateInstanceLayerProperties{};
+    PFN_vkEnumerateInstanceExtensionProperties vkEnumerateInstanceExtensionProperties{};
 };
 
 VulkanLibraryWrapper wrapper;
 } // namespace
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-bool VulkanImplX11::isAvailable(bool requireGraphics)
+bool VulkanImpl::isAvailable(bool requireGraphics)
 {
     static bool checked           = false;
     static bool computeAvailable  = false;
@@ -137,29 +129,29 @@ bool VulkanImplX11::isAvailable(bool requireGraphics)
 
             std::uint32_t extensionCount = 0;
 
-            wrapper.vkEnumerateInstanceExtensionProperties(0, &extensionCount, nullptr);
+            wrapper.vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
 
             extensionProperties.resize(extensionCount);
 
-            wrapper.vkEnumerateInstanceExtensionProperties(0, &extensionCount, extensionProperties.data());
+            wrapper.vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensionProperties.data());
 
             // Check if the necessary extensions are available
-            bool has_VK_KHR_surface          = false;
-            bool has_VK_KHR_platform_surface = false;
+            bool hasVkKhrSurface         = false;
+            bool hasVkKhrPlatformSurface = false;
 
             for (const VkExtensionProperties& properties : extensionProperties)
             {
-                if (!std::strcmp(properties.extensionName, VK_KHR_SURFACE_EXTENSION_NAME))
+                if (std::string_view(properties.extensionName) == VK_KHR_SURFACE_EXTENSION_NAME)
                 {
-                    has_VK_KHR_surface = true;
+                    hasVkKhrSurface = true;
                 }
-                else if (!std::strcmp(properties.extensionName, VK_KHR_XLIB_SURFACE_EXTENSION_NAME))
+                else if (std::string_view(properties.extensionName) == VK_KHR_XLIB_SURFACE_EXTENSION_NAME)
                 {
-                    has_VK_KHR_platform_surface = true;
+                    hasVkKhrPlatformSurface = true;
                 }
             }
 
-            if (!has_VK_KHR_surface || !has_VK_KHR_platform_surface)
+            if (!hasVkKhrSurface || !hasVkKhrPlatformSurface)
                 graphicsAvailable = false;
         }
     }
@@ -172,17 +164,17 @@ bool VulkanImplX11::isAvailable(bool requireGraphics)
 
 
 ////////////////////////////////////////////////////////////
-VulkanFunctionPointer VulkanImplX11::getFunction(const char* name)
+VulkanFunctionPointer VulkanImpl::getFunction(const char* name)
 {
     if (!isAvailable(false))
-        return 0;
+        return nullptr;
 
     return reinterpret_cast<VulkanFunctionPointer>(dlsym(wrapper.library, name));
 }
 
 
 ////////////////////////////////////////////////////////////
-const std::vector<const char*>& VulkanImplX11::getGraphicsRequiredInstanceExtensions()
+const std::vector<const char*>& VulkanImpl::getGraphicsRequiredInstanceExtensions()
 {
     static const std::vector<const char*> extensions{VK_KHR_SURFACE_EXTENSION_NAME, VK_KHR_XLIB_SURFACE_EXTENSION_NAME};
     return extensions;
@@ -190,10 +182,10 @@ const std::vector<const char*>& VulkanImplX11::getGraphicsRequiredInstanceExtens
 
 
 ////////////////////////////////////////////////////////////
-bool VulkanImplX11::createVulkanSurface(const VkInstance&            instance,
-                                        WindowHandle                 windowHandle,
-                                        VkSurfaceKHR&                surface,
-                                        const VkAllocationCallbacks* allocator)
+bool VulkanImpl::createVulkanSurface(const VkInstance&            instance,
+                                     WindowHandle                 windowHandle,
+                                     VkSurfaceKHR&                surface,
+                                     const VkAllocationCallbacks* allocator)
 {
     if (!isAvailable())
         return false;
@@ -209,18 +201,15 @@ bool VulkanImplX11::createVulkanSurface(const VkInstance&            instance,
 
     // Since the surface is basically attached to the window, the connection
     // to the X display will stay open even after we open and close it here
+    const auto                 display           = openDisplay();
     VkXlibSurfaceCreateInfoKHR surfaceCreateInfo = VkXlibSurfaceCreateInfoKHR();
     surfaceCreateInfo.sType                      = VK_STRUCTURE_TYPE_XLIB_SURFACE_CREATE_INFO_KHR;
-    surfaceCreateInfo.dpy                        = openDisplay();
+    surfaceCreateInfo.dpy                        = display.get();
     surfaceCreateInfo.window                     = windowHandle;
 
-    bool result = (vkCreateXlibSurfaceKHR(instance, &surfaceCreateInfo, allocator, &surface) == VK_SUCCESS);
-
-    closeDisplay(surfaceCreateInfo.dpy);
+    const bool result = (vkCreateXlibSurfaceKHR(instance, &surfaceCreateInfo, allocator, &surface) == VK_SUCCESS);
 
     return result;
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

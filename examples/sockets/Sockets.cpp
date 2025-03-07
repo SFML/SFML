@@ -1,15 +1,10 @@
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cstdlib>
+#include "TCP.hpp"
+#include "UDP.hpp"
+
 #include <iostream>
-
-
-void runTcpServer(unsigned short port);
-void runTcpClient(unsigned short port);
-void runUdpServer(unsigned short port);
-void runUdpClient(unsigned short port);
 
 
 ////////////////////////////////////////////////////////////
@@ -24,12 +19,12 @@ int main()
     const unsigned short port = 50001;
 
     // TCP, UDP or connected UDP ?
-    char protocol;
+    char protocol = 0;
     std::cout << "Do you want to use TCP (t) or UDP (u)? ";
     std::cin >> protocol;
 
     // Client or server ?
-    char who;
+    char who = 0;
     std::cout << "Do you want to be a server (s) or a client (c)? ";
     std::cin >> who;
 
@@ -52,8 +47,6 @@ int main()
 
     // Wait until the user presses 'enter' key
     std::cout << "Press enter to exit..." << std::endl;
-    std::cin.ignore(10000, '\n');
-    std::cin.ignore(10000, '\n');
-
-    return EXIT_SUCCESS;
+    std::cin.ignore(10'000, '\n');
+    std::cin.ignore(10'000, '\n');
 }

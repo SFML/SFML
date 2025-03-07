@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -29,26 +29,26 @@
 #include <SFML/Window/Touch.hpp>
 
 
-namespace sf
+namespace sf::Touch
 {
 ////////////////////////////////////////////////////////////
-bool Touch::isDown(unsigned int finger)
+bool isDown(unsigned int finger)
 {
     return priv::InputImpl::isTouchDown(finger);
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2i Touch::getPosition(unsigned int finger)
+Vector2i getPosition(unsigned int finger)
 {
     return priv::InputImpl::getTouchPosition(finger);
 }
 
 
 ////////////////////////////////////////////////////////////
-Vector2i Touch::getPosition(unsigned int finger, const WindowBase& relativeTo)
+Vector2i getPosition(unsigned int finger, const WindowBase& relativeTo)
 {
     return priv::InputImpl::getTouchPosition(finger, relativeTo);
 }
 
-} // namespace sf
+} // namespace sf::Touch

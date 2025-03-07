@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,91 +22,39 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_VERTEX_HPP
-#define SFML_VERTEX_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Color.hpp>
+
 #include <SFML/System/Vector2.hpp>
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-/// \brief Define a point with color and texture coordinates
+/// \brief Point with color and texture coordinates
+///
+/// By default, the vertex color is white and texture coordinates are (0, 0).
 ///
 ////////////////////////////////////////////////////////////
-class Vertex
+struct Vertex
 {
-public:
-    ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    ////////////////////////////////////////////////////////////
-    constexpr Vertex();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Construct the vertex from its position
-    ///
-    /// The vertex color is white and texture coordinates are (0, 0).
-    ///
-    /// \param thePosition Vertex position
-    ///
-    ////////////////////////////////////////////////////////////
-    constexpr Vertex(const Vector2f& thePosition);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Construct the vertex from its position and color
-    ///
-    /// The texture coordinates are (0, 0).
-    ///
-    /// \param thePosition Vertex position
-    /// \param theColor    Vertex color
-    ///
-    ////////////////////////////////////////////////////////////
-    constexpr Vertex(const Vector2f& thePosition, const Color& theColor);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Construct the vertex from its position and texture coordinates
-    ///
-    /// The vertex color is white.
-    ///
-    /// \param thePosition  Vertex position
-    /// \param theTexCoords Vertex texture coordinates
-    ///
-    ////////////////////////////////////////////////////////////
-    constexpr Vertex(const Vector2f& thePosition, const Vector2f& theTexCoords);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Construct the vertex from its position, color and texture coordinates
-    ///
-    /// \param thePosition  Vertex position
-    /// \param theColor     Vertex color
-    /// \param theTexCoords Vertex texture coordinates
-    ///
-    ////////////////////////////////////////////////////////////
-    constexpr Vertex(const Vector2f& thePosition, const Color& theColor, const Vector2f& theTexCoords);
-
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Vector2f position;  //!< 2D position of the vertex
-    Color    color;     //!< Color of the vertex
-    Vector2f texCoords; //!< Coordinates of the texture's pixel to map to the vertex
+    Vector2f position;            //!< 2D position of the vertex
+    Color    color{Color::White}; //!< Color of the vertex
+    Vector2f texCoords{}; //!< Coordinates of the texture's pixel to map to the vertex NOLINT(readability-redundant-member-init)
 };
-
-#include <SFML/Graphics/Vertex.inl>
 
 } // namespace sf
 
 
-#endif // SFML_VERTEX_HPP
-
-
 ////////////////////////////////////////////////////////////
-/// \class sf::Vertex
+/// \struct sf::Vertex
 /// \ingroup graphics
 ///
 /// A vertex is an improved point. It has a position and other
@@ -127,24 +75,48 @@ public:
 /// Example:
 /// \code
 /// // define a 100x100 square, red, with a 10x10 texture mapped on it
-/// sf::Vertex vertices[] =
+/// sf::Vertex vertices[]
 /// {
-///     sf::Vertex(sf::Vector2f(  0,   0), sf::Color::Red, sf::Vector2f( 0,  0)),
-///     sf::Vertex(sf::Vector2f(  0, 100), sf::Color::Red, sf::Vector2f( 0, 10)),
-///     sf::Vertex(sf::Vector2f(100, 100), sf::Color::Red, sf::Vector2f(10, 10)),
-///     sf::Vertex(sf::Vector2f(  0,   0), sf::Color::Red, sf::Vector2f( 0,  0)),
-///     sf::Vertex(sf::Vector2f(100, 100), sf::Color::Red, sf::Vector2f(10, 10)),
-///     sf::Vertex(sf::Vector2f(100,   0), sf::Color::Red, sf::Vector2f(10,  0))
+///     {{  0.0f,   0.0f}, sf::Color::Red, { 0.0f,  0.0f}},
+///     {{  0.0f, 100.0f}, sf::Color::Red, { 0.0f, 10.0f}},
+///     {{100.0f, 100.0f}, sf::Color::Red, {10.0f, 10.0f}},
+///     {{  0.0f,   0.0f}, sf::Color::Red, { 0.0f,  0.0f}},
+///     {{100.0f, 100.0f}, sf::Color::Red, {10.0f, 10.0f}},
+///     {{100.0f,   0.0f}, sf::Color::Red, {10.0f,  0.0f}}
 /// };
 ///
 /// // draw it
-/// window.draw(vertices, 6, sf::Triangles);
+/// window.draw(vertices, 6, sf::PrimitiveType::Triangles);
 /// \endcode
 ///
-/// Note: although texture coordinates are supposed to be an integer
+///
+/// It is recommended to use aggregate initialization to create vertex
+/// objects, which initializes the members in order.
+///
+/// On a C++20-compliant compiler (or where supported as an extension)
+/// it is possible to use "designated initializers" to only initialize
+/// a subset of members, with the restriction of having to follow the
+/// same order in which they are defined.
+///
+/// Example:
+/// \code
+/// // C++17 and above
+/// sf::Vertex v0{{5.0f, 5.0f}};                               // explicit 'position', implicit 'color' and 'texCoords'
+/// sf::Vertex v1{{5.0f, 5.0f}, sf::Color::Red};               // explicit 'position' and 'color', implicit 'texCoords'
+/// sf::Vertex v2{{5.0f, 5.0f}, sf::Color::Red, {1.0f, 1.0f}}; // everything is explicitly specified
+///
+/// // C++20 and above (or compilers supporting "designated initializers" as an extension)
+/// sf::Vertex v3{
+///    .position{5.0f, 5.0f},
+///    .texCoords{1.0f, 1.0f}
+/// };
+/// \endcode
+///
+///
+/// Note: Although texture coordinates are supposed to be an integer
 /// amount of pixels, their type is float because of some buggy graphics
 /// drivers that are not able to process integer coordinates correctly.
 ///
-/// \see sf::VertexArray
+/// \see `sf::VertexArray`
 ///
 ////////////////////////////////////////////////////////////

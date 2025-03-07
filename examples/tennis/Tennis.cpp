@@ -1,16 +1,23 @@
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 
+#include <SFML/Audio.hpp>
+
+#include <filesystem>
 #include <random>
+#include <string>
+
+#include <cmath>
+#include <cstdlib>
 
 #ifdef SFML_SYSTEM_IOS
 #include <SFML/Main.hpp>
 #endif
 
+namespace
+{
 std::filesystem::path resourcesDir()
 {
 #ifdef SFML_SYSTEM_IOS
@@ -19,6 +26,7 @@ std::filesystem::path resourcesDir()
     return "resources";
 #endif
 }
+} // namespace
 
 ////////////////////////////////////////////////////////////
 /// Entry point of application
@@ -32,10 +40,10 @@ int main()
     std::mt19937       rng(rd());
 
     // Define some constants
-    const float  gameWidth  = 800;
-    const float  gameHeight = 600;
-    sf::Vector2f paddleSize(25, 100);
-    float        ballRadius = 10.f;
+    const float        gameWidth  = 800;
+    const float        gameHeight = 600;
+    const sf::Vector2f paddleSize(25, 100);
+    const float        ballRadius = 10.f;
 
     // Create the window of the application
     sf::RenderWindow window(sf::VideoMode({static_cast<unsigned int>(gameWidth), static_cast<unsigned int>(gameHeight)}, 32),
@@ -44,17 +52,12 @@ int main()
     window.setVerticalSyncEnabled(true);
 
     // Load the sounds used in the game
-    sf::SoundBuffer ballSoundBuffer;
-    if (!ballSoundBuffer.loadFromFile(resourcesDir() / "ball.wav"))
-        return EXIT_FAILURE;
-    sf::Sound ballSound(ballSoundBuffer);
+    const sf::SoundBuffer ballSoundBuffer(resourcesDir() / "ball.wav");
+    sf::Sound             ballSound(ballSoundBuffer);
 
     // Create the SFML logo texture:
-    sf::Texture sfmlLogoTexture;
-    if (!sfmlLogoTexture.loadFromFile(resourcesDir() / "sfml_logo.png"))
-        return EXIT_FAILURE;
-    sf::Sprite sfmlLogo;
-    sfmlLogo.setTexture(sfmlLogoTexture);
+    const sf::Texture sfmlLogoTexture(resourcesDir() / "sfml_logo.png");
+    sf::Sprite        sfmlLogo(sfmlLogoTexture);
     sfmlLogo.setPosition({170.f, 50.f});
 
     // Create the left paddle
@@ -81,14 +84,11 @@ int main()
     ball.setFillColor(sf::Color::White);
     ball.setOrigin({ballRadius / 2.f, ballRadius / 2.f});
 
-    // Load the text font
-    sf::Font font;
-    if (!font.loadFromFile(resourcesDir() / "tuffy.ttf"))
-        return EXIT_FAILURE;
+    // Open the text font
+    const sf::Font font(resourcesDir() / "tuffy.ttf");
 
     // Initialize the pause message
-    sf::Text pauseMessage;
-    pauseMessage.setFont(font);
+    sf::Text pauseMessage(font);
     pauseMessage.setCharacterSize(40);
     pauseMessage.setPosition({170.f, 200.f});
     pauseMessage.setFillColor(sf::Color::White);
@@ -100,8 +100,8 @@ int main()
 #endif
 
     // Define the paddles properties
-    sf::Clock      AITimer;
-    const sf::Time AITime           = sf::seconds(0.1f);
+    sf::Clock      aiTimer;
+    const sf::Time aiTime           = sf::seconds(0.1f);
     const float    paddleSpeed      = 400.f;
     float          rightPaddleSpeed = 0.f;
     const float    ballSpeed        = 400.f;
@@ -112,19 +112,21 @@ int main()
     while (window.isOpen())
     {
         // Handle events
-        for (sf::Event event; window.pollEvent(event);)
+        while (const std::optional event = window.pollEvent())
         {
             // Window closed or escape key pressed: exit
-            if ((event.type == sf::Event::Closed) ||
-                ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape)))
+            if (event->is<sf::Event::Closed>() ||
+                (event->is<sf::Event::KeyPressed>() &&
+                 event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Escape))
             {
                 window.close();
                 break;
             }
 
             // Space key pressed: play
-            if (((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space)) ||
-                (event.type == sf::Event::TouchBegan))
+            if ((event->is<sf::Event::KeyPressed>() &&
+                 event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Space) ||
+                event->is<sf::Event::TouchBegan>())
             {
                 if (!isPlaying)
                 {
@@ -147,7 +149,7 @@ int main()
             }
 
             // Window size changed, adjust view appropriately
-            if (event.type == sf::Event::Resized)
+            if (event->is<sf::Event::Resized>())
             {
                 sf::View view;
                 view.setSize({gameWidth, gameHeight});
@@ -158,14 +160,14 @@ int main()
 
         if (isPlaying)
         {
-            float deltaTime = clock.restart().asSeconds();
+            const float deltaTime = clock.restart().asSeconds();
 
             // Move the player's paddle
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) && (leftPaddle.getPosition().y - paddleSize.y / 2 > 5.f))
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up) && (leftPaddle.getPosition().y - paddleSize.y / 2 > 5.f))
             {
                 leftPaddle.move({0.f, -paddleSpeed * deltaTime});
             }
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) &&
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down) &&
                 (leftPaddle.getPosition().y + paddleSize.y / 2 < gameHeight - 5.f))
             {
                 leftPaddle.move({0.f, paddleSpeed * deltaTime});
@@ -173,8 +175,8 @@ int main()
 
             if (sf::Touch::isDown(0))
             {
-                sf::Vector2i pos       = sf::Touch::getPosition(0);
-                sf::Vector2f mappedPos = window.mapPixelToCoords(pos);
+                const sf::Vector2i pos       = sf::Touch::getPosition(0);
+                const sf::Vector2f mappedPos = window.mapPixelToCoords(pos);
                 leftPaddle.setPosition({leftPaddle.getPosition().x, mappedPos.y});
             }
 
@@ -186,9 +188,9 @@ int main()
             }
 
             // Update the computer's paddle direction according to the ball position
-            if (AITimer.getElapsedTime() > AITime)
+            if (aiTimer.getElapsedTime() > aiTime)
             {
-                AITimer.restart();
+                aiTimer.restart();
                 if (ball.getPosition().y + ballRadius > rightPaddle.getPosition().y + paddleSize.y / 2)
                     rightPaddleSpeed = paddleSpeed;
                 else if (ball.getPosition().y - ballRadius < rightPaddle.getPosition().y - paddleSize.y / 2)

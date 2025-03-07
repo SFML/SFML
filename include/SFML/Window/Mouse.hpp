@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_MOUSE_HPP
-#define SFML_MOUSE_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -41,110 +40,109 @@ class WindowBase;
 /// \brief Give access to the real-time state of the mouse
 ///
 ////////////////////////////////////////////////////////////
-class SFML_WINDOW_API Mouse
+namespace Mouse
 {
-public:
-    ////////////////////////////////////////////////////////////
-    /// \brief Mouse buttons
-    ///
-    ////////////////////////////////////////////////////////////
-    enum Button
-    {
-        Left,     //!< The left mouse button
-        Right,    //!< The right mouse button
-        Middle,   //!< The middle (wheel) mouse button
-        XButton1, //!< The first extra mouse button
-        XButton2, //!< The second extra mouse button
-
-        ButtonCount //!< Keep last -- the total number of mouse buttons
-    };
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Mouse wheels
-    ///
-    ////////////////////////////////////////////////////////////
-    enum Wheel
-    {
-        VerticalWheel,  //!< The vertical mouse wheel
-        HorizontalWheel //!< The horizontal mouse wheel
-    };
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Check if a mouse button is pressed
-    ///
-    /// \param button Button to check
-    ///
-    /// \return True if the button is pressed, false otherwise
-    ///
-    ////////////////////////////////////////////////////////////
-    static bool isButtonPressed(Button button);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the current position of the mouse in desktop coordinates
-    ///
-    /// This function returns the global position of the mouse
-    /// cursor on the desktop.
-    ///
-    /// \return Current position of the mouse
-    ///
-    ////////////////////////////////////////////////////////////
-    static Vector2i getPosition();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the current position of the mouse in window coordinates
-    ///
-    /// This function returns the current position of the mouse
-    /// cursor, relative to the given window.
-    ///
-    /// \param relativeTo Reference window
-    ///
-    /// \return Current position of the mouse
-    ///
-    ////////////////////////////////////////////////////////////
-    static Vector2i getPosition(const WindowBase& relativeTo);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Set the current position of the mouse in desktop coordinates
-    ///
-    /// This function sets the global position of the mouse
-    /// cursor on the desktop.
-    ///
-    /// \param position New position of the mouse
-    ///
-    ////////////////////////////////////////////////////////////
-    static void setPosition(const Vector2i& position);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Set the current position of the mouse in window coordinates
-    ///
-    /// This function sets the current position of the mouse
-    /// cursor, relative to the given window.
-    ///
-    /// \param position New position of the mouse
-    /// \param relativeTo Reference window
-    ///
-    ////////////////////////////////////////////////////////////
-    static void setPosition(const Vector2i& position, const WindowBase& relativeTo);
+////////////////////////////////////////////////////////////
+/// \brief Mouse buttons
+///
+////////////////////////////////////////////////////////////
+enum class Button
+{
+    Left,   //!< The left mouse button
+    Right,  //!< The right mouse button
+    Middle, //!< The middle (wheel) mouse button
+    Extra1, //!< The first extra mouse button
+    Extra2  //!< The second extra mouse button
 };
+
+// NOLINTNEXTLINE(readability-identifier-naming)
+static constexpr unsigned int ButtonCount{5}; //!< The total number of mouse buttons
+
+////////////////////////////////////////////////////////////
+/// \brief Mouse wheels
+///
+////////////////////////////////////////////////////////////
+enum class Wheel
+{
+    Vertical,  //!< The vertical mouse wheel
+    Horizontal //!< The horizontal mouse wheel
+};
+
+////////////////////////////////////////////////////////////
+/// \brief Check if a mouse button is pressed
+///
+/// \warning Checking the state of buttons `Mouse::Button::Extra1` and
+/// `Mouse::Button::Extra2` is not supported on Linux with X11.
+///
+/// \param button Button to check
+///
+/// \return `true` if the button is pressed, `false` otherwise
+///
+////////////////////////////////////////////////////////////
+[[nodiscard]] SFML_WINDOW_API bool isButtonPressed(Button button);
+
+////////////////////////////////////////////////////////////
+/// \brief Get the current position of the mouse in desktop coordinates
+///
+/// This function returns the global position of the mouse
+/// cursor on the desktop.
+///
+/// \return Current position of the mouse
+///
+////////////////////////////////////////////////////////////
+[[nodiscard]] SFML_WINDOW_API Vector2i getPosition();
+
+////////////////////////////////////////////////////////////
+/// \brief Get the current position of the mouse in window coordinates
+///
+/// This function returns the current position of the mouse
+/// cursor, relative to the given window.
+///
+/// \param relativeTo Reference window
+///
+/// \return Current position of the mouse
+///
+////////////////////////////////////////////////////////////
+[[nodiscard]] SFML_WINDOW_API Vector2i getPosition(const WindowBase& relativeTo);
+
+////////////////////////////////////////////////////////////
+/// \brief Set the current position of the mouse in desktop coordinates
+///
+/// This function sets the global position of the mouse
+/// cursor on the desktop.
+///
+/// \param position New position of the mouse
+///
+////////////////////////////////////////////////////////////
+SFML_WINDOW_API void setPosition(Vector2i position);
+
+////////////////////////////////////////////////////////////
+/// \brief Set the current position of the mouse in window coordinates
+///
+/// This function sets the current position of the mouse
+/// cursor, relative to the given window.
+///
+/// \param position New position of the mouse
+/// \param relativeTo Reference window
+///
+////////////////////////////////////////////////////////////
+SFML_WINDOW_API void setPosition(Vector2i position, const WindowBase& relativeTo);
+} // namespace Mouse
 
 } // namespace sf
 
 
-#endif // SFML_MOUSE_HPP
-
-
 ////////////////////////////////////////////////////////////
-/// \class sf::Mouse
+/// \namespace sf::Mouse
 /// \ingroup window
 ///
-/// sf::Mouse provides an interface to the state of the
-/// mouse. It only contains static functions (a single
-/// mouse is assumed), so it's not meant to be instantiated.
+/// `sf::Mouse` provides an interface to the state of the
+/// mouse. A single mouse is assumed.
 ///
-/// This class allows users to query the mouse state at any
+/// This namespace allows users to query the mouse state at any
 /// time and directly, without having to deal with a window and
-/// its events. Compared to the MouseMoved, MouseButtonPressed
-/// and MouseButtonReleased events, sf::Mouse can retrieve the
+/// its events. Compared to the `MouseMoved`, `MouseButtonPressed`
+/// and `MouseButtonReleased` events, `sf::Mouse` can retrieve the
 /// state of the cursor and the buttons at any time
 /// (you don't need to store and update a boolean on your side
 /// in order to know if a button is pressed or released), and you
@@ -152,7 +150,7 @@ public:
 /// moved, pressed or released when your window is out of focus
 /// and no event is triggered.
 ///
-/// The setPosition and getPosition functions can be used to change
+/// The `setPosition` and `getPosition` functions can be used to change
 /// or retrieve the current position of the mouse pointer. There are
 /// two versions: one that operates in global coordinates (relative
 /// to the desktop) and one that operates in window coordinates
@@ -160,7 +158,7 @@ public:
 ///
 /// Usage example:
 /// \code
-/// if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+/// if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
 /// {
 ///     // left click...
 /// }
@@ -172,6 +170,6 @@ public:
 /// sf::Mouse::setPosition(sf::Vector2i(100, 200), window);
 /// \endcode
 ///
-/// \see sf::Joystick, sf::Keyboard, sf::Touch
+/// \see `sf::Joystick`, `sf::Keyboard`, `sf::Touch`
 ///
 ////////////////////////////////////////////////////////////

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,9 +25,11 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
 #include <SFML/Window/Unix/Display.hpp>
+#include <SFML/Window/Unix/Utils.hpp>
 #include <SFML/Window/VideoModeImpl.hpp>
+
+#include <SFML/System/Err.hpp>
 
 #include <X11/Xlib.h>
 #include <X11/extensions/Xrandr.h>
@@ -36,42 +38,51 @@
 #include <ostream>
 
 
-namespace sf
+namespace sf::priv
 {
-namespace priv
+////////////////////////////////////////////////////////////
+template <>
+struct XDeleter<XRRScreenConfiguration>
 {
+    void operator()(XRRScreenConfiguration* config) const
+    {
+        XRRFreeScreenConfigInfo(config);
+    }
+};
+
+
 ////////////////////////////////////////////////////////////
 std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 {
     std::vector<VideoMode> modes;
 
     // Open a connection with the X server
-    Display* display = openDisplay();
-    if (display)
+    if (const auto display = openDisplay())
     {
         // Retrieve the default screen number
-        int screen = DefaultScreen(display);
+        const int screen = DefaultScreen(display.get());
 
         // Check if the XRandR extension is present
-        int version;
-        if (XQueryExtension(display, "RANDR", &version, &version, &version))
+        int version = 0;
+        if (XQueryExtension(display.get(), "RANDR", &version, &version, &version))
         {
             // Get the current configuration
-            XRRScreenConfiguration* config = XRRGetScreenInfo(display, RootWindow(display, screen));
-            if (config)
+            if (const auto config = X11Ptr<XRRScreenConfiguration>(
+                    XRRGetScreenInfo(display.get(), RootWindow(display.get(), screen))))
             {
                 // Get the available screen sizes
-                int            nbSizes;
-                XRRScreenSize* sizes = XRRConfigSizes(config, &nbSizes);
+                int            nbSizes = 0;
+                XRRScreenSize* sizes   = XRRConfigSizes(config.get(), &nbSizes);
                 if (sizes && (nbSizes > 0))
                 {
                     // Get the list of supported depths
-                    int  nbDepths = 0;
-                    int* depths   = XListDepths(display, screen, &nbDepths);
+                    int nbDepths = 0;
+                    // NOLINTNEXTLINE(cppcoreguidelines-avoid-c-arrays,modernize-avoid-c-arrays)
+                    const auto depths = X11Ptr<int[]>(XListDepths(display.get(), screen, &nbDepths));
                     if (depths && (nbDepths > 0))
                     {
                         // Combine depths and sizes to fill the array of supported modes
-                        for (int i = 0; i < nbDepths; ++i)
+                        for (std::size_t i = 0; i < static_cast<std::size_t>(nbDepths); ++i)
                         {
                             for (int j = 0; j < nbSizes; ++j)
                             {
@@ -80,8 +91,8 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
                                                 static_cast<unsigned int>(sizes[j].height)},
                                                static_cast<unsigned int>(depths[i]));
 
-                                Rotation currentRotation;
-                                XRRConfigRotations(config, &currentRotation);
+                                Rotation currentRotation = 0;
+                                XRRConfigRotations(config.get(), &currentRotation);
 
                                 if (currentRotation == RR_Rotate_90 || currentRotation == RR_Rotate_270)
                                     std::swap(mode.size.x, mode.size.y);
@@ -91,14 +102,8 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
                                     modes.push_back(mode);
                             }
                         }
-
-                        // Free the array of depths
-                        XFree(depths);
                     }
                 }
-
-                // Free the configuration instance
-                XRRFreeScreenConfigInfo(config);
             }
             else
             {
@@ -112,9 +117,6 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
             // XRandr extension is not supported: we cannot get the video modes
             err() << "Failed to use the XRandR extension while trying to get the supported video modes" << std::endl;
         }
-
-        // Close the connection with the X server
-        closeDisplay(display);
     }
     else
     {
@@ -132,42 +134,38 @@ VideoMode VideoModeImpl::getDesktopMode()
     VideoMode desktopMode;
 
     // Open a connection with the X server
-    Display* display = openDisplay();
-    if (display)
+    if (const auto display = openDisplay())
     {
         // Retrieve the default screen number
-        int screen = DefaultScreen(display);
+        const int screen = DefaultScreen(display.get());
 
         // Check if the XRandR extension is present
-        int version;
-        if (XQueryExtension(display, "RANDR", &version, &version, &version))
+        int version = 0;
+        if (XQueryExtension(display.get(), "RANDR", &version, &version, &version))
         {
             // Get the current configuration
-            XRRScreenConfiguration* config = XRRGetScreenInfo(display, RootWindow(display, screen));
-            if (config)
+            if (const auto config = X11Ptr<XRRScreenConfiguration>(
+                    XRRGetScreenInfo(display.get(), RootWindow(display.get(), screen))))
             {
                 // Get the current video mode
-                Rotation currentRotation;
-                int      currentMode = XRRConfigCurrentConfiguration(config, &currentRotation);
+                Rotation  currentRotation = 0;
+                const int currentMode     = XRRConfigCurrentConfiguration(config.get(), &currentRotation);
 
                 // Get the available screen sizes
-                int            nbSizes;
-                XRRScreenSize* sizes = XRRConfigSizes(config, &nbSizes);
+                int            nbSizes = 0;
+                XRRScreenSize* sizes   = XRRConfigSizes(config.get(), &nbSizes);
                 if (sizes && (nbSizes > 0))
                 {
                     desktopMode = VideoMode({static_cast<unsigned int>(sizes[currentMode].width),
                                              static_cast<unsigned int>(sizes[currentMode].height)},
-                                            static_cast<unsigned int>(DefaultDepth(display, screen)));
+                                            static_cast<unsigned int>(DefaultDepth(display.get(), screen)));
 
-                    Rotation modeRotation;
-                    XRRConfigRotations(config, &modeRotation);
+                    Rotation modeRotation = 0;
+                    XRRConfigRotations(config.get(), &modeRotation);
 
                     if (modeRotation == RR_Rotate_90 || modeRotation == RR_Rotate_270)
                         std::swap(desktopMode.size.x, desktopMode.size.y);
                 }
-
-                // Free the configuration instance
-                XRRFreeScreenConfigInfo(config);
             }
             else
             {
@@ -181,9 +179,6 @@ VideoMode VideoModeImpl::getDesktopMode()
             // XRandr extension is not supported: we cannot get the video modes
             err() << "Failed to use the XRandR extension while trying to get the desktop video modes" << std::endl;
         }
-
-        // Close the connection with the X server
-        closeDisplay(display);
     }
     else
     {
@@ -194,6 +189,4 @@ VideoMode VideoModeImpl::getDesktopMode()
     return desktopMode;
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

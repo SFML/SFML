@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,14 +22,13 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_PRIMITIVETYPE_HPP
-#define SFML_PRIMITIVETYPE_HPP
+#pragma once
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
 /// \ingroup graphics
-/// \brief Types of primitives that a sf::VertexArray can render
+/// \brief Types of primitives that a `sf::VertexArray` can render
 ///
 /// Points and lines have no area, therefore their thickness
 /// will always be 1 pixel, regardless the current transform
@@ -47,6 +46,3 @@ enum class PrimitiveType
 };
 
 } // namespace sf
-
-
-#endif // SFML_PRIMITIVETYPE_HPP

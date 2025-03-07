@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,19 +22,21 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CONTEXT_HPP
-#define SFML_CONTEXT_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Export.hpp>
 
-#include <SFML/System/Vector2.hpp>
 #include <SFML/Window/GlResource.hpp>
 
-#include <cstdint>
+#include <SFML/System/Vector2.hpp>
+
 #include <memory>
+#include <string_view>
+
+#include <cstdint>
 
 
 namespace sf
@@ -84,11 +86,23 @@ public:
     Context& operator=(const Context&) = delete;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Move constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    Context(Context&& context) noexcept;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Move assignment
+    ///
+    ////////////////////////////////////////////////////////////
+    Context& operator=(Context&& context) noexcept;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Activate or deactivate explicitly the context
     ///
-    /// \param active True to activate, false to deactivate
+    /// \param active `true` to activate, `false` to deactivate
     ///
-    /// \return True on success, false on failure
+    /// \return `true` on success, `false` on failure
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool setActive(bool active);
@@ -103,39 +117,42 @@ public:
     /// \return Structure containing the settings
     ///
     ////////////////////////////////////////////////////////////
-    const ContextSettings& getSettings() const;
+    [[nodiscard]] const ContextSettings& getSettings() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Check whether a given OpenGL extension is available
     ///
     /// \param name Name of the extension to check for
     ///
-    /// \return True if available, false if unavailable
+    /// \return `true` if available, `false` if unavailable
     ///
     ////////////////////////////////////////////////////////////
-    static bool isExtensionAvailable(const char* name);
+    [[nodiscard]] static bool isExtensionAvailable(std::string_view name);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the address of an OpenGL function
+    ///
+    /// On Windows when not using OpenGL ES, a context must be
+    /// active for this function to succeed.
     ///
     /// \param name Name of the function to get the address of
     ///
     /// \return Address of the OpenGL function, 0 on failure
     ///
     ////////////////////////////////////////////////////////////
-    static GlFunctionPointer getFunction(const char* name);
+    [[nodiscard]] static GlFunctionPointer getFunction(const char* name);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the currently active context
     ///
-    /// This function will only return sf::Context objects.
+    /// This function will only return `sf::Context` objects.
     /// Contexts created e.g. by RenderTargets or for internal
     /// use will not be returned by this function.
     ///
-    /// \return The currently active context or a null pointer if none is active
+    /// \return The currently active context or `nullptr` if none is active
     ///
     ////////////////////////////////////////////////////////////
-    static const Context* getActiveContext();
+    [[nodiscard]] static const Context* getActiveContext();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the currently active context's ID
@@ -146,7 +163,7 @@ public:
     /// \return The active context's ID or 0 if no context is currently active
     ///
     ////////////////////////////////////////////////////////////
-    static std::uint64_t getActiveContextId();
+    [[nodiscard]] static std::uint64_t getActiveContextId();
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct a in-memory context
@@ -155,11 +172,10 @@ public:
     /// to bother with it.
     ///
     /// \param settings Creation parameters
-    /// \param width    Back buffer width
-    /// \param height   Back buffer height
+    /// \param size     Back buffer size
     ///
     ////////////////////////////////////////////////////////////
-    Context(const ContextSettings& settings, const Vector2u& size);
+    Context(const ContextSettings& settings, Vector2u size);
 
 private:
     ////////////////////////////////////////////////////////////
@@ -170,8 +186,6 @@ private:
 
 } // namespace sf
 
-
-#endif // SFML_CONTEXT_HPP
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Context
@@ -187,7 +201,7 @@ private:
 /// if you create a new thread it will have no valid context
 /// by default.
 ///
-/// To use a sf::Context instance, just construct it and let it
+/// To use a `sf::Context` instance, just construct it and let it
 /// live as long as you need a valid context. No explicit activation
 /// is needed, all it has to do is to exist. Its destructor
 /// will take care of deactivating and freeing all the attached

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -30,16 +30,8 @@
 #include <vector>
 
 
-namespace sf
+namespace sf::priv
 {
-namespace priv
-{
-////////////////////////////////////////////////////////////
-CursorImpl::CursorImpl()
-{
-}
-
-
 ////////////////////////////////////////////////////////////
 bool CursorImpl::loadFromPixels(const std::uint8_t* /*pixels*/, Vector2u /*size*/, Vector2u /*hotspot*/)
 {
@@ -80,6 +72,4 @@ void CursorImpl::release()
 {
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

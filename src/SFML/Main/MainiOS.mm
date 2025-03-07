@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.prg)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.prg)
 // Copyright (C) 2013 Jonathan De Wachter (dewachter.jonathan@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -43,8 +43,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 
-#ifdef SFML_SYSTEM_IOS
-
 #include <UIKit/UIKit.h>
 
 
@@ -59,5 +57,3 @@ int main(int argc, char** argv)
 
     return UIApplicationMain(argc, argv, nil, @"SFAppDelegate");
 }
-
-#endif // SFML_SYSTEM_IOS

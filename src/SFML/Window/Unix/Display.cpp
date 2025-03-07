@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,43 +25,44 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
 #include <SFML/Window/Unix/Display.hpp>
+
+#include <SFML/System/Err.hpp>
 
 #include <X11/keysym.h>
 
-#include <cassert>
-#include <cstdlib>
 #include <mutex>
 #include <ostream>
 #include <unordered_map>
 
+#include <cassert>
+#include <clocale>
+#include <cstdlib>
+
 
 namespace
 {
-// The shared display and its reference counter
-Display*             sharedDisplay     = nullptr;
-unsigned int         referenceCount    = 0;
-XIM                  sharedXIM         = nullptr;
-unsigned int         referenceCountXIM = 0;
-std::recursive_mutex mutex;
-
-using AtomMap = std::unordered_map<std::string, Atom>;
-AtomMap atoms;
+// A nested named namespace is used here to allow unity builds of SFML.
+namespace UnixDisplayImpl
+{
+std::weak_ptr<Display> weakSharedDisplay;
+std::recursive_mutex   mutex;
+} // namespace UnixDisplayImpl
 } // namespace
 
-namespace sf
-{
-namespace priv
+
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-Display* openDisplay()
+std::shared_ptr<Display> openDisplay()
 {
-    std::scoped_lock lock(mutex);
+    const std::lock_guard lock(UnixDisplayImpl::mutex);
 
-    if (referenceCount == 0)
+    auto sharedDisplay = UnixDisplayImpl::weakSharedDisplay.lock();
+    if (!sharedDisplay)
     {
-        sharedDisplay = XOpenDisplay(nullptr);
+        sharedDisplay.reset(XOpenDisplay(nullptr), XCloseDisplay);
+        UnixDisplayImpl::weakSharedDisplay = sharedDisplay;
 
         // Opening display failed: The best we can do at the moment is to output a meaningful error message
         // and cause an abnormal program termination
@@ -72,91 +73,71 @@ Display* openDisplay()
         }
     }
 
-    ++referenceCount;
     return sharedDisplay;
 }
 
 
 ////////////////////////////////////////////////////////////
-void closeDisplay(Display* display)
+std::shared_ptr<_XIM> openXim()
 {
-    std::scoped_lock lock(mutex);
+    const std::lock_guard lock(UnixDisplayImpl::mutex);
 
-    assert(display == sharedDisplay);
+    assert(!UnixDisplayImpl::weakSharedDisplay.expired() &&
+           "Display is not initialized. Call priv::openDisplay() to initialize it.");
 
-    --referenceCount;
-    if (referenceCount == 0)
-        XCloseDisplay(display);
-}
+    static std::weak_ptr<_XIM> xim;
 
-////////////////////////////////////////////////////////////
-XIM openXim()
-{
-    std::scoped_lock lock(mutex);
-
-    assert(sharedDisplay != nullptr);
-
-    if (referenceCountXIM == 0)
+    auto sharedXIM = xim.lock();
+    if (!sharedXIM)
     {
         // Create a new XIM instance
 
         // We need the default (environment) locale and X locale for opening
         // the IM and properly receiving text
         // First save the previous ones (this might be able to be written more elegantly?)
-        const char* p;
-        std::string prevLoc((p = setlocale(LC_ALL, nullptr)) ? p : "");
-        std::string prevXLoc((p = XSetLocaleModifiers(nullptr)) ? p : "");
+        const char*       p = nullptr;
+        const std::string prevLoc((p = std::setlocale(LC_ALL, nullptr)) ? p : "");
+        const std::string prevXLoc((p = XSetLocaleModifiers(nullptr)) ? p : "");
 
         // Set the locales from environment
-        setlocale(LC_ALL, "");
+        std::setlocale(LC_ALL, "");
         XSetLocaleModifiers("");
 
         // Create the input context
-        sharedXIM = XOpenIM(sharedDisplay, nullptr, nullptr, nullptr);
+        const auto closeIM = [](XIM im)
+        {
+            if (im)
+                XCloseIM(im);
+        };
+        sharedXIM.reset(XOpenIM(UnixDisplayImpl::weakSharedDisplay.lock().get(), nullptr, nullptr, nullptr), closeIM);
+        xim = sharedXIM;
 
         // Restore the previous locale
-        if (prevLoc.length() != 0)
-            setlocale(LC_ALL, prevLoc.c_str());
+        if (!prevLoc.empty())
+            std::setlocale(LC_ALL, prevLoc.c_str());
 
-        if (prevXLoc.length() != 0)
+        if (!prevXLoc.empty())
             XSetLocaleModifiers(prevXLoc.c_str());
     }
-
-    ++referenceCountXIM;
 
     return sharedXIM;
 }
 
-////////////////////////////////////////////////////////////
-void closeXim(XIM xim)
-{
-    std::scoped_lock lock(mutex);
-
-    assert(xim == sharedXIM);
-
-    --referenceCountXIM;
-
-    if ((referenceCountXIM == 0) && (xim != nullptr))
-        XCloseIM(xim);
-}
 
 ////////////////////////////////////////////////////////////
 Atom getAtom(const std::string& name, bool onlyIfExists)
 {
-    if (auto it = atoms.find(name); it != atoms.end())
+    static std::unordered_map<std::string, Atom> atoms;
+
+    if (const auto it = atoms.find(name); it != atoms.end())
         return it->second;
 
-    Display* display = openDisplay();
-
-    Atom atom = XInternAtom(display, name.c_str(), onlyIfExists ? True : False);
-
-    closeDisplay(display);
-
-    atoms[name] = atom;
+    const auto display = openDisplay();
+    const Atom atom    = XInternAtom(display.get(), name.c_str(), onlyIfExists ? True : False);
+    if (atom)
+        atoms[name] = atom;
 
     return atom;
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

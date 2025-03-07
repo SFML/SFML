@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -26,22 +26,20 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/GLCheck.hpp>
+#include <SFML/Graphics/GLExtensions.hpp>
 #include <SFML/Graphics/RenderTextureImplDefault.hpp>
 #include <SFML/Graphics/TextureSaver.hpp>
+
 #include <SFML/Window/Context.hpp>
 #include <SFML/Window/ContextSettings.hpp>
 
 #include <memory>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-RenderTextureImplDefault::RenderTextureImplDefault() : m_context(), m_size(0, 0)
-{
-}
+RenderTextureImplDefault::RenderTextureImplDefault() = default;
 
 
 ////////////////////////////////////////////////////////////
@@ -49,7 +47,7 @@ RenderTextureImplDefault::~RenderTextureImplDefault() = default;
 
 
 ////////////////////////////////////////////////////////////
-unsigned int RenderTextureImplDefault::getMaximumAntialiasingLevel()
+unsigned int RenderTextureImplDefault::getMaximumAntiAliasingLevel()
 {
     // If the system is so old that it doesn't support FBOs, chances are it is
     // also using either a software renderer or some CPU emulated support for AA
@@ -59,7 +57,7 @@ unsigned int RenderTextureImplDefault::getMaximumAntialiasingLevel()
 
 
 ////////////////////////////////////////////////////////////
-bool RenderTextureImplDefault::create(const Vector2u& size, unsigned int, const ContextSettings& settings)
+bool RenderTextureImplDefault::create(Vector2u size, unsigned int, const ContextSettings& settings)
 {
     // Store the dimensions
     m_size = size;
@@ -89,7 +87,7 @@ bool RenderTextureImplDefault::isSrgb() const
 void RenderTextureImplDefault::updateTexture(unsigned int textureId)
 {
     // Make sure that the current texture binding will be preserved
-    priv::TextureSaver save;
+    const TextureSaver save;
 
     // Copy the rendered pixels to the texture
     glCheck(glBindTexture(GL_TEXTURE_2D, textureId));
@@ -97,6 +95,4 @@ void RenderTextureImplDefault::updateTexture(unsigned int textureId)
         glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, static_cast<GLsizei>(m_size.x), static_cast<GLsizei>(m_size.y)));
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

@@ -28,9 +28,7 @@
 #include <SFML/Window/JoystickImpl.hpp>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 void JoystickImpl::initialize()
@@ -73,7 +71,7 @@ void JoystickImpl::close()
 JoystickCaps JoystickImpl::getCapabilities() const
 {
     // To implement
-    return JoystickCaps();
+    return {};
 }
 
 
@@ -88,9 +86,7 @@ Joystick::Identification JoystickImpl::getIdentification() const
 JoystickState JoystickImpl::update()
 {
     // To implement
-    return JoystickState();
+    return {};
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

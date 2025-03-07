@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -26,21 +26,21 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Glsl.hpp>
+#include <SFML/Graphics/Transform.hpp>
 
 #include <algorithm>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 
 ////////////////////////////////////////////////////////////
 void copyMatrix(const Transform& source, Matrix<3, 3>& dest)
 {
     const float* from = source.getMatrix(); // 4x4
-    float*       to   = dest.array;         // 3x3
+    auto&        to   = dest.array;         // 3x3
 
     // Use only left-upper 3x3 block (for a 2D transform)
     to[0] = from[0];
@@ -59,7 +59,7 @@ void copyMatrix(const Transform& source, Matrix<3, 3>& dest)
 void copyMatrix(const Transform& source, Matrix<4, 4>& dest)
 {
     // Adopt 4x4 matrix as-is
-    copyMatrix(source.getMatrix(), 4 * 4, dest.array);
+    copyMatrix(source.getMatrix(), dest.array.size(), dest.array.data());
 }
 
 
@@ -69,25 +69,4 @@ void copyMatrix(const float* source, std::size_t elements, float* dest)
     std::copy(source, source + elements, dest);
 }
 
-
-////////////////////////////////////////////////////////////
-void copyVector(const Color& source, Vector4<float>& dest)
-{
-    dest.x = source.r / 255.f;
-    dest.y = source.g / 255.f;
-    dest.z = source.b / 255.f;
-    dest.w = source.a / 255.f;
-}
-
-
-////////////////////////////////////////////////////////////
-void copyVector(const Color& source, Vector4<int>& dest)
-{
-    dest.x = static_cast<int>(source.r);
-    dest.y = static_cast<int>(source.g);
-    dest.z = static_cast<int>(source.b);
-    dest.w = static_cast<int>(source.a);
-}
-
-} // namespace priv
-} // namespace sf
+} // namespace sf::priv

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -26,6 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/ConvexShape.hpp>
+
+#include <cassert>
 
 
 namespace sf
@@ -53,8 +55,9 @@ std::size_t ConvexShape::getPointCount() const
 
 
 ////////////////////////////////////////////////////////////
-void ConvexShape::setPoint(std::size_t index, const Vector2f& point)
+void ConvexShape::setPoint(std::size_t index, Vector2f point)
 {
+    assert(index < m_points.size() && "Index is out of bounds");
     m_points[index] = point;
     update();
 }
@@ -63,6 +66,7 @@ void ConvexShape::setPoint(std::size_t index, const Vector2f& point)
 ////////////////////////////////////////////////////////////
 Vector2f ConvexShape::getPoint(std::size_t index) const
 {
+    assert(index < m_points.size() && "Index is out of bounds");
     return m_points[index];
 }
 

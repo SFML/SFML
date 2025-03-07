@@ -1,4 +1,3 @@
-
 set(INCROOT ${PROJECT_SOURCE_DIR}/include/SFML/System)
 set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/System)
 
@@ -8,8 +7,10 @@ set(SRC
     ${INCROOT}/Angle.inl
     ${SRCROOT}/Clock.cpp
     ${INCROOT}/Clock.hpp
+    ${SRCROOT}/EnumArray.hpp
     ${SRCROOT}/Err.cpp
     ${INCROOT}/Err.hpp
+    ${INCROOT}/Exception.hpp
     ${INCROOT}/Export.hpp
     ${INCROOT}/InputStream.hpp
     ${INCROOT}/NativeActivity.hpp
@@ -22,6 +23,8 @@ set(SRC
     ${INCROOT}/Time.inl
     ${INCROOT}/Utf.hpp
     ${INCROOT}/Utf.inl
+    ${SRCROOT}/Utils.hpp
+    ${SRCROOT}/Utils.cpp
     ${SRCROOT}/Vector2.cpp
     ${INCROOT}/Vector2.hpp
     ${INCROOT}/Vector2.inl
@@ -63,9 +66,12 @@ else()
     source_group("unix" FILES ${PLATFORM_SRC})
 endif()
 
+find_package(Threads REQUIRED)
+
 # define the sfml-system target
 sfml_add_library(System
-                 SOURCES ${SRC} ${PLATFORM_SRC})
+                 SOURCES ${SRC} ${PLATFORM_SRC}
+                 DEPENDENCIES "Dependencies.cmake.in")
 
 # enable precompiled headers
 if (SFML_ENABLE_PCH)
@@ -75,13 +81,10 @@ endif()
 
 if(SFML_OS_ANDROID)
     # glad sources
-    target_include_directories(sfml-system PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/glad/include")
+    target_include_directories(sfml-system SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/glad/include")
 endif()
 
-# setup dependencies
-if(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_MACOSX)
-    target_link_libraries(sfml-system PRIVATE pthread)
-endif()
+target_link_libraries(sfml-system PRIVATE Threads::Threads)
 
 if(SFML_OS_LINUX)
     target_link_libraries(sfml-system PRIVATE rt)

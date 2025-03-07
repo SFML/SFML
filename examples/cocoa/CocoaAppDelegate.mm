@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2025 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -27,6 +27,8 @@
 
 #import "NSString+stdstring.h"
 
+#include <filesystem>
+
 // These define are used for converting the color of the NSPopUpButton
 #define BLUE  @"Blue"
 #define GREEN @"Green"
@@ -37,37 +39,24 @@
 // Our PIMPL
 struct SFMLmainWindow
 {
-    SFMLmainWindow(sf::WindowHandle win) : renderWindow(win), background(sf::Color::Blue)
+    SFMLmainWindow(sf::WindowHandle win) : renderWindow(win)
     {
-        std::string resPath = [[[NSBundle mainBundle] resourcePath] tostdstring];
-        if (!logo.loadFromFile(resPath + "/logo.png"))
-            NSLog(@"Couldn't load the logo image");
-
         logo.setSmooth(true);
 
-        sprite.setTexture(logo, true);
-        sf::FloatRect rect = sprite.getLocalBounds();
-        sf::Vector2f  size(rect.width, rect.height);
-        sprite.setOrigin(size / 2.f);
+        sprite.setOrigin(sprite.getLocalBounds().getCenter());
         sprite.scale({0.3f, 0.3f});
-
-        unsigned int ww = renderWindow.getSize().x;
-        unsigned int wh = renderWindow.getSize().y;
-        sprite.setPosition(sf::Vector2f(ww, wh) / 2.f);
-
-        if (!font.loadFromFile(resPath + "/tuffy.ttf"))
-            NSLog(@"Couldn't load the font");
+        sprite.setPosition(sf::Vector2f(renderWindow.getSize()) / 2.f);
 
         text.setFillColor(sf::Color::White);
-        text.setFont(font);
     }
 
-    sf::RenderWindow renderWindow;
-    sf::Font         font;
-    sf::Text         text;
-    sf::Texture      logo;
-    sf::Sprite       sprite;
-    sf::Color        background;
+    std::filesystem::path resPath{[[[NSBundle mainBundle] resourcePath] tostdstring]};
+    sf::RenderWindow      renderWindow;
+    sf::Font              font{resPath / "tuffy.ttf"};
+    sf::Text              text{font};
+    sf::Texture           logo{resPath / "logo.png"};
+    sf::Sprite            sprite{logo};
+    sf::Color             background{sf::Color::Blue};
 };
 
 // Private stuff
@@ -131,7 +120,7 @@ struct SFMLmainWindow
          * periodically we need to add it to the two above runloop mode.
          *
          * The default mode allows timer firing while the user doesn't do anything
-         * while the second mode allows timer firing while he is using a slider
+         * while the second mode allows timer firing while they are using a slider
          * or a menu.
          */
 
@@ -149,7 +138,7 @@ struct SFMLmainWindow
     self.textField = nil;
 
     delete static_cast<SFMLmainWindow*>(self.mainWindow);
-    self.mainWindow  = 0;
+    self.mainWindow  = nil;
     self.renderTimer = nil;
 
     [super dealloc];
@@ -161,10 +150,10 @@ struct SFMLmainWindow
 
     // Scaling
     /* /!\ we do this at 60fps so choose low scaling factor! /!\ */
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Up))
         self.mainWindow->sprite.scale({1.01f, 1.01f});
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Down))
         self.mainWindow->sprite.scale({0.99f, 0.99f});
 
     // Clear the window, display some stuff and display it into our view.

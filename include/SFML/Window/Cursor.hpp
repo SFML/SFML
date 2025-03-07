@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_CURSOR_HPP
-#define SFML_CURSOR_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -32,8 +31,10 @@
 
 #include <SFML/System/Vector2.hpp>
 
-#include <cstdint>
 #include <memory>
+#include <optional>
+
+#include <cstdint>
 
 namespace sf
 {
@@ -55,29 +56,29 @@ public:
     /// Refer to the following table to determine which cursor
     /// is available on which platform.
     ///
-    ///  Type                               | Linux | Mac OS X | Windows  |
-    /// ------------------------------------|:-----:|:--------:|:--------:|
-    ///  sf::Cursor::Arrow                  |  yes  |    yes   |   yes    |
-    ///  sf::Cursor::ArrowWait              |  no   |    no    |   yes    |
-    ///  sf::Cursor::Wait                   |  yes  |    no    |   yes    |
-    ///  sf::Cursor::Text                   |  yes  |    yes   |   yes    |
-    ///  sf::Cursor::Hand                   |  yes  |    yes   |   yes    |
-    ///  sf::Cursor::SizeHorizontal         |  yes  |    yes   |   yes    |
-    ///  sf::Cursor::SizeVertical           |  yes  |    yes   |   yes    |
-    ///  sf::Cursor::SizeTopLeftBottomRight |  no   |    yes*  |   yes    |
-    ///  sf::Cursor::SizeBottomLeftTopRight |  no   |    yes*  |   yes    |
-    ///  sf::Cursor::SizeLeft               |  yes  |    yes** |   yes**  |
-    ///  sf::Cursor::SizeRight              |  yes  |    yes** |   yes**  |
-    ///  sf::Cursor::SizeTop                |  yes  |    yes** |   yes**  |
-    ///  sf::Cursor::SizeBottom             |  yes  |    yes** |   yes**  |
-    ///  sf::Cursor::SizeTopLeft            |  yes  |    yes** |   yes**  |
-    ///  sf::Cursor::SizeTopRight           |  yes  |    yes** |   yes**  |
-    ///  sf::Cursor::SizeBottomLeft         |  yes  |    yes** |   yes**  |
-    ///  sf::Cursor::SizeBottomRight        |  yes  |    yes** |   yes**  |
-    ///  sf::Cursor::SizeAll                |  yes  |    no    |   yes    |
-    ///  sf::Cursor::Cross                  |  yes  |    yes   |   yes    |
-    ///  sf::Cursor::Help                   |  yes  |    yes*  |   yes    |
-    ///  sf::Cursor::NotAllowed             |  yes  |    yes   |   yes    |
+    ///  Type                                       | Linux | macOS | Windows  |
+    /// --------------------------------------------|:-----:|:-----:|:--------:|
+    ///  `sf::Cursor::Type::Arrow`                  |  yes  | yes   |   yes    |
+    ///  `sf::Cursor::Type::ArrowWait`              |  no   | no    |   yes    |
+    ///  `sf::Cursor::Type::Wait`                   |  yes  | no    |   yes    |
+    ///  `sf::Cursor::Type::Text`                   |  yes  | yes   |   yes    |
+    ///  `sf::Cursor::Type::Hand`                   |  yes  | yes   |   yes    |
+    ///  `sf::Cursor::Type::SizeHorizontal`         |  yes  | yes   |   yes    |
+    ///  `sf::Cursor::Type::SizeVertical`           |  yes  | yes   |   yes    |
+    ///  `sf::Cursor::Type::SizeTopLeftBottomRight` |  no   | yes*  |   yes    |
+    ///  `sf::Cursor::Type::SizeBottomLeftTopRight` |  no   | yes*  |   yes    |
+    ///  `sf::Cursor::Type::SizeLeft`               |  yes  | yes** |   yes**  |
+    ///  `sf::Cursor::Type::SizeRight`              |  yes  | yes** |   yes**  |
+    ///  `sf::Cursor::Type::SizeTop`                |  yes  | yes** |   yes**  |
+    ///  `sf::Cursor::Type::SizeBottom`             |  yes  | yes** |   yes**  |
+    ///  `sf::Cursor::Type::SizeTopLeft`            |  yes  | yes** |   yes**  |
+    ///  `sf::Cursor::Type::SizeTopRight`           |  yes  | yes** |   yes**  |
+    ///  `sf::Cursor::Type::SizeBottomLeft`         |  yes  | yes** |   yes**  |
+    ///  `sf::Cursor::Type::SizeBottomRight`        |  yes  | yes** |   yes**  |
+    ///  `sf::Cursor::Type::SizeAll`                |  yes  | no    |   yes    |
+    ///  `sf::Cursor::Type::Cross`                  |  yes  | yes   |   yes    |
+    ///  `sf::Cursor::Type::Help`                   |  yes  | yes*  |   yes    |
+    ///  `sf::Cursor::Type::NotAllowed`             |  yes  | yes   |   yes    |
     ///
     ///  * These cursor types are undocumented so may not
     ///    be available on all versions, but have been tested on 10.13
@@ -85,7 +86,7 @@ public:
     ///  ** On Windows and macOS, double-headed arrows are used
     ///
     ////////////////////////////////////////////////////////////
-    enum Type
+    enum class Type
     {
         Arrow,                  //!< Arrow cursor (default)
         ArrowWait,              //!< Busy arrow cursor
@@ -110,18 +111,6 @@ public:
         NotAllowed       //!< Action not allowed cursor
     };
 
-public:
-    ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    /// This constructor doesn't actually create the cursor;
-    /// initially the new instance is invalid and must not be
-    /// used until either loadFromPixels() or loadFromSystem()
-    /// is called and successfully created a cursor.
-    ///
-    ////////////////////////////////////////////////////////////
-    Cursor();
-
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
@@ -144,14 +133,75 @@ public:
     Cursor& operator=(const Cursor&) = delete;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Move constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    Cursor(Cursor&&) noexcept;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Move assignment
+    ///
+    ////////////////////////////////////////////////////////////
+    Cursor& operator=(Cursor&&) noexcept;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct a cursor with the provided image
+    ///
+    /// `pixels` must be an array of `size` pixels in
+    /// 32-bit RGBA format. If not, this will cause undefined behavior.
+    ///
+    /// If `pixels` is `nullptr` or either of `size`'s
+    /// properties are 0, the current cursor is left unchanged
+    /// and the function will return `false`.
+    ///
+    /// In addition to specifying the pixel data, you can also
+    /// specify the location of the hotspot of the cursor. The
+    /// hotspot is the pixel coordinate within the cursor image
+    /// which will be located exactly where the mouse pointer
+    /// position is. Any mouse actions that are performed will
+    /// return the window/screen location of the hotspot.
+    ///
+    /// \warning On Unix platforms which do not support colored
+    ///          cursors, the pixels are mapped into a monochrome
+    ///          bitmap: pixels with an alpha channel to 0 are
+    ///          transparent, black if the RGB channel are close
+    ///          to zero, and white otherwise.
+    ///
+    /// \param pixels  Array of pixels of the image
+    /// \param size    Width and height of the image
+    /// \param hotspot (x,y) location of the hotspot
+    ///
+    /// \throws sf::Exception if the cursor could not be constructed
+    ///
+    ////////////////////////////////////////////////////////////
+    Cursor(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create a native system cursor
+    ///
+    /// Refer to the list of cursor available on each system
+    /// (see `sf::Cursor::Type`) to know whether a given cursor is
+    /// expected to load successfully or is not supported by
+    /// the operating system.
+    ///
+    /// \param type Native system cursor type
+    ///
+    /// \throws sf::Exception if the corresponding cursor
+    ///         is not natively supported by the operating
+    ///         system
+    ///
+    ////////////////////////////////////////////////////////////
+    explicit Cursor(Type type);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Create a cursor with the provided image
     ///
-    /// \a pixels must be an array of \a width by \a height pixels
+    /// `pixels` must be an array of `size` pixels
     /// in 32-bit RGBA format. If not, this will cause undefined behavior.
     ///
-    /// If \a pixels is null or either \a width or \a height are 0,
-    /// the current cursor is left unchanged and the function will
-    /// return false.
+    /// If `pixels` is `nullptr` or either of `size`'s
+    /// properties are 0, the current cursor is left unchanged
+    /// and the function will return `false`.
     ///
     /// In addition to specifying the pixel data, you can also
     /// specify the location of the hotspot of the cursor. The
@@ -169,43 +219,48 @@ public:
     /// \param pixels   Array of pixels of the image
     /// \param size     Width and height of the image
     /// \param hotspot  (x,y) location of the hotspot
-    /// \return true if the cursor was successfully loaded;
-    ///         false otherwise
+    /// \return Cursor if the cursor was successfully loaded;
+    ///         `std::nullopt` otherwise
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromPixels(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot);
+    [[nodiscard]] static std::optional<Cursor> createFromPixels(const std::uint8_t* pixels, Vector2u size, Vector2u hotspot);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a native system cursor
     ///
     /// Refer to the list of cursor available on each system
-    /// (see sf::Cursor::Type) to know whether a given cursor is
+    /// (see `sf::Cursor::Type`) to know whether a given cursor is
     /// expected to load successfully or is not supported by
     /// the operating system.
     ///
     /// \param type Native system cursor type
-    /// \return true if and only if the corresponding cursor is
+    /// \return Cursor if and only if the corresponding cursor is
     ///         natively supported by the operating system;
-    ///         false otherwise
+    ///         `std::nullopt` otherwise
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool loadFromSystem(Type type);
+    [[nodiscard]] static std::optional<Cursor> createFromSystem(Type type);
 
 private:
     friend class WindowBase;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Default constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    Cursor();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Get access to the underlying implementation
     ///
-    /// This is primarily designed for sf::Window::setMouseCursor,
+    /// This is primarily designed for `sf::WindowBase::setMouseCursor`,
     /// hence the friendship.
     ///
     /// \return a reference to the OS-specific implementation
     ///
     ////////////////////////////////////////////////////////////
-    const priv::CursorImpl& getImpl() const;
+    [[nodiscard]] const priv::CursorImpl& getImpl() const;
 
-private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
@@ -213,9 +268,6 @@ private:
 };
 
 } // namespace sf
-
-
-#endif // SFML_CURSOR_HPP
 
 
 ////////////////////////////////////////////////////////////
@@ -229,11 +281,11 @@ private:
 /// associated with either a native system cursor or a custom
 /// cursor.
 ///
-/// After loading the cursor the graphical appearance
-/// with either loadFromPixels() or loadFromSystem(), the
-/// cursor can be changed with sf::Window::setMouseCursor().
+/// After loading the cursor graphical appearance
+/// with either `createFromPixels()` or `createFromSystem()`, the
+/// cursor can be changed with `sf::WindowBase::setMouseCursor()`.
 ///
-/// The behaviour is undefined if the cursor is destroyed while
+/// The behavior is undefined if the cursor is destroyed while
 /// in use by the window.
 ///
 /// Usage example:
@@ -242,11 +294,10 @@ private:
 ///
 /// // ... create window as usual ...
 ///
-/// sf::Cursor cursor;
-/// if (cursor.loadFromSystem(sf::Cursor::Hand))
-///     window.setMouseCursor(cursor);
+/// const auto cursor = sf::Cursor::createFromSystem(sf::Cursor::Type::Hand).value();
+/// window.setMouseCursor(cursor);
 /// \endcode
 ///
-/// \see sf::Window::setMouseCursor
+/// \see `sf::WindowBase::setMouseCursor`
 ///
 ////////////////////////////////////////////////////////////

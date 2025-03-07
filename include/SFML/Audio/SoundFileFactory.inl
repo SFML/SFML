@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,7 +25,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Audio/SoundFileFactory.hpp> // NOLINT(misc-header-include-cycle)
 
+#include <memory>
 
 namespace sf
 {
@@ -43,20 +45,12 @@ std::unique_ptr<SoundFileWriter> createWriter()
 }
 } // namespace priv
 
+
 ////////////////////////////////////////////////////////////
 template <typename T>
 void SoundFileFactory::registerReader()
 {
-    // Make sure the same class won't be registered twice
-    unregisterReader<T>();
-
-    // Create a new factory with the functions provided by the class
-    ReaderFactory factory;
-    factory.check  = &T::check;
-    factory.create = &priv::createReader<T>;
-
-    // Add it
-    s_readers.push_back(factory);
+    getReaderFactoryMap()[&priv::createReader<T>] = &T::check;
 }
 
 
@@ -64,30 +58,23 @@ void SoundFileFactory::registerReader()
 template <typename T>
 void SoundFileFactory::unregisterReader()
 {
-    // Remove the instance(s) of the reader from the array of factories
-    for (auto it = s_readers.begin(); it != s_readers.end(); /* noop */)
-    {
-        if (it->create == &priv::createReader<T>)
-            it = s_readers.erase(it);
-        else
-            ++it;
-    }
+    getReaderFactoryMap().erase(&priv::createReader<T>);
 }
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+bool SoundFileFactory::isReaderRegistered()
+{
+    return getReaderFactoryMap().count(&priv::createReader<T>) == 1;
+}
+
 
 ////////////////////////////////////////////////////////////
 template <typename T>
 void SoundFileFactory::registerWriter()
 {
-    // Make sure the same class won't be registered twice
-    unregisterWriter<T>();
-
-    // Create a new factory with the functions provided by the class
-    WriterFactory factory;
-    factory.check  = &T::check;
-    factory.create = &priv::createWriter<T>;
-
-    // Add it
-    s_writers.push_back(factory);
+    getWriterFactoryMap()[&priv::createWriter<T>] = &T::check;
 }
 
 
@@ -95,14 +82,15 @@ void SoundFileFactory::registerWriter()
 template <typename T>
 void SoundFileFactory::unregisterWriter()
 {
-    // Remove the instance(s) of the writer from the array of factories
-    for (auto it = s_writers.begin(); it != s_writers.end(); /* noop */)
-    {
-        if (it->create == &priv::createWriter<T>)
-            it = s_writers.erase(it);
-        else
-            ++it;
-    }
+    getWriterFactoryMap().erase(&priv::createWriter<T>);
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+bool SoundFileFactory::isWriterRegistered()
+{
+    return getWriterFactoryMap().count(&priv::createWriter<T>) == 1;
 }
 
 } // namespace sf

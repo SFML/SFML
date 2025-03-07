@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,14 +25,16 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/JoystickImpl.hpp>
+#include <SFML/Window/Win32/Utils.hpp>
+
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Time.hpp>
 #include <SFML/System/Win32/WindowsHeader.hpp>
-#include <SFML/Window/JoystickImpl.hpp>
 
-#include <cmath>
-#include <cstring>
+#include <algorithm>
+#include <array>
 #include <iomanip>
 #include <ostream>
 #include <regstr.h>
@@ -40,6 +42,8 @@
 #include <string>
 #include <tchar.h>
 #include <vector>
+
+#include <cmath>
 
 
 ////////////////////////////////////////////////////////////
@@ -56,18 +60,20 @@ namespace
 {
 namespace guids
 {
-const GUID IID_IDirectInput8W = {0xbf798031, 0x483a, 0x4da2, {0xaa, 0x99, 0x5d, 0x64, 0xed, 0x36, 0x97, 0x00}};
+// NOLINTBEGIN(readability-identifier-naming)
+constexpr GUID IID_IDirectInput8W = {0xbf798031, 0x483a, 0x4da2, {0xaa, 0x99, 0x5d, 0x64, 0xed, 0x36, 0x97, 0x00}};
 
-const GUID GUID_XAxis  = {0xa36d02e0, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
-const GUID GUID_YAxis  = {0xa36d02e1, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
-const GUID GUID_ZAxis  = {0xa36d02e2, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
-const GUID GUID_RzAxis = {0xa36d02e3, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
-const GUID GUID_Slider = {0xa36d02e4, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
+constexpr GUID GUID_XAxis  = {0xa36d02e0, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
+constexpr GUID GUID_YAxis  = {0xa36d02e1, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
+constexpr GUID GUID_ZAxis  = {0xa36d02e2, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
+constexpr GUID GUID_RzAxis = {0xa36d02e3, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
+constexpr GUID GUID_Slider = {0xa36d02e4, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
 
-const GUID GUID_POV = {0xa36d02f2, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
+constexpr GUID GUID_POV = {0xa36d02f2, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
 
-const GUID GUID_RxAxis = {0xa36d02f4, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
-const GUID GUID_RyAxis = {0xa36d02f5, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
+constexpr GUID GUID_RxAxis = {0xa36d02f4, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
+constexpr GUID GUID_RyAxis = {0xa36d02f5, 0xc9f3, 0x11cf, {0xbf, 0xc7, 0x44, 0x45, 0x53, 0x54, 0x00, 0x00}};
+// NOLINTEND(readability-identifier-naming)
 } // namespace guids
 
 HMODULE         dinput8dll  = nullptr;
@@ -75,9 +81,9 @@ IDirectInput8W* directInput = nullptr;
 
 struct JoystickRecord
 {
-    GUID         guid;
-    unsigned int index;
-    bool         plugged;
+    GUID         guid{};
+    unsigned int index{};
+    bool         plugged{};
 };
 
 using JoystickList = std::vector<JoystickRecord>;
@@ -85,8 +91,8 @@ JoystickList joystickList;
 
 struct JoystickBlacklistEntry
 {
-    unsigned int vendorId;
-    unsigned int productId;
+    unsigned int vendorId{};
+    unsigned int productId{};
 };
 
 using JoystickBlacklist = std::vector<JoystickBlacklistEntry>;
@@ -103,47 +109,24 @@ namespace
 {
 struct ConnectionCache
 {
-    ConnectionCache() : connected(false)
-    {
-    }
-    bool      connected;
+    bool      connected{};
     sf::Clock timer;
 };
-const sf::Time connectionRefreshDelay = sf::milliseconds(500);
 
-ConnectionCache connectionCache[sf::Joystick::Count];
+std::array<ConnectionCache, sf::Joystick::Count> connectionCache{};
 
 // If true, will only update when WM_DEVICECHANGE message is received
 bool lazyUpdates = false;
-
-// Get a system error string from an error code
-std::string getErrorString(DWORD error)
-{
-    PTCHAR buffer;
-
-    if (FormatMessage(FORMAT_MESSAGE_MAX_WIDTH_MASK | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-                      nullptr,
-                      error,
-                      0,
-                      reinterpret_cast<PTCHAR>(&buffer),
-                      0,
-                      nullptr) == 0)
-        return "Unknown error.";
-
-    sf::String message = buffer;
-    LocalFree(buffer);
-    return message.toAnsiString();
-}
 
 // Get the joystick's name
 sf::String getDeviceName(unsigned int index, JOYCAPS caps)
 {
     // Give the joystick a default name
-    sf::String joystickDescription = "Unknown Joystick";
+    static const sf::String joystickDescription = "Unknown Joystick";
 
-    LONG                     result;
-    HKEY                     rootKey;
-    HKEY                     currentKey;
+    LONG                     result     = 0;
+    HKEY                     rootKey    = nullptr;
+    HKEY                     currentKey = nullptr;
     std::basic_string<TCHAR> subkey;
 
     subkey = REGSTR_PATH_JOYCONFIG;
@@ -163,7 +146,7 @@ sf::String getDeviceName(unsigned int index, JOYCAPS caps)
         if (result != ERROR_SUCCESS)
         {
             sf::err() << "Unable to open registry for joystick at index " << index << ": "
-                      << getErrorString(static_cast<DWORD>(result)) << std::endl;
+                      << sf::priv::getErrorString(static_cast<DWORD>(result)) << std::endl;
             return joystickDescription;
         }
     }
@@ -175,54 +158,50 @@ sf::String getDeviceName(unsigned int index, JOYCAPS caps)
     subkey += indexString.str();
     subkey += REGSTR_VAL_JOYOEMNAME;
 
-    TCHAR keyData[256];
-    DWORD keyDataSize = sizeof(keyData);
+    std::array<TCHAR, 256> keyData{};
+    DWORD                  keyDataSize = sizeof(keyData);
 
-    result = RegQueryValueEx(currentKey, subkey.c_str(), nullptr, nullptr, reinterpret_cast<LPBYTE>(keyData), &keyDataSize);
+    result = RegQueryValueEx(currentKey, subkey.c_str(), nullptr, nullptr, reinterpret_cast<LPBYTE>(keyData.data()), &keyDataSize);
     RegCloseKey(currentKey);
 
     if (result != ERROR_SUCCESS)
     {
         sf::err() << "Unable to query registry key for joystick at index " << index << ": "
-                  << getErrorString(static_cast<DWORD>(result)) << std::endl;
+                  << sf::priv::getErrorString(static_cast<DWORD>(result)) << std::endl;
         return joystickDescription;
     }
 
     subkey = REGSTR_PATH_JOYOEM;
     subkey += TEXT('\\');
-    subkey.append(keyData, keyDataSize / sizeof(TCHAR));
+    subkey.append(keyData.data(), keyDataSize / sizeof(TCHAR));
 
     result = RegOpenKeyEx(rootKey, subkey.c_str(), 0, KEY_READ, &currentKey);
 
     if (result != ERROR_SUCCESS)
     {
         sf::err() << "Unable to open registry key for joystick at index " << index << ": "
-                  << getErrorString(static_cast<DWORD>(result)) << std::endl;
+                  << sf::priv::getErrorString(static_cast<DWORD>(result)) << std::endl;
         return joystickDescription;
     }
 
     keyDataSize = sizeof(keyData);
 
-    result = RegQueryValueEx(currentKey, REGSTR_VAL_JOYOEMNAME, nullptr, nullptr, reinterpret_cast<LPBYTE>(keyData), &keyDataSize);
+    result = RegQueryValueEx(currentKey, REGSTR_VAL_JOYOEMNAME, nullptr, nullptr, reinterpret_cast<LPBYTE>(keyData.data()), &keyDataSize);
     RegCloseKey(currentKey);
 
     if (result != ERROR_SUCCESS)
     {
         sf::err() << "Unable to query name for joystick at index " << index << ": "
-                  << getErrorString(static_cast<DWORD>(result)) << std::endl;
+                  << sf::priv::getErrorString(static_cast<DWORD>(result)) << std::endl;
         return joystickDescription;
     }
 
-    keyData[255]        = TEXT('\0'); // Ensure null terminator in case the data is too long.
-    joystickDescription = keyData;
-
-    return joystickDescription;
+    keyData.back() = TEXT('\0'); // Ensure null terminator in case the data is too long.
+    return keyData.data();
 }
 } // namespace
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 void JoystickImpl::initialize()
@@ -252,7 +231,8 @@ bool JoystickImpl::isConnected(unsigned int index)
     if (directInput)
         return isConnectedDInput(index);
 
-    ConnectionCache& cache = connectionCache[index];
+    ConnectionCache&   cache                  = connectionCache[index];
+    constexpr sf::Time connectionRefreshDelay = sf::milliseconds(500);
     if (!lazyUpdates && cache.timer.getElapsedTime() > connectionRefreshDelay)
     {
         JOYINFOEX joyInfo;
@@ -275,7 +255,10 @@ void JoystickImpl::setLazyUpdates(bool status)
 void JoystickImpl::updateConnections()
 {
     if (directInput)
-        return updateConnectionsDInput();
+    {
+        updateConnectionsDInput();
+        return;
+    }
 
     for (unsigned int i = 0; i < Joystick::Count; ++i)
     {
@@ -299,7 +282,7 @@ bool JoystickImpl::open(unsigned int index)
     m_index = JOYSTICKID1 + index;
 
     // Store the joystick capabilities
-    bool success = joyGetDevCaps(m_index, &m_caps, sizeof(m_caps)) == JOYERR_NOERROR;
+    const bool success = joyGetDevCaps(m_index, &m_caps, sizeof(m_caps)) == JOYERR_NOERROR;
 
     if (success)
     {
@@ -331,14 +314,14 @@ JoystickCaps JoystickImpl::getCapabilities() const
     if (caps.buttonCount > Joystick::ButtonCount)
         caps.buttonCount = Joystick::ButtonCount;
 
-    caps.axes[Joystick::X]    = true;
-    caps.axes[Joystick::Y]    = true;
-    caps.axes[Joystick::Z]    = (m_caps.wCaps & JOYCAPS_HASZ) != 0;
-    caps.axes[Joystick::R]    = (m_caps.wCaps & JOYCAPS_HASR) != 0;
-    caps.axes[Joystick::U]    = (m_caps.wCaps & JOYCAPS_HASU) != 0;
-    caps.axes[Joystick::V]    = (m_caps.wCaps & JOYCAPS_HASV) != 0;
-    caps.axes[Joystick::PovX] = (m_caps.wCaps & JOYCAPS_HASPOV) != 0;
-    caps.axes[Joystick::PovY] = (m_caps.wCaps & JOYCAPS_HASPOV) != 0;
+    caps.axes[Joystick::Axis::X]    = true;
+    caps.axes[Joystick::Axis::Y]    = true;
+    caps.axes[Joystick::Axis::Z]    = (m_caps.wCaps & JOYCAPS_HASZ) != 0;
+    caps.axes[Joystick::Axis::R]    = (m_caps.wCaps & JOYCAPS_HASR) != 0;
+    caps.axes[Joystick::Axis::U]    = (m_caps.wCaps & JOYCAPS_HASU) != 0;
+    caps.axes[Joystick::Axis::V]    = (m_caps.wCaps & JOYCAPS_HASV) != 0;
+    caps.axes[Joystick::Axis::PovX] = (m_caps.wCaps & JOYCAPS_HASPOV) != 0;
+    caps.axes[Joystick::Axis::PovY] = (m_caps.wCaps & JOYCAPS_HASPOV) != 0;
 
     return caps;
 }
@@ -360,10 +343,8 @@ JoystickState JoystickImpl::update()
         {
             return updateDInputBuffered();
         }
-        else
-        {
-            return updateDInputPolled();
-        }
+
+        return updateDInputPolled();
     }
 
     JoystickState state;
@@ -379,30 +360,36 @@ JoystickState JoystickImpl::update()
         state.connected = true;
 
         // Axes
-        state.axes[Joystick::X] = (static_cast<float>(pos.dwXpos) - static_cast<float>(m_caps.wXmax + m_caps.wXmin) / 2.f) *
-                                  200.f / static_cast<float>(m_caps.wXmax - m_caps.wXmin);
-        state.axes[Joystick::Y] = (static_cast<float>(pos.dwYpos) - static_cast<float>(m_caps.wYmax + m_caps.wYmin) / 2.f) *
-                                  200.f / static_cast<float>(m_caps.wYmax - m_caps.wYmin);
-        state.axes[Joystick::Z] = (static_cast<float>(pos.dwZpos) - static_cast<float>(m_caps.wZmax + m_caps.wZmin) / 2.f) *
-                                  200.f / static_cast<float>(m_caps.wZmax - m_caps.wZmin);
-        state.axes[Joystick::R] = (static_cast<float>(pos.dwRpos) - static_cast<float>(m_caps.wRmax + m_caps.wRmin) / 2.f) *
-                                  200.f / static_cast<float>(m_caps.wRmax - m_caps.wRmin);
-        state.axes[Joystick::U] = (static_cast<float>(pos.dwUpos) - static_cast<float>(m_caps.wUmax + m_caps.wUmin) / 2.f) *
-                                  200.f / static_cast<float>(m_caps.wUmax - m_caps.wUmin);
-        state.axes[Joystick::V] = (static_cast<float>(pos.dwVpos) - static_cast<float>(m_caps.wVmax + m_caps.wVmin) / 2.f) *
-                                  200.f / static_cast<float>(m_caps.wVmax - m_caps.wVmin);
+        state.axes[Joystick::Axis::X] = (static_cast<float>(pos.dwXpos) -
+                                         static_cast<float>(m_caps.wXmax + m_caps.wXmin) / 2.f) *
+                                        200.f / static_cast<float>(m_caps.wXmax - m_caps.wXmin);
+        state.axes[Joystick::Axis::Y] = (static_cast<float>(pos.dwYpos) -
+                                         static_cast<float>(m_caps.wYmax + m_caps.wYmin) / 2.f) *
+                                        200.f / static_cast<float>(m_caps.wYmax - m_caps.wYmin);
+        state.axes[Joystick::Axis::Z] = (static_cast<float>(pos.dwZpos) -
+                                         static_cast<float>(m_caps.wZmax + m_caps.wZmin) / 2.f) *
+                                        200.f / static_cast<float>(m_caps.wZmax - m_caps.wZmin);
+        state.axes[Joystick::Axis::R] = (static_cast<float>(pos.dwRpos) -
+                                         static_cast<float>(m_caps.wRmax + m_caps.wRmin) / 2.f) *
+                                        200.f / static_cast<float>(m_caps.wRmax - m_caps.wRmin);
+        state.axes[Joystick::Axis::U] = (static_cast<float>(pos.dwUpos) -
+                                         static_cast<float>(m_caps.wUmax + m_caps.wUmin) / 2.f) *
+                                        200.f / static_cast<float>(m_caps.wUmax - m_caps.wUmin);
+        state.axes[Joystick::Axis::V] = (static_cast<float>(pos.dwVpos) -
+                                         static_cast<float>(m_caps.wVmax + m_caps.wVmin) / 2.f) *
+                                        200.f / static_cast<float>(m_caps.wVmax - m_caps.wVmin);
 
         // Special case for POV, it is given as an angle
         if (pos.dwPOV != 0xFFFF)
         {
-            float angle                = static_cast<float>(pos.dwPOV) / 18000.f * 3.141592654f;
-            state.axes[Joystick::PovX] = std::sin(angle) * 100;
-            state.axes[Joystick::PovY] = std::cos(angle) * 100;
+            const float angle                = static_cast<float>(pos.dwPOV) / 18000.f * 3.141592654f;
+            state.axes[Joystick::Axis::PovX] = std::sin(angle) * 100;
+            state.axes[Joystick::Axis::PovY] = std::cos(angle) * 100;
         }
         else
         {
-            state.axes[Joystick::PovX] = 0;
-            state.axes[Joystick::PovY] = 0;
+            state.axes[Joystick::Axis::PovX] = 0;
+            state.axes[Joystick::Axis::PovY] = 0;
         }
 
         // Buttons
@@ -430,11 +417,11 @@ void JoystickImpl::initializeDInput()
         if (directInput8Create)
         {
             // Try to acquire a DirectInput 8.x interface
-            HRESULT result = directInput8Create(GetModuleHandleW(nullptr),
-                                                0x0800,
-                                                guids::IID_IDirectInput8W,
-                                                reinterpret_cast<void**>(&directInput),
-                                                nullptr);
+            const HRESULT result = directInput8Create(GetModuleHandleW(nullptr),
+                                                      0x0800,
+                                                      guids::IID_IDirectInput8W,
+                                                      reinterpret_cast<void**>(&directInput),
+                                                      nullptr);
 
             if (FAILED(result))
             {
@@ -476,13 +463,9 @@ void JoystickImpl::cleanupDInput()
 bool JoystickImpl::isConnectedDInput(unsigned int index)
 {
     // Check if a joystick with the given index is in the connected list
-    for (const JoystickRecord& record : joystickList)
-    {
-        if (record.index == index)
-            return true;
-    }
-
-    return false;
+    return std::any_of(joystickList.cbegin(),
+                       joystickList.cend(),
+                       [index](const JoystickRecord& record) { return record.index == index; });
 }
 
 
@@ -494,19 +477,16 @@ void JoystickImpl::updateConnectionsDInput()
         record.plugged = false;
 
     // Enumerate devices
-    HRESULT result = directInput->EnumDevices(DI8DEVCLASS_GAMECTRL,
-                                              &JoystickImpl::deviceEnumerationCallback,
-                                              nullptr,
-                                              DIEDFL_ATTACHEDONLY);
+    const HRESULT result = directInput->EnumDevices(DI8DEVCLASS_GAMECTRL,
+                                                    &JoystickImpl::deviceEnumerationCallback,
+                                                    nullptr,
+                                                    DIEDFL_ATTACHEDONLY);
 
     // Remove devices that were not connected during the enumeration
-    for (auto i = joystickList.begin(); i != joystickList.end();)
-    {
-        if (!i->plugged)
-            i = joystickList.erase(i);
-        else
-            ++i;
-    }
+    joystickList.erase(std::remove_if(joystickList.begin(),
+                                      joystickList.end(),
+                                      [](const JoystickRecord& joystickRecord) { return !joystickRecord.plugged; }),
+                       joystickList.end());
 
     if (FAILED(result))
     {
@@ -539,11 +519,8 @@ bool JoystickImpl::openDInput(unsigned int index)
     // Initialize DirectInput members
     m_device = nullptr;
 
-    for (int& axis : m_axes)
-        axis = -1;
-
-    for (int& button : m_buttons)
-        button = -1;
+    m_axes.fill(-1);
+    m_buttons.fill(-1);
 
     m_deviceCaps        = {};
     m_deviceCaps.dwSize = sizeof(DIDEVCAPS);
@@ -613,9 +590,9 @@ bool JoystickImpl::openDInput(unsigned int index)
                 const DWORD povType    = DIDFT_POV | DIDFT_OPTIONAL | DIDFT_ANYINSTANCE;
                 const DWORD buttonType = DIDFT_BUTTON | DIDFT_OPTIONAL | DIDFT_ANYINSTANCE;
 
-                static DIOBJECTDATAFORMAT data[8 * 4 + 4 + sf::Joystick::ButtonCount];
+                static std::array<DIOBJECTDATAFORMAT, 8 * 4 + 4 + sf::Joystick::ButtonCount> data{};
 
-                for (int i = 0; i < 4; ++i)
+                for (std::size_t i = 0; i < 4; ++i)
                 {
                     data[8 * i + 0].pguid = &guids::GUID_XAxis;
                     data[8 * i + 1].pguid = &guids::GUID_YAxis;
@@ -660,13 +637,13 @@ bool JoystickImpl::openDInput(unsigned int index)
                 data[30].dwOfs = FIELD_OFFSET(DIJOYSTATE2, rglFSlider[0]);
                 data[31].dwOfs = FIELD_OFFSET(DIJOYSTATE2, rglFSlider[1]);
 
-                for (int i = 0; i < 8 * 4; ++i)
+                for (std::size_t i = 0; i < 8 * 4; ++i)
                 {
                     data[i].dwType  = axisType;
                     data[i].dwFlags = 0;
                 }
 
-                for (int i = 0; i < 4; ++i)
+                for (std::size_t i = 0; i < 4; ++i)
                 {
                     data[8 * 4 + i].pguid   = &guids::GUID_POV;
                     data[8 * 4 + i].dwOfs   = static_cast<DWORD>(DIJOFS_POV(static_cast<unsigned int>(i)));
@@ -674,7 +651,7 @@ bool JoystickImpl::openDInput(unsigned int index)
                     data[8 * 4 + i].dwFlags = 0;
                 }
 
-                for (int i = 0; i < sf::Joystick::ButtonCount; ++i)
+                for (unsigned int i = 0; i < sf::Joystick::ButtonCount; ++i)
                 {
                     data[8 * 4 + 4 + i].pguid   = nullptr;
                     data[8 * 4 + 4 + i].dwOfs   = static_cast<DWORD>(DIJOFS_BUTTON(i));
@@ -687,7 +664,7 @@ bool JoystickImpl::openDInput(unsigned int index)
                 format.dwFlags    = DIDFT_ABSAXIS;
                 format.dwDataSize = sizeof(DIJOYSTATE2);
                 format.dwNumObjs  = 8 * 4 + 4 + sf::Joystick::ButtonCount;
-                format.rgodf      = data;
+                format.rgodf      = data.data();
 
                 formatInitialized = true;
             }
@@ -734,7 +711,7 @@ bool JoystickImpl::openDInput(unsigned int index)
             }
 
             // Set device's axis mode to absolute if the device reports having at least one axis
-            for (int axis : m_axes)
+            for (const int axis : m_axes)
             {
                 if (axis != -1)
                 {
@@ -794,8 +771,7 @@ bool JoystickImpl::openDInput(unsigned int index)
                     {
                         if (m_identification.vendorId && m_identification.productId)
                         {
-                            JoystickBlacklistEntry entry;
-
+                            JoystickBlacklistEntry entry{};
                             entry.vendorId  = m_identification.vendorId;
                             entry.productId = m_identification.productId;
 
@@ -871,15 +847,18 @@ JoystickCaps JoystickImpl::getCapabilitiesDInput() const
     // Count how many buttons have valid offsets
     caps.buttonCount = 0;
 
-    for (int button : m_buttons)
+    for (const int button : m_buttons)
     {
         if (button != -1)
             ++caps.buttonCount;
     }
 
     // Check which axes have valid offsets
-    for (int i = 0; i < Joystick::AxisCount; ++i)
-        caps.axes[i] = (m_axes[i] != -1);
+    for (unsigned int i = 0; i < Joystick::AxisCount; ++i)
+    {
+        const auto axis = static_cast<Joystick::Axis>(i);
+        caps.axes[axis] = (m_axes[axis] != -1);
+    }
 
     return caps;
 }
@@ -894,17 +873,17 @@ JoystickState JoystickImpl::updateDInputBuffered()
     if (!m_device)
         return m_state;
 
-    DIDEVICEOBJECTDATA events[directInputEventBufferSize];
-    DWORD              eventCount = directInputEventBufferSize;
+    std::array<DIDEVICEOBJECTDATA, directInputEventBufferSize> events{};
+    DWORD                                                      eventCount = directInputEventBufferSize;
 
     // Try to get the device data
-    HRESULT result = m_device->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), events, &eventCount, 0);
+    HRESULT result = m_device->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), events.data(), &eventCount, 0);
 
     // If we have not acquired or have lost the device, attempt to (re-)acquire it and get the device data again
     if ((result == DIERR_NOTACQUIRED) || (result == DIERR_INPUTLOST))
     {
         m_device->Acquire();
-        result = m_device->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), events, &eventCount, 0);
+        result = m_device->GetDeviceData(sizeof(DIDEVICEOBJECTDATA), events.data(), &eventCount, 0);
     }
 
     // If we still can't get the device data, assume it has been disconnected
@@ -929,30 +908,31 @@ JoystickState JoystickImpl::updateDInputBuffered()
         bool eventHandled = false;
 
         // Get the current state of each axis
-        for (int j = 0; j < Joystick::AxisCount; ++j)
+        for (unsigned int j = 0; j < Joystick::AxisCount; ++j)
         {
-            if (m_axes[j] == static_cast<int>(events[i].dwOfs))
+            const auto axis = static_cast<Joystick::Axis>(j);
+            if (m_axes[axis] == static_cast<int>(events[i].dwOfs))
             {
-                if ((j == Joystick::PovX) || (j == Joystick::PovY))
+                if ((axis == Joystick::Axis::PovX) || (axis == Joystick::Axis::PovY))
                 {
-                    unsigned short value = LOWORD(events[i].dwData);
+                    const unsigned short value = LOWORD(events[i].dwData);
 
                     if (value != 0xFFFF)
                     {
-                        float angle = (static_cast<float>(value)) * 3.141592654f / DI_DEGREES / 180.f;
+                        const float angle = (static_cast<float>(value)) * 3.141592654f / DI_DEGREES / 180.f;
 
-                        m_state.axes[Joystick::PovX] = std::sin(angle) * 100.f;
-                        m_state.axes[Joystick::PovY] = std::cos(angle) * 100.f;
+                        m_state.axes[Joystick::Axis::PovX] = std::sin(angle) * 100.f;
+                        m_state.axes[Joystick::Axis::PovY] = std::cos(angle) * 100.f;
                     }
                     else
                     {
-                        m_state.axes[Joystick::PovX] = 0.f;
-                        m_state.axes[Joystick::PovY] = 0.f;
+                        m_state.axes[Joystick::Axis::PovX] = 0.f;
+                        m_state.axes[Joystick::Axis::PovY] = 0.f;
                     }
                 }
                 else
                 {
-                    m_state.axes[j] = (static_cast<float>(static_cast<short>(events[i].dwData)) + 0.5f) * 100.f / 32767.5f;
+                    m_state.axes[axis] = (static_cast<float>(static_cast<short>(events[i].dwData)) + 0.5f) * 100.f / 32767.5f;
                 }
 
                 eventHandled = true;
@@ -965,7 +945,7 @@ JoystickState JoystickImpl::updateDInputBuffered()
             continue;
 
         // Get the current state of each button
-        for (int j = 0; j < Joystick::ButtonCount; ++j)
+        for (unsigned int j = 0; j < Joystick::ButtonCount; ++j)
         {
             if (m_buttons[j] == static_cast<int>(events[i].dwOfs))
                 m_state.buttons[j] = (events[i].dwData != 0);
@@ -1018,48 +998,49 @@ JoystickState JoystickImpl::updateDInputPolled()
         }
 
         // Get the current state of each axis
-        for (int i = 0; i < Joystick::AxisCount; ++i)
+        for (unsigned int i = 0; i < Joystick::AxisCount; ++i)
         {
-            if (m_axes[i] != -1)
+            const auto axis = static_cast<Joystick::Axis>(i);
+            if (m_axes[axis] != -1)
             {
-                if ((i == Joystick::PovX) || (i == Joystick::PovY))
+                if ((axis == Joystick::Axis::PovX) || (axis == Joystick::Axis::PovY))
                 {
-                    unsigned short value = LOWORD(
-                        *reinterpret_cast<const DWORD*>(reinterpret_cast<const char*>(&joystate) + m_axes[i]));
+                    const unsigned short value = LOWORD(
+                        *reinterpret_cast<const DWORD*>(reinterpret_cast<const char*>(&joystate) + m_axes[axis]));
 
                     if (value != 0xFFFF)
                     {
-                        float angle = (static_cast<float>(value)) * 3.141592654f / DI_DEGREES / 180.f;
+                        const float angle = (static_cast<float>(value)) * 3.141592654f / DI_DEGREES / 180.f;
 
-                        state.axes[Joystick::PovX] = std::sin(angle) * 100.f;
-                        state.axes[Joystick::PovY] = std::cos(angle) * 100.f;
+                        state.axes[Joystick::Axis::PovX] = std::sin(angle) * 100.f;
+                        state.axes[Joystick::Axis::PovY] = std::cos(angle) * 100.f;
                     }
                     else
                     {
-                        state.axes[Joystick::PovX] = 0.f;
-                        state.axes[Joystick::PovY] = 0.f;
+                        state.axes[Joystick::Axis::PovX] = 0.f;
+                        state.axes[Joystick::Axis::PovY] = 0.f;
                     }
                 }
                 else
                 {
-                    state.axes[i] = (static_cast<float>(*reinterpret_cast<const LONG*>(
-                                         reinterpret_cast<const char*>(&joystate) + m_axes[i])) +
-                                     0.5f) *
-                                    100.f / 32767.5f;
+                    state.axes[axis] = (static_cast<float>(*reinterpret_cast<const LONG*>(
+                                            reinterpret_cast<const char*>(&joystate) + m_axes[axis])) +
+                                        0.5f) *
+                                       100.f / 32767.5f;
                 }
             }
             else
             {
-                state.axes[i] = 0.f;
+                state.axes[axis] = 0.f;
             }
         }
 
         // Get the current state of each button
-        for (int i = 0; i < Joystick::ButtonCount; ++i)
+        for (unsigned int i = 0; i < Joystick::ButtonCount; ++i)
         {
             if (m_buttons[i] != -1)
             {
-                BYTE value = *reinterpret_cast<const BYTE*>(reinterpret_cast<const char*>(&joystate) + m_buttons[i]);
+                const BYTE value = *reinterpret_cast<const BYTE*>(reinterpret_cast<const char*>(&joystate) + m_buttons[i]);
 
                 state.buttons[i] = ((value & 0x80) != 0);
             }
@@ -1089,7 +1070,7 @@ BOOL CALLBACK JoystickImpl::deviceEnumerationCallback(const DIDEVICEINSTANCE* de
         }
     }
 
-    JoystickRecord record = {deviceInstance->guidInstance, sf::Joystick::Count, true};
+    const JoystickRecord record = {deviceInstance->guidInstance, sf::Joystick::Count, true};
     joystickList.push_back(record);
 
     return DIENUM_CONTINUE;
@@ -1099,29 +1080,29 @@ BOOL CALLBACK JoystickImpl::deviceEnumerationCallback(const DIDEVICEINSTANCE* de
 ////////////////////////////////////////////////////////////
 BOOL CALLBACK JoystickImpl::deviceObjectEnumerationCallback(const DIDEVICEOBJECTINSTANCE* deviceObjectInstance, void* userData)
 {
-    sf::priv::JoystickImpl& joystick = *reinterpret_cast<sf::priv::JoystickImpl*>(userData);
+    JoystickImpl& joystick = *reinterpret_cast<JoystickImpl*>(userData);
 
     if (DIDFT_GETTYPE(deviceObjectInstance->dwType) & DIDFT_AXIS)
     {
         // Axes
         if (deviceObjectInstance->guidType == guids::GUID_XAxis)
-            joystick.m_axes[Joystick::X] = DIJOFS_X;
+            joystick.m_axes[Joystick::Axis::X] = DIJOFS_X;
         else if (deviceObjectInstance->guidType == guids::GUID_YAxis)
-            joystick.m_axes[Joystick::Y] = DIJOFS_Y;
+            joystick.m_axes[Joystick::Axis::Y] = DIJOFS_Y;
         else if (deviceObjectInstance->guidType == guids::GUID_ZAxis)
-            joystick.m_axes[Joystick::Z] = DIJOFS_Z;
+            joystick.m_axes[Joystick::Axis::Z] = DIJOFS_Z;
         else if (deviceObjectInstance->guidType == guids::GUID_RzAxis)
-            joystick.m_axes[Joystick::R] = DIJOFS_RZ;
+            joystick.m_axes[Joystick::Axis::R] = DIJOFS_RZ;
         else if (deviceObjectInstance->guidType == guids::GUID_RxAxis)
-            joystick.m_axes[Joystick::U] = DIJOFS_RX;
+            joystick.m_axes[Joystick::Axis::U] = DIJOFS_RX;
         else if (deviceObjectInstance->guidType == guids::GUID_RyAxis)
-            joystick.m_axes[Joystick::V] = DIJOFS_RY;
+            joystick.m_axes[Joystick::Axis::V] = DIJOFS_RY;
         else if (deviceObjectInstance->guidType == guids::GUID_Slider)
         {
-            if (joystick.m_axes[Joystick::U] == -1)
-                joystick.m_axes[Joystick::U] = DIJOFS_SLIDER(0);
+            if (joystick.m_axes[Joystick::Axis::U] == -1)
+                joystick.m_axes[Joystick::Axis::U] = DIJOFS_SLIDER(0);
             else
-                joystick.m_axes[Joystick::V] = DIJOFS_SLIDER(1);
+                joystick.m_axes[Joystick::Axis::V] = DIJOFS_SLIDER(1);
         }
         else
             return DIENUM_CONTINUE;
@@ -1135,35 +1116,35 @@ BOOL CALLBACK JoystickImpl::deviceObjectEnumerationCallback(const DIDEVICEOBJECT
         propertyRange.lMin              = -32768;
         propertyRange.lMax              = 32767;
 
-        HRESULT result = joystick.m_device->SetProperty(DIPROP_RANGE, &propertyRange.diph);
+        const HRESULT result = joystick.m_device->SetProperty(DIPROP_RANGE, &propertyRange.diph);
 
         if (result != DI_OK)
             err() << "Failed to set DirectInput device axis property range: " << result << std::endl;
 
         return DIENUM_CONTINUE;
     }
-    else if (DIDFT_GETTYPE(deviceObjectInstance->dwType) & DIDFT_POV)
+    if (DIDFT_GETTYPE(deviceObjectInstance->dwType) & DIDFT_POV)
     {
         // POVs
         if (deviceObjectInstance->guidType == guids::GUID_POV)
         {
-            if (joystick.m_axes[Joystick::PovX] == -1)
+            if (joystick.m_axes[Joystick::Axis::PovX] == -1)
             {
-                joystick.m_axes[Joystick::PovX] = DIJOFS_POV(0);
-                joystick.m_axes[Joystick::PovY] = DIJOFS_POV(0);
+                joystick.m_axes[Joystick::Axis::PovX] = DIJOFS_POV(0);
+                joystick.m_axes[Joystick::Axis::PovY] = DIJOFS_POV(0);
             }
         }
 
         return DIENUM_CONTINUE;
     }
-    else if (DIDFT_GETTYPE(deviceObjectInstance->dwType) & DIDFT_BUTTON)
+    if (DIDFT_GETTYPE(deviceObjectInstance->dwType) & DIDFT_BUTTON)
     {
         // Buttons
-        for (int i = 0; i < Joystick::ButtonCount; ++i)
+        for (unsigned int i = 0; i < Joystick::ButtonCount; ++i)
         {
             if (joystick.m_buttons[i] == -1)
             {
-                joystick.m_buttons[i] = DIJOFS_BUTTON(i);
+                joystick.m_buttons[i] = DIJOFS_BUTTON(static_cast<int>(i));
                 break;
             }
         }
@@ -1174,6 +1155,4 @@ BOOL CALLBACK JoystickImpl::deviceObjectEnumerationCallback(const DIDEVICEOBJECT
     return DIENUM_CONTINUE;
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

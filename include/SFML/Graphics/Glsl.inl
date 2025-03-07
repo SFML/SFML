@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,9 +22,28 @@
 //
 ////////////////////////////////////////////////////////////
 
-
 ////////////////////////////////////////////////////////////
-/// \brief Helper functions to copy sf::Transform to sf::Glsl::Mat3/4
+// Headers
+////////////////////////////////////////////////////////////
+#include <SFML/Graphics/Export.hpp>
+
+#include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/Glsl.hpp> // NOLINT(misc-header-include-cycle)
+
+#include <array>
+
+#include <cstddef>
+
+
+namespace sf
+{
+class Transform;
+} // namespace sf
+
+namespace sf::priv
+{
+////////////////////////////////////////////////////////////
+/// \brief Helper functions to copy `sf::Transform` to `sf::Glsl::Mat3/4`
 ///
 ////////////////////////////////////////////////////////////
 void SFML_GRAPHICS_API copyMatrix(const Transform& source, Matrix<3, 3>& dest);
@@ -33,18 +52,11 @@ void SFML_GRAPHICS_API copyMatrix(const Transform& source, Matrix<4, 4>& dest);
 ////////////////////////////////////////////////////////////
 /// \brief Copy array-based matrix with given number of elements
 ///
-/// Indirection to std::copy() to avoid inclusion of
+/// Indirection to `std::copy()` to avoid inclusion of
 /// <algorithm> and MSVC's annoying 4996 warning in header
 ///
 ////////////////////////////////////////////////////////////
 void SFML_GRAPHICS_API copyMatrix(const float* source, std::size_t elements, float* dest);
-
-////////////////////////////////////////////////////////////
-/// \brief Helper functions to copy sf::Color to sf::Glsl::Vec4/Ivec4
-///
-////////////////////////////////////////////////////////////
-void SFML_GRAPHICS_API copyVector(const Color& source, Vector4<float>& dest);
-void SFML_GRAPHICS_API copyVector(const Color& source, Vector4<int>& dest);
 
 
 ////////////////////////////////////////////////////////////
@@ -64,7 +76,7 @@ struct Matrix
     ////////////////////////////////////////////////////////////
     explicit Matrix(const float* pointer)
     {
-        copyMatrix(pointer, Columns * Rows, array);
+        copyMatrix(pointer, Columns * Rows, array.data());
     }
 
     ////////////////////////////////////////////////////////////
@@ -81,7 +93,7 @@ struct Matrix
         copyMatrix(transform, *this);
     }
 
-    float array[Columns * Rows]; //!< Array holding matrix data
+    std::array<float, Columns * Rows> array{}; //!< Array holding matrix data
 };
 
 ////////////////////////////////////////////////////////////
@@ -95,9 +107,7 @@ struct Vector4
     /// \brief Default constructor, creates a zero vector
     ///
     ////////////////////////////////////////////////////////////
-    Vector4() : x(0), y(0), z(0), w(0)
-    {
-    }
+    constexpr Vector4() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct from 4 vector components
@@ -112,7 +122,7 @@ struct Vector4
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wshadow"
 #endif
-    Vector4(T x, T y, T z, T w) : x(x), y(y), z(z), w(w)
+    constexpr Vector4(T x, T y, T z, T w) : x(x), y(y), z(z), w(w)
     {
     }
 #if defined(__GNUC__)
@@ -120,35 +130,48 @@ struct Vector4
 #endif
 
     ////////////////////////////////////////////////////////////
-    /// \brief Conversion constructor
-    ///
-    /// \param other 4D vector of different type
+    /// \brief Converts the vector to another type of vector
     ///
     ////////////////////////////////////////////////////////////
     template <typename U>
-    explicit Vector4(const Vector4<U>& other) :
-    x(static_cast<T>(other.x)),
-    y(static_cast<T>(other.y)),
-    z(static_cast<T>(other.z)),
-    w(static_cast<T>(other.w))
+    constexpr explicit operator Vector4<U>() const
     {
+        return Vector4<U>(static_cast<U>(x), static_cast<U>(y), static_cast<U>(z), static_cast<U>(w));
     }
 
     ////////////////////////////////////////////////////////////
-    /// \brief Construct float vector implicitly from color
+    /// \brief Construct vector implicitly from color
     ///
-    /// \param color Color instance. Is normalized to [0, 1]
-    ///              for floats, and left as-is for ints.
+    /// Vector is normalized to [0, 1] for floats, and left as-is
+    /// for ints. Not defined for other template arguments.
+    ///
+    /// \param color Color instance
     ///
     ////////////////////////////////////////////////////////////
-    Vector4(const Color& color)
-    // uninitialized
-    {
-        copyVector(color, *this);
-    }
+    constexpr Vector4(Color color);
 
-    T x; //!< 1st component (X) of the 4D vector
-    T y; //!< 2nd component (Y) of the 4D vector
-    T z; //!< 3rd component (Z) of the 4D vector
-    T w; //!< 4th component (W) of the 4D vector
+    T x{}; //!< 1st component (X) of the 4D vector
+    T y{}; //!< 2nd component (Y) of the 4D vector
+    T z{}; //!< 3rd component (Z) of the 4D vector
+    T w{}; //!< 4th component (W) of the 4D vector
 };
+
+
+////////////////////////////////////////////////////////////
+template <>
+constexpr Vector4<float>::Vector4(Color color) :
+x(color.r / 255.f),
+y(color.g / 255.f),
+z(color.b / 255.f),
+w(color.a / 255.f)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+template <>
+constexpr Vector4<int>::Vector4(Color color) : x(color.r), y(color.g), z(color.b), w(color.a)
+{
+}
+
+} // namespace sf::priv

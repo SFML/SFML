@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,12 +22,10 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_VECTOR3_HPP
-#define SFML_VECTOR3_HPP
+#pragma once
 
 #include <SFML/System/Export.hpp>
 
-#include <cassert>
 
 namespace sf
 {
@@ -43,10 +41,10 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
-    /// Creates a Vector3(0, 0, 0).
+    /// Creates a `Vector3(0, 0, 0)`.
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Vector3();
+    constexpr Vector3() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the vector from its coordinates
@@ -59,39 +57,32 @@ public:
     constexpr Vector3(T x, T y, T z);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Construct the vector from another type of vector
-    ///
-    /// This constructor doesn't replace the copy constructor,
-    /// it's called only when U != T.
-    /// A call to this constructor will fail to compile if U
-    /// is not convertible to T.
-    ///
-    /// \param vector Vector to convert
+    /// \brief Converts the vector to another type of vector
     ///
     ////////////////////////////////////////////////////////////
     template <typename U>
-    constexpr explicit Vector3(const Vector3<U>& vector);
+    constexpr explicit operator Vector3<U>() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Length of the vector <i><b>(floating-point)</b></i>.
     ///
-    /// If you are not interested in the actual length, but only in comparisons, consider using lengthSq().
+    /// If you are not interested in the actual length, but only in comparisons, consider using `lengthSquared()`.
     ///
     ////////////////////////////////////////////////////////////
-    SFML_SYSTEM_API T length() const;
+    [[nodiscard]] SFML_SYSTEM_API T length() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Square of vector's length.
     ///
-    /// Suitable for comparisons, more efficient than length().
+    /// Suitable for comparisons, more efficient than `length()`.
     ///
     ////////////////////////////////////////////////////////////
-    constexpr T lengthSq() const;
+    [[nodiscard]] constexpr T lengthSquared() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Vector with same direction but length 1 <i><b>(floating-point)</b></i>.
     ///
-    /// \pre \c *this is no zero vector.
+    /// \pre `*this` is no zero vector.
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] SFML_SYSTEM_API Vector3 normalized() const;
@@ -100,52 +91,52 @@ public:
     /// \brief Dot product of two 3D vectors.
     ///
     ////////////////////////////////////////////////////////////
-    constexpr T dot(const Vector3& rhs) const;
+    [[nodiscard]] constexpr T dot(const Vector3& rhs) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Cross product of two 3D vectors.
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Vector3 cross(const Vector3& rhs) const;
+    [[nodiscard]] constexpr Vector3 cross(const Vector3& rhs) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Component-wise multiplication of \c *this and \c rhs.
+    /// \brief Component-wise multiplication of `*this` and `rhs`.
     ///
-    /// Computes <tt>(lhs.x*rhs.x, lhs.y*rhs.y, lhs.z*rhs.z)</tt>.
+    /// Computes `(lhs.x*rhs.x, lhs.y*rhs.y, lhs.z*rhs.z)`.
     ///
     /// Scaling is the most common use case for component-wise multiplication/division.
     /// This operation is also known as the Hadamard or Schur product.
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Vector3 cwiseMul(const Vector3& rhs) const;
+    [[nodiscard]] constexpr Vector3 componentWiseMul(const Vector3& rhs) const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Component-wise division of \c *this and \c rhs.
+    /// \brief Component-wise division of `*this` and `rhs`.
     ///
-    /// Computes <tt>(lhs.x/rhs.x, lhs.y/rhs.y, lhs.z/rhs.z)</tt>.
+    /// Computes `(lhs.x/rhs.x, lhs.y/rhs.y, lhs.z/rhs.z)`.
     ///
     /// Scaling is the most common use case for component-wise multiplication/division.
     ///
-    /// \pre Neither component of \c rhs is zero.
+    /// \pre Neither component of `rhs` is zero.
     ///
     ////////////////////////////////////////////////////////////
-    constexpr Vector3 cwiseDiv(const Vector3& rhs) const;
+    [[nodiscard]] constexpr Vector3 componentWiseDiv(const Vector3& rhs) const;
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    T x{0}; //!< X coordinate of the vector
-    T y{0}; //!< Y coordinate of the vector
-    T z{0}; //!< Z coordinate of the vector
+    T x{}; //!< X coordinate of the vector
+    T y{}; //!< Y coordinate of the vector
+    T z{}; //!< Z coordinate of the vector
 };
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector3
-/// \brief Overload of unary operator -
+/// \brief Overload of unary `operator-`
 ///
 /// \param left Vector to negate
 ///
-/// \return Memberwise opposite of the vector
+/// \return Member-wise opposite of the vector
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -153,15 +144,15 @@ template <typename T>
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector3
-/// \brief Overload of binary operator +=
+/// \brief Overload of binary `operator+=`
 ///
-/// This operator performs a memberwise addition of both vectors,
-/// and assigns the result to \a left.
+/// This operator performs a member-wise addition of both vectors,
+/// and assigns the result to `left`.
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a vector)
 ///
-/// \return Reference to \a left
+/// \return Reference to `left`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -169,15 +160,15 @@ constexpr Vector3<T>& operator+=(Vector3<T>& left, const Vector3<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector3
-/// \brief Overload of binary operator -=
+/// \brief Overload of binary `operator-=`
 ///
-/// This operator performs a memberwise subtraction of both vectors,
-/// and assigns the result to \a left.
+/// This operator performs a member-wise subtraction of both vectors,
+/// and assigns the result to `left`.
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a vector)
 ///
-/// \return Reference to \a left
+/// \return Reference to `left`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -185,12 +176,12 @@ constexpr Vector3<T>& operator-=(Vector3<T>& left, const Vector3<T>& right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector3
-/// \brief Overload of binary operator +
+/// \brief Overload of binary `operator+`
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a vector)
 ///
-/// \return Memberwise addition of both vectors
+/// \return Member-wise addition of both vectors
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -198,12 +189,12 @@ template <typename T>
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector3
-/// \brief Overload of binary operator -
+/// \brief Overload of binary `operator-`
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a vector)
 ///
-/// \return Memberwise subtraction of both vectors
+/// \return Member-wise subtraction of both vectors
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -211,12 +202,12 @@ template <typename T>
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector3
-/// \brief Overload of binary operator *
+/// \brief Overload of binary `operator*`
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a scalar value)
 ///
-/// \return Memberwise multiplication by \a right
+/// \return Member-wise multiplication by `right`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -224,12 +215,12 @@ template <typename T>
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector3
-/// \brief Overload of binary operator *
+/// \brief Overload of binary `operator*`
 ///
 /// \param left  Left operand (a scalar value)
 /// \param right Right operand (a vector)
 ///
-/// \return Memberwise multiplication by \a left
+/// \return Member-wise multiplication by `left`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -237,15 +228,15 @@ template <typename T>
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector3
-/// \brief Overload of binary operator *=
+/// \brief Overload of binary `operator*=`
 ///
-/// This operator performs a memberwise multiplication by \a right,
-/// and assigns the result to \a left.
+/// This operator performs a member-wise multiplication by `right`,
+/// and assigns the result to `left`.
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a scalar value)
 ///
-/// \return Reference to \a left
+/// \return Reference to `left`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -253,12 +244,12 @@ constexpr Vector3<T>& operator*=(Vector3<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector3
-/// \brief Overload of binary operator /
+/// \brief Overload of binary `operator/`
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a scalar value)
 ///
-/// \return Memberwise division by \a right
+/// \return Member-wise division by `right`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -266,15 +257,15 @@ template <typename T>
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector3
-/// \brief Overload of binary operator /=
+/// \brief Overload of binary `operator/=`
 ///
-/// This operator performs a memberwise division by \a right,
-/// and assigns the result to \a left.
+/// This operator performs a member-wise division by `right`,
+/// and assigns the result to `left`.
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a scalar value)
 ///
-/// \return Reference to \a left
+/// \return Reference to `left`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -282,14 +273,14 @@ constexpr Vector3<T>& operator/=(Vector3<T>& left, T right);
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector3
-/// \brief Overload of binary operator ==
+/// \brief Overload of binary `operator==`
 ///
 /// This operator compares strict equality between two vectors.
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a vector)
 ///
-/// \return True if \a left is equal to \a right
+/// \return `true` if `left` is equal to `right`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
@@ -297,36 +288,33 @@ template <typename T>
 
 ////////////////////////////////////////////////////////////
 /// \relates Vector3
-/// \brief Overload of binary operator !=
+/// \brief Overload of binary `operator!=`
 ///
 /// This operator compares strict difference between two vectors.
 ///
 /// \param left  Left operand (a vector)
 /// \param right Right operand (a vector)
 ///
-/// \return True if \a left is not equal to \a right
+/// \return `true` if `left` is not equal to `right`
 ///
 ////////////////////////////////////////////////////////////
 template <typename T>
 [[nodiscard]] constexpr bool operator!=(const Vector3<T>& left, const Vector3<T>& right);
 
-#include <SFML/System/Vector3.inl>
-
-// Define the most common types
+// Aliases for the most common types
 using Vector3i = Vector3<int>;
 using Vector3f = Vector3<float>;
 
 } // namespace sf
 
-
-#endif // SFML_VECTOR3_HPP
+#include <SFML/System/Vector3.inl>
 
 
 ////////////////////////////////////////////////////////////
 /// \class sf::Vector3
 /// \ingroup system
 ///
-/// sf::Vector3 is a simple class that defines a mathematical
+/// `sf::Vector3` is a simple class that defines a mathematical
 /// vector with three coordinates (x, y and z). It can be used to
 /// represent anything that has three dimensions: a size, a point,
 /// a velocity, etc.
@@ -339,13 +327,13 @@ using Vector3f = Vector3<float>;
 /// results cannot be represented accurately with integers.
 /// The method documentation mentions "(floating-point)" in those cases.
 ///
-/// You generally don't have to care about the templated form (sf::Vector3<T>),
+/// You generally don't have to care about the templated form (`sf::Vector3<T>`),
 /// the most common specializations have special type aliases:
-/// \li sf::Vector3<float> is sf::Vector3f
-/// \li sf::Vector3<int> is sf::Vector3i
+/// \li `sf::Vector3<float>` is `sf::Vector3f`
+/// \li `sf::Vector3<int>` is `sf::Vector3i`
 ///
-/// The sf::Vector3 class has a small and simple interface, its x, y and z members
-/// can be accessed directly (there are no accessors like setX(), getX()).
+/// The `sf::Vector3` class has a small and simple interface, its x, y and z members
+/// can be accessed directly (there are no accessors like `setX()`, `getX()`).
 ///
 /// Usage example:
 /// \code
@@ -363,6 +351,6 @@ using Vector3f = Vector3<float>;
 /// bool different = (v != u);
 /// \endcode
 ///
-/// Note: for 2-dimensional vectors, see sf::Vector2.
+/// Note: for 2-dimensional vectors, see `sf::Vector2`.
 ///
 ////////////////////////////////////////////////////////////

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SOUNDFILEWRITEROGG_HPP
-#define SFML_SOUNDFILEWRITEROGG_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -32,13 +31,14 @@
 
 #include <vorbis/vorbisenc.h>
 
+#include <array>
 #include <filesystem>
 #include <fstream>
 
+#include <cstdint>
 
-namespace sf
-{
-namespace priv
+
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief Implementation of sound file writer that handles OGG/Vorbis files
@@ -52,17 +52,10 @@ public:
     ///
     /// \param filename Path of the sound file to check
     ///
-    /// \return True if the file can be written by this writer
+    /// \return `true` if the file can be written by this writer
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] static bool check(const std::filesystem::path& filename);
-
-public:
-    ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    ////////////////////////////////////////////////////////////
-    SoundFileWriterOgg();
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
@@ -76,11 +69,15 @@ public:
     /// \param filename     Path of the file to open
     /// \param sampleRate   Sample rate of the sound
     /// \param channelCount Number of channels of the sound
+    /// \param channelMap   Map of position in sample frame to sound channel
     ///
-    /// \return True if the file was successfully opened
+    /// \return `true` if the file was successfully opened
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool open(const std::filesystem::path& filename, unsigned int sampleRate, unsigned int channelCount) override;
+    [[nodiscard]] bool open(const std::filesystem::path&     filename,
+                            unsigned int                     sampleRate,
+                            unsigned int                     channelCount,
+                            const std::vector<SoundChannel>& channelMap) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Write audio samples to the open file
@@ -107,16 +104,12 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int     m_channelCount; // channel count of the sound being written
-    std::ofstream    m_file;         // output file
-    ogg_stream_state m_ogg;          // ogg stream
-    vorbis_info      m_vorbis;       // vorbis handle
-    vorbis_dsp_state m_state;        // current encoding state
+    unsigned int               m_channelCount{}; //!< Channel count of the sound being written
+    std::array<std::size_t, 8> m_remapTable{};   //!< Table we use to remap source to target channel order
+    std::ofstream              m_file;           //!< Output file
+    ogg_stream_state           m_ogg{};          //!< OGG stream
+    vorbis_info                m_vorbis{};       //!< Vorbis handle
+    vorbis_dsp_state           m_state{};        //!< Current encoding state
 };
 
-} // namespace priv
-
-} // namespace sf
-
-
-#endif // SFML_SOUNDFILEWRITEROGG_HPP
+} // namespace sf::priv

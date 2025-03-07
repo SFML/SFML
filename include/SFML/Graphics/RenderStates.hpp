@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_RENDERSTATES_HPP
-#define SFML_RENDERSTATES_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -31,6 +30,8 @@
 #include <SFML/Graphics/Export.hpp>
 
 #include <SFML/Graphics/BlendMode.hpp>
+#include <SFML/Graphics/CoordinateType.hpp>
+#include <SFML/Graphics/StencilMode.hpp>
 #include <SFML/Graphics/Transform.hpp>
 
 
@@ -40,25 +41,25 @@ class Shader;
 class Texture;
 
 ////////////////////////////////////////////////////////////
-/// \brief Define the states used for drawing to a RenderTarget
+/// \brief Define the states used for drawing to a `RenderTarget`
 ///
 ////////////////////////////////////////////////////////////
-class SFML_GRAPHICS_API RenderStates
+struct SFML_GRAPHICS_API RenderStates
 {
-public:
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
     /// Constructing a default set of render states is equivalent
-    /// to using sf::RenderStates::Default.
+    /// to using `sf::RenderStates::Default`.
     /// The default set defines:
-    /// \li the BlendAlpha blend mode
+    /// \li the `BlendAlpha` blend mode
+    /// \li the default `StencilMode` (no stencil)
     /// \li the identity transform
-    /// \li a null texture
-    /// \li a null shader
+    /// \li a `nullptr` texture
+    /// \li a `nullptr` shader
     ///
     ////////////////////////////////////////////////////////////
-    RenderStates();
+    RenderStates() = default;
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct a default set of render states with a custom blend mode
@@ -67,6 +68,14 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     RenderStates(const BlendMode& theBlendMode);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct a default set of render states with a custom stencil mode
+    ///
+    /// \param theStencilMode Stencil mode to use
+    ///
+    ////////////////////////////////////////////////////////////
+    RenderStates(const StencilMode& theStencilMode);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct a default set of render states with a custom transform
@@ -95,42 +104,51 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Construct a set of render states with all its attributes
     ///
-    /// \param theBlendMode Blend mode to use
-    /// \param theTransform Transform to use
-    /// \param theTexture   Texture to use
-    /// \param theShader    Shader to use
+    /// \param theBlendMode      Blend mode to use
+    /// \param theStencilMode    Stencil mode to use
+    /// \param theTransform      Transform to use
+    /// \param theCoordinateType Texture coordinate type to use
+    /// \param theTexture        Texture to use
+    /// \param theShader         Shader to use
     ///
     ////////////////////////////////////////////////////////////
-    RenderStates(const BlendMode& theBlendMode, const Transform& theTransform, const Texture* theTexture, const Shader* theShader);
+    RenderStates(const BlendMode&   theBlendMode,
+                 const StencilMode& theStencilMode,
+                 const Transform&   theTransform,
+                 CoordinateType     theCoordinateType,
+                 const Texture*     theTexture,
+                 const Shader*      theShader);
 
     ////////////////////////////////////////////////////////////
     // Static member data
     ////////////////////////////////////////////////////////////
+    // NOLINTNEXTLINE(readability-identifier-naming)
     static const RenderStates Default; //!< Special instance holding the default render states
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    BlendMode      blendMode; //!< Blending mode
-    Transform      transform; //!< Transform
-    const Texture* texture;   //!< Texture
-    const Shader*  shader;    //!< Shader
+    BlendMode      blendMode{BlendAlpha};                  //!< Blending mode
+    StencilMode    stencilMode;                            //!< Stencil mode
+    Transform      transform;                              //!< Transform
+    CoordinateType coordinateType{CoordinateType::Pixels}; //!< Texture coordinate type
+    const Texture* texture{};                              //!< Texture
+    const Shader*  shader{};                               //!< Shader
 };
 
 } // namespace sf
-
-
-#endif // SFML_RENDERSTATES_HPP
 
 
 ////////////////////////////////////////////////////////////
 /// \class sf::RenderStates
 /// \ingroup graphics
 ///
-/// There are four global states that can be applied to
+/// There are six global states that can be applied to
 /// the drawn objects:
 /// \li the blend mode: how pixels of the object are blended with the background
+/// \li the stencil mode: how pixels of the object interact with the stencil buffer
 /// \li the transform: how the object is positioned/rotated/scaled
+/// \li the texture coordinate type: how texture coordinates are interpreted
 /// \li the texture: what image is mapped to the object
 /// \li the shader: what custom effect is applied to the object
 ///
@@ -154,20 +172,20 @@ public:
 ///
 /// If you want to use a single specific render state,
 /// for example a shader, you can pass it directly to the Draw
-/// function: sf::RenderStates has an implicit one-argument
+/// function: `sf::RenderStates` has an implicit one-argument
 /// constructor for each state.
 /// \code
 /// window.draw(sprite, shader);
 /// \endcode
 ///
 /// When you're inside the Draw function of a drawable
-/// object (inherited from sf::Drawable), you can
+/// object (inherited from `sf::Drawable`), you can
 /// either pass the render states unmodified, or change
 /// some of them.
 /// For example, a transformable object will combine the
 /// current transform with its own transform. A sprite will
 /// set its texture. Etc.
 ///
-/// \see sf::RenderTarget, sf::Drawable
+/// \see `sf::RenderTarget`, `sf::Drawable`
 ///
 ////////////////////////////////////////////////////////////

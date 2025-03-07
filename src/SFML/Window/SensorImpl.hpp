@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_SENSORIMPL_HPP
-#define SFML_SENSORIMPL_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -43,7 +42,7 @@
 
 #elif defined(SFML_SYSTEM_MACOS)
 
-#include <SFML/Window/OSX/SensorImpl.hpp>
+#include <SFML/Window/macOS/SensorImpl.hpp>
 
 #elif defined(SFML_SYSTEM_IOS)
 
@@ -54,6 +53,3 @@
 #include <SFML/Window/Android/SensorImpl.hpp>
 
 #endif
-
-
-#endif // SFML_SENSORIMPL_HPP

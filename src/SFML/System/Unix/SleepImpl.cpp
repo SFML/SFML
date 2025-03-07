@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -40,9 +40,9 @@ void sleepImpl(Time time)
     const std::int64_t usecs = time.asMicroseconds();
 
     // Construct the time to wait
-    timespec ti;
-    ti.tv_sec  = static_cast<time_t>(usecs / 1000000);
-    ti.tv_nsec = static_cast<long>((usecs % 1000000) * 1000);
+    timespec ti{};
+    ti.tv_sec  = static_cast<time_t>(usecs / 1'000'000);
+    ti.tv_nsec = static_cast<long>((usecs % 1'000'000) * 1'000);
 
     // Wait...
     // If nanosleep returns -1, we check errno. If it is EINTR

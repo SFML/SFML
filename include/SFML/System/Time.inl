@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,11 +22,18 @@
 //
 ////////////////////////////////////////////////////////////
 
-
 ////////////////////////////////////////////////////////////
-constexpr Time::Time() = default;
+// Headers
+////////////////////////////////////////////////////////////
+#include <SFML/System/Time.hpp> // NOLINT(misc-header-include-cycle)
+
+#include <ratio>
+
+#include <cassert>
 
 
+namespace sf
+{
 ////////////////////////////////////////////////////////////
 template <typename Rep, typename Period>
 constexpr Time::Time(const std::chrono::duration<Rep, Period>& duration) : m_microseconds(duration)
@@ -73,21 +80,21 @@ constexpr Time::operator std::chrono::duration<Rep, Period>() const
 ////////////////////////////////////////////////////////////
 constexpr Time seconds(float amount)
 {
-    return Time(std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::duration<float>(amount)));
+    return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::duration<float>(amount));
 }
 
 
 ////////////////////////////////////////////////////////////
 constexpr Time milliseconds(std::int32_t amount)
 {
-    return Time(std::chrono::milliseconds(amount));
+    return std::chrono::milliseconds(amount);
 }
 
 
 ////////////////////////////////////////////////////////////
 constexpr Time microseconds(std::int64_t amount)
 {
-    return Time(std::chrono::microseconds(amount));
+    return std::chrono::microseconds(amount);
 }
 
 
@@ -213,6 +220,7 @@ constexpr Time& operator*=(Time& left, std::int64_t right)
 ////////////////////////////////////////////////////////////
 constexpr Time operator/(Time left, float right)
 {
+    assert(right != 0 && "Time::operator/ cannot divide by 0");
     return seconds(left.asSeconds() / right);
 }
 
@@ -220,6 +228,7 @@ constexpr Time operator/(Time left, float right)
 ////////////////////////////////////////////////////////////
 constexpr Time operator/(Time left, std::int64_t right)
 {
+    assert(right != 0 && "Time::operator/ cannot divide by 0");
     return microseconds(left.asMicroseconds() / right);
 }
 
@@ -227,6 +236,7 @@ constexpr Time operator/(Time left, std::int64_t right)
 ////////////////////////////////////////////////////////////
 constexpr Time& operator/=(Time& left, float right)
 {
+    assert(right != 0 && "Time::operator/= cannot divide by 0");
     return left = left / right;
 }
 
@@ -234,6 +244,7 @@ constexpr Time& operator/=(Time& left, float right)
 ////////////////////////////////////////////////////////////
 constexpr Time& operator/=(Time& left, std::int64_t right)
 {
+    assert(right != 0 && "Time::operator/= cannot divide by 0");
     return left = left / right;
 }
 
@@ -241,6 +252,7 @@ constexpr Time& operator/=(Time& left, std::int64_t right)
 ////////////////////////////////////////////////////////////
 constexpr float operator/(Time left, Time right)
 {
+    assert(right.asMicroseconds() != 0 && "Time::operator/ cannot divide by 0");
     return left.asSeconds() / right.asSeconds();
 }
 
@@ -248,6 +260,7 @@ constexpr float operator/(Time left, Time right)
 ////////////////////////////////////////////////////////////
 constexpr Time operator%(Time left, Time right)
 {
+    assert(right.asMicroseconds() != 0 && "Time::operator% cannot modulus by 0");
     return microseconds(left.asMicroseconds() % right.asMicroseconds());
 }
 
@@ -255,6 +268,7 @@ constexpr Time operator%(Time left, Time right)
 ////////////////////////////////////////////////////////////
 constexpr Time& operator%=(Time& left, Time right)
 {
+    assert(right.asMicroseconds() != 0 && "Time::operator%= cannot modulus by 0");
     return left = left % right;
 }
 
@@ -266,3 +280,5 @@ constexpr Time& operator%=(Time& left, Time right)
 // Note: the 'inline' keyword here is technically not required, but VS2019 fails
 // to compile with a bogus "multiple definition" error if not explicitly used.
 inline constexpr Time Time::Zero;
+
+} // namespace sf

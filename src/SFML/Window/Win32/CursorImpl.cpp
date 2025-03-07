@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,26 +25,18 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
-#include <SFML/System/Win32/WindowsHeader.hpp>
 #include <SFML/Window/Win32/CursorImpl.hpp>
 
-#include <cstring>
+#include <SFML/System/Err.hpp>
+#include <SFML/System/Win32/WindowsHeader.hpp>
+
 #include <ostream>
 
+#include <cstring>
 
-namespace sf
+
+namespace sf::priv
 {
-namespace priv
-{
-
-////////////////////////////////////////////////////////////
-CursorImpl::CursorImpl() : m_cursor(nullptr), m_systemCursor(false)
-{
-    // That's it.
-}
-
-
 ////////////////////////////////////////////////////////////
 CursorImpl::~CursorImpl()
 {
@@ -65,10 +57,10 @@ bool CursorImpl::loadFromPixels(const std::uint8_t* pixels, Vector2u size, Vecto
     bitmapHeader.bV5Planes      = 1;
     bitmapHeader.bV5BitCount    = 32;
     bitmapHeader.bV5Compression = BI_BITFIELDS;
-    bitmapHeader.bV5RedMask     = 0x00ff0000;
-    bitmapHeader.bV5GreenMask   = 0x0000ff00;
-    bitmapHeader.bV5BlueMask    = 0x000000ff;
-    bitmapHeader.bV5AlphaMask   = 0xff000000;
+    bitmapHeader.bV5RedMask     = 0x00'ff'00'00;
+    bitmapHeader.bV5GreenMask   = 0x00'00'ff'00;
+    bitmapHeader.bV5BlueMask    = 0x00'00'00'ff;
+    bitmapHeader.bV5AlphaMask   = 0xff'00'00'00;
 
     std::uint32_t* bitmapData = nullptr;
 
@@ -125,11 +117,9 @@ bool CursorImpl::loadFromPixels(const std::uint8_t* pixels, Vector2u size, Vecto
     {
         return true;
     }
-    else
-    {
-        err() << "Failed to create cursor from bitmaps" << std::endl;
-        return false;
-    }
+
+    err() << "Failed to create cursor from bitmaps" << std::endl;
+    return false;
 }
 
 
@@ -143,27 +133,27 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
     // clang-format off
     switch (type)
     {
-        case Cursor::Arrow:                  shape = IDC_ARROW;       break;
-        case Cursor::ArrowWait:              shape = IDC_APPSTARTING; break;
-        case Cursor::Wait:                   shape = IDC_WAIT;        break;
-        case Cursor::Text:                   shape = IDC_IBEAM;       break;
-        case Cursor::Hand:                   shape = IDC_HAND;        break;
-        case Cursor::SizeHorizontal:         shape = IDC_SIZEWE;      break;
-        case Cursor::SizeVertical:           shape = IDC_SIZENS;      break;
-        case Cursor::SizeTopLeftBottomRight: shape = IDC_SIZENWSE;    break;
-        case Cursor::SizeBottomLeftTopRight: shape = IDC_SIZENESW;    break;
-        case Cursor::SizeLeft:               shape = IDC_SIZEWE;      break;
-        case Cursor::SizeRight:              shape = IDC_SIZEWE;      break;
-        case Cursor::SizeTop:                shape = IDC_SIZENS;      break;
-        case Cursor::SizeBottom:             shape = IDC_SIZENS;      break;
-        case Cursor::SizeTopLeft:            shape = IDC_SIZENWSE;    break;
-        case Cursor::SizeBottomRight:        shape = IDC_SIZENWSE;    break;
-        case Cursor::SizeBottomLeft:         shape = IDC_SIZENESW;    break;
-        case Cursor::SizeTopRight:           shape = IDC_SIZENESW;    break;
-        case Cursor::SizeAll:                shape = IDC_SIZEALL;     break;
-        case Cursor::Cross:                  shape = IDC_CROSS;       break;
-        case Cursor::Help:                   shape = IDC_HELP;        break;
-        case Cursor::NotAllowed:             shape = IDC_NO;          break;
+        case Cursor::Type::Arrow:                  shape = IDC_ARROW;       break;
+        case Cursor::Type::ArrowWait:              shape = IDC_APPSTARTING; break;
+        case Cursor::Type::Wait:                   shape = IDC_WAIT;        break;
+        case Cursor::Type::Text:                   shape = IDC_IBEAM;       break;
+        case Cursor::Type::Hand:                   shape = IDC_HAND;        break;
+        case Cursor::Type::SizeHorizontal:         shape = IDC_SIZEWE;      break;
+        case Cursor::Type::SizeVertical:           shape = IDC_SIZENS;      break;
+        case Cursor::Type::SizeTopLeftBottomRight: shape = IDC_SIZENWSE;    break;
+        case Cursor::Type::SizeBottomLeftTopRight: shape = IDC_SIZENESW;    break;
+        case Cursor::Type::SizeLeft:               shape = IDC_SIZEWE;      break;
+        case Cursor::Type::SizeRight:              shape = IDC_SIZEWE;      break;
+        case Cursor::Type::SizeTop:                shape = IDC_SIZENS;      break;
+        case Cursor::Type::SizeBottom:             shape = IDC_SIZENS;      break;
+        case Cursor::Type::SizeTopLeft:            shape = IDC_SIZENWSE;    break;
+        case Cursor::Type::SizeBottomRight:        shape = IDC_SIZENWSE;    break;
+        case Cursor::Type::SizeBottomLeft:         shape = IDC_SIZENESW;    break;
+        case Cursor::Type::SizeTopRight:           shape = IDC_SIZENESW;    break;
+        case Cursor::Type::SizeAll:                shape = IDC_SIZEALL;     break;
+        case Cursor::Type::Cross:                  shape = IDC_CROSS;       break;
+        case Cursor::Type::Help:                   shape = IDC_HELP;        break;
+        case Cursor::Type::NotAllowed:             shape = IDC_NO;          break;
     }
     // clang-format on
 
@@ -175,11 +165,9 @@ bool CursorImpl::loadFromSystem(Cursor::Type type)
     {
         return true;
     }
-    else
-    {
-        err() << "Could not create copy of a system cursor" << std::endl;
-        return false;
-    }
+
+    err() << "Could not create copy of a system cursor" << std::endl;
+    return false;
 }
 
 
@@ -193,6 +181,4 @@ void CursorImpl::release()
     }
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

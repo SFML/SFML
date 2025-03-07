@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_GLYPH_HPP
-#define SFML_GLYPH_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -41,47 +40,32 @@ class Texture;
 /// \brief Structure describing a glyph
 ///
 ////////////////////////////////////////////////////////////
-class SFML_GRAPHICS_API Glyph
+struct SFML_GRAPHICS_API Glyph
 {
-public:
-    ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    ////////////////////////////////////////////////////////////
-    Glyph() : advance(0), lsbDelta(0), rsbDelta(0), texture(nullptr)
-    {
-    }
-
-    ////////////////////////////////////////////////////////////
-    // Member data
-    ////////////////////////////////////////////////////////////
-    float          advance;     //!< Offset to move horizontally to the next character
-    int            lsbDelta;    //!< Left offset after forced autohint. Internally used by getKerning()
-    int            rsbDelta;    //!< Right offset after forced autohint. Internally used by getKerning()
-    FloatRect      bounds;      //!< Bounding rectangle of the glyph, in coordinates relative to the baseline
-    IntRect        textureRect; //!< Texture coordinates of the glyph inside the font's texture
-    const Texture* texture;     //!< Font's texture containing the glyph
+    float     advance{};   //!< Offset to move horizontally to the next character
+    int       lsbDelta{};  //!< Left offset after forced autohint. Internally used by getKerning()
+    int       rsbDelta{};  //!< Right offset after forced autohint. Internally used by getKerning()
+    FloatRect bounds;      //!< Bounding rectangle of the glyph, in coordinates relative to the baseline
+    IntRect   textureRect; //!< Texture coordinates of the glyph inside the font's texture
+    const Texture* texture;//!< Font's texture containing the glyph
 };
 
 } // namespace sf
 
 
-#endif // SFML_GLYPH_HPP
-
-
 ////////////////////////////////////////////////////////////
-/// \class sf::Glyph
+/// \struct sf::Glyph
 /// \ingroup graphics
 ///
 /// A glyph is the visual representation of a character.
 ///
-/// The sf::Glyph structure provides the information needed
+/// The `sf::Glyph` structure provides the information needed
 /// to handle the glyph:
 /// \li the font's texture containing the glyph
 /// \li its coordinates in the font's texture
 /// \li its bounding rectangle
 /// \li the offset to apply to get the starting position of the next glyph
 ///
-/// \see sf::Font
+/// \see `sf::Font`
 ///
 ////////////////////////////////////////////////////////////

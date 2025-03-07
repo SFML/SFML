@@ -12,8 +12,7 @@ endif()
 sfml_add_example(opengl GUI_APP
                  SOURCES ${SRC}
                  BUNDLE_RESOURCES ${RESOURCES}
-                 DEPENDS SFML::Graphics
-                 RESOURCES_DIR resources)
+                 DEPENDS SFML::Graphics)
 
 # external dependency headers
 target_include_directories(opengl SYSTEM PRIVATE ${PROJECT_SOURCE_DIR}/examples/include)

@@ -1,11 +1,16 @@
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include "TCP.hpp"
+
 #include <SFML/Network.hpp>
 
 #include <iomanip>
 #include <iostream>
+#include <optional>
+#include <string_view>
+
+#include <cstddef>
 
 
 ////////////////////////////////////////////////////////////
@@ -30,17 +35,17 @@ void runTcpServer(unsigned short port)
     std::cout << "Client connected: " << socket.getRemoteAddress().value() << std::endl;
 
     // Send a message to the connected client
-    const char out[] = "Hi, I'm the server";
-    if (socket.send(out, sizeof(out)) != sf::Socket::Status::Done)
+    static constexpr std::string_view out = "Hi, I'm the server";
+    if (socket.send(out.data(), out.size()) != sf::Socket::Status::Done)
         return;
-    std::cout << "Message sent to the client: " << std::quoted(out) << std::endl;
+    std::cout << "Message sent to the client: " << std::quoted(out.data()) << std::endl;
 
     // Receive a message back from the client
-    char        in[128];
-    std::size_t received;
-    if (socket.receive(in, sizeof(in), received) != sf::Socket::Status::Done)
+    std::array<char, 128> in{};
+    std::size_t           received = 0;
+    if (socket.receive(in.data(), in.size(), received) != sf::Socket::Status::Done)
         return;
-    std::cout << "Answer received from the client: " << std::quoted(in) << std::endl;
+    std::cout << "Answer received from the client: " << std::quoted(in.data()) << std::endl;
 }
 
 
@@ -68,15 +73,15 @@ void runTcpClient(unsigned short port)
     std::cout << "Connected to server " << server.value() << std::endl;
 
     // Receive a message from the server
-    char        in[128];
-    std::size_t received;
-    if (socket.receive(in, sizeof(in), received) != sf::Socket::Status::Done)
+    std::array<char, 128> in{};
+    std::size_t           received = 0;
+    if (socket.receive(in.data(), in.size(), received) != sf::Socket::Status::Done)
         return;
-    std::cout << "Message received from the server: " << std::quoted(in) << std::endl;
+    std::cout << "Message received from the server: " << std::quoted(in.data()) << std::endl;
 
     // Send an answer to the server
-    const char out[] = "Hi, I'm a client";
-    if (socket.send(out, sizeof(out)) != sf::Socket::Status::Done)
+    static constexpr std::string_view out = "Hi, I'm a client";
+    if (socket.send(out.data(), out.size()) != sf::Socket::Status::Done)
         return;
-    std::cout << "Message sent to the server: " << std::quoted(out) << std::endl;
+    std::cout << "Message sent to the server: " << std::quoted(out.data()) << std::endl;
 }

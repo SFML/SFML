@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -27,9 +27,10 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/System/Err.hpp>
 
-#include <cstdio>
 #include <iostream>
 #include <streambuf>
+
+#include <cstdio>
 
 
 namespace
@@ -64,17 +65,15 @@ private:
             // Valid character
             return sputc(static_cast<char>(character));
         }
-        else if (character != EOF)
+        if (character != EOF)
         {
             // Not enough space in the buffer: synchronize output and try again
             sync();
             return overflow(character);
         }
-        else
-        {
-            // Invalid character: synchronize output
-            return sync();
-        }
+
+        // Invalid character: synchronize output
+        return sync();
     }
 
     int sync() override
@@ -83,8 +82,8 @@ private:
         if (pbase() != pptr())
         {
             // Print the contents of the write buffer into the standard error output
-            auto size = static_cast<std::size_t>(pptr() - pbase());
-            fwrite(pbase(), 1, size, stderr);
+            const auto size = static_cast<std::size_t>(pptr() - pbase());
+            std::fwrite(pbase(), 1, size, stderr);
 
             // Reset the pointer position to the beginning of the write buffer
             setp(pbase(), epptr());

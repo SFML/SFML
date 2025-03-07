@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,17 +25,20 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Utf.hpp>
 #include <SFML/Window/iOS/SFAppDelegate.hpp>
 #include <SFML/Window/iOS/SFView.hpp>
 
+#include <SFML/System/Utf.hpp>
+
 #include <QuartzCore/CAEAGLLayer.h>
+
 #include <cstring>
 
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
 @interface SFView ()
 
+// NOLINTNEXTLINE(readability-identifier-naming)
 @property (nonatomic) NSMutableArray* touches;
 
 @end
@@ -77,8 +80,8 @@
     const char* end = utf8 + std::strlen(utf8);
     while (utf8 < end)
     {
-        std::uint32_t character;
-        utf8 = sf::Utf8::decode(utf8, end, character);
+        char32_t character = 0;
+        utf8               = sf::Utf8::decode(utf8, end, character);
         [[SFAppDelegate getInstance] notifyCharacter:character];
     }
 }
@@ -87,7 +90,7 @@
 ////////////////////////////////////////////////////////////
 - (void)touchesBegan:(NSSet*)touches withEvent:(UIEvent*)event
 {
-    for (UITouch* touch in touches)
+    for (UITouch* touch in touches) // NOLINT(cppcoreguidelines-init-variables)
     {
         // find an empty slot for the new touch
         NSUInteger index = [self.touches indexOfObject:[NSNull null]];
@@ -114,7 +117,7 @@
 ////////////////////////////////////////////////////////////
 - (void)touchesMoved:(NSSet*)touches withEvent:(UIEvent*)event
 {
-    for (UITouch* touch in touches)
+    for (UITouch* touch in touches) // NOLINT(cppcoreguidelines-init-variables)
     {
         // find the touch
         NSUInteger index = [self.touches indexOfObject:touch];
@@ -134,7 +137,7 @@
 ////////////////////////////////////////////////////////////
 - (void)touchesEnded:(NSSet*)touches withEvent:(UIEvent*)event
 {
-    for (UITouch* touch in touches)
+    for (UITouch* touch in touches) // NOLINT(cppcoreguidelines-init-variables)
     {
         // find the touch
         NSUInteger index = [self.touches indexOfObject:touch];
@@ -190,7 +193,7 @@
         self.touches = [NSMutableArray array];
 
         // Configure the EAGL layer
-        CAEAGLLayer* eaglLayer       = static_cast<CAEAGLLayer*>(self.layer);
+        auto* eaglLayer              = static_cast<CAEAGLLayer*>(self.layer);
         eaglLayer.opaque             = YES;
         eaglLayer.drawableProperties = [NSDictionary
             dictionaryWithObjectsAndKeys:[NSNumber numberWithBool:FALSE],

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,16 +25,18 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
-#include <SFML/System/Sleep.hpp>
-#include <SFML/System/Time.hpp>
 #include <SFML/Window/iOS/EaglContext.hpp>
 #include <SFML/Window/iOS/SFView.hpp>
 #include <SFML/Window/iOS/WindowImplUIKit.hpp>
 
+#include <SFML/System/Err.hpp>
+#include <SFML/System/Sleep.hpp>
+#include <SFML/System/Time.hpp>
+
 #include <OpenGLES/EAGL.h>
 #include <OpenGLES/EAGLDrawable.h>
 #include <QuartzCore/CAEAGLLayer.h>
+#include <array>
 #include <dlfcn.h>
 #include <ostream>
 
@@ -44,16 +46,16 @@
 
 namespace
 {
-PFNGLBINDFRAMEBUFFEROESPROC            glBindFramebufferOESFunc            = 0;
-PFNGLBINDRENDERBUFFEROESPROC           glBindRenderbufferOESFunc           = 0;
-PFNGLCHECKFRAMEBUFFERSTATUSOESPROC     glCheckFramebufferStatusOESFunc     = 0;
-PFNGLDELETEFRAMEBUFFERSOESPROC         glDeleteFramebuffersOESFunc         = 0;
-PFNGLDELETERENDERBUFFERSOESPROC        glDeleteRenderbuffersOESFunc        = 0;
-PFNGLFRAMEBUFFERRENDERBUFFEROESPROC    glFramebufferRenderbufferOESFunc    = 0;
-PFNGLGENFRAMEBUFFERSOESPROC            glGenFramebuffersOESFunc            = 0;
-PFNGLGENRENDERBUFFERSOESPROC           glGenRenderbuffersOESFunc           = 0;
-PFNGLGETRENDERBUFFERPARAMETERIVOESPROC glGetRenderbufferParameterivOESFunc = 0;
-PFNGLRENDERBUFFERSTORAGEOESPROC        glRenderbufferStorageOESFunc        = 0;
+PFNGLBINDFRAMEBUFFEROESPROC            glBindFramebufferOESFunc            = nullptr;
+PFNGLBINDRENDERBUFFEROESPROC           glBindRenderbufferOESFunc           = nullptr;
+PFNGLCHECKFRAMEBUFFERSTATUSOESPROC     glCheckFramebufferStatusOESFunc     = nullptr;
+PFNGLDELETEFRAMEBUFFERSOESPROC         glDeleteFramebuffersOESFunc         = nullptr;
+PFNGLDELETERENDERBUFFERSOESPROC        glDeleteRenderbuffersOESFunc        = nullptr;
+PFNGLFRAMEBUFFERRENDERBUFFEROESPROC    glFramebufferRenderbufferOESFunc    = nullptr;
+PFNGLGENFRAMEBUFFERSOESPROC            glGenFramebuffersOESFunc            = nullptr;
+PFNGLGENRENDERBUFFERSOESPROC           glGenRenderbuffersOESFunc           = nullptr;
+PFNGLGETRENDERBUFFERPARAMETERIVOESPROC glGetRenderbufferParameterivOESFunc = nullptr;
+PFNGLRENDERBUFFERSTORAGEOESPROC        glRenderbufferStorageOESFunc        = nullptr;
 
 
 void ensureInit()
@@ -85,21 +87,13 @@ void ensureInit()
             sf::priv::EaglContext::getFunction("glRenderbufferStorageOES"));
     }
 }
-}
+} // namespace
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-EaglContext::EaglContext(EaglContext* shared) :
-m_context(nil),
-m_framebuffer(0),
-m_colorbuffer(0),
-m_depthbuffer(0),
-m_vsyncEnabled(false),
-m_clock()
+EaglContext::EaglContext(EaglContext* shared) : m_context(nil)
 {
     ensureInit();
 
@@ -114,12 +108,7 @@ m_clock()
 
 ////////////////////////////////////////////////////////////
 EaglContext::EaglContext(EaglContext* shared, const ContextSettings& settings, const WindowImpl& owner, unsigned int bitsPerPixel) :
-m_context(nil),
-m_framebuffer(0),
-m_colorbuffer(0),
-m_depthbuffer(0),
-m_vsyncEnabled(false),
-m_clock()
+m_context(nil)
 {
     ensureInit();
 
@@ -130,13 +119,8 @@ m_clock()
 
 
 ////////////////////////////////////////////////////////////
-EaglContext::EaglContext(EaglContext* /* shared */, const ContextSettings& /* settings */, const Vector2u& /* size */) :
-m_context(nil),
-m_framebuffer(0),
-m_colorbuffer(0),
-m_depthbuffer(0),
-m_vsyncEnabled(false),
-m_clock()
+EaglContext::EaglContext(EaglContext* /* shared */, const ContextSettings& /* settings */, Vector2u /* size */) :
+m_context(nil)
 {
     ensureInit();
 
@@ -154,7 +138,7 @@ EaglContext::~EaglContext()
     if (m_context)
     {
         // Activate the context, so that we can destroy the buffers
-        EAGLContext* previousContext = [EAGLContext currentContext];
+        EAGLContext* const previousContext = [EAGLContext currentContext];
         [EAGLContext setCurrentContext:m_context];
 
         // Destroy the buffers
@@ -177,23 +161,22 @@ EaglContext::~EaglContext()
 ////////////////////////////////////////////////////////////
 GlFunctionPointer EaglContext::getFunction(const char* name)
 {
-    static void* module = 0;
+    static void* module = nullptr;
 
-    const int   libCount       = 3;
-    const char* libs[libCount] = {"libGLESv1_CM.dylib",
-                                  "/System/Library/Frameworks/OpenGLES.framework/OpenGLES",
-                                  "OpenGLES.framework/OpenGLES"};
+    static constexpr std::array libs = {"libGLESv1_CM.dylib",
+                                        "/System/Library/Frameworks/OpenGLES.framework/OpenGLES",
+                                        "OpenGLES.framework/OpenGLES"};
 
-    for (int i = 0; i < libCount; ++i)
+    for (const auto& lib : libs)
     {
         if (!module)
-            module = dlopen(libs[i], RTLD_LAZY | RTLD_LOCAL);
+            module = dlopen(lib, RTLD_LAZY | RTLD_LOCAL);
     }
 
     if (module)
         return reinterpret_cast<GlFunctionPointer>(reinterpret_cast<uintptr_t>(dlsym(module, name)));
 
-    return 0;
+    return nullptr;
 }
 
 
@@ -201,7 +184,7 @@ GlFunctionPointer EaglContext::getFunction(const char* name)
 void EaglContext::recreateRenderBuffers(SFView* glView)
 {
     // Activate the context
-    EAGLContext* previousContext = [EAGLContext currentContext];
+    EAGLContext* const previousContext = [EAGLContext currentContext];
     [EAGLContext setCurrentContext:m_context];
 
     // Bind the frame buffer
@@ -224,12 +207,13 @@ void EaglContext::recreateRenderBuffers(SFView* glView)
     if (m_settings.depthBits > 0)
     {
         // Find the best internal format
-        GLenum format = m_settings.depthBits > 16
-                            ? (m_settings.stencilBits == 0 ? GL_DEPTH_COMPONENT24_OES : GL_DEPTH24_STENCIL8_OES)
-                            : GL_DEPTH_COMPONENT16_OES;
+        const GLenum format = m_settings.depthBits > 16
+                                  ? (m_settings.stencilBits == 0 ? GL_DEPTH_COMPONENT24_OES : GL_DEPTH24_STENCIL8_OES)
+                                  : GL_DEPTH_COMPONENT16_OES;
 
         // Get the size of the color-buffer (which fits the current size of the GL view)
-        GLint width, height;
+        GLint width  = 0;
+        GLint height = 0;
         glGetRenderbufferParameterivOESFunc(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_WIDTH_OES, &width);
         glGetRenderbufferParameterivOESFunc(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_HEIGHT_OES, &height);
 
@@ -243,7 +227,7 @@ void EaglContext::recreateRenderBuffers(SFView* glView)
     }
 
     // Make sure that everything's ok
-    GLenum status = glCheckFramebufferStatusOESFunc(GL_FRAMEBUFFER_OES);
+    const GLenum status = glCheckFramebufferStatusOESFunc(GL_FRAMEBUFFER_OES);
     if (status != GL_FRAMEBUFFER_COMPLETE_OES)
         err() << "Failed to create a valid frame buffer (error code: " << status << ")" << std::endl;
 
@@ -331,6 +315,4 @@ void EaglContext::createContext(EaglContext*           shared,
     makeCurrent(false);
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

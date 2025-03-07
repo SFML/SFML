@@ -1,15 +1,21 @@
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include "Client.hpp"
+
 #include <SFML/Audio.hpp>
+
 #include <SFML/Network.hpp>
 
 #include <iostream>
+#include <optional>
+
+#include <cstddef>
+#include <cstdint>
 
 
-const std::uint8_t clientAudioData   = 1;
-const std::uint8_t clientEndOfStream = 2;
+constexpr std::uint8_t clientAudioData   = 1;
+constexpr std::uint8_t clientEndOfStream = 2;
 
 
 ////////////////////////////////////////////////////////////
@@ -26,7 +32,7 @@ public:
     /// \param port Port of the remote host
     ///
     ////////////////////////////////////////////////////////////
-    NetworkRecorder(const sf::IpAddress& host, unsigned short port) : m_host(host), m_port(port)
+    NetworkRecorder(sf::IpAddress host, unsigned short port) : m_host(host), m_port(port)
     {
     }
 
@@ -54,10 +60,8 @@ private:
             std::cout << "Connected to server " << m_host << std::endl;
             return true;
         }
-        else
-        {
-            return false;
-        }
+
+        return false;
     }
 
     ////////////////////////////////////////////////////////////
@@ -81,7 +85,7 @@ private:
     ////////////////////////////////////////////////////////////
     void onStop() override
     {
-        // Send a "end-of-stream" packet
+        // Send an "end-of-stream" packet
         sf::Packet packet;
         packet << clientEndOfStream;
 
@@ -105,7 +109,7 @@ private:
 
 ////////////////////////////////////////////////////////////
 /// Create a client, connect it to a running server and
-/// start sending him audio data
+/// start sending it audio data
 ///
 ////////////////////////////////////////////////////////////
 void doClient(unsigned short port)
@@ -129,9 +133,9 @@ void doClient(unsigned short port)
     NetworkRecorder recorder(server.value(), port);
 
     // Wait for user input...
-    std::cin.ignore(10000, '\n');
+    std::cin.ignore(10'000, '\n');
     std::cout << "Press enter to start recording audio";
-    std::cin.ignore(10000, '\n');
+    std::cin.ignore(10'000, '\n');
 
     // Start capturing audio data
     if (!recorder.start(44100))
@@ -141,6 +145,6 @@ void doClient(unsigned short port)
     }
 
     std::cout << "Recording... press enter to stop";
-    std::cin.ignore(10000, '\n');
+    std::cin.ignore(10'000, '\n');
     recorder.stop();
 }

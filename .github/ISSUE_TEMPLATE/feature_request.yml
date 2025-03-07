@@ -1,0 +1,69 @@
+name: "Request a Feature"
+description: Request a change for SFML
+labels: ["feature"]
+body:
+    - type: markdown
+      attributes:
+          value: |
+              Thank you for bringing up this idea for discussion! 🙂
+
+    - type: checkboxes
+      attributes:
+          label: Prerequisite Checklist
+          description: "Before you submit the issue, we'd like you to consider the follow points."
+          options:
+              - label: "I searched for [existing issues](https://github.com/search?q=repo%3ASFML%2FSFML&type=issues) to prevent duplicates"
+                required: true
+              - label: "I searched for [existing discussions on the forum](https://www.google.com/search?q=site%3Ahttps%3A%2F%2Fen.sfml-dev.org) to prevent duplicates"
+                required: true
+              - label: "I understand [SFML's scope](https://www.sfml-dev.org/contribute.php#general-considerations) and believe the feature fits it"
+                required: true
+    - type: textarea
+      id: description
+      attributes:
+          label: Describe your feature request here
+          description: A clear and concise description of the wanted change.
+          placeholder: "Tell us what you see! And don't forget to add error message in full"
+      validations:
+          required: true
+    - type: textarea
+      id: use-cases
+      attributes:
+          label: Use Cases
+          description: Explain at least two concrete use cases for this feature.
+          placeholder: |
+              When writing collision detections...
+
+              For the correct positioning of the audio source...
+
+      validations:
+          required: true
+    - type: textarea
+      id: example
+      attributes:
+          label: API Example
+          description: Please provide an example how the new API could be used
+          value: |
+              ```cpp
+              #include <SFML/Graphics.hpp>
+
+              int main()
+              {
+                  sf::RenderWindow window(sf::VideoMode({1280, 720}), "Minimal, complete and verifiable example");
+                  window.setFramerateLimit(60);
+
+                  while (window.isOpen())
+                  {
+                      while (const std::optional event = window.pollEvent())
+                      {
+                          if (event->is<sf::Event::Closed>())
+                              window.close();
+                      }
+
+                      window.clear();
+                      window.display();
+                  }
+              }
+              ```
+      validations:
+          required: false

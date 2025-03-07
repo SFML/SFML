@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_WINDOWIMPLUIKIT_HPP
-#define SFML_WINDOWIMPLUIKIT_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -38,9 +37,7 @@ SFML_DECLARE_OBJC_CLASS(SFView);
 SFML_DECLARE_OBJC_CLASS(SFViewController);
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 /// \brief iOS (UIKit) implementation of WindowImpl
@@ -62,17 +59,12 @@ public:
     ///
     /// \param mode     Video mode to use
     /// \param title    Title of the window
-    /// \param style    Window style (resizable, fixed, or fullscren)
+    /// \param style    Window style
+    /// \param state    Window state
     /// \param settings Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
-    WindowImplUIKit(VideoMode mode, const String& title, unsigned long style, const ContextSettings& settings);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Destructor
-    ///
-    ////////////////////////////////////////////////////////////
-    ~WindowImplUIKit();
+    WindowImplUIKit(VideoMode mode, const String& title, std::uint32_t style, State state, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the OS-specific handle of the window
@@ -80,7 +72,7 @@ public:
     /// \return Handle of the window
     ///
     ////////////////////////////////////////////////////////////
-    WindowHandle getSystemHandle() const override;
+    [[nodiscard]] WindowHandle getNativeHandle() const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the position of the window
@@ -88,7 +80,7 @@ public:
     /// \return Position of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    Vector2i getPosition() const override;
+    [[nodiscard]] Vector2i getPosition() const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the position of the window on screen
@@ -96,7 +88,7 @@ public:
     /// \param position New position of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    void setPosition(const Vector2i& position) override;
+    void setPosition(Vector2i position) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the client size of the window
@@ -104,7 +96,7 @@ public:
     /// \return Size of the window, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    Vector2u getSize() const override;
+    [[nodiscard]] Vector2u getSize() const override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the size of the rendering region of the window
@@ -112,7 +104,27 @@ public:
     /// \param size New size, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    void setSize(const Vector2u& size) override;
+    void setSize(Vector2u size) override;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the minimum window rendering region size
+    ///
+    /// Pass `std::nullopt` to unset the minimum size
+    ///
+    /// \param minimumSize New minimum size, in pixels
+    ///
+    ////////////////////////////////////////////////////////////
+    void setMinimumSize(const std::optional<Vector2u>& minimumSize) override;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the maximum window rendering region size
+    ///
+    /// Pass `std::nullopt` to unset the maximum size
+    ///
+    /// \param maximumSize New maximum size, in pixels
+    ///
+    ////////////////////////////////////////////////////////////
+    void setMaximumSize(const std::optional<Vector2u>& maximumSize) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the title of the window
@@ -129,12 +141,12 @@ public:
     /// \param pixels Pointer to the pixels in memory, format must be RGBA 32 bits
     ///
     ////////////////////////////////////////////////////////////
-    void setIcon(const Vector2u& size, const std::uint8_t* pixels) override;
+    void setIcon(Vector2u size, const std::uint8_t* pixels) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the window
     ///
-    /// \param visible True to show, false to hide
+    /// \param visible `true` to show, `false` to hide
     ///
     ////////////////////////////////////////////////////////////
     void setVisible(bool visible) override;
@@ -142,7 +154,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the mouse cursor
     ///
-    /// \param visible True to show, false to hide
+    /// \param visible `true` to show, `false` to hide
     ///
     ////////////////////////////////////////////////////////////
     void setMouseCursorVisible(bool visible) override;
@@ -150,7 +162,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Clips or releases the mouse cursor
     ///
-    /// \param grabbed True to enable, false to disable
+    /// \param grabbed `true` to enable, `false` to disable
     ///
     ////////////////////////////////////////////////////////////
     void setMouseCursorGrabbed(bool grabbed) override;
@@ -166,7 +178,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Enable or disable automatic key-repeat
     ///
-    /// \param enabled True to enable, false to disable
+    /// \param enabled `true` to enable, `false` to disable
     ///
     ////////////////////////////////////////////////////////////
     void setKeyRepeatEnabled(bool enabled) override;
@@ -181,12 +193,11 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Check whether the window has the input focus
     ///
-    /// \return True if window has focus, false otherwise
+    /// \return `true` if window has focus, `false` otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool hasFocus() const override;
+    [[nodiscard]] bool hasFocus() const override;
 
-public:
     ////////////////////////////////////////////////////////////
     /// \brief Notify an event
     ///
@@ -201,12 +212,12 @@ public:
     /// \return Pointer to the window's view
     ///
     ////////////////////////////////////////////////////////////
-    SFView* getGlView() const;
+    [[nodiscard]] SFView* getGlView() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Show or hide the virtual keyboard
     ///
-    /// \param visible True to show, false to hide
+    /// \param visible `true` to show, `false` to hide
     ///
     ////////////////////////////////////////////////////////////
     void setVirtualKeyboardVisible(bool visible);
@@ -222,16 +233,11 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    UIWindow*         m_window;         ///< Pointer to the internal UIKit window
-    SFView*           m_view;           ///< OpenGL view of the window
-    SFViewController* m_viewController; ///< Controller attached to the view
-    bool              m_hasFocus;       ///< Current focus state of the window
-    float             m_backingScale;   ///< Converts from points to pixels and vice versa
+    UIWindow*         m_window{};         ///< Pointer to the internal UIKit window
+    SFView*           m_view{};           ///< OpenGL view of the window
+    SFViewController* m_viewController{}; ///< Controller attached to the view
+    bool              m_hasFocus{};       ///< Current focus state of the window
+    float             m_backingScale{};   ///< Converts from points to pixels and vice versa
 };
 
-} // namespace priv
-
-} // namespace sf
-
-
-#endif // SFML_WINDOWIMPLUIKIT_HPP
+} // namespace sf::priv

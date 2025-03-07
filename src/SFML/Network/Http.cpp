@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -26,23 +26,28 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Http.hpp>
+
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Utils.hpp>
 
+#include <algorithm>
+#include <array>
 #include <iterator>
 #include <limits>
 #include <ostream>
 #include <sstream>
+#include <utility>
+
+#include <cctype>
+#include <cstddef>
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Http::Request::Request(const std::string& uri, Method method, const std::string& body)
+Http::Request::Request(const std::string& uri, Method method, const std::string& body) : m_method(method)
 {
-    setMethod(method);
     setUri(uri);
-    setHttpVersion(1, 0);
     setBody(body);
 }
 
@@ -141,15 +146,9 @@ bool Http::Request::hasField(const std::string& field) const
 
 
 ////////////////////////////////////////////////////////////
-Http::Response::Response() : m_status(Status::ConnectionFailed), m_majorVersion(0), m_minorVersion(0)
-{
-}
-
-
-////////////////////////////////////////////////////////////
 const std::string& Http::Response::getField(const std::string& field) const
 {
-    if (auto it = m_fields.find(toLower(field)); it != m_fields.end())
+    if (const auto it = m_fields.find(toLower(field)); it != m_fields.end())
     {
         return it->second;
     }
@@ -211,7 +210,7 @@ void Http::Response::parse(const std::string& data)
     }
 
     // Extract the status code from the first line
-    int status;
+    int status = 0;
     if (in >> status)
     {
         m_status = static_cast<Status>(status);
@@ -240,7 +239,7 @@ void Http::Response::parse(const std::string& data)
     else
     {
         // Chunked - have to read chunk by chunk
-        std::size_t length;
+        std::size_t length = 0;
 
         // Read all chunks, identified by a chunk-size not being 0
         while (in >> std::hex >> length)
@@ -249,8 +248,8 @@ void Http::Response::parse(const std::string& data)
             in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 
             // Copy the actual content data
-            std::istreambuf_iterator<char> it(in);
-            std::istreambuf_iterator<char> itEnd;
+            std::istreambuf_iterator<char>       it(in);
+            const std::istreambuf_iterator<char> itEnd;
             for (std::size_t i = 0; ((i < length) && (it != itEnd)); ++i)
             {
                 m_body.push_back(*it);
@@ -273,12 +272,12 @@ void Http::Response::parseFields(std::istream& in)
     std::string line;
     while (std::getline(in, line) && (line.size() > 2))
     {
-        std::string::size_type pos = line.find(": ");
+        const std::string::size_type pos = line.find(": ");
         if (pos != std::string::npos)
         {
             // Extract the field name and its value
-            std::string field = line.substr(0, pos);
-            std::string value = line.substr(pos + 2);
+            const std::string field = line.substr(0, pos);
+            std::string       value = line.substr(pos + 2);
 
             // Remove any trailing \r
             if (!value.empty() && (*value.rbegin() == '\r'))
@@ -288,12 +287,6 @@ void Http::Response::parseFields(std::istream& in)
             m_fields[toLower(field)] = value;
         }
     }
-}
-
-
-////////////////////////////////////////////////////////////
-Http::Http() : m_host(), m_port(0)
-{
 }
 
 
@@ -347,7 +340,7 @@ Http::Response Http::sendRequest(const Http::Request& request, Time timeout)
     }
     if (!toSend.hasField("User-Agent"))
     {
-        toSend.setField("User-Agent", "libsfml-network/2.x");
+        toSend.setField("User-Agent", "libsfml-network/3.x");
     }
     if (!toSend.hasField("Host"))
     {
@@ -375,7 +368,7 @@ Http::Response Http::sendRequest(const Http::Request& request, Time timeout)
     if (m_connection.connect(m_host.value(), m_port, timeout) == Socket::Status::Done)
     {
         // Convert the request to string and send it through the connected socket
-        std::string requestStr = toSend.prepare();
+        const std::string requestStr = toSend.prepare();
 
         if (!requestStr.empty())
         {
@@ -383,12 +376,12 @@ Http::Response Http::sendRequest(const Http::Request& request, Time timeout)
             if (m_connection.send(requestStr.c_str(), requestStr.size()) == Socket::Status::Done)
             {
                 // Wait for the server's response
-                std::string receivedStr;
-                std::size_t size = 0;
-                char        buffer[1024];
-                while (m_connection.receive(buffer, sizeof(buffer), size) == Socket::Status::Done)
+                std::string            receivedStr;
+                std::size_t            size = 0;
+                std::array<char, 1024> buffer{};
+                while (m_connection.receive(buffer.data(), buffer.size(), size) == Socket::Status::Done)
                 {
-                    receivedStr.append(buffer, buffer + size);
+                    receivedStr.append(buffer.data(), buffer.data() + size);
                 }
 
                 // Build the Response object from the received data

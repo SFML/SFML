@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,16 +22,16 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_EAGLCONTEXT_HPP
-#define SFML_EAGLCONTEXT_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Clock.hpp>
-#include <SFML/System/Vector2.hpp>
 #include <SFML/Window/GlContext.hpp>
 #include <SFML/Window/iOS/ObjCType.hpp>
+
+#include <SFML/System/Clock.hpp>
+#include <SFML/System/Vector2.hpp>
 
 #include <glad/gl.h>
 
@@ -41,9 +41,7 @@
 SFML_DECLARE_OBJC_CLASS(EAGLContext);
 SFML_DECLARE_OBJC_CLASS(SFView);
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 class WindowImplUIKit;
 
@@ -81,13 +79,13 @@ public:
     /// \param size     Back buffer width and height, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    EaglContext(EaglContext* shared, const ContextSettings& settings, const Vector2u& size);
+    EaglContext(EaglContext* shared, const ContextSettings& settings, Vector2u size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    ~EaglContext();
+    ~EaglContext() override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the address of an OpenGL function
@@ -124,7 +122,7 @@ public:
     /// This can avoid some visual artifacts, and limit the framerate
     /// to a good value (but not constant across different computers).
     ///
-    /// \param enabled: True to enable v-sync, false to deactivate
+    /// \param enabled: `true` to enable v-sync, `false` to deactivate
     ///
     ////////////////////////////////////////////////////////////
     void setVerticalSyncEnabled(bool enabled) override;
@@ -136,7 +134,7 @@ protected:
     ///
     /// \param current Whether to make the context current or no longer current
     ///
-    /// \return True on success, false if any error happened
+    /// \return `true` on success, `false` if any error happened
     ///
     ////////////////////////////////////////////////////////////
     bool makeCurrent(bool current) override;
@@ -159,18 +157,14 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    EAGLContext* m_context;      ///< The internal context
-    GLuint       m_framebuffer;  ///< Frame buffer associated to the context
-    GLuint       m_colorbuffer;  ///< Color render buffer
-    GLuint       m_depthbuffer;  ///< Depth render buffer
-    bool         m_vsyncEnabled; ///< Vertical sync activation flag
-    Clock        m_clock;        ///< Measures the elapsed time for the fake v-sync implementation
+    EAGLContext* m_context;        ///< The internal context
+    GLuint       m_framebuffer{};  ///< Frame buffer associated to the context
+    GLuint       m_colorbuffer{};  ///< Color render buffer
+    GLuint       m_depthbuffer{};  ///< Depth render buffer
+    bool         m_vsyncEnabled{}; ///< Vertical sync activation flag
+    Clock        m_clock;          ///< Measures the elapsed time for the fake v-sync implementation
 };
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv
 
 #pragma GCC diagnostic pop
-
-#endif // SFML_EAGLCONTEXT_HPP

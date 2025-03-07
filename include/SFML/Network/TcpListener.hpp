@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2022 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -22,8 +22,7 @@
 //
 ////////////////////////////////////////////////////////////
 
-#ifndef SFML_TCPLISTENER_HPP
-#define SFML_TCPLISTENER_HPP
+#pragma once
 
 ////////////////////////////////////////////////////////////
 // Headers
@@ -59,10 +58,10 @@ public:
     ///
     /// \return Port to which the socket is bound
     ///
-    /// \see listen
+    /// \see `listen`
     ///
     ////////////////////////////////////////////////////////////
-    unsigned short getLocalPort() const;
+    [[nodiscard]] unsigned short getLocalPort() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Start listening for incoming connection attempts
@@ -74,19 +73,19 @@ public:
     /// function is called, it will stop listening on the old
     /// port before starting to listen on the new port.
     ///
-    /// When providing sf::Socket::AnyPort as port, the listener
+    /// When providing `sf::Socket::AnyPort` as port, the listener
     /// will request an available port from the system.
-    /// The chosen port can be retrieved by calling getLocalPort().
+    /// The chosen port can be retrieved by calling `getLocalPort()`.
     ///
     /// \param port    Port to listen on for incoming connection attempts
     /// \param address Address of the interface to listen on
     ///
     /// \return Status code
     ///
-    /// \see accept, close
+    /// \see `accept`, `close`
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Status listen(unsigned short port, const IpAddress& address = IpAddress::Any);
+    [[nodiscard]] Status listen(unsigned short port, IpAddress address = IpAddress::Any);
 
     ////////////////////////////////////////////////////////////
     /// \brief Stop listening and close the socket
@@ -94,7 +93,7 @@ public:
     /// This function gracefully stops the listener. If the
     /// socket is not listening, this function has no effect.
     ///
-    /// \see listen
+    /// \see `listen`
     ///
     ////////////////////////////////////////////////////////////
     void close();
@@ -109,7 +108,7 @@ public:
     ///
     /// \return Status code
     ///
-    /// \see listen
+    /// \see `listen`
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Status accept(TcpSocket& socket);
@@ -117,9 +116,6 @@ public:
 
 
 } // namespace sf
-
-
-#endif // SFML_TCPLISTENER_HPP
 
 
 ////////////////////////////////////////////////////////////
@@ -131,18 +127,18 @@ public:
 /// This is all it can do.
 ///
 /// When a new connection is received, you must call accept and
-/// the listener returns a new instance of sf::TcpSocket that
+/// the listener returns a new instance of `sf::TcpSocket` that
 /// is properly initialized and can be used to communicate with
 /// the new client.
 ///
 /// Listener sockets are specific to the TCP protocol,
 /// UDP sockets are connectionless and can therefore communicate
 /// directly. As a consequence, a listener socket will always
-/// return the new connections as sf::TcpSocket instances.
+/// return the new connections as `sf::TcpSocket` instances.
 ///
 /// A listener is automatically closed on destruction, like all
 /// other types of socket. However if you want to stop listening
-/// before the socket is destroyed, you can call its close()
+/// before the socket is destroyed, you can call its `close()`
 /// function.
 ///
 /// Usage example:
@@ -165,6 +161,6 @@ public:
 /// }
 /// \endcode
 ///
-/// \see sf::TcpSocket, sf::Socket
+/// \see `sf::TcpSocket`, `sf::Socket`
 ///
 ////////////////////////////////////////////////////////////

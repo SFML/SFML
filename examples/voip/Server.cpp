@@ -1,18 +1,23 @@
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include "Server.hpp"
+
 #include <SFML/Audio.hpp>
+
 #include <SFML/Network.hpp>
 
-#include <cstring>
 #include <iostream>
-#include <iterator>
 #include <mutex>
+#include <optional>
+#include <vector>
+
+#include <cstdint>
+#include <cstring>
 
 
-const std::uint8_t serverAudioData   = 1;
-const std::uint8_t serverEndOfStream = 2;
+constexpr std::uint8_t serverAudioData   = 1;
+constexpr std::uint8_t serverEndOfStream = 2;
 
 
 ////////////////////////////////////////////////////////////
@@ -26,10 +31,10 @@ public:
     /// Default constructor
     ///
     ////////////////////////////////////////////////////////////
-    NetworkAudioStream() : m_offset(0), m_hasFinished(false)
+    NetworkAudioStream()
     {
         // Set the sound parameters
-        initialize(1, 44100);
+        initialize(1, 44100, {sf::SoundChannel::Mono});
     }
 
     ////////////////////////////////////////////////////////////
@@ -81,7 +86,7 @@ private:
         // Copy samples into a local buffer to avoid synchronization problems
         // (don't forget that we run in two separate threads)
         {
-            std::scoped_lock lock(m_mutex);
+            const std::lock_guard lock(m_mutex);
             m_tempBuffer.assign(m_samples.begin() + static_cast<std::vector<std::int16_t>::difference_type>(m_offset),
                                 m_samples.end());
         }
@@ -119,23 +124,21 @@ private:
                 break;
 
             // Extract the message ID
-            std::uint8_t id;
+            std::uint8_t id = 0;
             packet >> id;
 
             if (id == serverAudioData)
             {
                 // Extract audio samples from the packet, and append it to our samples buffer
-                std::size_t sampleCount = (packet.getDataSize() - 1) / sizeof(std::int16_t);
+                const std::size_t sampleCount = (packet.getDataSize() - 1) / sizeof(std::int16_t);
 
                 // Don't forget that the other thread can access the sample array at any time
                 // (so we protect any operation on it with the mutex)
                 {
-                    std::scoped_lock lock(m_mutex);
-                    std::size_t      oldSize = m_samples.size();
-                    m_samples.resize(oldSize + sampleCount);
-                    std::memcpy(&(m_samples[oldSize]),
-                                static_cast<const char*>(packet.getData()) + 1,
-                                sampleCount * sizeof(std::int16_t));
+                    const std::lock_guard lock(m_mutex);
+                    const auto*           begin = static_cast<const char*>(packet.getData()) + 1;
+                    const auto*           end   = begin + sampleCount * sizeof(std::int16_t);
+                    m_samples.insert(m_samples.end(), begin, end);
                 }
             }
             else if (id == serverEndOfStream)
@@ -161,8 +164,8 @@ private:
     std::recursive_mutex      m_mutex;
     std::vector<std::int16_t> m_samples;
     std::vector<std::int16_t> m_tempBuffer;
-    std::size_t               m_offset;
-    bool                      m_hasFinished;
+    std::size_t               m_offset{};
+    bool                      m_hasFinished{};
 };
 
 
@@ -178,23 +181,23 @@ void doServer(unsigned short port)
     audioStream.start(port);
 
     // Loop until the sound playback is finished
-    while (audioStream.getStatus() != sf::SoundStream::Stopped)
+    while (audioStream.getStatus() != sf::SoundStream::Status::Stopped)
     {
         // Leave some CPU time for other threads
         sf::sleep(sf::milliseconds(100));
     }
 
-    std::cin.ignore(10000, '\n');
+    std::cin.ignore(10'000, '\n');
 
     // Wait until the user presses 'enter' key
     std::cout << "Press enter to replay the sound..." << std::endl;
-    std::cin.ignore(10000, '\n');
+    std::cin.ignore(10'000, '\n');
 
     // Replay the sound (just to make sure replaying the received data is OK)
     audioStream.play();
 
     // Loop until the sound playback is finished
-    while (audioStream.getStatus() != sf::SoundStream::Stopped)
+    while (audioStream.getStatus() != sf::SoundStream::Status::Stopped)
     {
         // Leave some CPU time for other threads
         sf::sleep(sf::milliseconds(100));

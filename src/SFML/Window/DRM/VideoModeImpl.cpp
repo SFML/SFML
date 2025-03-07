@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2020 Andrew Mickelson
+// Copyright (C) 2024-2025 Andrew Mickelson
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,26 +25,20 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/System/Err.hpp>
 #include <SFML/Window/DRM/DRMContext.hpp>
 #include <SFML/Window/VideoModeImpl.hpp>
 
-#include <drm-common.h>
+#include <SFML/System/Err.hpp>
 
 
-namespace sf
-{
-namespace priv
+namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 {
     std::vector<VideoMode> modes;
 
-    drm*                drm  = sf::priv::DRMContext::getDRM();
-    drmModeConnectorPtr conn = drm->saved_connector;
-
-    if (conn)
+    if (const auto* conn = DRMContext::getDRM().savedConnector)
     {
         for (int i = 0; i < conn->count_modes; i++)
             modes.push_back(VideoMode({conn->modes[i].hdisplay, conn->modes[i].vdisplay}));
@@ -59,14 +53,9 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 ////////////////////////////////////////////////////////////
 VideoMode VideoModeImpl::getDesktopMode()
 {
-    drm*               drm = sf::priv::DRMContext::getDRM();
-    drmModeModeInfoPtr ptr = drm->mode;
-    if (ptr)
-        return VideoMode({ptr->hdisplay, ptr->vdisplay});
-    else
-        return VideoMode({0, 0});
+    const Drm&               drm = DRMContext::getDRM();
+    const drmModeModeInfoPtr ptr = drm.mode ? drm.mode : &drm.originalCrtc->mode;
+    return VideoMode({ptr->hdisplay, ptr->vdisplay});
 }
 
-} // namespace priv
-
-} // namespace sf
+} // namespace sf::priv

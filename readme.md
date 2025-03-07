@@ -6,11 +6,14 @@ SFML is a simple, fast, cross-platform and object-oriented multimedia API. It pr
 
 ## State of Development
 
-SFML is currently in an interesting state of development, which can quickly become confusing if you aren't following it closely. As such we want to clarify where to get which version.
+Development is focused on version 3 in the `master` branch.
+No more features are planned for the 2.x release series.
 
--   The [`master`](https://github.com/SFML/SFML/tree/master) branch contains work in progress for the next major version SFML 3. As such it's considered unstable, but any testing and feedback is highly appreciated.
--   The [`2.6.x`](https://github.com/SFML/SFML/tree/2.6.x) branch is the nearly complete next minor version SFML 2.6, which should be very stable, even if it hasn't been officially released yet.
--   The [`2.5.1`](https://github.com/SFML/SFML/tree/2.5.1) tag is the last official SFML release, but it lacks a lot of fixes and features that can already be found on the `2.6.x` branch.
+## CMake Template
+
+The easiest way to get started with SFML is our [CMake-based project template](https://github.com/SFML/cmake-sfml-project/blob/master/README.md).
+This template will automatically download and build SFML alongside your own application.
+Read the README for full instructions on how to use it.
 
 ## Download
 
@@ -65,10 +68,10 @@ In short, SFML is free for any use (commercial or personal, proprietary or open-
 
 ## External libraries used by SFML
 
--   [_OpenAL-Soft_](https://github.com/kcat/openal-soft) is under the [LGPL license](https://github.com/kcat/openal-soft/blob/master/COPYING)
 -   [_stb_image_ and _stb_image_write_](https://github.com/nothings/stb) are [public domain](https://github.com/nothings/stb/blob/master/LICENSE)
 -   [_freetype_](https://gitlab.freedesktop.org/freetype/freetype) is under the [FreeType license or the GPL license](https://gitlab.freedesktop.org/freetype/freetype/-/blob/master/LICENSE.TXT)
 -   [_libogg_](https://gitlab.xiph.org/xiph/ogg) is under the [BSD license](https://gitlab.xiph.org/xiph/ogg/-/blob/master/COPYING)
 -   [_libvorbis_](https://gitlab.xiph.org/xiph/vorbis) is under the [BSD license](https://gitlab.xiph.org/xiph/vorbis/-/blob/master/COPYING)
 -   [_libflac_](https://gitlab.xiph.org/xiph/flac) is under the [BSD license](https://gitlab.xiph.org/xiph/flac/-/blob/master/COPYING.Xiph)
 -   [_minimp3_](https://github.com/lieff/minimp3) is under the [CC0 license](https://github.com/lieff/minimp3/blob/master/LICENSE)
+-   [_miniaudio_](https://github.com/mackron/miniaudio) is [public domain or under the MIT No Attribution license](https://github.com/mackron/miniaudio/blob/master/LICENSE)

@@ -1,8 +1,7 @@
+XCODE TEMPLATES FOR SFML
+========================
 
-XCODE TEMPLATES FOR SFML 2
-==========================
-
-These templates help you to easily create a new SFML 2 project for Xcode 4 or greater.
+These templates help you to easily create a new SFML project for Xcode 4 or greater.
 
 
 
@@ -40,7 +39,7 @@ Before installing the template, make sure you have installed:
 
  - Xcode 4 or greater, up to date;
  - the Command Line Tools;
- - SFML 2, either as frameworks or dylibs, as described in the official tutorials.
+ - SFML, either as frameworks or dylibs, as described in the official tutorials.
 
 
 You should also be familiar with Xcode. If needed checkout this document:
@@ -51,7 +50,7 @@ http://developer.apple.com/library/ios/#documentation/ToolsLanguages/Conceptual/
 Install
 -------
 
-If you are building SFML from sources you can set CMake's INSTALL_XCODE_TEMPLATES variable to TRUE
+If you are building SFML from sources you can set CMake's INSTALL_XCODE_TEMPLATES variable to ON
 to install the templates automatically.
 
 
@@ -80,12 +79,6 @@ FAQ
 
     No, Xcode 3 and 4 don't have the same template system. Therefore these templates won't work with
     a older version of Xcode.
-
-
-
-  * I'm still using SFML 1.6. Can I use these templates anyway?
-
-    No, these templates were made for SFML 2 only.
 
 
 
@@ -129,7 +122,7 @@ FAQ
 
     Short answer: Don't do that!
 
-    We strongly recommend you to use either dylibs or frameworks on Mac OS X. Please refer to Apple
+    We strongly recommend you to use either dylibs or frameworks on macOS. Please refer to Apple
     documentation for information about static vs shared libraries debate.
 
     If you really need/want to use static libraries proceed as follow. First, set your project to
@@ -146,5 +139,3 @@ FAQ
     project build settings to match the settings used to compile SFML; more
     specifically the Compiler for C/C++/Objective-C, the C++ language Dialect
     and the C++ Standard Library.
-
-
