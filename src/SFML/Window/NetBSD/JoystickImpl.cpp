@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2024 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //               2013-2013 David Demelier (demelier.david@gmail.com)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -309,8 +309,8 @@ JoystickState JoystickImpl::JoystickImpl::update()
         if (!data)
             continue;
 
-        int        buttonIndex = 0;
-        hid_item_t item;
+        std::size_t buttonIndex = 0;
+        hid_item_t  item;
 
         while (hid_get_item(data, &item))
         {

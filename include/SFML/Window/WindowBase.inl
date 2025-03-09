@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2024 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -28,6 +28,7 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowBase.hpp> // NOLINT(misc-header-include-cycle)
 
+#include <type_traits>
 #include <utility>
 
 
@@ -53,20 +54,56 @@ struct DelayOverloadResolution
     {
     }
 };
+
+// Wrapper providing a callable type suitable as OverloadSet base type for different kinds of handlers.
+// By default, we derive from the handler type and inherit its call operators.
+template <typename Handler>
+struct Caller : Handler
+{
+    using Handler::operator();
+};
+
+// Inheritance is not possible with reference types.
+// In this case, we capture the reference and forward arguments to it.
+template <typename Handler>
+struct Caller<Handler&>
+{
+    // Use SFINAE so that the call operator exists only for arguments the captured handler accepts
+    template <typename Argument, std::enable_if_t<std::is_invocable_v<Handler&, Argument>, int> = 0>
+    decltype(auto) operator()(Argument&& argument)
+    {
+        return handler(std::forward<Argument>(argument));
+    }
+    Handler& handler;
+};
+
+// Inheritance is not possible with function pointers either.
+// In this case, we capture the function pointer to call it.
+template <typename Return, typename Argument>
+struct Caller<Return (*)(Argument)>
+{
+    Return operator()(Argument&& argument)
+    {
+        return function(std::forward<Argument>(argument));
+    }
+    Return (*function)(Argument);
+};
 } // namespace priv
 
 
 ////////////////////////////////////////////////////////////
-template <typename... Ts>
-void WindowBase::handleEvents(Ts&&... handlers) // NOLINT(cppcoreguidelines-missing-std-forward)
+template <typename... Handlers>
+void WindowBase::handleEvents(Handlers&&... handlers)
 {
-    static_assert(sizeof...(Ts) > 0, "Must provide at least one handler");
+    static_assert(sizeof...(Handlers) > 0, "Must provide at least one handler");
+    static_assert((Event::isEventHandler<Handlers> && ...), "Handlers must accept at least one subtype of sf::Event");
 
     // Disable misc-const-correctness for this line since clang-tidy
-    // complains about it even though the code would become uncompilable
+    // complains about it even though the code would become incorrect
 
     // NOLINTNEXTLINE(misc-const-correctness)
-    priv::OverloadSet overloadSet{std::forward<Ts>(handlers)..., [](const priv::DelayOverloadResolution&) { /* ignore */ }};
+    priv::OverloadSet overloadSet{priv::Caller<Handlers>{std::forward<Handlers>(handlers)}...,
+                                  [](const priv::DelayOverloadResolution&) { /* ignore */ }};
 
     while (const std::optional event = pollEvent())
         event->visit(overloadSet);

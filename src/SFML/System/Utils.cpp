@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2024 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -44,8 +44,10 @@ std::string toLower(std::string str)
 std::string formatDebugPathInfo(const std::filesystem::path& path)
 {
     std::ostringstream oss;
-    oss << "    Provided path: " << path << '\n' //
-        << "    Absolute path: " << std::filesystem::absolute(path);
+    // convert to UTF-8 to handle non-ascii/non-latin1 filenames on windows
+    // cast is required to work in C++20 where u8string is char8_t which can't be printed to char stream
+    oss << "    Provided path: " << reinterpret_cast<const char*>(path.u8string().c_str()) << '\n' //
+        << "    Absolute path: " << reinterpret_cast<const char*>(std::filesystem::absolute(path).u8string().c_str());
     return oss.str();
 }
 

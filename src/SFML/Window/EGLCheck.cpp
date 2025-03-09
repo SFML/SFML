@@ -32,6 +32,7 @@
 
 #include <glad/egl.h>
 
+#include <filesystem>
 #include <ostream>
 
 

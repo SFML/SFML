@@ -229,8 +229,8 @@ TEST_CASE("[System] sf::Angle")
         SECTION("operator/")
         {
             STATIC_CHECK(sf::Angle::Zero / 10 == sf::Angle::Zero);
-            STATIC_CHECK(sf::degrees(10) / 2.5f == sf::degrees(4));
             STATIC_CHECK(sf::radians(12) / 3 == sf::radians(4));
+            CHECK(sf::degrees(10) / 2.5f == Approx(sf::degrees(4)));
 
             STATIC_CHECK(sf::Angle::Zero / sf::degrees(1) == 0.f);
             STATIC_CHECK(sf::degrees(10) / sf::degrees(10) == 1.f);

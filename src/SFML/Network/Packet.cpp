@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2024 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -571,7 +571,9 @@ Packet& Packet::operator<<(const String& data)
 ////////////////////////////////////////////////////////////
 bool Packet::checkSize(std::size_t size)
 {
-    m_isValid = m_isValid && (m_readPos + size <= m_data.size());
+    // Determine if size is big enough to trigger an overflow
+    const bool overflowDetected = m_readPos + size < m_readPos;
+    m_isValid                   = m_isValid && (m_readPos + size <= m_data.size()) && !overflowDetected;
 
     return m_isValid;
 }

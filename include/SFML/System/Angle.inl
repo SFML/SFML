@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2024 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -34,8 +34,8 @@ namespace sf
 {
 namespace priv
 {
-constexpr float pi  = 3.141592654f;
-constexpr float tau = pi * 2.f;
+inline constexpr float pi  = 3.141592654f;
+inline constexpr float tau = pi * 2.f;
 
 constexpr float positiveRemainder(float a, float b)
 {

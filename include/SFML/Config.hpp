@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2024 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -112,6 +112,14 @@
 
 
 ////////////////////////////////////////////////////////////
+// Ensure minimum C++ language standard version is met
+////////////////////////////////////////////////////////////
+#if (defined(_MSVC_LANG) && _MSVC_LANG < 201703L) || (!defined(_MSVC_LANG) && __cplusplus < 201703L)
+#error "Enable C++17 or newer for your compiler (e.g. -std=c++17 for GCC/Clang or /std:c++17 for MSVC)"
+#endif
+
+
+////////////////////////////////////////////////////////////
 // Portable debug macro
 ////////////////////////////////////////////////////////////
 #if !defined(NDEBUG)
@@ -132,10 +140,11 @@
 #define SFML_API_EXPORT __declspec(dllexport)
 #define SFML_API_IMPORT __declspec(dllimport)
 
-// For Visual C++ compilers, we also need to turn off this annoying C4251 warning
+// For Visual C++ compilers, we also need to turn off this annoying C4251 & C4275 warning
 #ifdef _MSC_VER
 
-#pragma warning(disable : 4251)
+#pragma warning(disable : 4251) // Using standard library types in our own exported types is okay
+#pragma warning(disable : 4275) // Exporting types derived from the standard library is okay
 
 #endif
 

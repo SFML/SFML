@@ -6,8 +6,6 @@ For a closer look at breaking changes and how to migrate from SFML 2, check out 
 
 ### General
 
-**Features**
-
 -   Raised C++ requirement to C++17 (#1855)
 -   Modernized internals to the full extent allowed by C++17
 -   Upgraded to CMake 3.22 (#2543)
@@ -40,9 +38,6 @@ For a closer look at breaking changes and how to migrate from SFML 2, check out 
 -   [Windows] Added support for UCRT MinGW (#3115)
 -   [Windows] Added support for Windows ARM64 (#3111)
 -   Added throwing constructors (#3152)
-
-**Bugfixes**
-
 -   Fixed `OPTIONAL_COMPONENTS` when finding SFML via `find_package` (#2052)
 -   [Nix] Fixed pkg-config support on Nix (#2835)
 
@@ -74,7 +69,6 @@ For a closer look at breaking changes and how to migrate from SFML 2, check out 
 -   Rewrote `sf::Event` API to improve type safety (#2766)
 -   Added `sf::State` for specifying fullscreen or floating windows (#2818)
 -   Renamed `XButton1` and `XButton2` to `Extra1` and `Extra2` (#2838)
--   Removed `sf::Keyboard::Key::Last` and `sf::Keyboard::Scan::Last` enumerators (#2849)
 -   Added raw mouse input support (#3057)
 -   Added `timeout` parameter to `waitEvent` (#3094)
 
