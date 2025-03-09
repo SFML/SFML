@@ -75,7 +75,7 @@ public:
     ///
     /// \param stream Source stream to read from
     ///
-    /// \return Properties of the loaded sound if the file was successfully opened
+    /// \return Properties of the loaded sound if the file was successfully opened, `std::nullopt` otherwise
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] virtual std::optional<Info> open(InputStream& stream) = 0;
