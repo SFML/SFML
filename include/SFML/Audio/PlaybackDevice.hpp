@@ -71,7 +71,7 @@ namespace sf::PlaybackDevice
 /// \brief Get the name of the default audio playback device
 ///
 /// This function returns the name of the default audio
-/// playback device. If none is available, an empty string
+/// playback device. If none is available, `std::nullopt`
 /// is returned.
 ///
 /// \return The name of the default audio playback device

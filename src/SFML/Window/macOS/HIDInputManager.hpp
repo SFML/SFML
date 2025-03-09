@@ -243,7 +243,7 @@ private:
     ///
     /// \param page  HID page like kHIDPage_GenericDesktop
     /// \param usage HID usage page like kHIDUsage_GD_Keyboard or kHIDUsage_GD_Mouse
-    /// \return a retained, non-empty CFSetRef of IOHIDDeviceRef or a null pointer
+    /// \return a retained, non-empty CFSetRef of IOHIDDeviceRef or `nullptr`
     ///
     ////////////////////////////////////////////////////////////
     CFSetRef copyDevices(std::uint32_t page, std::uint32_t usage);

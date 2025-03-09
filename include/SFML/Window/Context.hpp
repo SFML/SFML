@@ -137,7 +137,7 @@ public:
     ///
     /// \param name Name of the function to get the address of
     ///
-    /// \return Address of the OpenGL function, 0 on failure
+    /// \return Address of the OpenGL function, `nullptr` on failure
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] static GlFunctionPointer getFunction(const char* name);
