@@ -931,7 +931,8 @@ void Texture::bind(const Texture* texture, CoordinateType coordinateType)
         glCheck(glBindTexture(GL_TEXTURE_2D, texture->m_texture));
 
         // Check if we need to define a special texture matrix
-        if ((coordinateType == CoordinateType::Pixels) || texture->m_pixelsFlipped)
+        if ((coordinateType == CoordinateType::Pixels) || texture->m_pixelsFlipped ||
+            ((coordinateType == CoordinateType::Normalized) && (texture->m_size != texture->m_actualSize)))
         {
             // clang-format off
             std::array matrix = {1.f, 0.f, 0.f, 0.f,
@@ -946,6 +947,14 @@ void Texture::bind(const Texture* texture, CoordinateType coordinateType)
             {
                 matrix[0] = 1.f / static_cast<float>(texture->m_actualSize.x);
                 matrix[5] = 1.f / static_cast<float>(texture->m_actualSize.y);
+            }
+
+            // If normalized coordinates are used when NPOT textures aren't supported,
+            // then we need to setup scale factors to make the coordinates relative to the actual POT size
+            if ((coordinateType == CoordinateType::Normalized) && (texture->m_size != texture->m_actualSize))
+            {
+                matrix[0] = static_cast<float>(texture->m_size.x) / static_cast<float>(texture->m_actualSize.x);
+                matrix[5] = static_cast<float>(texture->m_size.y) / static_cast<float>(texture->m_actualSize.y);
             }
 
             // If pixels are flipped we must invert the Y axis
