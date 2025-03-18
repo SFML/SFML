@@ -136,6 +136,13 @@ else()
             PATCH_COMMAND ${CMAKE_COMMAND} -DFREETYPE_DIR=${FETCHCONTENT_BASE_DIR}/freetype-src -P ${PROJECT_SOURCE_DIR}/tools/freetype/PatchFreetype.cmake)
         FetchContent_MakeAvailable(Freetype)
 
+        # disable all compiler warnings
+        if(SFML_COMPILER_MSVC)
+            target_compile_options(freetype PRIVATE /w)
+        elseif(SFML_COMPILER_GCC OR SFML_COMPILER_CLANG)
+            target_compile_options(freetype PRIVATE -w)
+        endif()
+
         set_target_properties(freetype PROPERTIES FOLDER "Dependencies")
 
         # if building SFML as a shared library and linking our dependencies in
