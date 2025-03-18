@@ -3,6 +3,7 @@ string(REGEX REPLACE "\nadd_subdirectory\\(\"share/" "\n\#add_subdirectory(\"sha
 file(WRITE "${FLAC_DIR}/src/CMakeLists.txt" "${FLAC_SRC_CMAKELISTS_CONTENTS}")
 
 file(READ "${FLAC_DIR}/CMakeLists.txt" FLAC_CMAKELISTS_CONTENTS)
+string(REPLACE "cmake_minimum_required(VERSION 3.5)" "cmake_minimum_required(VERSION 3.5...3.10)" FLAC_CMAKELISTS_CONTENTS "${FLAC_CMAKELISTS_CONTENTS}")
 string(REPLACE "set_target_properties(FLAC grabbag getopt replaygain_analysis replaygain_synthesis utf8 PROPERTIES FOLDER Libraries)" "" FLAC_CMAKELISTS_CONTENTS "${FLAC_CMAKELISTS_CONTENTS}")
 string(REPLACE "install(FILES \${FLAC_HEADERS} DESTINATION \"\${CMAKE_INSTALL_INCLUDEDIR}/FLAC\")" "" FLAC_CMAKELISTS_CONTENTS "${FLAC_CMAKELISTS_CONTENTS}")
 string(REPLACE "install(FILES \${FLAC++_HEADERS} DESTINATION \"\${CMAKE_INSTALL_INCLUDEDIR}/FLAC++\")" "" FLAC_CMAKELISTS_CONTENTS "${FLAC_CMAKELISTS_CONTENTS}")

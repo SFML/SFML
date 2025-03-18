@@ -183,9 +183,15 @@ endif()
 
 option(SFML_ENABLE_STDLIB_ASSERTIONS "Enable standard library assertions" OFF)
 if(SFML_ENABLE_STDLIB_ASSERTIONS)
-    # intentionally using `add_definitions` here to propagate defines to subdirectories
-    add_definitions(-D_GLIBCXX_ASSERTIONS=1)                                   # see https://gcc.gnu.org/wiki/LibstdcxxDebugMode
-    add_definitions(-D_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_EXTENSIVE) # see https://libcxx.llvm.org/Hardening.html
+    # intentionally using `add_compile_definitions` here to propagate defines to subdirectories
+    add_compile_definitions(_GLIBCXX_ASSERTIONS=1)                                   # see https://gcc.gnu.org/wiki/LibstdcxxDebugMode
+
+    # Xcode has a property to control this - adding the define ourselves causes multiple definitions
+    if(XCODE)
+        set(CMAKE_XCODE_ATTRIBUTE_CLANG_CXX_STANDARD_LIBRARY_HARDENING "Yes (extensive)")
+    else()
+        add_compile_definitions(_LIBCPP_HARDENING_MODE=_LIBCPP_HARDENING_MODE_EXTENSIVE) # see https://libcxx.llvm.org/Hardening.html
+    endif()
 endif()
 
 # set the output directory for SFML DLLs and executables
@@ -221,14 +227,14 @@ if(SFML_INSTALL_PKGCONFIG_FILES)
 
     sfml_set_option(SFML_PKGCONFIG_INSTALL_DIR "${SFML_PKGCONFIG_DIR}" PATH "Install directory for SFML's pkg-config .pc files")
 
-    foreach(sfml_module IN ITEMS all system window graphics audio network)
+    if(SFML_BUILD_AUDIO AND SFML_BUILD_NETWORK AND SFML_BUILD_GRAPHICS AND SFML_BUILD_WINDOW)
         configure_file(
-            "tools/pkg-config/sfml-${sfml_module}.pc.in"
-            "tools/pkg-config/sfml-${sfml_module}.pc"
+            "tools/pkg-config/sfml-all.pc.in"
+            "tools/pkg-config/sfml-all.pc"
             @ONLY)
-        install(FILES "${CMAKE_CURRENT_BINARY_DIR}/tools/pkg-config/sfml-${sfml_module}.pc"
+        install(FILES "${CMAKE_CURRENT_BINARY_DIR}/tools/pkg-config/sfml-all.pc"
             DESTINATION "${SFML_PKGCONFIG_INSTALL_DIR}")
-    endforeach()
+    endif()
 endif()
 
 # option to enable precompiled headers

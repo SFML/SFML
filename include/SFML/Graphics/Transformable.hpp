@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2024 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -271,7 +271,7 @@ private:
 /// provides an "origin" component, which represents the local origin
 /// of the three other components. Let's take an example with a 10x10
 /// pixels sprite. By default, the sprite is positioned/rotated/scaled
-/// relatively to its top-left corner, because it is the local point
+/// relative to its top-left corner, because it is the local point
 /// (0, 0). But if we change the origin to be (5, 5), the sprite will
 /// be positioned/rotated/scaled around its center instead. And if
 /// we set the origin to (10, 10), it will be transformed around its
@@ -279,7 +279,7 @@ private:
 ///
 /// To keep the `sf::Transformable` class simple, there's only one
 /// origin for all the components. You cannot position the sprite
-/// relatively to its top-left corner while rotating it around its
+/// relative to its top-left corner while rotating it around its
 /// center, for example. To do such things, use `sf::Transform` directly.
 ///
 /// `sf::Transformable` can be used as a base class. It is often

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2024 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -69,10 +69,10 @@ const TEventSubtype* Event::getIf() const
 
 
 ////////////////////////////////////////////////////////////
-template <typename T>
-decltype(auto) Event::visit(T&& visitor) const
+template <typename Visitor>
+decltype(auto) Event::visit(Visitor&& visitor) const
 {
-    return std::visit(std::forward<T>(visitor), m_data);
+    return std::visit(std::forward<Visitor>(visitor), m_data);
 }
 
 } // namespace sf
