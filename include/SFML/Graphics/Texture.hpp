@@ -45,6 +45,9 @@
 namespace sf
 {
 class InputStream;
+class RenderTarget;
+class RenderTexture;
+class Font;
 class Window;
 class Image;
 
@@ -712,7 +715,7 @@ public:
     [[nodiscard]] static unsigned int getMaximumSize();
 
 private:
-    friend class Text;
+    friend class Font;
     friend class RenderTexture;
     friend class RenderTarget;
 

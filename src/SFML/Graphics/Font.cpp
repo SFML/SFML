@@ -237,24 +237,35 @@ const Font::Info& Font::getInfo() const
 ////////////////////////////////////////////////////////////
 const Glyph& Font::getGlyph(char32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness) const
 {
-    // Get the page corresponding to the character size
-    GlyphTable& glyphs = loadPage(characterSize).glyphs;
+    // Get the pages list corresponding to the character size
+    PageList& pages = m_pageLists[characterSize];
 
     // Build the key by combining the glyph index (based on code point), bold flag, and outline thickness
     const std::uint64_t key = combine(outlineThickness,
                                       bold,
                                       FT_Get_Char_Index(m_fontHandles ? m_fontHandles->face : nullptr, codePoint));
 
-    // Search the glyph into the cache
-    if (const auto it = glyphs.find(key); it != glyphs.end())
+    // Search the glyph in the pages list
+    for (const auto& page : pages)
     {
-        // Found: just return it
-        return it->second;
+        // Search the glyph into the cache
+        const auto& glyphs = page.glyphs;
+        const auto  found  = glyphs.find(key);
+        if (found != glyphs.end())
+        {
+            return found->second;
+        }
     }
 
     // Not found: we have to load it
     const Glyph glyph = loadGlyph(codePoint, characterSize, bold, outlineThickness);
-    return glyphs.try_emplace(key, glyph).first->second;
+  
+    // Store the glyph in the page that contains it
+    for (auto& page : pages)
+        if (glyph.texture == &page.texture)
+            return page.glyphs.emplace(key, glyph).first->second;
+  
+    return pages.front().glyphs.try_emplace(key, glyph).first->second;
 }
 
 
@@ -352,11 +363,19 @@ float Font::getUnderlineThickness(unsigned int characterSize) const
     return 0.f;
 }
 
-
 ////////////////////////////////////////////////////////////
-const Texture& Font::getTexture(unsigned int characterSize) const
+std::unordered_set<std::uint64_t> Font::getTextureIds(unsigned int characterSize) const
 {
-    return loadPage(characterSize).texture;
+    PageList& pages = m_pageLists[characterSize];
+    if (pages.empty())
+        pages.emplace_back(m_isSmooth);
+
+    std::unordered_set<std::uint64_t> textureIds;
+    for (const auto& page : pages)
+    {
+        textureIds.emplace(page.texture.m_cacheId);
+    }
+    return textureIds;
 }
 
 ////////////////////////////////////////////////////////////
@@ -366,9 +385,12 @@ void Font::setSmooth(bool smooth)
     {
         m_isSmooth = smooth;
 
-        for (auto& [key, page] : m_pages)
+        for (auto& [key, pageList] : m_pageLists)
         {
-            page.texture.setSmooth(m_isSmooth);
+            for (auto& page : pageList)
+            {
+                page.texture.setSmooth(m_isSmooth);
+            }
         }
     }
 }
@@ -378,7 +400,6 @@ bool Font::isSmooth() const
 {
     return m_isSmooth;
 }
-
 
 ////////////////////////////////////////////////////////////
 void Font::cleanup()
@@ -401,6 +422,10 @@ bool Font::openFromStreamImpl(InputStream& stream, std::string_view type)
     // Cleanup the previous resources
     cleanup();
 
+    // Reset members
+    m_pageLists.clear();
+    std::vector<std::uint8_t>().swap(m_pixelBuffer);
+  
     auto fontHandles = std::make_shared<FontHandles>();
 
     // Initialize FreeType
@@ -556,11 +581,41 @@ Glyph Font::loadGlyph(char32_t codePoint, unsigned int characterSize, bool bold,
 
         size += 2u * Vector2u(padding, padding);
 
-        // Get the glyphs page corresponding to the character size
-        Page& page = loadPage(characterSize);
+        // Get the pages list corresponding to the character size
+        PageList& pages = m_pageLists[characterSize];
 
-        // Find a good position for the new glyph into the texture
-        glyph.textureRect = findGlyphRect(page, size);
+        // Find a page that can fit well the glyph
+        Page* foundPage = nullptr;
+        for (auto& page : pages)
+        {
+            // Try to find a good position for the new glyph into the texture
+            glyph.textureRect = findGlyphRect(page, {width, height});
+
+            if (glyph.textureRect.width > 0)
+            {
+                foundPage = &page;
+                break;
+            }
+        }
+
+        // If we didn't find a matching page, create a new one
+        if (!foundPage)
+        {
+            foundPage = &pages.emplace_back(m_isSmooth);
+
+            // Try to find a good position for the new glyph into the texture
+            glyph.textureRect = findGlyphRect(*foundPage, {width, height});
+
+            if (glyph.textureRect.width == 0)
+            {
+                // Oops, we've reached the maximum texture size even for a single glyph...
+                err() << "Failed to add a new character to the font: the maximum texture size has been reached"
+                      << std::endl;
+                glyph.textureRect = IntRect({0, 0}, {2, 2});
+            }
+        }
+
+        glyph.texture = &foundPage->texture;
 
         // Make sure the texture data is positioned in the center
         // of the allocated texture rectangle
@@ -619,7 +674,7 @@ Glyph Font::loadGlyph(char32_t codePoint, unsigned int characterSize, bool bold,
         // Write the pixels to the texture
         const auto dest       = Vector2u(glyph.textureRect.position) - Vector2u(padding, padding);
         const auto updateSize = Vector2u(glyph.textureRect.size) + 2u * Vector2u(padding, padding);
-        page.texture.update(m_pixelBuffer.data(), updateSize, dest);
+        foundPage->texture.update(m_pixelBuffer.data(), updateSize, dest);
     }
 
     // Delete the FT glyph
