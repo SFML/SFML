@@ -60,7 +60,7 @@ subject to the following restrictions:
                 <string>com.apple.compilers.llvm.clang.1_0</string>
 
                 <key>CLANG_CXX_LANGUAGE_STANDARD</key>
-                <string>c++11</string>
+                <string>c++17</string>
 
                 <key>CLANG_CXX_LIBRARY</key>
                 <string>libc++</string>
