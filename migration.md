@@ -232,6 +232,13 @@ Here is a complete list of all enumerations which have undergone this change:
 This means that `sf::Rect<T>::getPosition()` and `sf::Rect<T>::getSize()` have been removed in favor of directly accessing the `position` and `size` data members.
 The 4-parameter constructor was also removed in favor of the constructor which takes two `sf::Vector2<T>`s.
 
+| v2        | v3            |
+| --------- | ------------- |
+| `.left`   | `.position.x` |
+| `.top`    | `.position.y` |
+| `.width`  | `.size.x`     |
+| `.height` | `.size.y`     |
+
 v2:
 ```cpp
 sf::FloatRect rect(10, 20, 30, 40);
