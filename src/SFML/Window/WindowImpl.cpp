@@ -297,7 +297,7 @@ void WindowImpl::processJoystickEvents()
 
         // Connection state
         const bool connected = m_joystickStatesImpl->states[i].connected;
-        if (previousState.connected ^ connected)
+        if (previousState.connected != connected)
         {
             if (connected)
                 pushEvent(Event::JoystickConnected{i});
@@ -335,7 +335,7 @@ void WindowImpl::processJoystickEvents()
                 const bool prevPressed = previousState.buttons[j];
                 const bool currPressed = m_joystickStatesImpl->states[i].buttons[j];
 
-                if (prevPressed ^ currPressed)
+                if (prevPressed != currPressed)
                 {
                     if (currPressed)
                         pushEvent(Event::JoystickButtonPressed{i, j});
