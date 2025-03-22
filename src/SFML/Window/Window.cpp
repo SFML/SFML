@@ -1,4 +1,4 @@
-////////////////////////////////////////////////////////////
+﻿////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
 // Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
@@ -122,8 +122,11 @@ void Window::create(WindowHandle handle)
 ////////////////////////////////////////////////////////////
 void Window::create(WindowHandle handle, const ContextSettings& settings)
 {
+    // Ensure the open window is closed first
+    close();
+
     // Recreate the window implementation
-    WindowBase::create(handle);
+    m_impl = priv::WindowImpl::create(handle);
 
     // Recreate the context
     m_context = priv::GlContext::create(settings, *m_impl, VideoMode::getDesktopMode().bitsPerPixel);
