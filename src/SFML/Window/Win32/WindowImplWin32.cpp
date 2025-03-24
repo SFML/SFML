@@ -148,7 +148,7 @@ WindowImplWin32::WindowImplWin32(WindowHandle handle) : m_handle(handle)
         // If we're the first window handle, we only need to poll for joysticks when WM_DEVICECHANGE message is received
         if (handleCount == 0)
         {
-            JoystickImpl::setLazyUpdates(true);
+            // TODO: Init RawInput for Joysticks
 
             initRawMouse();
         }
@@ -234,7 +234,7 @@ m_cursorGrabbed(m_fullscreen)
     {
         if (handleCount == 0)
         {
-            JoystickImpl::setLazyUpdates(true);
+            // TODO: Init RawInput for Joysticks
 
             initRawMouse();
         }
@@ -264,13 +264,9 @@ WindowImplWin32::~WindowImplWin32()
     if (m_icon)
         DestroyIcon(m_icon);
 
-    // If it's the last window handle we have to poll for joysticks again
     if (m_handle)
     {
         --handleCount;
-
-        if (handleCount == 0)
-            JoystickImpl::setLazyUpdates(false);
     }
 
     if (!m_callback)
@@ -1121,17 +1117,22 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             break;
         }
 
-        // Hardware configuration change event
-        case WM_DEVICECHANGE:
+        // More reliable hardware change event
+        case WM_INPUT_DEVICE_CHANGE:
         {
-            // Some sort of device change has happened, update joystick connections
-            if ((wParam == DBT_DEVICEARRIVAL) || (wParam == DBT_DEVICEREMOVECOMPLETE))
+            // TODO Dispatch Impl
+            switch (wParam)
             {
-                // Some sort of device change has happened, update joystick connections if it is a device interface
-                auto* deviceBroadcastHeader = reinterpret_cast<DEV_BROADCAST_HDR*>(lParam);
-
-                if (deviceBroadcastHeader && (deviceBroadcastHeader->dbch_devicetype == DBT_DEVTYP_DEVICEINTERFACE))
-                    JoystickImpl::updateConnections();
+                case GIDC_ARRIVAL:
+                {
+                    // INFO: Device Added
+                    break;
+                }
+                case GIDC_REMOVAL:
+                {
+                    // INFO: Device Removed
+                    break;
+                }
             }
 
             break;
