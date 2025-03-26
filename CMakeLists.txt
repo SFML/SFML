@@ -445,3 +445,21 @@ sfml_set_option(CLANG_TIDY_EXECUTABLE clang-tidy STRING "Override clang-tidy exe
 add_custom_target(tidy
     COMMAND ${CMAKE_COMMAND} -DCLANG_TIDY_EXECUTABLE=${CLANG_TIDY_EXECUTABLE} -DPROJECT_BINARY_DIR=${PROJECT_BINARY_DIR} -P ./cmake/Tidy.cmake
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR} VERBATIM)
+
+# Option to build C++20 modules (requires CMake 3.28+)
+sfml_set_option(SFML_BUILD_MODULES OFF BOOL "ON to build SFML's C++20 modules (requires CMake 3.28+)")
+
+if(SFML_BUILD_MODULES)
+    # Check CMake version requirement for C++20 modules
+    if(CMAKE_VERSION VERSION_LESS 3.28)
+        message(FATAL_ERROR "Building SFML modules requires CMake 3.28 or newer. Your version: ${CMAKE_VERSION}")
+    endif()
+    
+    # Make sure all SFML components are built before modules
+    if(NOT TARGET sfml-system)
+        message(FATAL_ERROR "SFML modules require all SFML components to be built first")
+    endif()
+    
+    # Add modules directory
+    add_subdirectory(modules)
+endif()
