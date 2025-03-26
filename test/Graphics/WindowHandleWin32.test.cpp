@@ -1,6 +1,8 @@
 #include <SFML/Window/WindowHandle.hpp>
 
 // Other 1st party headers
+#include <SFML/Graphics/RenderWindow.hpp>
+
 #include <SFML/Window/Window.hpp>
 #include <SFML/Window/WindowBase.hpp>
 
@@ -173,6 +175,61 @@ TEST_CASE("[Window] sf::WindowHandle (Win32)")
         const auto size = sf::Vector2u(sf::Vector2(clientRect.right - clientRect.left, clientRect.bottom - clientRect.top));
         CHECK(size == newSize);           // Validate that the actual client rect is indeed what we asked for
         CHECK(window->getSize() == size); // Validate that the `getSize` also returns the _actual_ client size
+    }
+
+    SECTION("sf::RenderWindow")
+    {
+        std::optional<sf::RenderWindow> renderWindow;
+
+        SECTION("Default context settings")
+        {
+            SECTION("WindowHandle constructor")
+            {
+                renderWindow.emplace(handle);
+            }
+
+            SECTION("create(WindowHandle)")
+            {
+                renderWindow.emplace().create(handle);
+            }
+
+            INFO("ExStyle: " << std::hex << exStyle << ", withMenu: " << withMenu);
+            CHECK(renderWindow->getSettings().attributeFlags == sf::ContextSettings::Default);
+        }
+
+        SECTION("Custom context settings")
+        {
+            static constexpr sf::ContextSettings contextSettings{/* depthBits*/ 1, /* stencilBits */ 1, /* antiAliasingLevel */ 1};
+
+            SECTION("WindowHandle constructor")
+            {
+                renderWindow.emplace(handle, contextSettings);
+            }
+
+            SECTION("create(WindowHandle)")
+            {
+                renderWindow.emplace().create(handle, contextSettings);
+            }
+
+            INFO("ExStyle: " << std::hex << exStyle << ", withMenu: " << withMenu);
+            CHECK(renderWindow->getSettings().depthBits >= 1);
+            CHECK(renderWindow->getSettings().stencilBits >= 1);
+            CHECK(renderWindow->getSettings().antiAliasingLevel >= 1);
+        }
+
+        INFO("ExStyle: " << std::hex << exStyle << ", withMenu: " << withMenu);
+        CHECK(renderWindow->isOpen());
+        CHECK(renderWindow->getPosition() == position);
+        CHECK(renderWindow->getSize() == initialSize);
+        CHECK(renderWindow->getNativeHandle() == handle);
+
+        CHECK(renderWindow->getSize() != newSize);
+        renderWindow->setSize(newSize);
+
+        REQUIRE(GetClientRect(handle, &clientRect));
+        const auto size = sf::Vector2u(sf::Vector2(clientRect.right - clientRect.left, clientRect.bottom - clientRect.top));
+        CHECK(size == newSize);                 // Validate that the actual client rect is indeed what we asked for
+        CHECK(renderWindow->getSize() == size); // Validate that the `getSize` also returns the _actual_ client size
     }
 
     INFO("ExStyle: " << std::hex << exStyle << ", withMenu: " << withMenu);
