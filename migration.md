@@ -489,6 +489,20 @@ SFML 3 capitalizes the `A` of `aliasing` for all the APIs.
 * `sf::RenderTexture::getMaximumAntialiasingLevel()` becomes `sf::RenderTexture::getMaximumAntiAliasingLevel()`
 * `sf::ContextSettings::antialiasingLevel` becomes `sf::ContextSettings::antiAliasingLevel`
 
+## C++20 Modules Support
+
+SFML 3 now adds support for C++20 modules, which can be imported using the `import` keyword. 
+
+For example, to use modules, rather than `#include <SFML/Audio.hpp>`, use `import sfml.audio`.
+
+| Modules         | Headers              |
+| --------------- | -------------------- |
+| `sfml.audio`    | `<SFML/Audio.hpp>`   |
+| `sfml.graphics` | `<SFML/Graphics.hpp` |
+| `sfml.network`  | `<SFML/Network.hpp>` |
+| `sfml.system`   | `<SFML/System.hpp>`  |
+| `sfml.window`   | `<SFML/Window.hpp>`  |
+
 ## Other Minor Changes
 
 SFML 3 includes various smaller changes that ought to be mentioned.
