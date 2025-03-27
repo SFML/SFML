@@ -65,8 +65,6 @@ unsigned int               handleCount      = 0; // All window handles
 const wchar_t*             className        = L"SFML_Window";
 sf::priv::WindowImplWin32* fullscreenWindow = nullptr;
 
-constexpr GUID guidDevinterfaceHid = {0x4d1e55b2, 0xf16f, 0x11cf, {0x88, 0xcb, 0x00, 0x11, 0x11, 0x00, 0x00, 0x30}};
-
 void setProcessDpiAware()
 {
     // Try SetProcessDpiAwareness first
@@ -145,7 +143,7 @@ WindowImplWin32::WindowImplWin32(WindowHandle handle) : m_handle(handle)
 
     if (m_handle)
     {
-        // If we're the first window handle, we need to register our RawMouse input. 
+        // If we're the first window handle, we need to register our RawMouse input.
         if (handleCount == 0)
         {
             initRawMouse();
@@ -222,7 +220,7 @@ m_cursorGrabbed(m_fullscreen)
                              GetModuleHandle(nullptr),
                              this);
 
-    // If we're the first window handle, we need to initialize RawInput for mice. 
+    // If we're the first window handle, we need to initialize RawInput for mice.
     if (m_handle)
     {
         if (handleCount == 0)
