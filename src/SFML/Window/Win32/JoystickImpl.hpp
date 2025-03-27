@@ -33,6 +33,7 @@
 
 namespace sf::priv
 {
+
 ////////////////////////////////////////////////////////////
 /// \brief Windows implementation of joysticks
 ///
@@ -105,28 +106,40 @@ public:
     // -- Windows-specific internal methods --
 
     /// \brief informs system of device added
-    static void DispatchDeviceConnected(LPARAM deviceHandle);
+    static void DispatchDeviceConnected(HANDLE deviceHandle);
     /// \brief informs system of device removed
-    static void DispatchDeviceRemoved(LPARAM deviceHandle);
+    static void DispatchDeviceRemoved(HANDLE deviceHandle);
     /// \brief Performs XInput Operations
     static void DispatchXInput();
+    /// \brief Performs RawInput Operations
+    static void DispatchRawInput(HRAWINPUT inputDevice);
+
+    static UINT GetJoystickMsgAtom();
 
     static LRESULT Win32JoystickWndProc(HWND hwnd, uint32_t msg, WPARAM wParam, LPARAM lParam);
     static DWORD WINAPI Win32JoystickDispatchThread(LPVOID lpParam);
 
 private:
 
+    static bool ExtractVidPid(const std::wstring devicePath, USHORT& vid, USHORT& pid, bool& isXInput);
+    static Joystick::Axis GetAxis(int index);
+
     static std::vector<JoystickImpl> m_sJoysticks;
     static ATOM                      m_sJoystickAtom;
     static HWND                      m_sJoystickHwnd;
     static UINT_PTR                  m_sTimerHandle;
+    static UINT                      m_joystickMsgAtom;
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int          m_index{};                              //!< Index of the joystick
-    bool                  m_isConnected{};                        //!< True when connected, false otherwise
-    JoystickCaps          m_caps{};                               //!< The capabilities of the joystick
+    unsigned int                 m_index{};                       //!< Index of the joystick
+    bool                         m_useXInput{};                   //!< True if it's an XInput device, false for RawInput
+    unsigned int                 m_xInputIndex{0xFFFFFFFF};       //!< The XInput index of the device.
+    DWORD                        m_xInputPacketNumber{};          //!< The last packet number for XInput polling operations.
+    HANDLE                       m_lastDeviceHandle{};            //!< The last device handle that device connected with.
+    // !!: The same device will have different handles each time it disconnects and reconnects. 
+    JoystickCaps                 m_caps{};                        //!< The capabilities of the joystick
     sf::Joystick::Identification m_identification{};              //!< The identification of the joystick
     sf::priv::JoystickState      m_state{};                       //!< The last state of the joystick (buffered!)
 };

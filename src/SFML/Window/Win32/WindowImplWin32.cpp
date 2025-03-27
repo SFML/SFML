@@ -224,18 +224,11 @@ m_cursorGrabbed(m_fullscreen)
                              GetModuleHandle(nullptr),
                              this);
 
-    // Register to receive device interface change notifications (used for joystick connection handling)
-    DEV_BROADCAST_DEVICEINTERFACE deviceInterface =
-        {sizeof(DEV_BROADCAST_DEVICEINTERFACE), DBT_DEVTYP_DEVICEINTERFACE, 0, guidDevinterfaceHid, {0}};
-    RegisterDeviceNotification(m_handle, &deviceInterface, DEVICE_NOTIFY_WINDOW_HANDLE);
-
-    // If we're the first window handle, we only need to poll for joysticks when WM_DEVICECHANGE message is received
+    // If we're the first window handle, we need to initialize RawInput for mice. 
     if (m_handle)
     {
         if (handleCount == 0)
         {
-            // TODO: Init RawInput for Joysticks
-
             initRawMouse();
         }
 
@@ -1112,27 +1105,6 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             {
                 if (const RAWMOUSE* rawMouse = &input.data.mouse; (rawMouse->usFlags & 0x01) == MOUSE_MOVE_RELATIVE)
                     pushEvent(Event::MouseMovedRaw{{rawMouse->lLastX, rawMouse->lLastY}});
-            }
-
-            break;
-        }
-
-        // More reliable hardware change event
-        case WM_INPUT_DEVICE_CHANGE:
-        {
-            // TODO Dispatch Impl
-            switch (wParam)
-            {
-                case GIDC_ARRIVAL:
-                {
-                    // INFO: Device Added
-                    break;
-                }
-                case GIDC_REMOVAL:
-                {
-                    // INFO: Device Removed
-                    break;
-                }
             }
 
             break;
