@@ -145,11 +145,9 @@ WindowImplWin32::WindowImplWin32(WindowHandle handle) : m_handle(handle)
 
     if (m_handle)
     {
-        // If we're the first window handle, we only need to poll for joysticks when WM_DEVICECHANGE message is received
+        // If we're the first window handle, we need to register our RawMouse input. 
         if (handleCount == 0)
         {
-            // TODO: Init RawInput for Joysticks
-
             initRawMouse();
         }
 
