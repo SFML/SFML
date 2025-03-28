@@ -460,20 +460,6 @@ This a breaking change for the following APIs:
 - `bool sf::OutputSoundFile::openFromFile(...)`
 - `bool sf::SoundFileWriter::open(...)`
 
-## C++20 Modules Support
-
-SFML 3 now adds support for C++20 modules, which can be imported using the `import` keyword. 
-
-For example, to use modules, rather than `#include <SFML/Audio.hpp>`, use `import sfml.audio`.
-
-| Modules         | Headers              |
-| --------------- | -------------------- |
-| `sfml.audio`    | `<SFML/Audio.hpp>`   |
-| `sfml.graphics` | `<SFML/Graphics.hpp` |
-| `sfml.network`  | `<SFML/Network.hpp>` |
-| `sfml.system`   | `<SFML/System.hpp>`  |
-| `sfml.window`   | `<SFML/Window.hpp>`  |
-
 ## Deprecated APIs
 
 SFML 3 removes all of the deprecated APIs in SFML 2.
