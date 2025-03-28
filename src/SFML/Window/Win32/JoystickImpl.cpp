@@ -59,8 +59,6 @@ std::vector<sf::priv::JoystickImpl> joysticks;
 ATOM                                joystickAtom{};
 HWND                                joystickHwnd{};
 UINT_PTR                            timerHandle{};
-UINT                                joystickMsgAtom{};
-
 // Raw Input Chunks
 constexpr auto             rawInputChunkSize = 512;
 std::vector<std::byte>     preparsedDataChunk;
@@ -70,17 +68,96 @@ std::vector<std::uint16_t> usageSizeDataChunk;
 std::vector<std::byte>     deviceHumanNameDataChunk;
 } // namespace
 
+namespace
+{
+sf::Joystick::Axis getAxis(int index)
+{
+    switch (index)
+    {
+        case 0:
+            return sf::Joystick::Axis::X;
+        case 1:
+            return sf::Joystick::Axis::Y;
+        case 2:
+            return sf::Joystick::Axis::Z;
+        case 3:
+            return sf::Joystick::Axis::R;
+        case 4:
+            return sf::Joystick::Axis::U;
+        case 5:
+            return sf::Joystick::Axis::V;
+        case 6:
+            return sf::Joystick::Axis::PovX;
+        case 7:
+            return sf::Joystick::Axis::PovY;
+        default:
+            throw std::out_of_range{"index is out of range."};
+    }
+}
+
+bool extractVidPid(const std::wstring& devicePath, USHORT& vid, USHORT& pid, bool& isXInput)
+{
+    // Find VID
+    std::size_t vidPos = devicePath.find(L"VID_");
+    if (vidPos == std::wstring::npos)
+        return false;
+    vidPos += 4;
+    if (vidPos + 4 > devicePath.length())
+        return false;
+    const std::wstring vidStr = devicePath.substr(vidPos, 4);
+
+    // Find PID
+    std::size_t pidPos = devicePath.find(L"PID_");
+    if (pidPos == std::wstring::npos)
+        return false;
+    pidPos += 4;
+    if (pidPos + 4 > devicePath.length())
+        return false;
+    const std::wstring pidStr = devicePath.substr(pidPos, 4);
+
+    // Check for XInput (IG_)
+    if (devicePath.find(L"IG_") != std::wstring::npos)
+    {
+        isXInput = true;
+    }
+
+    // Convert hex strings to USHORT without exceptions
+    WCHAR* endptr               = nullptr;
+    errno                       = 0; // Reset errno
+    const unsigned long vidLong = wcstoul(vidStr.c_str(), &endptr, 16);
+    if (errno != 0 || *endptr != L'\0' || vidLong > 0xFFFF)
+    {
+        const sf::String vidStrSfml{vidStr};
+        sf::err() << "Failed to parse VID: " << vidStrSfml.toUtf8().data() << std::endl;
+        return false;
+    }
+
+    errno                       = 0;
+    const unsigned long pidLong = wcstoul(pidStr.c_str(), &endptr, 16);
+    if (errno != 0 || *endptr != L'\0' || pidLong > 0xFFFF)
+    {
+        const sf::String pidStrSfml{pidStr};
+        sf::err() << "Failed to parse PID: " << pidStrSfml.toUtf8().data() << std::endl;
+        return false;
+    }
+
+    vid = static_cast<USHORT>(vidLong);
+    pid = static_cast<USHORT>(pidLong);
+    return true;
+}
+
+
+}
+
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-void JoystickImpl::DispatchDeviceConnected(HANDLE deviceHandle)
+void JoystickImpl::dispatchDeviceConnected(HANDLE deviceHandle)
 {
-    // TODO: Device identity discovery
-
-    JoystickImpl jstkImpl{};
-    jstkImpl.m_lastDeviceHandle = deviceHandle;
-    jstkImpl.m_index            = static_cast<std::uint32_t>(joysticks.size());
-    jstkImpl.m_state.connected  = true;
+    JoystickImpl joystickImpl{};
+    joystickImpl.m_lastDeviceHandle = deviceHandle;
+    joystickImpl.m_index            = static_cast<std::uint32_t>(joysticks.size());
+    joystickImpl.m_state.connected  = true;
 
     UINT nameSize{};
     // okay this looks weird, but the docs say to call it twice like this
@@ -96,27 +173,27 @@ void JoystickImpl::DispatchDeviceConnected(HANDLE deviceHandle)
                                    nullptr);
     if (HidD_GetProductString(fileHandle, deviceHumanNameDataChunk.data(), rawInputChunkSize))
     {
-        jstkImpl.m_identification.name = String{reinterpret_cast<wchar_t*>(deviceHumanNameDataChunk.data())};
+        joystickImpl.m_identification.name = String{reinterpret_cast<wchar_t*>(deviceHumanNameDataChunk.data())};
         USHORT vid{};
         USHORT pid{};
         bool   isXInput = false;
-        if (ExtractVidPid(devicePath, vid, pid, isXInput))
+        if (extractVidPid(devicePath, vid, pid, isXInput))
         {
-            jstkImpl.m_identification.vendorId  = vid;
-            jstkImpl.m_identification.productId = pid;
-            jstkImpl.m_useXInput                = true;
+            joystickImpl.m_identification.vendorId  = vid;
+            joystickImpl.m_identification.productId = pid;
+            joystickImpl.m_useXInput                = true;
         }
     }
 
     // you can theoretically override use xinput here, but from my testing the xbox controllers are awful with rawinput
 
-    if (jstkImpl.m_useXInput)
+    if (joystickImpl.m_useXInput)
     {
         // XInput has 14 Buttons and 6 Axes
-        jstkImpl.m_caps.buttonCount = 14;
+        joystickImpl.m_caps.buttonCount = 14;
         constexpr auto axes         = 6;
         for (std::size_t i = 0; i < Joystick::AxisCount && i < axes; ++i)
-            jstkImpl.m_caps.axes[GetAxis(static_cast<int>(i))] = true;
+            joystickImpl.m_caps.axes[getAxis(static_cast<int>(i))] = true;
     }
     else
     {
@@ -151,10 +228,10 @@ void JoystickImpl::DispatchDeviceConnected(HANDLE deviceHandle)
             return;
         }
 
-        jstkImpl.m_caps.buttonCount = hCaps.NumberInputButtonCaps;
+        joystickImpl.m_caps.buttonCount = hCaps.NumberInputButtonCaps;
         auto axes                   = hCaps.NumberInputValueCaps;
         for (std::size_t i = 0; i < Joystick::AxisCount && i < axes; ++i)
-            jstkImpl.m_caps.axes[GetAxis(static_cast<int>(i))] = true;
+            joystickImpl.m_caps.axes[getAxis(static_cast<int>(i))] = true;
     }
 
     unsigned int xInputIndex = 0;
@@ -166,10 +243,10 @@ void JoystickImpl::DispatchDeviceConnected(HANDLE deviceHandle)
         if (joystick.m_lastDeviceHandle == nullptr)
         {
             // slot is "free"
-            if (jstkImpl.m_useXInput)
-                jstkImpl.m_xInputIndex = xInputIndex;
+            if (joystickImpl.m_useXInput)
+                joystickImpl.m_xInputIndex = xInputIndex;
 
-            joystick = jstkImpl;
+            joystick = joystickImpl;
             break;
         }
     }
@@ -180,87 +257,8 @@ void JoystickImpl::DispatchDeviceConnected(HANDLE deviceHandle)
     }
 }
 
-Joystick::Axis JoystickImpl::GetAxis(int index)
-{
-    switch (index)
-    {
-        case 0:
-            return Joystick::Axis::X;
-        case 1:
-            return Joystick::Axis::Y;
-        case 2:
-            return Joystick::Axis::Z;
-        case 3:
-            return Joystick::Axis::R;
-        case 4:
-            return Joystick::Axis::U;
-        case 5:
-            return Joystick::Axis::V;
-        case 6:
-            return Joystick::Axis::PovX;
-        case 7:
-            return Joystick::Axis::PovY;
-        default:
-            throw std::out_of_range{"index is out of range."};
-    }
-}
-
-
 ////////////////////////////////////////////////////////////
-bool JoystickImpl::ExtractVidPid(const std::wstring& devicePath, USHORT& vid, USHORT& pid, bool& isXInput)
-{
-    // Find VID
-    std::size_t vidPos = devicePath.find(L"VID_");
-    if (vidPos == std::wstring::npos)
-        return false;
-    vidPos += 4;
-    if (vidPos + 4 > devicePath.length())
-        return false;
-    const std::wstring vidStr = devicePath.substr(vidPos, 4);
-
-    // Find PID
-    std::size_t pidPos = devicePath.find(L"PID_");
-    if (pidPos == std::wstring::npos)
-        return false;
-    pidPos += 4;
-    if (pidPos + 4 > devicePath.length())
-        return false;
-    const std::wstring pidStr = devicePath.substr(pidPos, 4);
-
-    // Check for XInput (IG_)
-    if (devicePath.find(L"IG_") != std::wstring::npos)
-    {
-        isXInput = true;
-    }
-
-    // Convert hex strings to USHORT without exceptions
-    WCHAR* endptr               = nullptr;
-    errno                       = 0; // Reset errno
-    const unsigned long vidLong = wcstoul(vidStr.c_str(), &endptr, 16);
-    if (errno != 0 || *endptr != L'\0' || vidLong > 0xFFFF)
-    {
-        const sf::String vidStrSfml{vidStr};
-        err() << "Failed to parse VID: " << vidStrSfml.toUtf8().data() << std::endl;
-        return false;
-    }
-
-    errno                       = 0;
-    const unsigned long pidLong = wcstoul(pidStr.c_str(), &endptr, 16);
-    if (errno != 0 || *endptr != L'\0' || pidLong > 0xFFFF)
-    {
-        const sf::String pidStrSfml{pidStr};
-        err() << "Failed to parse PID: " << pidStrSfml.toUtf8().data() << std::endl;
-        return false;
-    }
-
-    vid = static_cast<USHORT>(vidLong);
-    pid = static_cast<USHORT>(pidLong);
-    return true;
-}
-
-
-////////////////////////////////////////////////////////////
-void JoystickImpl::DispatchDeviceRemoved(HANDLE deviceHandle)
+void JoystickImpl::dispatchDeviceRemoved(HANDLE deviceHandle)
 {
     for (auto& joystick : joysticks)
     {
@@ -276,7 +274,7 @@ void JoystickImpl::DispatchDeviceRemoved(HANDLE deviceHandle)
 
 
 ////////////////////////////////////////////////////////////
-void JoystickImpl::DispatchRawInput(HRAWINPUT inputDevice)
+void JoystickImpl::dispatchRawInput(HRAWINPUT inputDevice)
 {
     UINT    bufferSize = sizeof(RAWINPUT);
     // a bigger stack-alloc, but since we spawned a separate thread for this we have plenty of stack memory
@@ -472,14 +470,14 @@ void JoystickImpl::DispatchRawInput(HRAWINPUT inputDevice)
             if (max != min)
                 outputValue = -100.0f + (static_cast<float>(rawValue) - min) * 200.0f / (max - min);
 
-            targetJoystick.m_state.axes[GetAxis(i)] = outputValue;
+            targetJoystick.m_state.axes[getAxis(i)] = outputValue;
         }
     }
 }
 
 
 ////////////////////////////////////////////////////////////
-void JoystickImpl::DispatchXInput()
+void JoystickImpl::dispatchXInput()
 {
     // valid XInput indexes are 0, 1, 2, and 3. 
     for (DWORD xinputIndex : { 0, 1, 2, 3} )
@@ -554,7 +552,7 @@ void JoystickImpl::DispatchXInput()
 
 
 ////////////////////////////////////////////////////////////
-DWORD WINAPI JoystickImpl::Win32JoystickDispatchThread(LPVOID /* lpParam */)
+DWORD WINAPI JoystickImpl::win32JoystickDispatchThread(LPVOID /* lpParam */)
 {
     // Required
     if (const auto coInitResult = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED); FAILED(coInitResult))
@@ -569,7 +567,7 @@ DWORD WINAPI JoystickImpl::Win32JoystickDispatchThread(LPVOID /* lpParam */)
     WNDCLASSEXW wndClass{};
     wndClass.cbSize        = sizeof(WNDCLASSEXW);
     wndClass.hInstance     = GetModuleHandleW(nullptr);
-    wndClass.lpfnWndProc   = reinterpret_cast<WNDPROC>(Win32JoystickWndProc);
+    wndClass.lpfnWndProc   = reinterpret_cast<WNDPROC>(win32JoystickWndProc);
     wndClass.lpszClassName = L"SFML-Win32JoystickWndProc";
 
     joystickAtom = RegisterClassExW(&wndClass);
@@ -667,21 +665,11 @@ void JoystickImpl::initialize()
         joystick.m_index           = static_cast<std::uint32_t>(i);
         joysticks.push_back(joystick);
     }
-
-    joystickMsgAtom          = RegisterWindowMessageW(L"SFML-3-Joystick-Dispatch-Message");
     DWORD       threadId     = 0;
-    const auto* threadHandle = CreateThread(nullptr, 0, Win32JoystickDispatchThread, nullptr, 0, &threadId);
+    const auto* threadHandle = CreateThread(nullptr, 0, win32JoystickDispatchThread, nullptr, 0, &threadId);
     if (threadHandle == nullptr)
         err() << "CreateThread returned 0, GetLastError: [" << GetLastError() << "] Win32 Joystick will not function.";
 }
-
-
-////////////////////////////////////////////////////////////
-UINT JoystickImpl::GetJoystickMsgAtom()
-{
-    return joystickAtom;
-}
-
 
 ////////////////////////////////////////////////////////////
 void JoystickImpl::cleanup()
@@ -737,7 +725,7 @@ JoystickState JoystickImpl::update() const
 
 
 ////////////////////////////////////////////////////////////
-LRESULT JoystickImpl::Win32JoystickWndProc(HWND hwnd, std::uint32_t msg, WPARAM wParam, LPARAM lParam)
+LRESULT JoystickImpl::win32JoystickWndProc(HWND hwnd, std::uint32_t msg, WPARAM wParam, LPARAM lParam)
 {
     switch (msg)
     {
@@ -748,13 +736,13 @@ LRESULT JoystickImpl::Win32JoystickWndProc(HWND hwnd, std::uint32_t msg, WPARAM 
                 case GIDC_ARRIVAL:
                 {
                     // INFO: Device Added
-                    DispatchDeviceConnected(reinterpret_cast<HANDLE>(lParam));
+                    dispatchDeviceConnected(reinterpret_cast<HANDLE>(lParam));
                     break;
                 }
                 case GIDC_REMOVAL:
                 {
                     // INFO: Device Removed
-                    DispatchDeviceRemoved(reinterpret_cast<HANDLE>(lParam));
+                    dispatchDeviceRemoved(reinterpret_cast<HANDLE>(lParam));
                     break;
                 }
             }
@@ -762,12 +750,12 @@ LRESULT JoystickImpl::Win32JoystickWndProc(HWND hwnd, std::uint32_t msg, WPARAM 
         }
         case WM_INPUT:
         {
-            DispatchRawInput(reinterpret_cast<HRAWINPUT>(lParam));
+            dispatchRawInput(reinterpret_cast<HRAWINPUT>(lParam));
             break;
         }
         case WM_TIMER:
         {
-            DispatchXInput();
+            dispatchXInput();
             break;
         }
     }

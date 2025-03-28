@@ -106,21 +106,16 @@ public:
 
 private:
     /// \brief informs system of device added
-    static void DispatchDeviceConnected(HANDLE deviceHandle);
+    static void dispatchDeviceConnected(HANDLE deviceHandle);
     /// \brief informs system of device removed
-    static void DispatchDeviceRemoved(HANDLE deviceHandle);
+    static void dispatchDeviceRemoved(HANDLE deviceHandle);
     /// \brief Performs XInput Operations
-    static void DispatchXInput();
+    static void dispatchXInput();
     /// \brief Performs RawInput Operations
-    static void DispatchRawInput(HRAWINPUT inputDevice);
+    static void dispatchRawInput(HRAWINPUT inputDevice);
 
-    static UINT GetJoystickMsgAtom();
-
-    static LRESULT      Win32JoystickWndProc(HWND hwnd, uint32_t msg, WPARAM wParam, LPARAM lParam);
-    static DWORD WINAPI Win32JoystickDispatchThread(LPVOID lpParam);
-
-    static bool           ExtractVidPid(const std::wstring& devicePath, USHORT& vid, USHORT& pid, bool& isXInput);
-    static Joystick::Axis GetAxis(int index);
+    static LRESULT      win32JoystickWndProc(HWND hwnd, uint32_t msg, WPARAM wParam, LPARAM lParam);
+    static DWORD WINAPI win32JoystickDispatchThread(LPVOID lpParam);
 
     ////////////////////////////////////////////////////////////
     // Member data
