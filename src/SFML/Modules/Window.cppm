@@ -26,6 +26,10 @@
 // Module preamble
 ////////////////////////////////////////////////////////////
 
+module;
+
+#include <SFML/Window.hpp>
+
 export module sfml.window;
 
 export import sfml.system;
