@@ -310,9 +310,7 @@ JoystickCaps JoystickImpl::getCapabilities() const
 
     JoystickCaps caps;
 
-    caps.buttonCount = m_caps.wNumButtons;
-    if (caps.buttonCount > Joystick::ButtonCount)
-        caps.buttonCount = Joystick::ButtonCount;
+    caps.buttonCount = std::min(m_caps.wNumButtons, Joystick::ButtonCount);
 
     caps.axes[Joystick::Axis::X]    = true;
     caps.axes[Joystick::Axis::Y]    = true;
