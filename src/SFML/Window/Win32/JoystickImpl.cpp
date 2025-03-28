@@ -538,7 +538,7 @@ DWORD WINAPI JoystickImpl::Win32JoystickDispatchThread(LPVOID /* lpParam */)
 {
     // Required
     auto coInitResult = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED);
-    if (!SUCCEEDED(coInitResult))
+    if (const auto coInitResult = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED); FAILED(coInitResult))
     {
         // :(
         auto errorCode = GetLastError();
