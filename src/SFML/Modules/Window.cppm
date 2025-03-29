@@ -34,6 +34,9 @@ export module sfml.window;
 
 export import sfml.system;
 
+export using ::VkInstance;
+export using ::VkSurfaceKHR;
+
 export namespace sf {
     namespace Clipboard {
         using sf::Clipboard::getString;
@@ -90,8 +93,6 @@ export namespace sf {
         using sf::Vulkan::getFunction;
         using sf::Vulkan::getGraphicsRequiredInstanceExtensions;
     }
-    using ::VkInstance;
-    using ::VkSurfaceKHR;
     using sf::VulkanFunctionPointer;
     using sf::Window;
     using sf::WindowBase;
@@ -104,11 +105,3 @@ export namespace sf {
     using sf::State;
     using sf::WindowHandle;
 }
-
-////////////////////////////////////////////////////////////
-/// \defgroup window Window module
-///
-/// Provides OpenGL-based windows, and abstractions for
-/// events and input handling.
-///
-////////////////////////////////////////////////////////////

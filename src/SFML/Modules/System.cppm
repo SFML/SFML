@@ -28,12 +28,15 @@
 
 module;
 
+#include <SFML/Config.hpp>
 #include <SFML/System.hpp>
 #include <SFML/System/SuspendAwareClock.hpp>
 
 export module sfml.system;
 
-export import sfml.Config;
+#ifdef SFML_SYSTEM_ANDROID
+using ::ANativeActivity;
+#endif
 
 export namespace sf {
     using sf::Angle;
@@ -43,7 +46,6 @@ export namespace sf {
     using sf::InputStream;
     using sf::MemoryInputStream;
     #ifdef SFML_SYSTEM_ANDROID
-    using ::ANativeActivity;
     using sf::getNativeActivity;
     #endif
     using sf::U8StringCharTraits;
@@ -67,13 +69,9 @@ export namespace sf {
     using sf::radians;
     using sf::err;
     using sf::sleep;
-}
 
-////////////////////////////////////////////////////////////
-/// \defgroup system System module
-///
-/// Base module of SFML, defining various utilities. It provides
-/// vector classes, Unicode strings and conversion functions,
-/// threads and mutexes, timing classes.
-///
-////////////////////////////////////////////////////////////
+    constexpr inline int VERSION_MAJOR = SFML_VERSION_MAJOR;
+    constexpr inline int VERSION_MINOR = SFML_VERSION_MINOR;
+    constexpr inline int VERSION_PATCH = SFML_VERSION_PATCH;
+    constexpr inline bool VERSION_IS_RELEASE = SFML_VERSION_IS_RELEASE;
+}

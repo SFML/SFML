@@ -448,13 +448,3 @@ add_custom_target(tidy
 
 # Option to build C++20 modules
 sfml_set_option(SFML_BUILD_MODULES OFF BOOL "ON to build SFML's C++20 modules (requires CMake 3.28+)")
-
-if(SFML_BUILD_MODULES)
-    # Check CMake version requirement for C++20 modules
-    if(CMAKE_VERSION VERSION_LESS 3.28)
-        message(FATAL_ERROR "Building SFML modules requires CMake 3.28 or newer. Your version: ${CMAKE_VERSION}")
-    endif()
-    
-    # Add modules directory
-    add_subdirectory(src/SFML/Modules)
-endif()

@@ -83,10 +83,3 @@ export namespace sf {
     using sf::VertexBuffer;
     using sf::View;
 }
-
-////////////////////////////////////////////////////////////
-/// \defgroup graphics Graphics module
-///
-/// 2D graphics module: sprites, text, shapes, ...
-///
-////////////////////////////////////////////////////////////

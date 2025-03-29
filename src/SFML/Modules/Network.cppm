@@ -55,11 +55,3 @@ export namespace sf {
     using sf::operator>>;
     using sf::operator<<;
 }
-
-////////////////////////////////////////////////////////////
-/// \defgroup network Network module
-///
-/// Socket-based communication, utilities and higher-level
-/// network protocols (HTTP, FTP).
-///
-////////////////////////////////////////////////////////////

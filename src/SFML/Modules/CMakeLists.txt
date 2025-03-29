@@ -1,8 +1,13 @@
 cmake_minimum_required(VERSION 3.28)
 
+# Check if GCC is being used and show warning
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    message(WARNING "C++20 modules not fully supported with GCC. SFML modules will not be built.")
+    return()
+endif()
+
 # System module is always required
 set(SFML_MODULES
-    Config.cppm
     System.cppm
 )
 
@@ -34,47 +39,40 @@ if(SFML_BUILD_NETWORK)
     )
 endif()
 
-# Define configure_cpp_module_target function if not already defined
-if(NOT COMMAND configure_cpp_module_target)
-    function(configure_cpp_module_target target)
-        target_sources(${target} PUBLIC FILE_SET CXX_MODULES FILES ${SFML_MODULES})
-    endfunction()
-endif()
-
 # Create the module library
-add_library(sfml)
+add_library(sfml-modules)
 
-# Configure the module target
-configure_cpp_module_target(sfml)
+# Add module sources directly
+target_sources(sfml-modules PUBLIC FILE_SET CXX_MODULES FILES ${SFML_MODULES})
 
 # System is always required
-target_link_libraries(sfml PUBLIC SFML::System)
+target_link_libraries(sfml-modules PUBLIC SFML::System)
 
 # Conditionally link with other SFML libraries based on what's enabled
 if(SFML_BUILD_WINDOW)
-    target_link_libraries(sfml PUBLIC SFML::Window)
+    target_link_libraries(sfml-modules PUBLIC SFML::Window)
 endif()
 
 if(SFML_BUILD_GRAPHICS)
-    target_link_libraries(sfml PUBLIC SFML::Graphics)
+    target_link_libraries(sfml-modules PUBLIC SFML::Graphics)
 endif()
 
 if(SFML_BUILD_AUDIO)
-    target_link_libraries(sfml PUBLIC SFML::Audio)
+    target_link_libraries(sfml-modules PUBLIC SFML::Audio)
 endif()
 
 if(SFML_BUILD_NETWORK)
-    target_link_libraries(sfml PUBLIC SFML::Network)
+    target_link_libraries(sfml-modules PUBLIC SFML::Network)
 endif()
 
 # Set target properties
-target_compile_features(sfml PUBLIC cxx_std_20)
+target_compile_features(sfml-modules PUBLIC cxx_std_20)
 
 # Create an alias target
-add_library(SFML::modules ALIAS sfml)
+add_library(SFML::Modules ALIAS sfml-modules)
 
 # Installation configuration
-install(TARGETS sfml
+install(TARGETS sfml-modules
     EXPORT sfml-targets
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}

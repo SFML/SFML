@@ -71,11 +71,3 @@ export namespace sf {
     using sf::SoundSource;
     using sf::SoundStream;
 }
-
-////////////////////////////////////////////////////////////
-/// \defgroup audio Audio module
-///
-/// Sounds, streaming (musics or custom sources), recording,
-/// spatialization.
-///
-////////////////////////////////////////////////////////////
