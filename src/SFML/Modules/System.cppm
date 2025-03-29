@@ -35,7 +35,7 @@ module;
 export module sfml.system;
 
 #ifdef SFML_SYSTEM_ANDROID
-using ::ANativeActivity;
+export using ::ANativeActivity;
 #endif
 
 export namespace sf {
