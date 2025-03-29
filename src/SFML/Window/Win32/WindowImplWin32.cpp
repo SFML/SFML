@@ -65,8 +65,6 @@ unsigned int               handleCount      = 0; // All window handles
 const wchar_t*             className        = L"SFML_Window";
 sf::priv::WindowImplWin32* fullscreenWindow = nullptr;
 
-constexpr GUID guidDevinterfaceHid = {0x4d1e55b2, 0xf16f, 0x11cf, {0x88, 0xcb, 0x00, 0x11, 0x11, 0x00, 0x00, 0x30}};
-
 void setProcessDpiAware()
 {
     // Try SetProcessDpiAwareness first
@@ -145,11 +143,9 @@ WindowImplWin32::WindowImplWin32(WindowHandle handle) : m_handle(handle)
 
     if (m_handle)
     {
-        // If we're the first window handle, we only need to poll for joysticks when WM_DEVICECHANGE message is received
+        // If we're the first window handle, we need to register our RawMouse input.
         if (handleCount == 0)
         {
-            JoystickImpl::setLazyUpdates(true);
-
             initRawMouse();
         }
 
@@ -224,18 +220,11 @@ m_cursorGrabbed(m_fullscreen)
                              GetModuleHandle(nullptr),
                              this);
 
-    // Register to receive device interface change notifications (used for joystick connection handling)
-    DEV_BROADCAST_DEVICEINTERFACE deviceInterface =
-        {sizeof(DEV_BROADCAST_DEVICEINTERFACE), DBT_DEVTYP_DEVICEINTERFACE, 0, guidDevinterfaceHid, {0}};
-    RegisterDeviceNotification(m_handle, &deviceInterface, DEVICE_NOTIFY_WINDOW_HANDLE);
-
-    // If we're the first window handle, we only need to poll for joysticks when WM_DEVICECHANGE message is received
+    // If we're the first window handle, we need to initialize RawInput for mice.
     if (m_handle)
     {
         if (handleCount == 0)
         {
-            JoystickImpl::setLazyUpdates(true);
-
             initRawMouse();
         }
 
@@ -264,13 +253,9 @@ WindowImplWin32::~WindowImplWin32()
     if (m_icon)
         DestroyIcon(m_icon);
 
-    // If it's the last window handle we have to poll for joysticks again
     if (m_handle)
     {
         --handleCount;
-
-        if (handleCount == 0)
-            JoystickImpl::setLazyUpdates(false);
     }
 
     if (!m_callback)
@@ -1116,22 +1101,6 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             {
                 if (const RAWMOUSE* rawMouse = &input.data.mouse; (rawMouse->usFlags & 0x01) == MOUSE_MOVE_RELATIVE)
                     pushEvent(Event::MouseMovedRaw{{rawMouse->lLastX, rawMouse->lLastY}});
-            }
-
-            break;
-        }
-
-        // Hardware configuration change event
-        case WM_DEVICECHANGE:
-        {
-            // Some sort of device change has happened, update joystick connections
-            if ((wParam == DBT_DEVICEARRIVAL) || (wParam == DBT_DEVICEREMOVECOMPLETE))
-            {
-                // Some sort of device change has happened, update joystick connections if it is a device interface
-                auto* deviceBroadcastHeader = reinterpret_cast<DEV_BROADCAST_HDR*>(lParam);
-
-                if (deviceBroadcastHeader && (deviceBroadcastHeader->dbch_devicetype == DBT_DEVTYP_DEVICEINTERFACE))
-                    JoystickImpl::updateConnections();
             }
 
             break;

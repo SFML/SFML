@@ -30,12 +30,11 @@
 #include <SFML/System/EnumArray.hpp>
 #include <SFML/System/Win32/WindowsHeader.hpp>
 
-#include <dinput.h>
-#include <mmsystem.h>
-
+#include <vector>
 
 namespace sf::priv
 {
+
 ////////////////////////////////////////////////////////////
 /// \brief Windows implementation of joysticks
 ///
@@ -64,20 +63,6 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     static bool isConnected(unsigned int index);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Enable or disable lazy enumeration updates
-    ///
-    /// \param status Whether to rely on windows triggering enumeration updates
-    ///
-    ////////////////////////////////////////////////////////////
-    static void setLazyUpdates(bool status);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Update the connection status of all joysticks
-    ///
-    ////////////////////////////////////////////////////////////
-    static void updateConnections();
 
     ////////////////////////////////////////////////////////////
     /// \brief Open the joystick
@@ -117,111 +102,33 @@ public:
     /// \return Joystick state
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] JoystickState update();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Perform the global initialization of the joystick module (DInput)
-    ///
-    ////////////////////////////////////////////////////////////
-    static void initializeDInput();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Perform the global cleanup of the joystick module (DInput)
-    ///
-    ////////////////////////////////////////////////////////////
-    static void cleanupDInput();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Check if a joystick is currently connected (DInput)
-    ///
-    /// \param index Index of the joystick to check
-    ///
-    /// \return `true` if the joystick is connected, `false` otherwise
-    ///
-    ////////////////////////////////////////////////////////////
-    static bool isConnectedDInput(unsigned int index);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Update the connection status of all joysticks (DInput)
-    ///
-    ////////////////////////////////////////////////////////////
-    static void updateConnectionsDInput();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Open the joystick (DInput)
-    ///
-    /// \param index Index assigned to the joystick
-    ///
-    /// \return `true` on success, `false` on failure
-    ///
-    ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool openDInput(unsigned int index);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Close the joystick (DInput)
-    ///
-    ////////////////////////////////////////////////////////////
-    void closeDInput();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Get the joystick capabilities (DInput)
-    ///
-    /// \return Joystick capabilities
-    ///
-    ////////////////////////////////////////////////////////////
-    [[nodiscard]] JoystickCaps getCapabilitiesDInput() const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Update the joystick and get its new state (DInput, Buffered)
-    ///
-    /// \return Joystick state
-    ///
-    ////////////////////////////////////////////////////////////
-    [[nodiscard]] JoystickState updateDInputBuffered();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Update the joystick and get its new state (DInput, Polled)
-    ///
-    /// \return Joystick state
-    ///
-    ////////////////////////////////////////////////////////////
-    [[nodiscard]] JoystickState updateDInputPolled();
+    [[nodiscard]] JoystickState update() const;
 
 private:
-    ////////////////////////////////////////////////////////////
-    /// \brief Device enumeration callback function passed to EnumDevices in updateConnections
-    ///
-    /// \param deviceInstance Device object instance
-    /// \param userData       User data (unused)
-    ///
-    /// \return DIENUM_CONTINUE to continue enumerating devices or DIENUM_STOP to stop
-    ///
-    ////////////////////////////////////////////////////////////
-    static BOOL CALLBACK deviceEnumerationCallback(const DIDEVICEINSTANCE* deviceInstance, void* userData);
+    /// \brief informs system of device added
+    static void dispatchDeviceConnected(HANDLE deviceHandle);
+    /// \brief informs system of device removed
+    static void dispatchDeviceRemoved(HANDLE deviceHandle);
+    /// \brief Performs XInput Operations
+    static void dispatchXInput();
+    /// \brief Performs RawInput Operations
+    static void dispatchRawInput(HRAWINPUT inputDevice);
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Device object enumeration callback function passed to EnumObjects in open
-    ///
-    /// \param deviceObjectInstance Device object instance
-    /// \param userData             User data (pointer to our JoystickImpl object)
-    ///
-    /// \return DIENUM_CONTINUE to continue enumerating objects or DIENUM_STOP to stop
-    ///
-    ////////////////////////////////////////////////////////////
-    static BOOL CALLBACK deviceObjectEnumerationCallback(const DIDEVICEOBJECTINSTANCE* deviceObjectInstance, void* userData);
+    static LRESULT      win32JoystickWndProc(HWND hwnd, uint32_t msg, WPARAM wParam, LPARAM lParam);
+    static DWORD WINAPI win32JoystickDispatchThread(LPVOID lpParam);
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int          m_index{};                              //!< Index of the joystick
-    JOYCAPS               m_caps{};                               //!< Joystick capabilities
-    IDirectInputDevice8W* m_device{};                             //!< DirectInput 8.x device
-    DIDEVCAPS             m_deviceCaps{};                         //!< DirectInput device capabilities
-    EnumArray<Joystick::Axis, int, Joystick::AxisCount> m_axes{}; //!< Offsets to the bytes containing the axes states, -1 if not available
-    std::array<int, Joystick::ButtonCount> m_buttons{}; //!< Offsets to the bytes containing the button states, -1 if not available
-    Joystick::Identification m_identification; //!< Joystick identification
-    JoystickState            m_state;          //!< Buffered joystick state
-    bool                     m_buffered{}; //!< `true` if the device uses buffering, `false` if the device uses polling
+    unsigned int m_index{};                 //!< Index of the joystick
+    bool         m_useXInput{};             //!< True if it's an XInput device, false for RawInput
+    unsigned int m_xInputIndex{0xFFFFFFFF}; //!< The XInput index of the device.
+    DWORD        m_xInputPacketNumber{};    //!< The last packet number for XInput polling operations.
+    HANDLE       m_lastDeviceHandle{};      //!< The last device handle that device connected with.
+    // !!: The same device will have different handles each time it disconnects and reconnects.
+    JoystickCaps             m_caps{};           //!< The capabilities of the joystick
+    Joystick::Identification m_identification{}; //!< The identification of the joystick
+    JoystickState            m_state{};          //!< The last state of the joystick (buffered!)
 };
 
 } // namespace sf::priv
