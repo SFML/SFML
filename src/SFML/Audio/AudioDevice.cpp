@@ -310,7 +310,7 @@ void AudioDevice::unregisterResource(AudioDevice::ResourceEntryIter resourceEntr
     auto* instance = getInstance();
     assert(instance && "AudioDevice instance should exist when calling AudioDevice::unregisterResource");
     const std::lock_guard lock(instance->m_resourcesMutex);
-    instance->m_resources.erase(resourceEntry);
+    instance->m_resources.erase(resourceEntry); // NOLINT(performance-unnecessary-value-param)
 }
 
 

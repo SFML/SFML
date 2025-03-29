@@ -345,6 +345,7 @@ TEST_CASE("[Window] sf::Event")
 
         SECTION("Move-only visitor")
         {
+            // NOLINTNEXTLINE(clang-analyzer-cplusplus.NewDeleteLeaks)
             auto moveOnlyVisitor = [ptr = std::make_unique<std::string_view>("It works")](const auto&) { return *ptr; };
 
             const sf::Event closed = sf::Event::Closed{};
