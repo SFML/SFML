@@ -28,6 +28,8 @@
 #include <SFML/Graphics/GLCheck.hpp>
 #include <SFML/Graphics/GLExtensions.hpp>
 
+#include <SFML/Window/Context.hpp>
+
 #include <SFML/System/Err.hpp>
 
 #include <filesystem>
@@ -39,11 +41,30 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 bool glCheckError(std::string_view file, unsigned int line, std::string_view expression)
 {
+    // Additionally check if a context was active on the thread at the time of the function call
+    if (Context::getActiveContextId() == 0)
+    {
+        err() << "An internal OpenGL call failed in " << std::filesystem::path(file).filename() << "(" << line << ")."
+              << "\nExpression:\n   " << expression
+              << "\nError description:\n   No active OpenGL context on calling thread.\n"
+              << std::endl;
+
+#if defined(SFML_FATAL_OPENGL_ERRORS)
+        assert(false && "OpenGL error (fatal OpenGL errors enabled): No active OpenGL context on calling thread");
+#endif
+
+        return true;
+    }
+
     const auto logError = [&](const char* error, const char* description)
     {
         err() << "An internal OpenGL call failed in " << std::filesystem::path(file).filename() << "(" << line << ")."
               << "\nExpression:\n   " << expression << "\nError description:\n   " << error << "\n   " << description << '\n'
               << std::endl;
+
+#if defined(SFML_FATAL_OPENGL_ERRORS)
+        assert(false && "OpenGL error (fatal OpenGL errors enabled)");
+#endif
 
         return false;
     };
