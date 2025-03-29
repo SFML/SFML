@@ -147,7 +147,7 @@ bool extractVidPid(const std::wstring& devicePath, USHORT& vid, USHORT& pid, boo
 }
 
 
-}
+} // namespace
 
 namespace sf::priv
 {
@@ -191,7 +191,7 @@ void JoystickImpl::dispatchDeviceConnected(HANDLE deviceHandle)
     {
         // XInput has 14 Buttons and 6 Axes
         joystickImpl.m_caps.buttonCount = 14;
-        constexpr auto axes         = 6;
+        constexpr auto axes             = 6;
         for (std::size_t i = 0; i < Joystick::AxisCount && i < axes; ++i)
             joystickImpl.m_caps.axes[getAxis(static_cast<int>(i))] = true;
     }
@@ -229,7 +229,7 @@ void JoystickImpl::dispatchDeviceConnected(HANDLE deviceHandle)
         }
 
         joystickImpl.m_caps.buttonCount = hCaps.NumberInputButtonCaps;
-        auto axes                   = hCaps.NumberInputValueCaps;
+        auto axes                       = hCaps.NumberInputValueCaps;
         for (std::size_t i = 0; i < Joystick::AxisCount && i < axes; ++i)
             joystickImpl.m_caps.axes[getAxis(static_cast<int>(i))] = true;
     }
@@ -276,7 +276,7 @@ void JoystickImpl::dispatchDeviceRemoved(HANDLE deviceHandle)
 ////////////////////////////////////////////////////////////
 void JoystickImpl::dispatchRawInput(HRAWINPUT inputDevice)
 {
-    UINT    bufferSize = sizeof(RAWINPUT);
+    UINT bufferSize = sizeof(RAWINPUT);
     // a bigger stack-alloc, but since we spawned a separate thread for this we have plenty of stack memory
     RAWINPUT  rawInput{};
     HIDP_CAPS hCaps{};
@@ -322,7 +322,7 @@ void JoystickImpl::dispatchRawInput(HRAWINPUT inputDevice)
             return;
         }
 
-        if(const auto uiResult = GetRawInputDeviceInfoW(deviceHandle, RIDI_PREPARSEDDATA, nullptr, &bufferSize);
+        if (const auto uiResult = GetRawInputDeviceInfoW(deviceHandle, RIDI_PREPARSEDDATA, nullptr, &bufferSize);
             uiResult == UINT_MAX)
         {
             // that didn't work!
@@ -332,8 +332,8 @@ void JoystickImpl::dispatchRawInput(HRAWINPUT inputDevice)
             return;
         }
 
-        if(const auto uiResult = GetRawInputDeviceInfoW(deviceHandle, RIDI_PREPARSEDDATA, preparsedDataChunk.data(), &bufferSize);
-        uiResult == UINT_MAX)
+        if (const auto uiResult = GetRawInputDeviceInfoW(deviceHandle, RIDI_PREPARSEDDATA, preparsedDataChunk.data(), &bufferSize);
+            uiResult == UINT_MAX)
         {
             // that didn't work!
             auto lastError = GetLastError();
@@ -367,13 +367,13 @@ void JoystickImpl::dispatchRawInput(HRAWINPUT inputDevice)
         ULONG buttonCount = hButtonCaps.Range.UsageMax - hButtonCaps.Range.UsageMin + 1u;
 
         if (const auto result = HidP_GetUsages(HidP_Input,
-                                            hButtonCaps.UsagePage,
-                                            0,
-                                            usageSizeDataChunk.data(),
-                                            &buttonCount,
-                                            preparsedData,
-                                            reinterpret_cast<PCHAR>(rawInput.data.hid.bRawData),
-                                            rawInput.data.hid.dwSizeHid);
+                                               hButtonCaps.UsagePage,
+                                               0,
+                                               usageSizeDataChunk.data(),
+                                               &buttonCount,
+                                               preparsedData,
+                                               reinterpret_cast<PCHAR>(rawInput.data.hid.bRawData),
+                                               rawInput.data.hid.dwSizeHid);
             FAILED(result))
         {
             // that didn't work!
@@ -403,7 +403,7 @@ void JoystickImpl::dispatchRawInput(HRAWINPUT inputDevice)
             std::size_t rawInputButtonIndex = 0;
             for (std::size_t buttonIndex = 0; buttonIndex < Joystick::ButtonCount; ++buttonIndex)
             {
-                // UsageMin tells us what button is the lowest, so we subtract it. The Hid spec is weird. 
+                // UsageMin tells us what button is the lowest, so we subtract it. The Hid spec is weird.
                 const auto rawInputButton = usageSizeDataChunk[rawInputButtonIndex] - hButtonCaps.Range.UsageMin;
                 if (static_cast<std::size_t>(rawInputButton) == buttonIndex)
                 {
@@ -432,13 +432,13 @@ void JoystickImpl::dispatchRawInput(HRAWINPUT inputDevice)
         {
             ULONG rawValue{};
             if (const auto result = HidP_GetUsageValue(HidP_Input,
-                                          pValueCaps[i].UsagePage,
-                                          0,
-                                          pValueCaps[i].Range.UsageMin,
-                                          &rawValue,
-                                          preparsedData,
-                                          reinterpret_cast<PCHAR>(rawInput.data.hid.bRawData),
-                                          rawInput.data.hid.dwSizeHid);
+                                                       pValueCaps[i].UsagePage,
+                                                       0,
+                                                       pValueCaps[i].Range.UsageMin,
+                                                       &rawValue,
+                                                       preparsedData,
+                                                       reinterpret_cast<PCHAR>(rawInput.data.hid.bRawData),
+                                                       rawInput.data.hid.dwSizeHid);
                 FAILED(result))
             {
                 // that didn't work!
@@ -479,8 +479,8 @@ void JoystickImpl::dispatchRawInput(HRAWINPUT inputDevice)
 ////////////////////////////////////////////////////////////
 void JoystickImpl::dispatchXInput()
 {
-    // valid XInput indexes are 0, 1, 2, and 3. 
-    for (DWORD xinputIndex : { 0, 1, 2, 3} )
+    // valid XInput indexes are 0, 1, 2, and 3.
+    for (DWORD xinputIndex : {0, 1, 2, 3})
     {
         XINPUT_STATE xinputState{};
         auto         xinputResult = XInputGetState(xinputIndex, &xinputState);
