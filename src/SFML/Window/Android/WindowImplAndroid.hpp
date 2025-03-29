@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/Android/JoystickButton.hpp>
 #include <SFML/Window/EglContext.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowImpl.hpp>
@@ -34,6 +35,8 @@
 #include <SFML/System/Android/Activity.hpp>
 
 #include <android/input.h>
+
+#include <variant>
 
 
 namespace sf::priv
@@ -121,18 +124,27 @@ private:
 
     static int processScrollEvent(AInputEvent* inputEvent, ActivityStates& states);
     static int processKeyEvent(AInputEvent* inputEvent, ActivityStates& states);
+    static int processKeyboardKeyEvent(AInputEvent*           inputEvent,
+                                       std::int32_t           action,
+                                       sf::Keyboard::Key      key,
+                                       sf::Keyboard::Scancode scancode,
+                                       std::int32_t           metakey);
+    static int processJoystickButtonEvent(AInputEvent*     inputEvent,
+                                          std::int32_t     action,
+                                          Joystick::Button button,
+                                          ActivityStates&  states);
     static int processMotionEvent(AInputEvent* inputEvent, ActivityStates& states);
     static int processPointerEvent(bool isDown, AInputEvent* event, ActivityStates& states);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Convert a Android key to SFML key code
+    /// \brief Convert a Android key to SFML key code / joystick button code
     ///
     /// \param symbol Android key to convert
     ///
-    /// \return Corresponding SFML key code
+    /// \return Corresponding SFML key code or joystick button code
     ///
     ////////////////////////////////////////////////////////////
-    static Keyboard::Key androidKeyToSF(std::int32_t key);
+    static std::variant<Keyboard::Key, Joystick::Button> androidKeyToSF(std::int32_t key);
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert a Android scan code to SFML key code

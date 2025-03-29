@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/EglContext.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Window/JoystickImpl.hpp>
 
 #include <SFML/System/EnumArray.hpp>
 
@@ -77,6 +78,8 @@ struct ActivityStates
     std::unordered_map<int, Vector2i>                  touchEvents;
     Vector2i                                           mousePosition;
     EnumArray<Mouse::Button, bool, Mouse::ButtonCount> isButtonPressed{};
+
+    std::unordered_map<std::int32_t, JoystickState> joystickStates; ///< Indexed by physical device ID
 
     bool mainOver{};
 
