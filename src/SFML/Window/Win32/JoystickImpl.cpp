@@ -192,7 +192,7 @@ void JoystickImpl::dispatchDeviceConnected(HANDLE deviceHandle)
         // XInput has 14 Buttons and 6 Axes
         joystickImpl.m_caps.buttonCount = 14;
         constexpr auto axes             = 6;
-        for (std::size_t i = 0; i < Joystick::AxisCount && i < axes; ++i)
+        for (unsigned int i = 0; i < Joystick::AxisCount && i < axes; ++i)
             joystickImpl.m_caps.axes[getAxis(static_cast<int>(i))] = true;
     }
     else
@@ -451,11 +451,12 @@ void JoystickImpl::dispatchRawInput(HRAWINPUT inputDevice)
             const auto bitSize = pValueCaps[i].BitSize;
 
             // funky-wunky bitSize
-            const ULONG expectedMax = (1ULL << bitSize) - 1;
+            const ULONG expectedMax = (1UL << bitSize) - 1UL;
 
             // looks weird, but the BitSize tells us how many bits they're actually using and which ones to ignore
-            const LONG logicalMax = expectedMax & pValueCaps[i].LogicalMax;
-            const LONG logicalMin = expectedMax & pValueCaps[i].LogicalMin;
+            // Also turns out the logical-max and logical-min don't... really have a signedness to them? They're weird!
+            const ULONG logicalMax = expectedMax & static_cast<ULONG>(pValueCaps[i].LogicalMax);
+            const ULONG logicalMin = expectedMax & static_cast<ULONG>(pValueCaps[i].LogicalMin);
 
             const auto min = static_cast<float>(logicalMin);
             const auto max = static_cast<float>(logicalMax);
@@ -480,7 +481,7 @@ void JoystickImpl::dispatchRawInput(HRAWINPUT inputDevice)
 void JoystickImpl::dispatchXInput()
 {
     // valid XInput indexes are 0, 1, 2, and 3.
-    for (DWORD xinputIndex : {0, 1, 2, 3})
+    for (const DWORD xinputIndex : {0ul, 1ul, 2ul, 3ul})
     {
         XINPUT_STATE xinputState{};
         auto         xinputResult = XInputGetState(xinputIndex, &xinputState);
