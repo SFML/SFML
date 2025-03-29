@@ -83,7 +83,7 @@ void addGlyphQuad(sf::VertexArray& vertices, sf::Vector2f position, sf::Color co
 
 namespace sf
 {
-////////////////////////////////////////////////////////////
+
 Text::Text(const Font& font, String string, unsigned int characterSize) :
 m_string(std::move(string)),
 m_font(&font),
@@ -121,6 +121,10 @@ void Text::setCharacterSize(unsigned int size)
     {
         m_characterSize      = size;
         m_geometryNeedUpdate = true;
+
+        // Glyph textures will change, so delete all VertexArray instances
+        m_fillVerticesMap.clear();
+        m_outlineVerticesMap.clear();
     }
 }
 
@@ -169,8 +173,12 @@ void Text::setFillColor(Color color)
         // (if geometry is updated anyway, we can skip this step)
         if (!m_geometryNeedUpdate)
         {
-            for (std::size_t i = 0; i < m_vertices.getVertexCount(); ++i)
-                m_vertices[i].color = m_fillColor;
+            for (auto& vertMap : m_fillVerticesMap)
+            {
+                VertexArray& vertices = vertMap.second;
+                for (std::size_t i = 0; i < vertices.getVertexCount(); ++i)
+                    vertices[i].color = m_fillColor;
+            }
         }
     }
 }
@@ -187,8 +195,12 @@ void Text::setOutlineColor(Color color)
         // (if geometry is updated anyway, we can skip this step)
         if (!m_geometryNeedUpdate)
         {
-            for (std::size_t i = 0; i < m_outlineVertices.getVertexCount(); ++i)
-                m_outlineVertices[i].color = m_outlineColor;
+            for (auto& vertMap : m_outlineVerticesMap)
+            {
+                VertexArray& vertices = vertMap.second;
+                for (std::size_t i = 0; i < vertices.getVertexCount(); ++i)
+                    vertices[i].color = m_outlineColor;
+            }
         }
     }
 }
@@ -343,9 +355,25 @@ void Text::draw(RenderTarget& target, RenderStates states) const
 
     // Only draw the outline if there is something to draw
     if (m_outlineThickness != 0)
-        target.draw(m_outlineVertices, states);
+    {
+        for (auto& [texture, verts] : m_outlineVerticesMap)
+        {
+            if (verts.getVertexCount() > 0)
+            {
+                states.texture = texture;
+                target.draw(verts, states);
+            }
+        }
+    }
 
-    target.draw(m_vertices, states);
+     for (auto& [texture, verts] : m_fillVerticesMap)
+        {
+            if (verts.getVertexCount() > 0)
+            {
+                states.texture = texture;
+                target.draw(verts, states);
+            }
+        }
 }
 
 
@@ -353,18 +381,29 @@ void Text::draw(RenderTarget& target, RenderStates states) const
 void Text::ensureGeometryUpdate() const
 {
     // Do nothing, if geometry has not changed and the font texture has not changed
-    if (!m_geometryNeedUpdate && m_font->getTexture(m_characterSize).m_cacheId == m_fontTextureId)
+    if (!m_geometryNeedUpdate && m_font->getTextureIds(m_characterSize) == m_fontTextureIds)
         return;
 
-    // Save the current fonts texture id
-    m_fontTextureId = m_font->getTexture(m_characterSize).m_cacheId;
+    // Save the current fonts texture ids
+    m_fontTextureIds = textureIds;
 
     // Mark geometry as updated
     m_geometryNeedUpdate = false;
 
-    // Clear the previous geometry
-    m_vertices.clear();
-    m_outlineVertices.clear();
+    if (textureNeedsUpdate)
+    {
+        m_fillVerticesMap.clear();
+        m_outlineVerticesMap.clear();
+    }
+    else
+    {
+        // Clear the previous geometry but keep all VertexArray instances so they can reuse their allocated memory
+        for (auto& verts : m_fillVerticesMap)
+            verts.second.clear();
+        for (auto& verts : m_outlineVerticesMap)
+            verts.second.clear();
+    }
+
     m_bounds = FloatRect();
 
     // No text: nothing to draw
@@ -410,19 +449,19 @@ void Text::ensureGeometryUpdate() const
         // If we're using the underlined style and there's a new line, draw a line
         if (isUnderlined && (curChar == U'\n' && prevChar != U'\n'))
         {
-            addLine(m_vertices, x, y, m_fillColor, underlineOffset, underlineThickness);
+            addLine(m_fillVerticesMap[nullptr], x, y, m_fillColor, underlineOffset, underlineThickness);
 
             if (m_outlineThickness != 0)
-                addLine(m_outlineVertices, x, y, m_outlineColor, underlineOffset, underlineThickness, m_outlineThickness);
+                addLine(m_outlineVerticesMap[nullptr], x, y, m_outlineColor, underlineOffset, underlineThickness, m_outlineThickness);
         }
 
         // If we're using the strike through style and there's a new line, draw a line across all characters
         if (isStrikeThrough && (curChar == U'\n' && prevChar != U'\n'))
         {
-            addLine(m_vertices, x, y, m_fillColor, strikeThroughOffset, underlineThickness);
+            addLine(m_fillVerticesMap[nullptr], x, y, m_fillColor, strikeThroughOffset, underlineThickness);
 
             if (m_outlineThickness != 0)
-                addLine(m_outlineVertices, x, y, m_outlineColor, strikeThroughOffset, underlineThickness, m_outlineThickness);
+                addLine(m_outlineVerticesMap[nullptr], x, y, m_outlineColor, strikeThroughOffset, underlineThickness, m_outlineThickness);
         }
 
         prevChar = curChar;
@@ -462,14 +501,14 @@ void Text::ensureGeometryUpdate() const
             const Glyph& glyph = m_font->getGlyph(curChar, m_characterSize, isBold, m_outlineThickness);
 
             // Add the outline glyph to the vertices
-            addGlyphQuad(m_outlineVertices, Vector2f(x, y), m_outlineColor, glyph, italicShear);
+            addGlyphQuad(m_outlineVerticesMap[glyph.texture], Vector2f(x, y), m_outlineColor, glyph, italicShear);
         }
 
         // Extract the current glyph's description
         const Glyph& glyph = m_font->getGlyph(curChar, m_characterSize, isBold);
 
         // Add the glyph to the vertices
-        addGlyphQuad(m_vertices, Vector2f(x, y), m_fillColor, glyph, italicShear);
+        addGlyphQuad(m_fillVerticesMap[glyph.texture], Vector2f(x, y), m_fillColor, glyph, italicShear);
 
         // Update the current bounds
         const Vector2f p1 = glyph.bounds.position;
@@ -497,24 +536,30 @@ void Text::ensureGeometryUpdate() const
     // If we're using the underlined style, add the last line
     if (isUnderlined && (x > 0))
     {
-        addLine(m_vertices, x, y, m_fillColor, underlineOffset, underlineThickness);
+        addLine(m_fillVerticesMap[nullptr], x, y, m_fillColor, underlineOffset, underlineThickness);
 
         if (m_outlineThickness != 0)
-            addLine(m_outlineVertices, x, y, m_outlineColor, underlineOffset, underlineThickness, m_outlineThickness);
+            addLine(m_outlineVerticesMap[nullptr], x, y, m_outlineColor, underlineOffset, underlineThickness, m_outlineThickness);
     }
 
     // If we're using the strike through style, add the last line across all characters
     if (isStrikeThrough && (x > 0))
     {
-        addLine(m_vertices, x, y, m_fillColor, strikeThroughOffset, underlineThickness);
+        addLine(m_fillVerticesMap[nullptr], x, y, m_fillColor, strikeThroughOffset, underlineThickness);
 
         if (m_outlineThickness != 0)
-            addLine(m_outlineVertices, x, y, m_outlineColor, strikeThroughOffset, underlineThickness, m_outlineThickness);
+            addLine(m_outlineVerticesMap[nullptr], x, y, m_outlineColor, strikeThroughOffset, underlineThickness, m_outlineThickness);
     }
 
     // Update the bounding rectangle
     m_bounds.position = Vector2f(minX, minY);
     m_bounds.size     = Vector2f(maxX, maxY) - Vector2f(minX, minY);
+  
+    // Finally, set type of primitives to triangles
+    for (auto& vertMap : m_fillVerticesMap)
+        vertMap.second.setPrimitiveType(PrimitiveType::Triangles);
+    for (auto& vertMap : m_outlineVerticesMap)
+        vertMap.second.setPrimitiveType(PrimitiveType::Triangles);
 }
 
 } // namespace sf
