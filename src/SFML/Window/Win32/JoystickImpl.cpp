@@ -192,7 +192,7 @@ void JoystickImpl::dispatchDeviceConnected(HANDLE deviceHandle)
         // XInput has 14 Buttons and 6 Axes
         joystickImpl.m_caps.buttonCount = 14;
         constexpr auto axes             = 6;
-        for (unsigned int i = 0; i < Joystick::AxisCount && i < axes; ++i)
+        for (unsigned int i = 0; i < axes; ++i)
             joystickImpl.m_caps.axes[getAxis(static_cast<int>(i))] = true;
     }
     else
