@@ -299,7 +299,7 @@ XInputGetState_t mXInputGetState = nullptr;
                 }
             }
             VariantClear(&data.var);
-            const auto device = data.pDevices[iDevice];
+            auto* device = data.pDevices[iDevice];
             if (device)
                 device->Release();
         }
