@@ -1225,7 +1225,7 @@ JoystickState JoystickImpl::updateXInput()
     }
 
     // XInput triggers range between 0 and 255 - to scale them to -100.0f .. 100.0f divide by the below factor (255 / 200)
-    constexpr auto triggerScaleFactor = 1.275;
+    constexpr auto triggerScaleFactor = 1.275f;
     state.axes[Joystick::Axis::U]     = (gamepad.bLeftTrigger / triggerScaleFactor) - 100.0f;
     state.axes[Joystick::Axis::V]     = (gamepad.bRightTrigger / triggerScaleFactor) - 100.0f;
 
