@@ -50,16 +50,15 @@
 #include <oleauto.h>
 #include <wbemidl.h>
 
-#ifndef SAFE_RELEASE
-#define SAFE_RELEASE(p)     \
-    {                       \
-        if (p)              \
-        {                   \
-            (p)->Release(); \
-            (p) = nullptr;  \
-        }                   \
+template <class T>
+void SafeRelease(T*& p)
+{
+    if (p)
+    {
+        p->Release();
+        p = nullptr;
     }
-#endif
+}
 
 
 ////////////////////////////////////////////////////////////
@@ -188,11 +187,11 @@ void safeCleanup(XInputCleanupData& data)
         SysFreeString(data.bstrClassName);
 
     for (auto* device : data.pDevices)
-        SAFE_RELEASE(device);
+        SafeRelease(device);
 
-    SAFE_RELEASE(data.pEnumDevices);
-    SAFE_RELEASE(data.pIWbemLocator);
-    SAFE_RELEASE(data.pIWbemServices);
+    SafeRelease(data.pEnumDevices);
+    SafeRelease(data.pIWbemLocator);
+    SafeRelease(data.pIWbemServices);
 }
 
 // See also https://learn.microsoft.com/en-us/windows/win32/xinput/xinput-and-directinput?redirectedfrom=MSDN
@@ -318,7 +317,7 @@ void safeCleanup(XInputCleanupData& data)
                 }
             }
             VariantClear(&data.var);
-            SAFE_RELEASE(data.pDevices[iDevice]);
+            SafeRelease(data.pDevices[iDevice]);
         }
     }
 
