@@ -202,9 +202,6 @@ void safeCleanup(XInputCleanupData& data)
     bool              bisXInputDevice = false;
     HRESULT           hr              = {};
 
-    // So we can call VariantClear() later, even if we never had a successful IWbemClassObject::Get().
-    VARIANT var = {};
-
     const HRESULT comInit = CoInitialize(nullptr);
     if (FAILED(comInit))
     {
@@ -212,7 +209,7 @@ void safeCleanup(XInputCleanupData& data)
         return false;
     }
 
-    VariantInit(&var);
+    VariantInit(&data.var);
 
     // Create WMI
     hr = CoCreateInstance(CLSID_WbemLocator,
@@ -293,20 +290,20 @@ void safeCleanup(XInputCleanupData& data)
         for (size_t iDevice = 0; iDevice < uReturned; ++iDevice)
         {
             // For each device, get its device ID
-            hr = data.pDevices[iDevice]->Get(data.bstrDeviceID, 0L, &var, nullptr, nullptr);
-            if (SUCCEEDED(hr) && var.vt == VT_BSTR && var.bstrVal != nullptr)
+            hr = data.pDevices[iDevice]->Get(data.bstrDeviceID, 0L, &data.var, nullptr, nullptr);
+            if (SUCCEEDED(hr) && data.var.vt == VT_BSTR && data.var.bstrVal != nullptr)
             {
                 // Check if the device ID contains "IG_".  If it does, then it's an XInput device
                 // This information cannot be found from DirectInput
-                if (wcsstr(var.bstrVal, L"IG_"))
+                if (wcsstr(data.var.bstrVal, L"IG_"))
                 {
                     // If it does, then get the VID/PID from var.bstrVal
                     DWORD  dwPid  = 0;
                     DWORD  dwVid  = 0;
-                    WCHAR* strVid = wcsstr(var.bstrVal, L"VID_");
+                    WCHAR* strVid = wcsstr(data.var.bstrVal, L"VID_");
                     if (strVid && swscanf_s(strVid, L"VID_%4X", &dwVid) != 1)
                         dwVid = 0;
-                    WCHAR* strPid = wcsstr(var.bstrVal, L"PID_");
+                    WCHAR* strPid = wcsstr(data.var.bstrVal, L"PID_");
                     if (strPid && swscanf_s(strPid, L"PID_%4X", &dwPid) != 1)
                         dwPid = 0;
 
@@ -320,7 +317,7 @@ void safeCleanup(XInputCleanupData& data)
                     }
                 }
             }
-            VariantClear(&var);
+            VariantClear(&data.var);
             SAFE_RELEASE(data.pDevices[iDevice]);
         }
     }
