@@ -187,6 +187,22 @@ public:
     ////////////////////////////////////////////////////////////
     [[nodiscard]] JoystickState updateDInputPolled();
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Updates the joystick and gets its new state (XInput)
+    ///
+    /// \return Joystick state
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] JoystickState updateXInput();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Notifies that there has been a device change
+    ///
+    /// \return Joystick state
+    ///
+    ////////////////////////////////////////////////////////////
+    static void invalidateDevices();
+
 private:
     ////////////////////////////////////////////////////////////
     /// \brief Device enumeration callback function passed to EnumDevices in updateConnections
@@ -219,6 +235,8 @@ private:
     DIDEVCAPS             m_deviceCaps{};                         //!< DirectInput device capabilities
     EnumArray<Joystick::Axis, int, Joystick::AxisCount> m_axes{}; //!< Offsets to the bytes containing the axes states, -1 if not available
     std::array<int, Joystick::ButtonCount> m_buttons{}; //!< Offsets to the bytes containing the button states, -1 if not available
+    bool                     m_useXInput{};
+    DWORD                    m_xInputIndex{0xFFFFFFFF};
     Joystick::Identification m_identification; //!< Joystick identification
     JoystickState            m_state;          //!< Buffered joystick state
     bool                     m_buffered{}; //!< `true` if the device uses buffering, `false` if the device uses polling
