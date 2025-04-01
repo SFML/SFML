@@ -50,17 +50,6 @@
 #include <oleauto.h>
 #include <wbemidl.h>
 
-template <class T>
-void SafeRelease(T*& p)
-{
-    if (p)
-    {
-        p->Release();
-        p = nullptr;
-    }
-}
-
-
 ////////////////////////////////////////////////////////////
 // DirectInput
 ////////////////////////////////////////////////////////////
@@ -124,6 +113,16 @@ constexpr std::size_t xinputMaxDevices{4};
 std::vector<bool>     xInputSlots{};
 bool                  directInputNeedsInvalidation{};
 
+template <class T>
+void safeRelease(T*& p)
+{
+    if (p)
+    {
+        p->Release();
+        p = nullptr;
+    }
+}
+
 [[nodiscard]] sf::Joystick::Axis getAxis(std::size_t index)
 {
     switch (index)
@@ -159,6 +158,25 @@ struct XInputCleanupData
     BSTR                              bstrNamespace  = nullptr;
     BSTR                              bstrDeviceID   = nullptr;
     BSTR                              bstrClassName  = nullptr;
+
+    ~XInputCleanupData()
+    {
+        VariantClear(&var);
+
+        if (bstrNamespace)
+            SysFreeString(bstrNamespace);
+        if (bstrDeviceID)
+            SysFreeString(bstrDeviceID);
+        if (bstrClassName)
+            SysFreeString(bstrClassName);
+
+        for (auto* device : pDevices)
+            safeRelease(device);
+
+        safeRelease(pEnumDevices);
+        safeRelease(pIWbemLocator);
+        safeRelease(pIWbemServices);
+    }
 };
 
 // NOLINTBEGIN(readability-identifier-naming)
@@ -175,69 +193,46 @@ using XInputGetState_t = DWORD(WINAPI*)(DWORD dwUserIndex, XINPUT_STATE* pState)
 
 XInputGetState_t mXInputGetState = nullptr;
 
-void safeCleanup(XInputCleanupData& data)
-{
-    VariantClear(&data.var);
-
-    if (data.bstrNamespace)
-        SysFreeString(data.bstrNamespace);
-    if (data.bstrDeviceID)
-        SysFreeString(data.bstrDeviceID);
-    if (data.bstrClassName)
-        SysFreeString(data.bstrClassName);
-
-    for (auto* device : data.pDevices)
-        SafeRelease(device);
-
-    SafeRelease(data.pEnumDevices);
-    SafeRelease(data.pIWbemLocator);
-    SafeRelease(data.pIWbemServices);
-}
-
 // See also https://learn.microsoft.com/en-us/windows/win32/xinput/xinput-and-directinput?redirectedfrom=MSDN
 [[nodiscard]] BOOL isXInputDevice(const GUID* pGuidProductFromDirectInput)
 {
-    XInputCleanupData data;
-    bool              bisXInputDevice = false;
-    HRESULT           hr              = {};
+    bool isXInputDevice = false;
 
     const HRESULT comInit = CoInitialize(nullptr);
     if (FAILED(comInit))
     {
-        safeCleanup(data);
         return false;
     }
 
+    // XInputCleanupData now has a destructor, see above.
+    XInputCleanupData data;
     VariantInit(&data.var);
 
     // Create WMI
-    hr = CoCreateInstance(CLSID_WbemLocator,
-                          nullptr,
-                          CLSCTX_INPROC_SERVER,
-                          IID_IWbemLocator,
-                          reinterpret_cast<LPVOID*>(&data.pIWbemLocator));
+    auto hr = CoCreateInstance(CLSID_WbemLocator,
+                               nullptr,
+                               CLSCTX_INPROC_SERVER,
+                               IID_IWbemLocator,
+                               reinterpret_cast<LPVOID*>(&data.pIWbemLocator));
     if (FAILED(hr) || data.pIWbemLocator == nullptr)
     {
-        safeCleanup(data);
+
         return false;
     }
 
     data.bstrNamespace = SysAllocString(L"\\\\.\\root\\cimv2");
     if (data.bstrNamespace == nullptr)
     {
-        safeCleanup(data);
         return false;
     }
     data.bstrClassName = SysAllocString(L"Win32_PNPEntity");
     if (data.bstrClassName == nullptr)
     {
-        safeCleanup(data);
         return false;
     }
     data.bstrDeviceID = SysAllocString(L"DeviceID");
     if (data.bstrDeviceID == nullptr)
     {
-        safeCleanup(data);
         return false;
     }
 
@@ -246,7 +241,6 @@ void safeCleanup(XInputCleanupData& data)
              ->ConnectServer(data.bstrNamespace, nullptr, nullptr, nullptr, 0L, nullptr, nullptr, &data.pIWbemServices);
     if (FAILED(hr) || data.pIWbemServices == nullptr)
     {
-        safeCleanup(data);
         return false;
     }
 
@@ -261,14 +255,12 @@ void safeCleanup(XInputCleanupData& data)
                            EOAC_NONE);
     if (FAILED(hr))
     {
-        safeCleanup(data);
         return false;
     }
 
     hr = data.pIWbemServices->CreateInstanceEnum(data.bstrClassName, 0, nullptr, &data.pEnumDevices);
     if (FAILED(hr) || data.pEnumDevices == nullptr)
     {
-        safeCleanup(data);
         return false;
     }
 
@@ -280,7 +272,6 @@ void safeCleanup(XInputCleanupData& data)
         hr = data.pEnumDevices->Next(10000, static_cast<ULONG>(data.pDevices.size()), data.pDevices.data(), &uReturned);
         if (FAILED(hr))
         {
-            safeCleanup(data);
             return false;
         }
         if (uReturned == 0)
@@ -310,19 +301,16 @@ void safeCleanup(XInputCleanupData& data)
                     const auto dwVidPid = static_cast<DWORD>(MAKELONG(dwVid, dwPid));
                     if (dwVidPid == pGuidProductFromDirectInput->Data1)
                     {
-                        bisXInputDevice = true;
-                        safeCleanup(data);
-                        return bisXInputDevice;
+                        isXInputDevice = true;
+                        return isXInputDevice;
                     }
                 }
             }
             VariantClear(&data.var);
-            SafeRelease(data.pDevices[iDevice]);
+            safeRelease(data.pDevices[iDevice]);
         }
     }
-
-    safeCleanup(data);
-    return bisXInputDevice;
+    return isXInputDevice;
 }
 } // namespace
 
@@ -1171,16 +1159,16 @@ JoystickState JoystickImpl::updateXInput()
 
     auto& state      = m_state;
     auto& gamepad    = xinputState.Gamepad;
-    state.buttons[0] = !!(gamepad.wButtons & XINPUT_GAMEPAD_A);
-    state.buttons[1] = !!(gamepad.wButtons & XINPUT_GAMEPAD_B);
-    state.buttons[2] = !!(gamepad.wButtons & XINPUT_GAMEPAD_X);
-    state.buttons[3] = !!(gamepad.wButtons & XINPUT_GAMEPAD_Y);
-    state.buttons[4] = !!(gamepad.wButtons & XINPUT_GAMEPAD_START);
-    state.buttons[5] = !!(gamepad.wButtons & XINPUT_GAMEPAD_BACK);
-    state.buttons[6] = !!(gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER);
-    state.buttons[7] = !!(gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER);
-    state.buttons[8] = !!(gamepad.wButtons & XINPUT_GAMEPAD_LEFT_THUMB);
-    state.buttons[9] = !!(gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_THUMB);
+    state.buttons[0] = 0 != (gamepad.wButtons & XINPUT_GAMEPAD_A);
+    state.buttons[1] = 0 != (gamepad.wButtons & XINPUT_GAMEPAD_B);
+    state.buttons[2] = 0 != (gamepad.wButtons & XINPUT_GAMEPAD_X);
+    state.buttons[3] = 0 != (gamepad.wButtons & XINPUT_GAMEPAD_Y);
+    state.buttons[4] = 0 != (gamepad.wButtons & XINPUT_GAMEPAD_START);
+    state.buttons[5] = 0 != (gamepad.wButtons & XINPUT_GAMEPAD_BACK);
+    state.buttons[6] = 0 != (gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER);
+    state.buttons[7] = 0 != (gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER);
+    state.buttons[8] = 0 != (gamepad.wButtons & XINPUT_GAMEPAD_LEFT_THUMB);
+    state.buttons[9] = 0 != (gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_THUMB);
 
     // The standard deadzone felt, too... dead. This feels reasonable, but should it be configurable?
     // Threshold is ... different, and NOT a deadzone, but instead a required delta between inputs to event an update.
@@ -1195,10 +1183,10 @@ JoystickState JoystickImpl::updateXInput()
     state.axes[Joystick::Axis::R] = (std::abs(gamepad.sThumbRY) < deadzone) ? 0.0f : gamepad.sThumbRY / thumbstickScaleFactor;
 
     // D-pad as axes (PovX and PovY) in Cartesian form: 100, -100, or 0
-    const bool dpadUp    = !!(gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP);
-    const bool dpadDown  = !!(gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN);
-    const bool dpadLeft  = !!(gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT);
-    const bool dpadRight = !!(gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT);
+    const bool dpadUp    = 0 != (gamepad.wButtons & XINPUT_GAMEPAD_DPAD_UP);
+    const bool dpadDown  = 0 != (gamepad.wButtons & XINPUT_GAMEPAD_DPAD_DOWN);
+    const bool dpadLeft  = 0 != (gamepad.wButtons & XINPUT_GAMEPAD_DPAD_LEFT);
+    const bool dpadRight = 0 != (gamepad.wButtons & XINPUT_GAMEPAD_DPAD_RIGHT);
 
     // PovX: Right = 100, Left = -100, both/neither = 0
     if (dpadLeft && dpadRight)
@@ -1236,10 +1224,10 @@ JoystickState JoystickImpl::updateXInput()
         state.axes[Joystick::Axis::PovY] = 0.0f;
     }
 
-    // XInput triggers range between 0 and 255 - to scale them to 0.0f .. 100.0f divide by the below factor
-    constexpr auto triggerScaleFactor = 2.55f;
-    state.axes[Joystick::Axis::U]     = gamepad.bLeftTrigger / triggerScaleFactor;
-    state.axes[Joystick::Axis::V]     = gamepad.bRightTrigger / triggerScaleFactor;
+    // XInput triggers range between 0 and 255 - to scale them to -100.0f .. 100.0f divide by the below factor (255 / 200)
+    constexpr auto triggerScaleFactor = 1.275;
+    state.axes[Joystick::Axis::U]     = (gamepad.bLeftTrigger / triggerScaleFactor) - 100.0f;
+    state.axes[Joystick::Axis::V]     = (gamepad.bRightTrigger / triggerScaleFactor) - 100.0f;
 
     state.connected = true;
 
