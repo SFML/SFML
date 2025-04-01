@@ -113,16 +113,6 @@ constexpr std::size_t xinputMaxDevices{4};
 std::vector<bool>     xInputSlots{};
 bool                  directInputNeedsInvalidation{};
 
-template <typename T>
-void safeRelease(T*& p)
-{
-    if (p)
-    {
-        p->Release();
-        p = nullptr;
-    }
-}
-
 [[nodiscard]] sf::Joystick::Axis getAxis(std::size_t index)
 {
     switch (index)
@@ -163,19 +153,24 @@ struct XInputCleanupData
     {
         VariantClear(&var);
 
-        if (bstrNamespace)
-            SysFreeString(bstrNamespace);
-        if (bstrDeviceID)
-            SysFreeString(bstrDeviceID);
-        if (bstrClassName)
-            SysFreeString(bstrClassName);
+        SysFreeString(bstrNamespace);
+        SysFreeString(bstrDeviceID);
+        SysFreeString(bstrClassName);
 
         for (auto* device : pDevices)
-            safeRelease(device);
+        {
+            if (device)
+            {
+                device->Release();
+            }
+        }
 
-        safeRelease(pEnumDevices);
-        safeRelease(pIWbemLocator);
-        safeRelease(pIWbemServices);
+        if (pEnumDevices)
+            pEnumDevices->Release();
+        if (pIWbemLocator)
+            pIWbemLocator->Release();
+        if (pIWbemServices)
+            pIWbemServices->Release();
     }
 };
 
@@ -304,7 +299,9 @@ XInputGetState_t mXInputGetState = nullptr;
                 }
             }
             VariantClear(&data.var);
-            safeRelease(data.pDevices[iDevice]);
+            const auto device = data.pDevices[iDevice];
+            if (device)
+                device->Release();
         }
     }
     return false;
