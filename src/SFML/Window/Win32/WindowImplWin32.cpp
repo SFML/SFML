@@ -236,6 +236,24 @@ m_cursorGrabbed(m_fullscreen)
         {
             JoystickImpl::setLazyUpdates(true);
 
+            std::array<RAWINPUTDEVICE, 3> rids{};
+            ZeroMemory(rids.data(), sizeof(rids));
+            for (auto& rid : rids)
+            {
+                // We are using this, talking to "generic" input devices.
+                rid.usUsagePage = 0x01; // HID_USAGE_PAGE_GENERIC;
+                // We want Windows to notify us when devices are added or removed.
+                rid.dwFlags = RIDEV_DEVNOTIFY;
+                // And send notifications to THIS specific HWND, which we registered earlier.
+                rid.hwndTarget = m_handle;
+            }
+
+            rids[0].usUsage = 0x05; // HID_USAGE_GENERIC_GAMEPAD;
+            rids[1].usUsage = 0x04; // HID_USAGE_GENERIC_JOYSTICK;
+            rids[2].usUsage = 0x08; // HID_USAGE_GENERIC_MULTI_AXIS_CONTROLLER;
+
+            RegisterRawInputDevices(rids.data(), static_cast<UINT>(rids.size()), sizeof(RAWINPUTDEVICE));
+
             initRawMouse();
         }
 
@@ -1122,18 +1140,10 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         }
 
         // Hardware configuration change event
-        case WM_DEVICECHANGE:
+        case WM_INPUT_DEVICE_CHANGE:
         {
             // Some sort of device change has happened, update joystick connections
-            if ((wParam == DBT_DEVICEARRIVAL) || (wParam == DBT_DEVICEREMOVECOMPLETE))
-            {
-                // Some sort of device change has happened, update joystick connections if it is a device interface
-                auto* deviceBroadcastHeader = reinterpret_cast<DEV_BROADCAST_HDR*>(lParam);
-
-                if (deviceBroadcastHeader && (deviceBroadcastHeader->dbch_devicetype == DBT_DEVTYP_DEVICEINTERFACE))
-                    JoystickImpl::updateConnections();
-            }
-
+            JoystickImpl::invalidateDevices();
             break;
         }
 
