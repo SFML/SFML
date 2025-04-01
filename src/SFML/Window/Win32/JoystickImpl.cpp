@@ -113,7 +113,7 @@ constexpr std::size_t xinputMaxDevices{4};
 std::vector<bool>     xInputSlots{};
 bool                  directInputNeedsInvalidation{};
 
-template <class T>
+template <typename T>
 void safeRelease(T*& p)
 {
     if (p)
@@ -196,8 +196,6 @@ XInputGetState_t mXInputGetState = nullptr;
 // See also https://learn.microsoft.com/en-us/windows/win32/xinput/xinput-and-directinput?redirectedfrom=MSDN
 [[nodiscard]] BOOL isXInputDevice(const GUID* pGuidProductFromDirectInput)
 {
-    bool isXInputDevice = false;
-
     const HRESULT comInit = CoInitialize(nullptr);
     if (FAILED(comInit))
     {
@@ -301,8 +299,7 @@ XInputGetState_t mXInputGetState = nullptr;
                     const auto dwVidPid = static_cast<DWORD>(MAKELONG(dwVid, dwPid));
                     if (dwVidPid == pGuidProductFromDirectInput->Data1)
                     {
-                        isXInputDevice = true;
-                        return isXInputDevice;
+                        return true;
                     }
                 }
             }
@@ -310,7 +307,7 @@ XInputGetState_t mXInputGetState = nullptr;
             safeRelease(data.pDevices[iDevice]);
         }
     }
-    return isXInputDevice;
+    return false;
 }
 } // namespace
 
@@ -419,7 +416,7 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 void JoystickImpl::initialize()
 {
-    auto* xinputModule = LoadLibraryA("XInput1_4.dll");
+    HMODULE xinputModule = LoadLibraryA("XInput1_4.dll");
     if (!xinputModule)
     {
         // this always succeeds.
