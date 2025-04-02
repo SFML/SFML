@@ -148,6 +148,7 @@ struct XInputCleanupData
     BSTR                              bstrNamespace  = nullptr;
     BSTR                              bstrDeviceID   = nullptr;
     BSTR                              bstrClassName  = nullptr;
+    HRESULT                           comInitResult  = {};
 
     ~XInputCleanupData()
     {
@@ -171,6 +172,10 @@ struct XInputCleanupData
             pIWbemLocator->Release();
         if (pIWbemServices)
             pIWbemServices->Release();
+        if (SUCCEEDED(comInitResult))
+        {
+            CoUninitialize();
+        }
     }
 };
 
@@ -191,14 +196,13 @@ XInputGetState_t mXInputGetState = nullptr;
 // See also https://learn.microsoft.com/en-us/windows/win32/xinput/xinput-and-directinput?redirectedfrom=MSDN
 [[nodiscard]] BOOL isXInputDevice(const GUID* pGuidProductFromDirectInput)
 {
-    const HRESULT comInit = CoInitialize(nullptr);
-    if (FAILED(comInit))
+    // XInputCleanupData now has a destructor, see above.
+    XInputCleanupData data;
+    data.comInitResult = CoInitialize(nullptr);
+    if (FAILED(data.comInitResult))
     {
         return false;
     }
-
-    // XInputCleanupData now has a destructor, see above.
-    XInputCleanupData data;
     VariantInit(&data.var);
 
     // Create WMI
