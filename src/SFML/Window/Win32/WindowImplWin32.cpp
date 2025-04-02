@@ -237,7 +237,6 @@ m_cursorGrabbed(m_fullscreen)
             JoystickImpl::setLazyUpdates(true);
 
             std::array<RAWINPUTDEVICE, 3> rids{};
-            ZeroMemory(rids.data(), sizeof(rids));
             for (auto& rid : rids)
             {
                 // We are using this, talking to "generic" input devices.
