@@ -496,6 +496,33 @@ SFML 3 capitalizes the `A` of `aliasing` for all the APIs.
 * `sf::RenderTexture::getMaximumAntialiasingLevel()` becomes `sf::RenderTexture::getMaximumAntiAliasingLevel()`
 * `sf::ContextSettings::antialiasingLevel` becomes `sf::ContextSettings::antiAliasingLevel`
 
+## CoordinateType for RenderStates
+
+The enum `sf::CoordinateType` was moved from the `sf::Texture` into its own dedicated enum class.
+
+The `sf::RenderStates` class got a new member of type `sf::CoordinateType` to control how the texture coordinates will be interpreted.
+By default SFML uses `sf::CoordinateType::Pixels`, while `sf::CoordinateType::Normalized` is the default for OpenGL.
+Using `sf::CoordinateType::Normalized` with `sf::RenderStates` allows for using normalized textures with `sf::VertexArray` and `sf::VertexBuffer`.
+
+The constructor for `sf::RenderStates` has changed.
+
+v2:
+```cpp
+auto renderStates = sf::RenderStates(sf::BlendAlpha,
+                                     transform,
+                                     texture,
+                                     nullptr);
+```
+
+v3:
+```cpp
+auto renderStates = sf::RenderStates(sf::BlendMode::BlendAlpha,
+                                     transform,
+                                     sf::CoordinateTye::Pixels,
+                                     texture,
+                                     nullptr);
+```
+
 ## Other Minor Changes
 
 SFML 3 includes various smaller changes that ought to be mentioned.
@@ -505,7 +532,6 @@ SFML 3 includes various smaller changes that ought to be mentioned.
 * Changed `sf::String` interface to use `std::u16string` and `std::u32string`
 * Removed `sf::ContextSettings` constructor in favor of aggregate initialization
 * Removed `sf::View::reset` in favor of assigning from a new `sf::View` object
-* Added new `sf::CoordinateType` enumeration to `sf::RenderStates::RenderStates`
 * Removed `sf::Vertex` constructors in favor of aggregate initialization
 * Renamed `sf::Mouse::Button::XButton1` and `sf::Mouse::Button::XButton2` enumerators to `sf::Mouse::Button::Extra1` and `sf::Mouse::Button::Extra2`
 * Removed NonCopyable.hpp header in favor of using built-in language features for disabling copy operators
