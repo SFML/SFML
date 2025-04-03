@@ -476,6 +476,13 @@ SFML 3 removes all of the deprecated APIs in SFML 2.
 | `sf::PrimitiveType::TrianglesStrip` | `sf::PrimitiveType::TriangleStrip` |
 | `sf::PrimitiveType::TrianglesFan`   | `sf::PrimitiveType::TriangleFan`   |
 | `sf::PrimitiveType::Quads`          | See 2                              |
+| `sf::Keyboard::BackSlash`           | `sf::Keyboard::Key::Backslash`     |
+| `sf::Keyboard::BackSpace`           | `sf::Keyboard::Key::Backspace`     |
+| `sf::Keyboard::Dash`                | `sf::Keyboard::Key::Dash`          |
+| `sf::Keyboard::Quote`               | `sf::Keyboard::Key::Hyphen`        |
+| `sf::Keyboard::Return`              | `sf::Keyboard::Key::Enter`         |
+| `sf::Keyboard::SemiColon`           | `sf::Keyboard::Key::Semicolon`     |
+| `sf::Keyboard::Tilde`               | `sf::Keyboard::Key::Grave`         |
 
 1. `sf::RenderWindow::capture` can be recreated by using an `sf::Texture` and its `sf::Texture::update(const Window&)` function to copy its contents into an `sf::Image` instead.
 2. `sf::PrimitiveType::Quads` can be replaced by another primitive type.
