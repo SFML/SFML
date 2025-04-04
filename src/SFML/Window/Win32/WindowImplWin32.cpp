@@ -150,6 +150,24 @@ WindowImplWin32::WindowImplWin32(WindowHandle handle) : m_handle(handle)
         {
             JoystickImpl::setLazyUpdates(true);
 
+            // register for updates to devices being plugged or unplugged
+            std::array<RAWINPUTDEVICE, 3> rids{};
+            for (auto& rid : rids)
+            {
+                // We are using this, talking to "generic" input devices.
+                rid.usUsagePage = 0x01; // HID_USAGE_PAGE_GENERIC;
+                // We want Windows to notify us when devices are added or removed.
+                rid.dwFlags = RIDEV_DEVNOTIFY;
+                // And send notifications to THIS specific HWND, which we registered earlier.
+                rid.hwndTarget = m_handle;
+            }
+
+            rids[0].usUsage = 0x05; // HID_USAGE_GENERIC_GAMEPAD;
+            rids[1].usUsage = 0x04; // HID_USAGE_GENERIC_JOYSTICK;
+            rids[2].usUsage = 0x08; // HID_USAGE_GENERIC_MULTI_AXIS_CONTROLLER;
+
+            RegisterRawInputDevices(rids.data(), static_cast<UINT>(rids.size()), sizeof(RAWINPUTDEVICE));
+
             initRawMouse();
         }
 
@@ -236,6 +254,7 @@ m_cursorGrabbed(m_fullscreen)
         {
             JoystickImpl::setLazyUpdates(true);
 
+            // register for updates to devices being plugged or unplugged
             std::array<RAWINPUTDEVICE, 3> rids{};
             for (auto& rid : rids)
             {
