@@ -504,6 +504,8 @@ The `sf::RenderStates` class got a new member of type `sf::CoordinateType` to co
 By default SFML uses `sf::CoordinateType::Pixels`, while `sf::CoordinateType::Normalized` is the default for OpenGL.
 Using `sf::CoordinateType::Normalized` with `sf::RenderStates` allows for using normalized textures with `sf::VertexArray` and `sf::VertexBuffer`.
 
+Additionally, as SFML now supports Stencil Testing, there's an additional overload for the Stencil Mode.
+
 The constructor for `sf::RenderStates` has changed.
 
 v2:
@@ -516,7 +518,8 @@ auto renderStates = sf::RenderStates(sf::BlendAlpha,
 
 v3:
 ```cpp
-auto renderStates = sf::RenderStates(sf::BlendMode::BlendAlpha,
+auto renderStates = sf::RenderStates(sf::BlendAlpha,
+                                     sf::StencilMode(),
                                      transform,
                                      sf::CoordinateTye::Pixels,
                                      texture,
