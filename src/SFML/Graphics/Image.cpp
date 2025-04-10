@@ -204,7 +204,9 @@ bool Image::loadFromFile(const std::filesystem::path& filename)
 
     if (priv::getActivityStatesPtr() != nullptr)
     {
-        priv::ResourceStream stream(filename);
+        priv::ResourceStream stream;
+        if (!stream.open(filename))
+            return false;
         return loadFromStream(stream);
     }
 
