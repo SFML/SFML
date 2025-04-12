@@ -104,51 +104,22 @@ using JoystickBlacklist = std::vector<JoystickBlacklistEntry>;
 JoystickBlacklist joystickBlacklist;
 
 const DWORD directInputEventBufferSize = 32;
-} // namespace
 
-// for XInput
-namespace
-{
-constexpr std::size_t xinputMaxDevices{4};
-std::vector<bool>     xInputSlots{};
-bool                  directInputNeedsInvalidation{};
-
-[[nodiscard]] sf::Joystick::Axis getAxis(std::size_t index)
-{
-    switch (index)
-    {
-        case 0:
-            return sf::Joystick::Axis::X;
-        case 1:
-            return sf::Joystick::Axis::Y;
-        case 2:
-            return sf::Joystick::Axis::Z;
-        case 3:
-            return sf::Joystick::Axis::R;
-        case 4:
-            return sf::Joystick::Axis::U;
-        case 5:
-            return sf::Joystick::Axis::V;
-        case 6:
-            return sf::Joystick::Axis::PovX;
-        case 7:
-            return sf::Joystick::Axis::PovY;
-        default:
-            throw std::out_of_range("index is out of range.");
-    }
-}
+// For XInput
+std::vector<bool> xInputSlots;
+bool              directInputNeedsInvalidation = false;
 
 struct XInputCleanupData
 {
-    VARIANT                           var            = {};
-    IWbemLocator*                     pIWbemLocator  = nullptr;
-    IEnumWbemClassObject*             pEnumDevices   = nullptr;
-    std::array<IWbemClassObject*, 20> pDevices       = {};
-    IWbemServices*                    pIWbemServices = nullptr;
-    BSTR                              bstrNamespace  = nullptr;
-    BSTR                              bstrDeviceID   = nullptr;
-    BSTR                              bstrClassName  = nullptr;
-    HRESULT                           comInitResult  = {};
+    VARIANT                           var{};
+    IWbemLocator*                     pIWbemLocator{};
+    IEnumWbemClassObject*             pEnumDevices{};
+    std::array<IWbemClassObject*, 20> pDevices{};
+    IWbemServices*                    pIWbemServices{};
+    BSTR                              bstrNamespace{};
+    BSTR                              bstrDeviceID{};
+    BSTR                              bstrClassName{};
+    HRESULT                           comInitResult{};
 
     ~XInputCleanupData()
     {
@@ -159,12 +130,8 @@ struct XInputCleanupData
         SysFreeString(bstrClassName);
 
         for (auto* device : pDevices)
-        {
             if (device)
-            {
                 device->Release();
-            }
-        }
 
         if (pEnumDevices)
             pEnumDevices->Release();
@@ -173,9 +140,7 @@ struct XInputCleanupData
         if (pIWbemServices)
             pIWbemServices->Release();
         if (SUCCEEDED(comInitResult))
-        {
             CoUninitialize();
-        }
     }
 };
 
@@ -189,9 +154,9 @@ const IID IID_IWbemLocator = {0xdc12a687, 0x737f, 0x11cf, {0x88, 0x4d, 0x00, 0xa
 // NOLINTEND(readability-identifier-naming)
 
 // Function pointer type for XInputGetState
-using XInputGetState_t = DWORD(WINAPI*)(DWORD dwUserIndex, XINPUT_STATE* pState);
+using XInputGetStateFunc = DWORD(WINAPI*)(DWORD dwUserIndex, XINPUT_STATE* pState);
 
-XInputGetState_t mXInputGetState = nullptr;
+XInputGetStateFunc mXInputGetState = nullptr;
 
 // See also https://learn.microsoft.com/en-us/windows/win32/xinput/xinput-and-directinput?redirectedfrom=MSDN
 [[nodiscard]] BOOL isXInputDevice(const GUID* pGuidProductFromDirectInput)
@@ -200,9 +165,8 @@ XInputGetState_t mXInputGetState = nullptr;
     XInputCleanupData data;
     data.comInitResult = CoInitialize(nullptr);
     if (FAILED(data.comInitResult))
-    {
         return false;
-    }
+
     VariantInit(&data.var);
 
     // Create WMI
@@ -212,34 +176,24 @@ XInputGetState_t mXInputGetState = nullptr;
                                IID_IWbemLocator,
                                reinterpret_cast<LPVOID*>(&data.pIWbemLocator));
     if (FAILED(hr) || data.pIWbemLocator == nullptr)
-    {
-
         return false;
-    }
 
     data.bstrNamespace = SysAllocString(L"\\\\.\\root\\cimv2");
     if (data.bstrNamespace == nullptr)
-    {
         return false;
-    }
+
     data.bstrClassName = SysAllocString(L"Win32_PNPEntity");
     if (data.bstrClassName == nullptr)
-    {
         return false;
-    }
+
     data.bstrDeviceID = SysAllocString(L"DeviceID");
     if (data.bstrDeviceID == nullptr)
-    {
         return false;
-    }
 
     // Connect to WMI
-    hr = data.pIWbemLocator
-             ->ConnectServer(data.bstrNamespace, nullptr, nullptr, nullptr, 0L, nullptr, nullptr, &data.pIWbemServices);
+    hr = data.pIWbemLocator->ConnectServer(data.bstrNamespace, nullptr, nullptr, nullptr, 0, nullptr, nullptr, &data.pIWbemServices);
     if (FAILED(hr) || data.pIWbemServices == nullptr)
-    {
         return false;
-    }
 
     // Switch security level to IMPERSONATE.
     hr = CoSetProxyBlanket(data.pIWbemServices,
@@ -251,30 +205,24 @@ XInputGetState_t mXInputGetState = nullptr;
                            nullptr,
                            EOAC_NONE);
     if (FAILED(hr))
-    {
         return false;
-    }
 
     hr = data.pIWbemServices->CreateInstanceEnum(data.bstrClassName, 0, nullptr, &data.pEnumDevices);
     if (FAILED(hr) || data.pEnumDevices == nullptr)
-    {
         return false;
-    }
-
 
     // Loop over all devices
     for (;;)
     {
         ULONG uReturned = 0;
-        hr = data.pEnumDevices->Next(10000, static_cast<ULONG>(data.pDevices.size()), data.pDevices.data(), &uReturned);
+        hr = data.pEnumDevices->Next(10'000, static_cast<ULONG>(data.pDevices.size()), data.pDevices.data(), &uReturned);
         if (FAILED(hr))
-        {
             return false;
-        }
+
         if (uReturned == 0)
             break;
 
-        for (size_t iDevice = 0; iDevice < uReturned; ++iDevice)
+        for (std::size_t iDevice = 0; iDevice < uReturned; ++iDevice)
         {
             // For each device, get its device ID
             hr = data.pDevices[iDevice]->Get(data.bstrDeviceID, 0L, &data.var, nullptr, nullptr);
@@ -282,26 +230,25 @@ XInputGetState_t mXInputGetState = nullptr;
             {
                 // Check if the device ID contains "IG_".  If it does, then it's an XInput device
                 // This information cannot be found from DirectInput
-                if (wcsstr(data.var.bstrVal, L"IG_"))
+                if (std::wcsstr(data.var.bstrVal, L"IG_"))
                 {
                     // If it does, then get the VID/PID from var.bstrVal
                     DWORD  dwPid  = 0;
                     DWORD  dwVid  = 0;
-                    WCHAR* strVid = wcsstr(data.var.bstrVal, L"VID_");
+                    WCHAR* strVid = std::wcsstr(data.var.bstrVal, L"VID_");
                     if (strVid && swscanf_s(strVid, L"VID_%4X", &dwVid) != 1)
                         dwVid = 0;
-                    WCHAR* strPid = wcsstr(data.var.bstrVal, L"PID_");
+                    WCHAR* strPid = std::wcsstr(data.var.bstrVal, L"PID_");
                     if (strPid && swscanf_s(strPid, L"PID_%4X", &dwPid) != 1)
                         dwPid = 0;
 
                     // Compare the VID/PID to the DInput device
                     const auto dwVidPid = static_cast<DWORD>(MAKELONG(dwVid, dwPid));
                     if (dwVidPid == pGuidProductFromDirectInput->Data1)
-                    {
                         return true;
-                    }
                 }
             }
+
             VariantClear(&data.var);
             auto* device = data.pDevices[iDevice];
             if (device)
@@ -424,9 +371,10 @@ void JoystickImpl::initialize()
         xinputModule = LoadLibraryA("XINPUT9_1_0.DLL");
     }
     assert(xinputModule != nullptr);
-    mXInputGetState = reinterpret_cast<XInputGetState_t>(
+    mXInputGetState = reinterpret_cast<XInputGetStateFunc>(
         reinterpret_cast<void*>(GetProcAddress(xinputModule, "XInputGetState")));
 
+    static constexpr std::size_t xinputMaxDevices = 4;
     xInputSlots.resize(xinputMaxDevices);
 
     // Try to initialize DirectInput
@@ -474,16 +422,20 @@ bool JoystickImpl::isConnected(unsigned int index)
     return cache.connected;
 }
 
+
 ////////////////////////////////////////////////////////////
 void JoystickImpl::setLazyUpdates(bool status)
 {
     lazyUpdates = status;
 }
 
+
+////////////////////////////////////////////////////////////
 void JoystickImpl::invalidateDevices()
 {
     directInputNeedsInvalidation = true;
 }
+
 
 ////////////////////////////////////////////////////////////
 void JoystickImpl::updateConnections()
@@ -505,6 +457,7 @@ void JoystickImpl::updateConnections()
         cache.timer.restart();
     }
 }
+
 
 ////////////////////////////////////////////////////////////
 bool JoystickImpl::open(unsigned int index)
@@ -536,6 +489,7 @@ void JoystickImpl::close()
         closeDInput();
 }
 
+
 ////////////////////////////////////////////////////////////
 JoystickCaps JoystickImpl::getCapabilities() const
 {
@@ -543,12 +497,11 @@ JoystickCaps JoystickImpl::getCapabilities() const
     {
         // XInput has 10 Buttons (since we exclude the DPad) and all 8 Axes
         JoystickCaps caps{0};
-        caps.buttonCount    = 10;
-        constexpr auto axes = 8;
-        for (unsigned int i = 0; i < axes; ++i)
-            caps.axes[getAxis(i)] = true;
+        caps.buttonCount = 10;
+        caps.axes.fill(true);
         return caps;
     }
+
     if (directInput)
         return getCapabilitiesDInput();
 
@@ -586,9 +539,7 @@ JoystickState JoystickImpl::update()
     }
 
     if (m_useXInput)
-    {
         return updateXInput();
-    }
 
     if (directInput)
     {
@@ -1129,7 +1080,7 @@ JoystickState JoystickImpl::updateXInput()
     // No identified index yet
     if (m_xInputIndex == 0xFFFFFFFF)
     {
-        for (size_t i = 0; i < xInputSlots.size(); i++)
+        for (std::size_t i = 0; i < xInputSlots.size(); ++i)
         {
             const bool taken = xInputSlots[i];
             if (!taken)
@@ -1141,8 +1092,8 @@ JoystickState JoystickImpl::updateXInput()
         }
     }
 
-    XINPUT_STATE xinputState = {};
-    auto         result      = mXInputGetState(m_xInputIndex, &xinputState);
+    XINPUT_STATE xinputState{};
+    const auto   result = mXInputGetState(m_xInputIndex, &xinputState);
 
     if (result != S_OK)
     {
@@ -1170,10 +1121,10 @@ JoystickState JoystickImpl::updateXInput()
 
     // The standard deadzone felt, too... dead. This feels reasonable, but should it be configurable?
     // Threshold is ... different, and NOT a deadzone, but instead a required delta between inputs to event an update.
-    const SHORT deadzone = XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE / 2;
+    static constexpr SHORT deadzone = XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE / 2;
 
     // XInput thumbsticks range from -32767 to 32767 - to scale them to -100.0f .. 100.0f divide by the below factor
-    constexpr auto thumbstickScaleFactor = 327.670f;
+    static constexpr auto thumbstickScaleFactor = 327.670f;
 
     state.axes[Joystick::Axis::X] = (std::abs(gamepad.sThumbLX) < deadzone) ? 0.0f : gamepad.sThumbLX / thumbstickScaleFactor;
     state.axes[Joystick::Axis::Y] = (std::abs(gamepad.sThumbLY) < deadzone) ? 0.0f : gamepad.sThumbLY / thumbstickScaleFactor;
@@ -1188,44 +1139,29 @@ JoystickState JoystickImpl::updateXInput()
 
     // PovX: Right = 100, Left = -100, both/neither = 0
     if (dpadLeft && dpadRight)
-    {
         state.axes[Joystick::Axis::PovX] = 0.0f;
-    }
     else if (dpadRight)
-    {
         state.axes[Joystick::Axis::PovX] = 100.0f;
-    }
     else if (dpadLeft)
-    {
         state.axes[Joystick::Axis::PovX] = -100.0f;
-    }
     else
-    {
         state.axes[Joystick::Axis::PovX] = 0.0f;
-    }
+
 
     // PovY: Up = 100, Down = -100, both/neither = 0
     if (dpadUp && dpadDown)
-    {
         state.axes[Joystick::Axis::PovY] = 0.0f;
-    }
     else if (dpadUp)
-    {
         state.axes[Joystick::Axis::PovY] = 100.0f;
-    }
     else if (dpadDown)
-    {
         state.axes[Joystick::Axis::PovY] = -100.0f;
-    }
     else
-    {
         state.axes[Joystick::Axis::PovY] = 0.0f;
-    }
 
     // XInput triggers range between 0 and 255 - to scale them to -100.0f .. 100.0f divide by the below factor (255 / 200)
-    constexpr auto triggerScaleFactor = 1.275f;
-    state.axes[Joystick::Axis::U]     = (gamepad.bLeftTrigger / triggerScaleFactor) - 100.0f;
-    state.axes[Joystick::Axis::V]     = (gamepad.bRightTrigger / triggerScaleFactor) - 100.0f;
+    static constexpr auto triggerScaleFactor = 1.275f;
+    state.axes[Joystick::Axis::U]            = (gamepad.bLeftTrigger / triggerScaleFactor) - 100.0f;
+    state.axes[Joystick::Axis::V]            = (gamepad.bRightTrigger / triggerScaleFactor) - 100.0f;
 
     state.connected = true;
 
@@ -1434,9 +1370,7 @@ BOOL CALLBACK JoystickImpl::deviceEnumerationCallback(const DIDEVICEINSTANCE* de
         if (record.guid == deviceInstance->guidInstance)
         {
             if (isXInputDevice(&deviceInstance->guidProduct))
-            {
                 record.xInputDevice = true;
-            }
 
             record.plugged = true;
 
@@ -1446,9 +1380,7 @@ BOOL CALLBACK JoystickImpl::deviceEnumerationCallback(const DIDEVICEINSTANCE* de
 
     JoystickRecord record = {deviceInstance->guidInstance, sf::Joystick::Count, true};
     if (isXInputDevice(&deviceInstance->guidProduct))
-    {
         record.xInputDevice = true;
-    }
     joystickList.push_back(record);
 
     return DIENUM_CONTINUE;
