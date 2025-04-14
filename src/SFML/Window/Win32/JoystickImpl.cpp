@@ -257,7 +257,7 @@ XInputGetStateFunc mXInputGetState = nullptr;
             if (device)
             {
                 device->Release();
-                // important to prevent a double-free in cleanup data destructor 
+                // important to prevent a double-free in cleanup data destructor
                 device = nullptr;
             }
         }
