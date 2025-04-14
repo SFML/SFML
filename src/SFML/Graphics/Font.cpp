@@ -154,24 +154,21 @@ bool Font::openFromFile(const std::filesystem::path& filename)
     // Cleanup the previous resources
     cleanup();
 
-#ifndef SFML_SYSTEM_ANDROID
-
     // Create the input stream and open the file
+#ifndef SFML_SYSTEM_ANDROID
     const auto stream = std::make_shared<FileInputStream>();
     const auto type   = "file"sv;
+#else
+    const auto stream = std::make_shared<priv::ResourceStream>();
+    const auto type   = "Android resource stream"sv;
+#endif
+
     if (!stream->open(filename))
     {
         err() << "Failed to load font (failed to open file): " << std::strerror(errno) << '\n'
               << formatDebugPathInfo(filename) << std::endl;
         return false;
     }
-
-#else
-
-    const auto stream = std::make_shared<priv::ResourceStream>(filename);
-    const auto type   = "Android resource stream"sv;
-
-#endif
 
     // Open the font, and if succesful save the stream to keep it alive
     if (openFromStreamImpl(*stream, type))

@@ -52,7 +52,7 @@ jobs:
         - { name: Static, flags: -DBUILD_SHARED_LIBS=OFF }
         type:
         - { name: Release }
-        - { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug -DSFML_ENABLE_COVERAGE=ON }
+        - { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug -DSFML_ENABLE_COVERAGE=ON -DSFML_FATAL_OPENGL_ERRORS=ON }
 
         include:
         - platform: { name: Windows VS2022 x64, os: windows-2022 }
@@ -93,14 +93,14 @@ jobs:
             flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=29 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=ON -DCMAKE_ANDROID_STL_TYPE=c++_shared
             arch: armeabi-v7a
             api: 29
-          type: { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug }
+          type: { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug -DSFML_FATAL_OPENGL_ERRORS=ON }
         - platform: { name: Android, os: ubuntu-22.04 }
           config:
             name: arm64-v8a (API 33)
             flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=33 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=ON -DCMAKE_ANDROID_STL_TYPE=c++_shared -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF
             arch: arm64-v8a
             api: 33
-          type: { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug }
+          type: { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug -DSFML_FATAL_OPENGL_ERRORS=ON }
 
 
     steps:
