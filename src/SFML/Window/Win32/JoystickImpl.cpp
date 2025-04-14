@@ -121,6 +121,11 @@ struct XInputCleanupData
     BSTR                              bstrClassName{};
     HRESULT                           comInitResult{};
 
+    XInputCleanupData()
+    {
+        VariantInit(&var);
+    }
+
     ~XInputCleanupData()
     {
         VariantClear(&var);
@@ -166,8 +171,6 @@ XInputGetStateFunc mXInputGetState = nullptr;
     data.comInitResult = CoInitialize(nullptr);
     if (FAILED(data.comInitResult))
         return false;
-
-    VariantInit(&data.var);
 
     // Create WMI
     auto hr = CoCreateInstance(CLSID_WbemLocator,
@@ -252,7 +255,11 @@ XInputGetStateFunc mXInputGetState = nullptr;
             VariantClear(&data.var);
             auto* device = data.pDevices[iDevice];
             if (device)
+            {
                 device->Release();
+                // important to prevent a double-free in cleanup data destructor 
+                device = nullptr;
+            }
         }
     }
     return false;
