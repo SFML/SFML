@@ -2,6 +2,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <SystemUtil.hpp>
 #include <string_view>
 
 namespace
@@ -85,7 +86,7 @@ TEST_CASE("[System] sf::Utf8")
         next = sf::Utf8::next(next, utf8.cend());
         CHECK(u8string_view(&*next, 4) == u8"🐌"sv);
         next = sf::Utf8::next(next, utf8.cend());
-        CHECK(next == utf8.cend());
+        CHECK(std::distance(next, utf8.cend()) == 0);
     }
 
     SECTION("count")
@@ -260,7 +261,7 @@ TEST_CASE("[System] sf::Utf16")
         next = sf::Utf16::next(next, utf16.cend());
         CHECK(std::u16string_view(&*next, 2) == u"🐌"sv);
         next = sf::Utf16::next(next, utf16.cend());
-        CHECK(next == utf16.cend());
+        CHECK(std::distance(next, utf16.cend()) == 0);
     }
 
     SECTION("count")
@@ -416,7 +417,7 @@ TEST_CASE("[System] sf::Utf32")
         next = sf::Utf32::next(next, utf32.cend());
         CHECK(*next == U'🐌');
         next = sf::Utf32::next(next, utf32.cend());
-        CHECK(next == utf32.cend());
+        CHECK(std::distance(next, utf32.cend()) == 0);
     }
 
     SECTION("count")
