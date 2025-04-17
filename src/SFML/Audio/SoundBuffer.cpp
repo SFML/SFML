@@ -93,7 +93,7 @@ SoundBuffer::SoundBuffer(const SoundBuffer& copy)
 SoundBuffer::~SoundBuffer()
 {
     // To prevent the iterator from becoming invalid, move the entire buffer to another
-    // container. Otherwise calling resetBuffer would result in detachSound being
+    // container. Otherwise calling `detachBuffer` would result in `detachSound` being
     // called which removes the sound from the internal list.
     SoundList sounds;
     sounds.swap(m_sounds);
