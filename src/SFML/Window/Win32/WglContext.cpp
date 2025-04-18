@@ -487,7 +487,8 @@ void WglContext::setDevicePixelFormat(unsigned int bitsPerPixel)
 ////////////////////////////////////////////////////////////
 void WglContext::updateSettingsFromPixelFormat()
 {
-    const int format = GetPixelFormat(m_deviceContext);
+    static bool hasWarnedAboutGeneric = false;
+    const int   format                = GetPixelFormat(m_deviceContext);
 
     if (format == 0)
     {
@@ -510,13 +511,17 @@ void WglContext::updateSettingsFromPixelFormat()
     {
         m_isGeneric = true;
 
-        err() << "Warning: Detected \"Microsoft Corporation GDI Generic\" OpenGL implementation" << std::endl;
+        if (!hasWarnedAboutGeneric)
+        {
+            hasWarnedAboutGeneric = true;
+            err() << "Warning: Detected \"Microsoft Corporation GDI Generic\" OpenGL implementation" << std::endl;
 
-        // Detect if the generic GDI implementation is not accelerated
-        if (!(actualFormat.dwFlags & PFD_GENERIC_ACCELERATED))
-            err() << "Warning: The \"Microsoft Corporation GDI Generic\" OpenGL implementation is not "
-                     "hardware-accelerated"
-                  << std::endl;
+            // Detect if the generic GDI implementation is not accelerated
+            if (!(actualFormat.dwFlags & PFD_GENERIC_ACCELERATED))
+                err() << "Warning: The \"Microsoft Corporation GDI Generic\" OpenGL implementation is not "
+                         "hardware-accelerated"
+                      << std::endl;
+        }
     }
 
     if (SF_GLAD_WGL_ARB_pixel_format)
