@@ -386,10 +386,7 @@ function(sfml_add_test target SOURCES DEPENDS)
     add_executable(${target} ${SOURCES})
 
     # enable precompiled headers
-    if (SFML_ENABLE_PCH)
-        message(VERBOSE "enabling PCH for SFML test '${target}'")
-        target_precompile_headers(${target} REUSE_FROM sfml-system)
-    endif()
+    target_precompile_headers(${target} REUSE_FROM sfml-test-main)
 
     # set the target's folder (for IDEs that support it, e.g. Visual Studio)
     set_target_properties(${target} PROPERTIES FOLDER "Tests")
