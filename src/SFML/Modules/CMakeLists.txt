@@ -16,6 +16,7 @@ if(SFML_BUILD_WINDOW)
     list(APPEND SFML_MODULES
         Window.cppm
     )
+    target_compile_definitions(sfml-modules PRIVATE BUILD_WINDOW_MODULE)
 endif()
 
 # Add Graphics module files if enabled
@@ -23,6 +24,7 @@ if(SFML_BUILD_GRAPHICS)
     list(APPEND SFML_MODULES
         Graphics.cppm
     )
+    target_compile_definitions(sfml-modules PRIVATE BUILD_GRAPHICS_MODULE)
 endif()
 
 # Add Audio module files if enabled
@@ -30,6 +32,7 @@ if(SFML_BUILD_AUDIO)
     list(APPEND SFML_MODULES
         Audio.cppm
     )
+    target_compile_definitions(sfml-modules PRIVATE BUILD_AUDIO_MODULE)
 endif()
 
 # Add Network module files if enabled
@@ -37,6 +40,7 @@ if(SFML_BUILD_NETWORK)
     list(APPEND SFML_MODULES
         Network.cppm
     )
+    target_compile_definitions(sfml-modules PRIVATE BUILD_NETWORK_MODULE)
 endif()
 
 # Create the module library
