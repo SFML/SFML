@@ -31,7 +31,7 @@ sfml_set_option(CMAKE_OSX_DEPLOYMENT_TARGET "13.0" STRING "The minimal iOS versi
 # project name
 project(SFML VERSION 3.0.1)
 
-set(VERSION_IS_RELEASE OFF)
+set(VERSION_IS_RELEASE ON)
 
 # include the configuration file
 include(cmake/Config.cmake)
