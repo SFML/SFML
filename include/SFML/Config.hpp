@@ -31,7 +31,7 @@
 #define SFML_VERSION_MAJOR      3
 #define SFML_VERSION_MINOR      0
 #define SFML_VERSION_PATCH      1
-#define SFML_VERSION_IS_RELEASE false
+#define SFML_VERSION_IS_RELEASE true
 
 
 ////////////////////////////////////////////////////////////
