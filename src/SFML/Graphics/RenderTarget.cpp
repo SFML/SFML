@@ -826,7 +826,7 @@ void RenderTarget::setupDraw(bool useVertexCache, const RenderStates& states)
     {
         if (isSrgb())
             glCheck(glEnable(GL_FRAMEBUFFER_SRGB));
-        else
+        else if (GLEXT_framebuffer_sRGB)
             glCheck(glDisable(GL_FRAMEBUFFER_SRGB));
     }
 #endif
