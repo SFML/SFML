@@ -510,13 +510,17 @@ void WglContext::updateSettingsFromPixelFormat()
     {
         m_isGeneric = true;
 
-        err() << "Warning: Detected \"Microsoft Corporation GDI Generic\" OpenGL implementation" << std::endl;
+        [[maybe_unused]] static const bool hasWarnedAboutGeneric = [actualFormat]() -> bool
+        {
+            err() << "Warning: Detected \"Microsoft Corporation GDI Generic\" OpenGL implementation" << std::endl;
 
-        // Detect if the generic GDI implementation is not accelerated
-        if (!(actualFormat.dwFlags & PFD_GENERIC_ACCELERATED))
-            err() << "Warning: The \"Microsoft Corporation GDI Generic\" OpenGL implementation is not "
-                     "hardware-accelerated"
-                  << std::endl;
+            // Detect if the generic GDI implementation is not accelerated
+            if (!(actualFormat.dwFlags & PFD_GENERIC_ACCELERATED))
+                err() << "Warning: The \"Microsoft Corporation GDI Generic\" OpenGL implementation is not "
+                         "hardware-accelerated"
+                      << std::endl;
+            return true;
+        }();
     }
 
     if (SF_GLAD_WGL_ARB_pixel_format)
