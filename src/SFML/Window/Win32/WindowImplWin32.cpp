@@ -167,6 +167,7 @@ WindowImplWin32::WindowImplWin32(WindowHandle handle) : m_handle(handle)
             rids[2].usUsage = 0x08; // HID_USAGE_GENERIC_MULTI_AXIS_CONTROLLER;
 
             RegisterRawInputDevices(rids.data(), static_cast<UINT>(rids.size()), sizeof(RAWINPUTDEVICE));
+            SetTimer(m_handle, NULL, USER_TIMER_MINIMUM, nullptr);
 
             initRawMouse();
         }
