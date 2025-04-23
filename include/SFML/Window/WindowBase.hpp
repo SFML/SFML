@@ -425,6 +425,24 @@ public:
     void setIcon(Vector2u size, const std::uint8_t* pixels);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Set the window state
+    ///
+    /// Change between windowed and fullscreen mode.
+    ///
+    /// \param state New state to be applied to the window
+    ///
+    ////////////////////////////////////////////////////////////
+    void setState(State state);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the window's current state
+    ///
+    /// \return Current state the window is in
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] State getState() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Show or hide the window
     ///
     /// The window is shown by default.
