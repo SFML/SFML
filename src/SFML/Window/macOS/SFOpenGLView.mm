@@ -342,6 +342,13 @@
 }
 
 
+////////////////////////////////////////////////////////
+- (BOOL)isFullscreen
+{
+    return m_fullscreen;
+}
+
+
 #pragma mark
 #pragma mark Subclassing methods
 

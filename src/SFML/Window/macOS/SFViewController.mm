@@ -257,6 +257,13 @@
 
 
 ////////////////////////////////////////////////////////
+- (BOOL)isFullscreen
+{
+    return [m_oglView isFullscreen];
+}
+
+
+////////////////////////////////////////////////////////
 - (void)processEvent
 {
     // If we are not on the main thread we stop here and advice the user.
