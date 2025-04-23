@@ -271,6 +271,7 @@ m_cursorGrabbed(m_fullscreen)
             rids[2].usUsage = 0x08; // HID_USAGE_GENERIC_MULTI_AXIS_CONTROLLER;
 
             RegisterRawInputDevices(rids.data(), static_cast<UINT>(rids.size()), sizeof(RAWINPUTDEVICE));
+            SetTimer(m_handle, NULL, USER_TIMER_MINIMUM, nullptr);
 
             initRawMouse();
         }
@@ -1162,6 +1163,13 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         {
             // Some sort of device change has happened, update joystick connections
             JoystickImpl::invalidateDevices();
+            break;
+        }
+
+        // Perform XInput polling here
+        case WM_TIMER:
+        {
+            JoystickImpl::pollXInput();
             break;
         }
 

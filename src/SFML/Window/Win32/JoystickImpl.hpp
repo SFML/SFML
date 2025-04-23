@@ -32,7 +32,7 @@
 
 #include <dinput.h>
 #include <mmsystem.h>
-
+#include <Xinput.h>
 
 namespace sf::priv
 {
@@ -158,6 +158,16 @@ public:
     [[nodiscard]] bool openDInput(unsigned int index);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Open the joystick (XInput)
+    ///
+    /// \param index Index assigned to the joystick
+    ///
+    /// \return `true` on success, `false` on failure
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] bool openXInput(unsigned int index);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Close the joystick (DInput)
     ///
     ////////////////////////////////////////////////////////////
@@ -188,12 +198,16 @@ public:
     [[nodiscard]] JoystickState updateDInputPolled();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Updates the joystick and gets its new state (XInput)
-    ///
-    /// \return Joystick state
+    /// \brief Updates XInput related information
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] JoystickState updateXInput();
+    static void pollXInput();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Pushes XInput state information to a Joystick
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] JoystickState updateXInput(XINPUT_STATE& xinputState);
 
     ////////////////////////////////////////////////////////////
     /// \brief Notifies that there has been a device change
