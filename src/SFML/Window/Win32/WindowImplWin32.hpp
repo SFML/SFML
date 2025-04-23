@@ -135,6 +135,22 @@ public:
     void setIcon(Vector2u size, const std::uint8_t* pixels) override;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Set the window state
+    ///
+    /// \param state New state to be applied to the window
+    ///
+    ////////////////////////////////////////////////////////////
+    void setState(State state) override;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the window's current state
+    ///
+    /// \return Current state the window is in
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] State getState() const override;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Show or hide the window
     ///
     /// \param visible `true` to show, `false` to hide
@@ -209,7 +225,13 @@ private:
     /// \param mode Video mode to switch to
     ///
     ////////////////////////////////////////////////////////////
-    void switchToFullscreen(const VideoMode& mode);
+    void switchToFullscreen();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Switch to window mode
+    ///
+    ////////////////////////////////////////////////////////////
+    void switchToWindowed();
 
     ////////////////////////////////////////////////////////////
     /// \brief Free all the graphical resources attached to the window
@@ -305,9 +327,11 @@ private:
     Vector2u m_lastSize;               //!< The last handled size of the window
     bool     m_resizing{};             //!< Is the window being resized?
     char16_t m_surrogate{}; //!< First half of the surrogate pair, in case we're receiving a Unicode character in two events
-    bool m_mouseInside{};   //!< Mouse is inside the window?
-    bool m_fullscreen{};    //!< Is the window fullscreen?
-    bool m_cursorGrabbed{}; //!< Is the mouse cursor trapped?
+    bool            m_mouseInside{};   //!< Mouse is inside the window?
+    bool            m_fullscreen{};    //!< Is the window fullscreen?
+    bool            m_cursorGrabbed{}; //!< Is the mouse cursor trapped?
+    const DWORD     m_win32Style;      //!< Window style in the windows format
+    const VideoMode m_mode;            //!< Video mode of the window
 };
 
 } // namespace priv

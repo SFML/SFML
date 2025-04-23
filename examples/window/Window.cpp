@@ -151,6 +151,20 @@ int main()
                 window.close();
             }
 
+            // Toggle fullscreen mode with F1
+            if (event->is<sf::Event::KeyPressed>() &&
+                event->getIf<sf::Event::KeyPressed>()->scancode == sf::Keyboard::Scancode::F1)
+            {
+                if (window.getState() == sf::State::Windowed)
+                {
+                    window.setState(sf::State::Fullscreen);
+                }
+                else
+                {
+                    window.setState(sf::State::Windowed);
+                }
+            }
+
             // Resize event: adjust the viewport
             if (const auto* resized = event->getIf<sf::Event::Resized>())
             {

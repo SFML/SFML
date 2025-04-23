@@ -1071,6 +1071,20 @@ void WindowImplX11::setIcon(Vector2u size, const std::uint8_t* pixels)
 
 
 ////////////////////////////////////////////////////////////
+void WindowImplX11::setState(State /*state*/)
+{
+    // Not implemented yet
+}
+
+
+////////////////////////////////////////////////////////////
+State WindowImplX11::getState() const
+{
+    return m_fullscreen ? State::Fullscreen : State::Windowed;
+}
+
+
+////////////////////////////////////////////////////////////
 void WindowImplX11::setVisible(bool visible)
 {
     if (visible)
