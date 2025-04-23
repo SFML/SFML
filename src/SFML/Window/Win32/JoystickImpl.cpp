@@ -114,11 +114,11 @@ struct XInputJoystickEntry
     {
     }
 
-    bool                                  connected{};
-    DWORD                                 xinputIndex{0xFFFFFFFF}; // cannot be zero because 0 is a valid index!
-    std::optional<sf::priv::JoystickImpl> joystick{};
-    XINPUT_STATE                          state{};
-    unsigned int                          joystickIndex{};
+    bool                    connected{};
+    DWORD                   xinputIndex{0xFFFFFFFF}; // cannot be zero because 0 is a valid index!
+    sf::priv::JoystickImpl* joystick{};
+    XINPUT_STATE            state{};
+    unsigned int            joystickIndex{};
 };
 
 constexpr std::size_t                             xinputMaxDevices             = 4;
@@ -512,9 +512,9 @@ void JoystickImpl::close()
 {
     if (directInput)
         closeDInput();
-    xinputDevices[m_xInputIndex].joystick.reset();
-    m_xInputIndex = 0xFFFFFFFF;
-    m_useXInput   = false;
+    xinputDevices[m_xInputIndex].joystick = nullptr;
+    m_xInputIndex                         = 0xFFFFFFFF;
+    m_useXInput                           = false;
 }
 
 
@@ -1071,9 +1071,9 @@ bool JoystickImpl::openXInput(unsigned int index)
 {
     for (auto& device : xinputDevices)
     {
-        if (device.connected && !device.joystick.has_value())
+        if (device.connected && !device.joystick)
         {
-            device.joystick.emplace(*this);
+            device.joystick      = this;
             device.joystickIndex = index;
             m_xInputIndex        = device.xinputIndex;
             return true;
