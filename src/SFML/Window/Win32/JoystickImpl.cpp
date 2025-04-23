@@ -36,6 +36,7 @@
 #include <algorithm>
 #include <array>
 #include <iomanip>
+#include <optional>
 #include <ostream>
 #include <regstr.h>
 #include <sstream>
@@ -106,8 +107,23 @@ JoystickBlacklist joystickBlacklist;
 const DWORD directInputEventBufferSize = 32;
 
 // For XInput
-std::vector<bool> xInputSlots;
-bool              directInputNeedsInvalidation = false;
+
+struct XInputJoystickEntry
+{
+    XInputJoystickEntry()
+    {
+    }
+
+    bool                                  connected{};
+    DWORD                                 xinputIndex{0xFFFFFFFF}; // cannot be zero because 0 is a valid index!
+    std::optional<sf::priv::JoystickImpl> joystick{};
+    XINPUT_STATE                          state{};
+    unsigned int                          joystickIndex{};
+};
+
+constexpr std::size_t                             xinputMaxDevices             = 4;
+bool                                              directInputNeedsInvalidation = false;
+std::array<XInputJoystickEntry, xinputMaxDevices> xinputDevices{};
 
 struct XInputCleanupData
 {
@@ -258,7 +274,7 @@ XInputGetStateFunc mXInputGetState = nullptr;
             {
                 device->Release();
                 // important to prevent a double-free in cleanup data destructor
-                device = nullptr;
+                data.pDevices[iDevice] = nullptr;
             }
         }
     }
@@ -381,9 +397,6 @@ void JoystickImpl::initialize()
     mXInputGetState = reinterpret_cast<XInputGetStateFunc>(
         reinterpret_cast<void*>(GetProcAddress(xinputModule, "XInputGetState")));
 
-    static constexpr std::size_t xinputMaxDevices = 4;
-    xInputSlots.resize(xinputMaxDevices);
-
     // Try to initialize DirectInput
     initializeDInput();
 
@@ -470,7 +483,12 @@ void JoystickImpl::updateConnections()
 bool JoystickImpl::open(unsigned int index)
 {
     if (directInput)
-        return openDInput(index);
+    {
+        auto returnValue = openDInput(index);
+        if (m_useXInput && returnValue)
+            return openXInput(index);
+        return returnValue;
+    }
 
     // No explicit "open" action is required
     m_index = JOYSTICKID1 + index;
@@ -494,6 +512,9 @@ void JoystickImpl::close()
 {
     if (directInput)
         closeDInput();
+    xinputDevices[m_xInputIndex].joystick.reset();
+    m_xInputIndex = 0xFFFFFFFF;
+    m_useXInput   = false;
 }
 
 
@@ -545,8 +566,9 @@ JoystickState JoystickImpl::update()
         updateConnections();
     }
 
+    // XInput state is buffered because XInput is a polling protocol (125Hz)
     if (m_useXInput)
-        return updateXInput();
+        return updateXInput(xinputDevices[m_xInputIndex].state);
 
     if (directInput)
     {
@@ -1044,6 +1066,22 @@ bool JoystickImpl::openDInput(unsigned int index)
     return false;
 }
 
+////////////////////////////////////////////////////////////
+bool JoystickImpl::openXInput(unsigned int index)
+{
+    for (auto& device : xinputDevices)
+    {
+        if (device.connected && !device.joystick.has_value())
+        {
+            device.joystick.emplace(*this);
+            device.joystickIndex = index;
+            m_xInputIndex        = device.xinputIndex;
+            return true;
+        }
+    }
+    return false;
+}
+
 
 ////////////////////////////////////////////////////////////
 void JoystickImpl::closeDInput()
@@ -1081,36 +1119,30 @@ JoystickCaps JoystickImpl::getCapabilitiesDInput() const
     return caps;
 }
 
-////////////////////////////////////////////////////////////
-JoystickState JoystickImpl::updateXInput()
+void JoystickImpl::pollXInput()
 {
-    // No identified index yet
-    if (m_xInputIndex == 0xFFFFFFFF)
+    for (DWORD xinputIndex = 0; xinputIndex < xinputMaxDevices; xinputIndex++)
     {
-        for (std::size_t i = 0; i < xInputSlots.size(); ++i)
+        auto&        destState = xinputDevices[xinputIndex];
+        XINPUT_STATE xinputState{};
+        const auto   result = mXInputGetState(xinputIndex, &xinputState);
+        if (result == 0x0)
         {
-            const bool taken = xInputSlots[i];
-            if (!taken)
-            {
-                xInputSlots[i] = true;
-                m_xInputIndex  = static_cast<DWORD>(i);
-                break;
-            }
+            destState.connected   = true;
+            destState.state       = xinputState;
+            destState.xinputIndex = xinputIndex;
+        }
+        else
+        {
+            destState.connected   = false;
+            destState.state       = {};
+            destState.xinputIndex = xinputIndex;
         }
     }
+}
 
-    XINPUT_STATE xinputState{};
-    const auto   result = mXInputGetState(m_xInputIndex, &xinputState);
-
-    if (result != S_OK)
-    {
-        // probably device not connected.
-        xInputSlots[m_xInputIndex] = false;
-        m_state                    = {};
-        m_xInputIndex              = 0xFFFFFFFF;
-        return m_state;
-    }
-
+JoystickState JoystickImpl::updateXInput(XINPUT_STATE& xinputState)
+{
     // INFO: After consideration, the Directional Pad will be exposed as PovX and PovY axes for consistency with PS5 DualSense controllers.
 
     auto& state      = m_state;
@@ -1171,7 +1203,6 @@ JoystickState JoystickImpl::updateXInput()
     state.axes[Joystick::Axis::V]            = (gamepad.bRightTrigger / triggerScaleFactor) - 100.0f;
 
     state.connected = true;
-
     return state;
 }
 
@@ -1388,6 +1419,7 @@ BOOL CALLBACK JoystickImpl::deviceEnumerationCallback(const DIDEVICEINSTANCE* de
     JoystickRecord record = {deviceInstance->guidInstance, sf::Joystick::Count, true};
     if (isXInputDevice(&deviceInstance->guidProduct))
         record.xInputDevice = true;
+
     joystickList.push_back(record);
 
     return DIENUM_CONTINUE;
