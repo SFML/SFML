@@ -1,5 +1,51 @@
 # Changelog
 
+## SFML 3.0.1
+
+### General
+
+-   Improved SFML 3 migration guide (#3464, #3478, #3480)
+-   Improved diagnostics when incorrect library type is found by find_package (#3368)
+-   Improved diagnostics when C++ language version is too low (#3383)
+-   Fixed build errors when compiling in C++20 mode (#3394)
+-   [iOS] Fixed iOS debug build (#3427)
+-   Removed `-s` suffix for sfml-main (#3431)
+-   Prevented recreation of UDev target which broke package manager workflows (#3450)
+-   Fixed bug with installing pkgconfig files (#3451)
+-   Fixed CMake 4 build error (#3462)
+-   [macOS] Fixed C++ language version in Xcode template (#3463)
+
+### System
+
+**Bugfixes**
+
+-   [Windows] Silenced C4275 warning for `sf::Exception` (#3405)
+-   Fixed printing Unicode filepaths when error occurs (#3407)
+
+### Window
+
+**Bugfixes**
+
+-   Improved `sf::Event::visit` and `sf::WindowBase::handleEvents` (#3399)
+-   [Windows] Fixed calculating window size with a menu or an extended style (#3448)
+-   [Windows] Fixed crash when constructing a window from a `sf::WindowHandle` (#3469)
+
+### Graphics
+
+**Bugfixes**
+
+-   Fixed `sf::Image` support for Unicode filenames (#3403)
+-   Ensured `sf::Image` remains unchanged after an unsuccessful load (#3409)
+-   Fixed opening `sf::Font` from non-ASCII paths (#3422)
+-   [Android] Fixed crash when loading missing resources (#3476)
+
+### Network
+
+**Bugfixes**
+
+-   Fixed comments and address ordering in IpAddress::getLocalAddress (#3428)
+-   Fixed unsigned overflow in `sf::Packet` size check (#3441)
+
 ## SFML 3.0.0
 
 For a closer look at breaking changes and how to migrate from SFML 2, check out the [migration guide](migration.md).
