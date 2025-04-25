@@ -30,9 +30,9 @@
 #include <SFML/System/EnumArray.hpp>
 #include <SFML/System/Win32/WindowsHeader.hpp>
 
+#include <Xinput.h>
 #include <dinput.h>
 #include <mmsystem.h>
-#include <Xinput.h>
 
 namespace sf::priv
 {
