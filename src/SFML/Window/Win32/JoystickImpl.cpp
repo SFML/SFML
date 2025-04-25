@@ -110,10 +110,6 @@ const DWORD directInputEventBufferSize = 32;
 
 struct XInputJoystickEntry
 {
-    XInputJoystickEntry()
-    {
-    }
-
     bool                    connected{};
     DWORD                   xinputIndex{0xFFFFFFFF}; // cannot be zero because 0 is a valid index!
     sf::priv::JoystickImpl* joystick{};
