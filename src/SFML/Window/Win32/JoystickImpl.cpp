@@ -512,9 +512,10 @@ void JoystickImpl::close()
 {
     if (directInput)
         closeDInput();
-    xinputDevices[m_xInputIndex].joystick = nullptr;
-    m_xInputIndex                         = 0xFFFFFFFF;
-    m_useXInput                           = false;
+    if (m_useXInput && m_xInputIndex < xinputMaxDevices)
+        xinputDevices[m_xInputIndex].joystick = nullptr;
+    m_xInputIndex = 0xFFFFFFFF;
+    m_useXInput   = false;
 }
 
 
