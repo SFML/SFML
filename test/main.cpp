@@ -1,7 +1,6 @@
 #include <catch2/catch_session.hpp>
 
 #include <SFML/Main.hpp>
-
 #include <array>
 
 ////////////////////////////////////////////////////////////

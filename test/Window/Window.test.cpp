@@ -84,7 +84,6 @@ TEST_CASE("[Window] sf::Window", runDisplayTests())
                                     sf::State::Windowed,
                                     sf::ContextSettings{/* depthBits*/ 1, /* stencilBits */ 1, /* antiAliasingLevel */ 1});
             CHECK(window.isOpen());
-            
 #ifndef SFML_SYSTEM_IOS
             // Fails on iOS as the window size always returns the display size
             CHECK(window.getSize() == sf::Vector2u(360, 240));

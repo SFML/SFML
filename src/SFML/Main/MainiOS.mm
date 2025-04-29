@@ -42,6 +42,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
+
 #include <SFML/Window/iOS/SFAppDelegate.hpp>
 
 #include <UIKit/UIKit.h>
@@ -50,8 +51,9 @@
 ////////////////////////////////////////////////////////////
 int main(int argc, char** argv)
 {
-    NSString * appDelegateClassName;
-    @autoreleasepool {
+    NSString* appDelegateClassName;
+    @autoreleasepool 
+    {
         // Setup code that might create autoreleased objects goes here.
         appDelegateClassName = NSStringFromClass([SFAppDelegate class]);
     }
