@@ -32,8 +32,12 @@ add_library(sfml-test-main STATIC
     TestUtilities/AudioUtil.cpp
 )
 target_include_directories(sfml-test-main PUBLIC TestUtilities)
-target_link_libraries(sfml-test-main PUBLIC SFML::Main SFML::System Catch2::Catch2)
+target_link_libraries(sfml-test-main PUBLIC SFML::System Catch2::Catch2)
 set_target_warnings(sfml-test-main)
+
+if(TARGET SFML::Main)
+    target_link_libraries(sfml-test-main PUBLIC SFML::Main)
+endif()
 
 # set the target flags to use the appropriate C++ standard library
 sfml_set_stdlib(Catch2)
