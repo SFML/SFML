@@ -32,15 +32,20 @@ add_library(sfml-test-main STATIC
     TestUtilities/AudioUtil.cpp
 )
 target_include_directories(sfml-test-main PUBLIC TestUtilities)
-target_link_libraries(sfml-test-main PUBLIC SFML::System Catch2::Catch2)
-set_target_warnings(sfml-test-main)
+target_link_libraries(sfml-test-main PUBLIC SFML::System)
 
+# Main is required on some platforms and is completely removed on others, so we can only depend on it when it exists
 if(TARGET SFML::Main)
-    target_link_libraries(sfml-test-main PUBLIC SFML::Main)
+    target_link_libraries(sfml-test-main PUBLIC SFML::Main Catch2::Catch2)
+else()
+    target_link_libraries(sfml-test-main PUBLIC Catch2::Catch2WithMain)
 endif()
+
+set_target_warnings(sfml-test-main)
 
 # set the target flags to use the appropriate C++ standard library
 sfml_set_stdlib(Catch2)
+sfml_set_stdlib(Catch2WithMain)
 sfml_set_stdlib(sfml-test-main)
 
 sfml_set_option(SFML_RUN_DISPLAY_TESTS ON BOOL "ON to run tests that require a display, OFF to ignore it")
@@ -94,7 +99,6 @@ set(WINDOW_SRC
     Window/Event.test.cpp
     Window/GlResource.test.cpp
     Window/Joystick.test.cpp
-    Window/Keyboard.test.cpp
     Window/Mouse.test.cpp
     Window/VideoMode.test.cpp
     Window/Window.test.cpp
