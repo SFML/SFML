@@ -410,11 +410,18 @@ void WindowImplWin32::setIcon(Vector2u size, const std::uint8_t* pixels)
     }
 }
 
-
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::setState(State state)
 {
+    setState(state, m_mode.size);
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplWin32::setState(State state, sf::Vector2u size)
+{
     auto currentState = getState();
+    m_mode.size = size;
 
     switch (state)
     {

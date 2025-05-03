@@ -187,6 +187,13 @@ void WindowImplAndroid::setState(State /*state*/)
 
 
 ////////////////////////////////////////////////////////////
+void WindowImplAndroid::setState(State /*state*/, sf::Vector2u /*size*/)
+{
+    // Not implemented yet
+}
+
+
+////////////////////////////////////////////////////////////
 State WindowImplAndroid::getState() const
 {
     const ActivityStates& states = getActivity();

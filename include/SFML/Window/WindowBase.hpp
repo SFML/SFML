@@ -429,10 +429,30 @@ public:
     ///
     /// Change between windowed and fullscreen mode.
     ///
+    /// \note This function will reuse the window's current size
+    /// when switching modes. If this behavior is no desired use the
+    /// overloaded function that accepts a different size.
+    ///
     /// \param state New state to be applied to the window
+    ///
+    /// \see `setState`
     ///
     ////////////////////////////////////////////////////////////
     void setState(State state);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the window state with a different size
+    ///
+    /// Change between windowed and fullscreen mode while using a
+    /// different window size for the new state.
+    ///
+    /// \param state New state to be applied to the window
+    /// \param size New window size to be applied with the new state
+    ///
+    /// \see `setState`
+    ///
+    ////////////////////////////////////////////////////////////
+    void setState(State state, sf::Vector2u size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the window's current state
