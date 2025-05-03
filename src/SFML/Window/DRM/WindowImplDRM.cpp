@@ -153,6 +153,13 @@ void WindowImplDRM::setState(State /*state*/)
 
 
 ////////////////////////////////////////////////////////////
+void WindowImplDRM::setState(State /*state*/, sf::Vector2u /*size*/)
+{
+    // Not implemented yet
+}
+
+
+////////////////////////////////////////////////////////////
 State WindowImplDRM::getState() const
 {
     return State::Windowed;

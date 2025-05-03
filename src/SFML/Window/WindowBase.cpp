@@ -285,6 +285,14 @@ void WindowBase::setState(State state)
 
 
 ////////////////////////////////////////////////////////////
+void WindowBase::setState(State state, sf::Vector2u size)
+{
+    if (m_impl)
+        m_impl->setState(state, size);
+}
+
+
+////////////////////////////////////////////////////////////
 State WindowBase::getState() const
 {
     return m_impl ? m_impl->getState() : State::Windowed;

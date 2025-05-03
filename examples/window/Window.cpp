@@ -157,11 +157,11 @@ int main()
             {
                 if (window.getState() == sf::State::Windowed)
                 {
-                    window.setState(sf::State::Fullscreen);
+                    window.setState(sf::State::Fullscreen, sf::VideoMode::getFullscreenModes()[0].size);
                 }
                 else
                 {
-                    window.setState(sf::State::Windowed);
+                    window.setState(sf::State::Windowed, {640, 480});
                 }
             }
 

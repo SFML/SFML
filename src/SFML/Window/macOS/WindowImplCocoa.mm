@@ -429,6 +429,13 @@ void WindowImplCocoa::setState(State /*state*/)
 
 
 ////////////////////////////////////////////////////////////
+void WindowImplCocoa::setState(State /*state*/, sf::Vector2u /*size*/)
+{
+    // Not implemented yet
+}
+
+
+////////////////////////////////////////////////////////////
 State WindowImplCocoa::getState() const
 {
     const AutoreleasePool pool;

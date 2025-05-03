@@ -1200,6 +1200,13 @@ void WindowImplX11::setState(State /*state*/)
 
 
 ////////////////////////////////////////////////////////////
+void WindowImplX11::setState(State /*state*/, sf::Vector2u /*size*/)
+{
+    // Not implemented yet
+}
+
+
+////////////////////////////////////////////////////////////
 State WindowImplX11::getState() const
 {
     return m_fullscreen ? State::Fullscreen : State::Windowed;
