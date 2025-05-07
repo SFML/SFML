@@ -1070,9 +1070,10 @@ bool JoystickImpl::openXInput(unsigned int index)
     {
         if (device.connected && !device.joystick)
         {
-            device.joystick      = this;
-            device.joystickIndex = index;
-            m_xInputIndex        = device.xinputIndex;
+            device.joystick       = this;
+            device.joystickIndex  = index;
+            m_xInputIndex         = device.xinputIndex;
+            m_identification.name = m_identification.name + " [XInput Slot " + std::to_string(device.xinputIndex) + "]";
             return true;
         }
     }
