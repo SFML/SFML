@@ -296,10 +296,21 @@ void Shape::updateOutline()
     // Determine if points are defined clockwise or counterclockwise. This will impact normals computation.
     const bool flipNormals = [this, count]()
     {
-        float twiceArea = 0.f;
+        // p0 is either strictly inside the shape, or on an edge.
+        const sf::Vector2f p0 = m_vertices[0].position;
         for (std::size_t i = 0; i < count; ++i)
-            twiceArea += m_vertices[i + 1].position.cross(m_vertices[i + 2].position);
-        return twiceArea >= 0.f;
+        {
+            const sf::Vector2f p1      = m_vertices[i + 1].position;
+            const sf::Vector2f p2      = m_vertices[i + 2].position;
+            const float        product = (p1 - p0).cross(p2 - p0);
+            if (product == 0.f)
+            {
+                // p0 is on the edge p1-p2. We cannot determine shape orientation yet, so continue.
+                continue;
+            }
+            return product > 0.f;
+        }
+        return true;
     }();
 
     for (std::size_t i = 0; i < count; ++i)
