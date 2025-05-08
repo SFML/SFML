@@ -115,7 +115,20 @@ struct XInputJoystickEntry
     sf::priv::JoystickImpl* joystick{};
     XINPUT_STATE            state{};
     unsigned int            joystickIndex{};
+    WORD                    vendorId;
+    WORD                    productId;
 };
+// NOLINTBEGIN(readability-identifier-naming)
+// Since this struct is a reference to MSFT Windows
+struct XINPUT_CAPABILITIES_EX
+{
+    XINPUT_CAPABILITIES Capabilities;
+    WORD                vendorId;
+    WORD                productId;
+    WORD                revisionId;
+    DWORD               a4; //unknown
+};
+// NOLINTEND(readability-identifier-naming)
 
 constexpr std::size_t                             xinputMaxDevices             = 4;
 bool                                              directInputNeedsInvalidation = false;
@@ -172,8 +185,29 @@ const IID IID_IWbemLocator = {0xdc12a687, 0x737f, 0x11cf, {0x88, 0x4d, 0x00, 0xa
 
 // Function pointer type for XInputGetState
 using XInputGetStateFunc = DWORD(WINAPI*)(DWORD dwUserIndex, XINPUT_STATE* pState);
+// Function pointer type for XInputGetCapabilitiesEx
+using XInputGetCapabilitiesExFunc =
+    DWORD(WINAPI*)(DWORD a1, DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES_EX* pCapabilities);
 
+XInputGetCapabilitiesExFunc mXInputGetCapabilitiesEx = nullptr;
 XInputGetStateFunc mXInputGetState = nullptr;
+
+[[nodiscard]] std::optional<DWORD> getXInputIndexFromVidPid(WORD vid, WORD pid) noexcept
+{
+    DWORD slot = 0;
+    for (const DWORD xInputSlot : {0,1,2,3})
+    {
+        XINPUT_CAPABILITIES_EX capsEx = {};
+        if (mXInputGetCapabilitiesEx(1, xInputSlot, 0, &capsEx) == ERROR_SUCCESS)
+        {
+            if (capsEx.vendorId == vid && capsEx.productId == pid)
+            {
+                return slot;
+            }
+        }
+    }
+    return std::nullopt;
+}
 
 // See also https://learn.microsoft.com/en-us/windows/win32/xinput/xinput-and-directinput?redirectedfrom=MSDN
 [[nodiscard]] BOOL isXInputDevice(const GUID* pGuidProductFromDirectInput)
@@ -388,6 +422,12 @@ void JoystickImpl::initialize()
     {
         // this always succeeds.
         xinputModule = LoadLibraryA("XINPUT9_1_0.DLL");
+        mXInputGetCapabilitiesEx = nullptr;
+    }
+    else
+    {
+        mXInputGetCapabilitiesEx = reinterpret_cast<XInputGetCapabilitiesExFunc>(
+            reinterpret_cast<void*>(GetProcAddress(xinputModule, (char*)108)));
     }
     assert(xinputModule != nullptr);
     mXInputGetState = reinterpret_cast<XInputGetStateFunc>(
@@ -1070,11 +1110,28 @@ bool JoystickImpl::openXInput(unsigned int index)
     {
         if (device.connected && !device.joystick)
         {
-            device.joystick       = this;
-            device.joystickIndex  = index;
-            m_xInputIndex         = device.xinputIndex;
-            m_identification.name = m_identification.name + " [XInput Slot " + std::to_string(device.xinputIndex) + "]";
-            return true;
+            if (mXInputGetCapabilitiesEx != nullptr)
+            {
+                auto slot = getXInputIndexFromVidPid(static_cast<WORD>(m_identification.vendorId), static_cast<WORD>(m_identification.productId));
+                if (slot.has_value())
+                {
+                    device.joystickIndex = index;
+                    device.joystick      = this;
+                    device.xinputIndex   = slot.value();
+                    m_xInputIndex         = device.xinputIndex; 
+                    m_identification.name = m_identification.name + " XINPUT [" +
+                                            std::to_string(device.xinputIndex) + "]";
+                    return true;
+                }
+            }
+            else
+            {
+                device.joystick       = this;
+                device.joystickIndex  = index;
+                m_xInputIndex         = device.xinputIndex;
+                m_identification.name = "Generic XInput Device Slot [" + std::to_string(device.xinputIndex) + "]";
+                return true;
+            }
         }
     }
     return false;
