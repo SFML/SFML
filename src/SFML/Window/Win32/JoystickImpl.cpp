@@ -190,12 +190,12 @@ using XInputGetCapabilitiesExFunc =
     DWORD(WINAPI*)(DWORD a1, DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES_EX* pCapabilities);
 
 XInputGetCapabilitiesExFunc mXInputGetCapabilitiesEx = nullptr;
-XInputGetStateFunc mXInputGetState = nullptr;
+XInputGetStateFunc          mXInputGetState          = nullptr;
 
 [[nodiscard]] std::optional<DWORD> getXInputIndexFromVidPid(WORD vid, WORD pid) noexcept
 {
     DWORD slot = 0;
-    for (const DWORD xInputSlot : {0,1,2,3})
+    for (const DWORD xInputSlot : {0, 1, 2, 3})
     {
         XINPUT_CAPABILITIES_EX capsEx = {};
         if (mXInputGetCapabilitiesEx(1, xInputSlot, 0, &capsEx) == ERROR_SUCCESS)
@@ -421,7 +421,7 @@ void JoystickImpl::initialize()
     if (!xinputModule)
     {
         // this always succeeds.
-        xinputModule = LoadLibraryA("XINPUT9_1_0.DLL");
+        xinputModule             = LoadLibraryA("XINPUT9_1_0.DLL");
         mXInputGetCapabilitiesEx = nullptr;
     }
     else
@@ -1112,15 +1112,16 @@ bool JoystickImpl::openXInput(unsigned int index)
         {
             if (mXInputGetCapabilitiesEx != nullptr)
             {
-                auto slot = getXInputIndexFromVidPid(static_cast<WORD>(m_identification.vendorId), static_cast<WORD>(m_identification.productId));
+                auto slot = getXInputIndexFromVidPid(static_cast<WORD>(m_identification.vendorId),
+                                                     static_cast<WORD>(m_identification.productId));
                 if (slot.has_value())
                 {
-                    device.joystickIndex = index;
-                    device.joystick      = this;
-                    device.xinputIndex   = slot.value();
-                    m_xInputIndex         = device.xinputIndex; 
-                    m_identification.name = m_identification.name + " XINPUT [" +
-                                            std::to_string(device.xinputIndex) + "]";
+                    device.joystickIndex  = index;
+                    device.joystick       = this;
+                    device.xinputIndex    = slot.value();
+                    m_xInputIndex         = device.xinputIndex;
+                    m_identification.name = m_identification.name + " XINPUT [" + std::to_string(device.xinputIndex) +
+                                            "]";
                     return true;
                 }
             }
