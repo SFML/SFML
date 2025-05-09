@@ -200,6 +200,11 @@ XInputGetStateFunc          mXInputGetState          = nullptr;
         XINPUT_CAPABILITIES_EX capsEx = {};
         if (mXInputGetCapabilitiesEx(1, xInputSlot, 0, &capsEx) == ERROR_SUCCESS)
         {
+            if (capsEx.vendorId == 0x045e && capsEx.productId == 0 && capsEx.Capabilities.Flags & XINPUT_CAPS_WIRELESS)
+            {
+                capsEx.productId = 0x02a1;
+            }
+
             if (capsEx.vendorId == vid && capsEx.productId == pid)
             {
                 return slot;
