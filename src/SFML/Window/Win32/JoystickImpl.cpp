@@ -59,7 +59,10 @@
 #ifndef DIDFT_OPTIONAL
 #define DIDFT_OPTIONAL 0x80000000
 #endif
-
+// because the xinput header has these under some OS build version guards 
+#ifndef XINPUT_CAPS_WIRELESS
+#define XINPUT_CAPS_WIRELESS 0x0002
+#endif
 
 namespace
 {
@@ -207,7 +210,10 @@ XInputGetStateFunc          mXInputGetState          = nullptr;
 
             if (capsEx.vendorId == vid && capsEx.productId == pid)
             {
-                return slot;
+                auto& entry = xinputDevices[slot];
+                // guard against multiple identical devices
+                if (entry.joystick == nullptr)
+                    return slot;
             }
         }
     }
@@ -527,7 +533,13 @@ bool JoystickImpl::open(unsigned int index)
     {
         auto returnValue = openDInput(index);
         if (m_useXInput && returnValue)
-            return openXInput(index);
+        {
+            if (!(returnValue = openXInput(index)))
+            {
+                // because otherwise we leak the dinput device
+                closeDInput();
+            }
+        }
         return returnValue;
     }
 
