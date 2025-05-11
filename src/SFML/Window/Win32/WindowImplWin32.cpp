@@ -167,7 +167,7 @@ WindowImplWin32::WindowImplWin32(WindowHandle handle) : m_handle(handle)
             rids[2].usUsage = 0x08; // HID_USAGE_GENERIC_MULTI_AXIS_CONTROLLER;
 
             RegisterRawInputDevices(rids.data(), static_cast<UINT>(rids.size()), sizeof(RAWINPUTDEVICE));
-            SetTimer(m_handle, 0x0u, 0x8u, nullptr);
+            SetTimer(m_handle, 0, 8, nullptr);
 
             initRawMouse();
         }
@@ -272,7 +272,7 @@ m_cursorGrabbed(m_fullscreen)
             rids[2].usUsage = 0x08; // HID_USAGE_GENERIC_MULTI_AXIS_CONTROLLER;
 
             RegisterRawInputDevices(rids.data(), static_cast<UINT>(rids.size()), sizeof(RAWINPUTDEVICE));
-            SetTimer(m_handle, 0x0u, 0x8u, nullptr);
+            SetTimer(m_handle, 0, 8, nullptr);
 
             initRawMouse();
         }

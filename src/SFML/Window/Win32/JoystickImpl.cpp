@@ -59,7 +59,7 @@
 #ifndef DIDFT_OPTIONAL
 #define DIDFT_OPTIONAL 0x80000000
 #endif
-// because the xinput header has these under some OS build version guards 
+// Xinput header has these under some OS build version guards
 #ifndef XINPUT_CAPS_WIRELESS
 #define XINPUT_CAPS_WIRELESS 0x0002
 #endif
@@ -114,13 +114,14 @@ const DWORD directInputEventBufferSize = 32;
 struct XInputJoystickEntry
 {
     bool                    connected{};
-    DWORD                   xinputIndex{0xFFFFFFFF}; // cannot be zero because 0 is a valid index!
+    DWORD                   xinputIndex{0xFFFFFFFF}; // Cannot be zero because 0 is a valid index
     sf::priv::JoystickImpl* joystick{};
     XINPUT_STATE            state{};
     unsigned int            joystickIndex{};
     WORD                    vendorId;
     WORD                    productId;
 };
+
 // NOLINTBEGIN(readability-identifier-naming)
 // Since this struct is a reference to MSFT Windows
 struct XINPUT_CAPABILITIES_EX
@@ -133,9 +134,8 @@ struct XINPUT_CAPABILITIES_EX
 };
 // NOLINTEND(readability-identifier-naming)
 
-constexpr std::size_t                             xinputMaxDevices             = 4;
-bool                                              directInputNeedsInvalidation = false;
-std::array<XInputJoystickEntry, xinputMaxDevices> xinputDevices{};
+bool                               directInputNeedsInvalidation = false;
+std::array<XInputJoystickEntry, 4> xinputDevices{};
 
 struct XInputCleanupData
 {
@@ -198,15 +198,13 @@ XInputGetStateFunc          mXInputGetState          = nullptr;
 [[nodiscard]] std::optional<DWORD> getXInputIndexFromVidPid(WORD vid, WORD pid) noexcept
 {
     DWORD slot = 0;
-    for (const DWORD xInputSlot : {0, 1, 2, 3})
+    for (const DWORD xInputSlot : {0u, 1u, 2u, 3u})
     {
-        XINPUT_CAPABILITIES_EX capsEx = {};
+        XINPUT_CAPABILITIES_EX capsEx{};
         if (mXInputGetCapabilitiesEx(1, xInputSlot, 0, &capsEx) == ERROR_SUCCESS)
         {
             if (capsEx.vendorId == 0x045e && capsEx.productId == 0 && capsEx.Capabilities.Flags & XINPUT_CAPS_WIRELESS)
-            {
                 capsEx.productId = 0x02a1;
-            }
 
             if (capsEx.vendorId == vid && capsEx.productId == pid)
             {
@@ -438,9 +436,9 @@ void JoystickImpl::initialize()
     else
     {
         mXInputGetCapabilitiesEx = reinterpret_cast<XInputGetCapabilitiesExFunc>(
-            reinterpret_cast<void*>(GetProcAddress(xinputModule, (char*)108)));
+            reinterpret_cast<void*>(GetProcAddress(xinputModule, reinterpret_cast<char*>(108))));
     }
-    assert(xinputModule != nullptr);
+    assert(xinputModule);
     mXInputGetState = reinterpret_cast<XInputGetStateFunc>(
         reinterpret_cast<void*>(GetProcAddress(xinputModule, "XInputGetState")));
 
@@ -531,16 +529,17 @@ bool JoystickImpl::open(unsigned int index)
 {
     if (directInput)
     {
-        auto returnValue = openDInput(index);
-        if (m_useXInput && returnValue)
+        auto result = openDInput(index);
+        if (m_useXInput && result)
         {
-            if (!(returnValue = openXInput(index)))
+            result = openXInput(index);
+            if (!result)
             {
-                // because otherwise we leak the dinput device
+                // Avoid leaking the dinput device
                 closeDInput();
             }
         }
-        return returnValue;
+        return result;
     }
 
     // No explicit "open" action is required
@@ -565,7 +564,7 @@ void JoystickImpl::close()
 {
     if (directInput)
         closeDInput();
-    if (m_useXInput && m_xInputIndex < xinputMaxDevices)
+    if (m_useXInput && m_xInputIndex < xinputDevices.size())
         xinputDevices[m_xInputIndex].joystick = nullptr;
     m_xInputIndex = 0xFFFFFFFF;
     m_useXInput   = false;
@@ -871,7 +870,7 @@ bool JoystickImpl::openDInput(unsigned int index)
 
             if (m_useXInput)
             {
-                // use XInput instead of DirectInput for obtaining caps and data
+                // Use XInput instead of DirectInput for obtaining caps and data
                 return true;
             }
 
@@ -1129,13 +1128,13 @@ bool JoystickImpl::openXInput(unsigned int index)
         {
             if (mXInputGetCapabilitiesEx != nullptr)
             {
-                auto slot = getXInputIndexFromVidPid(static_cast<WORD>(m_identification.vendorId),
-                                                     static_cast<WORD>(m_identification.productId));
+                const auto slot = getXInputIndexFromVidPid(static_cast<WORD>(m_identification.vendorId),
+                                                           static_cast<WORD>(m_identification.productId));
                 if (slot.has_value())
                 {
                     device.joystickIndex  = index;
                     device.joystick       = this;
-                    device.xinputIndex    = slot.value();
+                    device.xinputIndex    = *slot;
                     m_xInputIndex         = device.xinputIndex;
                     m_identification.name = m_identification.name + " XINPUT [" + std::to_string(device.xinputIndex) +
                                             "]";
@@ -1192,9 +1191,11 @@ JoystickCaps JoystickImpl::getCapabilitiesDInput() const
     return caps;
 }
 
+
+////////////////////////////////////////////////////////////
 void JoystickImpl::pollXInput()
 {
-    for (DWORD xinputIndex = 0; xinputIndex < xinputMaxDevices; xinputIndex++)
+    for (DWORD xinputIndex = 0; xinputIndex < xinputDevices.size(); ++xinputIndex)
     {
         auto&        destState = xinputDevices[xinputIndex];
         XINPUT_STATE xinputState{};
@@ -1214,9 +1215,11 @@ void JoystickImpl::pollXInput()
     }
 }
 
+
+////////////////////////////////////////////////////////////
 JoystickState JoystickImpl::updateXInput(XINPUT_STATE& xinputState)
 {
-    // INFO: After consideration, the Directional Pad will be exposed as PovX and PovY axes for consistency with PS5 DualSense controllers.
+    // After consideration, the Directional Pad will be exposed as PovX and PovY axes for consistency with PS5 DualSense controllers.
 
     auto& state      = m_state;
     auto& gamepad    = xinputState.Gamepad;

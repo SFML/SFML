@@ -34,6 +34,7 @@
 #include <dinput.h>
 #include <mmsystem.h>
 
+
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
