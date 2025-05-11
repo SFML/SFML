@@ -55,14 +55,15 @@
 // DirectInput
 ////////////////////////////////////////////////////////////
 
-
 #ifndef DIDFT_OPTIONAL
 #define DIDFT_OPTIONAL 0x80000000
 #endif
+
 // Xinput header has these under some OS build version guards
 #ifndef XINPUT_CAPS_WIRELESS
 #define XINPUT_CAPS_WIRELESS 0x0002
 #endif
+
 
 namespace
 {
@@ -109,7 +110,6 @@ JoystickBlacklist joystickBlacklist;
 
 const DWORD directInputEventBufferSize = 32;
 
-// For XInput
 
 struct XInputJoystickEntry
 {
@@ -118,8 +118,8 @@ struct XInputJoystickEntry
     sf::priv::JoystickImpl* joystick{};
     XINPUT_STATE            state{};
     unsigned int            joystickIndex{};
-    WORD                    vendorId;
-    WORD                    productId;
+    WORD                    vendorId{};
+    WORD                    productId{};
 };
 
 // NOLINTBEGIN(readability-identifier-naming)
