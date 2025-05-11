@@ -472,8 +472,8 @@ bool JoystickImpl::isConnected(unsigned int index)
     if (directInput)
         return isConnectedDInput(index);
 
-    ConnectionCache&   cache                  = connectionCache[index];
-    constexpr sf::Time connectionRefreshDelay = sf::milliseconds(500);
+    ConnectionCache& cache                  = connectionCache[index];
+    constexpr Time   connectionRefreshDelay = milliseconds(500);
     if (!lazyUpdates && cache.timer.getElapsedTime() > connectionRefreshDelay)
     {
         JOYINFOEX joyInfo;
@@ -882,7 +882,7 @@ bool JoystickImpl::openDInput(unsigned int index)
                 const DWORD povType    = DIDFT_POV | DIDFT_OPTIONAL | DIDFT_ANYINSTANCE;
                 const DWORD buttonType = DIDFT_BUTTON | DIDFT_OPTIONAL | DIDFT_ANYINSTANCE;
 
-                static std::array<DIOBJECTDATAFORMAT, 8 * 4 + 4 + sf::Joystick::ButtonCount> data{};
+                static std::array<DIOBJECTDATAFORMAT, 8 * 4 + 4 + Joystick::ButtonCount> data{};
 
                 for (std::size_t i = 0; i < 4; ++i)
                 {
@@ -943,7 +943,7 @@ bool JoystickImpl::openDInput(unsigned int index)
                     data[8 * 4 + i].dwFlags = 0;
                 }
 
-                for (unsigned int i = 0; i < sf::Joystick::ButtonCount; ++i)
+                for (unsigned int i = 0; i < Joystick::ButtonCount; ++i)
                 {
                     data[8 * 4 + 4 + i].pguid   = nullptr;
                     data[8 * 4 + 4 + i].dwOfs   = static_cast<DWORD>(DIJOFS_BUTTON(i));
@@ -955,7 +955,7 @@ bool JoystickImpl::openDInput(unsigned int index)
                 format.dwObjSize  = sizeof(DIOBJECTDATAFORMAT);
                 format.dwFlags    = DIDFT_ABSAXIS;
                 format.dwDataSize = sizeof(DIJOYSTATE2);
-                format.dwNumObjs  = 8 * 4 + 4 + sf::Joystick::ButtonCount;
+                format.dwNumObjs  = 8 * 4 + 4 + Joystick::ButtonCount;
                 format.rgodf      = data.data();
 
                 formatInitialized = true;
@@ -1490,7 +1490,7 @@ BOOL CALLBACK JoystickImpl::deviceEnumerationCallback(const DIDEVICEINSTANCE* de
         }
     }
 
-    JoystickRecord record = {deviceInstance->guidInstance, sf::Joystick::Count, true};
+    JoystickRecord record = {deviceInstance->guidInstance, Joystick::Count, true};
     if (isXInputDevice(&deviceInstance->guidProduct))
         record.xInputDevice = true;
 
