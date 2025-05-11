@@ -110,7 +110,6 @@ JoystickBlacklist joystickBlacklist;
 
 const DWORD directInputEventBufferSize = 32;
 
-
 struct XInputJoystickEntry
 {
     bool                    connected{};
@@ -192,8 +191,8 @@ using XInputGetStateFunc = DWORD(WINAPI*)(DWORD dwUserIndex, XINPUT_STATE* pStat
 using XInputGetCapabilitiesExFunc =
     DWORD(WINAPI*)(DWORD a1, DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES_EX* pCapabilities);
 
-XInputGetCapabilitiesExFunc mXInputGetCapabilitiesEx = nullptr;
-XInputGetStateFunc          mXInputGetState          = nullptr;
+XInputGetCapabilitiesExFunc xInputGetCapabilitiesEx = nullptr;
+XInputGetStateFunc          xInputGetState          = nullptr;
 
 [[nodiscard]] std::optional<DWORD> getXInputIndexFromVidPid(WORD vid, WORD pid) noexcept
 {
@@ -201,7 +200,7 @@ XInputGetStateFunc          mXInputGetState          = nullptr;
     for (const DWORD xInputSlot : {0u, 1u, 2u, 3u})
     {
         XINPUT_CAPABILITIES_EX capsEx{};
-        if (mXInputGetCapabilitiesEx(1, xInputSlot, 0, &capsEx) == ERROR_SUCCESS)
+        if (xInputGetCapabilitiesEx(1, xInputSlot, 0, &capsEx) == ERROR_SUCCESS)
         {
             if (capsEx.vendorId == 0x045e && capsEx.productId == 0 && capsEx.Capabilities.Flags & XINPUT_CAPS_WIRELESS)
                 capsEx.productId = 0x02a1;
@@ -430,16 +429,16 @@ void JoystickImpl::initialize()
     if (!xinputModule)
     {
         // this always succeeds.
-        xinputModule             = LoadLibraryA("XINPUT9_1_0.DLL");
-        mXInputGetCapabilitiesEx = nullptr;
+        xinputModule            = LoadLibraryA("XINPUT9_1_0.DLL");
+        xInputGetCapabilitiesEx = nullptr;
     }
     else
     {
-        mXInputGetCapabilitiesEx = reinterpret_cast<XInputGetCapabilitiesExFunc>(
+        xInputGetCapabilitiesEx = reinterpret_cast<XInputGetCapabilitiesExFunc>(
             reinterpret_cast<void*>(GetProcAddress(xinputModule, reinterpret_cast<char*>(108))));
     }
     assert(xinputModule);
-    mXInputGetState = reinterpret_cast<XInputGetStateFunc>(
+    xInputGetState = reinterpret_cast<XInputGetStateFunc>(
         reinterpret_cast<void*>(GetProcAddress(xinputModule, "XInputGetState")));
 
     // Try to initialize DirectInput
@@ -1126,7 +1125,7 @@ bool JoystickImpl::openXInput(unsigned int index)
     {
         if (device.connected && !device.joystick)
         {
-            if (mXInputGetCapabilitiesEx != nullptr)
+            if (xInputGetCapabilitiesEx != nullptr)
             {
                 const auto slot = getXInputIndexFromVidPid(static_cast<WORD>(m_identification.vendorId),
                                                            static_cast<WORD>(m_identification.productId));
@@ -1199,8 +1198,7 @@ void JoystickImpl::pollXInput()
     {
         auto&        destState = xinputDevices[xinputIndex];
         XINPUT_STATE xinputState{};
-        const auto   result = mXInputGetState(xinputIndex, &xinputState);
-        if (result == 0x0)
+        if (xInputGetState(xinputIndex, &xinputState) == 0)
         {
             destState.connected   = true;
             destState.state       = xinputState;
