@@ -135,7 +135,7 @@ struct XINPUT_CAPABILITIES_EX
 // NOLINTEND(readability-identifier-naming)
 
 bool                               directInputNeedsInvalidation = false;
-std::array<XInputJoystickEntry, 4> xinputDevices{};
+std::array<XInputJoystickEntry, 4> xInputDevices{};
 
 struct BstrDeleter
 {
@@ -213,7 +213,7 @@ XInputGetStateFunc          xInputGetState          = nullptr;
 
             if (capsEx.vendorId == vid && capsEx.productId == pid)
             {
-                auto& entry = xinputDevices[slot];
+                auto& entry = xInputDevices[slot];
                 // guard against multiple identical devices
                 if (entry.joystick == nullptr)
                     return slot;
@@ -426,21 +426,21 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 void JoystickImpl::initialize()
 {
-    HMODULE xinputModule = LoadLibraryA("XInput1_4.dll");
-    if (!xinputModule)
+    HMODULE xInputModule = LoadLibraryA("XInput1_4.dll");
+    if (!xInputModule)
     {
         // this always succeeds.
-        xinputModule            = LoadLibraryA("XINPUT9_1_0.DLL");
+        xInputModule            = LoadLibraryA("XINPUT9_1_0.DLL");
         xInputGetCapabilitiesEx = nullptr;
     }
     else
     {
         xInputGetCapabilitiesEx = reinterpret_cast<XInputGetCapabilitiesExFunc>(
-            reinterpret_cast<void*>(GetProcAddress(xinputModule, reinterpret_cast<char*>(108))));
+            reinterpret_cast<void*>(GetProcAddress(xInputModule, reinterpret_cast<char*>(108))));
     }
-    assert(xinputModule);
+    assert(xInputModule);
     xInputGetState = reinterpret_cast<XInputGetStateFunc>(
-        reinterpret_cast<void*>(GetProcAddress(xinputModule, "XInputGetState")));
+        reinterpret_cast<void*>(GetProcAddress(xInputModule, "XInputGetState")));
 
     // Try to initialize DirectInput
     initializeDInput();
@@ -564,8 +564,8 @@ void JoystickImpl::close()
 {
     if (directInput)
         closeDInput();
-    if (m_useXInput && m_xInputIndex < xinputDevices.size())
-        xinputDevices[m_xInputIndex].joystick = nullptr;
+    if (m_useXInput && m_xInputIndex < xInputDevices.size())
+        xInputDevices[m_xInputIndex].joystick = nullptr;
     m_xInputIndex = 0xFFFFFFFF;
     m_useXInput   = false;
 }
@@ -621,7 +621,7 @@ JoystickState JoystickImpl::update()
 
     // XInput state is buffered because XInput is a polling protocol (125Hz)
     if (m_useXInput)
-        return updateXInput(xinputDevices[m_xInputIndex].state);
+        return updateXInput(xInputDevices[m_xInputIndex].state);
 
     if (directInput)
     {
@@ -1122,7 +1122,7 @@ bool JoystickImpl::openDInput(unsigned int index)
 ////////////////////////////////////////////////////////////
 bool JoystickImpl::openXInput(unsigned int index)
 {
-    for (auto& device : xinputDevices)
+    for (auto& device : xInputDevices)
     {
         if (device.connected && !device.joystick)
         {
@@ -1193,14 +1193,14 @@ JoystickCaps JoystickImpl::getCapabilitiesDInput() const
 ////////////////////////////////////////////////////////////
 void JoystickImpl::pollXInput()
 {
-    for (DWORD xInputIndex = 0; xInputIndex < xinputDevices.size(); ++xInputIndex)
+    for (DWORD xInputIndex = 0; xInputIndex < xInputDevices.size(); ++xInputIndex)
     {
-        auto&        destState = xinputDevices[xInputIndex];
-        XINPUT_STATE xinputState{};
-        if (xInputGetState(xInputIndex, &xinputState) == 0)
+        auto&        destState = xInputDevices[xInputIndex];
+        XINPUT_STATE xInputState{};
+        if (xInputGetState(xInputIndex, &xInputState) == 0)
         {
             destState.connected   = true;
-            destState.state       = xinputState;
+            destState.state       = xInputState;
             destState.xInputIndex = xInputIndex;
         }
         else
@@ -1214,12 +1214,12 @@ void JoystickImpl::pollXInput()
 
 
 ////////////////////////////////////////////////////////////
-JoystickState JoystickImpl::updateXInput(XINPUT_STATE& xinputState)
+JoystickState JoystickImpl::updateXInput(XINPUT_STATE& xInputState)
 {
     // After consideration, the Directional Pad will be exposed as PovX and PovY axes for consistency with PS5 DualSense controllers.
 
     auto& state      = m_state;
-    auto& gamepad    = xinputState.Gamepad;
+    auto& gamepad    = xInputState.Gamepad;
     state.buttons[0] = 0 != (gamepad.wButtons & XINPUT_GAMEPAD_A);
     state.buttons[1] = 0 != (gamepad.wButtons & XINPUT_GAMEPAD_B);
     state.buttons[2] = 0 != (gamepad.wButtons & XINPUT_GAMEPAD_X);
