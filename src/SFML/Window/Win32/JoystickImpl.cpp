@@ -1132,16 +1132,14 @@ bool JoystickImpl::openXInput(unsigned int index)
         {
             if (xInputGetCapabilitiesEx != nullptr)
             {
-                const auto slot = getXInputIndexFromVidPid(static_cast<WORD>(m_identification.vendorId),
-                                                           static_cast<WORD>(m_identification.productId));
-                if (slot.has_value())
+                if (const auto slot = getXInputIndexFromVidPid(static_cast<WORD>(m_identification.vendorId),
+                                                               static_cast<WORD>(m_identification.productId)))
                 {
-                    device.joystickIndex  = index;
-                    device.joystick       = this;
-                    device.xInputIndex    = *slot;
-                    m_xInputIndex         = device.xInputIndex;
-                    m_identification.name = m_identification.name + " XINPUT [" + std::to_string(device.xInputIndex) +
-                                            "]";
+                    device.joystickIndex = index;
+                    device.joystick      = this;
+                    device.xInputIndex   = *slot;
+                    m_xInputIndex        = device.xInputIndex;
+                    m_identification.name += " XINPUT [" + std::to_string(device.xInputIndex) + "]";
                     return true;
                 }
             }
