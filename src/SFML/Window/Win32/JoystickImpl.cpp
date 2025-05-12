@@ -203,7 +203,6 @@ XInputGetStateFunc          xInputGetState          = nullptr;
 
 [[nodiscard]] std::optional<DWORD> getXInputIndexFromVidPid(WORD vid, WORD pid) noexcept
 {
-    DWORD slot = 0;
     for (const DWORD xInputSlot : {0u, 1u, 2u, 3u})
     {
         XINPUT_CAPABILITIES_EX capsEx{};
@@ -214,10 +213,10 @@ XInputGetStateFunc          xInputGetState          = nullptr;
 
             if (capsEx.vendorId == vid && capsEx.productId == pid)
             {
-                auto& entry = xInputDevices[slot];
+                auto& entry = xInputDevices[xInputSlot];
                 // guard against multiple identical devices
                 if (entry.joystick == nullptr)
-                    return slot;
+                    return xInputSlot;
             }
         }
     }
