@@ -36,6 +36,7 @@
 #include <algorithm>
 #include <array>
 #include <iomanip>
+#include <memory>
 #include <optional>
 #include <ostream>
 #include <regstr.h>
@@ -136,17 +137,26 @@ struct XINPUT_CAPABILITIES_EX
 bool                               directInputNeedsInvalidation = false;
 std::array<XInputJoystickEntry, 4> xinputDevices{};
 
+struct BstrDeleter
+{
+    void operator()(BSTR bstr) const
+    {
+        if (bstr)
+            SysFreeString(bstr);
+    }
+};
+
 struct XInputCleanupData
 {
-    VARIANT                           var{};
-    IWbemLocator*                     wbemLocator{};
-    IEnumWbemClassObject*             enumDevices{};
-    std::array<IWbemClassObject*, 20> devices{};
-    IWbemServices*                    wbemServices{};
-    BSTR                              namespaceStr{};
-    BSTR                              deviceId{};
-    BSTR                              className{};
-    HRESULT                           comInitResult{};
+    VARIANT                               var{};
+    IWbemLocator*                         wbemLocator{};
+    IEnumWbemClassObject*                 enumDevices{};
+    std::array<IWbemClassObject*, 20>     devices{};
+    IWbemServices*                        wbemServices{};
+    std::unique_ptr<OLECHAR, BstrDeleter> namespaceStr;
+    std::unique_ptr<OLECHAR, BstrDeleter> deviceId;
+    std::unique_ptr<OLECHAR, BstrDeleter> className;
+    HRESULT                               comInitResult{};
 
     XInputCleanupData()
     {
@@ -156,10 +166,6 @@ struct XInputCleanupData
     ~XInputCleanupData()
     {
         VariantClear(&var);
-
-        SysFreeString(namespaceStr);
-        SysFreeString(deviceId);
-        SysFreeString(className);
 
         for (auto* device : devices)
             if (device)
@@ -235,20 +241,20 @@ XInputGetStateFunc          xInputGetState          = nullptr;
     if (FAILED(hr) || data.wbemLocator == nullptr)
         return false;
 
-    data.namespaceStr = SysAllocString(LR"(\\.\root\cimv2)");
+    data.namespaceStr.reset(SysAllocString(LR"(\\.\root\cimv2)"));
     if (data.namespaceStr == nullptr)
         return false;
 
-    data.className = SysAllocString(L"Win32_PNPEntity");
+    data.className.reset(SysAllocString(L"Win32_PNPEntity"));
     if (data.className == nullptr)
         return false;
 
-    data.deviceId = SysAllocString(L"DeviceID");
+    data.deviceId.reset(SysAllocString(L"DeviceID"));
     if (data.deviceId == nullptr)
         return false;
 
     // Connect to WMI
-    hr = data.wbemLocator->ConnectServer(data.namespaceStr, nullptr, nullptr, nullptr, 0, nullptr, nullptr, &data.wbemServices);
+    hr = data.wbemLocator->ConnectServer(data.namespaceStr.get(), nullptr, nullptr, nullptr, 0, nullptr, nullptr, &data.wbemServices);
     if (FAILED(hr) || data.wbemServices == nullptr)
         return false;
 
@@ -264,7 +270,7 @@ XInputGetStateFunc          xInputGetState          = nullptr;
     if (FAILED(hr))
         return false;
 
-    hr = data.wbemServices->CreateInstanceEnum(data.className, 0, nullptr, &data.enumDevices);
+    hr = data.wbemServices->CreateInstanceEnum(data.className.get(), 0, nullptr, &data.enumDevices);
     if (FAILED(hr) || data.enumDevices == nullptr)
         return false;
 
@@ -279,10 +285,10 @@ XInputGetStateFunc          xInputGetState          = nullptr;
         if (uReturned == 0)
             break;
 
-        for (std::size_t iDevice = 0; iDevice < uReturned; ++iDevice)
+        for (std::size_t i = 0; i < uReturned; ++i)
         {
             // For each device, get its device ID
-            hr = data.devices[iDevice]->Get(data.deviceId, 0L, &data.var, nullptr, nullptr);
+            hr = data.devices[i]->Get(data.deviceId.get(), 0, &data.var, nullptr, nullptr);
             if (SUCCEEDED(hr) && data.var.vt == VT_BSTR && data.var.bstrVal != nullptr)
             {
                 // Check if the device ID contains "IG_".  If it does, then it's an XInput device
@@ -307,12 +313,11 @@ XInputGetStateFunc          xInputGetState          = nullptr;
             }
 
             VariantClear(&data.var);
-            auto* device = data.devices[iDevice];
-            if (device)
+            if (auto* device = data.devices[i])
             {
                 device->Release();
                 // important to prevent a double-free in cleanup data destructor
-                data.devices[iDevice] = nullptr;
+                data.devices[i] = nullptr;
             }
         }
     }
