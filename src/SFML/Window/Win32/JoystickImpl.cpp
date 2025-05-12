@@ -113,7 +113,7 @@ const DWORD directInputEventBufferSize = 32;
 struct XInputJoystickEntry
 {
     bool                    connected{};
-    DWORD                   xinputIndex{0xFFFFFFFF}; // Cannot be zero because 0 is a valid index
+    DWORD                   xInputIndex{0xFFFFFFFF}; // Cannot be zero because 0 is a valid index
     sf::priv::JoystickImpl* joystick{};
     XINPUT_STATE            state{};
     unsigned int            joystickIndex{};
@@ -125,11 +125,11 @@ struct XInputJoystickEntry
 // Since this struct is a reference to MSFT Windows
 struct XINPUT_CAPABILITIES_EX
 {
-    XINPUT_CAPABILITIES Capabilities;
-    WORD                vendorId;
-    WORD                productId;
-    WORD                revisionId;
-    DWORD               a4; //unknown
+    XINPUT_CAPABILITIES capabilities;
+    WORD                vendorId{};
+    WORD                productId{};
+    WORD                revisionId{};
+    DWORD               a4{}; // Unknown
 };
 // NOLINTEND(readability-identifier-naming)
 
@@ -139,13 +139,13 @@ std::array<XInputJoystickEntry, 4> xinputDevices{};
 struct XInputCleanupData
 {
     VARIANT                           var{};
-    IWbemLocator*                     pIWbemLocator{};
-    IEnumWbemClassObject*             pEnumDevices{};
-    std::array<IWbemClassObject*, 20> pDevices{};
-    IWbemServices*                    pIWbemServices{};
-    BSTR                              bstrNamespace{};
-    BSTR                              bstrDeviceID{};
-    BSTR                              bstrClassName{};
+    IWbemLocator*                     wbemLocator{};
+    IEnumWbemClassObject*             enumDevices{};
+    std::array<IWbemClassObject*, 20> devices{};
+    IWbemServices*                    wbemServices{};
+    BSTR                              namespaceStr{};
+    BSTR                              deviceId{};
+    BSTR                              className{};
     HRESULT                           comInitResult{};
 
     XInputCleanupData()
@@ -157,27 +157,27 @@ struct XInputCleanupData
     {
         VariantClear(&var);
 
-        SysFreeString(bstrNamespace);
-        SysFreeString(bstrDeviceID);
-        SysFreeString(bstrClassName);
+        SysFreeString(namespaceStr);
+        SysFreeString(deviceId);
+        SysFreeString(className);
 
-        for (auto* device : pDevices)
+        for (auto* device : devices)
             if (device)
                 device->Release();
 
-        if (pEnumDevices)
-            pEnumDevices->Release();
-        if (pIWbemLocator)
-            pIWbemLocator->Release();
-        if (pIWbemServices)
-            pIWbemServices->Release();
+        if (enumDevices)
+            enumDevices->Release();
+        if (wbemLocator)
+            wbemLocator->Release();
+        if (wbemServices)
+            wbemServices->Release();
         if (SUCCEEDED(comInitResult))
             CoUninitialize();
     }
 };
 
 // NOLINTBEGIN(readability-identifier-naming)
-// keeping GUIDs and UUIDs consistent
+// Keeping GUIDs and UUIDs consistent
 // Define CLSID_WbemLocator
 const CLSID CLSID_WbemLocator = {0x4590f811, 0x1d3a, 0x11d0, {0x89, 0x1f, 0x00, 0xaa, 0x00, 0x4b, 0x2e, 0x24}};
 
@@ -202,7 +202,7 @@ XInputGetStateFunc          xInputGetState          = nullptr;
         XINPUT_CAPABILITIES_EX capsEx{};
         if (xInputGetCapabilitiesEx(1, xInputSlot, 0, &capsEx) == ERROR_SUCCESS)
         {
-            if (capsEx.vendorId == 0x045e && capsEx.productId == 0 && capsEx.Capabilities.Flags & XINPUT_CAPS_WIRELESS)
+            if (capsEx.vendorId == 0x045e && capsEx.productId == 0 && capsEx.capabilities.Flags & XINPUT_CAPS_WIRELESS)
                 capsEx.productId = 0x02a1;
 
             if (capsEx.vendorId == vid && capsEx.productId == pid)
@@ -218,7 +218,7 @@ XInputGetStateFunc          xInputGetState          = nullptr;
 }
 
 // See also https://learn.microsoft.com/en-us/windows/win32/xinput/xinput-and-directinput?redirectedfrom=MSDN
-[[nodiscard]] BOOL isXInputDevice(const GUID* pGuidProductFromDirectInput)
+[[nodiscard]] BOOL isXInputDevice(const GUID& guidProductFromDirectInput)
 {
     // XInputCleanupData now has a destructor, see above.
     XInputCleanupData data;
@@ -231,29 +231,29 @@ XInputGetStateFunc          xInputGetState          = nullptr;
                                nullptr,
                                CLSCTX_INPROC_SERVER,
                                IID_IWbemLocator,
-                               reinterpret_cast<LPVOID*>(&data.pIWbemLocator));
-    if (FAILED(hr) || data.pIWbemLocator == nullptr)
+                               reinterpret_cast<LPVOID*>(&data.wbemLocator));
+    if (FAILED(hr) || data.wbemLocator == nullptr)
         return false;
 
-    data.bstrNamespace = SysAllocString(L"\\\\.\\root\\cimv2");
-    if (data.bstrNamespace == nullptr)
+    data.namespaceStr = SysAllocString(LR"(\\.\root\cimv2)");
+    if (data.namespaceStr == nullptr)
         return false;
 
-    data.bstrClassName = SysAllocString(L"Win32_PNPEntity");
-    if (data.bstrClassName == nullptr)
+    data.className = SysAllocString(L"Win32_PNPEntity");
+    if (data.className == nullptr)
         return false;
 
-    data.bstrDeviceID = SysAllocString(L"DeviceID");
-    if (data.bstrDeviceID == nullptr)
+    data.deviceId = SysAllocString(L"DeviceID");
+    if (data.deviceId == nullptr)
         return false;
 
     // Connect to WMI
-    hr = data.pIWbemLocator->ConnectServer(data.bstrNamespace, nullptr, nullptr, nullptr, 0, nullptr, nullptr, &data.pIWbemServices);
-    if (FAILED(hr) || data.pIWbemServices == nullptr)
+    hr = data.wbemLocator->ConnectServer(data.namespaceStr, nullptr, nullptr, nullptr, 0, nullptr, nullptr, &data.wbemServices);
+    if (FAILED(hr) || data.wbemServices == nullptr)
         return false;
 
     // Switch security level to IMPERSONATE.
-    hr = CoSetProxyBlanket(data.pIWbemServices,
+    hr = CoSetProxyBlanket(data.wbemServices,
                            RPC_C_AUTHN_WINNT,
                            RPC_C_AUTHZ_NONE,
                            nullptr,
@@ -264,15 +264,15 @@ XInputGetStateFunc          xInputGetState          = nullptr;
     if (FAILED(hr))
         return false;
 
-    hr = data.pIWbemServices->CreateInstanceEnum(data.bstrClassName, 0, nullptr, &data.pEnumDevices);
-    if (FAILED(hr) || data.pEnumDevices == nullptr)
+    hr = data.wbemServices->CreateInstanceEnum(data.className, 0, nullptr, &data.enumDevices);
+    if (FAILED(hr) || data.enumDevices == nullptr)
         return false;
 
     // Loop over all devices
     for (;;)
     {
         ULONG uReturned = 0;
-        hr = data.pEnumDevices->Next(10'000, static_cast<ULONG>(data.pDevices.size()), data.pDevices.data(), &uReturned);
+        hr = data.enumDevices->Next(10'000, static_cast<ULONG>(data.devices.size()), data.devices.data(), &uReturned);
         if (FAILED(hr))
             return false;
 
@@ -282,7 +282,7 @@ XInputGetStateFunc          xInputGetState          = nullptr;
         for (std::size_t iDevice = 0; iDevice < uReturned; ++iDevice)
         {
             // For each device, get its device ID
-            hr = data.pDevices[iDevice]->Get(data.bstrDeviceID, 0L, &data.var, nullptr, nullptr);
+            hr = data.devices[iDevice]->Get(data.deviceId, 0L, &data.var, nullptr, nullptr);
             if (SUCCEEDED(hr) && data.var.vt == VT_BSTR && data.var.bstrVal != nullptr)
             {
                 // Check if the device ID contains "IG_".  If it does, then it's an XInput device
@@ -301,18 +301,18 @@ XInputGetStateFunc          xInputGetState          = nullptr;
 
                     // Compare the VID/PID to the DInput device
                     const auto dwVidPid = static_cast<DWORD>(MAKELONG(dwVid, dwPid));
-                    if (dwVidPid == pGuidProductFromDirectInput->Data1)
+                    if (dwVidPid == guidProductFromDirectInput.Data1)
                         return true;
                 }
             }
 
             VariantClear(&data.var);
-            auto* device = data.pDevices[iDevice];
+            auto* device = data.devices[iDevice];
             if (device)
             {
                 device->Release();
                 // important to prevent a double-free in cleanup data destructor
-                data.pDevices[iDevice] = nullptr;
+                data.devices[iDevice] = nullptr;
             }
         }
     }
@@ -1133,9 +1133,9 @@ bool JoystickImpl::openXInput(unsigned int index)
                 {
                     device.joystickIndex  = index;
                     device.joystick       = this;
-                    device.xinputIndex    = *slot;
-                    m_xInputIndex         = device.xinputIndex;
-                    m_identification.name = m_identification.name + " XINPUT [" + std::to_string(device.xinputIndex) +
+                    device.xInputIndex    = *slot;
+                    m_xInputIndex         = device.xInputIndex;
+                    m_identification.name = m_identification.name + " XINPUT [" + std::to_string(device.xInputIndex) +
                                             "]";
                     return true;
                 }
@@ -1144,8 +1144,8 @@ bool JoystickImpl::openXInput(unsigned int index)
             {
                 device.joystick       = this;
                 device.joystickIndex  = index;
-                m_xInputIndex         = device.xinputIndex;
-                m_identification.name = "Generic XInput Device Slot [" + std::to_string(device.xinputIndex) + "]";
+                m_xInputIndex         = device.xInputIndex;
+                m_identification.name = "Generic XInput Device Slot [" + std::to_string(device.xInputIndex) + "]";
                 return true;
             }
         }
@@ -1194,21 +1194,21 @@ JoystickCaps JoystickImpl::getCapabilitiesDInput() const
 ////////////////////////////////////////////////////////////
 void JoystickImpl::pollXInput()
 {
-    for (DWORD xinputIndex = 0; xinputIndex < xinputDevices.size(); ++xinputIndex)
+    for (DWORD xInputIndex = 0; xInputIndex < xinputDevices.size(); ++xInputIndex)
     {
-        auto&        destState = xinputDevices[xinputIndex];
+        auto&        destState = xinputDevices[xInputIndex];
         XINPUT_STATE xinputState{};
-        if (xInputGetState(xinputIndex, &xinputState) == 0)
+        if (xInputGetState(xInputIndex, &xinputState) == 0)
         {
             destState.connected   = true;
             destState.state       = xinputState;
-            destState.xinputIndex = xinputIndex;
+            destState.xInputIndex = xInputIndex;
         }
         else
         {
             destState.connected   = false;
             destState.state       = {};
-            destState.xinputIndex = xinputIndex;
+            destState.xInputIndex = xInputIndex;
         }
     }
 }
@@ -1481,7 +1481,7 @@ BOOL CALLBACK JoystickImpl::deviceEnumerationCallback(const DIDEVICEINSTANCE* de
     {
         if (record.guid == deviceInstance->guidInstance)
         {
-            if (isXInputDevice(&deviceInstance->guidProduct))
+            if (isXInputDevice(deviceInstance->guidProduct))
                 record.xInputDevice = true;
 
             record.plugged = true;
@@ -1491,7 +1491,7 @@ BOOL CALLBACK JoystickImpl::deviceEnumerationCallback(const DIDEVICEINSTANCE* de
     }
 
     JoystickRecord record = {deviceInstance->guidInstance, Joystick::Count, true};
-    if (isXInputDevice(&deviceInstance->guidProduct))
+    if (isXInputDevice(deviceInstance->guidProduct))
         record.xInputDevice = true;
 
     joystickList.push_back(record);
