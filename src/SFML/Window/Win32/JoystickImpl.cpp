@@ -114,7 +114,7 @@ const DWORD directInputEventBufferSize = 32;
 struct XInputJoystickEntry
 {
     bool                    connected{};
-    DWORD                   xInputIndex{0xFFFFFFFF}; // Cannot be zero because 0 is a valid index
+    std::optional<DWORD>    xInputIndex{}; // Cannot be zero-means-null because 0 is a valid index
     sf::priv::JoystickImpl* joystick{};
     XINPUT_STATE            state{};
     unsigned int            joystickIndex{};
@@ -122,8 +122,10 @@ struct XInputJoystickEntry
     WORD                    productId{};
 };
 
-// NOLINTBEGIN(readability-identifier-naming)
-// Since this struct is a reference to MSFT Windows
+// This struct ordinarily would be defined in a Windows-header-file.
+// See also: https://stackoverflow.com/a/68879988/4928207
+// This is used to ensure that the device we're looking at matches the product and vendor id
+// This struct is essentially "foreign" to SFML, so don't reorder its members. (ABI Compat)
 struct XINPUT_CAPABILITIES_EX
 {
     XINPUT_CAPABILITIES capabilities{};
@@ -132,7 +134,6 @@ struct XINPUT_CAPABILITIES_EX
     WORD                revisionId{};
     DWORD               a4{}; // Unknown
 };
-// NOLINTEND(readability-identifier-naming)
 
 bool                               directInputNeedsInvalidation = false;
 std::array<XInputJoystickEntry, 4> xInputDevices{};
@@ -564,9 +565,9 @@ void JoystickImpl::close()
 {
     if (directInput)
         closeDInput();
-    if (m_useXInput && m_xInputIndex < xInputDevices.size())
-        xInputDevices[m_xInputIndex].joystick = nullptr;
-    m_xInputIndex = 0xFFFFFFFF;
+    if (m_useXInput && m_xInputIndex.has_value())
+        xInputDevices[m_xInputIndex.value()].joystick = nullptr;
+    m_xInputIndex.reset();
     m_useXInput   = false;
 }
 
@@ -620,8 +621,8 @@ JoystickState JoystickImpl::update()
     }
 
     // XInput state is buffered because XInput is a polling protocol (125Hz)
-    if (m_useXInput)
-        return updateXInput(xInputDevices[m_xInputIndex].state);
+    if (m_useXInput && m_xInputIndex.has_value())
+        return updateXInput(xInputDevices[m_xInputIndex.value()].state);
 
     if (directInput)
     {
@@ -1135,8 +1136,8 @@ bool JoystickImpl::openXInput(unsigned int index)
                     device.joystickIndex = index;
                     device.joystick      = this;
                     device.xInputIndex   = *slot;
-                    m_xInputIndex        = device.xInputIndex;
-                    m_identification.name += " XINPUT [" + std::to_string(device.xInputIndex) + "]";
+                    m_xInputIndex        = device.xInputIndex.value();
+                    m_identification.name += " XINPUT [" + std::to_string(m_xInputIndex.value()) + "]";
                     return true;
                 }
             }
@@ -1144,8 +1145,8 @@ bool JoystickImpl::openXInput(unsigned int index)
             {
                 device.joystick       = this;
                 device.joystickIndex  = index;
-                m_xInputIndex         = device.xInputIndex;
-                m_identification.name = "Generic XInput Device Slot [" + std::to_string(device.xInputIndex) + "]";
+                m_xInputIndex         = device.xInputIndex.value();
+                m_identification.name = "Generic XInput Device Slot [" + std::to_string(m_xInputIndex.value()) + "]";
                 return true;
             }
         }

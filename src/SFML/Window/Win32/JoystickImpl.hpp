@@ -33,7 +33,7 @@
 #include <Xinput.h>
 #include <dinput.h>
 #include <mmsystem.h>
-
+#include <optional>
 
 namespace sf::priv
 {
@@ -251,7 +251,7 @@ private:
     EnumArray<Joystick::Axis, int, Joystick::AxisCount> m_axes{}; //!< Offsets to the bytes containing the axes states, -1 if not available
     std::array<int, Joystick::ButtonCount> m_buttons{}; //!< Offsets to the bytes containing the button states, -1 if not available
     bool                     m_useXInput{};
-    DWORD                    m_xInputIndex{0xFFFFFFFF};
+    std::optional<DWORD>     m_xInputIndex{};
     Joystick::Identification m_identification; //!< Joystick identification
     JoystickState            m_state;          //!< Buffered joystick state
     bool                     m_buffered{}; //!< `true` if the device uses buffering, `false` if the device uses polling
