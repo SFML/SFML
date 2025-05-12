@@ -1119,6 +1119,7 @@ bool JoystickImpl::openDInput(unsigned int index)
     return false;
 }
 
+
 ////////////////////////////////////////////////////////////
 bool JoystickImpl::openXInput(unsigned int index)
 {
