@@ -126,7 +126,7 @@ struct XInputJoystickEntry
 // Since this struct is a reference to MSFT Windows
 struct XINPUT_CAPABILITIES_EX
 {
-    XINPUT_CAPABILITIES capabilities;
+    XINPUT_CAPABILITIES capabilities{};
     WORD                vendorId{};
     WORD                productId{};
     WORD                revisionId{};
@@ -226,7 +226,6 @@ XInputGetStateFunc          xInputGetState          = nullptr;
 // See also https://learn.microsoft.com/en-us/windows/win32/xinput/xinput-and-directinput?redirectedfrom=MSDN
 [[nodiscard]] BOOL isXInputDevice(const GUID& guidProductFromDirectInput)
 {
-    // XInputCleanupData now has a destructor, see above.
     XInputCleanupData data;
     data.comInitResult = CoInitialize(nullptr);
     if (FAILED(data.comInitResult))
@@ -277,15 +276,15 @@ XInputGetStateFunc          xInputGetState          = nullptr;
     // Loop over all devices
     for (;;)
     {
-        ULONG uReturned = 0;
-        hr = data.enumDevices->Next(10'000, static_cast<ULONG>(data.devices.size()), data.devices.data(), &uReturned);
+        ULONG returned = 0;
+        hr = data.enumDevices->Next(10'000, static_cast<ULONG>(data.devices.size()), data.devices.data(), &returned);
         if (FAILED(hr))
             return false;
 
-        if (uReturned == 0)
+        if (returned == 0)
             break;
 
-        for (std::size_t i = 0; i < uReturned; ++i)
+        for (std::size_t i = 0; i < returned; ++i)
         {
             // For each device, get its device ID
             hr = data.devices[i]->Get(data.deviceId.get(), 0, &data.var, nullptr, nullptr);
@@ -296,12 +295,12 @@ XInputGetStateFunc          xInputGetState          = nullptr;
                 if (std::wcsstr(data.var.bstrVal, L"IG_"))
                 {
                     // If it does, then get the VID/PID from var.bstrVal
-                    DWORD  dwPid  = 0;
-                    DWORD  dwVid  = 0;
                     WCHAR* strVid = std::wcsstr(data.var.bstrVal, L"VID_");
+                    DWORD  dwVid  = 0;
                     if (strVid && swscanf_s(strVid, L"VID_%4X", &dwVid) != 1)
                         dwVid = 0;
                     WCHAR* strPid = std::wcsstr(data.var.bstrVal, L"PID_");
+                    DWORD  dwPid  = 0;
                     if (strPid && swscanf_s(strPid, L"PID_%4X", &dwPid) != 1)
                         dwPid = 0;
 
@@ -323,14 +322,11 @@ XInputGetStateFunc          xInputGetState          = nullptr;
     }
     return false;
 }
-} // namespace
 
 
 ////////////////////////////////////////////////////////////
 // Legacy joystick API
 ////////////////////////////////////////////////////////////
-namespace
-{
 struct ConnectionCache
 {
     bool      connected{};
