@@ -442,6 +442,10 @@ void JoystickImpl::initialize()
     xInputGetState = reinterpret_cast<XInputGetStateFunc>(
         reinterpret_cast<void*>(GetProcAddress(xInputModule, "XInputGetState")));
 
+    // set the indexes of xinput buffered state correctly. 
+    for (size_t xInputIndex = 0; xInputIndex < xInputDevices.size(); xInputIndex++)
+        xInputDevices[xInputIndex].xInputIndex = static_cast<DWORD>(xInputIndex);
+
     // Try to initialize DirectInput
     initializeDInput();
 
@@ -527,18 +531,14 @@ void JoystickImpl::updateConnections()
 ////////////////////////////////////////////////////////////
 bool JoystickImpl::open(unsigned int index)
 {
+    if (openXInput(index))
+    {
+        m_useXInput = true;
+        return true;
+    }
     if (directInput)
     {
         auto result = openDInput(index);
-        if (m_useXInput && result)
-        {
-            result = openXInput(index);
-            if (!result)
-            {
-                // Avoid leaking the dinput device
-                closeDInput();
-            }
-        }
         return result;
     }
 
@@ -621,7 +621,15 @@ JoystickState JoystickImpl::update()
 
     // XInput state is buffered because XInput is a polling protocol (125Hz)
     if (m_useXInput && m_xInputIndex.has_value())
-        return updateXInput(xInputDevices[m_xInputIndex.value()].state);
+    {
+        auto device = xInputDevices[m_xInputIndex.value()];
+        if (!device.connected)
+        {
+            // empty (disconnected) state. 
+            return JoystickState{};
+        }
+        return updateXInput(device.state);
+    }
 
     if (directInput)
     {
@@ -1136,7 +1144,7 @@ bool JoystickImpl::openXInput(unsigned int index)
                     device.joystick      = this;
                     device.xInputIndex   = *slot;
                     m_xInputIndex        = device.xInputIndex.value();
-                    m_identification.name += " XINPUT [" + std::to_string(m_xInputIndex.value()) + "]";
+                    m_identification.name = "Generic XInput Device Slot [" + std::to_string(m_xInputIndex.value()) + "]";
                     return true;
                 }
             }
@@ -1493,7 +1501,7 @@ BOOL CALLBACK JoystickImpl::deviceEnumerationCallback(const DIDEVICEINSTANCE* de
     JoystickRecord record = {deviceInstance->guidInstance, Joystick::Count, true};
     if (isXInputDevice(deviceInstance->guidProduct))
         record.xInputDevice = true;
-
+    
     joystickList.push_back(record);
 
     return DIENUM_CONTINUE;
