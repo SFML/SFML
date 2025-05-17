@@ -201,7 +201,9 @@ using XInputGetCapabilitiesExFunc =
 XInputGetCapabilitiesExFunc xInputGetCapabilitiesEx = nullptr;
 XInputGetStateFunc          xInputGetState          = nullptr;
 
-[[nodiscard]] std::optional<DWORD> getXInputIndexFromVidPid(WORD vid, WORD pid) noexcept
+// This is a "Guess" because it's our best attempt at getting it, but there's still the possibility that it's wrong.
+// That said, this should work "well enough" that one won't notice the difference.
+[[nodiscard]] std::optional<DWORD> guessXInputIndexFromVidPid(WORD vid, WORD pid) noexcept
 {
     for (const DWORD xInputSlot : {0u, 1u, 2u, 3u})
     {
@@ -442,7 +444,7 @@ void JoystickImpl::initialize()
     xInputGetState = reinterpret_cast<XInputGetStateFunc>(
         reinterpret_cast<void*>(GetProcAddress(xInputModule, "XInputGetState")));
 
-    // set the indexes of xinput buffered state correctly. 
+    // set the indexes of xinput buffered state correctly.
     for (size_t xInputIndex = 0; xInputIndex < xInputDevices.size(); xInputIndex++)
         xInputDevices[xInputIndex].xInputIndex = static_cast<DWORD>(xInputIndex);
 
@@ -567,7 +569,7 @@ void JoystickImpl::close()
     if (m_useXInput && m_xInputIndex.has_value())
         xInputDevices[m_xInputIndex.value()].joystick = nullptr;
     m_xInputIndex.reset();
-    m_useXInput   = false;
+    m_useXInput = false;
 }
 
 
@@ -625,7 +627,7 @@ JoystickState JoystickImpl::update()
         auto device = xInputDevices[m_xInputIndex.value()];
         if (!device.connected)
         {
-            // empty (disconnected) state. 
+            // empty (disconnected) state.
             return JoystickState{};
         }
         return updateXInput(device.state);
@@ -810,6 +812,7 @@ void JoystickImpl::updateConnectionsDInput()
 ////////////////////////////////////////////////////////////
 bool JoystickImpl::openDInput(unsigned int index)
 {
+
     // Initialize DirectInput members
     m_device = nullptr;
 
@@ -826,7 +829,6 @@ bool JoystickImpl::openDInput(unsigned int index)
     {
         if (record.index == index)
         {
-            m_useXInput = record.xInputDevice;
             // Create device
             HRESULT result = directInput->CreateDevice(record.guid, &m_device, nullptr);
 
@@ -866,6 +868,13 @@ bool JoystickImpl::openDInput(unsigned int index)
                 }
             }
 
+            m_useXInput = record.xInputDevice;
+            if (m_useXInput)
+            {
+                // Use XInput instead of DirectInput for obtaining caps and data
+                return openXInput(index);
+            }
+
             // Get friendly product name of the device
             auto stringProperty              = DIPROPSTRING();
             stringProperty.diph.dwSize       = sizeof(stringProperty);
@@ -875,12 +884,6 @@ bool JoystickImpl::openDInput(unsigned int index)
 
             if (SUCCEEDED(m_device->GetProperty(DIPROP_PRODUCTNAME, &stringProperty.diph)))
                 m_identification.name = stringProperty.wsz;
-
-            if (m_useXInput)
-            {
-                // Use XInput instead of DirectInput for obtaining caps and data
-                return true;
-            }
 
             static bool         formatInitialized = false;
             static DIDATAFORMAT format;
@@ -1137,7 +1140,7 @@ bool JoystickImpl::openXInput(unsigned int index)
         {
             if (xInputGetCapabilitiesEx != nullptr)
             {
-                if (const auto slot = getXInputIndexFromVidPid(static_cast<WORD>(m_identification.vendorId),
+                if (const auto slot = guessXInputIndexFromVidPid(static_cast<WORD>(m_identification.vendorId),
                                                                static_cast<WORD>(m_identification.productId)))
                 {
                     device.joystickIndex = index;
@@ -1501,7 +1504,7 @@ BOOL CALLBACK JoystickImpl::deviceEnumerationCallback(const DIDEVICEINSTANCE* de
     JoystickRecord record = {deviceInstance->guidInstance, Joystick::Count, true};
     if (isXInputDevice(deviceInstance->guidProduct))
         record.xInputDevice = true;
-    
+
     joystickList.push_back(record);
 
     return DIENUM_CONTINUE;

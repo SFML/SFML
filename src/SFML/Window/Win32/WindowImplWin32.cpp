@@ -44,6 +44,10 @@
 #include <cstddef>
 #include <cstring>
 
+// for HID macros
+#include <hidsdi.h>
+
+
 // MinGW lacks the definition of some Win32 constants
 #ifndef XBUTTON1
 #define XBUTTON1 0x0001
@@ -155,16 +159,16 @@ WindowImplWin32::WindowImplWin32(WindowHandle handle) : m_handle(handle)
             for (auto& rid : rids)
             {
                 // We are using this, talking to "generic" input devices.
-                rid.usUsagePage = 0x01; // HID_USAGE_PAGE_GENERIC;
+                rid.usUsagePage = HID_USAGE_PAGE_GENERIC; // 0x01
                 // We want Windows to notify us when devices are added or removed.
                 rid.dwFlags = RIDEV_DEVNOTIFY;
                 // And send notifications to THIS specific HWND, which we registered earlier.
                 rid.hwndTarget = m_handle;
             }
 
-            rids[0].usUsage = 0x05; // HID_USAGE_GENERIC_GAMEPAD;
-            rids[1].usUsage = 0x04; // HID_USAGE_GENERIC_JOYSTICK;
-            rids[2].usUsage = 0x08; // HID_USAGE_GENERIC_MULTI_AXIS_CONTROLLER;
+            rids[0].usUsage = HID_USAGE_GENERIC_GAMEPAD;               // 0x05
+            rids[1].usUsage = HID_USAGE_GENERIC_JOYSTICK;              // 0x04
+            rids[2].usUsage = HID_USAGE_GENERIC_MULTI_AXIS_CONTROLLER; // 0x08
 
             RegisterRawInputDevices(rids.data(), static_cast<UINT>(rids.size()), sizeof(RAWINPUTDEVICE));
             SetTimer(m_handle, 0, 8, nullptr);
@@ -260,16 +264,16 @@ m_cursorGrabbed(m_fullscreen)
             for (auto& rid : rids)
             {
                 // We are using this, talking to "generic" input devices.
-                rid.usUsagePage = 0x01; // HID_USAGE_PAGE_GENERIC;
+                rid.usUsagePage = HID_USAGE_PAGE_GENERIC; // 0x01
                 // We want Windows to notify us when devices are added or removed.
                 rid.dwFlags = RIDEV_DEVNOTIFY;
                 // And send notifications to THIS specific HWND, which we registered earlier.
                 rid.hwndTarget = m_handle;
             }
 
-            rids[0].usUsage = 0x05; // HID_USAGE_GENERIC_GAMEPAD;
-            rids[1].usUsage = 0x04; // HID_USAGE_GENERIC_JOYSTICK;
-            rids[2].usUsage = 0x08; // HID_USAGE_GENERIC_MULTI_AXIS_CONTROLLER;
+            rids[0].usUsage = HID_USAGE_GENERIC_GAMEPAD;               // 0x05
+            rids[1].usUsage = HID_USAGE_GENERIC_JOYSTICK;              // 0x04
+            rids[2].usUsage = HID_USAGE_GENERIC_MULTI_AXIS_CONTROLLER; // 0x08
 
             RegisterRawInputDevices(rids.data(), static_cast<UINT>(rids.size()), sizeof(RAWINPUTDEVICE));
             SetTimer(m_handle, 0, 8, nullptr);
