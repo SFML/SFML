@@ -58,7 +58,7 @@ extern "C"
 // Fix for MinGW not defining certain macros.
 // NOLINTBEGIN(readability-identifier-naming)
 #ifndef HID_USAGE_GENERIC_MULTI_AXIS_CONTROLLER
-constexpr HID_USAGE_GENERIC_MULTI_AXIS_CONTROLLER = 0x08;
+#define HID_USAGE_GENERIC_MULTI_AXIS_CONTROLLER 0x08;
 #endif
 // NOLINTEND(readability-identifier-naming)
 
