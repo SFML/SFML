@@ -114,7 +114,7 @@ const DWORD directInputEventBufferSize = 32;
 struct XInputJoystickEntry
 {
     bool                    connected{};
-    std::optional<DWORD>    xInputIndex{}; // Cannot be zero-means-null because 0 is a valid index
+    std::optional<DWORD>    xInputIndex; // Cannot be zero-means-null because 0 is a valid index
     sf::priv::JoystickImpl* joystick{};
     XINPUT_STATE            state{};
     unsigned int            joystickIndex{};
@@ -126,7 +126,7 @@ struct XInputJoystickEntry
 // See also: https://stackoverflow.com/a/68879988/4928207
 // This is used to ensure that the device we're looking at matches the product and vendor id
 // This struct is essentially "foreign" to SFML, so don't reorder its members. (ABI Compat)
-struct XINPUT_CAPABILITIES_EX
+struct XinputCapabilitiesEx
 {
     XINPUT_CAPABILITIES capabilities{};
     WORD                vendorId{};
@@ -196,7 +196,7 @@ const IID IID_IWbemLocator = {0xdc12a687, 0x737f, 0x11cf, {0x88, 0x4d, 0x00, 0xa
 using XInputGetStateFunc = DWORD(WINAPI*)(DWORD dwUserIndex, XINPUT_STATE* pState);
 // Function pointer type for XInputGetCapabilitiesEx
 using XInputGetCapabilitiesExFunc =
-    DWORD(WINAPI*)(DWORD a1, DWORD dwUserIndex, DWORD dwFlags, XINPUT_CAPABILITIES_EX* pCapabilities);
+    DWORD(WINAPI*)(DWORD a1, DWORD dwUserIndex, DWORD dwFlags, XinputCapabilitiesEx* pCapabilities);
 
 XInputGetCapabilitiesExFunc xInputGetCapabilitiesEx = nullptr;
 XInputGetStateFunc          xInputGetState          = nullptr;
@@ -207,7 +207,7 @@ XInputGetStateFunc          xInputGetState          = nullptr;
 {
     for (const DWORD xInputSlot : {0u, 1u, 2u, 3u})
     {
-        XINPUT_CAPABILITIES_EX capsEx{};
+        XinputCapabilitiesEx capsEx{};
         if (xInputGetCapabilitiesEx(1, xInputSlot, 0, &capsEx) == ERROR_SUCCESS)
         {
             if (capsEx.vendorId == 0x045e && capsEx.productId == 0 && capsEx.capabilities.Flags & XINPUT_CAPS_WIRELESS)
@@ -1141,12 +1141,12 @@ bool JoystickImpl::openXInput(unsigned int index)
             if (xInputGetCapabilitiesEx != nullptr)
             {
                 if (const auto slot = guessXInputIndexFromVidPid(static_cast<WORD>(m_identification.vendorId),
-                                                               static_cast<WORD>(m_identification.productId)))
+                                                                 static_cast<WORD>(m_identification.productId)))
                 {
                     device.joystickIndex = index;
                     device.joystick      = this;
                     device.xInputIndex   = *slot;
-                    m_xInputIndex        = device.xInputIndex.value();
+                    m_xInputIndex        = device.xInputIndex;
                     m_identification.name = "Generic XInput Device Slot [" + std::to_string(m_xInputIndex.value()) + "]";
                     return true;
                 }
@@ -1155,7 +1155,7 @@ bool JoystickImpl::openXInput(unsigned int index)
             {
                 device.joystick       = this;
                 device.joystickIndex  = index;
-                m_xInputIndex         = device.xInputIndex.value();
+                m_xInputIndex         = device.xInputIndex;
                 m_identification.name = "Generic XInput Device Slot [" + std::to_string(m_xInputIndex.value()) + "]";
                 return true;
             }

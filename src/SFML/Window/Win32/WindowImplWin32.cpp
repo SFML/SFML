@@ -44,8 +44,17 @@
 #include <cstddef>
 #include <cstring>
 
+// Fix for MinGW not finding certain macros.
+// https://stackoverflow.com/questions/49538390/problems-linking-with-mingw-v-4-3-0-and-libhid
+#ifdef __MINGW32__
+extern "C"
+{
+#endif
 // for HID macros
 #include <hidsdi.h>
+#ifdef __MINGW32__
+}
+#endif
 
 
 // MinGW lacks the definition of some Win32 constants
