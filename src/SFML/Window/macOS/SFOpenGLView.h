@@ -140,6 +140,15 @@ class WindowImplCocoa;
 ////////////////////////////////////////////////////////////
 - (CGFloat)displayScaleFactor;
 
+////////////////////////////////////////////////////////////
+/// \brief Determine if the window is in fullscreen mode
+///
+/// \return `true` if the window is in fullscreen mode,
+///         `false` otherwise
+///
+////////////////////////////////////////////////////////////
+- (BOOL)isFullscreen;
+
 @end
 
 @interface SFOpenGLView (keyboard)
