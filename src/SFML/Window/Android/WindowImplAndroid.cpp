@@ -26,6 +26,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/Android/JniHelper.hpp>
 #include <SFML/Window/Android/WindowImplAndroid.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/WindowEnums.hpp>
@@ -330,19 +331,9 @@ int WindowImplAndroid::processEvent(int /* fd */, int /* events */, void* /* dat
 int WindowImplAndroid::processScrollEvent(AInputEvent* inputEvent, ActivityStates& states)
 {
     // Prepare the Java virtual machine
-    jint lResult = 0;
-
-    JavaVM* lJavaVM = states.activity->vm;
     JNIEnv* lJNIEnv = states.activity->env;
-
-    JavaVMAttachArgs lJavaVMAttachArgs;
-    lJavaVMAttachArgs.version = JNI_VERSION_1_6;
-    lJavaVMAttachArgs.name    = "NativeThread";
-    lJavaVMAttachArgs.group   = nullptr;
-
-    lResult = lJavaVM->AttachCurrentThread(&lJNIEnv, &lJavaVMAttachArgs);
-
-    if (lResult == JNI_ERR)
+    auto    jni     = Jni::attachCurrentThread(states.activity->vm, &lJNIEnv);
+    if (!jni)
     {
         err() << "Failed to initialize JNI, couldn't get the Unicode value" << std::endl;
         return 0;
@@ -399,24 +390,32 @@ int WindowImplAndroid::processScrollEvent(AInputEvent* inputEvent, ActivityState
     event.position = Vector2i(Vector2(AMotionEvent_getX(inputEvent, 0), AMotionEvent_getY(inputEvent, 0)));
     forwardEvent(event);
 
-    // Detach this thread from the JVM
-    lJavaVM->DetachCurrentThread();
-
     return 1;
 }
 
 
 ////////////////////////////////////////////////////////////
-int WindowImplAndroid::processKeyEvent(AInputEvent* inputEvent, ActivityStates& /* states */)
+int WindowImplAndroid::processKeyEvent(AInputEvent* inputEvent, ActivityStates& states)
 {
-    const std::int32_t action = AKeyEvent_getAction(inputEvent);
-
+    const std::int32_t action  = AKeyEvent_getAction(inputEvent);
     const std::int32_t key     = AKeyEvent_getKeyCode(inputEvent);
     const std::int32_t metakey = AKeyEvent_getMetaState(inputEvent);
+    const auto         sfCode  = androidKeyToSF(key);
 
+    if (std::holds_alternative<Keyboard::Key>(sfCode))
+    {
+        return processKeyboardKeyEvent(inputEvent, action, std::get<Keyboard::Key>(sfCode), metakey);
+    }
+
+    return processJoystickButtonEvent(inputEvent, action, std::get<Joystick::Button>(sfCode), states);
+}
+
+////////////////////////////////////////////////////////////
+int WindowImplAndroid::processKeyboardKeyEvent(AInputEvent* inputEvent, std::int32_t action, sf::Keyboard::Key key, std::int32_t metakey)
+{
     const auto forwardKeyEvent = [&](auto keyEvent)
     {
-        keyEvent.code  = androidKeyToSF(key);
+        keyEvent.code  = key;
         keyEvent.alt   = metakey & AMETA_ALT_ON;
         keyEvent.shift = metakey & AMETA_SHIFT_ON;
         forwardEvent(keyEvent);
@@ -439,11 +438,9 @@ int WindowImplAndroid::processKeyEvent(AInputEvent* inputEvent, ActivityStates& 
             forwardKeyEvent(Event::KeyPressed{});
             forwardKeyEvent(Event::KeyReleased{});
 
-            // This requires some special treatment, since this might represent
-            // a repetition of key presses or a complete sequence
-            if (key == AKEYCODE_UNKNOWN)
+            if (key == Keyboard::Key::Unknown)
             {
-                // This is a unique sequence, which is not yet exposed in the NDK
+                // This related to a very old issue that hasn't been resolved in over a decade
                 // https://code.google.com/p/android/issues/detail?id=33998
                 return 0;
             }
@@ -461,6 +458,20 @@ int WindowImplAndroid::processKeyEvent(AInputEvent* inputEvent, ActivityStates& 
     return 0;
 }
 
+////////////////////////////////////////////////////////////
+int WindowImplAndroid::processJoystickButtonEvent(AInputEvent*     inputEvent,
+                                                  std::int32_t     action,
+                                                  Joystick::Button button,
+                                                  ActivityStates&  states)
+{
+    const auto deviceId = AInputEvent_getDeviceId(inputEvent);
+    if (states.joystickStates.find(deviceId) == states.joystickStates.end())
+        return 1;
+
+    const auto buttonIdx = static_cast<std::underlying_type_t<decltype(button)>>(button);
+    states.joystickStates.at(deviceId).buttons[buttonIdx] = action == AKEY_EVENT_ACTION_DOWN;
+    return 1;
+}
 
 ////////////////////////////////////////////////////////////
 int WindowImplAndroid::processMotionEvent(AInputEvent* inputEvent, ActivityStates& states)
@@ -491,6 +502,34 @@ int WindowImplAndroid::processMotionEvent(AInputEvent* inputEvent, ActivityState
             forwardEvent(touchMoved);
 
             states.touchEvents[id] = touchMoved.position;
+        }
+        else if (static_cast<std::uint32_t>(device) & AINPUT_SOURCE_JOYSTICK)
+        {
+            /* NOTE:
+            I haven't found a reasonable mapping between input event and device ID which caused it.
+            Furthermore, it seems like all axii changes coming from the single gamepad are contained
+            in the single input event, meaning that I can poll values for all axii in this single
+            loop iteration and it'll work.
+
+            Also, whoever coded Windows gamepad support had normalized axii values to <-100, 100>
+            instead of sane interval of <-1, 1>.
+
+            Also also, a same gamepad connected via same method can report different axii
+            on Windows and Android. Xbox One for example will report triggers as negative/positive
+            values on the single axis, while Android reports them on two separate axii.
+            */
+            const auto deviceId = AInputEvent_getDeviceId(inputEvent);
+            if (states.joystickStates.find(deviceId) == states.joystickStates.end())
+                return 1;
+
+            const float factor = 100.f; // Windows code normalizes axis to range <-100, 100> instead of sane <-1, 1>
+            auto&       axes   = states.joystickStates.at(deviceId).axes;
+
+            for (unsigned axisIdx = 0; axisIdx < Joystick::AxisCount; ++axisIdx)
+            {
+                const auto axis = static_cast<Joystick::Axis>(axisIdx);
+                axes[axis] = AMotionEvent_getAxisValue(inputEvent, JoystickImpl::sfAxisToAndroid(axis), p) * factor;
+            }
         }
     }
 
@@ -552,7 +591,7 @@ int WindowImplAndroid::processPointerEvent(bool isDown, AInputEvent* inputEvent,
 
 
 ////////////////////////////////////////////////////////////
-Keyboard::Key WindowImplAndroid::androidKeyToSF(std::int32_t key)
+std::variant<Keyboard::Key, Joystick::Button> WindowImplAndroid::androidKeyToSF(std::int32_t key)
 {
     // clang-format off
     switch (key)
@@ -575,12 +614,12 @@ Keyboard::Key WindowImplAndroid::androidKeyToSF(std::int32_t key)
         case AKEYCODE_8:                  return Keyboard::Key::Num8;
         case AKEYCODE_9:                  return Keyboard::Key::Num9;
         case AKEYCODE_STAR:
-        case AKEYCODE_POUND:
-        case AKEYCODE_DPAD_UP:
-        case AKEYCODE_DPAD_DOWN:
-        case AKEYCODE_DPAD_LEFT:
-        case AKEYCODE_DPAD_RIGHT:
-        case AKEYCODE_DPAD_CENTER:
+        case AKEYCODE_POUND:              return Keyboard::Key::Unknown;
+        case AKEYCODE_DPAD_UP:            return Joystick::Button::DpadUp;
+        case AKEYCODE_DPAD_DOWN:          return Joystick::Button::DpadDown;
+        case AKEYCODE_DPAD_LEFT:          return Joystick::Button::DpadLeft;
+        case AKEYCODE_DPAD_RIGHT:         return Joystick::Button::DpadRight;
+        case AKEYCODE_DPAD_CENTER:        return Joystick::Button::DpadCenter;
         case AKEYCODE_VOLUME_UP:
         case AKEYCODE_VOLUME_DOWN:
         case AKEYCODE_POWER:
@@ -653,22 +692,22 @@ Keyboard::Key WindowImplAndroid::androidKeyToSF(std::int32_t key)
         case AKEYCODE_PAGE_UP:            return Keyboard::Key::PageUp;
         case AKEYCODE_PAGE_DOWN:          return Keyboard::Key::PageDown;
         case AKEYCODE_PICTSYMBOLS:
-        case AKEYCODE_SWITCH_CHARSET:
-        case AKEYCODE_BUTTON_A:
-        case AKEYCODE_BUTTON_B:
-        case AKEYCODE_BUTTON_C:
-        case AKEYCODE_BUTTON_X:
-        case AKEYCODE_BUTTON_Y:
-        case AKEYCODE_BUTTON_Z:
-        case AKEYCODE_BUTTON_L1:
-        case AKEYCODE_BUTTON_R1:
-        case AKEYCODE_BUTTON_L2:
-        case AKEYCODE_BUTTON_R2:
-        case AKEYCODE_BUTTON_THUMBL:
-        case AKEYCODE_BUTTON_THUMBR:
-        case AKEYCODE_BUTTON_START:
-        case AKEYCODE_BUTTON_SELECT:
-        case AKEYCODE_BUTTON_MODE:
+        case AKEYCODE_SWITCH_CHARSET:     return Keyboard::Key::Unknown;
+        case AKEYCODE_BUTTON_A:           return Joystick::Button::A;
+        case AKEYCODE_BUTTON_B:           return Joystick::Button::B;
+        case AKEYCODE_BUTTON_C:           return Joystick::Button::C;
+        case AKEYCODE_BUTTON_X:           return Joystick::Button::X;
+        case AKEYCODE_BUTTON_Y:           return Joystick::Button::Y;
+        case AKEYCODE_BUTTON_Z:           return Joystick::Button::Z;
+        case AKEYCODE_BUTTON_L1:          return Joystick::Button::L1;
+        case AKEYCODE_BUTTON_R1:          return Joystick::Button::R1;
+        case AKEYCODE_BUTTON_L2:          return Joystick::Button::L2;
+        case AKEYCODE_BUTTON_R2:          return Joystick::Button::R2;
+        case AKEYCODE_BUTTON_THUMBL:      return Joystick::Button::L3;
+        case AKEYCODE_BUTTON_THUMBR:      return Joystick::Button::R3;
+        case AKEYCODE_BUTTON_START:       return Joystick::Button::Start;
+        case AKEYCODE_BUTTON_SELECT:      return Joystick::Button::Select;
+        case AKEYCODE_BUTTON_MODE:        return Joystick::Button::Capture;
         default:                          return Keyboard::Key::Unknown;
     }
     // clang-format on
@@ -682,20 +721,10 @@ char32_t WindowImplAndroid::getUnicode(AInputEvent* event)
     ActivityStates&       states = getActivity();
     const std::lock_guard lock(states.mutex);
 
-    // Initializes JNI
-    jint lResult = 0;
-
-    JavaVM* lJavaVM = states.activity->vm;
+    // Prepare the Java virtual machine
     JNIEnv* lJNIEnv = states.activity->env;
-
-    JavaVMAttachArgs lJavaVMAttachArgs;
-    lJavaVMAttachArgs.version = JNI_VERSION_1_6;
-    lJavaVMAttachArgs.name    = "NativeThread";
-    lJavaVMAttachArgs.group   = nullptr;
-
-    lResult = lJavaVM->AttachCurrentThread(&lJNIEnv, &lJavaVMAttachArgs);
-
-    if (lResult == JNI_ERR)
+    auto    jni     = Jni::attachCurrentThread(states.activity->vm, &lJNIEnv);
+    if (!jni)
         err() << "Failed to initialize JNI, couldn't get the Unicode value" << std::endl;
 
     // Retrieve key data from the input event
@@ -732,9 +761,6 @@ char32_t WindowImplAndroid::getUnicode(AInputEvent* event)
 
     lJNIEnv->DeleteLocalRef(classKeyEvent);
     lJNIEnv->DeleteLocalRef(objectKeyEvent);
-
-    // Detach this thread from the JVM
-    lJavaVM->DetachCurrentThread();
 
     return static_cast<char32_t>(unicode);
 }
