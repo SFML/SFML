@@ -63,6 +63,8 @@
 #   add_executable(myapp ...)
 #   target_link_libraries(myapp PRIVATE SFML::Graphics SFML::Audio)
 
+cmake_policy(VERSION 3.22...3.31)
+
 if(NOT SFML_FIND_COMPONENTS)
     message(FATAL_ERROR "find_package(SFML) called with no component")
 endif()
