@@ -179,6 +179,27 @@ void WindowImplUIKit::setIcon(Vector2u /* size */, const std::uint8_t* /* pixels
 
 
 ////////////////////////////////////////////////////////////
+void WindowImplUIKit::setState(State /*state*/)
+{
+    // Not implemented yet
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplUIKit::setState(State /*state*/, sf::Vector2u /*size*/)
+{
+    // Not implemented yet
+}
+
+
+////////////////////////////////////////////////////////////
+State WindowImplUIKit::getState() const
+{
+    return [UIApplication sharedApplication].statusBarHidden ? State::Fullscreen : State::Windowed;
+}
+
+
+////////////////////////////////////////////////////////////
 void WindowImplUIKit::setVisible(bool /* visible */)
 {
     // Not applicable
