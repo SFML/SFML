@@ -68,11 +68,6 @@ int             contextCount   = 0;
 EGLDisplay      display        = EGL_NO_DISPLAY;
 int             waitingForFlip = 0;
 
-bool isEglLoaded()
-{
-    return eglLoaded;
-}
-
 void pageFlipHandler(int /* fd */, unsigned int /* frame */, unsigned int /* sec */, unsigned int /* usec */, void* data)
 {
     int* temp = static_cast<int*>(data);
@@ -555,7 +550,7 @@ DRMContext::DRMContext(DRMContext* shared)
 
     // Get the initialized EGL display
     m_display = getInitializedDisplay();
-    if (!isEglLoaded())
+    if (!eglLoaded)
         return;
 
     // Get the best EGL config matching the default video settings
@@ -583,7 +578,7 @@ DRMContext::DRMContext(DRMContext* shared, const ContextSettings& settings, cons
 
     // Get the initialized EGL display
     m_display = getInitializedDisplay();
-    if (!isEglLoaded())
+    if (!eglLoaded)
         return;
 
     // Get the best EGL config matching the requested video settings
@@ -608,7 +603,7 @@ DRMContext::DRMContext(DRMContext* shared, const ContextSettings& settings, Vect
 
     // Get the initialized EGL display
     m_display = getInitializedDisplay();
-    if (!isEglLoaded())
+    if (!eglLoaded)
         return;
 
     // Get the best EGL config matching the requested video settings
@@ -860,7 +855,7 @@ void DRMContext::updateSettings()
 ////////////////////////////////////////////////////////////
 GlFunctionPointer DRMContext::getFunction(const char* name)
 {
-    if (!isEglLoaded())
+    if (!eglLoaded)
         return nullptr;
     return reinterpret_cast<GlFunctionPointer>(eglGetProcAddress(name));
 }
