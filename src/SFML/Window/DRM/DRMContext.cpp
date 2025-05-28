@@ -67,6 +67,11 @@ int             contextCount   = 0;
 EGLDisplay      display        = EGL_NO_DISPLAY;
 int             waitingForFlip = 0;
 
+bool getInitialized()
+{
+    return initialized;
+}
+
 void pageFlipHandler(int /* fd */, unsigned int /* frame */, unsigned int /* sec */, unsigned int /* usec */, void* data)
 {
     int* temp = static_cast<int*>(data);
@@ -821,6 +826,8 @@ void DRMContext::updateSettings()
 ////////////////////////////////////////////////////////////
 GlFunctionPointer DRMContext::getFunction(const char* name)
 {
+    if (!getInitialized())
+        return nullptr;
     return reinterpret_cast<GlFunctionPointer>(eglGetProcAddress(name));
 }
 
