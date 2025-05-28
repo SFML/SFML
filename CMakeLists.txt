@@ -201,9 +201,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake")
 
-# add the subdirectories
-add_subdirectory(src/SFML)
-
 # on Linux and BSD-like OS, install pkg-config files by default
 set(SFML_INSTALL_PKGCONFIG_DEFAULT OFF)
 
@@ -247,6 +244,9 @@ endif()
 if(SFML_ENABLE_PCH AND SFML_OS_MACOS)
     message(FATAL_ERROR "Precompiled headers are currently not supported in macOS builds")
 endif()
+
+# add the subdirectories
+add_subdirectory(src/SFML)
 
 # setup the install rules
 if(NOT SFML_BUILD_FRAMEWORKS)
