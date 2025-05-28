@@ -321,6 +321,24 @@ int findDrmDevice(drmModeResPtr& resources)
     return fileDescriptor;
 }
 
+drmModeConnectorPtr drmGetConnectorPtr(drmModeResPtr resources, int64_t wantedConnectorId)
+{
+    drmModeConnectorPtr connector = nullptr;
+    for (int i = 0; i < resources->count_connectors; ++i)
+    {
+        connector = drmModeGetConnector(drmNode.fileDescriptor, resources->connectors[i]);
+        if ((connector->connection == DRM_MODE_CONNECTED) &&
+            ((wantedConnectorId == -1) || (connector->connector_id == wantedConnectorId)))
+        {
+            // It's connected, let's use this!
+            break;
+        }
+        drmModeFreeConnector(connector);
+        connector = nullptr;
+    }
+    return connector;
+}
+
 int initDrm()
 {
     if (initialized)
@@ -355,17 +373,21 @@ int initDrm()
     }
 
     // Find a connected connector:
-    drmModeConnectorPtr connector = nullptr;
-    for (int i = 0; i < resources->count_connectors; ++i)
+
+    // Use environment variable "SFML_DRM_CONNECTOR_ID" (or -1 if not set)
+    // Use to request specific connector
+    int64_t     wantedConnectorId = -1;
+    const char* connectorString   = std::getenv("SFML_DRM_CONNECTOR_ID");
+
+    if (connectorString && *connectorString)
+        wantedConnectorId = std::atoi(connectorString);
+
+    drmModeConnectorPtr connector = drmGetConnectorPtr(resources, wantedConnectorId);
+    if ((!connector) && (wantedConnectorId != -1))
     {
-        connector = drmModeGetConnector(drmNode.fileDescriptor, resources->connectors[i]);
-        if (connector->connection == DRM_MODE_CONNECTED)
-        {
-            // It's connected, let's use this!
-            break;
-        }
-        drmModeFreeConnector(connector);
-        connector = nullptr;
+        sf::err() << "Requested connector not found! Switching to general search!" << std::endl;
+        wantedConnectorId = -1;
+        connector         = drmGetConnectorPtr(resources, wantedConnectorId);
     }
 
     if (!connector)
@@ -447,7 +469,7 @@ void setDrmMode(sf::Vector2u size = {})
     unsigned int refreshRate   = 0;
     const char*  refreshString = std::getenv("SFML_DRM_REFRESH");
 
-    if (refreshString)
+    if (refreshString && *refreshString)
         refreshRate = static_cast<unsigned int>(std::atoi(refreshString));
 
     bool matched = false;
