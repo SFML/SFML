@@ -59,6 +59,7 @@ struct DrmFb
 };
 
 bool            initialized = false;
+bool            eglLoaded   = false;
 sf::priv::Drm   drmNode;
 drmEventContext drmEventCtx{};
 pollfd          pollFD{};
@@ -67,9 +68,9 @@ int             contextCount   = 0;
 EGLDisplay      display        = EGL_NO_DISPLAY;
 int             waitingForFlip = 0;
 
-bool getInitialized()
+bool getEglLoaded()
 {
-    return initialized;
+    return eglLoaded;
 }
 
 void pageFlipHandler(int /* fd */, unsigned int /* frame */, unsigned int /* sec */, unsigned int /* usec */, void* data)
@@ -486,9 +487,14 @@ EGLDisplay getInitializedDisplay()
 {
     if (display == EGL_NO_DISPLAY)
     {
-        gladLoaderLoadEGL(EGL_NO_DISPLAY);
+        if (!gladLoaderLoadEGL(EGL_NO_DISPLAY))
+        {
+            sf::err() << "Failed to load EGL entry points" << std::endl;
+            return EGL_NO_DISPLAY;
+        }
 
-        display = eglCheck(eglGetDisplay(reinterpret_cast<EGLNativeDisplayType>(gbmDevice)));
+        eglLoaded = true;
+        display   = eglCheck(eglGetDisplay(reinterpret_cast<EGLNativeDisplayType>(gbmDevice)));
 
         EGLint major = 0;
         EGLint minor = 0;
@@ -527,6 +533,8 @@ DRMContext::DRMContext(DRMContext* shared)
 
     // Get the initialized EGL display
     m_display = getInitializedDisplay();
+    if (!getEglLoaded())
+        return;
 
     // Get the best EGL config matching the default video settings
     m_config = getBestConfig(m_display, ContextSettings{});
@@ -553,6 +561,8 @@ DRMContext::DRMContext(DRMContext* shared, const ContextSettings& settings, cons
 
     // Get the initialized EGL display
     m_display = getInitializedDisplay();
+    if (!getEglLoaded())
+        return;
 
     // Get the best EGL config matching the requested video settings
     m_config = getBestConfig(m_display, settings);
@@ -576,6 +586,8 @@ DRMContext::DRMContext(DRMContext* shared, const ContextSettings& settings, Vect
 
     // Get the initialized EGL display
     m_display = getInitializedDisplay();
+    if (!getEglLoaded())
+        return;
 
     // Get the best EGL config matching the requested video settings
     m_config = getBestConfig(m_display, settings);
@@ -826,7 +838,7 @@ void DRMContext::updateSettings()
 ////////////////////////////////////////////////////////////
 GlFunctionPointer DRMContext::getFunction(const char* name)
 {
-    if (!getInitialized())
+    if (!getEglLoaded())
         return nullptr;
     return reinterpret_cast<GlFunctionPointer>(eglGetProcAddress(name));
 }
