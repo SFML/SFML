@@ -28,8 +28,6 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-        - { name: Windows VS2019 x86,             os: windows-2019, flags: -DSFML_USE_MESA3D=ON -GNinja }
-        - { name: Windows VS2019 x64,             os: windows-2019, flags: -DSFML_USE_MESA3D=ON -GNinja }
         - { name: Windows VS2022 x86,             os: windows-2022, flags: -DSFML_USE_MESA3D=ON -GNinja }
         - { name: Windows VS2022 x64,             os: windows-2022, flags: -DSFML_USE_MESA3D=ON -GNinja }
         - { name: Windows VS2022 arm64,           os: windows-2022, flags: -DSFML_USE_MESA3D=OFF -GNinja -DSFML_BUILD_TEST_SUITE=OFF }
