@@ -4,7 +4,7 @@
 
 #include <GraphicsUtil.hpp>
 #include <array>
-#include <iomanip>
+#include <ios>
 #include <sstream>
 #include <type_traits>
 

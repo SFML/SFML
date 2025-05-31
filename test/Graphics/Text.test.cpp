@@ -82,6 +82,8 @@ TEST_CASE("[Graphics] sf::Text", runDisplayTests())
         sf::Text text(font);
         text.setString("abcdefghijklmnopqrstuvwxyz");
         CHECK(text.getString() == "abcdefghijklmnopqrstuvwxyz");
+        text.setString("⽌⣚⢜⇋➰⚑⾿");
+        CHECK(text.getString() == "⽌⣚⢜⇋➰⚑⾿");
     }
 
     SECTION("Set/get font")

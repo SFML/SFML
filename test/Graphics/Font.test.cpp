@@ -47,7 +47,7 @@ TEST_CASE("[Graphics] sf::Font", runDisplayTests())
             {
                 const sf::Font font("Graphics/tuffy.ttf");
                 CHECK(font.getInfo().family == "Tuffy");
-                const auto& glyph = font.getGlyph(0x45, 16, false);
+                const auto& glyph = font.getGlyph(U'E', 16, false);
                 CHECK(glyph.advance == 9);
                 CHECK(glyph.lsbDelta == 9);
                 CHECK(glyph.rsbDelta == 16);
@@ -84,7 +84,7 @@ TEST_CASE("[Graphics] sf::Font", runDisplayTests())
                 const auto     memory = loadIntoMemory("Graphics/tuffy.ttf");
                 const sf::Font font(memory.data(), memory.size());
                 CHECK(font.getInfo().family == "Tuffy");
-                const auto& glyph = font.getGlyph(0x45, 16, false);
+                const auto& glyph = font.getGlyph(U'E', 16, false);
                 CHECK(glyph.advance == 9);
                 CHECK(glyph.lsbDelta == 9);
                 CHECK(glyph.rsbDelta == 16);
@@ -112,7 +112,7 @@ TEST_CASE("[Graphics] sf::Font", runDisplayTests())
             sf::FileInputStream stream("Graphics/tuffy.ttf");
             const sf::Font      font(stream);
             CHECK(font.getInfo().family == "Tuffy");
-            const auto& glyph = font.getGlyph(0x45, 16, false);
+            const auto& glyph = font.getGlyph(U'E', 16, false);
             CHECK(glyph.advance == 9);
             CHECK(glyph.lsbDelta == 9);
             CHECK(glyph.rsbDelta == 16);
@@ -152,7 +152,7 @@ TEST_CASE("[Graphics] sf::Font", runDisplayTests())
 
             REQUIRE(font.openFromFile(filename));
             CHECK(font.getInfo().family == "Tuffy");
-            const auto& glyph = font.getGlyph(0x45, 16, false);
+            const auto& glyph = font.getGlyph(U'E', 16, false);
             CHECK(glyph.advance == 9);
             CHECK(glyph.lsbDelta == 9);
             CHECK(glyph.rsbDelta == 16);
@@ -191,7 +191,7 @@ TEST_CASE("[Graphics] sf::Font", runDisplayTests())
             const auto memory = loadIntoMemory("Graphics/tuffy.ttf");
             REQUIRE(font.openFromMemory(memory.data(), memory.size()));
             CHECK(font.getInfo().family == "Tuffy");
-            const auto& glyph = font.getGlyph(0x45, 16, false);
+            const auto& glyph = font.getGlyph(U'E', 16, false);
             CHECK(glyph.advance == 9);
             CHECK(glyph.lsbDelta == 9);
             CHECK(glyph.rsbDelta == 16);
@@ -229,7 +229,7 @@ TEST_CASE("[Graphics] sf::Font", runDisplayTests())
             REQUIRE(stream.open("Graphics/tuffy.ttf"));
             REQUIRE(font.openFromStream(stream));
             CHECK(font.getInfo().family == "Tuffy");
-            const auto& glyph = font.getGlyph(0x45, 16, false);
+            const auto& glyph = font.getGlyph(U'E', 16, false);
             CHECK(glyph.advance == 9);
             CHECK(glyph.lsbDelta == 9);
             CHECK(glyph.rsbDelta == 16);
@@ -257,5 +257,24 @@ TEST_CASE("[Graphics] sf::Font", runDisplayTests())
         sf::Font font("Graphics/tuffy.ttf");
         font.setSmooth(false);
         CHECK(!font.isSmooth());
+    }
+
+    SECTION("hasGlyph")
+    {
+        const sf::Font font("Graphics/tuffy.ttf");
+
+        SECTION("Has codepoint")
+        {
+            const char32_t codepoint = GENERATE(U' ', U'.', U'?', U'a', 'A', U'z', U'Z', U'é', U'ö');
+            INFO("Codepoint: U+" << std::uppercase << std::hex << std::setw(4) << std::setfill('0') << codepoint);
+            CHECK(font.hasGlyph(codepoint));
+        }
+
+        SECTION("Lacks codepoint")
+        {
+            const char32_t codepoint = GENERATE(U'θ', U'¼', U'𐤄', U'我', U'ꯍ', U'🐌');
+            INFO("Codepoint: U+" << std::uppercase << std::hex << std::setw(4) << std::setfill('0') << codepoint);
+            CHECK(!font.hasGlyph(codepoint));
+        }
     }
 }
