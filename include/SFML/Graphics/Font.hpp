@@ -268,7 +268,30 @@ public:
     /// \return Kerning value for `first` and `second`, in pixels
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] float getKerning(std::uint32_t first, std::uint32_t second, unsigned int characterSize, bool bold = false) const;
+    [[deprecated("Use char32_t overload")]] [[nodiscard]] float getKerning(
+        std::uint32_t first,
+        std::uint32_t second,
+        unsigned int  characterSize,
+        bool          bold = false) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the kerning offset of two glyphs
+    ///
+    /// The kerning is an extra offset (negative) to apply between two
+    /// glyphs when rendering them, to make the pair look more "natural".
+    /// For example, the pair "AV" have a special kerning to make them
+    /// closer than other characters. Most of the glyphs pairs have a
+    /// kerning offset of zero, though.
+    ///
+    /// \param first         Unicode code point of the first character
+    /// \param second        Unicode code point of the second character
+    /// \param characterSize Reference character size
+    /// \param bold          Retrieve the bold version or the regular one?
+    ///
+    /// \return Kerning value for `first` and `second`, in pixels
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] float getKerning(char32_t first, char32_t second, unsigned int characterSize, bool bold = false) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the line spacing
