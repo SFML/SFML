@@ -331,7 +331,7 @@ unsigned int SoundStream::getSampleRate() const
 
 
 ////////////////////////////////////////////////////////////
-std::vector<SoundChannel> SoundStream::getChannelMap() const
+const std::vector<SoundChannel>& SoundStream::getChannelMap() const
 {
     return m_impl->channelMap;
 }
