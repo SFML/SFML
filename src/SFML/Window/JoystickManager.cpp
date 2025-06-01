@@ -112,6 +112,7 @@ JoystickManager::JoystickManager()
 ////////////////////////////////////////////////////////////
 JoystickManager::~JoystickManager()
 {
+    // NOLINTNEXTLINE(misc-const-correctness)
     for (Item& item : m_joysticks)
     {
         if (item.state.connected)
