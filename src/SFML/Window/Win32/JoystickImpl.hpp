@@ -30,9 +30,10 @@
 #include <SFML/System/EnumArray.hpp>
 #include <SFML/System/Win32/WindowsHeader.hpp>
 
+#include <Xinput.h>
 #include <dinput.h>
 #include <mmsystem.h>
-
+#include <optional>
 
 namespace sf::priv
 {
@@ -158,6 +159,16 @@ public:
     [[nodiscard]] bool openDInput(unsigned int index);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Open the joystick (XInput)
+    ///
+    /// \param index Index assigned to the joystick
+    ///
+    /// \return `true` on success, `false` on failure
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] bool openXInput(unsigned int index);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Close the joystick (DInput)
     ///
     ////////////////////////////////////////////////////////////
@@ -186,6 +197,26 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] JoystickState updateDInputPolled();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Updates XInput related information
+    ///
+    ////////////////////////////////////////////////////////////
+    static void pollXInput();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Pushes XInput state information to a Joystick
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] JoystickState updateXInput(XINPUT_STATE& xinputState);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Notifies that there has been a device change
+    ///
+    /// \return Joystick state
+    ///
+    ////////////////////////////////////////////////////////////
+    static void invalidateDevices();
 
 private:
     ////////////////////////////////////////////////////////////
@@ -219,6 +250,8 @@ private:
     DIDEVCAPS             m_deviceCaps{};                         //!< DirectInput device capabilities
     EnumArray<Joystick::Axis, int, Joystick::AxisCount> m_axes{}; //!< Offsets to the bytes containing the axes states, -1 if not available
     std::array<int, Joystick::ButtonCount> m_buttons{}; //!< Offsets to the bytes containing the button states, -1 if not available
+    bool                     m_useXInput{};
+    std::optional<DWORD>     m_xInputIndex{};
     Joystick::Identification m_identification; //!< Joystick identification
     JoystickState            m_state;          //!< Buffered joystick state
     bool                     m_buffered{}; //!< `true` if the device uses buffering, `false` if the device uses polling
