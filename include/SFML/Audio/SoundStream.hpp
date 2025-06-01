@@ -146,7 +146,7 @@ public:
     /// \return Map of position in sample frame to sound channel
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] std::vector<SoundChannel> getChannelMap() const;
+    [[nodiscard]] const std::vector<SoundChannel>& getChannelMap() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current status of the stream (stopped, paused, playing)
