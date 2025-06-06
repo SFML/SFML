@@ -25,6 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Audio/AudioDevice.hpp>
 #include <SFML/Audio/MiniaudioUtils.hpp>
 #include <SFML/Audio/SoundStream.hpp>
 
@@ -312,6 +313,7 @@ void SoundStream::stop()
     {
         setPlayingOffset(Time::Zero);
         m_impl->status = Status::Stopped;
+        priv::AudioDevice::waitForReadingComplete();
     }
 }
 

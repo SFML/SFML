@@ -315,6 +315,14 @@ void AudioDevice::unregisterResource(AudioDevice::ResourceEntryIter resourceEntr
 
 
 ////////////////////////////////////////////////////////////
+void AudioDevice::waitForReadingComplete()
+{
+    // Once we can lock the reading mutex it means the engine read cycle has been completed
+    const std::lock_guard lock(getInstance()->m_readingDataMutex);
+}
+
+
+////////////////////////////////////////////////////////////
 void AudioDevice::setGlobalVolume(float volume)
 {
     // Store the volume in case no audio device exists yet
@@ -488,6 +496,7 @@ bool AudioDevice::initialize()
 
         if (audioDevice.m_engine)
         {
+            const std::lock_guard lock(audioDevice.m_readingDataMutex);
             if (const auto result = ma_engine_read_pcm_frames(&*audioDevice.m_engine, output, frameCount, nullptr);
                 result != MA_SUCCESS)
                 err() << "Failed to read PCM frames from audio engine: " << ma_result_description(result) << std::endl;
