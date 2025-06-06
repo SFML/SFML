@@ -239,6 +239,31 @@ public:
     virtual void setIcon(Vector2u size, const std::uint8_t* pixels) = 0;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Set the window state
+    ///
+    /// \param state New state to be applied to the window
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void setState(State state) = 0;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the window state with a different size
+    ///
+    /// \param state New state to be applied to the window
+    /// \param size New window size to be applied with the new state
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void setState(State state, sf::Vector2u size) = 0;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the window's current state
+    ///
+    /// \return Current state the window is in
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] virtual State getState() const = 0;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Show or hide the window
     ///
     /// \param visible `true` to show, `false` to hide
