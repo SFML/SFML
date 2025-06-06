@@ -29,9 +29,12 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
 
+#include <functional>
 #include <optional>
 #include <string>
 #include <vector>
+
+#include <cstdint>
 
 
 namespace sf::PlaybackDevice
@@ -74,6 +77,11 @@ namespace sf::PlaybackDevice
 /// playback device. If none is available, `std::nullopt`
 /// is returned.
 ///
+/// Note that depending on when this function is called, the
+/// default device reported by the operating system might
+/// change e.g. when a USB audio device is plugged into or
+/// unplugged from the system.
+///
 /// \return The name of the default audio playback device
 ///
 ////////////////////////////////////////////////////////////
@@ -94,10 +102,72 @@ namespace sf::PlaybackDevice
 ///
 /// \return `true`, if it was able to set the requested device
 ///
-/// \see `getAvailableDevices`, `getDefaultDevice`
+/// \see `getAvailableDevices`, `getDefaultDevice`, `setDeviceToDefault`, `setDeviceToNull`
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_AUDIO_API bool setDevice(const std::string& name);
+
+////////////////////////////////////////////////////////////
+/// \brief Set the audio playback device to the default
+///
+/// This function sets the audio playback device to the
+/// default device. It can be called on the fly (i.e:
+/// while sounds are playing).
+///
+/// If there are sounds playing when the audio playback
+/// device is switched, the sounds will continue playing
+/// uninterrupted on the new audio playback device.
+///
+/// When certain backends are used, using the default device
+/// will enable automatic stream routing. When automatic
+/// stream routing is enabled, audio data is automatically
+/// sent to whichever physical audio device is currently
+/// marked as the default on the system. If the default device
+/// changes due to e.g. a device being added to or removed
+/// from the system or the user marking another device as the
+/// default, automatic stream routing will seamlessly reroute
+/// the audio data to the new default device without any
+/// manual intervention.
+///
+/// Automatic stream routing is currently supported when using
+/// the WASAPI or DirectSound backend on Windows or the
+/// Core Audio backend on macOS and iOS.
+///
+/// Depending on the order in which hardware devices are
+/// initialized e.g. after resuming from sleep, the default
+/// device might change one or more times in rapid succession
+/// before it reverts back to the state in which it was
+/// before the system went to sleep.
+///
+/// \return `true`, if it was able to set the audio playback device to the default device
+///
+/// \see `getAvailableDevices`, `getDefaultDevice`, `setDevice`, `setDeviceToNull`
+///
+////////////////////////////////////////////////////////////
+[[nodiscard]] SFML_AUDIO_API bool setDeviceToDefault();
+
+////////////////////////////////////////////////////////////
+/// \brief Set the audio playback device to the null device
+///
+/// This function sets the audio playback device to the
+/// null device. It can be called on the fly (i.e:
+/// while sounds are playing).
+///
+/// If there are sounds playing when the audio playback
+/// device is switched, the sounds will continue playing
+/// uninterrupted on the new audio playback device.
+///
+/// Audio data routed to the null device will be discarded
+/// by the backend. This can be used to keep sounds playing
+/// without having them actually output on a physical
+/// audio playback device.
+///
+/// \return `true`, if it was able to set the audio playback device to the null device
+///
+/// \see `getAvailableDevices`, `getDefaultDevice`, `setDevice`, `setDeviceToDefault`
+///
+////////////////////////////////////////////////////////////
+[[nodiscard]] SFML_AUDIO_API bool setDeviceToNull();
 
 ////////////////////////////////////////////////////////////
 /// \brief Get the name of the current audio playback device
@@ -114,5 +184,56 @@ namespace sf::PlaybackDevice
 ///
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_AUDIO_API std::optional<std::uint32_t> getDeviceSampleRate();
+
+////////////////////////////////////////////////////////////
+/// \brief Check if the current playback device is the default device
+///
+/// This function will return `false` if there is no
+/// current playback device.
+///
+/// \return `true`, if the current playback device is the default device
+///
+////////////////////////////////////////////////////////////
+[[nodiscard]] SFML_AUDIO_API bool isDefaultDevice();
+
+////////////////////////////////////////////////////////////
+/// \brief Enumeration of the playback device notifications
+///
+////////////////////////////////////////////////////////////
+enum class Notification
+{
+    DeviceStarted,  //!< Playback device has been started
+    DeviceStopped,  //!< Playback device has been stopped
+    DeviceRerouted, //!< Playback device has been rerouted (Generated on platforms that support automatic stream routing)
+    DeviceInterruptionBegan, //!< Playback device interruption has begun (Generated on Apple mobile platforms)
+    DeviceInterruptionEnded, //!< Playback device interruption has ended (Generated on Apple mobile platforms)
+    DeviceUnlocked           //!< Playback device has been unlocked (Generated by Emscripten/WebAudio)
+};
+
+////////////////////////////////////////////////////////////
+/// \brief Callable that is called to notify of changes to the playback device state
+///
+////////////////////////////////////////////////////////////
+using NotificationCallback = std::function<void(Notification notification)>;
+
+////////////////////////////////////////////////////////////
+/// \brief Set a callback that should be called to notify of changes to the playback device state
+///
+/// Warning: Do not attempt to alter the device state from
+/// within this callback. This includes changing the device
+/// and even creating/destroying sound objects since that
+/// could indirectly cause the playback device to be
+/// created/destroyed. Also do not attempt to set the
+/// notification callback from within this callback. Doing
+/// so will result in a deadlock.
+///
+/// When receiving a notification via this callback, store
+/// the information somewhere and react on it from another
+/// thread e.g. the main thread within the application.
+///
+/// \param callback The callback that should be called to notify of changes to the playback device state
+///
+////////////////////////////////////////////////////////////
+SFML_AUDIO_API void setNotificationCallback(NotificationCallback callback);
 
 } // namespace sf::PlaybackDevice

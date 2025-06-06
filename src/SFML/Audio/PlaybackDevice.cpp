@@ -75,6 +75,20 @@ bool setDevice(const std::string& name)
 
 
 ////////////////////////////////////////////////////////////
+bool setDeviceToDefault()
+{
+    return priv::AudioDevice::setDeviceToDefault();
+}
+
+
+////////////////////////////////////////////////////////////
+bool setDeviceToNull()
+{
+    return priv::AudioDevice::setDeviceToNull();
+}
+
+
+////////////////////////////////////////////////////////////
 std::optional<std::string> getDevice()
 {
     return priv::AudioDevice::getDevice();
@@ -85,6 +99,20 @@ std::optional<std::string> getDevice()
 std::optional<std::uint32_t> getDeviceSampleRate()
 {
     return priv::AudioDevice::getDeviceSampleRate();
+}
+
+
+////////////////////////////////////////////////////////////
+bool isDefaultDevice()
+{
+    return priv::AudioDevice::isDefaultDevice();
+}
+
+
+////////////////////////////////////////////////////////////
+void setNotificationCallback(NotificationCallback callback)
+{
+    priv::AudioDevice::setNotificationCallback(std::move(callback));
 }
 
 } // namespace sf::PlaybackDevice
