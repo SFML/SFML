@@ -10,6 +10,7 @@ if(NOT SFML_OS_IOS)
     if(SFML_BUILD_AUDIO)
         add_subdirectory(sound)
         add_subdirectory(sound_capture)
+        add_subdirectory(sound_device)
     endif()
 endif()
 
