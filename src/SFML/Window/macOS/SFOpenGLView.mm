@@ -112,7 +112,7 @@
         m_trackingArea  = [[NSTrackingArea alloc] initWithRect:[self bounds] options:opts owner:self userInfo:nil];
         [self addTrackingArea:m_trackingArea];
 
-        m_fullscreen    = isFullscreen;
+        m_state         = isFullscreen ? sf::State::Fullscreen : sf::State::Windowed;
         m_scaleFactor   = 1.0; // Default value; it will be updated in finishInit
         m_cursorGrabbed = NO;
         m_deltaXBuffer  = 0;
@@ -291,7 +291,7 @@
     if (m_requester)
         m_requester->windowFocusGained();
 
-    if (m_fullscreen)
+    if (m_state == sf::State::Fullscreen)
         [self enterFullscreen];
 }
 
@@ -306,7 +306,7 @@
     if (m_requester)
         m_requester->windowFocusLost();
 
-    if (m_fullscreen)
+    if (m_state == sf::State::Fullscreen)
         [self exitFullscreen];
 }
 
@@ -345,7 +345,7 @@
 ////////////////////////////////////////////////////////
 - (BOOL)isFullscreen
 {
-    return m_fullscreen;
+    return m_state == sf::State::Fullscreen;
 }
 
 

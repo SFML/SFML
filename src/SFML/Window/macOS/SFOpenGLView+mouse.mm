@@ -361,7 +361,7 @@
                 // Also, this factor is not the same when keeping track of how much
                 // we move the cursor (buffers) when projecting the cursor into the
                 // view when grabbing the cursor for the first time.
-                CGFloat factorBuffer = m_fullscreen ? 1 : 2;
+                CGFloat factorBuffer = m_state == sf::State::Fullscreen ? 1 : 2;
 
                 CGFloat deltaX = [eventOrNil deltaX];
                 CGFloat deltaY = [eventOrNil deltaY];

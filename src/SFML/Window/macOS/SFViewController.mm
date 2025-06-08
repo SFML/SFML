@@ -292,4 +292,17 @@
 }
 
 
+////////////////////////////////////////////////////////
+- (sf::State)getState
+{
+    return [self isFullscreen] ? sf::State::Fullscreen : sf::State::Windowed;
+}
+
+
+////////////////////////////////////////////////////////
+- (void)setState:(sf::State)state
+{
+}
+
+
 @end

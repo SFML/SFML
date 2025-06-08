@@ -422,16 +422,18 @@ void WindowImplCocoa::setIcon(Vector2u size, const std::uint8_t* pixels)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::setState(State /*state*/)
+void WindowImplCocoa::setState(State state)
 {
-    // TODO: Not implemented yet
+    const AutoreleasePool pool;
+    [m_delegate setState:state];
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::setState(State /*state*/, Vector2u /*size*/)
+void WindowImplCocoa::setState(State state, Vector2u size)
 {
-    // TODO: Not implemented yet
+    setState(state);
+    setSize(size);
 }
 
 
@@ -439,7 +441,7 @@ void WindowImplCocoa::setState(State /*state*/, Vector2u /*size*/)
 State WindowImplCocoa::getState() const
 {
     const AutoreleasePool pool;
-    return [m_delegate isFullscreen] ? State::Fullscreen : State::Windowed;
+    return [m_delegate getState];
 }
 
 

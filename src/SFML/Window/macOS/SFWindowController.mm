@@ -42,6 +42,7 @@
 #include <ApplicationServices/ApplicationServices.h>
 #import <OpenGL/OpenGL.h>
 #include <algorithm>
+#include <iostream>
 #include <ostream>
 
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
@@ -101,7 +102,7 @@
         m_window        = nil;
         m_oglView       = nil;
         m_requester     = nil;
-        m_fullscreen    = NO; // assuming this is the case... too hard to handle anyway.
+        m_state         = sf::State::Windowed; // assuming this is the case... too hard to handle anyway.
         m_restoreResize = NO;
         m_highDpi       = NO;
 
@@ -154,11 +155,11 @@
         m_window        = nil;
         m_oglView       = nil;
         m_requester     = nil;
-        m_fullscreen    = (state == sf::State::Fullscreen) ? YES : NO;
+        m_state         = state;
         m_restoreResize = NO;
         m_highDpi       = NO;
 
-        if (m_fullscreen)
+        if (m_state == sf::State::Fullscreen)
             [self setupFullscreenViewWithMode:mode];
         else
             [self setupWindowWithMode:mode andStyle:style];
@@ -428,48 +429,53 @@
 ////////////////////////////////////////////////////////
 - (void)resizeTo:(sf::Vector2u)size
 {
-    if (m_fullscreen)
+    switch (m_state)
     {
-        // Special case when fullscreen: only resize the opengl view
-        // and make sure the requested size is not bigger than the window.
-        const sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
+        case sf::State::Fullscreen:
+        {
+            // Special case when fullscreen: only resize the opengl view
+            // and make sure the requested size is not bigger than the window.
+            const sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
 
-        size.x = std::min(size.x, desktop.size.x);
-        size.y = std::min(size.y, desktop.size.y);
+            size.x = std::min(size.x, desktop.size.x);
+            size.y = std::min(size.y, desktop.size.y);
 
-        const auto origin  = sf::Vector2<CGFloat>(desktop.size - size) / CGFloat{2};
-        NSRect     oglRect = NSMakeRect(origin.x, origin.y, size.x, size.y);
+            const auto origin  = sf::Vector2<CGFloat>(desktop.size - size) / CGFloat{2};
+            NSRect     oglRect = NSMakeRect(origin.x, origin.y, size.x, size.y);
 
-        [m_oglView setFrame:oglRect];
-        [m_oglView setNeedsDisplay:YES];
-    }
-    else
-    {
-        // Before resizing, remove resizable mask to be able to resize
-        // beyond the desktop boundaries.
-        NSUInteger styleMask = [m_window styleMask];
+            [m_oglView setFrame:oglRect];
+            [m_oglView setNeedsDisplay:YES];
+        }
+        break;
+        case sf::State::Windowed:
+        {
+            // Before resizing, remove resizable mask to be able to resize
+            // beyond the desktop boundaries.
+            NSUInteger styleMask = [m_window styleMask];
 
-        [m_window setStyleMask:styleMask ^ NSResizableWindowMask];
+            [m_window setStyleMask:styleMask ^ NSResizableWindowMask];
 
-        // Add titlebar height.
-        size.y += static_cast<unsigned int>([self titlebarHeight]);
+            // Add titlebar height.
+            size.y += static_cast<unsigned int>([self titlebarHeight]);
 
-        // Corner case: don't set the window height bigger than the screen height
-        // or the view will be resized _later_ without generating a resize event.
-        NSRect  screenFrame      = [[NSScreen mainScreen] visibleFrame];
-        CGFloat maxVisibleHeight = screenFrame.size.height;
-        if (size.y > maxVisibleHeight)
-            size.y = static_cast<unsigned int>(maxVisibleHeight);
+            // Corner case: don't set the window height bigger than the screen height
+            // or the view will be resized _later_ without generating a resize event.
+            NSRect  screenFrame      = [[NSScreen mainScreen] visibleFrame];
+            CGFloat maxVisibleHeight = screenFrame.size.height;
+            if (size.y > maxVisibleHeight)
+                size.y = static_cast<unsigned int>(maxVisibleHeight);
 
-        if (m_requester != nil)
-            m_requester->windowResized({size.x, size.y - static_cast<unsigned int>([self titlebarHeight])});
+            if (m_requester != nil)
+                m_requester->windowResized({size.x, size.y - static_cast<unsigned int>([self titlebarHeight])});
 
-        NSRect frame = NSMakeRect([m_window frame].origin.x, [m_window frame].origin.y, size.x, size.y);
+            NSRect frame = NSMakeRect([m_window frame].origin.x, [m_window frame].origin.y, size.x, size.y);
 
-        [m_window setFrame:frame display:YES];
+            [m_window setFrame:frame display:YES];
 
-        // And restore the mask
-        [m_window setStyleMask:styleMask];
+            // And restore the mask
+            [m_window setStyleMask:styleMask];
+        }
+        break;
     }
 }
 
@@ -566,7 +572,7 @@
 ////////////////////////////////////////////////////////
 - (BOOL)isFullscreen
 {
-    return m_fullscreen;
+    return m_state == sf::State::Fullscreen;
 }
 
 
@@ -633,6 +639,45 @@
 - (float)titlebarHeight
 {
     return static_cast<float>(NSHeight([m_window frame]) - NSHeight([[m_window contentView] frame]));
+}
+
+
+////////////////////////////////////////////////////////////
+- (sf::State)getState
+{
+    return m_state;
+}
+
+
+////////////////////////////////////////////////////////////
+- (void)setState:(sf::State)state
+{
+    // Nested switch statements ensure we handle all possible transitions
+    // between the current window state and the desired window state.
+    switch (m_state)
+    {
+        case sf::State::Windowed:
+            switch (state)
+            {
+                case sf::State::Windowed:
+                    break;
+                case sf::State::Fullscreen:
+                    [m_window toggleFullScreen:nil];
+                    break;
+            }
+            break;
+        case sf::State::Fullscreen:
+            switch (state)
+            {
+                case sf::State::Windowed:
+                    [m_window toggleFullScreen:nil];
+                    break;
+                case sf::State::Fullscreen:
+                    break;
+            }
+            break;
+    }
+    m_state = state;
 }
 
 @end

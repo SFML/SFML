@@ -26,6 +26,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/WindowEnums.hpp>
+
 #import <AppKit/AppKit.h>
 
 #pragma GCC diagnostic push
@@ -76,7 +78,7 @@ class WindowImplCocoa;
     BOOL                       m_mouseIsIn;     ///< Mouse positional state
     NSCursor*                  m_cursor;        ///< Active cursor
     NSTrackingArea*            m_trackingArea;  ///< Mouse tracking area
-    BOOL                       m_fullscreen;    ///< Indicate whether the window is fullscreen or not
+    sf::State                  m_state;         ///< Current window state
     CGFloat                    m_scaleFactor;   ///< Display scale factor (e.g. 1x for classic display, 2x for retina)
     BOOL                       m_cursorGrabbed; ///< Is the mouse cursor trapped?
     CGFloat                    m_deltaXBuffer;  ///< See note about cursor grabbing above
