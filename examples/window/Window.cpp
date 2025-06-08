@@ -3,6 +3,9 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window.hpp>
 
+#include <array>
+#include <iostream>
+
 #include <cstdlib>
 
 #define GLAD_GL_IMPLEMENTATION
@@ -12,10 +15,6 @@
 #include <SFML/Main.hpp>
 #endif
 
-#include <array>
-#include <iostream>
-
-#include <cstdlib>
 
 ////////////////////////////////////////////////////////////
 /// Entry point of application
@@ -151,17 +150,21 @@ int main()
                 window.close();
             }
 
-            // Toggle fullscreen mode with F1
-            if (event->is<sf::Event::KeyPressed>() &&
-                event->getIf<sf::Event::KeyPressed>()->scancode == sf::Keyboard::Scancode::F1)
+            // Set with state with function keys
+            if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
             {
-                if (window.getState() == sf::State::Windowed)
+                switch (keyPressed->scancode)
                 {
-                    window.setState(sf::State::Fullscreen, sf::VideoMode::getFullscreenModes()[0].size);
-                }
-                else
-                {
-                    window.setState(sf::State::Windowed, {640, 480});
+                    case sf::Keyboard::Scancode::F1:
+                        window.setState(sf::State::Fullscreen, sf::VideoMode::getFullscreenModes().front().size);
+                        assert(window.getState() == sf::State::Fullscreen);
+                        break;
+                    case sf::Keyboard::Scancode::F2:
+                        window.setState(sf::State::Windowed, {640, 480});
+                        assert(window.getState() == sf::State::Windowed);
+                        break;
+                    default:
+                        break;
                 }
             }
 

@@ -82,7 +82,7 @@ public:
     void setState(State state) override;
 
     ////////////////////////////////////////////////////////////
-    void setState(State state, sf::Vector2u size) override;
+    void setState(State state, Vector2u size) override;
 
     ////////////////////////////////////////////////////////////
     [[nodiscard]] State getState() const override;
@@ -213,11 +213,11 @@ private:
     Vector2u m_lastSize;               //!< The last handled size of the window
     bool     m_resizing{};             //!< Is the window being resized?
     char16_t m_surrogate{}; //!< First half of the surrogate pair, in case we're receiving a Unicode character in two events
-    bool        m_mouseInside{};   //!< Mouse is inside the window?
-    bool        m_fullscreen{};    //!< Is the window fullscreen?
-    bool        m_cursorGrabbed{}; //!< Is the mouse cursor trapped?
-    const DWORD m_win32Style;      //!< Window style in the windows format
-    VideoMode   m_mode;            //!< Video mode of the window
+    bool        m_mouseInside{};                     //!< Mouse is inside the window?
+    bool        m_fullscreen{};                      //!< Is the window fullscreen?
+    bool        m_cursorGrabbed{};                   //!< Is the mouse cursor trapped?
+    const DWORD m_win32Style;                        //!< Window style in the windows format
+    VideoMode   m_mode{VideoMode::getDesktopMode()}; //!< Video mode of the window
 };
 
 } // namespace priv
