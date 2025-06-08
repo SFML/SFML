@@ -285,7 +285,7 @@ void WindowBase::setState(State state)
 
 
 ////////////////////////////////////////////////////////////
-void WindowBase::setState(State state, sf::Vector2u size)
+void WindowBase::setState(State state, Vector2u size)
 {
     if (m_impl)
         m_impl->setState(state, size);

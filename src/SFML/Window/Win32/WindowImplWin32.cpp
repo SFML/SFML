@@ -159,10 +159,7 @@ void initRawMouse()
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-WindowImplWin32::WindowImplWin32(WindowHandle handle) :
-m_handle(handle),
-m_win32Style(translateStyle(Style::None)),
-m_mode(VideoMode::getDesktopMode())
+WindowImplWin32::WindowImplWin32(WindowHandle handle) : m_handle(handle), m_win32Style(translateStyle(Style::None))
 {
     // Set that this process is DPI aware and can handle DPI scaling
     setProcessDpiAware();
@@ -418,30 +415,25 @@ void WindowImplWin32::setState(State state)
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplWin32::setState(State state, sf::Vector2u size)
+void WindowImplWin32::setState(State state, Vector2u size)
 {
-    auto currentState = getState();
     m_mode.size = size;
 
     switch (state)
     {
         case State::Fullscreen:
-            if (currentState != State::Fullscreen)
+            if (getState() != State::Fullscreen)
             {
                 m_fullscreen = true;
                 switchToFullscreen();
             }
             break;
-
         case State::Windowed:
-            if (currentState == State::Fullscreen)
+            if (getState() == State::Fullscreen)
             {
                 m_fullscreen = false;
                 switchToWindowed();
             }
-            break;
-
-        default:
             break;
     }
 }
@@ -591,10 +583,10 @@ void WindowImplWin32::switchToWindowed()
     SetWindowLongPtrW(m_handle, GWL_STYLE, static_cast<LONG_PTR>(m_win32Style));
 
     // Compute position and size
-    auto [width, height] = Vector2i(m_mode.size);
-    HDC       screenDC   = GetDC(nullptr);
-    const int left       = (GetDeviceCaps(screenDC, HORZRES) - width) / 2;
-    const int top        = (GetDeviceCaps(screenDC, VERTRES) - height) / 2;
+    const auto [width, height] = Vector2i(m_mode.size);
+    HDC       screenDC         = GetDC(nullptr);
+    const int left             = (GetDeviceCaps(screenDC, HORZRES) - width) / 2;
+    const int top              = (GetDeviceCaps(screenDC, VERTRES) - height) / 2;
     ReleaseDC(nullptr, screenDC);
 
     RECT rectangle = {0, 0, width, height};

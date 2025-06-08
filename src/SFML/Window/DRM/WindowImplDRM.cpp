@@ -148,14 +148,14 @@ void WindowImplDRM::setIcon(Vector2u /*size*/, const std::uint8_t* /*pixels*/)
 ////////////////////////////////////////////////////////////
 void WindowImplDRM::setState(State /*state*/)
 {
-    // Not implemented yet
+    // TODO: Not implemented yet
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplDRM::setState(State /*state*/, sf::Vector2u /*size*/)
+void WindowImplDRM::setState(State /*state*/, Vector2u /*size*/)
 {
-    // Not implemented yet
+    // TODO: Not implemented yet
 }
 
 

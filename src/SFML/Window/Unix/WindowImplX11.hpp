@@ -164,7 +164,7 @@ public:
     /// \param size New window size to be applied with the new state
     ///
     ////////////////////////////////////////////////////////////
-    void setState(State state, sf::Vector2u size) override;
+    void setState(State state, Vector2u size) override;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the window's current state

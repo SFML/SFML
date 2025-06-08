@@ -424,14 +424,14 @@ void WindowImplCocoa::setIcon(Vector2u size, const std::uint8_t* pixels)
 ////////////////////////////////////////////////////////////
 void WindowImplCocoa::setState(State /*state*/)
 {
-    // Not implemented yet
+    // TODO: Not implemented yet
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplCocoa::setState(State /*state*/, sf::Vector2u /*size*/)
+void WindowImplCocoa::setState(State /*state*/, Vector2u /*size*/)
 {
-    // Not implemented yet
+    // TODO: Not implemented yet
 }
 
 

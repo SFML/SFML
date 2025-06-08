@@ -452,7 +452,7 @@ public:
     /// \see `setState`
     ///
     ////////////////////////////////////////////////////////////
-    void setState(State state, sf::Vector2u size);
+    void setState(State state, Vector2u size);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the window's current state

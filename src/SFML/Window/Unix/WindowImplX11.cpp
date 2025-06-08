@@ -1073,14 +1073,14 @@ void WindowImplX11::setIcon(Vector2u size, const std::uint8_t* pixels)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setState(State /*state*/)
 {
-    // Not implemented yet
+    // TODO: Not implemented yet
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplX11::setState(State /*state*/, sf::Vector2u /*size*/)
+void WindowImplX11::setState(State /*state*/, Vector2u /*size*/)
 {
-    // Not implemented yet
+    // TODO: Not implemented yet
 }
 
 

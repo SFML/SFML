@@ -253,7 +253,7 @@ public:
     /// \param size New window size to be applied with the new state
     ///
     ////////////////////////////////////////////////////////////
-    virtual void setState(State state, sf::Vector2u size) = 0;
+    virtual void setState(State state, Vector2u size) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the window's current state

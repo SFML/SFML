@@ -182,14 +182,14 @@ void WindowImplAndroid::setIcon(Vector2u /* size */, const std::uint8_t* /* pixe
 ////////////////////////////////////////////////////////////
 void WindowImplAndroid::setState(State /*state*/)
 {
-    // Not implemented yet
+    // TODO: Not implemented yet
 }
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplAndroid::setState(State /*state*/, sf::Vector2u /*size*/)
+void WindowImplAndroid::setState(State /*state*/, Vector2u /*size*/)
 {
-    // Not implemented yet
+    // TODO: Not implemented yet
 }
 
 
