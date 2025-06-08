@@ -427,7 +427,8 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Set the window state
     ///
-    /// Change between windowed and fullscreen mode.
+    /// \note This function will reuse the window's current size
+    /// when switching modes.
     ///
     /// \param state New state to be applied to the window
     ///
@@ -437,7 +438,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Get the window's current state
     ///
-    /// \return Current state the window is in
+    /// \return Current state of the window
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] State getState() const;

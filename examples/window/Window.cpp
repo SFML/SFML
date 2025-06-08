@@ -3,6 +3,9 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window.hpp>
 
+#include <array>
+#include <iostream>
+
 #include <cstdlib>
 
 #define GLAD_GL_IMPLEMENTATION
@@ -12,10 +15,6 @@
 #include <SFML/Main.hpp>
 #endif
 
-#include <array>
-#include <iostream>
-
-#include <cstdlib>
 
 ////////////////////////////////////////////////////////////
 /// Entry point of application

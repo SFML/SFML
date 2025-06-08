@@ -249,7 +249,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Get the window's current state
     ///
-    /// \return Current state the window is in
+    /// \return Current state of the window
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] virtual State getState() const = 0;
