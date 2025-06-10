@@ -33,6 +33,7 @@
 
 #include <locale>
 #include <string>
+#include <string_view>
 
 #include <cstddef>
 #include <cstdint>
@@ -171,6 +172,18 @@ public:
     String(const std::string& ansiString, const std::locale& locale = {});
 
     ////////////////////////////////////////////////////////////
+    /// \brief Construct from an ANSI string view and a locale
+    ///
+    /// The source string is converted to UTF-32 according
+    /// to the given locale.
+    ///
+    /// \param ansiString ANSI string to convert
+    /// \param locale     Locale to use for conversion
+    ///
+    ////////////////////////////////////////////////////////////
+    String(std::string_view ansiString, const std::locale& locale = {});
+
+    ////////////////////////////////////////////////////////////
     /// \brief Construct from null-terminated C-style wide string
     ///
     /// \param wideString Wide string to convert
@@ -187,6 +200,14 @@ public:
     String(const std::wstring& wideString);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Construct from a wide string view
+    ///
+    /// \param wideString Wide string to convert
+    ///
+    ////////////////////////////////////////////////////////////
+    String(std::wstring_view wideString);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Construct from a null-terminated C-style UTF-32 string
     ///
     /// \param utf32String UTF-32 string to assign
@@ -201,6 +222,14 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     String(std::u32string utf32String);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct from an UTF-32 string view
+    ///
+    /// \param utf32String UTF-32 string to assign
+    ///
+    ////////////////////////////////////////////////////////////
+    String(std::u32string_view utf32String);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new `sf::String` from a UTF-8 encoded string
