@@ -139,10 +139,10 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Get the sample rate of the current audio playback device
     ///
-    /// \return The sample rate of the current audio playback device or 0 if there is none
+    /// \return The sample rate of the current audio playback device or `std::nullopt` if there is none
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::uint32_t getDeviceSampleRate();
+    [[nodiscard]] static std::optional<std::uint32_t> getDeviceSampleRate();
 
     struct ResourceEntry
     {

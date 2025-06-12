@@ -291,13 +291,13 @@ std::optional<std::string> AudioDevice::getDevice()
 
 
 ////////////////////////////////////////////////////////////
-std::uint32_t AudioDevice::getDeviceSampleRate()
+std::optional<std::uint32_t> AudioDevice::getDeviceSampleRate()
 {
     auto* instance = getInstance();
     if (instance && instance->m_playbackDevice)
         return instance->m_playbackDevice->sampleRate;
 
-    return 0;
+    return std::nullopt;
 }
 
 

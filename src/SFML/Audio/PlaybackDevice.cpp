@@ -82,7 +82,7 @@ std::optional<std::string> getDevice()
 
 
 ////////////////////////////////////////////////////////////
-std::uint32_t getDeviceSampleRate()
+std::optional<std::uint32_t> getDeviceSampleRate()
 {
     return priv::AudioDevice::getDeviceSampleRate();
 }
