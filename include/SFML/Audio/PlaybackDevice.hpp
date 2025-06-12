@@ -107,4 +107,12 @@ namespace sf::PlaybackDevice
 ////////////////////////////////////////////////////////////
 [[nodiscard]] SFML_AUDIO_API std::optional<std::string> getDevice();
 
+////////////////////////////////////////////////////////////
+/// \brief Get the sample rate of the current audio playback device
+///
+/// \return The sample rate of the current audio playback device or `std::nullopt` if there is none
+///
+////////////////////////////////////////////////////////////
+[[nodiscard]] SFML_AUDIO_API std::optional<std::uint32_t> getDeviceSampleRate();
+
 } // namespace sf::PlaybackDevice
