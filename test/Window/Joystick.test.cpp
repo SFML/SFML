@@ -3,6 +3,8 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/generators/catch_generators_range.hpp>
 
+#include <SystemUtil.hpp>
+
 TEST_CASE("[Window] sf::Joystick")
 {
     SECTION("Constants")
