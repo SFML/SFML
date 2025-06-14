@@ -126,7 +126,7 @@ bool JoystickImpl::open(unsigned int joyIndex)
         return false;
     }
 
-    auto inputDeviceClass = JniInputDeviceClass::findClass(env);
+    auto inputDeviceClass = JniInputDeviceClass::findClass(*env);
     if (!inputDeviceClass)
         return false;
 
@@ -218,7 +218,7 @@ JoystickState JoystickImpl::update() const
         return {false};
     }
 
-    auto inputDeviceClass = JniInputDeviceClass::findClass(env);
+    auto inputDeviceClass = JniInputDeviceClass::findClass(*env);
     if (!inputDeviceClass)
     {
         return {false};

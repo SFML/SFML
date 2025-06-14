@@ -35,17 +35,15 @@
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-JniListClass::JniListClass(JNIEnv* env, jclass listClass) : m_env(env), m_listClass(listClass)
+JniListClass::JniListClass(JNIEnv& env, jclass listClass) : m_env(env), m_listClass(listClass)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
-std::optional<JniListClass> JniListClass::findClass(JNIEnv* env)
+std::optional<JniListClass> JniListClass::findClass(JNIEnv& env)
 {
-    assert(env);
-
-    jclass listClass = env->FindClass("java/util/List");
+    jclass listClass = env.FindClass("java/util/List");
     if (!listClass)
         return std::nullopt;
 
@@ -54,7 +52,7 @@ std::optional<JniListClass> JniListClass::findClass(JNIEnv* env)
 
 
 ////////////////////////////////////////////////////////////
-JniMotionRange::JniMotionRange(JNIEnv* env, jobject motionRange, jmethodID getAxisMethod) :
+JniMotionRange::JniMotionRange(JNIEnv& env, jobject motionRange, jmethodID getAxisMethod) :
 m_env(env),
 m_motionRange(motionRange),
 m_getAxisMethod(getAxisMethod)
@@ -65,12 +63,12 @@ m_getAxisMethod(getAxisMethod)
 ////////////////////////////////////////////////////////////
 int JniMotionRange::getAxis() const
 {
-    return m_env->CallIntMethod(m_motionRange, m_getAxisMethod);
+    return m_env.CallIntMethod(m_motionRange, m_getAxisMethod);
 }
 
 
 ////////////////////////////////////////////////////////////
-JniMotionRangeClass::JniMotionRangeClass(JNIEnv* env, jclass motionRangeClass) :
+JniMotionRangeClass::JniMotionRangeClass(JNIEnv& env, jclass motionRangeClass) :
 m_env(env),
 m_motionRangeClass(motionRangeClass)
 {
@@ -78,10 +76,9 @@ m_motionRangeClass(motionRangeClass)
 
 
 ////////////////////////////////////////////////////////////
-std::optional<JniMotionRangeClass> JniMotionRangeClass::findClass(JNIEnv* env)
+std::optional<JniMotionRangeClass> JniMotionRangeClass::findClass(JNIEnv& env)
 {
-    assert(env);
-    jclass motionRangeClass = env->FindClass("android/view/InputDevice$MotionRange");
+    jclass motionRangeClass = env.FindClass("android/view/InputDevice$MotionRange");
     if (!motionRangeClass)
         return std::nullopt;
 
@@ -92,7 +89,7 @@ std::optional<JniMotionRangeClass> JniMotionRangeClass::findClass(JNIEnv* env)
 ////////////////////////////////////////////////////////////
 std::optional<JniMotionRange> JniMotionRangeClass::makeFromJava(jobject motionRange)
 {
-    jmethodID getAxisMethod = m_env->GetMethodID(m_motionRangeClass, "getAxis", "()I");
+    jmethodID getAxisMethod = m_env.GetMethodID(m_motionRangeClass, "getAxis", "()I");
     if (!getAxisMethod)
     {
         err() << "Could not locate required InputDevice.MotionRange methods" << std::endl;
@@ -105,7 +102,7 @@ std::optional<JniMotionRange> JniMotionRangeClass::makeFromJava(jobject motionRa
 
 ////////////////////////////////////////////////////////////
 JniInputDevice::JniInputDevice(
-    JNIEnv*   env,
+    JNIEnv&   env,
     jobject   inputDevice,
     jmethodID getNameMethod,
     jmethodID getVendorIdMethod,
@@ -126,33 +123,33 @@ m_getMotionRangesMethod(getMotionRangesMethod)
 ////////////////////////////////////////////////////////////
 unsigned int JniInputDevice::getVendorId() const
 {
-    return static_cast<unsigned int>(m_env->CallIntMethod(m_inputDevice, m_getVendorIdMethod));
+    return static_cast<unsigned int>(m_env.CallIntMethod(m_inputDevice, m_getVendorIdMethod));
 }
 
 
 ////////////////////////////////////////////////////////////
 unsigned int JniInputDevice::getProductId() const
 {
-    return static_cast<unsigned int>(m_env->CallIntMethod(m_inputDevice, m_getProductIdMethod));
+    return static_cast<unsigned int>(m_env.CallIntMethod(m_inputDevice, m_getProductIdMethod));
 }
 
 
 ////////////////////////////////////////////////////////////
 std::string JniInputDevice::getName() const
 {
-    return javaStringToStd(static_cast<jstring>(m_env->CallObjectMethod(m_inputDevice, m_getNameMethod)));
+    return javaStringToStd(static_cast<jstring>(m_env.CallObjectMethod(m_inputDevice, m_getNameMethod)));
 }
 
 
 ////////////////////////////////////////////////////////////
 bool JniInputDevice::supportsSource(std::size_t sourceFlags) const
 {
-    return m_env->CallBooleanMethod(m_inputDevice, m_supportsSourceMethod, jint(sourceFlags));
+    return m_env.CallBooleanMethod(m_inputDevice, m_supportsSourceMethod, jint(sourceFlags));
 }
 
 
 ////////////////////////////////////////////////////////////
-JniInputDeviceClass::JniInputDeviceClass(JNIEnv* env, jclass inputDeviceClass, jmethodID getDeviceIdsMethod, jmethodID getDeviceMethod) :
+JniInputDeviceClass::JniInputDeviceClass(JNIEnv& env, jclass inputDeviceClass, jmethodID getDeviceIdsMethod, jmethodID getDeviceMethod) :
 m_env(env),
 m_inputDeviceClass(inputDeviceClass),
 m_getDeviceIdsMethod(getDeviceIdsMethod),
@@ -162,15 +159,14 @@ m_getDeviceMethod(getDeviceMethod)
 
 
 ////////////////////////////////////////////////////////////
-std::optional<JniInputDeviceClass> JniInputDeviceClass::findClass(JNIEnv* env)
+std::optional<JniInputDeviceClass> JniInputDeviceClass::findClass(JNIEnv& env)
 {
-    assert(env);
-    jclass inputDeviceClass = env->FindClass("android/view/InputDevice");
+    jclass inputDeviceClass = env.FindClass("android/view/InputDevice");
     if (!inputDeviceClass)
         return std::nullopt;
 
-    jmethodID getDeviceIdsMethod = env->GetStaticMethodID(inputDeviceClass, "getDeviceIds", "()[I");
-    jmethodID getDeviceMethod = env->GetStaticMethodID(inputDeviceClass, "getDevice", "(I)Landroid/view/InputDevice;");
+    jmethodID getDeviceIdsMethod = env.GetStaticMethodID(inputDeviceClass, "getDeviceIds", "()[I");
+    jmethodID getDeviceMethod = env.GetStaticMethodID(inputDeviceClass, "getDevice", "(I)Landroid/view/InputDevice;");
     if (!getDeviceIdsMethod || !getDeviceMethod)
     {
         err() << "Could not locate required InputDevice methods" << std::endl;
@@ -184,25 +180,25 @@ std::optional<JniInputDeviceClass> JniInputDeviceClass::findClass(JNIEnv* env)
 ////////////////////////////////////////////////////////////
 std::optional<JniArray<jint>> JniInputDeviceClass::getDeviceIds()
 {
-    auto* deviceIdsArray = static_cast<jintArray>(m_env->CallStaticObjectMethod(m_inputDeviceClass, m_getDeviceIdsMethod));
+    auto* deviceIdsArray = static_cast<jintArray>(m_env.CallStaticObjectMethod(m_inputDeviceClass, m_getDeviceIdsMethod));
     if (!deviceIdsArray)
     {
         err() << "No input devices found." << std::endl;
         return std::nullopt;
     }
 
-    return JniArray<jint>(m_env, deviceIdsArray);
+    return JniArray<jint>(&m_env, deviceIdsArray);
 }
 
 
 ////////////////////////////////////////////////////////////
 std::optional<JniInputDevice> JniInputDeviceClass::getDevice(jint idx)
 {
-    jmethodID getNameMethod         = m_env->GetMethodID(m_inputDeviceClass, "getName", "()Ljava/lang/String;");
-    jmethodID getVendorIdMethod     = m_env->GetMethodID(m_inputDeviceClass, "getVendorId", "()I");
-    jmethodID getProductIdMethod    = m_env->GetMethodID(m_inputDeviceClass, "getProductId", "()I");
-    jmethodID supportsSourceMethod  = m_env->GetMethodID(m_inputDeviceClass, "supportsSource", "(I)Z");
-    jmethodID getMotionRangesMethod = m_env->GetMethodID(m_inputDeviceClass, "getMotionRanges", "()Ljava/util/List;");
+    jmethodID getNameMethod         = m_env.GetMethodID(m_inputDeviceClass, "getName", "()Ljava/lang/String;");
+    jmethodID getVendorIdMethod     = m_env.GetMethodID(m_inputDeviceClass, "getVendorId", "()I");
+    jmethodID getProductIdMethod    = m_env.GetMethodID(m_inputDeviceClass, "getProductId", "()I");
+    jmethodID supportsSourceMethod  = m_env.GetMethodID(m_inputDeviceClass, "supportsSource", "(I)Z");
+    jmethodID getMotionRangesMethod = m_env.GetMethodID(m_inputDeviceClass, "getMotionRanges", "()Ljava/util/List;");
 
     if (!getNameMethod || !getVendorIdMethod || !getProductIdMethod || !supportsSourceMethod || !getMotionRangesMethod)
     {
@@ -210,7 +206,7 @@ std::optional<JniInputDevice> JniInputDeviceClass::getDevice(jint idx)
         return std::nullopt;
     }
 
-    jobject inputDevice = m_env->CallStaticObjectMethod(m_inputDeviceClass, m_getDeviceMethod, idx);
+    jobject inputDevice = m_env.CallStaticObjectMethod(m_inputDeviceClass, m_getDeviceMethod, idx);
     if (!inputDevice)
     {
         // Can happen normally, no log needed
@@ -224,9 +220,9 @@ std::optional<JniInputDevice> JniInputDeviceClass::getDevice(jint idx)
 ////////////////////////////////////////////////////////////
 std::string JniInputDevice::javaStringToStd(jstring str) const
 {
-    const char*       utfChars = m_env->GetStringUTFChars(str, nullptr);
+    const char*       utfChars = m_env.GetStringUTFChars(str, nullptr);
     const std::string result(utfChars);
-    m_env->ReleaseStringUTFChars(str, utfChars);
+    m_env.ReleaseStringUTFChars(str, utfChars);
     return result;
 }
 
@@ -238,7 +234,7 @@ std::optional<JniList<JniMotionRange, JniMotionRangeClass>> JniInputDevice::getM
     if (!cls)
         return std::nullopt;
 
-    if (jobject list = m_env->CallObjectMethod(m_inputDevice, m_getMotionRangesMethod))
+    if (jobject list = m_env.CallObjectMethod(m_inputDevice, m_getMotionRangesMethod))
         return cls->makeFromJava<JniMotionRange, JniMotionRangeClass>(list);
 
     return std::nullopt;
@@ -269,7 +265,6 @@ Jni::~Jni()
 ////////////////////////////////////////////////////////////
 std::optional<Jni> Jni::attachCurrentThread(JavaVM* vm, JNIEnv** env)
 {
-    assert(vm);
     assert(env);
 
     JavaVMAttachArgs lJavaVMAttachArgs;

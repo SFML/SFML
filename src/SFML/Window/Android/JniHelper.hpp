@@ -52,15 +52,15 @@ class JniList;
 class JniListClass
 {
 public:
-    [[nodiscard]] static std::optional<JniListClass> findClass(JNIEnv* env);
+    [[nodiscard]] static std::optional<JniListClass> findClass(JNIEnv& env);
 
     template <typename T, typename TClass>
     [[nodiscard]] std::optional<JniList<T, TClass>> makeFromJava(jobject list);
 
 private:
-    JniListClass(JNIEnv* env, jclass listClass);
+    JniListClass(JNIEnv& env, jclass listClass);
 
-    JNIEnv* m_env;
+    JNIEnv& m_env;
     jclass  m_listClass;
 };
 
@@ -74,9 +74,9 @@ public:
 private:
     friend class JniMotionRangeClass;
 
-    JniMotionRange(JNIEnv* env, jobject motionRange, jmethodID getAxisMethod);
+    JniMotionRange(JNIEnv& env, jobject motionRange, jmethodID getAxisMethod);
 
-    JNIEnv*   m_env;
+    JNIEnv&   m_env;
     jobject   m_motionRange;
     jmethodID m_getAxisMethod;
 };
@@ -84,14 +84,14 @@ private:
 class JniMotionRangeClass
 {
 public:
-    [[nodiscard]] static std::optional<JniMotionRangeClass> findClass(JNIEnv* env);
+    [[nodiscard]] static std::optional<JniMotionRangeClass> findClass(JNIEnv& env);
 
     [[nodiscard]] std::optional<JniMotionRange> makeFromJava(jobject motionRange);
 
 private:
-    JniMotionRangeClass(JNIEnv* env, jclass motionRangeClass);
+    JniMotionRangeClass(JNIEnv& env, jclass motionRangeClass);
 
-    JNIEnv* m_env;
+    JNIEnv& m_env;
     jclass  m_motionRangeClass;
 };
 
@@ -118,7 +118,7 @@ public:
 private:
     friend class JniInputDeviceClass;
 
-    JniInputDevice(JNIEnv*   env,
+    JniInputDevice(JNIEnv&   env,
                    jobject   inputDevice,
                    jmethodID getNameMethod,
                    jmethodID getVendorIdMethod,
@@ -128,7 +128,7 @@ private:
 
     [[nodiscard]] std::string javaStringToStd(jstring str) const;
 
-    JNIEnv*   m_env;
+    JNIEnv&   m_env;
     jobject   m_inputDevice;
     jmethodID m_getNameMethod;
     jmethodID m_getVendorIdMethod;
@@ -145,16 +145,16 @@ private:
 class JniInputDeviceClass
 {
 public:
-    [[nodiscard]] static std::optional<JniInputDeviceClass> findClass(JNIEnv* env);
+    [[nodiscard]] static std::optional<JniInputDeviceClass> findClass(JNIEnv& env);
 
     [[nodiscard]] std::optional<JniArray<jint>> getDeviceIds();
 
     [[nodiscard]] std::optional<JniInputDevice> getDevice(jint idx);
 
 private:
-    JniInputDeviceClass(JNIEnv* env, jclass inputDeviceClass, jmethodID getDeviceIdsMethod, jmethodID getDeviceMethod);
+    JniInputDeviceClass(JNIEnv& env, jclass inputDeviceClass, jmethodID getDeviceIdsMethod, jmethodID getDeviceMethod);
 
-    JNIEnv*   m_env;
+    JNIEnv&   m_env;
     jclass    m_inputDeviceClass;
     jmethodID m_getDeviceIdsMethod;
     jmethodID m_getDeviceMethod;
@@ -170,7 +170,7 @@ struct Jni
 public:
     Jni(Jni&& other) noexcept;
 
-    Jni(const Jni&&) = delete;
+    Jni(const Jni&) = delete;
 
     ~Jni();
 

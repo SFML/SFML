@@ -99,7 +99,7 @@ public:
         if (!cls)
             return std::nullopt;
 
-        jobject motionRange = m_env->CallObjectMethod(m_list, m_getMethod, idx);
+        jobject motionRange = m_env.CallObjectMethod(m_list, m_getMethod, idx);
         if (!motionRange)
             return std::nullopt;
 
@@ -108,13 +108,13 @@ public:
 
     [[nodiscard]] ssize_t getSize() const
     {
-        return m_env->CallIntMethod(m_list, m_sizeMethod);
+        return m_env.CallIntMethod(m_list, m_sizeMethod);
     }
 
 private:
     friend class JniListClass;
 
-    JniList(JNIEnv* env, jobject list, jmethodID getMethod, jmethodID sizeMethod) :
+    JniList(JNIEnv& env, jobject list, jmethodID getMethod, jmethodID sizeMethod) :
     m_env(env),
     m_list(list),
     m_getMethod(getMethod),
@@ -122,7 +122,7 @@ private:
     {
     }
 
-    JNIEnv*   m_env;
+    JNIEnv&   m_env;
     jobject   m_list;
     jmethodID m_getMethod;
     jmethodID m_sizeMethod;
@@ -131,8 +131,8 @@ private:
 template <typename T, typename TClass>
 [[nodiscard]] std::optional<JniList<T, TClass>> JniListClass::makeFromJava(jobject list)
 {
-    jmethodID getMethod  = m_env->GetMethodID(m_listClass, "get", "(I)Ljava/lang/Object;");
-    jmethodID sizeMethod = m_env->GetMethodID(m_listClass, "size", "()I");
+    jmethodID getMethod  = m_env.GetMethodID(m_listClass, "get", "(I)Ljava/lang/Object;");
+    jmethodID sizeMethod = m_env.GetMethodID(m_listClass, "size", "()I");
 
     if (!getMethod || !sizeMethod)
     {
