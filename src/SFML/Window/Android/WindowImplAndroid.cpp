@@ -332,7 +332,8 @@ int WindowImplAndroid::processScrollEvent(AInputEvent* inputEvent, ActivityState
 {
     // Prepare the Java virtual machine
     JNIEnv* lJNIEnv = states.activity->env;
-    if (!Jni::attachCurrentThread(states.activity->vm, &lJNIEnv))
+    auto    jni     = Jni::attachCurrentThread(states.activity->vm, &lJNIEnv);
+    if (!jni)
     {
         err() << "Failed to initialize JNI" << std::endl;
         return 0;
@@ -716,7 +717,8 @@ char32_t WindowImplAndroid::getUnicode(AInputEvent* event)
 
     // Prepare the Java virtual machine
     JNIEnv* lJNIEnv = states.activity->env;
-    if (!Jni::attachCurrentThread(states.activity->vm, &lJNIEnv))
+    auto    jni     = Jni::attachCurrentThread(states.activity->vm, &lJNIEnv);
+    if (!jni)
         err() << "Failed to initialize JNI, couldn't get the Unicode value" << std::endl;
 
     // Retrieve key data from the input event
