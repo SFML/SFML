@@ -234,7 +234,8 @@ std::string JniInputDevice::javaStringToStd(jstring str) const
 ////////////////////////////////////////////////////////////
 std::optional<JniList<JniMotionRange, JniMotionRangeClass>> JniInputDevice::getMotionRanges() const
 {
-    if (!JniListClass::findClass(m_env))
+    auto cls = JniListClass::findClass(m_env);
+    if (!cls)
         return std::nullopt;
 
     if (jobject list = m_env->CallObjectMethod(m_inputDevice, m_getMotionRangesMethod))

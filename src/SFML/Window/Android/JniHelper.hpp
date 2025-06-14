@@ -178,7 +178,7 @@ public:
     /// \brief Binds \p env to thread called NativeThread
     ///
     /// The thread will be detached once the instance of the optional
-    /// is detached.
+    /// is destroyed.
     ///
     /// \param vm Pointer to JavaVM instance (from ActivityStates)
     /// \param env Pointer to pointer to JNIEnv that will be used to
