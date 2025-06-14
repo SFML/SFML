@@ -31,6 +31,7 @@
 
 #include <optional>
 
+
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
@@ -102,15 +103,16 @@ public:
     ////////////////////////////////////////////////////////////
     [[nodiscard]] JoystickState update() const;
 
+    // TODO Write Doxygen header
     [[nodiscard]] static int sfAxisToAndroid(Joystick::Axis axis);
 
 private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Joystick::Identification m_identification; ///< Joystick identification
-    JoystickCaps             m_capabilities;
-    std::optional<int32_t>   m_currentDeviceIdx; ///< Physical device ID
+    Joystick::Identification    m_identification; ///< Joystick identification
+    JoystickCaps                m_capabilities;
+    std::optional<std::int32_t> m_currentDeviceIdx; ///< Physical device ID
 };
 
 } // namespace sf::priv

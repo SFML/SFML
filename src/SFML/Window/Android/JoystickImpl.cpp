@@ -119,8 +119,7 @@ bool JoystickImpl::open(unsigned int joyIndex)
     const std::lock_guard lock(states.mutex);
 
     JNIEnv* env = states.activity->env;
-    auto    jni = Jni::attachCurrentThread(states.activity->vm, &env);
-    if (!jni)
+    if (!Jni::attachCurrentThread(states.activity->vm, &env))
     {
         err() << "Failed to initialize JNI" << std::endl;
         return false;
@@ -211,8 +210,7 @@ JoystickState JoystickImpl::update() const
     const std::lock_guard lock(states.mutex);
 
     JNIEnv* env = states.activity->env;
-    auto    jni = Jni::attachCurrentThread(states.activity->vm, &env);
-    if (!jni)
+    if (!Jni::attachCurrentThread(states.activity->vm, &env))
     {
         err() << "Failed to initialize JNI" << std::endl;
         return {false};

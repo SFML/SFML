@@ -332,8 +332,7 @@ int WindowImplAndroid::processScrollEvent(AInputEvent* inputEvent, ActivityState
 {
     // Prepare the Java virtual machine
     JNIEnv* lJNIEnv = states.activity->env;
-    auto    jni     = Jni::attachCurrentThread(states.activity->vm, &lJNIEnv);
-    if (!jni)
+    if (!Jni::attachCurrentThread(states.activity->vm, &lJNIEnv))
     {
         err() << "Failed to initialize JNI" << std::endl;
         return 0;
