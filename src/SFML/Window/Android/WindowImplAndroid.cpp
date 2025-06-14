@@ -332,8 +332,7 @@ int WindowImplAndroid::processScrollEvent(AInputEvent* inputEvent, ActivityState
 {
     // Prepare the Java virtual machine
     JNIEnv* lJNIEnv = states.activity->env;
-    auto    jni     = Jni::attachCurrentThread(states.activity->vm, &lJNIEnv);
-    if (!jni)
+    if (!Jni::attachCurrentThread(states.activity->vm, &lJNIEnv))
     {
         err() << "Failed to initialize JNI" << std::endl;
         return 0;
@@ -403,12 +402,10 @@ int WindowImplAndroid::processKeyEvent(AInputEvent* inputEvent, ActivityStates& 
     const auto         sfCode  = androidKeyToSF(key);
 
     if (std::holds_alternative<Keyboard::Key>(sfCode))
-    {
         return processKeyboardKeyEvent(inputEvent, action, std::get<Keyboard::Key>(sfCode), metakey);
-    }
-
     return processJoystickButtonEvent(inputEvent, action, std::get<Joystick::Button>(sfCode), states);
 }
+
 
 ////////////////////////////////////////////////////////////
 int WindowImplAndroid::processKeyboardKeyEvent(AInputEvent* inputEvent, std::int32_t action, sf::Keyboard::Key key, std::int32_t metakey)
@@ -458,6 +455,7 @@ int WindowImplAndroid::processKeyboardKeyEvent(AInputEvent* inputEvent, std::int
     return 0;
 }
 
+
 ////////////////////////////////////////////////////////////
 int WindowImplAndroid::processJoystickButtonEvent(AInputEvent*     inputEvent,
                                                   std::int32_t     action,
@@ -468,10 +466,11 @@ int WindowImplAndroid::processJoystickButtonEvent(AInputEvent*     inputEvent,
     if (states.joystickStates.find(deviceId) == states.joystickStates.end())
         return 1;
 
-    const auto buttonIdx = static_cast<std::underlying_type_t<decltype(button)>>(button);
-    states.joystickStates.at(deviceId).buttons[buttonIdx] = action == AKEY_EVENT_ACTION_DOWN;
+    const auto buttonIdx                               = static_cast<std::underlying_type_t<decltype(button)>>(button);
+    states.joystickStates[deviceId].buttons[buttonIdx] = action == AKEY_EVENT_ACTION_DOWN;
     return 1;
 }
+
 
 ////////////////////////////////////////////////////////////
 int WindowImplAndroid::processMotionEvent(AInputEvent* inputEvent, ActivityStates& states)
@@ -517,9 +516,9 @@ int WindowImplAndroid::processMotionEvent(AInputEvent* inputEvent, ActivityState
                 return 1;
 
             const float factor = 100.f; // SFML normalizes axis to the range <-100, 100> instead of <-1, 1>
-            auto&       axes   = states.joystickStates.at(deviceId).axes;
+            auto&       axes   = states.joystickStates[deviceId].axes;
 
-            for (unsigned axisIdx = 0; axisIdx < Joystick::AxisCount; ++axisIdx)
+            for (unsigned int axisIdx = 0; axisIdx < Joystick::AxisCount; ++axisIdx)
             {
                 const auto axis = static_cast<Joystick::Axis>(axisIdx);
                 axes[axis] = AMotionEvent_getAxisValue(inputEvent, JoystickImpl::sfAxisToAndroid(axis), p) * factor;
@@ -717,8 +716,7 @@ char32_t WindowImplAndroid::getUnicode(AInputEvent* event)
 
     // Prepare the Java virtual machine
     JNIEnv* lJNIEnv = states.activity->env;
-    auto    jni     = Jni::attachCurrentThread(states.activity->vm, &lJNIEnv);
-    if (!jni)
+    if (!Jni::attachCurrentThread(states.activity->vm, &lJNIEnv))
         err() << "Failed to initialize JNI, couldn't get the Unicode value" << std::endl;
 
     // Retrieve key data from the input event

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2013 Jonathan De Wachter (dewachter.jonathan@gmail.com)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -27,40 +27,39 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-
 #include <SFML/System/Err.hpp>
 
 #include <android/native_activity.h>
 
-#include <algorithm>
 #include <optional>
-#include <ostream>
 #include <string>
 
 #include <cassert>
 
+
+namespace sf::priv
+{
 ////////////////////////////////////////////////////////////
 /// \brief C++ wrapper over Java arrays
 ///
 ////////////////////////////////////////////////////////////
-template <class T>
+template <typename T>
 class JniArray;
 
-template <class T, class TClass>
+template <typename T, typename TClass>
 class JniList;
 
 class JniListClass
 {
-private:
-    JniListClass(JNIEnv* env, jclass listClass);
-
 public:
     [[nodiscard]] static std::optional<JniListClass> findClass(JNIEnv* env);
 
-    template <class T, class TClass>
+    template <typename T, typename TClass>
     [[nodiscard]] std::optional<JniList<T, TClass>> makeFromJava(jobject list);
 
 private:
+    JniListClass(JNIEnv* env, jclass listClass);
+
     JNIEnv* m_env;
     jclass  m_listClass;
 };
@@ -69,15 +68,14 @@ class JniMotionRangeClass;
 
 class JniMotionRange
 {
-private:
-    JniMotionRange(JNIEnv* env, jobject motionRange, jmethodID getAxisMethod);
-
-    friend class JniMotionRangeClass;
-
 public:
     [[nodiscard]] int getAxis() const;
 
 private:
+    friend class JniMotionRangeClass;
+
+    JniMotionRange(JNIEnv* env, jobject motionRange, jmethodID getAxisMethod);
+
     JNIEnv*   m_env;
     jobject   m_motionRange;
     jmethodID m_getAxisMethod;
@@ -85,15 +83,14 @@ private:
 
 class JniMotionRangeClass
 {
-private:
-    JniMotionRangeClass(JNIEnv* env, jclass motionRangeClass);
-
 public:
     [[nodiscard]] static std::optional<JniMotionRangeClass> findClass(JNIEnv* env);
 
     [[nodiscard]] std::optional<JniMotionRange> makeFromJava(jobject motionRange);
 
 private:
+    JniMotionRangeClass(JNIEnv* env, jclass motionRangeClass);
+
     JNIEnv* m_env;
     jclass  m_motionRangeClass;
 };
@@ -107,7 +104,20 @@ class JniInputDeviceClass;
 ////////////////////////////////////////////////////////////
 class JniInputDevice
 {
+public:
+    [[nodiscard]] unsigned int getVendorId() const;
+
+    [[nodiscard]] unsigned int getProductId() const;
+
+    [[nodiscard]] std::string getName() const;
+
+    [[nodiscard]] bool supportsSource(std::size_t sourceFlags) const;
+
+    [[nodiscard]] std::optional<JniList<JniMotionRange, JniMotionRangeClass>> getMotionRanges() const;
+
 private:
+    friend class JniInputDeviceClass;
+
     JniInputDevice(JNIEnv*   env,
                    jobject   inputDevice,
                    jmethodID getNameMethod,
@@ -116,21 +126,7 @@ private:
                    jmethodID supportsSourceMethod,
                    jmethodID getMotionRangesMethod);
 
-    friend class JniInputDeviceClass;
-
-public:
-    [[nodiscard]] unsigned getVendorId() const;
-
-    [[nodiscard]] unsigned getProductId() const;
-
-    [[nodiscard]] std::string getName() const;
-
-    [[nodiscard]] bool supportsSource(size_t sourceFlags) const;
-
-    [[nodiscard]] std::optional<JniList<JniMotionRange, JniMotionRangeClass>> getMotionRanges() const;
-
-private:
-    std::string javaStringToStd(jstring str) const;
+    [[nodiscard]] std::string javaStringToStd(jstring str) const;
 
     JNIEnv*   m_env;
     jobject   m_inputDevice;
@@ -148,9 +144,6 @@ private:
 ////////////////////////////////////////////////////////////
 class JniInputDeviceClass
 {
-private:
-    JniInputDeviceClass(JNIEnv* env, jclass inputDeviceClass, jmethodID getDeviceIdsMethod, jmethodID getDeviceMethod);
-
 public:
     [[nodiscard]] static std::optional<JniInputDeviceClass> findClass(JNIEnv* env);
 
@@ -159,6 +152,8 @@ public:
     [[nodiscard]] std::optional<JniInputDevice> getDevice(jint idx);
 
 private:
+    JniInputDeviceClass(JNIEnv* env, jclass inputDeviceClass, jmethodID getDeviceIdsMethod, jmethodID getDeviceMethod);
+
     JNIEnv*   m_env;
     jclass    m_inputDeviceClass;
     jmethodID m_getDeviceIdsMethod;
@@ -172,9 +167,6 @@ private:
 ////////////////////////////////////////////////////////////
 struct Jni
 {
-private:
-    explicit Jni(JavaVM* vm);
-
 public:
     Jni(Jni&& other) noexcept;
 
@@ -195,10 +187,14 @@ public:
     /// \return Returns instance of this object on success or std::nullopt on fail
     ///
     ////////////////////////////////////////////////////////////
-    static std::optional<Jni> attachCurrentThread(JavaVM* vm, JNIEnv** env);
+    [[nodiscard]] static std::optional<Jni> attachCurrentThread(JavaVM* vm, JNIEnv** env);
 
 private:
-    JavaVM* m_vm = nullptr;
+    explicit Jni(JavaVM* vm);
+
+    JavaVM* m_vm{};
 };
+
+} // namespace sf::priv
 
 #include <SFML/Window/Android/JniHelper.inl>

@@ -33,7 +33,31 @@
 
 namespace
 {
-std::optional<sf::priv::JoystickCaps> getCapabilitiesFromJni(const JniInputDevice& inputDevice)
+[[nodiscard]] std::optional<sf::Joystick::Axis> androidAxisToSf(const int axisCode)
+{
+    switch (axisCode)
+    {
+        case AMOTION_EVENT_AXIS_X:
+            return sf::Joystick::Axis::X;
+        case AMOTION_EVENT_AXIS_Y:
+            return sf::Joystick::Axis::Y;
+        case AMOTION_EVENT_AXIS_Z:
+            return sf::Joystick::Axis::Z;
+        case AMOTION_EVENT_AXIS_RZ:
+            return sf::Joystick::Axis::R;
+        case AMOTION_EVENT_AXIS_LTRIGGER:
+            return sf::Joystick::Axis::U;
+        case AMOTION_EVENT_AXIS_RTRIGGER:
+            return sf::Joystick::Axis::V;
+        case AMOTION_EVENT_AXIS_HAT_X:
+            return sf::Joystick::Axis::PovX;
+        case AMOTION_EVENT_AXIS_HAT_Y:
+            return sf::Joystick::Axis::PovY;
+    }
+    return std::nullopt;
+}
+
+[[nodiscard]] std::optional<sf::priv::JoystickCaps> getCapabilitiesFromJni(const sf::priv::JniInputDevice& inputDevice)
 {
     auto motionRanges = inputDevice.getMotionRanges();
     if (!motionRanges)
@@ -53,8 +77,7 @@ std::optional<sf::priv::JoystickCaps> getCapabilitiesFromJni(const JniInputDevic
             return std::nullopt;
         }
 
-        const auto axis = sf::priv::JoystickImpl::androidAxisToSf(motionRange->getAxis());
-        if (axis)
+        if (const auto axis = androidAxisToSf(motionRange->getAxis()))
             capabilities.axes[*axis] = true;
     }
 
@@ -64,7 +87,6 @@ std::optional<sf::priv::JoystickCaps> getCapabilitiesFromJni(const JniInputDevic
 
 namespace sf::priv
 {
-
 ////////////////////////////////////////////////////////////
 void JoystickImpl::initialize()
 {
@@ -85,6 +107,7 @@ bool JoystickImpl::isConnected(unsigned int index)
     return index < Joystick::Count;
 }
 
+
 ////////////////////////////////////////////////////////////
 bool JoystickImpl::open(unsigned int joyIndex)
 {
@@ -96,8 +119,7 @@ bool JoystickImpl::open(unsigned int joyIndex)
     const std::lock_guard lock(states.mutex);
 
     JNIEnv* env = states.activity->env;
-    auto    jni = Jni::attachCurrentThread(states.activity->vm, &env);
-    if (!jni)
+    if (!Jni::attachCurrentThread(states.activity->vm, &env))
     {
         err() << "Failed to initialize JNI" << std::endl;
         return false;
@@ -186,8 +208,7 @@ JoystickState JoystickImpl::update() const
     const std::lock_guard lock(states.mutex);
 
     JNIEnv* env = states.activity->env;
-    auto    jni = Jni::attachCurrentThread(states.activity->vm, &env);
-    if (!jni)
+    if (!Jni::attachCurrentThread(states.activity->vm, &env))
     {
         err() << "Failed to initialize JNI" << std::endl;
         return {false};
@@ -208,45 +229,34 @@ JoystickState JoystickImpl::update() const
         return {false};
     }
 
-    return {isConnected,
-            states.joystickStates.at(m_currentDeviceIdx).axes,
-            states.joystickStates.at(m_currentDeviceIdx).buttons};
+    return {isConnected, states.joystickStates[m_currentDeviceIdx].axes, states.joystickStates[m_currentDeviceIdx].buttons};
 }
 
-std::optional<Joystick::Axis> JoystickImpl::androidAxisToSf(int axisCode)
-{
-    // clang-format off
-    switch (axisCode)
-    {
-        case AMOTION_EVENT_AXIS_X:        return Joystick::Axis::X;
-        case AMOTION_EVENT_AXIS_Y:        return Joystick::Axis::Y;
-        case AMOTION_EVENT_AXIS_Z:        return Joystick::Axis::Z;
-        case AMOTION_EVENT_AXIS_RZ:       return Joystick::Axis::R;
-        case AMOTION_EVENT_AXIS_LTRIGGER: return Joystick::Axis::U;
-        case AMOTION_EVENT_AXIS_RTRIGGER: return Joystick::Axis::V;
-        case AMOTION_EVENT_AXIS_HAT_X:    return Joystick::Axis::PovX;
-        case AMOTION_EVENT_AXIS_HAT_Y:    return Joystick::Axis::PovY;
-        default:                          return std::nullopt;
-    }
-    // clang-format on
-}
 
+////////////////////////////////////////////////////////////
 int JoystickImpl::sfAxisToAndroid(Joystick::Axis axis)
 {
-    // clang-format off
     switch (axis)
     {
-        case Joystick::Axis::X:    return AMOTION_EVENT_AXIS_X;
-        case Joystick::Axis::Y:    return AMOTION_EVENT_AXIS_Y;
-        case Joystick::Axis::Z:    return AMOTION_EVENT_AXIS_Z;
-        case Joystick::Axis::R:    return AMOTION_EVENT_AXIS_RZ;
-        case Joystick::Axis::U:    return AMOTION_EVENT_AXIS_LTRIGGER;
-        case Joystick::Axis::V:    return AMOTION_EVENT_AXIS_RTRIGGER;
-        case Joystick::Axis::PovX: return AMOTION_EVENT_AXIS_HAT_X;
-        case Joystick::Axis::PovY: return AMOTION_EVENT_AXIS_HAT_Y;
-        default:                   return -1;
+        case Joystick::Axis::X:
+            return AMOTION_EVENT_AXIS_X;
+        case Joystick::Axis::Y:
+            return AMOTION_EVENT_AXIS_Y;
+        case Joystick::Axis::Z:
+            return AMOTION_EVENT_AXIS_Z;
+        case Joystick::Axis::R:
+            return AMOTION_EVENT_AXIS_RZ;
+        case Joystick::Axis::U:
+            return AMOTION_EVENT_AXIS_LTRIGGER;
+        case Joystick::Axis::V:
+            return AMOTION_EVENT_AXIS_RTRIGGER;
+        case Joystick::Axis::PovX:
+            return AMOTION_EVENT_AXIS_HAT_X;
+        case Joystick::Axis::PovY:
+            return AMOTION_EVENT_AXIS_HAT_Y;
     }
-    // clang-format on
+
+    return -1;
 }
 
 } // namespace sf::priv

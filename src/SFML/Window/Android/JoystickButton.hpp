@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2013 Jonathan De Wachter (dewachter.jonathan@gmail.com)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <cstddef>
+#include <cstdint>
 
 namespace sf::Joystick
 {
@@ -35,9 +35,9 @@ namespace sf::Joystick
 /// \brief Abstract names for Joystick button codes
 ///
 ////////////////////////////////////////////////////////////
-enum class Button : size_t
+enum class Button : std::uint8_t
 {
-    A = 0,
+    A,
     B,
     C,
     X,
