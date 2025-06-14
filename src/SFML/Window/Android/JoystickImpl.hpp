@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Joystick.hpp>
 
+#include <optional>
 
 namespace sf::priv
 {
@@ -109,7 +110,7 @@ private:
     ////////////////////////////////////////////////////////////
     Joystick::Identification m_identification; ///< Joystick identification
     JoystickCaps             m_capabilities;
-    int32_t                  m_currentDeviceIdx{-1}; ///< Physical device ID
+    std::optional<int32_t>   m_currentDeviceIdx; ///< Physical device ID
 };
 
 } // namespace sf::priv

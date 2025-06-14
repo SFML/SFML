@@ -169,7 +169,7 @@ bool JoystickImpl::open(unsigned int joyIndex)
 
         m_currentDeviceIdx = deviceId;
 
-        states.joystickStates[m_currentDeviceIdx] = {};
+        states.joystickStates[deviceId] = {};
 
         return true;
     }
@@ -183,7 +183,9 @@ void JoystickImpl::close() const
 {
     ActivityStates&       states = getActivity();
     const std::lock_guard lock(states.mutex);
-    states.joystickStates.erase(m_currentDeviceIdx);
+
+    if (m_currentDeviceIdx)
+        states.joystickStates.erase(*m_currentDeviceIdx);
 }
 
 
@@ -222,8 +224,14 @@ JoystickState JoystickImpl::update() const
         return {false};
     }
 
-    const bool isConnected = inputDeviceClass->getDevice(m_currentDeviceIdx).has_value();
-    if (states.joystickStates.find(m_currentDeviceIdx) == states.joystickStates.end())
+    if (!m_currentDeviceIdx)
+    {
+        // Should never happen
+        return {false};
+    }
+
+    const bool isConnected = inputDeviceClass->getDevice(*m_currentDeviceIdx).has_value();
+    if (states.joystickStates.find(*m_currentDeviceIdx) == states.joystickStates.end())
     {
         // This technically shouldn't happen, but when I have connect physical gamepad
         // and then connect/disconnect a bluetooth one, states for the physical one
@@ -231,7 +239,7 @@ JoystickState JoystickImpl::update() const
         return {false};
     }
 
-    return {isConnected, states.joystickStates[m_currentDeviceIdx].axes, states.joystickStates[m_currentDeviceIdx].buttons};
+    return {isConnected, states.joystickStates[*m_currentDeviceIdx].axes, states.joystickStates[*m_currentDeviceIdx].buttons};
 }
 
 
