@@ -36,6 +36,16 @@
 
 #include <cassert>
 
+////////////////////////////////////////////////////////////
+/// A note about using this module:
+/// 1) Attach the current thread by calling Jni::attachCurrentThread
+///    and keep the result of the function till the end of the work.
+///    The returned handle automatically detaches the thread when destroyed.
+/// 2) If you want to use a particular object (say InputDevice),
+///    find an appropriate Jni<MyDesiredObject>Class and call the findClass
+///    static method on it. This will give you a handle to the JNI class object
+///    on which you can call appropriate methods that will give you its class instance.
+////////////////////////////////////////////////////////////
 
 namespace sf::priv
 {
@@ -52,30 +62,34 @@ class JniList;
 class JniListClass
 {
 public:
+    ////////////////////////////////////////////////////////////
+    /// \note Prefer calling JniListClass::findClass
+    /// instead of invoking this constructor directly.
+    ////////////////////////////////////////////////////////////
+    JniListClass(JNIEnv& env, jclass listClass);
+
     [[nodiscard]] static std::optional<JniListClass> findClass(JNIEnv& env);
 
     template <typename T, typename TClass>
     [[nodiscard]] std::optional<JniList<T, TClass>> makeFromJava(jobject list);
 
 private:
-    JniListClass(JNIEnv& env, jclass listClass);
-
     JNIEnv& m_env;
     jclass  m_listClass;
 };
 
-class JniMotionRangeClass;
-
 class JniMotionRange
 {
 public:
+    ////////////////////////////////////////////////////////////
+    /// \note Prefer using JniMotionRangeClass to create instances
+    /// of this class, rather than invoking this constructor directly.
+    ////////////////////////////////////////////////////////////
+    JniMotionRange(JNIEnv& env, jobject motionRange, jmethodID getAxisMethod);
+
     [[nodiscard]] int getAxis() const;
 
 private:
-    friend class JniMotionRangeClass;
-
-    JniMotionRange(JNIEnv& env, jobject motionRange, jmethodID getAxisMethod);
-
     JNIEnv&   m_env;
     jobject   m_motionRange;
     jmethodID m_getAxisMethod;
@@ -84,18 +98,20 @@ private:
 class JniMotionRangeClass
 {
 public:
+    ////////////////////////////////////////////////////////////
+    /// \note Prefer calling JniMotionRangeClass::findClass
+    /// instead of invoking this constructor directly.
+    ////////////////////////////////////////////////////////////
+    JniMotionRangeClass(JNIEnv& env, jclass motionRangeClass);
+
     [[nodiscard]] static std::optional<JniMotionRangeClass> findClass(JNIEnv& env);
 
     [[nodiscard]] std::optional<JniMotionRange> makeFromJava(jobject motionRange);
 
 private:
-    JniMotionRangeClass(JNIEnv& env, jclass motionRangeClass);
-
     JNIEnv& m_env;
     jclass  m_motionRangeClass;
 };
-
-class JniInputDeviceClass;
 
 ////////////////////////////////////////////////////////////
 /// \brief C++ wrapper over JNI InputDevice instances
@@ -105,6 +121,18 @@ class JniInputDeviceClass;
 class JniInputDevice
 {
 public:
+    ////////////////////////////////////////////////////////////
+    /// \note Prefer using JniInputDeviceClass to create instances
+    /// of this class, rather than invoking this constructor directly.
+    ////////////////////////////////////////////////////////////
+    JniInputDevice(JNIEnv&   env,
+                   jobject   inputDevice,
+                   jmethodID getNameMethod,
+                   jmethodID getVendorIdMethod,
+                   jmethodID getProductIdMethod,
+                   jmethodID supportsSourceMethod,
+                   jmethodID getMotionRangesMethod);
+
     [[nodiscard]] unsigned int getVendorId() const;
 
     [[nodiscard]] unsigned int getProductId() const;
@@ -116,16 +144,6 @@ public:
     [[nodiscard]] std::optional<JniList<JniMotionRange, JniMotionRangeClass>> getMotionRanges() const;
 
 private:
-    friend class JniInputDeviceClass;
-
-    JniInputDevice(JNIEnv&   env,
-                   jobject   inputDevice,
-                   jmethodID getNameMethod,
-                   jmethodID getVendorIdMethod,
-                   jmethodID getProductIdMethod,
-                   jmethodID supportsSourceMethod,
-                   jmethodID getMotionRangesMethod);
-
     [[nodiscard]] std::string javaStringToStd(jstring str) const;
 
     JNIEnv&   m_env;
@@ -145,6 +163,12 @@ private:
 class JniInputDeviceClass
 {
 public:
+    ////////////////////////////////////////////////////////////
+    /// \note Prefer calling JniInputDeviceClass::findClass
+    /// instead of invoking this constructor directly.
+    ////////////////////////////////////////////////////////////
+    JniInputDeviceClass(JNIEnv& env, jclass inputDeviceClass, jmethodID getDeviceIdsMethod, jmethodID getDeviceMethod);
+
     [[nodiscard]] static std::optional<JniInputDeviceClass> findClass(JNIEnv& env);
 
     [[nodiscard]] std::optional<JniArray<jint>> getDeviceIds();
@@ -152,8 +176,6 @@ public:
     [[nodiscard]] std::optional<JniInputDevice> getDevice(jint idx);
 
 private:
-    JniInputDeviceClass(JNIEnv& env, jclass inputDeviceClass, jmethodID getDeviceIdsMethod, jmethodID getDeviceMethod);
-
     JNIEnv&   m_env;
     jclass    m_inputDeviceClass;
     jmethodID m_getDeviceIdsMethod;
@@ -163,11 +185,14 @@ private:
 ////////////////////////////////////////////////////////////
 /// \brief RAII wrapper for attaching JavaVM thread
 ///
-/// Thread is detached automatically when this class is destroyed
+/// Thread is detached automatically when this class is destroyed.
+/// Construct this class by calling attachCurrentThread method.
 ////////////////////////////////////////////////////////////
 struct Jni
 {
 public:
+    Jni(JavaVM& vm, JNIEnv& env);
+
     Jni(Jni&& other) noexcept;
 
     Jni(const Jni&) = delete;
@@ -180,19 +205,18 @@ public:
     /// The thread will be detached once the instance of the optional
     /// is destroyed.
     ///
-    /// \param vm Pointer to JavaVM instance (from ActivityStates)
-    /// \param env Pointer to pointer to JNIEnv that will be used to
-    /// invoke JNI.
+    /// \param activity Reference to native activity object.
     ///
     /// \return Returns instance of this object on success or std::nullopt on fail
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] static std::optional<Jni> attachCurrentThread(JavaVM* vm, JNIEnv** env);
+    [[nodiscard]] static std::optional<Jni> attachCurrentThread(ANativeActivity& activity);
+
+    [[nodiscard]] JNIEnv& getEnv() const;
 
 private:
-    explicit Jni(JavaVM* vm);
-
     JavaVM* m_vm{};
+    JNIEnv* m_env{};
 };
 
 } // namespace sf::priv

@@ -118,15 +118,14 @@ bool JoystickImpl::open(unsigned int joyIndex)
     ActivityStates&       states = getActivity();
     const std::lock_guard lock(states.mutex);
 
-    JNIEnv* env = states.activity->env;
-    auto    jni = Jni::attachCurrentThread(states.activity->vm, &env);
+    auto jni = Jni::attachCurrentThread(*states.activity);
     if (!jni)
     {
         err() << "Failed to initialize JNI" << std::endl;
         return false;
     }
 
-    auto inputDeviceClass = JniInputDeviceClass::findClass(*env);
+    auto inputDeviceClass = JniInputDeviceClass::findClass(jni->getEnv());
     if (!inputDeviceClass)
         return false;
 
@@ -210,15 +209,14 @@ JoystickState JoystickImpl::update() const
     ActivityStates&       states = getActivity();
     const std::lock_guard lock(states.mutex);
 
-    JNIEnv* env = states.activity->env;
-    auto    jni = Jni::attachCurrentThread(states.activity->vm, &env);
+    auto jni = Jni::attachCurrentThread(*states.activity);
     if (!jni)
     {
         err() << "Failed to initialize JNI" << std::endl;
         return {false};
     }
 
-    auto inputDeviceClass = JniInputDeviceClass::findClass(*env);
+    auto inputDeviceClass = JniInputDeviceClass::findClass(jni->getEnv());
     if (!inputDeviceClass)
     {
         return {false};

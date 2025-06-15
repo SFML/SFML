@@ -48,11 +48,11 @@ template <typename T>
 class JniArray
 {
 public:
-    JniArray(JNIEnv* env, jintArray array) :
-    m_env(env),
+    JniArray(JNIEnv& env, jintArray array) :
+    m_env(&env),
     m_array(array),
-    m_length(env->GetArrayLength(array)),
-    m_data(env->GetIntArrayElements(array, nullptr))
+    m_length(env.GetArrayLength(array)),
+    m_data(env.GetIntArrayElements(array, nullptr))
     {
     }
 
@@ -93,6 +93,18 @@ template <typename T, typename TClass>
 class JniList
 {
 public:
+    ////////////////////////////////////////////////////////////
+    /// \note Prefer using JniListClass to create instances
+    /// of this class, rather than invoking this constructor directly.
+    ////////////////////////////////////////////////////////////
+    JniList(JNIEnv& env, jobject list, jmethodID getMethod, jmethodID sizeMethod) :
+            m_env(env),
+            m_list(list),
+            m_getMethod(getMethod),
+            m_sizeMethod(sizeMethod)
+    {
+    }
+
     [[nodiscard]] std::optional<T> operator[](ssize_t idx) const
     {
         auto cls = TClass::findClass(m_env);
@@ -112,16 +124,6 @@ public:
     }
 
 private:
-    friend class JniListClass;
-
-    JniList(JNIEnv& env, jobject list, jmethodID getMethod, jmethodID sizeMethod) :
-    m_env(env),
-    m_list(list),
-    m_getMethod(getMethod),
-    m_sizeMethod(sizeMethod)
-    {
-    }
-
     JNIEnv&   m_env;
     jobject   m_list;
     jmethodID m_getMethod;

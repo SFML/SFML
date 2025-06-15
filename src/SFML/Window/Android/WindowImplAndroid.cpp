@@ -331,13 +331,14 @@ int WindowImplAndroid::processEvent(int /* fd */, int /* events */, void* /* dat
 int WindowImplAndroid::processScrollEvent(AInputEvent* inputEvent, ActivityStates& states)
 {
     // Prepare the Java virtual machine
-    JNIEnv* lJNIEnv = states.activity->env;
-    auto    jni     = Jni::attachCurrentThread(states.activity->vm, &lJNIEnv);
+    auto jni = Jni::attachCurrentThread(*states.activity);
     if (!jni)
     {
         err() << "Failed to initialize JNI" << std::endl;
         return 0;
     }
+
+    auto& lJNIEnv = jni->getEnv();
 
     // Retrieve everything we need to create this MotionEvent in Java
     const std::int64_t downTime   = AMotionEvent_getDownTime(inputEvent);
@@ -354,14 +355,14 @@ int WindowImplAndroid::processScrollEvent(AInputEvent* inputEvent, ActivityState
     const std::int32_t edgeFlags  = AMotionEvent_getEdgeFlags(inputEvent);
 
     // Create the MotionEvent object in Java through its static constructor obtain()
-    jclass    classMotionEvent   = lJNIEnv->FindClass("android/view/MotionEvent");
-    jmethodID staticMethodObtain = lJNIEnv->GetStaticMethodID(classMotionEvent,
+    jclass    classMotionEvent   = lJNIEnv.FindClass("android/view/MotionEvent");
+    jmethodID staticMethodObtain = lJNIEnv.GetStaticMethodID(classMotionEvent,
                                                               "obtain",
                                                               "(JJIFFFFIFFII)Landroid/view/MotionEvent;");
     // Note: C standard compatibility, varargs
     //       automatically promote floats to doubles
     //       even though the function signature declares float
-    jobject objectMotionEvent = lJNIEnv->CallStaticObjectMethod(classMotionEvent,
+    jobject objectMotionEvent = lJNIEnv.CallStaticObjectMethod(classMotionEvent,
                                                                 staticMethodObtain,
                                                                 downTime,
                                                                 eventTime,
@@ -377,11 +378,11 @@ int WindowImplAndroid::processScrollEvent(AInputEvent* inputEvent, ActivityState
                                                                 edgeFlags);
 
     // Call its getAxisValue() method to get the delta value of our wheel move event
-    jmethodID    methodGetAxisValue = lJNIEnv->GetMethodID(classMotionEvent, "getAxisValue", "(I)F");
-    const jfloat delta              = lJNIEnv->CallFloatMethod(objectMotionEvent, methodGetAxisValue, 0x00000001);
+    jmethodID    methodGetAxisValue = lJNIEnv.GetMethodID(classMotionEvent, "getAxisValue", "(I)F");
+    const jfloat delta              = lJNIEnv.CallFloatMethod(objectMotionEvent, methodGetAxisValue, 0x00000001);
 
-    lJNIEnv->DeleteLocalRef(classMotionEvent);
-    lJNIEnv->DeleteLocalRef(objectMotionEvent);
+    lJNIEnv.DeleteLocalRef(classMotionEvent);
+    lJNIEnv.DeleteLocalRef(objectMotionEvent);
 
     // Create and send our mouse wheel event
     Event::MouseWheelScrolled event;
@@ -716,10 +717,11 @@ char32_t WindowImplAndroid::getUnicode(AInputEvent* event)
     const std::lock_guard lock(states.mutex);
 
     // Prepare the Java virtual machine
-    JNIEnv* lJNIEnv = states.activity->env;
-    auto    jni     = Jni::attachCurrentThread(states.activity->vm, &lJNIEnv);
+    auto jni = Jni::attachCurrentThread(*states.activity);
     if (!jni)
         err() << "Failed to initialize JNI, couldn't get the Unicode value" << std::endl;
+
+    auto& lJNIEnv = jni->getEnv();
 
     // Retrieve key data from the input event
     const jlong downTime  = AKeyEvent_getDownTime(event);
@@ -734,9 +736,9 @@ char32_t WindowImplAndroid::getUnicode(AInputEvent* event)
     const jint  source    = AInputEvent_getSource(event);
 
     // Construct a KeyEvent object from the event data
-    jclass    classKeyEvent       = lJNIEnv->FindClass("android/view/KeyEvent");
-    jmethodID keyEventConstructor = lJNIEnv->GetMethodID(classKeyEvent, "<init>", "(JJIIIIIIII)V");
-    jobject   objectKeyEvent      = lJNIEnv->NewObject(classKeyEvent,
+    jclass    classKeyEvent       = lJNIEnv.FindClass("android/view/KeyEvent");
+    jmethodID keyEventConstructor = lJNIEnv.GetMethodID(classKeyEvent, "<init>", "(JJIIIIIIII)V");
+    jobject   objectKeyEvent      = lJNIEnv.NewObject(classKeyEvent,
                                                 keyEventConstructor,
                                                 downTime,
                                                 eventTime,
@@ -750,11 +752,11 @@ char32_t WindowImplAndroid::getUnicode(AInputEvent* event)
                                                 source);
 
     // Call its getUnicodeChar() method to get the Unicode value
-    jmethodID methodGetUnicode = lJNIEnv->GetMethodID(classKeyEvent, "getUnicodeChar", "(I)I");
-    const int unicode          = lJNIEnv->CallIntMethod(objectKeyEvent, methodGetUnicode, metaState);
+    jmethodID methodGetUnicode = lJNIEnv.GetMethodID(classKeyEvent, "getUnicodeChar", "(I)I");
+    const int unicode          = lJNIEnv.CallIntMethod(objectKeyEvent, methodGetUnicode, metaState);
 
-    lJNIEnv->DeleteLocalRef(classKeyEvent);
-    lJNIEnv->DeleteLocalRef(objectKeyEvent);
+    lJNIEnv.DeleteLocalRef(classKeyEvent);
+    lJNIEnv.DeleteLocalRef(objectKeyEvent);
 
     return static_cast<char32_t>(unicode);
 }

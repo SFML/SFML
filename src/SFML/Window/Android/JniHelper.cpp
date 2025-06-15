@@ -187,7 +187,7 @@ std::optional<JniArray<jint>> JniInputDeviceClass::getDeviceIds()
         return std::nullopt;
     }
 
-    return JniArray<jint>(&m_env, deviceIdsArray);
+    return JniArray<jint>(m_env, deviceIdsArray);
 }
 
 
@@ -242,39 +242,49 @@ std::optional<JniList<JniMotionRange, JniMotionRangeClass>> JniInputDevice::getM
 
 
 ////////////////////////////////////////////////////////////
-Jni::Jni(Jni&& other) noexcept
+Jni::Jni(JavaVM& vm, JNIEnv& env) : m_vm(&vm), m_env(&env)
 {
-    std::swap(m_vm, other.m_vm);
 }
 
 
 ////////////////////////////////////////////////////////////
-Jni::Jni(JavaVM* vm) : m_vm(vm)
+Jni::Jni(Jni&& other) noexcept
 {
+    std::swap(m_vm, other.m_vm);
+    std::swap(m_env, other.m_env);
 }
 
 
 ////////////////////////////////////////////////////////////
 Jni::~Jni()
 {
+    m_env = nullptr;
     if (m_vm)
         m_vm->DetachCurrentThread();
 }
 
 
 ////////////////////////////////////////////////////////////
-std::optional<Jni> Jni::attachCurrentThread(JavaVM* vm, JNIEnv** env)
+std::optional<Jni> Jni::attachCurrentThread(ANativeActivity& activity)
 {
-    assert(env);
+    JavaVM *vm  = activity.vm;
+    JNIEnv *env = activity.env;
 
     JavaVMAttachArgs lJavaVMAttachArgs;
     lJavaVMAttachArgs.version = JNI_VERSION_1_6;
     lJavaVMAttachArgs.name    = "NativeThread";
     lJavaVMAttachArgs.group   = nullptr;
 
-    if (vm->AttachCurrentThread(env, &lJavaVMAttachArgs) == JNI_ERR)
+    if (vm->AttachCurrentThread(&env, &lJavaVMAttachArgs) == JNI_ERR)
         return std::nullopt;
 
-    return Jni(vm);
+    return Jni(*vm, *env);
+}
+
+
+////////////////////////////////////////////////////////////
+JNIEnv& Jni::getEnv() const
+{
+    return *m_env;
 }
 } // namespace sf::priv
