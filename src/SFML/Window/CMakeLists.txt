@@ -257,6 +257,8 @@ elseif(SFML_OS_ANDROID)
         ${SRCROOT}/Android/WindowImplAndroid.cpp
         ${SRCROOT}/Android/VideoModeImpl.cpp
         ${SRCROOT}/Android/InputImpl.cpp
+        ${SRCROOT}/Android/JniHelper.hpp
+        ${SRCROOT}/Android/JniHelper.cpp
         ${SRCROOT}/Android/JoystickImpl.hpp
         ${SRCROOT}/Android/JoystickImpl.cpp
         ${SRCROOT}/Android/SensorImpl.hpp
