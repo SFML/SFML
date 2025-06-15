@@ -98,10 +98,10 @@ public:
     /// of this class, rather than invoking this constructor directly.
     ////////////////////////////////////////////////////////////
     JniList(JNIEnv& env, jobject list, jmethodID getMethod, jmethodID sizeMethod) :
-            m_env(env),
-            m_list(list),
-            m_getMethod(getMethod),
-            m_sizeMethod(sizeMethod)
+    m_env(env),
+    m_list(list),
+    m_getMethod(getMethod),
+    m_sizeMethod(sizeMethod)
     {
     }
 

@@ -267,8 +267,8 @@ Jni::~Jni()
 ////////////////////////////////////////////////////////////
 std::optional<Jni> Jni::attachCurrentThread(ANativeActivity& activity)
 {
-    JavaVM *vm  = activity.vm;
-    JNIEnv *env = activity.env;
+    JavaVM* vm  = activity.vm;
+    JNIEnv* env = activity.env;
 
     JavaVMAttachArgs lJavaVMAttachArgs;
     lJavaVMAttachArgs.version = JNI_VERSION_1_6;

@@ -357,25 +357,25 @@ int WindowImplAndroid::processScrollEvent(AInputEvent* inputEvent, ActivityState
     // Create the MotionEvent object in Java through its static constructor obtain()
     jclass    classMotionEvent   = lJNIEnv.FindClass("android/view/MotionEvent");
     jmethodID staticMethodObtain = lJNIEnv.GetStaticMethodID(classMotionEvent,
-                                                              "obtain",
-                                                              "(JJIFFFFIFFII)Landroid/view/MotionEvent;");
+                                                             "obtain",
+                                                             "(JJIFFFFIFFII)Landroid/view/MotionEvent;");
     // Note: C standard compatibility, varargs
     //       automatically promote floats to doubles
     //       even though the function signature declares float
     jobject objectMotionEvent = lJNIEnv.CallStaticObjectMethod(classMotionEvent,
-                                                                staticMethodObtain,
-                                                                downTime,
-                                                                eventTime,
-                                                                action,
-                                                                static_cast<double>(x),
-                                                                static_cast<double>(y),
-                                                                static_cast<double>(pressure),
-                                                                static_cast<double>(size),
-                                                                metaState,
-                                                                static_cast<double>(xPrecision),
-                                                                static_cast<double>(yPrecision),
-                                                                deviceId,
-                                                                edgeFlags);
+                                                               staticMethodObtain,
+                                                               downTime,
+                                                               eventTime,
+                                                               action,
+                                                               static_cast<double>(x),
+                                                               static_cast<double>(y),
+                                                               static_cast<double>(pressure),
+                                                               static_cast<double>(size),
+                                                               metaState,
+                                                               static_cast<double>(xPrecision),
+                                                               static_cast<double>(yPrecision),
+                                                               deviceId,
+                                                               edgeFlags);
 
     // Call its getAxisValue() method to get the delta value of our wheel move event
     jmethodID    methodGetAxisValue = lJNIEnv.GetMethodID(classMotionEvent, "getAxisValue", "(I)F");
@@ -739,17 +739,17 @@ char32_t WindowImplAndroid::getUnicode(AInputEvent* event)
     jclass    classKeyEvent       = lJNIEnv.FindClass("android/view/KeyEvent");
     jmethodID keyEventConstructor = lJNIEnv.GetMethodID(classKeyEvent, "<init>", "(JJIIIIIIII)V");
     jobject   objectKeyEvent      = lJNIEnv.NewObject(classKeyEvent,
-                                                keyEventConstructor,
-                                                downTime,
-                                                eventTime,
-                                                action,
-                                                code,
-                                                repeat,
-                                                metaState,
-                                                deviceId,
-                                                scancode,
-                                                flags,
-                                                source);
+                                               keyEventConstructor,
+                                               downTime,
+                                               eventTime,
+                                               action,
+                                               code,
+                                               repeat,
+                                               metaState,
+                                               deviceId,
+                                               scancode,
+                                               flags,
+                                               source);
 
     // Call its getUnicodeChar() method to get the Unicode value
     jmethodID methodGetUnicode = lJNIEnv.GetMethodID(classKeyEvent, "getUnicodeChar", "(I)I");
