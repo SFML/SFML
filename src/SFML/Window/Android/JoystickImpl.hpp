@@ -103,7 +103,12 @@ public:
     ////////////////////////////////////////////////////////////
     [[nodiscard]] JoystickState update() const;
 
-    // TODO Write Doxygen header
+    ////////////////////////////////////////////////////////////
+    /// \brief Translate SFML axis code to Android axis index
+    ///
+    /// \return Android-compatible ID of the given axis
+    ///
+    ////////////////////////////////////////////////////////////
     [[nodiscard]] static int sfAxisToAndroid(Joystick::Axis axis);
 
 private:
