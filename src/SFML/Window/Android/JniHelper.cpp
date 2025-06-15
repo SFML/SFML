@@ -258,9 +258,8 @@ Jni::Jni(Jni&& other) noexcept
 ////////////////////////////////////////////////////////////
 Jni::~Jni()
 {
-    m_env = nullptr;
-    if (m_vm)
-        m_vm->DetachCurrentThread();
+    assert(m_vm);
+    m_vm->DetachCurrentThread();
 }
 
 
@@ -285,6 +284,7 @@ std::optional<Jni> Jni::attachCurrentThread(ANativeActivity& activity)
 ////////////////////////////////////////////////////////////
 JNIEnv& Jni::getEnv() const
 {
+    assert(m_env);
     return *m_env;
 }
 } // namespace sf::priv
