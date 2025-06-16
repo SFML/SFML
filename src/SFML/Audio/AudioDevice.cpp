@@ -291,6 +291,17 @@ std::optional<std::string> AudioDevice::getDevice()
 
 
 ////////////////////////////////////////////////////////////
+std::optional<std::uint32_t> AudioDevice::getDeviceSampleRate()
+{
+    auto* instance = getInstance();
+    if (instance && instance->m_playbackDevice)
+        return instance->m_playbackDevice->sampleRate;
+
+    return std::nullopt;
+}
+
+
+////////////////////////////////////////////////////////////
 AudioDevice::ResourceEntryIter AudioDevice::registerResource(void*               resource,
                                                              ResourceEntry::Func deinitializeFunc,
                                                              ResourceEntry::Func reinitializeFunc)

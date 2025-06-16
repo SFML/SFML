@@ -80,4 +80,11 @@ std::optional<std::string> getDevice()
     return priv::AudioDevice::getDevice();
 }
 
+
+////////////////////////////////////////////////////////////
+std::optional<std::uint32_t> getDeviceSampleRate()
+{
+    return priv::AudioDevice::getDeviceSampleRate();
+}
+
 } // namespace sf::PlaybackDevice
