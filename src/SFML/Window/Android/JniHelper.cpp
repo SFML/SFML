@@ -258,8 +258,8 @@ Jni::Jni(Jni&& other) noexcept
 ////////////////////////////////////////////////////////////
 Jni::~Jni()
 {
-    assert(m_vm);
-    m_vm->DetachCurrentThread();
+    if (m_vm)
+        m_vm->DetachCurrentThread();
 }
 
 
