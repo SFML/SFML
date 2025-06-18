@@ -56,6 +56,8 @@ public:
     {
     }
 
+    JniArray(const JniArray&) = delete;
+
     JniArray(JniArray&& other) noexcept
     {
         std::swap(m_env, other.m_env);
