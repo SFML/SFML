@@ -70,11 +70,16 @@ m_size(mode.size)
     if (state == State::Fullscreen)
         states.fullscreen = true;
 
+    const bool shouldCreateSurface = (states.window != nullptr) && (WindowImplAndroid::singleInstance == nullptr);
+
     WindowImplAndroid::singleInstance = this;
     states.forwardEvent               = forwardEvent;
 
     // Register process event callback
     states.processEvent = processEvent;
+
+    if (shouldCreateSurface)
+        states.forwardEvent(sf::Event::FocusGained{});
 
     states.initialized = true;
 }
