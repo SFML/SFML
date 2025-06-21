@@ -144,34 +144,65 @@ TEST_CASE("[Graphics] sf::Font", runDisplayTests())
             CHECK(!font.openFromFile("does/not/exist.ttf"));
         }
 
+        CHECK(font.getInfo().family.empty());
+
         SECTION("Successful load")
         {
-            const std::u32string        filenameSuffix = GENERATE(U"", U"-ń", U"-🐌");
-            const std::filesystem::path filename       = U"Graphics/tuffy" + filenameSuffix + U".ttf";
-            INFO("Filename: " << reinterpret_cast<const char*>(filename.u8string().c_str()));
+            SECTION("TrueType .ttf")
+            {
+                const std::u32string        filenameSuffix = GENERATE(U"", U"-ń", U"-🐌");
+                const std::filesystem::path filename       = U"Graphics/tuffy" + filenameSuffix + U".ttf";
+                INFO("Filename: " << reinterpret_cast<const char*>(filename.u8string().c_str()));
 
-            REQUIRE(font.openFromFile(filename));
-            CHECK(font.getInfo().family == "Tuffy");
-            const auto& glyph = font.getGlyph(0x45, 16, false);
-            CHECK(glyph.advance == 9);
-            CHECK(glyph.lsbDelta == 9);
-            CHECK(glyph.rsbDelta == 16);
-            CHECK(glyph.bounds == sf::FloatRect({0, -12}, {8, 12}));
-            CHECK(glyph.textureRect == sf::IntRect({2, 5}, {8, 12}));
-            CHECK(font.hasGlyph(U'A'));
-            CHECK(font.hasGlyph(U'À'));
-            CHECK(font.getKerning(U'A', U'B', 12) == -1);
-            CHECK(font.getKerning(U'C', U'D', 24, true) == 0);
-            CHECK(font.getLineSpacing(24) == 30);
-            CHECK(font.getUnderlinePosition(36) == Approx(2.20312f));
-            CHECK(font.getUnderlineThickness(48) == Approx(1.17188f));
-            const auto& texture = font.getTexture(10);
-            CHECK(texture.getSize() == sf::Vector2u(128, 128));
-            CHECK(texture.isSmooth());
-            CHECK(!texture.isSrgb());
-            CHECK(!texture.isRepeated());
-            CHECK(texture.getNativeHandle() != 0);
-            CHECK(font.isSmooth());
+                REQUIRE(font.openFromFile(filename));
+                CHECK(font.getInfo().family == "Tuffy");
+                const auto& glyph = font.getGlyph(0x45, 16, false);
+                CHECK(glyph.advance == 9);
+                CHECK(glyph.lsbDelta == 9);
+                CHECK(glyph.rsbDelta == 16);
+                CHECK(glyph.bounds == sf::FloatRect({0, -12}, {8, 12}));
+                CHECK(glyph.textureRect == sf::IntRect({2, 5}, {8, 12}));
+                CHECK(font.hasGlyph(U'A'));
+                CHECK(font.hasGlyph(U'À'));
+                CHECK(font.getKerning(U'A', U'B', 12) == -1);
+                CHECK(font.getKerning(U'C', U'D', 24, true) == 0);
+                CHECK(font.getLineSpacing(24) == 30);
+                CHECK(font.getUnderlinePosition(36) == Approx(2.20312f));
+                CHECK(font.getUnderlineThickness(48) == Approx(1.17188f));
+                const auto& texture = font.getTexture(10);
+                CHECK(texture.getSize() == sf::Vector2u(128, 128));
+                CHECK(texture.isSmooth());
+                CHECK(!texture.isSrgb());
+                CHECK(!texture.isRepeated());
+                CHECK(texture.getNativeHandle() != 0);
+                CHECK(font.isSmooth());
+            }
+
+            SECTION("OpenType .otf")
+            {
+                REQUIRE(font.openFromFile("Graphics/Indulta.otf"));
+                CHECK(font.getInfo().family == "Indulta");
+                const auto& glyph = font.getGlyph(0x45, 16, false);
+                CHECK(glyph.advance == 11);
+                CHECK(glyph.lsbDelta == -21);
+                CHECK(glyph.rsbDelta == 16);
+                CHECK(glyph.bounds == sf::FloatRect({1, -13}, {9, 13}));
+                CHECK(glyph.textureRect == sf::IntRect({2, 5}, {9, 13}));
+                CHECK(font.hasGlyph(U'A'));
+                CHECK(font.hasGlyph(U'À'));
+                CHECK(font.getKerning(U'A', U'B', 12) == 0);
+                CHECK(font.getKerning(U'C', U'D', 24, true) == 0);
+                CHECK(font.getLineSpacing(24) == 33);
+                CHECK(font.getUnderlinePosition(36) == Approx(9.6875f));
+                CHECK(font.getUnderlineThickness(48) == Approx(1.0625f));
+                const auto& texture = font.getTexture(10);
+                CHECK(texture.getSize() == sf::Vector2u(128, 128));
+                CHECK(texture.isSmooth());
+                CHECK(!texture.isSrgb());
+                CHECK(!texture.isRepeated());
+                CHECK(texture.getNativeHandle() != 0);
+                CHECK(font.isSmooth());
+            }
         }
     }
 
