@@ -29,6 +29,7 @@
 #include <SFML/System/Utf.hpp>
 
 #include <iterator>
+#include <unicodelib.h>
 #include <utility>
 
 #include <cassert>
@@ -438,6 +439,27 @@ String::Iterator String::end()
 String::ConstIterator String::end() const
 {
     return m_string.end();
+}
+
+
+////////////////////////////////////////////////////////////
+bool String::isGraphemeBoundary(std::size_t position) const
+{
+    return unicode::is_grapheme_boundary(m_string.data(), m_string.size(), position);
+}
+
+
+////////////////////////////////////////////////////////////
+bool String::isWordBoundary(std::size_t position) const
+{
+    return unicode::is_word_boundary(m_string.data(), m_string.size(), position);
+}
+
+
+////////////////////////////////////////////////////////////
+bool String::isSentenceBoundary(std::size_t position) const
+{
+    return unicode::is_sentence_boundary(m_string.data(), m_string.size(), position);
 }
 
 
