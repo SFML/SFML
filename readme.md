@@ -76,3 +76,5 @@ In short, SFML is free for any use (commercial or personal, proprietary or open-
 -   [_minimp3_](https://github.com/lieff/minimp3) is under the [CC0 license](https://github.com/lieff/minimp3/blob/master/LICENSE)
 -   [_miniaudio_](https://github.com/mackron/miniaudio) is [public domain or under the MIT No Attribution license](https://github.com/mackron/miniaudio/blob/master/LICENSE)
 -   [_cpp-unicodelib_](https://github.com/yhirose/cpp-unicodelib) is under the [MIT license](https://github.com/yhirose/cpp-unicodelib/blob/master/LICENSE)
+-   [_HarfBuzz_](https://github.com/harfbuzz/harfbuzz) is under the [Old MIT license](https://github.com/harfbuzz/harfbuzz/blob/main/COPYING)
+-   [_SheenBidi_](https://github.com/Tehreer/SheenBidi) is under the [Apache license](https://github.com/Tehreer/SheenBidi/blob/master/LICENSE)
