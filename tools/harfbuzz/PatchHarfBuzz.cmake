@@ -1,0 +1,6 @@
+file(READ "${HARFBUZZ_DIR}/CMakeLists.txt" HARFBUZZ_CMAKELISTS_CONTENTS)
+string(REPLACE "message(WARN \"HarfBuzz has a Meson port and tries to migrate all the other build systems to it, please consider using it as we might remove our cmake port soon.\")" "" HARFBUZZ_CMAKELISTS_CONTENTS "${HARFBUZZ_CMAKELISTS_CONTENTS}")
+string(REPLACE "message(\"Building introspection files on Windows requires BUILD_SHARED_LIBS to be enabled.\")" "" HARFBUZZ_CMAKELISTS_CONTENTS "${HARFBUZZ_CMAKELISTS_CONTENTS}")
+string(REPLACE "target_link_libraries(harfbuzz $" "target_link_libraries(harfbuzz PUBLIC $" HARFBUZZ_CMAKELISTS_CONTENTS "${HARFBUZZ_CMAKELISTS_CONTENTS}")
+string(REPLACE "target_link_libraries(harfbuzz freetype" "target_link_libraries(harfbuzz PUBLIC freetype" HARFBUZZ_CMAKELISTS_CONTENTS "${HARFBUZZ_CMAKELISTS_CONTENTS}")
+file(WRITE "${HARFBUZZ_DIR}/CMakeLists.txt" "${HARFBUZZ_CMAKELISTS_CONTENTS}")
