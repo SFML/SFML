@@ -157,7 +157,7 @@ if(SFML_RUN_DISPLAY_TESTS)
 endif()
 
 if (XCODE AND SFML_OS_IOS)
-    set(GRAPHICS_RESOURCE
+    set(GRAPHICS_RESOURCES
         Graphics/invalid_shader.vert
         Graphics/sfml-logo-big.bmp
         Graphics/sfml-logo-big.gif
@@ -173,8 +173,8 @@ if (XCODE AND SFML_OS_IOS)
         Graphics/tuffy-ń.ttf
         Graphics/tuffy.ttf
     )
-    target_sources(test-sfml-graphics PRIVATE ${GRAPHICS_RESOURCE})
-    set_source_files_properties(${GRAPHICS_RESOURCE} MACOSX_PACKAGE_LOCATION "Graphics")
+    target_sources(test-sfml-graphics PRIVATE ${GRAPHICS_RESOURCES})
+    set_source_files_properties(${GRAPHICS_RESOURCES} MACOSX_PACKAGE_LOCATION "Graphics")
 endif()
 
 set(NETWORK_SRC
