@@ -296,6 +296,42 @@ public:
     [[nodiscard]] float getKerning(char32_t first, char32_t second, unsigned int characterSize, bool bold = false) const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the ascent
+    ///
+    /// The ascent is the largest distance between the baseline and
+    /// the top of all glyphs in the font.
+    ///
+    /// Be aware that there is no uniform definition of how the
+    /// ascent is calculated. It can vary from font to font.
+    ///
+    /// \param characterSize Reference character size
+    ///
+    /// \return Ascent, in pixels
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] float getAscent(unsigned int characterSize) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the descent
+    ///
+    /// The descent is the largest distance between the baseline and
+    /// the bottom of all glyphs in the font.
+    ///
+    /// Be aware that there is no uniform definition of how the
+    /// descent is calculated. It can vary from font to font.
+    ///
+    /// The descent shares the same coordinate system as the
+    /// ascent. This means that it will be negative for distances
+    /// below the baseline.
+    ///
+    /// \param characterSize Reference character size
+    ///
+    /// \return Descent, in pixels
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] float getDescent(unsigned int characterSize) const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Get the line spacing
     ///
     /// Line spacing is the vertical offset to apply between two

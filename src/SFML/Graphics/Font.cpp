@@ -308,6 +308,40 @@ float Font::getKerning(char32_t first, char32_t second, unsigned int characterSi
 
 
 ////////////////////////////////////////////////////////////
+float Font::getAscent(unsigned int characterSize) const
+{
+    FT_Face face = m_fontHandles ? m_fontHandles->face : nullptr;
+
+    if (face && setCurrentSize(characterSize))
+    {
+        if (!FT_IS_SCALABLE(face))
+            return static_cast<float>(face->size->metrics.ascender) / float{1 << 6};
+
+        return static_cast<float>(FT_MulFix(face->ascender, face->size->metrics.y_scale)) / float{1 << 6};
+    }
+
+    return 0.f;
+}
+
+
+////////////////////////////////////////////////////////////
+float Font::getDescent(unsigned int characterSize) const
+{
+    FT_Face face = m_fontHandles ? m_fontHandles->face : nullptr;
+
+    if (face && setCurrentSize(characterSize))
+    {
+        if (!FT_IS_SCALABLE(face))
+            return static_cast<float>(face->size->metrics.descender) / float{1 << 6};
+
+        return static_cast<float>(FT_MulFix(face->descender, face->size->metrics.y_scale)) / float{1 << 6};
+    }
+
+    return 0.f;
+}
+
+
+////////////////////////////////////////////////////////////
 float Font::getLineSpacing(unsigned int characterSize) const
 {
     FT_Face face = m_fontHandles ? m_fontHandles->face : nullptr;
