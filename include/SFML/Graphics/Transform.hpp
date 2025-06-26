@@ -273,7 +273,7 @@ private:
                                    0.f, 1.f, 0.f, 0.f,
                                    0.f, 0.f, 1.f, 0.f,
                                    0.f, 0.f, 0.f, 1.f}; //!< 4x4 matrix defining the transformation
-    // clang-format off
+    // clang-format on
 };
 
 ////////////////////////////////////////////////////////////
