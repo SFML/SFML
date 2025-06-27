@@ -2,10 +2,8 @@
 
 #include <catch2/catch_test_macros.hpp>
 
-#include <GraphicsUtil.hpp>
+#include <SystemUtil.hpp>
 #include <array>
-#include <iomanip>
-#include <sstream>
 #include <type_traits>
 
 #include <cassert>
@@ -25,37 +23,7 @@ auto select(const std::basic_string<T>& string16, const std::basic_string<T>& st
     else
         return string32;
 }
-
-auto toHex(const char32_t character)
-{
-    std::ostringstream stream;
-    stream << "[\\x" << std::uppercase << std::hex << std::uint32_t{character} << ']';
-    return stream.str();
-}
 } // namespace
-
-// Specialize StringMaker for alternative std::basic_string<T> specializations
-// std::string's string conversion cannot be specialized but all other string types get special treatment
-// https://github.com/catchorg/Catch2/blob/devel/docs/tostring.md#catchstringmaker-specialisation
-namespace Catch
-{
-template <>
-struct StringMaker<sf::U8String>
-{
-    static std::string convert(const sf::U8String& string)
-    {
-        std::ostringstream output;
-        for (const auto character : string)
-        {
-            if (character >= 32 && character < 127)
-                output << std::string(1, static_cast<char>(character));
-            else
-                output << toHex(character);
-        }
-        return output.str();
-    }
-};
-} // namespace Catch
 
 TEST_CASE("[System] sf::U8StringCharTraits")
 {
