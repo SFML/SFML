@@ -422,6 +422,30 @@ void WindowImplCocoa::setIcon(Vector2u size, const std::uint8_t* pixels)
 
 
 ////////////////////////////////////////////////////////////
+void WindowImplCocoa::setState(State state)
+{
+    const AutoreleasePool pool;
+    [m_delegate setState:state];
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplCocoa::setState(State state, Vector2u size)
+{
+    setState(state);
+    setSize(size);
+}
+
+
+////////////////////////////////////////////////////////////
+State WindowImplCocoa::getState() const
+{
+    const AutoreleasePool pool;
+    return [m_delegate getState];
+}
+
+
+////////////////////////////////////////////////////////////
 void WindowImplCocoa::setVisible(bool visible)
 {
     const AutoreleasePool pool;
