@@ -2,6 +2,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <SystemUtil.hpp>
 #include <type_traits>
 
 TEST_CASE("[Network] sf::Ftp")

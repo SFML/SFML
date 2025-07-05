@@ -100,10 +100,10 @@ TEST_CASE("[Audio] sf::SoundFileFactory")
 
         SECTION("Valid file")
         {
-            CHECK(sf::SoundFileFactory::createReaderFromFilename("Audio/ding.flac"));
-            CHECK(sf::SoundFileFactory::createReaderFromFilename("Audio/ding.mp3"));
-            CHECK(sf::SoundFileFactory::createReaderFromFilename("Audio/doodle_pop.ogg"));
-            CHECK(sf::SoundFileFactory::createReaderFromFilename("Audio/killdeer.wav"));
+            CHECK(sf::SoundFileFactory::createReaderFromFilename("Audio/ding.flac").get());
+            CHECK(sf::SoundFileFactory::createReaderFromFilename("Audio/ding.mp3").get());
+            CHECK(sf::SoundFileFactory::createReaderFromFilename("Audio/doodle_pop.ogg").get());
+            CHECK(sf::SoundFileFactory::createReaderFromFilename("Audio/killdeer.wav").get());
         }
     }
 
@@ -131,7 +131,7 @@ TEST_CASE("[Audio] sf::SoundFileFactory")
             REQUIRE(stream.open("Audio/killdeer.wav"));
         }
 
-        CHECK(sf::SoundFileFactory::createReaderFromStream(stream));
+        CHECK(sf::SoundFileFactory::createReaderFromStream(stream).get());
     }
 
     SECTION("createWriterFromFilename()")
@@ -143,10 +143,10 @@ TEST_CASE("[Audio] sf::SoundFileFactory")
 
         SECTION("Valid extension")
         {
-            CHECK(sf::SoundFileFactory::createWriterFromFilename("file.flac"));
+            CHECK(sf::SoundFileFactory::createWriterFromFilename("file.flac").get());
             CHECK(!sf::SoundFileFactory::createWriterFromFilename("file.mp3")); // Mp3 writing not yet implemented
-            CHECK(sf::SoundFileFactory::createWriterFromFilename("file.ogg"));
-            CHECK(sf::SoundFileFactory::createWriterFromFilename("file.wav"));
+            CHECK(sf::SoundFileFactory::createWriterFromFilename("file.ogg").get());
+            CHECK(sf::SoundFileFactory::createWriterFromFilename("file.wav").get());
         }
     }
 }

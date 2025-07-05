@@ -3,7 +3,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_floating_point.hpp>
 
-#include <SystemUtil.hpp>
+#include <GraphicsUtil.hpp>
 #include <type_traits>
 
 class RenderTarget : public sf::RenderTarget
