@@ -319,12 +319,11 @@ float Font::getAscent(unsigned int characterSize) const
         if (!FT_IS_SCALABLE(face))
             return std::ceil(static_cast<float>(face->size->metrics.ascender) / static_cast<float>(1 << 6));
 
-        return std::ceil(static_cast<float>(FT_MulFix(face->ascender, face->size->metrics.y_scale)) / static_cast<float>(1 << 6));
+        return std::ceil(
+            static_cast<float>(FT_MulFix(face->ascender, face->size->metrics.y_scale)) / static_cast<float>(1 << 6));
     }
-    else
-    {
-        return 0.f;
-    }
+
+    return 0.f;
 }
 
 ////////////////////////////////////////////////////////////
@@ -339,12 +338,11 @@ float Font::getDescent(unsigned int characterSize) const
         if (!FT_IS_SCALABLE(face))
             return std::floor(static_cast<float>(face->size->metrics.descender) / static_cast<float>(1 << 6));
 
-        return std::floor(static_cast<float>(FT_MulFix(face->descender, face->size->metrics.y_scale)) / static_cast<float>(1 << 6));
+        return std::floor(
+            static_cast<float>(FT_MulFix(face->descender, face->size->metrics.y_scale)) / static_cast<float>(1 << 6));
     }
-    else
-    {
-        return 0.f;
-    }
+
+    return 0.f;
 }
 
 
