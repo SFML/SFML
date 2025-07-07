@@ -310,7 +310,8 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Get the font's descent
     ///
-    /// The descent is the distance between the baseline and the bottom of the font.
+    /// The descent is the offset from the baseline to the bottom of the font.
+    /// This is a negative value.
     ///
     /// \param characterSize Reference character size
     ///
