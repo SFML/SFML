@@ -99,6 +99,11 @@ jobs:
             arch: arm64-v8a
             api: 33
           type: { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug -DSFML_FATAL_OPENGL_ERRORS=ON }
+        exclude: # Shared libraries are not supported on iOS
+        - platform: { name: iOS }
+          config: { name: Shared }
+        - platform: { name: iOS Xcode }
+          config: { name: Shared }
 
 
     steps:
