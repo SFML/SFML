@@ -277,6 +277,29 @@ void WindowBase::setIcon(Vector2u size, const std::uint8_t* pixels)
 
 
 ////////////////////////////////////////////////////////////
+void WindowBase::setState(State state)
+{
+    if (m_impl)
+        m_impl->setState(state);
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowBase::setState(State state, Vector2u size)
+{
+    if (m_impl)
+        m_impl->setState(state, size);
+}
+
+
+////////////////////////////////////////////////////////////
+State WindowBase::getState() const
+{
+    return m_impl ? m_impl->getState() : State::Windowed;
+}
+
+
+////////////////////////////////////////////////////////////
 void WindowBase::setVisible(bool visible)
 {
     if (m_impl)

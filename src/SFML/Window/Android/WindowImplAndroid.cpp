@@ -185,6 +185,28 @@ void WindowImplAndroid::setIcon(Vector2u /* size */, const std::uint8_t* /* pixe
 
 
 ////////////////////////////////////////////////////////////
+void WindowImplAndroid::setState(State /*state*/)
+{
+    // TODO: Not implemented yet
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplAndroid::setState(State /*state*/, Vector2u /*size*/)
+{
+    // TODO: Not implemented yet
+}
+
+
+////////////////////////////////////////////////////////////
+State WindowImplAndroid::getState() const
+{
+    const ActivityStates& states = getActivity();
+    return states.fullscreen ? State::Fullscreen : State::Windowed;
+}
+
+
+////////////////////////////////////////////////////////////
 void WindowImplAndroid::setVisible(bool /* visible */)
 {
     // Not applicable
