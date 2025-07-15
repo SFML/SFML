@@ -298,7 +298,7 @@ Http::Http(const std::string& host, unsigned short port)
 
 
 ////////////////////////////////////////////////////////////
-void Http::setHost(const std::string& host, unsigned short port)
+bool Http::setHost(const std::string& host, unsigned short port)
 {
     // Check the protocol
     if (toLower(host.substr(0, 7)) == "http://")
@@ -326,11 +326,12 @@ void Http::setHost(const std::string& host, unsigned short port)
         m_hostName.erase(m_hostName.size() - 1);
 
     m_host = IpAddress::resolve(m_hostName);
+    return m_host.has_value();
 }
 
 
 ////////////////////////////////////////////////////////////
-Http::Response Http::sendRequest(const Http::Request& request, Time timeout)
+Http::Response Http::sendRequest(const Http::Request& request, Time timeout) const
 {
     // First make sure that the request is valid -- add missing mandatory fields
     Request toSend(request);
@@ -364,8 +365,9 @@ Http::Response Http::sendRequest(const Http::Request& request, Time timeout)
     // Prepare the response
     Response received;
 
+    TcpSocket connection;
     // Connect the socket to the host
-    if (m_connection.connect(m_host.value(), m_port, timeout) == Socket::Status::Done)
+    if (connection.connect(m_host.value(), m_port, timeout) == Socket::Status::Done)
     {
         // Convert the request to string and send it through the connected socket
         const std::string requestStr = toSend.prepare();
@@ -373,13 +375,13 @@ Http::Response Http::sendRequest(const Http::Request& request, Time timeout)
         if (!requestStr.empty())
         {
             // Send it through the socket
-            if (m_connection.send(requestStr.c_str(), requestStr.size()) == Socket::Status::Done)
+            if (connection.send(requestStr.c_str(), requestStr.size()) == Socket::Status::Done)
             {
                 // Wait for the server's response
                 std::string            receivedStr;
                 std::size_t            size = 0;
                 std::array<char, 1024> buffer{};
-                while (m_connection.receive(buffer.data(), buffer.size(), size) == Socket::Status::Done)
+                while (connection.receive(buffer.data(), buffer.size(), size) == Socket::Status::Done)
                 {
                     receivedStr.append(buffer.data(), buffer.data() + size);
                 }
@@ -390,7 +392,7 @@ Http::Response Http::sendRequest(const Http::Request& request, Time timeout)
         }
 
         // Close the connection
-        m_connection.disconnect();
+        connection.disconnect();
     }
 
     return received;
