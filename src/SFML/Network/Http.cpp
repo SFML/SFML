@@ -298,7 +298,7 @@ Http::Http(const std::string& host, unsigned short port)
 
 
 ////////////////////////////////////////////////////////////
-void Http::setHost(const std::string& host, unsigned short port)
+bool Http::setHost(const std::string& host, unsigned short port)
 {
     // Check the protocol
     if (toLower(host.substr(0, 7)) == "http://")
@@ -326,11 +326,12 @@ void Http::setHost(const std::string& host, unsigned short port)
         m_hostName.erase(m_hostName.size() - 1);
 
     m_host = IpAddress::resolve(m_hostName);
+    return m_host.has_value();
 }
 
 
 ////////////////////////////////////////////////////////////
-Http::Response Http::sendRequest(const Http::Request& request, Time timeout, bool verifyServer)
+Http::Response Http::sendRequest(const Http::Request& request, Time timeout, bool verifyServer) const
 {
     // First make sure that the request is valid -- add missing mandatory fields
     Request toSend(request);
@@ -364,11 +365,11 @@ Http::Response Http::sendRequest(const Http::Request& request, Time timeout, boo
     // Prepare the response
     Response received;
 
+    TcpSocket connection;
     // Connect the socket to the host
-    if (m_host.has_value() && m_connection.connect(m_host.value(), m_port, timeout) == Socket::Status::Done)
+    if (m_host.has_value() && connection.connect(m_host.value(), m_port, timeout) == Socket::Status::Done)
     {
-        if (m_https &&
-            (m_connection.setupTlsClient(m_hostName, verifyServer) != sf::TcpSocket::TlsStatus::HandshakeComplete))
+        if (m_https && (connection.setupTlsClient(m_hostName, verifyServer) != sf::TcpSocket::TlsStatus::HandshakeComplete))
             return received;
 
         // Convert the request to string and send it through the connected socket
@@ -377,7 +378,7 @@ Http::Response Http::sendRequest(const Http::Request& request, Time timeout, boo
         if (!requestStr.empty())
         {
             // Send it through the socket
-            if (m_connection.send(requestStr.c_str(), requestStr.size()) == Socket::Status::Done)
+            if (connection.send(requestStr.c_str(), requestStr.size()) == Socket::Status::Done)
             {
                 // Wait for the server's response
                 std::string            receivedStr;
@@ -389,7 +390,7 @@ Http::Response Http::sendRequest(const Http::Request& request, Time timeout, boo
                 // When these messages are received the receive function will return Socket::Status::Partial
                 // In this case We just continue to call receive until actual payload
                 // data is available, the connection is closed or an error occurs
-                auto result = m_connection.receive(buffer.data(), buffer.size(), size);
+                auto result = connection.receive(buffer.data(), buffer.size(), size);
 
                 while ((result == Socket::Status::Done) || (result == Socket::Status::Partial))
                 {
@@ -397,7 +398,7 @@ Http::Response Http::sendRequest(const Http::Request& request, Time timeout, boo
                     if (result == Socket::Status::Done)
                         receivedStr.append(buffer.data(), buffer.data() + size);
 
-                    result = m_connection.receive(buffer.data(), buffer.size(), size);
+                    result = connection.receive(buffer.data(), buffer.size(), size);
                 }
 
                 // Build the Response object from the received data
@@ -406,7 +407,7 @@ Http::Response Http::sendRequest(const Http::Request& request, Time timeout, boo
         }
 
         // Close the connection
-        m_connection.disconnect();
+        connection.disconnect();
     }
 
     return received;

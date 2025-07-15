@@ -374,6 +374,7 @@ public:
     ///
     /// This function just stores the host address and port, it
     /// doesn't actually connect to it until you send a request.
+    /// It does however try to resolve the address.
     /// The port has a default value of 0, which means that the
     /// HTTP client will use the right port according to the
     /// protocol used (80 for HTTP). You should leave it like
@@ -383,8 +384,10 @@ public:
     /// \param host Web server to connect to
     /// \param port Port to use for connection
     ///
+    /// \return `true` if the host has been resolved and is valid, `false` otherwise
+    ///
     ////////////////////////////////////////////////////////////
-    void setHost(const std::string& host, unsigned short port = 0);
+    bool setHost(const std::string& host, unsigned short port = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Send a HTTP request and return the server's response.
@@ -405,17 +408,16 @@ public:
     /// \return Server's response
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Response sendRequest(const Request& request, Time timeout = Time::Zero, bool verifyServer = true);
+    [[nodiscard]] Response sendRequest(const Request& request, Time timeout = Time::Zero, bool verifyServer = true) const;
 
 private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    TcpSocket                m_connection; //!< Connection to the host
-    std::optional<IpAddress> m_host;       //!< Web host address
-    std::string              m_hostName;   //!< Web host name
-    unsigned short           m_port{};     //!< Port used for connection with host
-    bool                     m_https{};    //!< Use HTTPS
+    std::optional<IpAddress> m_host;     //!< Web host address
+    std::string              m_hostName; //!< Web host name
+    unsigned short           m_port{};   //!< Port used for connection with host
+    bool                     m_https{};  //!< Use HTTPS
 };
 
 } // namespace sf
