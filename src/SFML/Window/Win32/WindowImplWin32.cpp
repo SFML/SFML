@@ -124,6 +124,27 @@ void setProcessDpiAware()
     }
 }
 
+DWORD translateStyle(std::uint32_t style)
+{
+    // Choose the window style according to the Style parameter
+    DWORD win32Style = WS_VISIBLE;
+    if (style == sf::Style::None)
+    {
+        win32Style |= WS_POPUP;
+    }
+    else
+    {
+        if (style & sf::Style::Titlebar)
+            win32Style |= WS_CAPTION | WS_MINIMIZEBOX;
+        if (style & sf::Style::Resize)
+            win32Style |= WS_THICKFRAME | WS_MAXIMIZEBOX;
+        if (style & sf::Style::Close)
+            win32Style |= WS_SYSMENU;
+    }
+
+    return win32Style;
+}
+
 // Register a RAWINPUTDEVICE representing the mouse to receive raw
 // mouse deltas using WM_INPUT
 void initRawMouse()
@@ -138,7 +159,10 @@ void initRawMouse()
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-WindowImplWin32::WindowImplWin32(WindowHandle handle) : m_handle(handle)
+WindowImplWin32::WindowImplWin32(WindowHandle handle) :
+m_handle(handle),
+m_win32Style(translateStyle(Style::None)),
+m_mode(VideoMode::getDesktopMode())
 {
     // Set that this process is DPI aware and can handle DPI scaling
     setProcessDpiAware();
@@ -170,7 +194,9 @@ WindowImplWin32::WindowImplWin32(VideoMode     mode,
                                  const ContextSettings& /*settings*/) :
 m_lastSize(mode.size),
 m_fullscreen(state == State::Fullscreen),
-m_cursorGrabbed(m_fullscreen)
+m_cursorGrabbed(m_fullscreen),
+m_win32Style(translateStyle(style)),
+m_mode(mode)
 {
     // Set that this process is DPI aware and can handle DPI scaling
     setProcessDpiAware();
@@ -181,32 +207,16 @@ m_cursorGrabbed(m_fullscreen)
 
     // Compute position and size
     HDC       screenDC   = GetDC(nullptr);
-    const int left       = (GetDeviceCaps(screenDC, HORZRES) - static_cast<int>(mode.size.x)) / 2;
-    const int top        = (GetDeviceCaps(screenDC, VERTRES) - static_cast<int>(mode.size.y)) / 2;
-    auto [width, height] = Vector2i(mode.size);
+    const int left       = (GetDeviceCaps(screenDC, HORZRES) - static_cast<int>(m_mode.size.x)) / 2;
+    const int top        = (GetDeviceCaps(screenDC, VERTRES) - static_cast<int>(m_mode.size.y)) / 2;
+    auto [width, height] = Vector2i(m_mode.size);
     ReleaseDC(nullptr, screenDC);
-
-    // Choose the window style according to the Style parameter
-    DWORD win32Style = WS_VISIBLE;
-    if (style == Style::None)
-    {
-        win32Style |= WS_POPUP;
-    }
-    else
-    {
-        if (style & Style::Titlebar)
-            win32Style |= WS_CAPTION | WS_MINIMIZEBOX;
-        if (style & Style::Resize)
-            win32Style |= WS_THICKFRAME | WS_MAXIMIZEBOX;
-        if (style & Style::Close)
-            win32Style |= WS_SYSMENU;
-    }
 
     // In windowed mode, adjust width and height so that window will have the requested client area
     if (!m_fullscreen)
     {
         RECT rectangle = {0, 0, width, height};
-        AdjustWindowRect(&rectangle, win32Style, false);
+        AdjustWindowRect(&rectangle, m_win32Style, false);
         width  = rectangle.right - rectangle.left;
         height = rectangle.bottom - rectangle.top;
     }
@@ -214,7 +224,7 @@ m_cursorGrabbed(m_fullscreen)
     // Create the window
     m_handle = CreateWindowW(className,
                              reinterpret_cast<const wchar_t*>(title.toUtf16().c_str()),
-                             win32Style,
+                             m_win32Style,
                              left,
                              top,
                              width,
@@ -248,7 +258,7 @@ m_cursorGrabbed(m_fullscreen)
 
     // Switch to fullscreen if requested
     if (m_fullscreen)
-        switchToFullscreen(mode);
+        switchToFullscreen();
 
     // Increment window count
     ++windowCount;
@@ -402,6 +412,44 @@ void WindowImplWin32::setIcon(Vector2u size, const std::uint8_t* pixels)
 
 
 ////////////////////////////////////////////////////////////
+void WindowImplWin32::setState(State state)
+{
+    auto currentState = getState();
+
+    switch (state)
+    {
+        case State::Fullscreen:
+            if (currentState != State::Fullscreen)
+            {
+                m_fullscreen = true;
+                switchToFullscreen();
+            }
+            break;
+
+        case State::Windowed:
+            if (currentState == State::Fullscreen)
+            {
+                m_fullscreen = false;
+                switchToWindowed();
+            }
+            break;
+
+        default:
+            break;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+State WindowImplWin32::getState() const
+{
+    if (fullscreenWindow == this)
+        return State::Fullscreen;
+
+    return State::Windowed;
+}
+
+////////////////////////////////////////////////////////////
 void WindowImplWin32::setVisible(bool visible)
 {
     ShowWindow(m_handle, visible ? SW_SHOW : SW_HIDE);
@@ -494,13 +542,13 @@ void WindowImplWin32::registerWindowClass()
 
 
 ////////////////////////////////////////////////////////////
-void WindowImplWin32::switchToFullscreen(const VideoMode& mode)
+void WindowImplWin32::switchToFullscreen()
 {
     DEVMODE devMode;
     devMode.dmSize       = sizeof(devMode);
-    devMode.dmPelsWidth  = mode.size.x;
-    devMode.dmPelsHeight = mode.size.y;
-    devMode.dmBitsPerPel = mode.bitsPerPixel;
+    devMode.dmPelsWidth  = m_mode.size.x;
+    devMode.dmPelsHeight = m_mode.size.y;
+    devMode.dmBitsPerPel = m_mode.bitsPerPixel;
     devMode.dmFields     = DM_PELSWIDTH | DM_PELSHEIGHT | DM_BITSPERPEL;
 
     // Apply fullscreen mode
@@ -511,18 +559,45 @@ void WindowImplWin32::switchToFullscreen(const VideoMode& mode)
     }
 
     // Make the window flags compatible with fullscreen mode
-    SetWindowLongPtr(m_handle,
-                     GWL_STYLE,
-                     static_cast<LONG_PTR>(WS_POPUP) | static_cast<LONG_PTR>(WS_CLIPCHILDREN) |
-                         static_cast<LONG_PTR>(WS_CLIPSIBLINGS));
-    SetWindowLongPtr(m_handle, GWL_EXSTYLE, WS_EX_APPWINDOW);
+    SetWindowLongPtrW(m_handle,
+                      GWL_STYLE,
+                      static_cast<LONG_PTR>(WS_POPUP) | static_cast<LONG_PTR>(WS_CLIPCHILDREN) |
+                          static_cast<LONG_PTR>(WS_CLIPSIBLINGS));
+    SetWindowLongPtrW(m_handle, GWL_EXSTYLE, WS_EX_APPWINDOW);
 
     // Resize the window so that it fits the entire screen
-    SetWindowPos(m_handle, HWND_TOP, 0, 0, static_cast<int>(mode.size.x), static_cast<int>(mode.size.y), SWP_FRAMECHANGED);
+    SetWindowPos(m_handle, HWND_TOP, 0, 0, static_cast<int>(m_mode.size.x), static_cast<int>(m_mode.size.y), SWP_FRAMECHANGED);
     ShowWindow(m_handle, SW_SHOW);
 
     // Set "this" as the current fullscreen window
     fullscreenWindow = this;
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplWin32::switchToWindowed()
+{
+    // Restore the graphics mode of the display device back to the values from the registry
+    ChangeDisplaySettingsW(nullptr, 0);
+
+    // Set the window flags to what the user requested before switching to fullscreen
+    SetWindowLongPtrW(m_handle, GWL_STYLE, static_cast<LONG_PTR>(m_win32Style));
+
+    // Compute position and size
+    auto [width, height] = Vector2i(m_mode.size);
+    HDC       screenDC   = GetDC(nullptr);
+    const int left       = (GetDeviceCaps(screenDC, HORZRES) - width) / 2;
+    const int top        = (GetDeviceCaps(screenDC, VERTRES) - height) / 2;
+    ReleaseDC(nullptr, screenDC);
+
+    RECT rectangle = {0, 0, width, height};
+    AdjustWindowRect(&rectangle, m_win32Style, false);
+    const int adjustedWidth  = rectangle.right - rectangle.left;
+    const int adjustedHeight = rectangle.bottom - rectangle.top;
+
+    SetWindowPos(m_handle, HWND_TOP, left, top, adjustedWidth, adjustedHeight, SWP_FRAMECHANGED);
+
+    fullscreenWindow = nullptr;
 }
 
 
