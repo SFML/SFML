@@ -48,10 +48,29 @@ namespace
 // as possible, i.e. until it is requested by someone.
 // This also avoids static initialization order races in the
 // event some other static object gets/sets the current device.
-std::optional<std::string>& getCurrentDevice()
+struct CurrentDeviceSelection
 {
-    static std::optional<std::string> currentDevice;
-    return currentDevice;
+    std::optional<std::string> selection;
+    bool                       useNull{};
+};
+
+CurrentDeviceSelection& getCurrentDeviceSelection()
+{
+    static CurrentDeviceSelection currentDeviceSelection;
+    return currentDeviceSelection;
+}
+
+// The same applies here
+struct NotificationCallback
+{
+    std::mutex                           mutex;
+    PlaybackDevice::NotificationCallback callback;
+};
+
+NotificationCallback& getNotificationCallback()
+{
+    static NotificationCallback notificationCallback;
+    return notificationCallback;
 }
 } // namespace
 
@@ -86,57 +105,8 @@ AudioDevice::AudioDevice()
         result != MA_SUCCESS)
         err() << "Failed to register audio log callback: " << ma_result_description(result) << std::endl;
 
-    // Create the context
-    m_context.emplace();
-
-    auto contextConfig                                 = ma_context_config_init();
-    contextConfig.pLog                                 = &*m_log;
-    std::uint32_t                          deviceCount = 0;
-    const auto                             nullBackend = ma_backend_null;
-    const std::array<const ma_backend*, 2> backendLists{nullptr, &nullBackend};
-
-    for (const auto* backendList : backendLists)
-    {
-        // We can set backendCount to 1 since it is ignored when backends is set to nullptr
-        if (const auto result = ma_context_init(backendList, 1, &contextConfig, &*m_context); result != MA_SUCCESS)
-        {
-            m_context.reset();
-            err() << "Failed to initialize the audio playback context: " << ma_result_description(result) << std::endl;
-            return;
-        }
-
-        // Count the playback devices
-        if (const auto result = ma_context_get_devices(&*m_context, nullptr, &deviceCount, nullptr, nullptr);
-            result != MA_SUCCESS)
-        {
-            err() << "Failed to get audio playback devices: " << ma_result_description(result) << std::endl;
-            return;
-        }
-
-        // Check if there are audio playback devices available on the system
-        if (deviceCount > 0)
-            break;
-
-        // Warn if no devices were found using the default backend list
-        if (backendList == nullptr)
-            err() << "No audio playback devices available on the system" << std::endl;
-
-        // Clean up the context if we didn't find any devices
-        ma_context_uninit(&*m_context);
-    }
-
-    // If the NULL audio backend also doesn't provide a device we give up
-    if (deviceCount == 0)
-    {
-        m_context.reset();
-        return;
-    }
-
-    if (m_context->backend == ma_backend_null)
-        err() << "Using NULL audio backend for playback" << std::endl;
-
     if (!initialize())
-        err() << "Failed to initialize audio device or engine" << std::endl;
+        err() << "Failed to initialize audio context, device or engine" << std::endl;
 }
 
 
@@ -200,6 +170,10 @@ bool AudioDevice::reinitialize()
     if (instance->m_playbackDevice)
         ma_device_uninit(&*instance->m_playbackDevice);
 
+    // Destroy the old context
+    if (instance->m_context)
+        ma_context_uninit(&*instance->m_context);
+
     // Create the new objects
     const auto result = instance->initialize();
 
@@ -254,23 +228,71 @@ std::vector<AudioDevice::DeviceEntry> AudioDevice::getAvailableDevices()
         return deviceList;
     };
 
+    std::vector<DeviceEntry> deviceList;
+    auto                     retry       = false;
+    const ma_backend         nullBackend = ma_backend_null;
+    const ma_backend*        retryBackend{};
+
     // Use an existing instance's context if one exists
-    auto* instance = getInstance();
-
-    if (instance && instance->m_context)
-        return getDevices(*instance->m_context);
-
-    // Otherwise, construct a temporary context
-    ma_context context{};
-
-    if (const auto result = ma_context_init(nullptr, 0, nullptr, &context); result != MA_SUCCESS)
+    if (auto* instance = getInstance(); instance && instance->m_context)
     {
-        err() << "Failed to initialize the audio playback context: " << ma_result_description(result) << std::endl;
-        return {};
+        deviceList = getDevices(*instance->m_context);
+
+        if (deviceList.empty() && (instance->m_context->backend != ma_backend_null))
+        {
+            // Retry with null backend
+            retry        = true;
+            retryBackend = &nullBackend;
+        }
+        else if (instance->m_context->backend == ma_backend_null)
+        {
+            // Retry with default backend
+            retry        = true;
+            retryBackend = nullptr;
+        }
+    }
+    else
+    {
+        // Otherwise, construct a temporary context
+        ma_context context{};
+
+        if (const auto result = ma_context_init(nullptr, 0, nullptr, &context); result != MA_SUCCESS)
+        {
+            err() << "Failed to initialize the audio playback context: " << ma_result_description(result) << std::endl;
+            return {};
+        }
+
+        deviceList = getDevices(context);
+
+        if (deviceList.empty() && (context.backend != ma_backend_null))
+        {
+            // Retry with null backend
+            retry        = true;
+            retryBackend = &nullBackend;
+        }
+
+        ma_context_uninit(&context);
     }
 
-    auto deviceList = getDevices(context);
-    ma_context_uninit(&context);
+    if (retry)
+    {
+        // Construct a temporary context using the selected backend to retry
+        ma_context context{};
+
+        if (const auto result = ma_context_init(retryBackend, 1, nullptr, &context); result != MA_SUCCESS)
+        {
+            err() << "Failed to initialize the audio playback context: " << ma_result_description(result) << std::endl;
+            return {};
+        }
+
+        auto retryDeviceList = getDevices(context);
+
+        if (!retryDeviceList.empty())
+            deviceList = std::move(retryDeviceList);
+
+        ma_context_uninit(&context);
+    }
+
     return deviceList;
 }
 
@@ -278,7 +300,28 @@ std::vector<AudioDevice::DeviceEntry> AudioDevice::getAvailableDevices()
 ////////////////////////////////////////////////////////////
 bool AudioDevice::setDevice(const std::string& name)
 {
-    getCurrentDevice() = name;
+    auto& selection     = getCurrentDeviceSelection();
+    selection.useNull   = false;
+    selection.selection = name;
+    return reinitialize();
+}
+
+
+////////////////////////////////////////////////////////////
+bool AudioDevice::setDeviceToDefault()
+{
+    auto& selection   = getCurrentDeviceSelection();
+    selection.useNull = false;
+    selection.selection.reset();
+    return reinitialize();
+}
+
+
+////////////////////////////////////////////////////////////
+bool AudioDevice::setDeviceToNull()
+{
+    auto& selection   = getCurrentDeviceSelection();
+    selection.useNull = true;
     return reinitialize();
 }
 
@@ -286,7 +329,62 @@ bool AudioDevice::setDevice(const std::string& name)
 ////////////////////////////////////////////////////////////
 std::optional<std::string> AudioDevice::getDevice()
 {
-    return getCurrentDevice();
+    auto* instance = getInstance();
+
+    if (!instance || !instance->m_playbackDevice)
+        return std::nullopt;
+
+    std::array<char, MA_MAX_DEVICE_NAME_LENGTH + 1> deviceName{};
+    std::size_t                                     deviceNameLength{};
+
+    if (const auto result = ma_device_get_name(&*instance->m_playbackDevice,
+                                               ma_device_type_playback,
+                                               deviceName.data(),
+                                               deviceName.size(),
+                                               &deviceNameLength);
+        result != MA_SUCCESS)
+    {
+        err() << "Failed to get the name of audio playback device: " << ma_result_description(result) << std::endl;
+        return std::nullopt;
+    }
+
+    return std::string(deviceName.data(), deviceNameLength);
+}
+
+
+////////////////////////////////////////////////////////////
+bool AudioDevice::isDefaultDevice()
+{
+    auto* instance = getInstance();
+
+    if (!instance || !instance->m_playbackDevice)
+        return false;
+
+    // We don't want to consider the null device as a default
+    // since it is used either as a fallback when other backends
+    // don't provide devices themselves or when the user
+    // explicitly requests it to discard audio data
+    return (instance->m_context->backend != ma_backend_null) && (instance->m_playbackDevice->playback.pID == nullptr);
+}
+
+
+////////////////////////////////////////////////////////////
+void AudioDevice::setNotificationCallback(PlaybackDevice::NotificationCallback callback)
+{
+    auto&                 notificationCallback = getNotificationCallback();
+    const std::lock_guard lock(notificationCallback.mutex);
+    notificationCallback.callback = std::move(callback);
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<std::uint32_t> AudioDevice::getDeviceSampleRate()
+{
+    auto* instance = getInstance();
+    if (instance && instance->m_playbackDevice)
+        return instance->m_playbackDevice->sampleRate;
+
+    return std::nullopt;
 }
 
 
@@ -463,16 +561,17 @@ Vector3f AudioDevice::getUpVector()
 ////////////////////////////////////////////////////////////
 std::optional<ma_device_id> AudioDevice::getSelectedDeviceId() const
 {
-    const auto devices    = getAvailableDevices();
-    auto       deviceName = getDevice();
+    const auto& selection = getCurrentDeviceSelection();
 
     // If no device has been selected by the user yet, use the default device
-    if (!deviceName)
-        deviceName = PlaybackDevice::getDefaultDevice();
+    if (!selection.selection)
+        return std::nullopt;
+
+    const auto devices = getAvailableDevices();
 
     const auto iter = std::find_if(devices.begin(),
                                    devices.end(),
-                                   [&deviceName](const auto& device) { return device.name == deviceName; });
+                                   [&selection](const auto& device) { return device.name == *selection.selection; });
 
     if (iter != devices.end())
         return iter->id;
@@ -484,6 +583,60 @@ std::optional<ma_device_id> AudioDevice::getSelectedDeviceId() const
 ////////////////////////////////////////////////////////////
 bool AudioDevice::initialize()
 {
+    // Create the context
+    m_context.emplace();
+
+    auto contextConfig                         = ma_context_config_init();
+    contextConfig.pLog                         = &*m_log;
+    std::uint32_t                  deviceCount = 0;
+    const auto                     nullBackend = ma_backend_null;
+    std::vector<const ma_backend*> backendLists;
+
+    if (!getCurrentDeviceSelection().useNull)
+        backendLists.push_back(nullptr);
+
+    backendLists.push_back(&nullBackend);
+
+    for (const auto* backendList : backendLists)
+    {
+        // We can set backendCount to 1 since it is ignored when backends is set to nullptr
+        if (const auto result = ma_context_init(backendList, 1, &contextConfig, &*m_context); result != MA_SUCCESS)
+        {
+            m_context.reset();
+            err() << "Failed to initialize the audio playback context: " << ma_result_description(result) << std::endl;
+            return false;
+        }
+
+        // Count the playback devices
+        if (const auto result = ma_context_get_devices(&*m_context, nullptr, &deviceCount, nullptr, nullptr);
+            result != MA_SUCCESS)
+        {
+            err() << "Failed to get audio playback devices: " << ma_result_description(result) << std::endl;
+            return false;
+        }
+
+        // Check if there are audio playback devices available on the system
+        if (deviceCount > 0)
+            break;
+
+        // Warn if no devices were found using the default backend list
+        if (backendList == nullptr)
+            err() << "No audio playback devices available on the system" << std::endl;
+
+        // Clean up the context if we didn't find any devices
+        ma_context_uninit(&*m_context);
+    }
+
+    // If the NULL audio backend also doesn't provide a device we give up
+    if (deviceCount == 0)
+    {
+        m_context.reset();
+        return false;
+    }
+
+    if (!getCurrentDeviceSelection().useNull && (m_context->backend == ma_backend_null))
+        err() << "Using NULL audio playback device, even though it wasn't requested" << std::endl;
+
     const auto deviceId = getSelectedDeviceId();
 
     // Create the playback device
@@ -502,6 +655,39 @@ bool AudioDevice::initialize()
                 err() << "Failed to read PCM frames from audio engine: " << ma_result_description(result) << std::endl;
         }
     };
+    playbackDeviceConfig.notificationCallback = [](const ma_device_notification* notification)
+    {
+        auto&                 notificationCallback = getNotificationCallback();
+        const std::lock_guard lock(notificationCallback.mutex);
+        const auto&           callback = notificationCallback.callback;
+
+        if (!callback)
+            return;
+
+        switch (notification->type)
+        {
+            case ma_device_notification_type_started:
+                callback(PlaybackDevice::Notification::DeviceStarted);
+                break;
+            case ma_device_notification_type_stopped:
+                callback(PlaybackDevice::Notification::DeviceStopped);
+                break;
+            case ma_device_notification_type_rerouted:
+                callback(PlaybackDevice::Notification::DeviceRerouted);
+                break;
+            case ma_device_notification_type_interruption_began:
+                callback(PlaybackDevice::Notification::DeviceInterruptionBegan);
+                break;
+            case ma_device_notification_type_interruption_ended:
+                callback(PlaybackDevice::Notification::DeviceInterruptionEnded);
+                break;
+            case ma_device_notification_type_unlocked:
+                callback(PlaybackDevice::Notification::DeviceUnlocked);
+                break;
+            default:
+                break;
+        }
+    };
     playbackDeviceConfig.pUserData          = this;
     playbackDeviceConfig.playback.format    = ma_format_f32;
     playbackDeviceConfig.playback.pDeviceID = deviceId ? &*deviceId : nullptr;
@@ -509,30 +695,8 @@ bool AudioDevice::initialize()
     if (const auto result = ma_device_init(&*m_context, &playbackDeviceConfig, &*m_playbackDevice); result != MA_SUCCESS)
     {
         m_playbackDevice.reset();
-        getCurrentDevice() = std::nullopt;
         err() << "Failed to initialize the audio playback device: " << ma_result_description(result) << std::endl;
         return false;
-    }
-
-    // Update the current device string from the the device we just initialized
-    {
-        std::array<char, MA_MAX_DEVICE_NAME_LENGTH + 1> deviceName{};
-        std::size_t                                     deviceNameLength{};
-
-        if (const auto result = ma_device_get_name(&*m_playbackDevice,
-                                                   ma_device_type_playback,
-                                                   deviceName.data(),
-                                                   deviceName.size(),
-                                                   &deviceNameLength);
-            result != MA_SUCCESS)
-        {
-            err() << "Failed to get name of audio playback device: " << ma_result_description(result) << std::endl;
-            getCurrentDevice() = std::nullopt;
-        }
-        else
-        {
-            getCurrentDevice() = std::string(deviceName.data(), deviceNameLength);
-        }
     }
 
     // Create the engine

@@ -383,7 +383,7 @@ function(sfml_add_test target SOURCES DEPENDS)
     source_group("" FILES ${SOURCES})
 
     # create the target
-    add_executable(${target} ${SOURCES})
+    add_executable(${target} ${SOURCES} ${PROJECT_SOURCE_DIR}/test/main.cpp)
 
     # enable precompiled headers
     if (SFML_ENABLE_PCH)
