@@ -32,20 +32,20 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 constexpr Color::Color(std::uint8_t red, std::uint8_t green, std::uint8_t blue, std::uint8_t alpha) :
-r(red),
-g(green),
-b(blue),
-a(alpha)
+    r(red),
+    g(green),
+    b(blue),
+    a(alpha)
 {
 }
 
 
 ////////////////////////////////////////////////////////////
 constexpr Color::Color(std::uint32_t color) :
-r(static_cast<std::uint8_t>((color & 0xff'00'00'00) >> 24)),
-g(static_cast<std::uint8_t>((color & 0x00'ff'00'00) >> 16)),
-b(static_cast<std::uint8_t>((color & 0x00'00'ff'00) >> 8)),
-a(static_cast<std::uint8_t>((color & 0x00'00'00'ff) >> 0))
+    r(static_cast<std::uint8_t>((color & 0xff'00'00'00) >> 24)),
+    g(static_cast<std::uint8_t>((color & 0x00'ff'00'00) >> 16)),
+    b(static_cast<std::uint8_t>((color & 0x00'00'ff'00) >> 8)),
+    a(static_cast<std::uint8_t>((color & 0x00'00'00'ff) >> 0))
 {
 }
 

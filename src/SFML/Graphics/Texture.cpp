@@ -146,11 +146,11 @@ Texture::Texture(Vector2u size, bool sRgb) : Texture()
 
 ////////////////////////////////////////////////////////////
 Texture::Texture(const Texture& copy) :
-GlResource(copy),
-m_isSmooth(copy.m_isSmooth),
-m_sRgb(copy.m_sRgb),
-m_isRepeated(copy.m_isRepeated),
-m_cacheId(TextureImpl::getUniqueId())
+    GlResource(copy),
+    m_isSmooth(copy.m_isSmooth),
+    m_sRgb(copy.m_sRgb),
+    m_isRepeated(copy.m_isRepeated),
+    m_cacheId(TextureImpl::getUniqueId())
 {
     if (copy.m_texture)
     {
@@ -188,16 +188,16 @@ Texture::~Texture()
 
 ////////////////////////////////////////////////////////////
 Texture::Texture(Texture&& right) noexcept :
-m_size(std::exchange(right.m_size, {})),
-m_actualSize(std::exchange(right.m_actualSize, {})),
-m_texture(std::exchange(right.m_texture, 0)),
-m_isSmooth(std::exchange(right.m_isSmooth, false)),
-m_sRgb(std::exchange(right.m_sRgb, false)),
-m_isRepeated(std::exchange(right.m_isRepeated, false)),
-m_pixelsFlipped(std::exchange(right.m_pixelsFlipped, false)),
-m_fboAttachment(std::exchange(right.m_fboAttachment, false)),
-m_hasMipmap(std::exchange(right.m_hasMipmap, false)),
-m_cacheId(std::exchange(right.m_cacheId, 0))
+    m_size(std::exchange(right.m_size, {})),
+    m_actualSize(std::exchange(right.m_actualSize, {})),
+    m_texture(std::exchange(right.m_texture, 0)),
+    m_isSmooth(std::exchange(right.m_isSmooth, false)),
+    m_sRgb(std::exchange(right.m_sRgb, false)),
+    m_isRepeated(std::exchange(right.m_isRepeated, false)),
+    m_pixelsFlipped(std::exchange(right.m_pixelsFlipped, false)),
+    m_fboAttachment(std::exchange(right.m_fboAttachment, false)),
+    m_hasMipmap(std::exchange(right.m_hasMipmap, false)),
+    m_cacheId(std::exchange(right.m_cacheId, 0))
 {
 }
 

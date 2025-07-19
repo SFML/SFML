@@ -75,7 +75,7 @@ WindowImplDRM::WindowImplDRM(VideoMode mode,
                              std::uint32_t /*style*/,
                              State /*state*/,
                              const ContextSettings& /*settings*/) :
-m_size(mode.size)
+    m_size(mode.size)
 {
     InputImpl::setTerminalConfig();
 }

@@ -52,9 +52,9 @@ Socket::~Socket()
 
 ////////////////////////////////////////////////////////////
 Socket::Socket(Socket&& socket) noexcept :
-m_type(socket.m_type),
-m_socket(std::exchange(socket.m_socket, priv::SocketImpl::invalidSocket())),
-m_isBlocking(socket.m_isBlocking)
+    m_type(socket.m_type),
+    m_socket(std::exchange(socket.m_socket, priv::SocketImpl::invalidSocket())),
+    m_isBlocking(socket.m_isBlocking)
 {
 }
 

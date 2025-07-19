@@ -108,7 +108,7 @@ EaglContext::EaglContext(EaglContext* shared) : m_context(nil)
 
 ////////////////////////////////////////////////////////////
 EaglContext::EaglContext(EaglContext* shared, const ContextSettings& settings, const WindowImpl& owner, unsigned int bitsPerPixel) :
-m_context(nil)
+    m_context(nil)
 {
     ensureInit();
 
@@ -120,7 +120,7 @@ m_context(nil)
 
 ////////////////////////////////////////////////////////////
 EaglContext::EaglContext(EaglContext* /* shared */, const ContextSettings& /* settings */, Vector2u /* size */) :
-m_context(nil)
+    m_context(nil)
 {
     ensureInit();
 
