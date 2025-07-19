@@ -62,7 +62,7 @@ WindowImplAndroid::WindowImplAndroid(VideoMode mode,
                                      std::uint32_t /* style */,
                                      State state,
                                      const ContextSettings& /* settings */) :
-m_size(mode.size)
+    m_size(mode.size)
 {
     ActivityStates&       states = getActivity();
     const std::lock_guard lock(states.mutex);
