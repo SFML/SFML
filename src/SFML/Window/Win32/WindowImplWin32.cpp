@@ -168,9 +168,9 @@ WindowImplWin32::WindowImplWin32(VideoMode     mode,
                                  std::uint32_t style,
                                  State         state,
                                  const ContextSettings& /*settings*/) :
-m_lastSize(mode.size),
-m_fullscreen(state == State::Fullscreen),
-m_cursorGrabbed(m_fullscreen)
+    m_lastSize(mode.size),
+    m_fullscreen(state == State::Fullscreen),
+    m_cursorGrabbed(m_fullscreen)
 {
     // Set that this process is DPI aware and can handle DPI scaling
     setProcessDpiAware();

@@ -36,8 +36,8 @@ class Pixelate : public Effect
 {
 public:
     explicit Pixelate(sf::Texture&& texture, sf::Shader&& shader) :
-    m_texture(std::move(texture)),
-    m_shader(std::move(shader))
+        m_texture(std::move(texture)),
+        m_shader(std::move(shader))
     {
         m_shader.setUniform("texture", sf::Shader::CurrentTexture);
     }
@@ -79,27 +79,27 @@ public:
     }
 
     explicit WaveBlur(const sf::Font& font, sf::Shader&& shader) :
-    m_text(font,
-           "Praesent suscipit augue in velit pulvinar hendrerit varius purus aliquam.\n"
-           "Mauris mi odio, bibendum quis fringilla a, laoreet vel orci. Proin vitae vulputate tortor.\n"
-           "Praesent cursus ultrices justo, ut feugiat ante vehicula quis.\n"
-           "Donec fringilla scelerisque mauris et viverra.\n"
-           "Maecenas adipiscing ornare scelerisque. Nullam at libero elit.\n"
-           "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.\n"
-           "Nullam leo urna, tincidunt id semper eget, ultricies sed mi.\n"
-           "Morbi mauris massa, commodo id dignissim vel, lobortis et elit.\n"
-           "Fusce vel libero sed neque scelerisque venenatis.\n"
-           "Integer mattis tincidunt quam vitae iaculis.\n"
-           "Vivamus fringilla sem non velit venenatis fermentum.\n"
-           "Vivamus varius tincidunt nisi id vehicula.\n"
-           "Integer ullamcorper, enim vitae euismod rutrum, massa nisl semper ipsum,\n"
-           "vestibulum sodales sem ante in massa.\n"
-           "Vestibulum in augue non felis convallis viverra.\n"
-           "Mauris ultricies dolor sed massa convallis sed aliquet augue fringilla.\n"
-           "Duis erat eros, porta in accumsan in, blandit quis sem.\n"
-           "In hac habitasse platea dictumst. Etiam fringilla est id odio dapibus sit amet semper dui laoreet.\n",
-           22),
-    m_shader(std::move(shader))
+        m_text(font,
+               "Praesent suscipit augue in velit pulvinar hendrerit varius purus aliquam.\n"
+               "Mauris mi odio, bibendum quis fringilla a, laoreet vel orci. Proin vitae vulputate tortor.\n"
+               "Praesent cursus ultrices justo, ut feugiat ante vehicula quis.\n"
+               "Donec fringilla scelerisque mauris et viverra.\n"
+               "Maecenas adipiscing ornare scelerisque. Nullam at libero elit.\n"
+               "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.\n"
+               "Nullam leo urna, tincidunt id semper eget, ultricies sed mi.\n"
+               "Morbi mauris massa, commodo id dignissim vel, lobortis et elit.\n"
+               "Fusce vel libero sed neque scelerisque venenatis.\n"
+               "Integer mattis tincidunt quam vitae iaculis.\n"
+               "Vivamus fringilla sem non velit venenatis fermentum.\n"
+               "Vivamus varius tincidunt nisi id vehicula.\n"
+               "Integer ullamcorper, enim vitae euismod rutrum, massa nisl semper ipsum,\n"
+               "vestibulum sodales sem ante in massa.\n"
+               "Vestibulum in augue non felis convallis viverra.\n"
+               "Mauris ultricies dolor sed massa convallis sed aliquet augue fringilla.\n"
+               "Duis erat eros, porta in accumsan in, blandit quis sem.\n"
+               "In hac habitasse platea dictumst. Etiam fringilla est id odio dapibus sit amet semper dui laoreet.\n",
+               22),
+        m_shader(std::move(shader))
     {
         m_text.setPosition({30.f, 20.f});
     }
@@ -201,10 +201,10 @@ public:
     }
 
     explicit Edge(sf::RenderTexture&& surface, sf::Texture&& backgroundTexture, sf::Texture&& entityTexture, sf::Shader&& shader) :
-    m_surface(std::move(surface)),
-    m_backgroundTexture(std::move(backgroundTexture)),
-    m_entityTexture(std::move(entityTexture)),
-    m_shader(std::move(shader))
+        m_surface(std::move(surface)),
+        m_backgroundTexture(std::move(backgroundTexture)),
+        m_entityTexture(std::move(entityTexture)),
+        m_shader(std::move(shader))
     {
     }
 
@@ -252,9 +252,9 @@ public:
     }
 
     explicit Geometry(sf::Texture&& logoTexture, sf::Shader&& shader) :
-    m_logoTexture(std::move(logoTexture)),
-    m_shader(std::move(shader)),
-    m_pointCloud(sf::PrimitiveType::Points, 10'000)
+        m_logoTexture(std::move(logoTexture)),
+        m_shader(std::move(shader)),
+        m_pointCloud(sf::PrimitiveType::Points, 10'000)
     {
         // Move the points in the point cloud to random positions
         for (std::size_t i = 0; i < 10'000; ++i)

@@ -95,8 +95,8 @@ Vector2<T> Vector2<T>::projectedOnto(Vector2<T> axis) const
 ////////////////////////////////////////////////////////////
 template <typename T>
 Vector2<T>::Vector2(T r, Angle phi) :
-x(r * static_cast<T>(std::cos(phi.asRadians()))),
-y(r * static_cast<T>(std::sin(phi.asRadians())))
+    x(r * static_cast<T>(std::cos(phi.asRadians()))),
+    y(r * static_cast<T>(std::sin(phi.asRadians())))
 {
     static_assert(std::is_floating_point_v<T>, "Vector2::Vector2(T, Angle) is only supported for floating point types");
 }
