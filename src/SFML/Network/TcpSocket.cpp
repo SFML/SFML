@@ -31,11 +31,47 @@
 #include <SFML/Network/TcpSocket.hpp>
 
 #include <SFML/System/Err.hpp>
+#include <SFML/System/String.hpp>
+
+
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wold-style-cast"
+#elif defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#endif
+
+#include <mbedtls/ctr_drbg.h>
+#include <mbedtls/entropy.h>
+#include <mbedtls/error.h>
+#include <mbedtls/net_sockets.h>
+#include <mbedtls/ssl.h>
+#include <mbedtls/version.h>
+
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#elif defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
+
+#if defined(SFML_SYSTEM_WINDOWS)
+#include <wincrypt.h>
+#elif defined(SFML_SYSTEM_MACOS)
+#include <Availability.h>
+#include <Security/Security.h>
+
+#include <CoreFoundation/CoreFoundation.h>
+#endif
 
 #include <algorithm>
 #include <array>
+#include <filesystem>
+#include <mutex>
+#include <optional>
 #include <ostream>
 
+#include <cassert>
 #include <cstring>
 
 #ifdef _MSC_VER
@@ -51,14 +87,609 @@ constexpr int flags = MSG_NOSIGNAL;
 #else
 constexpr int flags = 0;
 #endif
+
+std::string tlsErrorString(int errnum)
+{
+    std::array<char, 1024> buffer{};
+    mbedtls_strerror(errnum, buffer.data(), buffer.size());
+    return buffer.data();
+}
+
+bool loadSystemCertificates([[maybe_unused]] mbedtls_x509_crt* x509crt, [[maybe_unused]] mbedtls_x509_crl* x509crl)
+{
+#if defined(SFML_SYSTEM_WINDOWS)
+    static const auto getErrorString = [](DWORD error) -> std::string
+    {
+        PTCHAR buffer = nullptr;
+        if (FormatMessage(FORMAT_MESSAGE_MAX_WIDTH_MASK | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+                          nullptr,
+                          error,
+                          0,
+                          reinterpret_cast<PTCHAR>(&buffer),
+                          0,
+                          nullptr) == 0)
+        {
+            return "Unknown error.";
+        }
+
+        const sf::String message = buffer;
+        LocalFree(buffer);
+        return message.toAnsiString();
+    };
+
+    const auto loadStore = [&](const char* store)
+    {
+        auto* systemStore = CertOpenSystemStoreA(0, store);
+
+        if (systemStore == nullptr)
+        {
+            sf::err() << "Failed to open Windows certificate store: " << getErrorString(GetLastError()) << std::endl;
+            return false;
+        }
+
+        const CERT_CONTEXT* cert{};
+        cert = CertEnumCertificatesInStore(systemStore, cert);
+
+        while (cert)
+        {
+            if (cert->dwCertEncodingType == X509_ASN_ENCODING)
+            {
+                // Certificate parsing might fail because a certificate makes use of intentionally removed features
+                // We can just ignore the certificate and move on to the next one
+                mbedtls_x509_crt_parse(x509crt, cert->pbCertEncoded, cert->cbCertEncoded);
+            }
+
+            cert = CertEnumCertificatesInStore(systemStore, cert);
+        }
+
+        const CRL_CONTEXT* crl{};
+        crl = CertEnumCRLsInStore(systemStore, crl);
+
+        while (crl)
+        {
+            if (crl->dwCertEncodingType == X509_ASN_ENCODING)
+            {
+                // CRL parsing might fail because a CRL makes use of intentionally removed features
+                // We can just ignore the CRL and move on to the next one
+                mbedtls_x509_crl_parse(x509crl, crl->pbCrlEncoded, crl->cbCrlEncoded);
+            }
+
+            crl = CertEnumCRLsInStore(systemStore, crl);
+        }
+
+        if (!CertCloseStore(systemStore, 0))
+            sf::err() << "Failed to close Windows certificate store: " << getErrorString(GetLastError()) << std::endl;
+
+        return true;
+    };
+
+    return loadStore("ROOT") && loadStore("CA");
+#elif (defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_ANDROID) || defined(SFML_SYSTEM_FREEBSD) || \
+       defined(SFML_SYSTEM_OPENBSD) || defined(SFML_SYSTEM_NETBSD))
+    auto loadStore = [&](const char* path)
+    {
+        // Just trying to load all known paths is simpler than specifying paths per distribution
+        if (!std::filesystem::exists(path))
+            return true;
+
+        if (auto result = mbedtls_x509_crt_parse_path(x509crt, path); result < 0)
+        {
+            sf::err() << "Failed to load CA certificate directory: " << tlsErrorString(result) << std::endl;
+            return false;
+        }
+
+        return true;
+    };
+
+    // TODO: Handle revocation directory as well
+
+#if defined(SFML_SYSTEM_LINUX)
+    return loadStore("/etc/ssl/") && loadStore("/etc/ssl/certs/") && loadStore("/etc/pki/ca-trust/extracted/pem/") &&
+           loadStore("/etc/pki/tls/") && loadStore("/etc/pki/tls/certs/");
+#elif defined(SFML_SYSTEM_ANDROID)
+    return loadStore("/system/etc/security/cacerts/") && loadStore("/data/misc/keychain/cacerts-added/");
+#elif defined(SFML_SYSTEM_FREEBSD)
+    return loadStore("/usr/local/share/certs");
+#elif defined(SFML_SYSTEM_OPENBSD)
+    return loadStore("/etc/ssl/");
+#elif defined(SFML_SYSTEM_NETBSD)
+    return loadStore("/etc/openssl/certs");
+#endif
+#elif defined(SFML_SYSTEM_MACOS)
+    auto loadStore = [&](SecTrustSettingsDomain domain)
+    {
+        static constexpr auto osStatusErrorString = [](OSStatus status)
+        {
+            CFStringRef stringRef = SecCopyErrorMessageString(status, nullptr);
+            std::string string(CFStringGetCStringPtr(stringRef, kCFStringEncodingUTF8));
+            CFRelease(stringRef);
+            return string;
+        };
+
+        CFArrayRef     certs{};
+        const OSStatus status = SecTrustSettingsCopyCertificates(domain, &certs);
+
+        if (status == errSecNoTrustSettings)
+            return true;
+
+        if (status != errSecSuccess)
+        {
+            sf::err() << "Failed to load system certificates: " << osStatusErrorString(status);
+            return false;
+        }
+
+        for (auto i = 0; i < CFArrayGetCount(certs); ++i)
+        {
+            const auto* cert = CFArrayGetValueAtIndex(certs, i);
+            CFDataRef   der{};
+
+            if (auto result = SecItemExport(cert, kSecFormatX509Cert, 0, nullptr, &der); result != errSecSuccess)
+            {
+                CFRelease(der);
+                CFRelease(certs);
+                sf::err() << "Failed to load system certificate: " << osStatusErrorString(result);
+                return false;
+            }
+
+            // Certificate parsing might fail because a certificate makes use of intentionally removed features
+            // We can just ignore the certificate and move on to the next one
+            mbedtls_x509_crt_parse(x509crt,
+                                   reinterpret_cast<const unsigned char*>(CFDataGetBytePtr(der)),
+                                   static_cast<std::size_t>(CFDataGetLength(der)));
+
+            CFRelease(der);
+        }
+
+        return true;
+    };
+
+    return (loadStore(kSecTrustSettingsDomainUser) && loadStore(kSecTrustSettingsDomainAdmin) &&
+            loadStore(kSecTrustSettingsDomainSystem));
+#else
+    // Add implementations for other system certificate stores here
+    return false;
+#endif
+}
+
+// When building MbedTLS ourselves, it doesn't provide its own built-in cross-platform mutex implementation
+// Instead it delegates mutex management to our code with the use of the following callbacks
+// We just provide wrapper functions around std::mutex
+#if !defined(MBEDTLS_THREADING_C)
+#error "Mbed TLS not built with threading support however it is required"
+#endif
+
+struct MbedTlsThreading
+{
+#if defined(MBEDTLS_THREADING_ALT)
+    MbedTlsThreading()
+    {
+        mbedtls_threading_set_alt(
+            [](mbedtls_threading_mutex_t* ptr) // Construction
+            {
+                if (!ptr)
+                    return;
+                *ptr = std::make_unique<std::mutex>().release();
+            },
+            [](mbedtls_threading_mutex_t* ptr) // Destruction
+            {
+                if (!ptr)
+                    return;
+                [[maybe_unused]] const std::unique_ptr<std::mutex> dummy(static_cast<std::mutex*>(*ptr));
+            },
+            [](mbedtls_threading_mutex_t* ptr) // Lock
+            {
+                if (!ptr)
+                    return MBEDTLS_ERR_THREADING_BAD_INPUT_DATA;
+                try
+                {
+                    static_cast<std::mutex*>(*ptr)->lock();
+                } catch (const std::exception&)
+                {
+                    return MBEDTLS_ERR_THREADING_MUTEX_ERROR;
+                }
+                return 0;
+            },
+            [](mbedtls_threading_mutex_t* ptr) // Unlock
+            {
+                if (!ptr)
+                    return MBEDTLS_ERR_THREADING_BAD_INPUT_DATA;
+                try
+                {
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 26110) // Caller failing to hold lock before calling function
+#endif
+                    static_cast<std::mutex*>(*ptr)->unlock();
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+                } catch (const std::exception&)
+                {
+                    return MBEDTLS_ERR_THREADING_MUTEX_ERROR;
+                }
+                return 0;
+            });
+    }
+
+    ~MbedTlsThreading()
+    {
+        mbedtls_threading_free_alt();
+    }
+#else
+#if !defined(MBEDTLS_THREADING_PTHREAD)
+#error "No Mbed TLS threading implementation available"
+#endif
+#endif
+};
+
+struct MbedTlsSharedState
+{
+    MbedTlsSharedState()
+    {
+        mbedtls_entropy_init(&entropyContext);
+        mbedtls_ctr_drbg_init(&ctrDrbgContext);
+
+        // We use a personalization string as a cheap way to minimally seed the RNG in case entropy is low
+#define SFML_NUMBER_TO_STRING_HELPER(x) #x
+#define SFML_NUMBER_TO_STRING(x)        SFML_NUMBER_TO_STRING_HELPER(x)
+
+        static constexpr auto*
+            personalizationString = "sfml-network-" SFML_NUMBER_TO_STRING(SFML_VERSION_MAJOR) "." SFML_NUMBER_TO_STRING(
+            SFML_VERSION_MINOR) "." SFML_NUMBER_TO_STRING(SFML_VERSION_PATCH) "-mbedtls-" MBEDTLS_VERSION_STRING_FULL;
+
+        if (auto result = mbedtls_ctr_drbg_seed(&ctrDrbgContext,
+                                                mbedtls_entropy_func,
+                                                &entropyContext,
+                                                reinterpret_cast<const unsigned char*>(personalizationString),
+                                                std::strlen(personalizationString));
+            result != 0)
+        {
+            sf::err() << "Failed to seed DRBG: " << tlsErrorString(result) << std::endl;
+            assert(false && "Failed to seed DRBG");
+            throw std::runtime_error("Failed to seed DRBG");
+        }
+    }
+
+    ~MbedTlsSharedState()
+    {
+        mbedtls_ctr_drbg_free(&ctrDrbgContext);
+        mbedtls_entropy_free(&entropyContext);
+    }
+
+    MbedTlsThreading         threading;
+    mbedtls_entropy_context  entropyContext{};
+    mbedtls_ctr_drbg_context ctrDrbgContext{};
+} mbedTlsSharedState;
 } // namespace
 
 namespace sf
 {
+struct TcpSocket::Impl
+{
+    TcpSocket::TlsStatus setupTls(
+        TcpSocket&        socket,
+        const sf::String& hostname,
+        VerifyPeer        verifyPeer,
+        const std::byte*  certificateChainData,
+        std::size_t       certificateChainSize,
+        const std::byte*  privateKeyData,
+        std::size_t       privateKeySize,
+        const std::byte*  privateKeyPasswordData,
+        std::size_t       privateKeyPasswordSize)
+    {
+        // We can't set up TLS if the underlying TCP stream isn't connected yet
+        if (!socket.getRemoteAddress().has_value())
+            return TlsStatus::NotConnected;
+
+        if (!tlsState.has_value())
+        {
+            // Construct new TLS state
+            auto& state = tlsState.emplace();
+
+            // Load user-provided certificate data
+            if (certificateChainData != nullptr && certificateChainSize > 0)
+            {
+                if (auto result = mbedtls_x509_crt_parse(&state.x509Crt,
+                                                         reinterpret_cast<const unsigned char*>(certificateChainData),
+                                                         certificateChainSize);
+                    result != 0)
+                {
+                    if (result < 0)
+                    {
+                        err() << "Failed to load provided certificate chain: " << tlsErrorString(result) << std::endl;
+                    }
+                    else if (result == 1)
+                    {
+                        err() << "Only 1 certificate could be loaded from provided certificate chain" << std::endl;
+                    }
+                    else
+                    {
+                        err() << "Only " << result << " certificates could be loaded from provided certificate chain"
+                              << std::endl;
+                    }
+
+                    tlsState.reset();
+                    return TlsStatus::Error;
+                }
+            }
+
+            const auto isServer = privateKeyData != nullptr;
+
+            // If we are a client, load certificates from the system certificate store
+            if (!isServer)
+            {
+                if (auto result = loadSystemCertificates(&state.x509Crt, &state.x509Crl); !result)
+                {
+                    err() << "Failed to load system certificates" << std::endl;
+                    tlsState.reset();
+                    return TlsStatus::Error;
+                }
+            }
+
+            // If we are a server, load private key
+            if (privateKeyData != nullptr && privateKeySize > 0)
+            {
+                // Passing in an RNG is only required in Mbed TLS 3.x.x, neither 2.x.x or 4.x.x requires it
+#if MBEDTLS_VERSION_MAJOR == 3
+                auto result = mbedtls_pk_parse_key(&state.privateKeyContext,
+                                                   reinterpret_cast<const unsigned char*>(privateKeyData),
+                                                   privateKeySize,
+                                                   reinterpret_cast<const unsigned char*>(privateKeyPasswordData),
+                                                   privateKeyPasswordSize,
+                                                   mbedtls_ctr_drbg_random,
+                                                   &mbedTlsSharedState.ctrDrbgContext);
+#else
+                auto result = mbedtls_pk_parse_key(&state.privateKeyContext,
+                                                   reinterpret_cast<const unsigned char*>(privateKeyData),
+                                                   privateKeySize,
+                                                   reinterpret_cast<const unsigned char*>(privateKeyPasswordData),
+                                                   privateKeyPasswordSize);
+#endif
+
+                if (result != 0)
+                {
+                    err() << "Failed to load provided private key: " << tlsErrorString(result) << std::endl;
+                    tlsState.reset();
+                    return TlsStatus::Error;
+                }
+            }
+
+            if (auto result = mbedtls_ssl_config_defaults(&state.sslConfig,
+                                                          isServer ? MBEDTLS_SSL_IS_SERVER : MBEDTLS_SSL_IS_CLIENT,
+                                                          MBEDTLS_SSL_TRANSPORT_STREAM,
+                                                          MBEDTLS_SSL_PRESET_DEFAULT);
+                result != 0)
+            {
+                err() << "Failed to set up TLS: " << tlsErrorString(result) << std::endl;
+                tlsState.reset();
+                return TlsStatus::Error;
+            }
+
+            // Set up random number generator and peer verification mode
+            mbedtls_ssl_conf_rng(&state.sslConfig, mbedtls_ctr_drbg_random, &mbedTlsSharedState.ctrDrbgContext);
+            mbedtls_ssl_conf_authmode(&state.sslConfig,
+                                      (verifyPeer == VerifyPeer::Enabled) ? MBEDTLS_SSL_VERIFY_REQUIRED
+                                                                          : MBEDTLS_SSL_VERIFY_NONE);
+
+            // Set the CA chain to use for verification
+            // Set our own certificate if we are a server
+            if (isServer)
+            {
+                if (state.x509Crt.next != nullptr)
+                    mbedtls_ssl_conf_ca_chain(&state.sslConfig, state.x509Crt.next, nullptr);
+
+                if (auto result = mbedtls_ssl_conf_own_cert(&state.sslConfig, &state.x509Crt, &state.privateKeyContext);
+                    result != 0)
+                {
+                    err() << "Failed to load server certificate: " << tlsErrorString(result) << std::endl;
+                    tlsState.reset();
+                    return TlsStatus::Error;
+                }
+            }
+            else
+            {
+                // If we are a client, make use of the CRL as well
+                mbedtls_ssl_conf_ca_chain(&state.sslConfig, &state.x509Crt, &state.x509Crl);
+            }
+
+            if (auto result = mbedtls_ssl_setup(&state.sslContext, &state.sslConfig); result != 0)
+            {
+                err() << "Failed to set up TLS: " << tlsErrorString(result) << std::endl;
+                tlsState.reset();
+                return TlsStatus::Error;
+            }
+
+            if (!isServer)
+            {
+                // Set the hostname that is used for peer verification and sent via SNI if it is supported
+                if (auto result = mbedtls_ssl_set_hostname(&state.sslContext,
+                                                           reinterpret_cast<const char*>(hostname.toUtf8().c_str()));
+                    result != 0)
+                {
+                    err() << "Failed to set up TLS: " << tlsErrorString(result) << std::endl;
+                    tlsState.reset();
+                    return TlsStatus::Error;
+                }
+            }
+
+            // Set up how the TLS implementation communicates with the underlying socket
+            state.netContext.fd = static_cast<int>(socket.getNativeHandle());
+
+            mbedtls_ssl_set_bio(
+                &state.sslContext,
+                &socket,
+                [](void* context, const unsigned char* data, std::size_t size) -> int
+                {
+                    auto& tcpSocket = *static_cast<TcpSocket*>(context);
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuseless-cast"
+                    const auto result = static_cast<int>(
+                        ::send(tcpSocket.getNativeHandle(),
+                               reinterpret_cast<const char*>(data),
+                               static_cast<priv::SocketImpl::Size>(size),
+                               flags));
+
+                    if ((result == -1) && (priv::SocketImpl::getErrorStatus() == sf::Socket::Status::NotReady))
+                        return MBEDTLS_ERR_SSL_WANT_WRITE;
+
+                    return result;
+#pragma GCC diagnostic pop
+                },
+                [](void* context, unsigned char* data, std::size_t size) -> int
+                {
+                    auto& tcpSocket = *static_cast<TcpSocket*>(context);
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuseless-cast"
+                    const auto result = static_cast<int>(
+                        recv(tcpSocket.getNativeHandle(),
+                             reinterpret_cast<char*>(data),
+                             static_cast<priv::SocketImpl::Size>(size),
+                             flags));
+
+                    if ((result == -1) && (priv::SocketImpl::getErrorStatus() == sf::Socket::Status::NotReady))
+                        return MBEDTLS_ERR_SSL_WANT_READ;
+
+                    return result;
+#pragma GCC diagnostic pop
+                },
+                nullptr);
+        }
+
+        auto& state = *tlsState;
+
+        // Perform the TLS handshake if it isn't complete yet
+        if (!state.handshakeComplete)
+        {
+            if (auto result = mbedtls_ssl_handshake(&state.sslContext); result != 0)
+            {
+                if (result == MBEDTLS_ERR_SSL_WANT_READ || result == MBEDTLS_ERR_SSL_WANT_WRITE)
+                    return TlsStatus::HandshakeStarted;
+
+                if (result != MBEDTLS_ERR_SSL_WANT_READ && result != MBEDTLS_ERR_SSL_WANT_WRITE)
+                {
+                    // Output the reason for verification failure
+                    if (result == MBEDTLS_ERR_X509_CERT_VERIFY_FAILED)
+                    {
+                        auto verifyResult = mbedtls_ssl_get_verify_result(&state.sslContext);
+
+                        std::string errors;
+
+                        if (verifyResult & MBEDTLS_X509_BADCERT_EXPIRED)
+                            errors += "expired, ";
+                        if (verifyResult & MBEDTLS_X509_BADCERT_REVOKED)
+                            errors += "revoked, ";
+                        if (verifyResult & MBEDTLS_X509_BADCERT_CN_MISMATCH)
+                            errors += "CN mismatch, ";
+                        if (verifyResult & MBEDTLS_X509_BADCERT_NOT_TRUSTED)
+                            errors += "not trusted, ";
+                        if (verifyResult & MBEDTLS_X509_BADCRL_NOT_TRUSTED)
+                            errors += "CRL not trusted, ";
+                        if (verifyResult & MBEDTLS_X509_BADCRL_EXPIRED)
+                            errors += "CRL expired, ";
+                        if (verifyResult & MBEDTLS_X509_BADCERT_MISSING)
+                            errors += "missing, ";
+                        if (verifyResult & MBEDTLS_X509_BADCERT_SKIP_VERIFY)
+                            errors += "skip verify, ";
+                        if (verifyResult & MBEDTLS_X509_BADCERT_OTHER)
+                            errors += "other, ";
+                        if (verifyResult & MBEDTLS_X509_BADCERT_FUTURE)
+                            errors += "future, ";
+                        if (verifyResult & MBEDTLS_X509_BADCRL_FUTURE)
+                            errors += "CRL future, ";
+                        if (verifyResult & MBEDTLS_X509_BADCERT_KEY_USAGE)
+                            errors += "key usage, ";
+                        if (verifyResult & MBEDTLS_X509_BADCERT_EXT_KEY_USAGE)
+                            errors += "ext key usage, ";
+                        if (verifyResult & MBEDTLS_X509_BADCERT_NS_CERT_TYPE)
+                            errors += "NS cert type, ";
+                        if (verifyResult & MBEDTLS_X509_BADCERT_BAD_MD)
+                            errors += "bad MD, ";
+                        if (verifyResult & MBEDTLS_X509_BADCERT_BAD_PK)
+                            errors += "bad PK, ";
+                        if (verifyResult & MBEDTLS_X509_BADCERT_BAD_KEY)
+                            errors += "bad key, ";
+                        if (verifyResult & MBEDTLS_X509_BADCRL_BAD_MD)
+                            errors += "CRL bad MD, ";
+                        if (verifyResult & MBEDTLS_X509_BADCRL_BAD_KEY)
+                            errors += "CRL bad key, ";
+
+                        if (errors.empty())
+                        {
+                            err() << "TLS certificate verification failed" << std::endl;
+                        }
+                        else
+                        {
+                            errors.resize(errors.size() - 2);
+                            err() << "TLS certificate verification failed: " << errors << std::endl;
+                        }
+                    }
+                    else
+                    {
+                        err() << "TLS handshake failed: " << tlsErrorString(result) << std::endl;
+                    }
+
+                    tlsState.reset();
+                    return TlsStatus::Error;
+                }
+            }
+
+            state.handshakeComplete = true;
+        }
+
+        return TlsStatus::HandshakeComplete;
+    }
+
+    struct TlsState
+    {
+        TlsState()
+        {
+            mbedtls_ssl_init(&sslContext);
+            mbedtls_ssl_config_init(&sslConfig);
+            mbedtls_x509_crt_init(&x509Crt);
+            mbedtls_x509_crl_init(&x509Crl);
+            mbedtls_pk_init(&privateKeyContext);
+        }
+
+        ~TlsState()
+        {
+            mbedtls_pk_free(&privateKeyContext);
+            mbedtls_x509_crl_free(&x509Crl);
+            mbedtls_x509_crt_free(&x509Crt);
+            mbedtls_ssl_config_free(&sslConfig);
+            mbedtls_ssl_free(&sslContext);
+        }
+
+        bool                handshakeComplete{};
+        mbedtls_net_context netContext{-1};
+        mbedtls_ssl_context sslContext{};
+        mbedtls_ssl_config  sslConfig{};
+        mbedtls_x509_crt    x509Crt{};
+        mbedtls_x509_crl    x509Crl{};
+        mbedtls_pk_context  privateKeyContext{};
+    };
+
+    std::optional<TlsState> tlsState;
+};
+
+
 ////////////////////////////////////////////////////////////
-TcpSocket::TcpSocket() : Socket(Type::Tcp)
+TcpSocket::TcpSocket() : Socket(Type::Tcp), m_impl(std::make_unique<Impl>())
 {
 }
+
+
+////////////////////////////////////////////////////////////
+TcpSocket::~TcpSocket() = default;
+
+
+////////////////////////////////////////////////////////////
+TcpSocket::TcpSocket(TcpSocket&&) noexcept = default;
+
+
+////////////////////////////////////////////////////////////
+TcpSocket& TcpSocket::operator=(TcpSocket&&) noexcept = default;
 
 
 ////////////////////////////////////////////////////////////
@@ -212,11 +843,112 @@ Socket::Status TcpSocket::connect(IpAddress remoteAddress, unsigned short remote
 ////////////////////////////////////////////////////////////
 void TcpSocket::disconnect()
 {
+    if (m_impl->tlsState)
+    {
+        if (m_impl->tlsState->handshakeComplete)
+        {
+            if (auto result = mbedtls_ssl_close_notify(&m_impl->tlsState->sslContext);
+                (result != 0 && result != MBEDTLS_ERR_SSL_WANT_READ && result != MBEDTLS_ERR_SSL_WANT_WRITE &&
+                 result != MBEDTLS_ERR_NET_CONN_RESET))
+                err() << "Failed to notify TLS peer connection is being closed: " << tlsErrorString(result) << std::endl;
+        }
+
+        m_impl->tlsState.reset();
+    }
+
     // Close the socket
     close();
 
     // Reset the pending packet data
     m_pendingPacket = PendingPacket();
+}
+
+
+////////////////////////////////////////////////////////////
+TcpSocket::TlsStatus TcpSocket::setupTlsClient(const String& hostname, VerifyPeer verifyPeer)
+{
+    return m_impl->setupTls(*this, hostname, verifyPeer, nullptr, 0, nullptr, 0, nullptr, 0);
+}
+
+
+////////////////////////////////////////////////////////////
+TcpSocket::TlsStatus TcpSocket::setupTlsClient(const String&    hostname,
+                                               const std::byte* certificateChainData,
+                                               std::size_t      certificateChainSize)
+{
+    assert(certificateChainData != nullptr && certificateChainSize > 0 && "Certificate chain data not valid");
+
+    if (certificateChainData == nullptr || certificateChainSize == 0)
+        return TlsStatus::Error;
+
+    return m_impl
+        ->setupTls(*this, hostname, VerifyPeer::Enabled, certificateChainData, certificateChainSize, nullptr, 0, nullptr, 0);
+}
+
+
+////////////////////////////////////////////////////////////
+TcpSocket::TlsStatus TcpSocket::setupTlsClient(const sf::String& hostname, const std::string& certificateChainData)
+{
+    // Mbed TLS expects the terminating NULL to be part of the PEM data
+    // For this reason we can't use std::string_view in the signature of this function
+    // and have to add 1 to the size of the string
+    return setupTlsClient(hostname,
+                          reinterpret_cast<const std::byte*>(certificateChainData.c_str()),
+                          certificateChainData.size() + 1);
+}
+
+
+////////////////////////////////////////////////////////////
+TcpSocket::TlsStatus TcpSocket::setupTlsServer(
+    const std::byte* certificateChainData,
+    std::size_t      certificateChainSize,
+    const std::byte* privateKeyData,
+    std::size_t      privateKeySize,
+    const std::byte* privateKeyPasswordData,
+    std::size_t      privateKeyPasswordSize)
+{
+    assert(certificateChainData != nullptr && certificateChainSize > 0 && "Certificate chain data not valid");
+    assert(privateKeyData != nullptr && privateKeySize > 0 && "Private key data not valid");
+
+    if (certificateChainData == nullptr || certificateChainSize == 0 || privateKeyData == nullptr || privateKeySize == 0)
+        return TlsStatus::Error;
+
+    return m_impl->setupTls(*this,
+                            {},
+                            VerifyPeer::Disabled,
+                            certificateChainData,
+                            certificateChainSize,
+                            privateKeyData,
+                            privateKeySize,
+                            privateKeyPasswordData,
+                            privateKeyPasswordSize);
+}
+
+
+////////////////////////////////////////////////////////////
+TcpSocket::TlsStatus TcpSocket::setupTlsServer(const std::string& certificateChainData,
+                                               const std::string& privateKeyData,
+                                               const std::string& privateKeyPasswordData)
+{
+    // Mbed TLS expects the terminating NULL to be part of the PEM data
+    // For this reason we can't use std::string_view in the signature of this function
+    // and have to add 1 to the size of the strings
+    return setupTlsServer(reinterpret_cast<const std::byte*>(certificateChainData.c_str()),
+                          certificateChainData.size() + 1,
+                          reinterpret_cast<const std::byte*>(privateKeyData.c_str()),
+                          privateKeyData.size() + 1,
+                          reinterpret_cast<const std::byte*>(privateKeyPasswordData.c_str()),
+                          privateKeyPasswordData.size() + 1);
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<std::string> TcpSocket::getCurrentCiphersuiteName() const
+{
+    if (!m_impl->tlsState)
+        return std::nullopt;
+
+    return mbedtls_ssl_get_ciphersuite(&m_impl->tlsState->sslContext);
 }
 
 
@@ -246,14 +978,57 @@ Socket::Status TcpSocket::send(const void* data, std::size_t size, std::size_t& 
     int result = 0;
     for (sent = 0; sent < size; sent += static_cast<std::size_t>(result))
     {
+        if (m_impl->tlsState)
+        {
+            // Handle sending over a TLS stream
+            assert(m_impl->tlsState->handshakeComplete &&
+                   "TLS handshake must be complete before receiving application data");
+
+            if (!m_impl->tlsState->handshakeComplete)
+            {
+                err() << "TLS handshake must be complete before receiving application data" << std::endl;
+                return Status::Error;
+            }
+
+            result = mbedtls_ssl_write(&m_impl->tlsState->sslContext,
+                                       static_cast<const unsigned char*>(data) + sent,
+                                       size - sent);
+
+            switch (result)
+            {
+                case MBEDTLS_ERR_SSL_WANT_READ:
+                    [[fallthrough]];
+                case MBEDTLS_ERR_SSL_WANT_WRITE:
+                    [[fallthrough]];
+                case MBEDTLS_ERR_SSL_ASYNC_IN_PROGRESS:
+                    [[fallthrough]];
+                case MBEDTLS_ERR_SSL_CRYPTO_IN_PROGRESS:
+                    return Status::Partial;
+                case MBEDTLS_ERR_NET_CONN_RESET:
+                    sent = 0;
+                    return Status::Disconnected;
+                default:
+                    break;
+            }
+
+            // If an any other error occurred, reset the TLS state
+            if (result < 0)
+            {
+                m_impl->tlsState.reset();
+                return Status::Error;
+            }
+        }
+        else
+        {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wuseless-cast"
-        // Send a chunk of data
-        result = static_cast<int>(::send(getNativeHandle(),
-                                         static_cast<const char*>(data) + sent,
-                                         static_cast<priv::SocketImpl::Size>(size - sent),
-                                         flags));
+            // Send a chunk of data
+            result = static_cast<int>(::send(getNativeHandle(),
+                                             static_cast<const char*>(data) + sent,
+                                             static_cast<priv::SocketImpl::Size>(size - sent),
+                                             flags));
 #pragma GCC diagnostic pop
+        }
 
         // Check for errors
         if (result < 0)
@@ -284,12 +1059,60 @@ Socket::Status TcpSocket::receive(void* data, std::size_t size, std::size_t& rec
         return Status::Error;
     }
 
+    auto sizeReceived = 0;
+
+    if (m_impl->tlsState)
+    {
+        // Handle receiving over a TLS stream
+        assert(m_impl->tlsState->handshakeComplete && "TLS handshake must be complete before sending application data");
+
+        if (!m_impl->tlsState->handshakeComplete)
+        {
+            err() << "TLS handshake must be complete before sending application data" << std::endl;
+            return Status::Error;
+        }
+
+        sizeReceived = mbedtls_ssl_read(&m_impl->tlsState->sslContext, static_cast<unsigned char*>(data), size);
+
+        switch (sizeReceived)
+        {
+            case MBEDTLS_ERR_SSL_PEER_CLOSE_NOTIFY:
+                [[fallthrough]];
+            case MBEDTLS_ERR_NET_CONN_RESET:
+                received = 0;
+                return Status::Disconnected;
+            case MBEDTLS_ERR_SSL_WANT_READ:
+                [[fallthrough]];
+            case MBEDTLS_ERR_SSL_WANT_WRITE:
+                [[fallthrough]];
+            case MBEDTLS_ERR_SSL_ASYNC_IN_PROGRESS:
+                [[fallthrough]];
+            case MBEDTLS_ERR_SSL_CRYPTO_IN_PROGRESS:
+                received = 0;
+                return Status::Partial;
+            default:
+                break;
+        }
+
+        // If any other error occurred or the TLS stream has no more data to provide, reset the TLS state
+        if (sizeReceived < 0)
+        {
+            m_impl->tlsState.reset();
+            return Status::Error;
+        }
+
+        if (sizeReceived == 0)
+            m_impl->tlsState.reset();
+    }
+    else
+    {
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wuseless-cast"
-    // Receive a chunk of bytes
-    const int sizeReceived = static_cast<int>(
-        recv(getNativeHandle(), static_cast<char*>(data), static_cast<priv::SocketImpl::Size>(size), flags));
+        // Receive a chunk of bytes
+        sizeReceived = static_cast<int>(
+            recv(getNativeHandle(), static_cast<char*>(data), static_cast<priv::SocketImpl::Size>(size), flags));
 #pragma GCC diagnostic pop
+    }
 
     // Check the number of bytes received
     if (sizeReceived > 0)
@@ -299,7 +1122,7 @@ Socket::Status TcpSocket::receive(void* data, std::size_t size, std::size_t& rec
     }
     if (sizeReceived == 0)
     {
-        return Socket::Status::Disconnected;
+        return Status::Disconnected;
     }
 
     return priv::SocketImpl::getErrorStatus();
