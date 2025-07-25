@@ -30,11 +30,16 @@ int main()
 
     if (protocol == 't')
     {
+        // Enable TLS ?
+        char tls = 0;
+        std::cout << "Do you want to enable TLS (y) or not (n)? ";
+        std::cin >> tls;
+
         // Test the TCP protocol
         if (who == 's')
-            runTcpServer(port);
+            runTcpServer(port, tls == 'y');
         else
-            runTcpClient(port);
+            runTcpClient(port, tls == 'y');
     }
     else
     {

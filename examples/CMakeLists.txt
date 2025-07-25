@@ -2,6 +2,7 @@
 if(NOT SFML_OS_IOS)
     if(SFML_BUILD_NETWORK)
         add_subdirectory(ftp)
+        add_subdirectory(http)
         add_subdirectory(sockets)
     endif()
     if(SFML_BUILD_NETWORK AND SFML_BUILD_AUDIO)
