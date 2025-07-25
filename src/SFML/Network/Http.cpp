@@ -309,10 +309,10 @@ void Http::setHost(const std::string& host, unsigned short port)
     }
     else if (toLower(host.substr(0, 8)) == "https://")
     {
-        // HTTPS protocol -- unsupported (requires encryption and certificates and stuff...)
-        err() << "HTTPS protocol is not supported by sf::Http" << std::endl;
-        m_hostName.clear();
-        m_port = 0;
+        // HTTPS protocol
+        m_hostName = host.substr(8);
+        m_port     = (port != 0 ? port : 443);
+        m_https    = true;
     }
     else
     {
@@ -330,7 +330,7 @@ void Http::setHost(const std::string& host, unsigned short port)
 
 
 ////////////////////////////////////////////////////////////
-Http::Response Http::sendRequest(const Http::Request& request, Time timeout)
+Http::Response Http::sendRequest(const Http::Request& request, Time timeout, bool verifyServer)
 {
     // First make sure that the request is valid -- add missing mandatory fields
     Request toSend(request);
@@ -365,8 +365,12 @@ Http::Response Http::sendRequest(const Http::Request& request, Time timeout)
     Response received;
 
     // Connect the socket to the host
-    if (m_connection.connect(m_host.value(), m_port, timeout) == Socket::Status::Done)
+    if (m_host.has_value() && m_connection.connect(m_host.value(), m_port, timeout) == Socket::Status::Done)
     {
+        if (m_https &&
+            (m_connection.setupTlsClient(m_hostName, verifyServer) != sf::TcpSocket::TlsStatus::HandshakeComplete))
+            return received;
+
         // Convert the request to string and send it through the connected socket
         const std::string requestStr = toSend.prepare();
 
@@ -379,9 +383,21 @@ Http::Response Http::sendRequest(const Http::Request& request, Time timeout)
                 std::string            receivedStr;
                 std::size_t            size = 0;
                 std::array<char, 1024> buffer{};
-                while (m_connection.receive(buffer.data(), buffer.size(), size) == Socket::Status::Done)
+
+                // When the HTTPS connection makes use of TLS 1.3 new session ticket
+                // messages can be received by the client from the server at any time
+                // When these messages are received the receive function will return Socket::Status::Partial
+                // In this case We just continue to call receive until actual payload
+                // data is available, the connection is closed or an error occurs
+                auto result = m_connection.receive(buffer.data(), buffer.size(), size);
+
+                while ((result == Socket::Status::Done) || (result == Socket::Status::Partial))
                 {
-                    receivedStr.append(buffer.data(), buffer.data() + size);
+                    // Only append payload data when it has been completely received
+                    if (result == Socket::Status::Done)
+                        receivedStr.append(buffer.data(), buffer.data() + size);
+
+                    result = m_connection.receive(buffer.data(), buffer.size(), size);
                 }
 
                 // Build the Response object from the received data
