@@ -580,6 +580,60 @@ public:
     ////////////////////////////////////////////////////////////
     [[nodiscard]] ConstIterator end() const;
 
+    ////////////////////////////////////////////////////////////
+    /// \brief Check if the position before a character is a grapheme boundary
+    ///
+    /// When manipulating unicode strings, removing single codepoints
+    /// does not always make sense since they might be a part
+    /// of a grapheme composed of multiple codepoints. In the case of
+    /// a text editor, it is more intuitive to the user if entire
+    /// graphemes are removed when e.g. delete or backspace is pressed
+    /// rather than single codepoints. For this reason, the visual caret
+    /// that marks the insertion/deletion point should only be
+    /// positioned at a grapheme boundaries.
+    ///
+    /// \param position The position of the character to check
+    ///
+    /// \return `true` if the position before a character is a grapheme boundary
+    ///
+    /// \see `isWordBoundary`, `isSentenceBoundary`
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] bool isGraphemeBoundary(std::size_t position) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Check if the position before a character is a word boundary
+    ///
+    /// When breaking text into multiple lines, it is important to know
+    /// where each word ends so that lines aren't broken in the middle
+    /// of a word. This should be used in combination with
+    /// `isSentenceBoundary` to ensure punctuation isn't broken into a
+    /// new line by itself.
+    ///
+    /// \param position The position of the character to check
+    ///
+    /// \return `true` if the position before a character is a word boundary
+    ///
+    /// \see `isGraphemeBoundary`, `isSentenceBoundary`
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] bool isWordBoundary(std::size_t position) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Check if the position before a character is a sentence boundary
+    ///
+    /// This can be used together with `isWordBoundary` to break
+    /// lines. See `isWordBoundary` for more information.
+    ///
+    /// \param position The position of the character to check
+    ///
+    /// \return `true` if the position before a character is a sentence boundary
+    ///
+    /// \see `isGraphemeBoundary`, `isWordBoundary`
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] bool isSentenceBoundary(std::size_t position) const;
+
 private:
     friend SFML_SYSTEM_API bool operator==(const String& left, const String& right);
     friend SFML_SYSTEM_API bool operator<(const String& left, const String& right);

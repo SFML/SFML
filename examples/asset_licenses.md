@@ -1,6 +1,6 @@
 # Assets used by SFML's example projects.
 
-All assets are under public domain (CC0):
+All the following assets are under public domain (CC0):
 
 | Name                                 | Author                    | Link                       |
 | ------------------------------------ | ------------------------- | -------------------------- |
@@ -28,3 +28,11 @@ All assets are under public domain (CC0):
 [7]: https://www.kenney.nl/assets/ui-audio
 [8]: https://www.kenney.nl/assets/toon-characters-1
 [9]: https://www.nps.gov/subjects/sound/sounds-killdeer.htm
+
+All the following assets are under the Open Font License:
+
+| Name       | Author | Link               |
+| ---------- | ------ | ------------------ |
+| Noto fonts | Google | [Google Fonts][10] |
+
+[10]: https://fonts.google.com/noto
