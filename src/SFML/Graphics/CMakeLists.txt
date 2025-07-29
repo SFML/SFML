@@ -144,8 +144,16 @@ else()
             set_target_properties(freetype PROPERTIES POSITION_INDEPENDENT_CODE ON)
         endif()
 
-        # disable building dependencies as part of a unity build, they don't support it
-        set_target_properties(freetype PROPERTIES UNITY_BUILD OFF)
+        # build using unity build and exclude files that cause issues
+        set_target_properties(freetype PROPERTIES UNITY_BUILD ON UNITY_BUILD_BATCH_SIZE 256)
+        set_source_files_properties(
+            "${FETCHCONTENT_BASE_DIR}/freetype-src/src/pfr/pfr.c"
+            "${FETCHCONTENT_BASE_DIR}/freetype-src/src/smooth/smooth.c"
+            "${FETCHCONTENT_BASE_DIR}/freetype-src/builds/windows/ftsystem.c"
+            "${FETCHCONTENT_BASE_DIR}/freetype-src/builds/windows/ftdebug.c"
+            TARGET_DIRECTORY freetype
+            PROPERTIES SKIP_UNITY_BUILD_INCLUSION ON
+        )
 
         sfml_set_stdlib(freetype)
         add_library(Freetype::Freetype ALIAS freetype)
