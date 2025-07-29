@@ -113,6 +113,9 @@ enum class Wheel
 ///
 /// \param position New position of the mouse
 ///
+/// \warning On macOS you're required to grant accessibility access for
+///     your application in order for `setPosition` to work.
+///
 ////////////////////////////////////////////////////////////
 SFML_WINDOW_API void setPosition(Vector2i position);
 
@@ -124,6 +127,9 @@ SFML_WINDOW_API void setPosition(Vector2i position);
 ///
 /// \param position New position of the mouse
 /// \param relativeTo Reference window
+///
+/// \warning On macOS you're required to grant accessibility access for
+///     your application in order for `setPosition` to work.
 ///
 ////////////////////////////////////////////////////////////
 SFML_WINDOW_API void setPosition(Vector2i position, const WindowBase& relativeTo);
