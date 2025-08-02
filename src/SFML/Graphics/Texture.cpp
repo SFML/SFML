@@ -50,7 +50,7 @@
 namespace
 {
 // A nested named namespace is used here to allow unity builds of SFML.
-namespace TextureImpl
+namespace SFML_UNITY_ID
 {
 // Thread-safe unique identifier generator,
 // is used for states cache (see RenderTarget)
@@ -60,14 +60,14 @@ std::uint64_t getUniqueId() noexcept
 
     return id.fetch_add(1);
 }
-} // namespace TextureImpl
+} // namespace SFML_UNITY_ID
 } // namespace
 
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
-Texture::Texture() : m_cacheId(TextureImpl::getUniqueId())
+Texture::Texture() : m_cacheId(SFML_UNITY_ID::getUniqueId())
 {
 }
 
@@ -150,7 +150,7 @@ Texture::Texture(const Texture& copy) :
     m_isSmooth(copy.m_isSmooth),
     m_sRgb(copy.m_sRgb),
     m_isRepeated(copy.m_isRepeated),
-    m_cacheId(TextureImpl::getUniqueId())
+    m_cacheId(SFML_UNITY_ID::getUniqueId())
 {
     if (copy.m_texture)
     {
@@ -340,7 +340,7 @@ bool Texture::resize(Vector2u size, bool sRgb)
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, textureWrapParam));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
-    m_cacheId = TextureImpl::getUniqueId();
+    m_cacheId = SFML_UNITY_ID::getUniqueId();
 
     m_hasMipmap = false;
 
@@ -580,7 +580,7 @@ void Texture::update(const std::uint8_t* pixels, Vector2u size, Vector2u dest)
         glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
         m_hasMipmap     = false;
         m_pixelsFlipped = false;
-        m_cacheId       = TextureImpl::getUniqueId();
+        m_cacheId       = SFML_UNITY_ID::getUniqueId();
 
         // Force an OpenGL flush, so that the texture data will appear updated
         // in all contexts immediately (solves problems in multi-threaded apps)
@@ -703,7 +703,7 @@ void Texture::update(const Texture& texture, Vector2u dest)
         glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
         m_hasMipmap     = false;
         m_pixelsFlipped = false;
-        m_cacheId       = TextureImpl::getUniqueId();
+        m_cacheId       = SFML_UNITY_ID::getUniqueId();
 
         // Force an OpenGL flush, so that the texture data will appear updated
         // in all contexts immediately (solves problems in multi-threaded apps)
@@ -766,7 +766,7 @@ void Texture::update(const Window& window, Vector2u dest)
         glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
         m_hasMipmap     = false;
         m_pixelsFlipped = true;
-        m_cacheId       = TextureImpl::getUniqueId();
+        m_cacheId       = SFML_UNITY_ID::getUniqueId();
 
         // Force an OpenGL flush, so that the texture will appear updated
         // in all contexts immediately (solves problems in multi-threaded apps)

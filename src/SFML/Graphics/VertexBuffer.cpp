@@ -43,7 +43,7 @@
 namespace
 {
 // A nested named namespace is used here to allow unity builds of SFML.
-namespace VertexBufferImpl
+namespace SFML_UNITY_ID
 {
 GLenum usageToGlEnum(sf::VertexBuffer::Usage usage)
 {
@@ -57,7 +57,7 @@ GLenum usageToGlEnum(sf::VertexBuffer::Usage usage)
             return GLEXT_GL_STREAM_DRAW;
     }
 }
-} // namespace VertexBufferImpl
+} // namespace SFML_UNITY_ID
 } // namespace
 
 
@@ -134,7 +134,7 @@ bool VertexBuffer::create(std::size_t vertexCount)
     glCheck(GLEXT_glBufferData(GLEXT_GL_ARRAY_BUFFER,
                                static_cast<GLsizeiptrARB>(sizeof(Vertex) * vertexCount),
                                nullptr,
-                               VertexBufferImpl::usageToGlEnum(m_usage)));
+                               SFML_UNITY_ID::usageToGlEnum(m_usage)));
     glCheck(GLEXT_glBindBuffer(GLEXT_GL_ARRAY_BUFFER, 0));
 
     m_size = vertexCount;
@@ -180,7 +180,7 @@ bool VertexBuffer::update(const Vertex* vertices, std::size_t vertexCount, unsig
         glCheck(GLEXT_glBufferData(GLEXT_GL_ARRAY_BUFFER,
                                    static_cast<GLsizeiptrARB>(sizeof(Vertex) * vertexCount),
                                    nullptr,
-                                   VertexBufferImpl::usageToGlEnum(m_usage)));
+                                   SFML_UNITY_ID::usageToGlEnum(m_usage)));
 
         m_size = vertexCount;
     }
@@ -234,7 +234,7 @@ bool VertexBuffer::update([[maybe_unused]] const VertexBuffer& vertexBuffer)
     glCheck(GLEXT_glBufferData(GLEXT_GL_ARRAY_BUFFER,
                                static_cast<GLsizeiptrARB>(sizeof(Vertex) * vertexBuffer.m_size),
                                nullptr,
-                               VertexBufferImpl::usageToGlEnum(m_usage)));
+                               SFML_UNITY_ID::usageToGlEnum(m_usage)));
 
     void* const destination = glCheck(GLEXT_glMapBuffer(GLEXT_GL_ARRAY_BUFFER, GLEXT_GL_WRITE_ONLY));
 

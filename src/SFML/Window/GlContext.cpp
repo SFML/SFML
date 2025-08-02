@@ -166,7 +166,7 @@ using glIsEnabledFuncType   = GLboolean (*)(GLenum);
 namespace
 {
 // A nested named namespace is used here to allow unity builds of SFML.
-namespace GlContextImpl
+namespace SFML_UNITY_ID
 {
 // This structure contains all the state necessary to
 // track current context information for each thread
@@ -187,7 +187,7 @@ private:
     // Private constructor to prevent CurrentContext from being constructed outside of get()
     CurrentContext() = default;
 };
-} // namespace GlContextImpl
+} // namespace SFML_UNITY_ID
 } // namespace
 
 
@@ -328,7 +328,7 @@ struct GlContext::TransientContext
     {
         // TransientContext should never be created if there is
         // already a context active on the current thread
-        assert(!GlContextImpl::CurrentContext::get().id && "Another context is active on the current thread");
+        assert(!SFML_UNITY_ID::CurrentContext::get().id && "Another context is active on the current thread");
 
         // Lock ourselves so we don't create a new object if one doesn't already exist
         sharedContext = SharedContext::getWeakPtr().lock();
@@ -475,7 +475,7 @@ void GlContext::registerUnsharedGlObject(std::shared_ptr<void> object)
 {
     if (const std::lock_guard lock(Impl::getUnsharedGlObjectsMutex());
         const auto            unsharedGlObjects = Impl::getWeakUnsharedGlObjects().lock())
-        unsharedGlObjects->emplace_back(Impl::UnsharedGlObject{GlContextImpl::CurrentContext::get().id, std::move(object)});
+        unsharedGlObjects->emplace_back(Impl::UnsharedGlObject{SFML_UNITY_ID::CurrentContext::get().id, std::move(object)});
 }
 
 
@@ -492,7 +492,7 @@ void GlContext::unregisterUnsharedGlObject(std::shared_ptr<void> object)
                                        unsharedGlObjects->end(),
                                        [&object](const Impl::UnsharedGlObject& obj) {
                                            return (obj.object == object) &&
-                                                  (obj.contextId == GlContextImpl::CurrentContext::get().id);
+                                                  (obj.contextId == SFML_UNITY_ID::CurrentContext::get().id);
                                        });
 
         if (iter != unsharedGlObjects->end())
@@ -504,7 +504,7 @@ void GlContext::unregisterUnsharedGlObject(std::shared_ptr<void> object)
 ////////////////////////////////////////////////////////////
 void GlContext::acquireTransientContext()
 {
-    auto& currentContext = GlContextImpl::CurrentContext::get();
+    auto& currentContext = SFML_UNITY_ID::CurrentContext::get();
 
     // Fast path if we already have a context active on this thread
     if (currentContext.id)
@@ -528,7 +528,7 @@ void GlContext::acquireTransientContext()
 ////////////////////////////////////////////////////////////
 void GlContext::releaseTransientContext()
 {
-    auto& currentContext = GlContextImpl::CurrentContext::get();
+    auto& currentContext = SFML_UNITY_ID::CurrentContext::get();
 
     // Make sure a context was left active after acquireTransientContext() was called
     assert(currentContext.id && "Current context ID cannot be zero");
@@ -700,21 +700,21 @@ GlFunctionPointer GlContext::getFunction(const char* name)
 ////////////////////////////////////////////////////////////
 const GlContext* GlContext::getActiveContext()
 {
-    return GlContextImpl::CurrentContext::get().ptr;
+    return SFML_UNITY_ID::CurrentContext::get().ptr;
 }
 
 
 ////////////////////////////////////////////////////////////
 std::uint64_t GlContext::getActiveContextId()
 {
-    return GlContextImpl::CurrentContext::get().id;
+    return SFML_UNITY_ID::CurrentContext::get().id;
 }
 
 
 ////////////////////////////////////////////////////////////
 GlContext::~GlContext()
 {
-    auto& currentContext = GlContextImpl::CurrentContext::get();
+    auto& currentContext = SFML_UNITY_ID::CurrentContext::get();
 
     if (m_impl->id == currentContext.id)
     {
@@ -734,7 +734,7 @@ const ContextSettings& GlContext::getSettings() const
 ////////////////////////////////////////////////////////////
 bool GlContext::setActive(bool active)
 {
-    auto& currentContext = GlContextImpl::CurrentContext::get();
+    auto& currentContext = SFML_UNITY_ID::CurrentContext::get();
 
     // Make sure we don't try to create the shared context here since
     // setActive can be called during construction and lead to infinite recursion
@@ -837,7 +837,7 @@ int GlContext::evaluateFormat(
 ////////////////////////////////////////////////////////////
 void GlContext::cleanupUnsharedResources()
 {
-    const auto& currentContext = GlContextImpl::CurrentContext::get();
+    const auto& currentContext = SFML_UNITY_ID::CurrentContext::get();
 
     // Save the current context so we can restore it later
     GlContext* contextToRestore = currentContext.ptr;

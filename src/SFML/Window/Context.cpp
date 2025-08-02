@@ -39,11 +39,11 @@
 namespace
 {
 // A nested named namespace is used here to allow unity builds of SFML.
-namespace ContextImpl
+namespace SFML_UNITY_ID
 {
 // This per-thread variable holds the current context for each thread
 thread_local sf::Context* currentContext(nullptr);
-} // namespace ContextImpl
+} // namespace SFML_UNITY_ID
 } // namespace
 
 namespace sf
@@ -67,8 +67,8 @@ Context::~Context()
 ////////////////////////////////////////////////////////////
 Context::Context(Context&& context) noexcept : m_context(std::move(context.m_context))
 {
-    if (&context == ContextImpl::currentContext)
-        ContextImpl::currentContext = this;
+    if (&context == SFML_UNITY_ID::currentContext)
+        SFML_UNITY_ID::currentContext = this;
 }
 
 
@@ -79,8 +79,8 @@ Context& Context::operator=(Context&& context) noexcept
         return *this;
 
     m_context = std::move(context.m_context);
-    if (&context == ContextImpl::currentContext)
-        ContextImpl::currentContext = this;
+    if (&context == SFML_UNITY_ID::currentContext)
+        SFML_UNITY_ID::currentContext = this;
 
     return *this;
 }
@@ -93,9 +93,9 @@ bool Context::setActive(bool active)
         return false;
 
     if (active)
-        ContextImpl::currentContext = this;
-    else if (this == ContextImpl::currentContext)
-        ContextImpl::currentContext = nullptr;
+        SFML_UNITY_ID::currentContext = this;
+    else if (this == SFML_UNITY_ID::currentContext)
+        SFML_UNITY_ID::currentContext = nullptr;
     return true;
 }
 
@@ -110,7 +110,7 @@ const ContextSettings& Context::getSettings() const
 ////////////////////////////////////////////////////////////
 const Context* Context::getActiveContext()
 {
-    using ContextImpl::currentContext;
+    using SFML_UNITY_ID::currentContext;
 
     // We have to check that the last activated sf::Context is still active (a RenderTarget activation may have deactivated it)
     if (currentContext && currentContext->m_context.get() == priv::GlContext::getActiveContext())

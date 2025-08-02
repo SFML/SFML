@@ -56,7 +56,7 @@
 namespace
 {
 // A nested named namespace is used here to allow unity builds of SFML.
-namespace EglContextImpl
+namespace SFML_UNITY_ID
 {
 EGLDisplay getInitializedDisplay()
 {
@@ -107,7 +107,7 @@ void ensureInit()
                        return true;
                    });
 }
-} // namespace EglContextImpl
+} // namespace SFML_UNITY_ID
 } // namespace
 
 
@@ -116,10 +116,10 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 EglContext::EglContext(EglContext* shared)
 {
-    EglContextImpl::ensureInit();
+    SFML_UNITY_ID::ensureInit();
 
     // Get the initialized EGL display
-    m_display = EglContextImpl::getInitializedDisplay();
+    m_display = SFML_UNITY_ID::getInitializedDisplay();
 
     // Get the best EGL config matching the default video settings
     m_config = getBestConfig(m_display, VideoMode::getDesktopMode().bitsPerPixel, ContextSettings());
@@ -142,7 +142,7 @@ EglContext::EglContext(EglContext*                        shared,
                        [[maybe_unused]] const WindowImpl& owner,
                        unsigned int                       bitsPerPixel)
 {
-    EglContextImpl::ensureInit();
+    SFML_UNITY_ID::ensureInit();
 
 #ifdef SFML_SYSTEM_ANDROID
 
@@ -155,7 +155,7 @@ EglContext::EglContext(EglContext*                        shared,
 #endif
 
     // Get the initialized EGL display
-    m_display = EglContextImpl::getInitializedDisplay();
+    m_display = SFML_UNITY_ID::getInitializedDisplay();
 
     // Get the best EGL config matching the requested video settings
     m_config = getBestConfig(m_display, bitsPerPixel, settings);
@@ -176,7 +176,7 @@ EglContext::EglContext(EglContext*                        shared,
 ////////////////////////////////////////////////////////////
 EglContext::EglContext(EglContext* /*shared*/, const ContextSettings& /*settings*/, Vector2u /*size*/)
 {
-    EglContextImpl::ensureInit();
+    SFML_UNITY_ID::ensureInit();
 
     err() << "Warning: context has not been initialized. The constructor EglContext(shared, settings, size) is "
              "currently not implemented."
@@ -215,7 +215,7 @@ EglContext::~EglContext()
 ////////////////////////////////////////////////////////////
 GlFunctionPointer EglContext::getFunction(const char* name)
 {
-    EglContextImpl::ensureInit();
+    SFML_UNITY_ID::ensureInit();
 
     return eglGetProcAddress(name);
 }
@@ -284,7 +284,7 @@ void EglContext::destroySurface()
 ////////////////////////////////////////////////////////////
 EGLConfig EglContext::getBestConfig(EGLDisplay display, unsigned int bitsPerPixel, const ContextSettings& settings)
 {
-    EglContextImpl::ensureInit();
+    SFML_UNITY_ID::ensureInit();
 
     // Determine the number of available configs
     EGLint configCount = 0;
@@ -384,10 +384,10 @@ void EglContext::updateSettings()
 ////////////////////////////////////////////////////////////
 XVisualInfo EglContext::selectBestVisual(::Display* xDisplay, unsigned int bitsPerPixel, const ContextSettings& settings)
 {
-    EglContextImpl::ensureInit();
+    SFML_UNITY_ID::ensureInit();
 
     // Get the initialized EGL display
-    EGLDisplay display = EglContextImpl::getInitializedDisplay();
+    EGLDisplay display = SFML_UNITY_ID::getInitializedDisplay();
 
     // Get the best EGL config matching the default video settings
     EGLConfig config = getBestConfig(display, bitsPerPixel, settings);

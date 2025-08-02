@@ -51,7 +51,7 @@
 namespace
 {
 // A nested named namespace is used here to allow unity builds of SFML.
-namespace RenderTargetImpl
+namespace SFML_UNITY_ID
 {
 // Mutex to protect ID generation and our context-RenderTarget-map
 std::recursive_mutex& getMutex()
@@ -191,7 +191,7 @@ std::uint32_t stencilFunctionToGlConstant(sf::StencilComparison comparison)
     assert(false);
     return GL_ALWAYS;
 }
-} // namespace RenderTargetImpl
+} // namespace SFML_UNITY_ID
 } // namespace
 
 
@@ -200,7 +200,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 void RenderTarget::clear(Color color)
 {
-    if (RenderTargetImpl::isActive(m_id) || setActive(true))
+    if (SFML_UNITY_ID::isActive(m_id) || setActive(true))
     {
         // Unbind texture to fix RenderTexture preventing clear
         applyTexture(nullptr);
@@ -218,7 +218,7 @@ void RenderTarget::clear(Color color)
 ////////////////////////////////////////////////////////////
 void RenderTarget::clearStencil(StencilValue stencilValue)
 {
-    if (RenderTargetImpl::isActive(m_id) || setActive(true))
+    if (SFML_UNITY_ID::isActive(m_id) || setActive(true))
     {
         // Unbind texture to fix RenderTexture preventing clear
         applyTexture(nullptr);
@@ -236,7 +236,7 @@ void RenderTarget::clearStencil(StencilValue stencilValue)
 ////////////////////////////////////////////////////////////
 void RenderTarget::clear(Color color, StencilValue stencilValue)
 {
-    if (RenderTargetImpl::isActive(m_id) || setActive(true))
+    if (SFML_UNITY_ID::isActive(m_id) || setActive(true))
     {
         // Unbind texture to fix RenderTexture preventing clear
         applyTexture(nullptr);
@@ -352,7 +352,7 @@ void RenderTarget::draw(const Vertex* vertices, std::size_t vertexCount, Primiti
     if (!vertices || (vertexCount == 0))
         return;
 
-    if (RenderTargetImpl::isActive(m_id) || setActive(true))
+    if (SFML_UNITY_ID::isActive(m_id) || setActive(true))
     {
         // Check if the vertex count is low enough so that we can pre-transform them
         const bool useVertexCache = (vertexCount <= m_cache.vertexCache.size());
@@ -442,7 +442,7 @@ void RenderTarget::draw(const VertexBuffer& vertexBuffer, std::size_t firstVerte
     if (!vertexCount || !vertexBuffer.getNativeHandle())
         return;
 
-    if (RenderTargetImpl::isActive(m_id) || setActive(true))
+    if (SFML_UNITY_ID::isActive(m_id) || setActive(true))
     {
         setupDraw(false, states);
 
@@ -483,11 +483,11 @@ bool RenderTarget::isSrgb() const
 bool RenderTarget::setActive(bool active)
 {
     // Mark this RenderTarget as active or no longer active in the tracking map
-    const std::lock_guard lock(RenderTargetImpl::getMutex());
+    const std::lock_guard lock(SFML_UNITY_ID::getMutex());
 
     const std::uint64_t contextId = Context::getActiveContextId();
 
-    using RenderTargetImpl::getContextRenderTargetMap;
+    using SFML_UNITY_ID::getContextRenderTargetMap;
     auto&      contextRenderTargetMap = getContextRenderTargetMap();
     const auto it                     = contextRenderTargetMap.find(contextId);
 
@@ -522,7 +522,7 @@ bool RenderTarget::setActive(bool active)
 ////////////////////////////////////////////////////////////
 void RenderTarget::pushGLStates()
 {
-    if (RenderTargetImpl::isActive(m_id) || setActive(true))
+    if (SFML_UNITY_ID::isActive(m_id) || setActive(true))
     {
 #ifdef SFML_DEBUG
         // make sure that the user didn't leave an unchecked OpenGL error
@@ -553,7 +553,7 @@ void RenderTarget::pushGLStates()
 ////////////////////////////////////////////////////////////
 void RenderTarget::popGLStates()
 {
-    if (RenderTargetImpl::isActive(m_id) || setActive(true))
+    if (SFML_UNITY_ID::isActive(m_id) || setActive(true))
     {
         glCheck(glMatrixMode(GL_PROJECTION));
         glCheck(glPopMatrix());
@@ -585,7 +585,7 @@ void RenderTarget::resetGLStates()
     }
 #endif
 
-    if (RenderTargetImpl::isActive(m_id) || setActive(true))
+    if (SFML_UNITY_ID::isActive(m_id) || setActive(true))
     {
         // Make sure that extensions are initialized
         priv::ensureExtensionsInit();
@@ -650,7 +650,7 @@ void RenderTarget::initialize()
 
     // Generate a unique ID for this RenderTarget to track
     // whether it is active within a specific context
-    m_id = RenderTargetImpl::getUniqueId();
+    m_id = SFML_UNITY_ID::getUniqueId();
 }
 
 
@@ -698,8 +698,8 @@ void RenderTarget::applyCurrentView()
 ////////////////////////////////////////////////////////////
 void RenderTarget::applyBlendMode(const BlendMode& mode)
 {
-    using RenderTargetImpl::equationToGlConstant;
-    using RenderTargetImpl::factorToGlConstant;
+    using SFML_UNITY_ID::equationToGlConstant;
+    using SFML_UNITY_ID::factorToGlConstant;
 
     // Apply the blend mode, falling back to the non-separate versions if necessary
     if (GLEXT_blend_func_separate)
@@ -751,8 +751,8 @@ void RenderTarget::applyBlendMode(const BlendMode& mode)
 ////////////////////////////////////////////////////////////
 void RenderTarget::applyStencilMode(const StencilMode& mode)
 {
-    using RenderTargetImpl::stencilFunctionToGlConstant;
-    using RenderTargetImpl::stencilOperationToGlConstant;
+    using SFML_UNITY_ID::stencilFunctionToGlConstant;
+    using SFML_UNITY_ID::stencilOperationToGlConstant;
 
     // Fast path if we have a default (disabled) stencil mode
     if (mode == StencilMode())
@@ -869,7 +869,7 @@ void RenderTarget::setupDraw(bool useVertexCache, const RenderStates& states)
         // in order to inform the OpenGL driver that we want changes
         // made to it in other contexts to be visible here as well
         // This saves us from having to call glFlush() in
-        // RenderTextureImplFBO which can be quite costly
+        // the render texture fbo implementatin which can be quite costly
         // See: https://www.khronos.org/opengl/wiki/Memory_Model
         applyTexture(states.texture, states.coordinateType);
     }

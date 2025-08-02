@@ -95,11 +95,10 @@ using WindowImplType = sf::priv::WindowImplAndroid;
 namespace
 {
 // A nested named namespace is used here to allow unity builds of SFML.
-// Yes, this is a rather weird namespace.
-namespace WindowImplImpl
+namespace SFML_UNITY_ID
 {
 const sf::priv::WindowImpl* fullscreenWindow = nullptr;
-} // namespace WindowImplImpl
+} // namespace SFML_UNITY_ID
 } // namespace
 
 
@@ -124,7 +123,7 @@ std::unique_ptr<WindowImpl> WindowImpl::create(
     if (state == State::Fullscreen)
     {
         // Make sure there's not already a fullscreen window (only one is allowed)
-        if (WindowImplImpl::fullscreenWindow != nullptr)
+        if (SFML_UNITY_ID::fullscreenWindow != nullptr)
         {
             err() << "Creating two fullscreen windows is not allowed, switching to windowed mode" << std::endl;
             state = State::Windowed;
@@ -153,7 +152,7 @@ std::unique_ptr<WindowImpl> WindowImpl::create(
 
     auto windowImpl = std::make_unique<WindowImplType>(mode, title, style, state, settings);
     if (state == State::Fullscreen)
-        WindowImplImpl::fullscreenWindow = windowImpl.get();
+        SFML_UNITY_ID::fullscreenWindow = windowImpl.get();
     return windowImpl;
 }
 
@@ -185,8 +184,8 @@ WindowImpl::WindowImpl() : m_joystickStatesImpl(std::make_unique<JoystickStatesI
 ////////////////////////////////////////////////////////////
 WindowImpl::~WindowImpl()
 {
-    if (WindowImplImpl::fullscreenWindow == this)
-        WindowImplImpl::fullscreenWindow = nullptr;
+    if (SFML_UNITY_ID::fullscreenWindow == this)
+        SFML_UNITY_ID::fullscreenWindow = nullptr;
 }
 
 
