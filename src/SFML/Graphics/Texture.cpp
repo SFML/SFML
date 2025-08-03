@@ -394,6 +394,10 @@ bool Texture::loadFromImage(const Image& image, bool sRgb, const IntRect& area)
     }
 
     // Load a sub-area of the image
+    assert(area.size.x > 0 && "Area size x cannot be negative");
+    assert(area.size.y > 0 && "Area size y cannot be negative");
+    assert(area.position.x < size.x && "Area position x is out of image bounds");
+    assert(area.position.y < size.y && "Area position y is out of image bounds");
 
     // Adjust the rectangle to the size of the image
     IntRect rectangle    = area;
