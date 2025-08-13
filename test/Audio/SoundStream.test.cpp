@@ -1,5 +1,8 @@
 #include <SFML/Audio/SoundStream.hpp>
 
+// Other 1st party headers
+#include <SFML/Audio/PlaybackDevice.hpp>
+
 #include <catch2/catch_test_macros.hpp>
 
 #include <AudioUtil.hpp>
@@ -27,6 +30,8 @@ private:
 
 TEST_CASE("[Audio] sf::SoundStream", runAudioDeviceTests())
 {
+    [[maybe_unused]] auto result = sf::PlaybackDevice::setDeviceToNull();
+
     SECTION("Type traits")
     {
         STATIC_CHECK(!std::is_constructible_v<sf::SoundStream>);
