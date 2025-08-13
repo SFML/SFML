@@ -50,7 +50,7 @@
 
 namespace
 {
-namespace WglContextImpl
+namespace SFML_UNITY_ID
 {
 // Some drivers are bugged and don't track the current HDC/HGLRC properly
 // In order to deactivate successfully, we need to track it ourselves as well
@@ -95,7 +95,7 @@ void ensureExtensionsInit(HDC deviceContext)
         gladLoadWGL(deviceContext, sf::priv::WglContext::getFunction);
     }
 }
-} // namespace WglContextImpl
+} // namespace SFML_UNITY_ID
 } // namespace
 
 
@@ -110,7 +110,7 @@ WglContext::WglContext(WglContext* shared) : WglContext(shared, ContextSettings{
 ////////////////////////////////////////////////////////////
 WglContext::WglContext(WglContext* shared, const ContextSettings& settings, const WindowImpl& owner, unsigned int bitsPerPixel)
 {
-    WglContextImpl::ensureInit();
+    SFML_UNITY_ID::ensureInit();
 
     // Save the creation settings
     m_settings = settings;
@@ -126,7 +126,7 @@ WglContext::WglContext(WglContext* shared, const ContextSettings& settings, cons
 ////////////////////////////////////////////////////////////
 WglContext::WglContext(WglContext* shared, const ContextSettings& settings, Vector2u size)
 {
-    WglContextImpl::ensureInit();
+    SFML_UNITY_ID::ensureInit();
 
     // Save the creation settings
     m_settings = settings;
@@ -148,10 +148,10 @@ WglContext::~WglContext()
     // Destroy the OpenGL context
     if (m_context)
     {
-        if (WglContextImpl::currentContext == this)
+        if (SFML_UNITY_ID::currentContext == this)
         {
             if (wglMakeCurrent(m_deviceContext, nullptr) == TRUE)
-                WglContextImpl::currentContext = nullptr;
+                SFML_UNITY_ID::currentContext = nullptr;
         }
 
         wglDeleteContext(m_context);
@@ -180,11 +180,11 @@ WglContext::~WglContext()
 ////////////////////////////////////////////////////////////
 GlFunctionPointer WglContext::getFunction(const char* name)
 {
-    if (WglContextImpl::currentContext == nullptr)
+    if (SFML_UNITY_ID::currentContext == nullptr)
         return nullptr;
 
     // If we are using the generic GDI implementation, skip to loading directly from OpenGL32.dll since it doesn't support extensions
-    if (!WglContextImpl::currentContext->m_isGeneric)
+    if (!SFML_UNITY_ID::currentContext->m_isGeneric)
     {
         auto address = reinterpret_cast<GlFunctionPointer>(wglGetProcAddress(reinterpret_cast<LPCSTR>(name)));
 
@@ -198,7 +198,7 @@ GlFunctionPointer WglContext::getFunction(const char* name)
         }
     }
 
-    return WglContextImpl::getOpenGl32Function(name);
+    return SFML_UNITY_ID::getOpenGl32Function(name);
 }
 
 
@@ -215,7 +215,7 @@ bool WglContext::makeCurrent(bool current)
         return false;
     }
 
-    WglContextImpl::currentContext = (current ? this : nullptr);
+    SFML_UNITY_ID::currentContext = (current ? this : nullptr);
 
     return true;
 }
@@ -233,7 +233,7 @@ void WglContext::display()
 void WglContext::setVerticalSyncEnabled(bool enabled)
 {
     // Make sure that extensions are initialized
-    WglContextImpl::ensureExtensionsInit(m_deviceContext);
+    SFML_UNITY_ID::ensureExtensionsInit(m_deviceContext);
 
     if (SF_GLAD_WGL_EXT_swap_control)
     {
@@ -288,7 +288,7 @@ int WglContext::selectBestPixelFormat(HDC deviceContext, unsigned int bitsPerPix
         }
     }
 
-    WglContextImpl::ensureInit();
+    SFML_UNITY_ID::ensureInit();
 
     // Find a suitable pixel format -- first try with wglChoosePixelFormatARB
     int bestFormat = 0;
@@ -752,7 +752,7 @@ void WglContext::createContext(WglContext* shared)
                 static std::recursive_mutex mutex;
                 const std::lock_guard       lock(mutex);
 
-                if (WglContextImpl::currentContext == shared)
+                if (SFML_UNITY_ID::currentContext == shared)
                 {
                     if (wglMakeCurrent(shared->m_deviceContext, nullptr) == FALSE)
                     {
@@ -761,7 +761,7 @@ void WglContext::createContext(WglContext* shared)
                         return;
                     }
 
-                    WglContextImpl::currentContext = nullptr;
+                    SFML_UNITY_ID::currentContext = nullptr;
                 }
             }
 
@@ -823,7 +823,7 @@ void WglContext::createContext(WglContext* shared)
             static std::recursive_mutex mutex;
             const std::lock_guard       lock(mutex);
 
-            if (WglContextImpl::currentContext == shared)
+            if (SFML_UNITY_ID::currentContext == shared)
             {
                 if (wglMakeCurrent(shared->m_deviceContext, nullptr) == FALSE)
                 {
@@ -832,7 +832,7 @@ void WglContext::createContext(WglContext* shared)
                     return;
                 }
 
-                WglContextImpl::currentContext = nullptr;
+                SFML_UNITY_ID::currentContext = nullptr;
             }
 
             if (wglShareLists(sharedContext, m_context) == FALSE)
@@ -845,7 +845,7 @@ void WglContext::createContext(WglContext* shared)
     if (!shared && m_context)
     {
         makeCurrent(true);
-        WglContextImpl::ensureExtensionsInit(m_deviceContext);
+        SFML_UNITY_ID::ensureExtensionsInit(m_deviceContext);
         makeCurrent(false);
     }
 }

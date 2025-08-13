@@ -43,11 +43,11 @@
 namespace
 {
 // A nested named namespace is used here to allow unity builds of SFML.
-namespace UnixDisplayImpl
+namespace SFML_UNITY_ID
 {
 std::weak_ptr<Display> weakSharedDisplay;
 std::recursive_mutex   mutex;
-} // namespace UnixDisplayImpl
+} // namespace SFML_UNITY_ID
 } // namespace
 
 
@@ -56,13 +56,13 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 std::shared_ptr<Display> openDisplay()
 {
-    const std::lock_guard lock(UnixDisplayImpl::mutex);
+    const std::lock_guard lock(SFML_UNITY_ID::mutex);
 
-    auto sharedDisplay = UnixDisplayImpl::weakSharedDisplay.lock();
+    auto sharedDisplay = SFML_UNITY_ID::weakSharedDisplay.lock();
     if (!sharedDisplay)
     {
         sharedDisplay.reset(XOpenDisplay(nullptr), XCloseDisplay);
-        UnixDisplayImpl::weakSharedDisplay = sharedDisplay;
+        SFML_UNITY_ID::weakSharedDisplay = sharedDisplay;
 
         // Opening display failed: The best we can do at the moment is to output a meaningful error message
         // and cause an abnormal program termination
@@ -80,9 +80,9 @@ std::shared_ptr<Display> openDisplay()
 ////////////////////////////////////////////////////////////
 std::shared_ptr<_XIM> openXim()
 {
-    const std::lock_guard lock(UnixDisplayImpl::mutex);
+    const std::lock_guard lock(SFML_UNITY_ID::mutex);
 
-    assert(!UnixDisplayImpl::weakSharedDisplay.expired() &&
+    assert(!SFML_UNITY_ID::weakSharedDisplay.expired() &&
            "Display is not initialized. Call priv::openDisplay() to initialize it.");
 
     static std::weak_ptr<_XIM> xim;
@@ -109,7 +109,7 @@ std::shared_ptr<_XIM> openXim()
             if (im)
                 XCloseIM(im);
         };
-        sharedXIM.reset(XOpenIM(UnixDisplayImpl::weakSharedDisplay.lock().get(), nullptr, nullptr, nullptr), closeIM);
+        sharedXIM.reset(XOpenIM(SFML_UNITY_ID::weakSharedDisplay.lock().get(), nullptr, nullptr, nullptr), closeIM);
         xim = sharedXIM;
 
         // Restore the previous locale
