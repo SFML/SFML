@@ -36,10 +36,10 @@ jobs:
         - { name: Windows VS2022 Unity,           os: windows-2025, flags: -DSFML_USE_MESA3D=ON -DCMAKE_UNITY_BUILD=ON -GNinja }
         - { name: Windows LLVM/Clang,             os: windows-2025, flags: -DSFML_USE_MESA3D=ON -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -GNinja }
         - { name: Windows MinGW,                  os: windows-2025, flags: -DSFML_USE_MESA3D=ON -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -GNinja }
-        - { name: Linux GCC,                      os: ubuntu-22.04, flags: -GNinja }
-        - { name: Linux Clang,                    os: ubuntu-22.04, flags: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -GNinja , gcovr_options: '--gcov-executable="llvm-cov-$CLANG_VERSION gcov"' }
-        - { name: Linux GCC DRM,                  os: ubuntu-22.04, flags: -DSFML_USE_DRM=ON -DSFML_RUN_DISPLAY_TESTS=OFF -GNinja }
-        - { name: Linux GCC OpenGL ES,            os: ubuntu-22.04, flags: -DSFML_OPENGL_ES=ON -DSFML_RUN_DISPLAY_TESTS=OFF -GNinja }
+        - { name: Linux GCC,                      os: ubuntu-24.04, flags: -GNinja }
+        - { name: Linux Clang,                    os: ubuntu-24.04, flags: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -GNinja , gcovr_options: '--gcov-executable="llvm-cov-$CLANG_VERSION gcov"' }
+        - { name: Linux GCC DRM,                  os: ubuntu-24.04, flags: -DSFML_USE_DRM=ON -DSFML_RUN_DISPLAY_TESTS=OFF -GNinja }
+        - { name: Linux GCC OpenGL ES,            os: ubuntu-24.04, flags: -DSFML_OPENGL_ES=ON -DSFML_RUN_DISPLAY_TESTS=OFF -GNinja }
         - { name: macOS x64,                      os: macos-13, flags: -GNinja }
         - { name: macOS x64 Xcode,                os: macos-13, flags: -GXcode }
         - { name: macOS arm64,                    os: macos-15, flags: -GNinja -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF }
@@ -55,13 +55,13 @@ jobs:
         include:
         - platform: { name: Windows VS2022 x64, os: windows-2025 }
           config: { name: Static with PCH (MSVC), flags: -DSFML_USE_MESA3D=ON -GNinja -DBUILD_SHARED_LIBS=OFF -DSFML_ENABLE_PCH=ON }
-        - platform: { name: Linux GCC, os: ubuntu-22.04 }
+        - platform: { name: Linux GCC, os: ubuntu-24.04 }
           config: { name: Static with PCH (GCC), flags: -GNinja -DCMAKE_CXX_COMPILER=g++ -DBUILD_SHARED_LIBS=OFF -DSFML_ENABLE_PCH=ON }
-        - platform: { name: Linux Clang, os: ubuntu-22.04 }
+        - platform: { name: Linux Clang, os: ubuntu-24.04 }
           config: { name: Static with PCH (Clang), flags: -GNinja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DBUILD_SHARED_LIBS=OFF -DSFML_ENABLE_PCH=ON }
-        - platform: { name: Linux GCC, os: ubuntu-22.04 }
+        - platform: { name: Linux GCC, os: ubuntu-24.04 }
           config: { name: Bundled Deps Static, flags: -GNinja -DCMAKE_CXX_COMPILER=g++ -DBUILD_SHARED_LIBS=OFF -DSFML_USE_SYSTEM_DEPS=OFF }
-        - platform: { name: Linux GCC, os: ubuntu-22.04 }
+        - platform: { name: Linux GCC, os: ubuntu-24.04 }
           config: { name: Bundled Deps Shared, flags: -GNinja -DCMAKE_CXX_COMPILER=g++ -DBUILD_SHARED_LIBS=ON -DSFML_USE_SYSTEM_DEPS=OFF }
         - platform: { name: Windows MinGW, os: windows-2025 }
           config: { name: Static Standard Libraries, flags: -GNinja -DSFML_USE_MESA3D=ON -DCMAKE_CXX_COMPILER=g++ -DSFML_USE_STATIC_STD_LIBS=ON }
@@ -71,28 +71,28 @@ jobs:
           config: { name: Frameworks, flags: -GNinja -DSFML_BUILD_FRAMEWORKS=ON -DBUILD_SHARED_LIBS=ON }
         - platform: { name: macOS , os: macos-14 }
           config: { name: System Deps, flags: -GNinja -DBUILD_SHARED_LIBS=ON -DSFML_USE_SYSTEM_DEPS=ON }
-        - platform: { name: Android, os: ubuntu-22.04 }
+        - platform: { name: Android, os: ubuntu-24.04 }
           config:
             name: x86 (API 21)
             flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=x86 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=21 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=ON -DCMAKE_ANDROID_STL_TYPE=c++_shared -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF
             arch: x86
             api: 21
           type: { name: Release }
-        - platform: { name: Android, os: ubuntu-22.04 }
+        - platform: { name: Android, os: ubuntu-24.04 }
           config:
             name: x86_64 (API 24)
             flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=x86_64 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=24 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=ON -DCMAKE_ANDROID_STL_TYPE=c++_shared -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF
             arch: x86_64
             api: 24
           type: { name: Release }
-        - platform: { name: Android, os: ubuntu-22.04 }
+        - platform: { name: Android, os: ubuntu-24.04 }
           config:
             name: armeabi-v7a (API 29)
             flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=29 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=ON -DCMAKE_ANDROID_STL_TYPE=c++_shared
             arch: armeabi-v7a
             api: 29
           type: { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug -DSFML_FATAL_OPENGL_ERRORS=ON }
-        - platform: { name: Android, os: ubuntu-22.04 }
+        - platform: { name: Android, os: ubuntu-24.04 }
           config:
             name: arm64-v8a (API 33)
             flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=33 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=ON -DCMAKE_ANDROID_STL_TYPE=c++_shared -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF
@@ -116,14 +116,10 @@ jobs:
       with:
         arch: ${{ contains(matrix.platform.name, 'arm64') && 'amd64_arm64' || contains(matrix.platform.name, 'x86') && 'x86' || 'x64' }}
 
-    # Although the CMake configuration will run with 3.24 on Windows and 3.22
-    # elsewhere, we install 3.25 on Windows in order to support specifying
-    # CMAKE_MSVC_DEBUG_INFORMATION_FORMAT which allows CCache to cache MSVC object
-    # files, see: https://cmake.org/cmake/help/latest/release/3.25.html#variables
     - name: Get CMake and Ninja
       uses: lukka/get-cmake@latest
       with:
-        cmakeVersion: ${{ runner.os == 'Windows' && '3.25' || '3.22' }}
+        cmakeVersion: 3.28
         ninjaVersion: latest
 
     - name: Install Linux Dependencies and Tools
@@ -131,11 +127,8 @@ jobs:
       run: |
         CLANG_VERSION=$(clang++ --version | sed -n 's/.*version \([0-9]\+\)\..*/\1/p')
         echo "CLANG_VERSION=$CLANG_VERSION" >> $GITHUB_ENV
-        sudo apt-get update && sudo apt-get install xorg-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev xvfb fluxbox ccache gcovr ${{ matrix.platform.name == 'Linux Clang' && 'llvm-$CLANG_VERSION' || '' }}
-
-    - name: Remove ALSA Library
-      if: runner.os == 'Linux' && matrix.platform.name != 'Android'
-      run: sudo apt-get remove -y libasound2
+        sudo apt-get update
+        sudo apt-get install xorg-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev xvfb fluxbox ccache gcovr ${{ matrix.platform.name == 'Linux Clang' && 'llvm-$CLANG_VERSION' || '' }}
 
     - name: Install Android Components
       if: matrix.platform.name == 'Android'
@@ -175,17 +168,9 @@ jobs:
       with:
         packages: gcovr
 
-    - name: Cache OpenCppCoverage
-      if: matrix.type.name == 'Debug' && runner.os == 'Windows'
-      id: opencppcoverage-cache
-      uses: actions/cache@v4
-      with:
-        path: C:\Program Files\OpenCppCoverage
-        key: opencppcoverage
-
     - name: Install OpenCppCoverage
       uses: nick-fields/retry@v3
-      if: matrix.type.name == 'Debug' && runner.os == 'Windows' && steps.opencppcoverage-cache.outputs.cache-hit != 'true'
+      if: matrix.type.name == 'Debug' && runner.os == 'Windows'
       with:
         max_attempts: 10
         timeout_minutes: 3
@@ -197,15 +182,15 @@ jobs:
       uses: actions/cache@v4
       with:
         path: "C:\\Program Files\\mingw64"
-        key: winlibs-x86_64-posix-seh-gcc-12.2.0-llvm-16.0.0-mingw-w64msvcrt-10.0.0-r5
+        key: winlibs-x86_64-posix-seh-gcc-14.2.0-llvm-19.1.7-mingw-w64msvcrt-12.0.0-r3
 
     - name: Install MinGW
       if: matrix.platform.name == 'Windows MinGW' && steps.mingw-cache.outputs.cache-hit != 'true'
       run: |
-        curl -Lo mingw64.zip https://github.com/brechtsanders/winlibs_mingw/releases/download/12.2.0-16.0.0-10.0.0-msvcrt-r5/winlibs-x86_64-posix-seh-gcc-12.2.0-llvm-16.0.0-mingw-w64msvcrt-10.0.0-r5.zip
+        curl -Lo mingw64.zip https://github.com/brechtsanders/winlibs_mingw/releases/download/14.2.0posix-19.1.7-12.0.0-msvcrt-r3/winlibs-x86_64-posix-seh-gcc-14.2.0-llvm-19.1.7-mingw-w64msvcrt-12.0.0-r3.zip
         unzip -qq -d "C:\Program Files" mingw64.zip
 
-    - name: Add OpenCppCoverage and MinGW to PATH and remove MinGW-supplied CCache
+    - name: Add OpenCppCoverage and MinGW to PATH and remove MinGW-supplied CCache & CMake
       if: runner.os == 'Windows'
       run: |
         echo "C:\Program Files\OpenCppCoverage" >> $GITHUB_PATH
@@ -213,6 +198,9 @@ jobs:
         rm -f "C:\Program Files\mingw64\bin\ccache.exe"
         echo "Using $(which ccache)"
         ccache --version
+        rm -f "C:\Program Files\mingw64\bin\cmake.exe"
+        echo "Using $(which cmake)"
+        cmake --version
 
     - name: Configure CMake
       run: cmake --preset dev -DCMAKE_VERBOSE_MAKEFILE=ON ${{matrix.platform.flags}} ${{matrix.config.flags}} ${{matrix.type.flags}}
@@ -241,7 +229,8 @@ jobs:
 
     - name: Test (Windows)
       if: runner.os == 'Windows' && !contains(matrix.platform.name, 'MinGW') && !contains(matrix.platform.name, 'arm64')
-      run: cmake --build build --target runtests --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }}
+      run: |
+        cmake --build build --target runtests --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }}
 
     - name: Test (Linux/macOS/MinGW)
       if: (runner.os != 'Windows' || contains(matrix.platform.name, 'MinGW')) && !contains(matrix.platform.name, 'iOS') && !contains(matrix.platform.name, 'Android')
@@ -251,6 +240,7 @@ jobs:
         if [ "${{ matrix.type.name }}" == "Debug" ]; then
           gcovr -r $GITHUB_WORKSPACE -x build/coverage.out -s -f 'src/SFML/.*' -f 'include/SFML/.*' ${{ matrix.platform.gcovr_options }} $GITHUB_WORKSPACE
         fi
+        ls build/
 
     - name: Upload Coverage Report to Coveralls
       if: matrix.type.name == 'Debug' && github.repository == 'SFML/SFML' && !contains(matrix.platform.name, 'iOS') && !contains(matrix.platform.name, 'Android')  && !contains(matrix.platform.name, 'arm64') # Disable upload in forks
@@ -271,7 +261,7 @@ jobs:
   coverage:
     name: Finalize Coverage Upload
     needs: build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     if: github.repository == 'SFML/SFML' # Disable upload in forks
 
     steps:
@@ -330,7 +320,9 @@ jobs:
 
     - name: Install Linux Dependencies
       if: runner.os == 'Linux'
-      run: sudo apt-get update && sudo apt-get install libfreetype-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev
+      run: |
+        sudo apt-get update
+        sudo apt-get install libfreetype-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev
 
     - name: Install macOS Dependencies
       if: runner.os == 'macOS'
@@ -353,9 +345,9 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-        - { name: Linux,               os: ubuntu-22.04, flags: }
-        - { name: Linux DRM,           os: ubuntu-22.04, flags: -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_USE_DRM=ON }
-        - { name: Linux GCC OpenGL ES, os: ubuntu-22.04, flags: -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_OPENGL_ES=ON }
+        - { name: Linux,               os: ubuntu-24.04 }
+        - { name: Linux DRM,           os: ubuntu-24.04, flags: -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_USE_DRM=ON }
+        - { name: Linux GCC OpenGL ES, os: ubuntu-24.04, flags: -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_OPENGL_ES=ON }
 
     steps:
     - name: Checkout Code
@@ -369,7 +361,9 @@ jobs:
 
     - name: Install Linux Dependencies
       if: runner.os == 'Linux'
-      run: sudo apt-get update && sudo apt-get install xorg-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev xvfb fluxbox && sudo apt-get remove -y libasound2
+      run: |
+        sudo apt-get update
+        sudo apt-get install xorg-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev xvfb fluxbox
 
     - name: Configure
       run: cmake --preset dev -GNinja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DSFML_BUILD_EXAMPLES=OFF -DSFML_ENABLE_SANITIZERS=ON ${{matrix.platform.flags}}
