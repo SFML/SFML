@@ -309,10 +309,10 @@ void Http::setHost(const std::string& host, unsigned short port)
     }
     else if (toLower(host.substr(0, 8)) == "https://")
     {
-        // HTTPS protocol -- unsupported (requires encryption and certificates and stuff...)
-        err() << "HTTPS protocol is not supported by sf::Http" << std::endl;
-        m_hostName.clear();
-        m_port = 0;
+        // HTTPS protocol
+        m_hostName = host.substr(8);
+        m_port     = (port != 0 ? port : 443);
+        m_https    = true;
     }
     else
     {
@@ -330,7 +330,7 @@ void Http::setHost(const std::string& host, unsigned short port)
 
 
 ////////////////////////////////////////////////////////////
-Http::Response Http::sendRequest(const Http::Request& request, Time timeout)
+Http::Response Http::sendRequest(const Http::Request& request, Time timeout, bool verifyServer)
 {
     // First make sure that the request is valid -- add missing mandatory fields
     Request toSend(request);
@@ -365,8 +365,14 @@ Http::Response Http::sendRequest(const Http::Request& request, Time timeout)
     Response received;
 
     // Connect the socket to the host
-    if (m_connection.connect(m_host.value(), m_port, timeout) == Socket::Status::Done)
+    if (m_host.has_value() && m_connection.connect(m_host.value(), m_port, timeout) == Socket::Status::Done)
     {
+        if (m_https &&
+            (m_connection.setupTlsClient(m_hostName,
+                                         verifyServer ? TcpSocket::VerifyPeer::Enabled : TcpSocket::VerifyPeer::Disabled) !=
+             sf::TcpSocket::TlsStatus::HandshakeComplete))
+            return received;
+
         // Convert the request to string and send it through the connected socket
         const std::string requestStr = toSend.prepare();
 
