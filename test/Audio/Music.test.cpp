@@ -1,6 +1,7 @@
 #include <SFML/Audio/Music.hpp>
 
 // Other 1st party headers
+#include <SFML/Audio/PlaybackDevice.hpp>
 #include <SFML/System/Exception.hpp>
 #include <SFML/System/FileInputStream.hpp>
 
@@ -14,6 +15,8 @@
 
 TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
 {
+    sf::PlaybackDevice::setDeviceToNull();
+
     SECTION("Type traits")
     {
         STATIC_CHECK(!std::is_copy_constructible_v<sf::Music>);
