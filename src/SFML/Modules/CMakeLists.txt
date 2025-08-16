@@ -1,11 +1,5 @@
 cmake_minimum_required(VERSION 3.28)
 
-# Check if GCC is being used and show warning
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    message(WARNING "C++20 modules not fully supported with GCC. SFML modules will not be built.")
-    return()
-endif()
-
 # System module is always required
 set(SFML_MODULES
     System.cppm
