@@ -45,6 +45,7 @@
 #include <qoi.h>
 
 #include <algorithm>
+#include <array>
 #include <fstream>
 #include <iomanip>
 #include <memory>
@@ -109,15 +110,12 @@ struct MallocPointerDeleter
 using MallocPtr = std::unique_ptr<void, MallocPointerDeleter>;
 
 // A helper to check if the given buffer is a valid QOI file magic number
-bool isQoiMagicNumber(char* buffer, int size)
+bool isQoiMagicNumber(const char* buffer, int size)
 {
     if (size != 4)
         return false;
 
-    return buffer[0] == 'q' &&
-           buffer[1] == 'o' &&
-           buffer[2] == 'i' &&
-           buffer[3] == 'f';
+    return buffer[0] == 'q' && buffer[1] == 'o' && buffer[2] == 'i' && buffer[3] == 'f';
 }
 } // namespace
 
@@ -269,11 +267,11 @@ bool Image::loadFromFile(const std::filesystem::path& filename)
     }
 
     // Read a (possible) QOI magic number
-    char qoiMagicNumber[4];
-    file.read(qoiMagicNumber, 4);
+    std::array<char, 4> qoiMagicNumber{};
+    file.read(qoiMagicNumber.data(), 4);
 
     // Read the QOI file if it's valid
-    if (isQoiMagicNumber(qoiMagicNumber, static_cast<int>(file.gcount())))
+    if (isQoiMagicNumber(qoiMagicNumber.data(), static_cast<int>(file.gcount())))
     {
         // Get the size of the file
         file.seekg(0, std::ios::end);
@@ -321,8 +319,8 @@ bool Image::loadFromMemory(const void* data, std::size_t size)
     if (data && size)
     {
         // Check if the buffer contains a QOI image
-        const unsigned int qoiMagicNumber = *static_cast<const unsigned int*>(data);
-        if (qoiMagicNumber == QOI_MAGIC)
+        const auto* qoiMagicNumBuffer = static_cast<const char*>(data);
+        if (isQoiMagicNumber(qoiMagicNumBuffer, std::min(static_cast<int>(size), 4)))
         {
             qoi_desc formatDesc = {};
             if (const auto ptr = MallocPtr(qoi_decode(data, static_cast<int>(size), &formatDesc, 4)))
@@ -367,8 +365,8 @@ bool Image::loadFromStream(InputStream& stream)
     }
 
     // Read a (possible) QOI magic number
-    char       qoiMagicNumber[4];
-    const auto qoiMagicCount = stream.read(qoiMagicNumber, 4);
+    std::array<char, 4> qoiMagicNumber{};
+    const auto          qoiMagicCount = stream.read(qoiMagicNumber.data(), 4);
 
     const auto seekToStartResult = stream.seek(0);
     if (!seekToStartResult.has_value())
@@ -378,7 +376,7 @@ bool Image::loadFromStream(InputStream& stream)
     }
 
     // Read the QOI file if it's valid
-    if (qoiMagicCount.has_value() && isQoiMagicNumber(qoiMagicNumber, static_cast<int>(*qoiMagicCount)))
+    if (qoiMagicCount.has_value() && isQoiMagicNumber(qoiMagicNumber.data(), static_cast<int>(*qoiMagicCount)))
     {
         if (const auto streamSize = stream.getSize(); streamSize.has_value())
         {
@@ -471,9 +469,9 @@ bool Image::saveToFile(const std::filesystem::path& filename) const
         else if (extension == ".qoi")
         {
             qoi_desc desc;
-            desc.width = m_size.x;
-            desc.height = m_size.y;
-            desc.channels = 4;
+            desc.width      = m_size.x;
+            desc.height     = m_size.y;
+            desc.channels   = 4;
             desc.colorspace = QOI_LINEAR;
 
             int bufferLen = 0;
@@ -534,9 +532,9 @@ std::optional<std::vector<std::uint8_t>> Image::saveToMemory(std::string_view fo
         else if (specified == "qoi")
         {
             qoi_desc desc;
-            desc.width = m_size.x;
-            desc.height = m_size.y;
-            desc.channels = 4;
+            desc.width      = m_size.x;
+            desc.height     = m_size.y;
+            desc.channels   = 4;
             desc.colorspace = QOI_LINEAR;
 
             int dataSize = 0;
@@ -544,7 +542,7 @@ std::optional<std::vector<std::uint8_t>> Image::saveToMemory(std::string_view fo
             {
                 // Copy the returned data into the buffer
                 const auto* source = static_cast<std::uint8_t*>(ptr.get());
-                buffer.reserve(dataSize);
+                buffer.reserve(static_cast<size_t>(dataSize));
                 std::copy(source, source + dataSize, std::back_inserter(buffer));
                 return buffer;
             }
