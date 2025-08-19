@@ -36,13 +36,12 @@
 #include <SFML/System/Android/ResourceStream.hpp>
 #endif
 
+#define QOI_IMPLEMENTATION
+#include <qoi.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
-
-#define QOI_IMPLEMENTATION
-#include <qoi.h>
 
 #include <algorithm>
 #include <array>
@@ -104,7 +103,7 @@ struct MallocPointerDeleter
 {
     void operator()(void* ptr) const
     {
-        free(ptr);
+        free(ptr); // NOLINT(*-no-malloc)
     }
 };
 using MallocPtr = std::unique_ptr<void, MallocPointerDeleter>;
