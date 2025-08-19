@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.28)
 # System module is always required
 set(SFML_MODULES
     System.cppm
+    SFML.cppm
 )
 
 # Add Window module files if enabled
