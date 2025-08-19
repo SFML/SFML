@@ -274,7 +274,6 @@ bool Image::loadFromFile(const std::filesystem::path& filename)
     {
         // Get the size of the file
         file.seekg(0, std::ios::end);
-        // Sometimes (on 32-bit android) stream size and offset types are different widths, so cast it to be safe
         const auto streamSize = static_cast<std::streamsize>(file.tellg());
         file.seekg(0, std::ios::beg);
 
