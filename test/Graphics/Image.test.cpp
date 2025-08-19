@@ -83,6 +83,15 @@ TEST_CASE("[Graphics] sf::Image")
                     CHECK(image.getSize() == sf::Vector2u(1001, 304));
                     CHECK(image.getPixelsPtr() != nullptr);
                 }
+
+                SECTION("qoi")
+                {
+                    const sf::Image image("Graphics/sfml-logo-big.qoi");
+                    CHECK(image.getPixel({0, 0}) == sf::Color(255, 255, 255, 0));
+                    CHECK(image.getPixel({200, 150}) == sf::Color(144, 208, 62));
+                    CHECK(image.getSize() == sf::Vector2u(1001, 304));
+                    CHECK(image.getPixelsPtr() != nullptr);
+                }
             }
         }
 
@@ -315,6 +324,13 @@ TEST_CASE("[Graphics] sf::Image")
             {
                 REQUIRE(image.loadFromFile("Graphics/sfml-logo-big.psd"));
                 CHECK(image.getPixel({0, 0}) == sf::Color::White);
+                CHECK(image.getPixel({200, 150}) == sf::Color(144, 208, 62));
+            }
+
+            SECTION("qoi")
+            {
+                REQUIRE(image.loadFromFile("Graphics/sfml-logo-big.qoi"));
+                CHECK(image.getPixel({0, 0}) == sf::Color(255, 255, 255, 0));
                 CHECK(image.getPixel({200, 150}) == sf::Color(144, 208, 62));
             }
 
