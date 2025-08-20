@@ -1,6 +1,7 @@
 #include <SFML/Audio/Sound.hpp>
 
 // Other 1st party headers
+#include <SFML/Audio/PlaybackDevice.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
 
 #include <SFML/System/Time.hpp>
@@ -13,6 +14,8 @@
 
 TEST_CASE("[Audio] sf::Sound", runAudioDeviceTests())
 {
+    [[maybe_unused]] auto result = sf::PlaybackDevice::setDeviceToNull();
+
     SECTION("Type traits")
     {
         STATIC_CHECK(!std::is_constructible_v<sf::Sound, sf::SoundBuffer&&>);
