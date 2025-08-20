@@ -267,7 +267,10 @@ bool Image::loadFromFile(const std::filesystem::path& filename)
 
     // Read a (possible) QOI magic number
     std::array<char, 4> qoiMagicNumber{};
-    file.read(qoiMagicNumber.data(), 4);
+    file.read(qoiMagicNumber.data(), static_cast<std::streamsize>(qoiMagicNumber.size()));
+
+    // Seek back to the start of the file for reading
+    file.seekg(0, std::ios::beg);
 
     // Read the QOI file if it's valid
     if (isQoiMagicNumber(qoiMagicNumber.data(), static_cast<int>(file.gcount())))
@@ -289,9 +292,6 @@ bool Image::loadFromFile(const std::filesystem::path& filename)
             return true;
         }
     }
-
-    // Seek back to the start of the file for reading
-    file.seekg(0, std::ios::beg);
 
     // Load the image and get a pointer to the pixels in memory
     sf::Vector2i imageSize;
@@ -365,12 +365,12 @@ bool Image::loadFromStream(InputStream& stream)
 
     // Read a (possible) QOI magic number
     std::array<char, 4> qoiMagicNumber{};
-    const auto          qoiMagicCount = stream.read(qoiMagicNumber.data(), 4);
+    const auto          qoiMagicCount = stream.read(qoiMagicNumber.data(), qoiMagicNumber.size());
 
     const auto seekToStartResult = stream.seek(0);
     if (!seekToStartResult.has_value())
     {
-        sf::err() << "Failed to seek back the image stream" << std::endl;
+        err() << "Failed to seek back the image stream" << std::endl;
         return false;
     }
 
