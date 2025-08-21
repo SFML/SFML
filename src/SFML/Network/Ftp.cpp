@@ -41,6 +41,12 @@
 #include <cstddef>
 #include <cstdint>
 
+#ifdef _MSC_VER
+#pragma warning(disable : 4996)
+#else
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 
 namespace sf
 {

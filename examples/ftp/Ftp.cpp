@@ -6,6 +6,12 @@
 #include <iostream>
 #include <optional>
 
+#ifdef _MSC_VER
+#pragma warning(disable : 4996)
+#else
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 
 namespace
 {
