@@ -3,6 +3,7 @@ set(NETWORK_SRC
     Http.test.cpp
     IpAddress.test.cpp
     Packet.test.cpp
+    Sftp.test.cpp
     Socket.test.cpp
     SocketSelector.test.cpp
     TcpListener.test.cpp
