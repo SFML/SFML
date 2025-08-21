@@ -81,3 +81,4 @@ In short, SFML is free for any use (commercial or personal, proprietary or open-
 -   [_qoi_](https://github.com/phoboslab/qoi) is under the [MIT license](https://github.com/phoboslab/qoi/blob/master/LICENSE)
 -   [_Mbed TLS_](https://github.com/Mbed-TLS/mbedtls) is under the [Apache license or the GPL license](https://github.com/Mbed-TLS/mbedtls/blob/main/LICENSE)
 -   [_wepoll_](https://github.com/piscisaureus/wepoll) is under the [BSD license](https://github.com/piscisaureus/wepoll/blob/dist/LICENSE)
+-   [_libssh2_](https://github.com/libssh2/libssh2) is under the [BSD license](https://github.com/libssh2/libssh2/blob/master/COPYING)

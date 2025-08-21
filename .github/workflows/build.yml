@@ -124,7 +124,7 @@ jobs:
         CLANG_VERSION=$(clang++ --version | sed -n 's/.*version \([0-9]\+\)\..*/\1/p')
         echo "CLANG_VERSION=$CLANG_VERSION" >> $GITHUB_ENV
         sudo apt-get update
-        sudo apt-get install xorg-dev libharfbuzz-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev libmbedtls-dev xvfb fluxbox ccache gcovr ${{ matrix.platform.name == 'Linux Clang' && 'llvm-$CLANG_VERSION' || '' }}
+        sudo apt-get install xorg-dev libharfbuzz-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev libmbedtls-dev libssh2-1-dev xvfb fluxbox ccache gcovr ${{ matrix.platform.name == 'Linux Clang' && 'llvm-$CLANG_VERSION' || '' }}
 
     - name: Install Android Components
       if: matrix.platform.name == 'Android'
@@ -142,7 +142,7 @@ jobs:
 
     - name: Install macOS System Deps
       if: contains(matrix.config.name, 'System Deps')
-      run: brew install flac libvorbis mbedtls
+      run: brew install flac libvorbis mbedtls libssh2
 
     # In addition to installing a known working version of CCache, this action also takes care of saving and restoring the cache for us
     # Additionally it outputs information at the end of each job that helps us to verify if the cache is working properly
