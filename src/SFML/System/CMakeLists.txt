@@ -21,6 +21,8 @@ set(SRC
     ${INCROOT}/String.inl
     ${INCROOT}/Time.hpp
     ${INCROOT}/Time.inl
+    ${SRCROOT}/TimeoutWithPredicate.cpp
+    ${INCROOT}/TimeoutWithPredicate.hpp
     ${INCROOT}/Utf.hpp
     ${INCROOT}/Utf.inl
     ${SRCROOT}/Utils.hpp

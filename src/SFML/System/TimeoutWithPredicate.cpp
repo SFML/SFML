@@ -22,32 +22,41 @@
 //
 ////////////////////////////////////////////////////////////
 
-#pragma once
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/System/TimeoutWithPredicate.hpp>
 
-#include <SFML/Network/Dns.hpp>
-#include <SFML/Network/Ftp.hpp>
-#include <SFML/Network/Http.hpp>
-#include <SFML/Network/IpAddress.hpp>
-#include <SFML/Network/Packet.hpp>
-#include <SFML/Network/Sftp.hpp>
-#include <SFML/Network/Socket.hpp>
-#include <SFML/Network/SocketHandle.hpp>
-#include <SFML/Network/SocketSelector.hpp>
-#include <SFML/Network/TcpListener.hpp>
-#include <SFML/Network/TcpSocket.hpp>
-#include <SFML/Network/UdpSocket.hpp>
 
-#include <SFML/System.hpp>
+namespace sf
+{
+////////////////////////////////////////////////////////////
+TimeoutWithPredicate::TimeoutWithPredicate(Time timeout) : m_predicate([] { return false; }), m_period(timeout)
+{
+}
 
 
 ////////////////////////////////////////////////////////////
-/// \defgroup network Network module
-///
-/// Socket-based communication, utilities and higher-level
-/// network protocols (HTTP, FTP).
-///
+TimeoutWithPredicate::TimeoutWithPredicate(std::function<bool()> predicate, Time period) :
+    m_predicate(std::move(predicate)),
+    m_period(period)
+{
+    if (!m_predicate)
+        m_predicate = [] { return false; };
+}
+
+
 ////////////////////////////////////////////////////////////
+const std::function<bool()>& TimeoutWithPredicate::getPredicate() const
+{
+    return m_predicate;
+}
+
+
+////////////////////////////////////////////////////////////
+const Time& TimeoutWithPredicate::getPeriod() const
+{
+    return m_period;
+}
+
+} // namespace sf
