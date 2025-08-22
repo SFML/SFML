@@ -50,6 +50,7 @@
 #include <memory>
 #include <ostream>
 #include <string>
+#include <string_view>
 #include <utility>
 
 #include <cassert>
@@ -109,9 +110,9 @@ struct MallocPointerDeleter
 using MallocPtr = std::unique_ptr<void, MallocPointerDeleter>;
 
 // A helper to check if the given buffer is a valid QOI file magic number
-bool isQoiMagicNumber(const char* buffer, int size)
+bool isQoiMagicNumber(std::string_view buffer)
 {
-    if (size != 4)
+    if (buffer.size() < 4)
         return false;
 
     return buffer[0] == 'q' && buffer[1] == 'o' && buffer[2] == 'i' && buffer[3] == 'f';
@@ -273,7 +274,7 @@ bool Image::loadFromFile(const std::filesystem::path& filename)
     file.seekg(0, std::ios::beg);
 
     // Read the QOI file if it's valid
-    if (isQoiMagicNumber(qoiMagicNumber.data(), static_cast<int>(file.gcount())))
+    if (isQoiMagicNumber(std::string_view(qoiMagicNumber.data(), static_cast<size_t>(file.gcount()))))
     {
         // Get the size of the file
         file.seekg(0, std::ios::end);
@@ -319,7 +320,7 @@ bool Image::loadFromMemory(const void* data, std::size_t size)
     {
         // Check if the buffer contains a QOI image
         const auto* qoiMagicNumBuffer = static_cast<const char*>(data);
-        if (isQoiMagicNumber(qoiMagicNumBuffer, std::min(static_cast<int>(size), 4)))
+        if (isQoiMagicNumber(std::string_view(qoiMagicNumBuffer, size)))
         {
             qoi_desc formatDesc = {};
             if (const auto ptr = MallocPtr(qoi_decode(data, static_cast<int>(size), &formatDesc, 4)))
@@ -375,7 +376,7 @@ bool Image::loadFromStream(InputStream& stream)
     }
 
     // Read the QOI file if it's valid
-    if (qoiMagicCount.has_value() && isQoiMagicNumber(qoiMagicNumber.data(), static_cast<int>(*qoiMagicCount)))
+    if (qoiMagicCount.has_value() && isQoiMagicNumber(std::string_view(qoiMagicNumber.data(), *qoiMagicCount)))
     {
         if (const auto streamSize = stream.getSize(); streamSize.has_value())
         {
