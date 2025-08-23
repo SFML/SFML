@@ -27,7 +27,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundSource.hpp>
 
-#include <miniaudio.h>
+#include <miniaudio/miniaudio.h>
 
 #include <algorithm>
 

@@ -32,7 +32,7 @@
 
 #include <SFML/System/Vector3.hpp>
 
-#include <miniaudio.h>
+#include <miniaudio/miniaudio.h>
 
 #include <list>
 #include <mutex>

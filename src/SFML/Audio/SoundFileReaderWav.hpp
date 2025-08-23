@@ -29,7 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/SoundFileReader.hpp>
 
-#include <miniaudio.h>
+#include <miniaudio/miniaudio.h>
 
 #include <optional>
 

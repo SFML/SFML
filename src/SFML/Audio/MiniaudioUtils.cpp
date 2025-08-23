@@ -32,7 +32,7 @@
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Time.hpp>
 
-#include <miniaudio.h>
+#include <miniaudio/miniaudio.h>
 
 #include <ostream>
 

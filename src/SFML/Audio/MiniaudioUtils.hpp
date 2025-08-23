@@ -33,7 +33,7 @@
 
 #include <SFML/System/Angle.hpp>
 
-#include <miniaudio.h>
+#include <miniaudio/miniaudio.h>
 
 #include <limits>
 

@@ -32,7 +32,7 @@
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Sleep.hpp>
 
-#include <miniaudio.h>
+#include <miniaudio/miniaudio.h>
 
 #include <algorithm>
 #include <ostream>
