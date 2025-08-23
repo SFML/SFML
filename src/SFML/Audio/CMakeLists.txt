@@ -10,7 +10,6 @@ set(SRC
     ${INCROOT}/Export.hpp
     ${SRCROOT}/Listener.cpp
     ${INCROOT}/Listener.hpp
-    ${SRCROOT}/Miniaudio.cpp
     ${SRCROOT}/MiniaudioUtils.hpp
     ${SRCROOT}/MiniaudioUtils.cpp
     ${SRCROOT}/Music.cpp
@@ -35,6 +34,11 @@ set(SRC
     ${SRCROOT}/SoundStream.cpp
     ${INCROOT}/SoundStream.hpp
 )
+if(NOT SFML_USE_SYSTEM_DEPS)
+    list(APPEND SRC
+        ${SRCROOT}/Miniaudio.cpp
+    )
+endif()
 source_group("" FILES ${SRC})
 
 set(CODECS_SRC
@@ -71,6 +75,7 @@ endif()
 if(SFML_USE_SYSTEM_DEPS)
     find_package(Vorbis REQUIRED)
     find_package(FLAC REQUIRED)
+    find_package(Miniaudio REQUIRED)
 else()
     # use an immediately invoked function to scope option variables we have to set
     function(sfml_add_audio_dependencies)
@@ -195,9 +200,6 @@ sfml_add_library(Audio
 # avoids warnings in vorbisfile.h
 target_compile_definitions(sfml-audio PRIVATE OV_EXCLUDE_STATIC_CALLBACKS FLAC__NO_DLL)
 
-# disable miniaudio features we do not use
-target_compile_definitions(sfml-audio PRIVATE MA_NO_MP3 MA_NO_FLAC MA_NO_ENCODING MA_NO_RESOURCE_MANAGER MA_NO_GENERATION)
-
 # use standard fixed-width integer types
 target_compile_definitions(sfml-audio PRIVATE MA_USE_STDINT)
 
@@ -208,12 +210,20 @@ target_compile_definitions(sfml-audio PRIVATE SFML_IS_BIG_ENDIAN=$<STREQUAL:${CM
 target_link_libraries(sfml-audio
                       PUBLIC SFML::System
                       PRIVATE Vorbis::vorbis Vorbis::vorbisfile Vorbis::vorbisenc FLAC::FLAC Threads::Threads)
+
+if(SFML_USE_SYSTEM_DEPS)
+    target_link_libraries(sfml-audio PRIVATE Miniaudio::Miniaudio)
+else()
+    # disable miniaudio features we do not use
+    target_compile_definitions(sfml-audio PRIVATE MA_NO_MP3 MA_NO_FLAC MA_NO_ENCODING MA_NO_RESOURCE_MANAGER MA_NO_GENERATION)
+
+    # miniaudio sources
+    target_include_directories(sfml-audio SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/miniaudio")
+endif()
+
 if(SFML_OS_IOS)
     target_link_libraries(sfml-audio PRIVATE "-framework Foundation" "-framework CoreFoundation" "-framework CoreAudio" "-framework AudioToolbox" "-framework AVFoundation")
 endif()
-
-# miniaudio sources
-target_include_directories(sfml-audio SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/miniaudio")
 
 # minimp3 sources
 target_include_directories(sfml-audio SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/minimp3")
