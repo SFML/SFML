@@ -75,6 +75,11 @@ macro(sfml_add_library module)
     endif()
     add_library(SFML::${module} ALIAS ${target})
 
+    # Generate a unique identifier for every C++ unity built file
+    set_target_properties(${target} PROPERTIES
+        UNITY_BUILD_UNIQUE_ID "SFML_UNITY_ID"
+    )
+    
     # enable C++17 support
     target_compile_features(${target} PUBLIC cxx_std_17)
 
