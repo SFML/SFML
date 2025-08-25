@@ -98,6 +98,9 @@ target_include_directories(sfml-graphics SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/e
 # glad sources
 target_include_directories(sfml-graphics SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/glad/include")
 
+# qoi sources
+target_include_directories(sfml-graphics SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/qoi")
+
 # find external libraries
 if(SFML_OS_ANDROID)
     target_link_libraries(sfml-graphics PRIVATE z)
