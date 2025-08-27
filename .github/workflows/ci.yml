@@ -148,12 +148,6 @@ jobs:
       if: contains(matrix.config.name, 'System Deps')
       run: brew install flac libvorbis || true
 
-    - name: Install old Xcode version
-      if: matrix.platform.os == 'macos-15' && contains(matrix.platform.name, 'iOS')
-      uses: maxim-lobanov/setup-xcode@v1
-      with:
-        xcode_version: '16.0'
-
     # In addition to installing a known working version of CCache, this action also takes care of saving and restoring the cache for us
     # Additionally it outputs information at the end of each job that helps us to verify if the cache is working properly
     - name: Setup CCache
