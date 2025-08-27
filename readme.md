@@ -78,3 +78,4 @@ In short, SFML is free for any use (commercial or personal, proprietary or open-
 -   [_cpp-unicodelib_](https://github.com/yhirose/cpp-unicodelib) is under the [MIT license](https://github.com/yhirose/cpp-unicodelib/blob/master/LICENSE)
 -   [_HarfBuzz_](https://github.com/harfbuzz/harfbuzz) is under the [Old MIT license](https://github.com/harfbuzz/harfbuzz/blob/main/COPYING)
 -   [_SheenBidi_](https://github.com/Tehreer/SheenBidi) is under the [Apache license](https://github.com/Tehreer/SheenBidi/blob/master/LICENSE)
+-   [_qoi_](https://github.com/phoboslab/qoi) is under the [MIT license](https://github.com/phoboslab/qoi/blob/master/LICENSE)

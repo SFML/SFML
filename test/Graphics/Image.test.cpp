@@ -83,6 +83,15 @@ TEST_CASE("[Graphics] sf::Image")
                     CHECK(image.getSize() == sf::Vector2u(1001, 304));
                     CHECK(image.getPixelsPtr() != nullptr);
                 }
+
+                SECTION("qoi")
+                {
+                    const sf::Image image("Graphics/sfml-logo-big.qoi");
+                    CHECK(image.getPixel({0, 0}) == sf::Color(255, 255, 255, 0));
+                    CHECK(image.getPixel({200, 150}) == sf::Color(144, 208, 62));
+                    CHECK(image.getSize() == sf::Vector2u(1001, 304));
+                    CHECK(image.getPixelsPtr() != nullptr);
+                }
             }
         }
 
@@ -318,6 +327,13 @@ TEST_CASE("[Graphics] sf::Image")
                 CHECK(image.getPixel({200, 150}) == sf::Color(144, 208, 62));
             }
 
+            SECTION("qoi")
+            {
+                REQUIRE(image.loadFromFile("Graphics/sfml-logo-big.qoi"));
+                CHECK(image.getPixel({0, 0}) == sf::Color(255, 255, 255, 0));
+                CHECK(image.getPixel({200, 150}) == sf::Color(144, 208, 62));
+            }
+
             CHECK(image.getSize() == sf::Vector2u(1001, 304));
             CHECK(image.getPixelsPtr() != nullptr);
         }
@@ -469,6 +485,11 @@ TEST_CASE("[Graphics] sf::Image")
                 filename /= "test.png";
             }
 
+            SECTION("To .qoi")
+            {
+                filename /= "test.qoi";
+            }
+
             SECTION("To Spanish Latin1 filename .png")
             {
                 // small n with tilde, from Spanish, outside of ASCII, inside common Latin 1 codepage
@@ -570,6 +591,18 @@ TEST_CASE("[Graphics] sf::Image")
                 CHECK(output[1] == 80);
                 CHECK(output[2] == 78);
                 CHECK(output[3] == 71);
+            }
+
+            SECTION("To qoi")
+            {
+                maybeOutput = image.saveToMemory("qoi");
+                REQUIRE(maybeOutput.has_value());
+                const auto& output = *maybeOutput;
+                REQUIRE(output.size() == 28);
+                CHECK(output[0] == 113);
+                CHECK(output[1] == 111);
+                CHECK(output[2] == 105);
+                CHECK(output[3] == 102);
             }
 
             // Cannot test JPEG encoding due to it triggering UB in stbiw__jpg_writeBits
