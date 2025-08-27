@@ -239,7 +239,7 @@ struct Text::ShaperImpl
             else
             {
                 if (shaper->fontId == fontId && shaper->characterSize == characterSize)
-                    result = shaper;
+                    result = std::move(shaper);
 
                 // Don't break even if we find a match since we want to finish cleaning up
                 ++iter;
