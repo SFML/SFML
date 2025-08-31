@@ -79,3 +79,14 @@ In short, SFML is free for any use (commercial or personal, proprietary or open-
 -   [_HarfBuzz_](https://github.com/harfbuzz/harfbuzz) is under the [Old MIT license](https://github.com/harfbuzz/harfbuzz/blob/main/COPYING)
 -   [_SheenBidi_](https://github.com/Tehreer/SheenBidi) is under the [Apache license](https://github.com/Tehreer/SheenBidi/blob/master/LICENSE)
 -   [_qoi_](https://github.com/phoboslab/qoi) is under the [MIT license](https://github.com/phoboslab/qoi/blob/master/LICENSE)
+
+## Showcases
+
+Here are some cool applications using SFML:
+
+- [ZombieV](https://github.com/johnBuffer/ZombieV) : A top-down zombie shooter game.
+- [Open Hexagon](https://github.com/vittorioromeo/SSVOpenHexagon) : A clone of the fast-paced arcade game Super Hexagon.
+- [Cendric2](https://github.com/tizian/Cendric2) : RPG Platformer.
+- [Deer Portal](https://github.com/deerportal/deerportal) : Strategy game driven by the classical elements.
+- [Pseuthe](https://github.com/fallahn/pseuthe) : It's abstract audio / visual experience, with casual game play elements.
+- [Witch Blast](https://github.com/Cirrus-Minor/witchblast) : Roguelite dungeon crawler game.
