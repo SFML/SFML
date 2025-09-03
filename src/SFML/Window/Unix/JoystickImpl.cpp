@@ -184,7 +184,7 @@ void updatePluggedList(udev_device* udevDevice = nullptr)
                         newRecord.systemPath = syspath ? syspath : "";
                         newRecord.plugged    = true;
 
-                        joystickList.push_back(newRecord);
+                        joystickList.emplace_back(std::move(newRecord));
                     }
                     else if (std::strstr(action, "remove"))
                     {

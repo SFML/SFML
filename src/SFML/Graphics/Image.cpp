@@ -36,17 +36,21 @@
 #include <SFML/System/Android/ResourceStream.hpp>
 #endif
 
+#define QOI_IMPLEMENTATION
+#include <qoi.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb_image_write.h>
 
 #include <algorithm>
+#include <array>
 #include <fstream>
 #include <iomanip>
 #include <memory>
 #include <ostream>
 #include <string>
+#include <string_view>
 #include <utility>
 
 #include <cassert>
@@ -93,6 +97,26 @@ struct StbDeleter
     }
 };
 using StbPtr = std::unique_ptr<stbi_uc, StbDeleter>;
+
+// RAII wrapper for malloc-ed pointers
+// (this is used with qoi.h)
+struct MallocPointerDeleter
+{
+    void operator()(void* ptr) const
+    {
+        free(ptr); // NOLINT(*-no-malloc)
+    }
+};
+using MallocPtr = std::unique_ptr<void, MallocPointerDeleter>;
+
+// A helper to check if the given buffer is a valid QOI file magic number
+bool isQoiMagicNumber(std::string_view buffer)
+{
+    if (buffer.size() < 4)
+        return false;
+
+    return buffer[0] == 'q' && buffer[1] == 'o' && buffer[2] == 'i' && buffer[3] == 'f';
+}
 } // namespace
 
 
@@ -242,6 +266,34 @@ bool Image::loadFromFile(const std::filesystem::path& filename)
         return false;
     }
 
+    // Read a (possible) QOI magic number
+    std::array<char, 4> qoiMagicNumber{};
+    file.read(qoiMagicNumber.data(), static_cast<std::streamsize>(qoiMagicNumber.size()));
+
+    // Seek back to the start of the file for reading
+    file.seekg(0, std::ios::beg);
+
+    // Read the QOI file if it's valid
+    if (isQoiMagicNumber(std::string_view(qoiMagicNumber.data(), static_cast<size_t>(file.gcount()))))
+    {
+        // Get the size of the file
+        file.seekg(0, std::ios::end);
+        const auto streamSize = static_cast<std::streamsize>(file.tellg());
+        file.seekg(0, std::ios::beg);
+
+        // Read in the file contents since QOI doesn't support streams
+        std::vector<uint8_t> buffer(static_cast<size_t>(streamSize));
+        file.read(reinterpret_cast<char*>(buffer.data()), streamSize);
+
+        qoi_desc formatDesc = {};
+        if (const auto ptr = MallocPtr(qoi_decode(buffer.data(), static_cast<int>(streamSize), &formatDesc, 4)))
+        {
+            const Vector2u imageSize = {formatDesc.width, formatDesc.height};
+            resize(imageSize, static_cast<const uint8_t*>(ptr.get()));
+            return true;
+        }
+    }
+
     // Load the image and get a pointer to the pixels in memory
     sf::Vector2i imageSize;
     int          channels = 0;
@@ -266,6 +318,20 @@ bool Image::loadFromMemory(const void* data, std::size_t size)
     // Check input parameters
     if (data && size)
     {
+        // Check if the buffer contains a QOI image
+        const auto* qoiMagicNumBuffer = static_cast<const char*>(data);
+        if (isQoiMagicNumber(std::string_view(qoiMagicNumBuffer, size)))
+        {
+            qoi_desc formatDesc = {};
+            if (const auto ptr = MallocPtr(qoi_decode(data, static_cast<int>(size), &formatDesc, 4)))
+            {
+                const Vector2u imageSize = {formatDesc.width, formatDesc.height};
+                resize(imageSize, static_cast<const uint8_t*>(ptr.get()));
+                return true;
+            }
+        }
+
+        // If we can't load it as a QOI file, we fall back to using STBI
         // Load the image and get a pointer to the pixels in memory
         Vector2i    imageSize;
         int         channels = 0;
@@ -296,6 +362,36 @@ bool Image::loadFromStream(InputStream& stream)
     {
         err() << "Failed to seek image stream" << std::endl;
         return false;
+    }
+
+    // Read a (possible) QOI magic number
+    std::array<char, 4> qoiMagicNumber{};
+    const auto          qoiMagicCount = stream.read(qoiMagicNumber.data(), qoiMagicNumber.size());
+
+    const auto seekToStartResult = stream.seek(0);
+    if (!seekToStartResult.has_value())
+    {
+        err() << "Failed to seek back the image stream" << std::endl;
+        return false;
+    }
+
+    // Read the QOI file if it's valid
+    if (qoiMagicCount.has_value() && isQoiMagicNumber(std::string_view(qoiMagicNumber.data(), *qoiMagicCount)))
+    {
+        if (const auto streamSize = stream.getSize(); streamSize.has_value())
+        {
+            // Read in the file contents since QOI doesn't support streams
+            std::vector<char> buffer(*streamSize);
+            const auto        readDataSize = stream.read(buffer.data(), *streamSize);
+
+            qoi_desc formatDesc = {};
+            if (const auto ptr = MallocPtr(qoi_decode(buffer.data(), static_cast<int>(*readDataSize), &formatDesc, 4)))
+            {
+                const Vector2u imageSize = {formatDesc.width, formatDesc.height};
+                resize(imageSize, static_cast<const uint8_t*>(ptr.get()));
+                return true;
+            }
+        }
     }
 
     // Setup the stb_image callbacks
@@ -370,6 +466,22 @@ bool Image::saveToFile(const std::filesystem::path& filename) const
                 file)
                 return true;
         }
+        else if (extension == ".qoi")
+        {
+            qoi_desc desc;
+            desc.width      = m_size.x;
+            desc.height     = m_size.y;
+            desc.channels   = 4;
+            desc.colorspace = QOI_LINEAR;
+
+            int bufferLen = 0;
+            if (const auto buffer = MallocPtr(qoi_encode(m_pixels.data(), &desc, &bufferLen)))
+            {
+                std::ofstream file(filename, std::ios::binary);
+                file.write(static_cast<const char*>(buffer.get()), bufferLen);
+                return true;
+            }
+        }
         else
         {
             err() << "Image file extension " << extension << " not supported\n";
@@ -416,6 +528,24 @@ std::optional<std::vector<std::uint8_t>> Image::saveToMemory(std::string_view fo
             // JPG format
             if (stbi_write_jpg_to_func(bufferFromCallback, &buffer, convertedSize.x, convertedSize.y, 4, m_pixels.data(), 90))
                 return buffer;
+        }
+        else if (specified == "qoi")
+        {
+            qoi_desc desc;
+            desc.width      = m_size.x;
+            desc.height     = m_size.y;
+            desc.channels   = 4;
+            desc.colorspace = QOI_LINEAR;
+
+            int dataSize = 0;
+            if (const auto ptr = MallocPtr(qoi_encode(m_pixels.data(), &desc, &dataSize)))
+            {
+                // Copy the returned data into the buffer
+                const auto* source = static_cast<std::uint8_t*>(ptr.get());
+                buffer.reserve(static_cast<size_t>(dataSize));
+                std::copy(source, source + dataSize, std::back_inserter(buffer));
+                return buffer;
+            }
         }
     }
 

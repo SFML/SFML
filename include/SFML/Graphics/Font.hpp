@@ -63,7 +63,10 @@ public:
     ////////////////////////////////////////////////////////////
     struct Info
     {
-        std::string family; //!< The font family
+        std::uint64_t id{};                 //!< A unique ID that identifies the font
+        std::string   family;               //!< The font family
+        bool          hasKerning{};         //!< Has kerning information
+        bool          hasVerticalMetrics{}; //!< Has native vertical metrics
     };
 
     ////////////////////////////////////////////////////////////
@@ -210,6 +213,32 @@ public:
     [[nodiscard]] const Info& getInfo() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Retrieve a glyph of the font by glyph ID
+    ///
+    /// If the font is a bitmap font, not all character sizes
+    /// might be available. If the glyph is not available at the
+    /// requested size, an empty glyph is returned.
+    ///
+    /// This function is only useful for getting the glyphs
+    /// returned in the data from calling `shape`.
+    ///
+    /// Be aware that using a negative value for the outline
+    /// thickness will cause distorted rendering.
+    ///
+    /// \param id               ID of the glyph to get
+    /// \param characterSize    Reference character size
+    /// \param bold             Retrieve the bold version or the regular one?
+    /// \param outlineThickness Thickness of outline (when != 0 the glyph will not be filled)
+    ///
+    /// \return The glyph corresponding to `id` and `characterSize`
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] const Glyph& getGlyphById(std::uint32_t id,
+                                            unsigned int  characterSize,
+                                            bool          bold,
+                                            float         outlineThickness = 0) const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Retrieve a glyph of the font
     ///
     /// If the font is a bitmap font, not all character sizes
@@ -296,6 +325,42 @@ public:
     [[nodiscard]] float getKerning(char32_t first, char32_t second, unsigned int characterSize, bool bold = false) const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the ascent
+    ///
+    /// The ascent is the largest distance between the baseline and
+    /// the top of all glyphs in the font.
+    ///
+    /// Be aware that there is no uniform definition of how the
+    /// ascent is calculated. It can vary from font to font.
+    ///
+    /// \param characterSize Reference character size
+    ///
+    /// \return Ascent, in pixels
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] float getAscent(unsigned int characterSize) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the descent
+    ///
+    /// The descent is the largest distance between the baseline and
+    /// the bottom of all glyphs in the font.
+    ///
+    /// Be aware that there is no uniform definition of how the
+    /// descent is calculated. It can vary from font to font.
+    ///
+    /// The descent shares the same coordinate system as the
+    /// ascent. This means that it will be negative for distances
+    /// below the baseline.
+    ///
+    /// \param characterSize Reference character size
+    ///
+    /// \return Descent, in pixels
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] float getDescent(unsigned int characterSize) const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Get the line spacing
     ///
     /// Line spacing is the vertical offset to apply between two
@@ -378,6 +443,8 @@ public:
     [[nodiscard]] bool isSmooth() const;
 
 private:
+    friend class Text;
+
     ////////////////////////////////////////////////////////////
     /// \brief Structure defining a row of glyphs
     ///
@@ -437,15 +504,15 @@ private:
     ////////////////////////////////////////////////////////////
     /// \brief Load a new glyph and store it in the cache
     ///
-    /// \param codePoint        Unicode code point of the character to load
+    /// \param id               Glyph ID of the character to load
     /// \param characterSize    Reference character size
     /// \param bold             Retrieve the bold version or the regular one?
     /// \param outlineThickness Thickness of outline (when != 0 the glyph will not be filled)
     ///
-    /// \return The glyph corresponding to `codePoint` and `characterSize`
+    /// \return The glyph corresponding to `id` and `characterSize`
     ///
     ////////////////////////////////////////////////////////////
-    Glyph loadGlyph(char32_t codePoint, unsigned int characterSize, bool bold, float outlineThickness) const;
+    Glyph loadGlyph(std::uint32_t id, unsigned int characterSize, bool bold, float outlineThickness) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Find a suitable rectangle within the texture for a glyph
@@ -467,6 +534,24 @@ private:
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool setCurrentSize(unsigned int characterSize) const;
+
+    ////////////////////////////////////////////////////////////
+    /// Handle
+    ////////////////////////////////////////////////////////////
+    using FontHandle = void*; //!< Font handle used by the shaper
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the current font handle
+    ///
+    /// This is used internally by Text to shape unicode text.
+    ///
+    /// \warning Using this handle without care may result in unwanted
+    /// side effects, as it could interfere with SFMLs internal usage!
+    ///
+    /// \return The currently active font handle or nullptr if there is none
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] FontHandle getFontHandle() const;
 
     ////////////////////////////////////////////////////////////
     // Types

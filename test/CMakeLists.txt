@@ -6,7 +6,7 @@ set_target_warnings(test-sfml-install)
 set(CATCH_CONFIG_NO_EXPERIMENTAL_STATIC_ANALYSIS_SUPPORT ON CACHE BOOL "")
 FetchContent_Declare(Catch2
     GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-    GIT_TAG v3.8.1
+    GIT_TAG v3.9.1
     GIT_SHALLOW ON)
 FetchContent_MakeAvailable(Catch2)
 include(Catch)
