@@ -1,0 +1,345 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - .*
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    name: ${{ matrix.platform.name }} ${{ matrix.config.name }}
+    runs-on: ${{ matrix.platform.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+        - { name: Windows VS2022 x86, os: windows-2025 }
+        - { name: Windows VS2022 x64, os: windows-2025 }
+        - { name: Windows MinGW x86,  os: windows-2025, flags: -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ }
+        - { name: Windows MinGW x64,  os: windows-2025, flags: -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ }
+        - { name: Linux GCC,          os: ubuntu-24.04 }
+        - { name: macOS x64,          os: macos-13 }
+        - { name: macOS arm64,        os: macos-15 }
+        config:
+        - { name: Shared, flags: -DBUILD_SHARED_LIBS=ON }
+        - { name: Static, flags: -DBUILD_SHARED_LIBS=OFF }
+        type:
+        - { name: Release, flags: -DCMAKE_BUILD_TYPE=Release }
+        - { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug }
+        include:
+        - platform: { name: macOS x64, os: macos-13 }
+          config: { name: Frameworks, flags: -DSFML_BUILD_FRAMEWORKS=ON -DBUILD_SHARED_LIBS=ON }
+          type: { name: Release }
+        - platform: { name: macOS arm64, os: macos-15 }
+          config: { name: Frameworks, flags: -DSFML_BUILD_FRAMEWORKS=ON -DBUILD_SHARED_LIBS=ON }
+          type: { name: Release }
+        exclude:
+        - platform: { name: Linux GCC }
+          type: { name: Debug }
+        - platform: { name: macOS x64 }
+          type: { name: Debug }
+        - platform: { name: macOS arm64 }
+          type: { name: Debug }
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set Visual Studio Architecture
+      if: contains(matrix.platform.name, 'Windows VS')
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: ${{ contains(matrix.platform.name, 'x86') && 'x86' || 'x64' }}
+
+    - name: Get CMake and Ninja
+      uses: lukka/get-cmake@latest
+      with:
+        cmakeVersion: '3.25'
+        ninjaVersion: latest
+
+    - name: Install Linux Dependencies and Tools
+      if: runner.os == 'Linux'
+      run: sudo apt-get update && sudo apt-get install xorg-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev
+
+    - name: Install macOS Tools
+      if: runner.os == 'macOS'
+      run: |
+        brew update
+
+    - name: Cache MinGW x86
+      if: matrix.platform.name == 'Windows MinGW x86'
+      id: mingw32-cache
+      uses: actions/cache@v4
+      with:
+        path: "C:\\Program Files\\mingw32"
+        key: winlibs-i686-posix-dwarf-gcc-14.2.0-mingw-w64ucrt-12.0.0-r2
+
+    - name: Install MinGW x86
+      if: matrix.platform.name == 'Windows MinGW x86' && steps.mingw32-cache.outputs.cache-hit != 'true'
+      run: |
+        curl -Lo mingw32.zip https://github.com/brechtsanders/winlibs_mingw/releases/download/14.2.0posix-19.1.1-12.0.0-ucrt-r2/winlibs-i686-posix-dwarf-gcc-14.2.0-mingw-w64ucrt-12.0.0-r2.zip
+        unzip -qq -d "C:\Program Files" mingw32.zip
+
+    - name: Add MinGW x86 to PATH
+      if: matrix.platform.name == 'Windows MinGW x86'
+      run: |
+        echo "C:\Program Files\mingw32\bin" >> $GITHUB_PATH
+
+    - name: Cache MinGW x64
+      if: matrix.platform.name == 'Windows MinGW x64'
+      id: mingw64-cache
+      uses: actions/cache@v4
+      with:
+        path: "C:\\Program Files\\mingw64"
+        key: winlibs-x86_64-posix-seh-gcc-14.2.0-mingw-w64ucrt-12.0.0-r2
+
+    - name: Install MinGW x64
+      if: matrix.platform.name == 'Windows MinGW x64' && steps.mingw64-cache.outputs.cache-hit != 'true'
+      run: |
+        curl -Lo mingw64.zip https://github.com/brechtsanders/winlibs_mingw/releases/download/14.2.0posix-19.1.1-12.0.0-ucrt-r2/winlibs-x86_64-posix-seh-gcc-14.2.0-mingw-w64ucrt-12.0.0-r2.zip
+        unzip -qq -d "C:\Program Files" mingw64.zip
+
+    - name: Add MinGW x64 to PATH
+      if: matrix.platform.name == 'Windows MinGW x64'
+      run: |
+        echo "C:\Program Files\mingw64\bin" >> $GITHUB_PATH
+
+    - name: Configure CMake
+      run: cmake -B build -GNinja -DCMAKE_VERBOSE_MAKEFILE=ON -DSFML_BUILD_EXAMPLES=${{matrix.config.name == 'Static' && matrix.type.name == 'Release' && 'ON' || 'OFF'}} -DSFML_BUILD_TESTS=OFF -DSFML_BUILD_DOC=OFF -DCMAKE_INSTALL_PREFIX=./install ${{ matrix.platform.flags }} ${{matrix.config.flags }} ${{ matrix.type.flags }}
+
+    - name: Build
+      run: cmake --build build --config ${{ matrix.type.name }} --target install
+
+    - name: Packaging - Copy Files
+      run: |
+        mkdir './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}'
+        cp -rH ./install/* './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}'
+        cp './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/share/doc/SFML/readme.md' './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}'
+        cp './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/share/doc/SFML/license.md' './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}'
+        rm -r './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/share'
+        cp ./changelog.md './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}'
+
+    - name: Packaging - Copy Frameworks for macOS
+      if: matrix.config.name == 'Frameworks' && matrix.type.name == 'Release' && runner.os == 'macOS'
+      run: |
+        mkdir './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/Frameworks'
+        mv './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/'*.framework './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/Frameworks'
+
+    - name: Packaging - Copy Example Files
+      if: matrix.config.name == 'Static' && matrix.type.name == 'Release'
+      run: |
+        mkdir 'SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples'
+        cp -r ./examples/* 'SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples'
+        rm './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/CMakeLists.txt'
+        find './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples' -type f -name CMakeLists.txt -delete
+        rm -r './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/android'
+        rm -r './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/include'
+        rm -r './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/vulkan/vulkan.h'
+        rm -r './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/island/stb_perlin.h'
+
+    - name: Packaging - Prepare Example Files for Windows
+      if: matrix.config.name == 'Static' && matrix.type.name == 'Release' && runner.os == 'Windows'
+      run: |
+        rm -r './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/X11'
+        rm -r './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/cocoa'
+        cp ./build/bin/event_handling.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/event_handling'
+        cp ./build/bin/ftp.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/ftp'
+        cp ./build/bin/island.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/island'
+        cp ./build/bin/joystick.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/joystick'
+        cp ./build/bin/keyboard.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/keyboard'
+        cp ./build/bin/opengl.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/opengl'
+        cp ./build/bin/raw_input.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/raw_input'
+        cp ./build/bin/shader.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/shader'
+        cp ./build/bin/sockets.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/sockets'
+        cp ./build/bin/sound-capture.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/sound_capture'
+        cp ./build/bin/sound-effects.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/sound_effects'
+        cp ./build/bin/sound.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/sound'
+        cp ./build/bin/stencil.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/stencil'
+        cp ./build/bin/tennis.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/tennis'
+        cp ./build/bin/voip.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/voip'
+        cp ./build/bin/vulkan.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/vulkan'
+        cp ./build/bin/win32.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/win32'
+        cp ./build/bin/window.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/window'
+
+    - name: Packaging - Prepare Example Files for Linux
+      if: matrix.config.name == 'Static' && matrix.type.name == 'Release' && runner.os == 'Linux'
+      run: |
+        rm -r './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/cocoa'
+        rm -r './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/win32'
+        cp ./build/bin/X11Example './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/X11'
+        cp ./build/bin/event_handling './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/event_handling'
+        cp ./build/bin/ftp './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/ftp'
+        cp ./build/bin/island './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/island'
+        cp ./build/bin/joystick './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/joystick'
+        cp ./build/bin/keyboard './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/keyboard'
+        cp ./build/bin/opengl './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/opengl'
+        cp ./build/bin/raw_input './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/raw_input'
+        cp ./build/bin/shader './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/shader'
+        cp ./build/bin/sockets './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/sockets'
+        cp ./build/bin/sound-capture './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/sound_capture'
+        cp ./build/bin/sound-effects './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/sound_effects'
+        cp ./build/bin/sound './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/sound'
+        cp ./build/bin/stencil './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/stencil'
+        cp ./build/bin/tennis './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/tennis'
+        cp ./build/bin/voip './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/voip'
+        cp ./build/bin/vulkan './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/vulkan'
+        cp ./build/bin/window './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/window'
+
+    - name: Packaging - Prepare Example Files for macOS
+      if: matrix.config.name == 'Static' && matrix.type.name == 'Release' && runner.os == 'macOS'
+      run: |
+        rm -r './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/X11'
+        rm -r './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/raw_input'
+        rm -r './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/win32'
+        cp -r ./build/bin/cocoa.app './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/cocoa'
+        cp ./build/bin/event_handling './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/event_handling'
+        cp ./build/bin/ftp './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/ftp'
+        cp ./build/bin/island './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/island'
+        cp ./build/bin/joystick './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/joystick'
+        cp ./build/bin/keyboard './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/keyboard'
+        cp ./build/bin/opengl './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/opengl'
+        cp ./build/bin/shader './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/shader'
+        cp ./build/bin/sockets './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/sockets'
+        cp ./build/bin/sound-capture './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/sound_capture'
+        cp ./build/bin/sound-effects './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/sound_effects'
+        cp ./build/bin/sound './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/sound'
+        cp ./build/bin/stencil './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/stencil'
+        cp ./build/bin/tennis './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/tennis'
+        cp ./build/bin/voip './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/voip'
+        cp ./build/bin/vulkan './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/vulkan'
+        cp ./build/bin/window './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/window'
+
+    - name: Packaging - Create Archive
+      run: |
+        if [[ "${{ runner.os }}" == "Windows" ]]; then
+          7z a -tzip "./SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}.zip" "./SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}"/*
+        elif [[ "${{ runner.os }}" == "macOS" ]]; then
+          tar -czvf "./SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}.tar.gz" -C "./SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}" .
+        else
+          tar -chzvf "./SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}.tar.gz" -C "./SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}" .
+        fi
+
+    - name: Upload Artifact
+      if: runner.os == 'Windows'
+      uses: actions/upload-artifact@v4
+      with:
+        name: SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}
+        path: './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}.zip'
+
+    - name: Upload Artifact
+      if: runner.os != 'Windows'
+      uses: actions/upload-artifact@v4
+      with:
+        name: SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}
+        path: './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}.tar.gz'
+
+  docs:
+    name: Documentation
+    runs-on: macos-15
+
+    steps:
+    - name: Install Doxygen
+      run: |
+        brew update
+        brew install --formula doxygen || true
+
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Configure
+      run: cmake -B build -DSFML_BUILD_DOC=ON -DSFML_BUILD_WINDOW=OFF -DSFML_BUILD_GRAPHICS=OFF -DSFML_BUILD_AUDIO=OFF -DSFML_BUILD_NETWORK=OFF
+
+    - name: Build Doxygen Site
+      run: cmake --build build --target doc
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: SFML-doc
+        path: ./build/doc/html
+        retention-days: 1
+
+  package:
+    name: Package SFML ${{ matrix.platform.name }}
+    runs-on: ${{ matrix.platform.os }}
+    needs: [build, docs]
+
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+        - { name: Windows VS2022 x86, os: windows-2025 }
+        - { name: Windows VS2022 x64, os: windows-2025 }
+        - { name: Windows MinGW x86,  os: windows-2025 }
+        - { name: Windows MinGW x64,  os: windows-2025 }
+        - { name: Linux GCC,          os: ubuntu-24.04 }
+        - { name: macOS x64,          os: macos-13 }
+        - { name: macOS arm64,        os: macos-15 }
+
+    steps:
+      - name: Get version from context
+        id: git-version
+        run: |
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            echo "version=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          else
+            echo "version=${{ github.sha }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Retrieve Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: upload/
+          pattern: SFML-${{ matrix.platform.name }}*
+          merge-multiple: true
+
+      - name: Unpack Artifacts
+        run: |
+          mkdir -p upload/SFML-${{ steps.git-version.outputs.version }}
+          if [[ "${{ runner.os }}" == "Windows" ]]; then
+            for file in "upload/SFML-${{ matrix.platform.name }}"*.zip; do
+              7z x -y "$file" -oupload/SFML-${{ steps.git-version.outputs.version }}
+            done
+          else
+            for file in "upload/SFML-${{ matrix.platform.name }}"*.tar.gz; do
+              tar -xzvf "$file" -C upload/SFML-${{ steps.git-version.outputs.version }}
+            done
+          fi
+
+      - name: Retrieve Docs
+        uses: actions/download-artifact@v4
+        with:
+          path: upload/SFML-${{ steps.git-version.outputs.version }}/doc
+          pattern: SFML-doc
+          merge-multiple: true
+
+      - name: Packaging - Create Archive
+        run: |
+          cd upload
+          if [[ "${{ runner.os }}" == "Windows" ]]; then
+            7z a -tzip SFML-${{ steps.git-version.outputs.version }}.zip SFML-${{ steps.git-version.outputs.version }}/*
+          elif [[ "${{ runner.os }}" == "macOS" ]]; then
+            tar -czvf SFML-${{ steps.git-version.outputs.version }}.tar.gz SFML-${{ steps.git-version.outputs.version }}
+          else
+            tar -chzvf SFML-${{ steps.git-version.outputs.version }}.tar.gz SFML-${{ steps.git-version.outputs.version }}
+          fi
+
+      - name: Upload Artifact
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: SFML-${{ steps.git-version.outputs.version }}-${{ matrix.platform.name }}
+          path: upload/SFML-${{ steps.git-version.outputs.version }}.zip
+
+      - name: Upload Artifact
+        if: runner.os != 'Windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: SFML-${{ steps.git-version.outputs.version }}-${{ matrix.platform.name }}
+          path: upload/SFML-${{ steps.git-version.outputs.version }}.tar.gz
