@@ -1,12 +1,4 @@
-if(CMAKE_HOST_WIN32)
-    # We require a CMake version greater than or equal to 3.24 on Windows in order to
-    # support specifying target_include_directories with SYSTEM for Visual Studio Generators
-    # see: https://cmake.org/cmake/help/latest/release/3.24.html#generators
-    cmake_minimum_required(VERSION 3.24)
-else()
-    # For all other systems, 3.22 will suffice
-    cmake_minimum_required(VERSION 3.22)
-endif()
+cmake_minimum_required(VERSION 3.28)
 
 # define a macro that helps defining an option
 macro(sfml_set_option var default type docstring)
@@ -22,6 +14,11 @@ endmacro()
 # we use this mechanism to embed debug information into the object file to allow ccache to cache it
 if(POLICY CMP0141)
     cmake_policy(SET CMP0141 NEW)
+endif()
+
+# When configuring with `--fresh`, also do a fresh configure for fetched dependencies
+if(POLICY CMP0168)
+    cmake_policy(SET CMP0168 NEW)
 endif()
 
 # determine whether to create a debug or release build

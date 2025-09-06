@@ -160,10 +160,10 @@ struct Vector4
 ////////////////////////////////////////////////////////////
 template <>
 constexpr Vector4<float>::Vector4(Color color) :
-x(color.r / 255.f),
-y(color.g / 255.f),
-z(color.b / 255.f),
-w(color.a / 255.f)
+    x(color.r / 255.f),
+    y(color.g / 255.f),
+    z(color.b / 255.f),
+    w(color.a / 255.f)
 {
 }
 

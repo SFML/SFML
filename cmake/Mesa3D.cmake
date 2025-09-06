@@ -1,5 +1,5 @@
-set(MESA3D_URL "https://github.com/pal1000/mesa-dist-win/releases/download/23.0.0/mesa3d-23.0.0-release-msvc.7z")
-set(MESA3D_SHA256 "FEF8A643689414A70347AE8027D24674DEFD85E8D6428C8A9D4145BB3F44A3B0")
+set(MESA3D_URL "https://github.com/pal1000/mesa-dist-win/releases/download/25.2.0/mesa3d-25.2.0-release-msvc.7z")
+set(MESA3D_SHA256 "67e76e9844206c71cf313e09409303af9c01d7561c5f57d7e152771e2408aafe")
 
 get_filename_component(MESA3D_ARCHIVE "${MESA3D_URL}" NAME)
 get_filename_component(MESA3D_ARCHIVE_DIRECTORY "${MESA3D_URL}" NAME_WLE)

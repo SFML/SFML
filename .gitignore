@@ -5,3 +5,4 @@
 build/
 cmake-build-*/
 CMakeUserPresets.json
+.DS_Store
