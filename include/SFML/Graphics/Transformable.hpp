@@ -62,6 +62,17 @@ public:
     /// See the move function to apply an offset based on the previous position instead.
     /// The default position of a transformable object is (0, 0).
     ///
+    /// **Note on offsets:**
+    /// `sf::Text` may appear offset when positioned.
+    /// This is because its local bounds are influenced by font metrics (e.g., tallest characters),
+    /// so `getGlobalBounds()` may not match the position you set.
+    ///
+    /// To remove this offset, adjust the origin manually:
+    /// \code
+    /// text.setOrigin(text.getLocalBounds().position.x, text.getLocalBounds().position.y);
+    /// text.setPosition(position);
+    /// \endcode
+    ///
     /// \param position New position
     ///
     /// \see `move`, `getPosition`
