@@ -388,7 +388,7 @@ In Utf<16>::decode(In begin, In end, char32_t& output, char32_t replacement)
     else
     {
         // We can make a direct copy
-        output = first;
+        output = static_cast<char32_t>(first);
     }
 
     return begin;
