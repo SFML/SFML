@@ -49,10 +49,10 @@ class JniArray
 {
 public:
     JniArray(JNIEnv& env, jintArray array) :
-    m_env(&env),
-    m_array(array),
-    m_length(env.GetArrayLength(array)),
-    m_data(env.GetIntArrayElements(array, nullptr))
+        m_env(&env),
+        m_array(array),
+        m_length(env.GetArrayLength(array)),
+        m_data(env.GetIntArrayElements(array, nullptr))
     {
     }
 
@@ -100,10 +100,10 @@ public:
     /// of this class, rather than invoking this constructor directly.
     ////////////////////////////////////////////////////////////
     JniList(JNIEnv& env, jobject list, jmethodID getMethod, jmethodID sizeMethod) :
-    m_env(env),
-    m_list(list),
-    m_getMethod(getMethod),
-    m_sizeMethod(sizeMethod)
+        m_env(env),
+        m_list(list),
+        m_getMethod(getMethod),
+        m_sizeMethod(sizeMethod)
     {
     }
 

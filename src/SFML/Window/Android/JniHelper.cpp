@@ -53,9 +53,9 @@ std::optional<JniListClass> JniListClass::findClass(JNIEnv& env)
 
 ////////////////////////////////////////////////////////////
 JniMotionRange::JniMotionRange(JNIEnv& env, jobject motionRange, jmethodID getAxisMethod) :
-m_env(env),
-m_motionRange(motionRange),
-m_getAxisMethod(getAxisMethod)
+    m_env(env),
+    m_motionRange(motionRange),
+    m_getAxisMethod(getAxisMethod)
 {
 }
 
@@ -69,8 +69,8 @@ int JniMotionRange::getAxis() const
 
 ////////////////////////////////////////////////////////////
 JniMotionRangeClass::JniMotionRangeClass(JNIEnv& env, jclass motionRangeClass) :
-m_env(env),
-m_motionRangeClass(motionRangeClass)
+    m_env(env),
+    m_motionRangeClass(motionRangeClass)
 {
 }
 
@@ -109,13 +109,13 @@ JniInputDevice::JniInputDevice(
     jmethodID getProductIdMethod,
     jmethodID supportsSourceMethod,
     jmethodID getMotionRangesMethod) :
-m_env(env),
-m_inputDevice(inputDevice),
-m_getNameMethod(getNameMethod),
-m_getVendorIdMethod(getVendorIdMethod),
-m_getProductIdMethod(getProductIdMethod),
-m_supportsSourceMethod(supportsSourceMethod),
-m_getMotionRangesMethod(getMotionRangesMethod)
+    m_env(env),
+    m_inputDevice(inputDevice),
+    m_getNameMethod(getNameMethod),
+    m_getVendorIdMethod(getVendorIdMethod),
+    m_getProductIdMethod(getProductIdMethod),
+    m_supportsSourceMethod(supportsSourceMethod),
+    m_getMotionRangesMethod(getMotionRangesMethod)
 {
 }
 
@@ -150,10 +150,10 @@ bool JniInputDevice::supportsSource(std::size_t sourceFlags) const
 
 ////////////////////////////////////////////////////////////
 JniInputDeviceClass::JniInputDeviceClass(JNIEnv& env, jclass inputDeviceClass, jmethodID getDeviceIdsMethod, jmethodID getDeviceMethod) :
-m_env(env),
-m_inputDeviceClass(inputDeviceClass),
-m_getDeviceIdsMethod(getDeviceIdsMethod),
-m_getDeviceMethod(getDeviceMethod)
+    m_env(env),
+    m_inputDeviceClass(inputDeviceClass),
+    m_getDeviceIdsMethod(getDeviceIdsMethod),
+    m_getDeviceMethod(getDeviceMethod)
 {
 }
 
