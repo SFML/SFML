@@ -375,6 +375,13 @@ macro(sfml_add_example target)
     if(SFML_COMPILER_MSVC)
         target_compile_options(${target} PRIVATE /utf-8)
     endif()
+
+    if(WIN32)
+        # Copy runtime dependencies to the output
+        add_custom_command(TARGET ${target} POST_BUILD 
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:${target}> $<TARGET_FILE_DIR:${target}> 
+            COMMAND_EXPAND_LISTS)
+    endif()
 endmacro()
 
 # add a new target which is a SFML test
@@ -450,6 +457,13 @@ function(sfml_add_test target SOURCES DEPENDS)
     # Enable support for UTF-8 characters in source code
     if(SFML_COMPILER_MSVC)
         target_compile_options(${target} PRIVATE /utf-8)
+    endif()
+
+    if(WIN32)
+        # Copy runtime dependencies to the output
+        add_custom_command(TARGET ${target} POST_BUILD 
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:${target}> $<TARGET_FILE_DIR:${target}> 
+            COMMAND_EXPAND_LISTS)
     endif()
 
     # Add the test
