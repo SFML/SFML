@@ -372,7 +372,7 @@ macro(sfml_add_example target)
         target_compile_options(${target} PRIVATE /utf-8)
     endif()
 
-    if(WIN32)
+    if(WIN32 AND BUILD_SHARED_LIBS)
         # Copy runtime dependencies to the output
         add_custom_command(TARGET ${target} POST_BUILD 
             COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:${target}> $<TARGET_FILE_DIR:${target}> 
@@ -450,7 +450,7 @@ function(sfml_add_test target SOURCES DEPENDS)
         target_compile_options(${target} PRIVATE /utf-8)
     endif()
 
-    if(WIN32)
+    if(WIN32 AND BUILD_SHARED_LIBS)
         # Copy runtime dependencies to the output
         add_custom_command(TARGET ${target} POST_BUILD 
             COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:${target}> $<TARGET_FILE_DIR:${target}> 
