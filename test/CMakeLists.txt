@@ -57,7 +57,6 @@ endif()
 
 add_subdirectory(Audio)
 add_subdirectory(Graphics)
-add_subdirectory(install)
 add_subdirectory(Network)
 add_subdirectory(System)
 add_subdirectory(Window)
