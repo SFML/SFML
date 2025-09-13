@@ -63,7 +63,7 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
 
             SECTION("Valid file")
             {
-                const sf::Music music("Audio/ding.mp3");
+                const sf::Music music("ding.mp3");
                 CHECK(music.getDuration() == sf::microseconds(1990884));
                 const auto [offset, length] = music.getLoopPoints();
                 CHECK(offset == sf::Time::Zero);
@@ -87,7 +87,7 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
 
             SECTION("Valid buffer")
             {
-                memory = loadIntoMemory("Audio/ding.flac");
+                memory = loadIntoMemory("ding.flac");
 
                 const sf::Music music(memory.data(), memory.size());
                 CHECK(music.getDuration() == sf::microseconds(1990884));
@@ -104,7 +104,7 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
 
         SECTION("Stream")
         {
-            sf::FileInputStream stream("Audio/doodle_pop.ogg");
+            sf::FileInputStream stream("doodle_pop.ogg");
             const sf::Music     music(stream);
             CHECK(music.getDuration() == sf::microseconds(24002176));
             const auto [offset, length] = music.getLoopPoints();
@@ -139,7 +139,7 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
         SECTION("Valid file")
         {
             const std::u32string        filenameSuffix = GENERATE(U"", U"-ń", U"-🐌");
-            const std::filesystem::path filename       = U"Audio/ding" + filenameSuffix + U".mp3";
+            const std::filesystem::path filename       = U"ding" + filenameSuffix + U".mp3";
             INFO("Filename: " << reinterpret_cast<const char*>(filename.u8string().c_str()));
 
             REQUIRE(music.openFromFile(filename));
@@ -176,7 +176,7 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
 
         SECTION("Valid buffer")
         {
-            memory = loadIntoMemory("Audio/ding.flac");
+            memory = loadIntoMemory("ding.flac");
             REQUIRE(music.openFromMemory(memory.data(), memory.size()));
             CHECK(music.getDuration() == sf::microseconds(1990884));
             const auto [offset, length] = music.getLoopPoints();
@@ -211,7 +211,7 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
 
         SECTION("Valid stream")
         {
-            REQUIRE(stream.open("Audio/doodle_pop.ogg"));
+            REQUIRE(stream.open("doodle_pop.ogg"));
             REQUIRE(music.openFromStream(stream));
             CHECK(music.getDuration() == sf::microseconds(24002176));
             const auto [offset, length] = music.getLoopPoints();
@@ -227,7 +227,7 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
 
     SECTION("play/pause/stop")
     {
-        sf::Music music("Audio/ding.mp3");
+        sf::Music music("ding.mp3");
 
         // Wait for background thread to start
         music.play();
@@ -260,7 +260,7 @@ TEST_CASE("[Audio] sf::Music", runAudioDeviceTests())
             CHECK(length == sf::seconds(0));
         }
 
-        REQUIRE(music.openFromFile("Audio/killdeer.wav"));
+        REQUIRE(music.openFromFile("killdeer.wav"));
 
         SECTION("Within range")
         {
