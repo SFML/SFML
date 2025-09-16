@@ -69,20 +69,23 @@ if(SFML_OS_ANDROID AND DEFINED ENV{LIBCXX_SHARED_SO})
     file(GENERATE OUTPUT "${PROJECT_BINARY_DIR}/prepare-android-files.sh" CONTENT
         "#!/bin/bash\n\
         adb shell \"mkdir -p ${TARGET_DIR}\"\n\
-        adb push $<TARGET_FILE:test-sfml-audio>    ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:test-sfml-graphics> ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:test-sfml-network>  ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:test-sfml-system>   ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:test-sfml-window>   ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:SFML::Audio>        ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:SFML::Graphics>     ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:SFML::Network>      ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:SFML::System>       ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:SFML::Window>       ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:Catch2>             ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:Catch2WithMain>     ${TARGET_DIR}\n\
-        adb push $ENV{LIBCXX_SHARED_SO}            ${TARGET_DIR}\n\
-        adb push ${CMAKE_CURRENT_LIST_DIR}         ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:test-sfml-audio>     ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:test-sfml-graphics>  ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:test-sfml-network>   ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:test-sfml-system>    ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:test-sfml-window>    ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:SFML::Audio>         ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:SFML::Graphics>      ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:SFML::Network>       ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:SFML::System>        ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:SFML::Window>        ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:Catch2>              ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:Catch2WithMain>      ${TARGET_DIR}\n\
+        adb push $ENV{LIBCXX_SHARED_SO}             ${TARGET_DIR}\n\
+        adb push ${CMAKE_CURRENT_LIST_DIR}/Audio    ${TARGET_DIR}\n\
+        adb push ${CMAKE_CURRENT_LIST_DIR}/Graphics ${TARGET_DIR}\n\
+        adb push ${CMAKE_CURRENT_LIST_DIR}/System   ${TARGET_DIR}\n\
+        adb push ${CMAKE_CURRENT_LIST_DIR}/Window   ${TARGET_DIR}\n\
         adb shell \"chmod -R 775 ${TARGET_DIR} && ls -la ${TARGET_DIR}\"\n"
         FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE)
 
