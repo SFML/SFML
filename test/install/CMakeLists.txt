@@ -13,7 +13,7 @@ if(PROJECT_IS_TOP_LEVEL)
         set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY BOTH)
     endif()
 
-    find_package(SFML 3.0.1 EXACT CONFIG REQUIRED COMPONENTS Graphics Network Audio)
+    find_package(SFML 3.0.2 EXACT CONFIG REQUIRED COMPONENTS Graphics Network Audio)
 endif()
 
 add_executable(test-sfml-install Install.cpp)
