@@ -1,12 +1,8 @@
-# Check executable exists
-if(NOT EXISTS ${CLANG_FORMAT_EXECUTABLE})
-    find_program(CLANG_FORMAT_EXEC_TEMP ${CLANG_FORMAT_EXECUTABLE})
-    if(CLANG_FORMAT_EXEC_TEMP)
-        set(CLANG_FORMAT_EXECUTABLE ${CLANG_FORMAT_EXEC_TEMP})
-        unset(CLANG_FORMAT_EXEC_TEMP)
-    else()
-        message(FATAL_ERROR "Unable to find clang-format executable: \"${CLANG_FORMAT_EXECUTABLE}\"")
-    endif()
+set(DIR tools/clang-format)
+if (CMAKE_HOST_APPLE)
+    set(CLANG_FORMAT_EXECUTABLE ${DIR}/mac/clang-format)
+else()
+    set(CLANG_FORMAT_EXECUTABLE ${DIR}/linux/clang-format)
 endif()
 
 # Check executable version
