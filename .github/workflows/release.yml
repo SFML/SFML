@@ -24,7 +24,7 @@ jobs:
         - { name: Windows MinGW x86,  os: windows-2025, flags: -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ }
         - { name: Windows MinGW x64,  os: windows-2025, flags: -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ }
         - { name: Linux GCC,          os: ubuntu-24.04 }
-        - { name: macOS x64,          os: macos-13 }
+        - { name: macOS x64,          os: macos-15,     flags: -DCMAKE_OSX_ARCHITECTURES=x86_64 }
         - { name: macOS arm64,        os: macos-15 }
         config:
         - { name: Shared, flags: -DBUILD_SHARED_LIBS=ON }
@@ -33,8 +33,8 @@ jobs:
         - { name: Release, flags: -DCMAKE_BUILD_TYPE=Release }
         - { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug }
         include:
-        - platform: { name: macOS x64, os: macos-13 }
-          config: { name: Frameworks, flags: -DSFML_BUILD_FRAMEWORKS=ON -DBUILD_SHARED_LIBS=ON }
+        - platform: { name: macOS x64, os: macos-15 }
+          config: { name: Frameworks, flags: -DSFML_BUILD_FRAMEWORKS=ON -DBUILD_SHARED_LIBS=ON -DCMAKE_OSX_ARCHITECTURES=x86_64 }
           type: { name: Release }
         - platform: { name: macOS arm64, os: macos-15 }
           config: { name: Frameworks, flags: -DSFML_BUILD_FRAMEWORKS=ON -DBUILD_SHARED_LIBS=ON }
@@ -279,7 +279,7 @@ jobs:
         - { name: Windows MinGW x86,  os: windows-2025 }
         - { name: Windows MinGW x64,  os: windows-2025 }
         - { name: Linux GCC,          os: ubuntu-24.04 }
-        - { name: macOS x64,          os: macos-13 }
+        - { name: macOS x64,          os: macos-15 }
         - { name: macOS arm64,        os: macos-15 }
 
     steps:
