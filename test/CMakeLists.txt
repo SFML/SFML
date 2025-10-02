@@ -24,6 +24,8 @@ target_include_directories(Catch2 SYSTEM INTERFACE ${CATCH2_INCLUDE_DIRS})
 add_library(sfml-test-main STATIC
     TestUtilities/SystemUtil.hpp
     TestUtilities/SystemUtil.cpp
+    TestUtilities/NetworkUtil.hpp
+    TestUtilities/NetworkUtil.cpp
     TestUtilities/WindowUtil.hpp
     TestUtilities/WindowUtil.cpp
     TestUtilities/GraphicsUtil.hpp
@@ -56,6 +58,11 @@ endif()
 sfml_set_option(SFML_RUN_AUDIO_DEVICE_TESTS ON BOOL "ON to run tests that require an audio device, OFF to ignore it")
 if(SFML_RUN_AUDIO_DEVICE_TESTS)
     target_compile_definitions(sfml-test-main PRIVATE SFML_RUN_AUDIO_DEVICE_TESTS)
+endif()
+
+if(NOT SFML_OS_IOS)
+    target_compile_definitions(sfml-test-main PRIVATE SFML_RUN_CONNECTION_TESTS)
+    target_compile_definitions(sfml-test-main PRIVATE SFML_RUN_LOOPBACK_TESTS)
 endif()
 
 set(SYSTEM_SRC
@@ -187,6 +194,7 @@ set(NETWORK_SRC
     Network/Socket.test.cpp
     Network/SocketSelector.test.cpp
     Network/TcpListener.test.cpp
+    Network/TcpLoopback.test.cpp
     Network/TcpSocket.test.cpp
     Network/UdpSocket.test.cpp
 )
