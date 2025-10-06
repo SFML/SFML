@@ -238,7 +238,7 @@ macro(sfml_add_library module)
             FRAMEWORK DESTINATION "." COMPONENT bin)
 
     # install pkgconfig
-    if(SFML_INSTALL_PKGCONFIG_FILES)
+    if(SFML_INSTALL_PKGCONFIG_FILES AND NOT ${target} STREQUAL "sfml-main")
         configure_file(
             "${PROJECT_SOURCE_DIR}/tools/pkg-config/${target}.pc.in"
             "${CMAKE_CURRENT_BINARY_DIR}/tools/pkg-config/${target}.pc"
