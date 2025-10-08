@@ -35,17 +35,19 @@
 #include <filesystem>
 #include <ostream>
 
-
-namespace sf::priv
+namespace
+{
+namespace eglCheckImpl
 {
 ////////////////////////////////////////////////////////////
-bool eglCheckError(std::string_view file, unsigned int line, std::string_view expression)
+bool checkError(std::string_view file, unsigned int line, std::string_view expression)
 {
     const auto logError = [&](const char* error, const char* description)
     {
-        err() << "An internal EGL call failed in " << std::filesystem::path(file).filename() << "(" << line << ")."
-              << "\nExpression:\n   " << expression << "\nError description:\n   " << error << "\n   " << description << '\n'
-              << std::endl;
+        sf::err() << "An internal EGL call failed in " << std::filesystem::path(file).filename() << "(" << line << ")."
+                  << "\nExpression:\n   " << expression << "\nError description:\n   " << error << "\n   "
+                  << description << '\n'
+                  << std::endl;
 
         return false;
     };
@@ -117,6 +119,29 @@ bool eglCheckError(std::string_view file, unsigned int line, std::string_view ex
         default:
             return logError("Unknown error", "Unknown description");
     }
+}
+} // namespace eglCheckImpl
+} // namespace
+
+
+namespace sf::priv
+{
+////////////////////////////////////////////////////////////
+EglScopedChecker::EglScopedChecker(const std::string_view file, const std::string_view expression, const unsigned int line) :
+    m_file(file),
+    m_expression(expression),
+    m_line(line)
+{
+    if (const auto error = eglGetError(); error != EGL_SUCCESS)
+        err() << "EGL error (" << error << ") detected during eglCheck call" << std::endl;
+}
+
+
+////////////////////////////////////////////////////////////
+EglScopedChecker::~EglScopedChecker()
+{
+    while (!eglCheckImpl::checkError(m_file, m_line, m_expression))
+        /* no-op */;
 }
 
 } // namespace sf::priv
