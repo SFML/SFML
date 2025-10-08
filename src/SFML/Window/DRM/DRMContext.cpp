@@ -34,6 +34,7 @@
 
 #include <array>
 #include <fcntl.h>
+#include <ostream>
 #include <poll.h>
 #include <unistd.h>
 #include <xf86drm.h>
