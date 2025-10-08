@@ -191,8 +191,11 @@ if(SFML_ENABLE_STDLIB_ASSERTIONS)
     endif()
 endif()
 
-# set the output directory for SFML DLLs and executables
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+# only change the directory if we're the top level project
+if(${PROJECT_IS_TOP_LEVEL})
+    # set the output directory for SFML DLLs and executables
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+endif()
 
 # enable project folders
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
