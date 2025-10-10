@@ -35,7 +35,7 @@ TEST_CASE("[System] sf::FileInputStream")
 
         SECTION("File path constructor")
         {
-            sf::FileInputStream fileInputStream("System/test.txt");
+            sf::FileInputStream fileInputStream("test.txt");
             CHECK(fileInputStream.read(buffer.data(), 5) == 5);
             CHECK(fileInputStream.tell() == 5);
             CHECK(fileInputStream.getSize() == 12);
@@ -49,7 +49,7 @@ TEST_CASE("[System] sf::FileInputStream")
     {
         SECTION("Move constructor")
         {
-            sf::FileInputStream movedFileInputStream("System/test.txt");
+            sf::FileInputStream movedFileInputStream("test.txt");
             sf::FileInputStream fileInputStream = std::move(movedFileInputStream);
             CHECK(fileInputStream.read(buffer.data(), 6) == 6);
             CHECK(fileInputStream.tell() == 6);
@@ -59,8 +59,8 @@ TEST_CASE("[System] sf::FileInputStream")
 
         SECTION("Move assignment")
         {
-            sf::FileInputStream movedFileInputStream("System/test.txt");
-            sf::FileInputStream fileInputStream("System/test2.txt");
+            sf::FileInputStream movedFileInputStream("test.txt");
+            sf::FileInputStream fileInputStream("test2.txt");
             fileInputStream = std::move(movedFileInputStream);
             CHECK(fileInputStream.read(buffer.data(), 6) == 6);
             CHECK(fileInputStream.tell() == 6);
@@ -72,7 +72,7 @@ TEST_CASE("[System] sf::FileInputStream")
     SECTION("Temporary file stream open")
     {
         sf::FileInputStream fileInputStream;
-        REQUIRE(fileInputStream.open("System/test.txt"));
+        REQUIRE(fileInputStream.open("test.txt"));
         CHECK(fileInputStream.read(buffer.data(), 5) == 5);
         CHECK(fileInputStream.tell() == 5);
         CHECK(fileInputStream.getSize() == 12);
@@ -83,7 +83,7 @@ TEST_CASE("[System] sf::FileInputStream")
 
     SECTION("Temporary file stream create")
     {
-        sf::FileInputStream fileInputStream("System/test.txt");
+        sf::FileInputStream fileInputStream("test.txt");
         CHECK(fileInputStream.read(buffer.data(), 5) == 5);
         CHECK(fileInputStream.tell() == 5);
         CHECK(fileInputStream.getSize() == 12);
@@ -95,7 +95,7 @@ TEST_CASE("[System] sf::FileInputStream")
     SECTION("open()")
     {
         const std::u32string        filenameSuffix = GENERATE(U"", U"-ń", U"-🐌");
-        const std::filesystem::path filename       = U"System/test" + filenameSuffix + U".txt";
+        const std::filesystem::path filename       = U"test" + filenameSuffix + U".txt";
         INFO("Filename: " << reinterpret_cast<const char*>(filename.u8string().c_str()));
 
         sf::FileInputStream fileInputStream;

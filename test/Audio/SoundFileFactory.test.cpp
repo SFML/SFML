@@ -100,10 +100,10 @@ TEST_CASE("[Audio] sf::SoundFileFactory")
 
         SECTION("Valid file")
         {
-            CHECK(sf::SoundFileFactory::createReaderFromFilename("Audio/ding.flac"));
-            CHECK(sf::SoundFileFactory::createReaderFromFilename("Audio/ding.mp3"));
-            CHECK(sf::SoundFileFactory::createReaderFromFilename("Audio/doodle_pop.ogg"));
-            CHECK(sf::SoundFileFactory::createReaderFromFilename("Audio/killdeer.wav"));
+            CHECK(sf::SoundFileFactory::createReaderFromFilename("ding.flac"));
+            CHECK(sf::SoundFileFactory::createReaderFromFilename("ding.mp3"));
+            CHECK(sf::SoundFileFactory::createReaderFromFilename("doodle_pop.ogg"));
+            CHECK(sf::SoundFileFactory::createReaderFromFilename("killdeer.wav"));
         }
     }
 
@@ -113,22 +113,22 @@ TEST_CASE("[Audio] sf::SoundFileFactory")
 
         SECTION("flac")
         {
-            REQUIRE(stream.open("Audio/ding.flac"));
+            REQUIRE(stream.open("ding.flac"));
         }
 
         SECTION("mp3")
         {
-            REQUIRE(stream.open("Audio/ding.mp3"));
+            REQUIRE(stream.open("ding.mp3"));
         }
 
         SECTION("ogg")
         {
-            REQUIRE(stream.open("Audio/doodle_pop.ogg"));
+            REQUIRE(stream.open("doodle_pop.ogg"));
         }
 
         SECTION("wav")
         {
-            REQUIRE(stream.open("Audio/killdeer.wav"));
+            REQUIRE(stream.open("killdeer.wav"));
         }
 
         CHECK(sf::SoundFileFactory::createReaderFromStream(stream));

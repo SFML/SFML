@@ -61,7 +61,7 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
 
         SECTION("File")
         {
-            const sf::Texture texture("Graphics/sfml-logo-big.png");
+            const sf::Texture texture("sfml-logo-big.png");
             CHECK(texture.getSize() == sf::Vector2u(1001, 304));
             CHECK(!texture.isSmooth());
             CHECK(!texture.isSrgb());
@@ -71,7 +71,7 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
 
         SECTION("Memory")
         {
-            const auto        memory = loadIntoMemory("Graphics/sfml-logo-big.png");
+            const auto        memory = loadIntoMemory("sfml-logo-big.png");
             const sf::Texture texture(memory.data(), memory.size());
             CHECK(texture.getSize() == sf::Vector2u(1001, 304));
             CHECK(!texture.isSmooth());
@@ -82,7 +82,7 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
 
         SECTION("Stream")
         {
-            sf::FileInputStream stream("Graphics/sfml-logo-big.png");
+            sf::FileInputStream stream("sfml-logo-big.png");
             const sf::Texture   texture(stream);
             CHECK(texture.getSize() == sf::Vector2u(1001, 304));
             CHECK(!texture.isSmooth());
@@ -201,7 +201,7 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
     SECTION("loadFromFile()")
     {
         sf::Texture texture;
-        REQUIRE(texture.loadFromFile("Graphics/sfml-logo-big.png"));
+        REQUIRE(texture.loadFromFile("sfml-logo-big.png"));
         CHECK(texture.getSize() == sf::Vector2u(1001, 304));
         CHECK(!texture.isSmooth());
         CHECK(!texture.isSrgb());
@@ -211,7 +211,7 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
 
     SECTION("loadFromMemory()")
     {
-        const auto  memory = loadIntoMemory("Graphics/sfml-logo-big.png");
+        const auto  memory = loadIntoMemory("sfml-logo-big.png");
         sf::Texture texture;
         REQUIRE(texture.loadFromMemory(memory.data(), memory.size()));
         CHECK(texture.getSize() == sf::Vector2u(1001, 304));
@@ -225,7 +225,7 @@ TEST_CASE("[Graphics] sf::Texture", runDisplayTests())
     {
         sf::Texture         texture;
         sf::FileInputStream stream;
-        REQUIRE(stream.open("Graphics/sfml-logo-big.png"));
+        REQUIRE(stream.open("sfml-logo-big.png"));
         REQUIRE(texture.loadFromStream(stream));
         CHECK(texture.getSize() == sf::Vector2u(1001, 304));
         CHECK(!texture.isSmooth());

@@ -1,8 +1,5 @@
 include(FetchContent)
 
-add_subdirectory(install)
-set_target_warnings(test-sfml-install)
-
 set(CATCH_CONFIG_NO_EXPERIMENTAL_STATIC_ANALYSIS_SUPPORT ON CACHE BOOL "")
 FetchContent_Declare(Catch2
     GIT_REPOSITORY https://github.com/catchorg/Catch2.git
@@ -58,176 +55,11 @@ if(SFML_RUN_AUDIO_DEVICE_TESTS)
     target_compile_definitions(sfml-test-main PRIVATE SFML_RUN_AUDIO_DEVICE_TESTS)
 endif()
 
-set(SYSTEM_SRC
-    System/Angle.test.cpp
-    System/Clock.test.cpp
-    System/Config.test.cpp
-    System/Err.test.cpp
-    System/Exception.test.cpp
-    System/FileInputStream.test.cpp
-    System/MemoryInputStream.test.cpp
-    System/Sleep.test.cpp
-    System/String.test.cpp
-    System/Time.test.cpp
-    System/Utf.test.cpp
-    System/Vector2.test.cpp
-    System/Vector3.test.cpp
-)
-sfml_add_test(test-sfml-system "${SYSTEM_SRC}" "")
-target_compile_definitions(test-sfml-system PRIVATE
-    EXPECTED_SFML_VERSION_MAJOR=${SFML_VERSION_MAJOR}
-    EXPECTED_SFML_VERSION_MINOR=${SFML_VERSION_MINOR}
-    EXPECTED_SFML_VERSION_PATCH=${SFML_VERSION_PATCH}
-    EXPECTED_SFML_VERSION_IS_RELEASE=$<IF:$<BOOL:${VERSION_IS_RELEASE}>,true,false>
-)
-
-if(XCODE AND SFML_OS_IOS)
-    set(SYSTEM_RESOURCE 
-        System/test.txt
-        System/test2.txt
-        System/test-ń.txt
-        System/test-🐌.txt
-    )
-    target_sources(test-sfml-system PRIVATE ${SYSTEM_RESOURCE})
-    set_source_files_properties(${SYSTEM_RESOURCE} PROPERTIES MACOSX_PACKAGE_LOCATION "System")
-endif()
-
-set(WINDOW_SRC
-    Window/Clipboard.test.cpp
-    Window/Context.test.cpp
-    Window/ContextSettings.test.cpp
-    Window/Event.test.cpp
-    Window/GlResource.test.cpp
-    Window/Joystick.test.cpp
-    Window/Mouse.test.cpp
-    Window/VideoMode.test.cpp
-)
-
-if(NOT SFML_OS_IOS)
-    list(APPEND WINDOW_SRC
-        # These modules aren't supported/relevant for iOS
-        Window/Cursor.test.cpp
-        Window/Keyboard.test.cpp
-        Window/Vulkan.test.cpp
-
-        # At the time of writing these tests all pass except the window size ones
-        Window/Window.test.cpp
-        Window/WindowBase.test.cpp
-    )
-endif()
-sfml_add_test(test-sfml-window "${WINDOW_SRC}" SFML::Window)
-
-set(GRAPHICS_SRC
-    Graphics/BlendMode.test.cpp
-    Graphics/CircleShape.test.cpp
-    Graphics/Color.test.cpp
-    Graphics/ConvexShape.test.cpp
-    Graphics/CoordinateType.test.cpp
-    Graphics/Drawable.test.cpp
-    Graphics/Font.test.cpp
-    Graphics/Glsl.test.cpp
-    Graphics/Glyph.test.cpp
-    Graphics/Image.test.cpp
-    Graphics/Rect.test.cpp
-    Graphics/RectangleShape.test.cpp
-    Graphics/Render.test.cpp
-    Graphics/RenderStates.test.cpp
-    Graphics/RenderTarget.test.cpp
-    Graphics/RenderTexture.test.cpp
-    Graphics/RenderWindow.test.cpp
-    Graphics/Shader.test.cpp
-    Graphics/Shape.test.cpp
-    Graphics/Sprite.test.cpp
-    Graphics/StencilMode.test.cpp
-    Graphics/Text.test.cpp
-    Graphics/Texture.test.cpp
-    Graphics/Transform.test.cpp
-    Graphics/Transformable.test.cpp
-    Graphics/Vertex.test.cpp
-    Graphics/VertexArray.test.cpp
-    Graphics/VertexBuffer.test.cpp
-    Graphics/View.test.cpp
-)
-if(SFML_OS_WINDOWS)
-    list(APPEND GRAPHICS_SRC
-        Graphics/WindowHandleWin32.test.cpp
-    )
-endif()
-sfml_add_test(test-sfml-graphics "${GRAPHICS_SRC}" SFML::Graphics)
-if(SFML_RUN_DISPLAY_TESTS)
-    target_compile_definitions(test-sfml-graphics PRIVATE SFML_RUN_DISPLAY_TESTS)
-endif()
-
-if (XCODE AND SFML_OS_IOS)
-    set(GRAPHICS_RESOURCES
-        Graphics/invalid_shader.vert
-        Graphics/sfml-logo-big.bmp
-        Graphics/sfml-logo-big.gif
-        Graphics/sfml-logo-big.jpg
-        Graphics/sfml-logo-big.png
-        Graphics/sfml-logo-big.psd
-        Graphics/shader-🐌.vert
-        Graphics/shader-ń.vert
-        Graphics/shader.frag
-        Graphics/shader.geom
-        Graphics/shader.vert
-        Graphics/tuffy-🐌.ttf
-        Graphics/tuffy-ń.ttf
-        Graphics/tuffy.ttf
-    )
-    target_sources(test-sfml-graphics PRIVATE ${GRAPHICS_RESOURCES})
-    set_source_files_properties(${GRAPHICS_RESOURCES} MACOSX_PACKAGE_LOCATION "Graphics")
-endif()
-
-set(NETWORK_SRC
-    Network/Ftp.test.cpp
-    Network/Http.test.cpp
-    Network/IpAddress.test.cpp
-    Network/Packet.test.cpp
-    Network/Socket.test.cpp
-    Network/SocketSelector.test.cpp
-    Network/TcpListener.test.cpp
-    Network/TcpSocket.test.cpp
-    Network/UdpSocket.test.cpp
-)
-sfml_add_test(test-sfml-network "${NETWORK_SRC}" SFML::Network)
-
-set(AUDIO_SRC
-    Audio/AudioResource.test.cpp
-    Audio/InputSoundFile.test.cpp
-    Audio/Listener.test.cpp
-    Audio/Music.test.cpp
-    Audio/OutputSoundFile.test.cpp
-    Audio/Sound.test.cpp
-    Audio/SoundBuffer.test.cpp
-    Audio/SoundBufferRecorder.test.cpp
-    Audio/SoundFileFactory.test.cpp
-    Audio/SoundFileReader.test.cpp
-    Audio/SoundFileWriter.test.cpp
-    Audio/SoundRecorder.test.cpp
-    Audio/SoundSource.test.cpp
-    Audio/SoundStream.test.cpp
-)
-sfml_add_test(test-sfml-audio "${AUDIO_SRC}" SFML::Audio)
-
-if(SFML_OS_IOS)
-    set(AUDIO_RESOURCE
-        Audio/ding-🐌.flac
-        Audio/ding-🐌.mp3
-        Audio/ding-ń.flac
-        Audio/ding-ń.mp3
-        Audio/ding.flac
-        Audio/ding.mp3
-        Audio/doodle_pop-🐌.ogg
-        Audio/doodle_pop-ń.ogg
-        Audio/doodle_pop.ogg
-        Audio/killdeer-🐌.wav
-        Audio/killdeer-ń.wav
-        Audio/killdeer.wav
-    )
-    target_sources(test-sfml-audio PRIVATE ${AUDIO_RESOURCE})
-    set_source_files_properties(${AUDIO_RESOURCE} PROPERTIES MACOSX_PACKAGE_LOCATION "Audio")
-endif()
+add_subdirectory(Audio)
+add_subdirectory(Graphics)
+add_subdirectory(Network)
+add_subdirectory(System)
+add_subdirectory(Window)
 
 if(SFML_OS_ANDROID AND DEFINED ENV{LIBCXX_SHARED_SO})
     # Because we can only write to the tmp directory on the Android virtual device we will need to build our directory tree under it
@@ -237,20 +69,23 @@ if(SFML_OS_ANDROID AND DEFINED ENV{LIBCXX_SHARED_SO})
     file(GENERATE OUTPUT "${PROJECT_BINARY_DIR}/prepare-android-files.sh" CONTENT
         "#!/bin/bash\n\
         adb shell \"mkdir -p ${TARGET_DIR}\"\n\
-        adb push $<TARGET_FILE:test-sfml-audio>    ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:test-sfml-graphics> ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:test-sfml-network>  ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:test-sfml-system>   ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:test-sfml-window>   ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:SFML::Audio>        ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:SFML::Graphics>     ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:SFML::Network>      ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:SFML::System>       ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:SFML::Window>       ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:Catch2>             ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:Catch2WithMain>     ${TARGET_DIR}\n\
-        adb push $ENV{LIBCXX_SHARED_SO}            ${TARGET_DIR}\n\
-        adb push ${CMAKE_CURRENT_LIST_DIR}         ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:test-sfml-audio>       ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:test-sfml-graphics>    ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:test-sfml-network>     ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:test-sfml-system>      ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:test-sfml-window>      ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:SFML::Audio>           ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:SFML::Graphics>        ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:SFML::Network>         ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:SFML::System>          ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:SFML::Window>          ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:Catch2>                ${TARGET_DIR}\n\
+        adb push $<TARGET_FILE:Catch2WithMain>        ${TARGET_DIR}\n\
+        adb push $ENV{LIBCXX_SHARED_SO}               ${TARGET_DIR}\n\
+        adb push ${CMAKE_CURRENT_LIST_DIR}/Audio/.    ${TARGET_DIR}\n\
+        adb push ${CMAKE_CURRENT_LIST_DIR}/Graphics/. ${TARGET_DIR}\n\
+        adb push ${CMAKE_CURRENT_LIST_DIR}/System/.   ${TARGET_DIR}\n\
+        adb push ${CMAKE_CURRENT_LIST_DIR}/Window/.   ${TARGET_DIR}\n\
         adb shell \"chmod -R 775 ${TARGET_DIR} && ls -la ${TARGET_DIR}\"\n"
         FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE)
 
@@ -260,7 +95,7 @@ if(SFML_OS_ANDROID AND DEFINED ENV{LIBCXX_SHARED_SO})
     # Generate proxy script that translates CTest commands into adb shell commands
     file(GENERATE OUTPUT "${PROJECT_BINARY_DIR}/run-in-adb-shell.sh" CONTENT
         "#!/bin/bash\n\
-        adb shell \"cd ${TARGET_DIR}/test; LD_LIBRARY_PATH=${TARGET_DIR} /data/local/tmp/$1 \\\"$2\\\" \\\"$3\\\" \\\"$4\\\" \\\"$5\\\" \\\"$6\\\" \\\"$7\\\" \\\"$8\\\" \\\"$9\\\"\"\n"
+        adb shell \"cd ${TARGET_DIR}; LD_LIBRARY_PATH=${TARGET_DIR} /data/local/tmp/$1 \\\"$2\\\" \\\"$3\\\" \\\"$4\\\" \\\"$5\\\" \\\"$6\\\" \\\"$7\\\" \\\"$8\\\" \\\"$9\\\"\"\n"
         FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE)
 endif()
 
