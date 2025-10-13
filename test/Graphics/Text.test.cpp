@@ -28,7 +28,7 @@ TEST_CASE("[Graphics] sf::Text", runDisplayTests())
         STATIC_CHECK(std::is_nothrow_move_assignable_v<sf::Text>);
     }
 
-    const sf::Font font("Graphics/tuffy.ttf");
+    const sf::Font font("tuffy.ttf");
 
     SECTION("Construction")
     {
@@ -103,7 +103,7 @@ TEST_CASE("[Graphics] sf::Text", runDisplayTests())
     SECTION("Set/get font")
     {
         sf::Text       text(font);
-        const sf::Font otherFont("Graphics/tuffy.ttf");
+        const sf::Font otherFont("tuffy.ttf");
         text.setFont(otherFont);
         CHECK(&text.getFont() == &otherFont);
     }

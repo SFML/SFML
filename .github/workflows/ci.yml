@@ -40,8 +40,8 @@ jobs:
         - { name: Linux Clang,                    os: ubuntu-24.04, flags: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -GNinja , gcovr_options: '--gcov-executable="llvm-cov-$CLANG_VERSION gcov"' }
         - { name: Linux GCC DRM,                  os: ubuntu-24.04, flags: -DSFML_USE_DRM=ON -DSFML_RUN_DISPLAY_TESTS=OFF -GNinja }
         - { name: Linux GCC OpenGL ES,            os: ubuntu-24.04, flags: -DSFML_OPENGL_ES=ON -DSFML_RUN_DISPLAY_TESTS=OFF -GNinja }
-        - { name: macOS x64,                      os: macos-13, flags: -GNinja }
-        - { name: macOS x64 Xcode,                os: macos-13, flags: -GXcode }
+        - { name: macOS x64,                      os: macos-15, flags: -GNinja -DCMAKE_OSX_ARCHITECTURES=x86_64 }
+        - { name: macOS x64 Xcode,                os: macos-15, flags: -GXcode -DCMAKE_OSX_ARCHITECTURES=x86_64 }
         - { name: macOS arm64,                    os: macos-15, flags: -GNinja -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF }
         - { name: iOS Xcode,                      os: macos-15, flags: -DCMAKE_SYSTEM_NAME=iOS -GXcode -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO }
         config:
