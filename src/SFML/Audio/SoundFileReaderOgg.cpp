@@ -127,7 +127,7 @@ bool SoundFileReaderOgg::open(InputStream& stream, Info& info)
     if (ov_raw_seek(&m_vorbis, 0) < 0)
     {
         err() << "Failed to seek to start of Vorbis file" << std::endl;
-        return std::nullopt;
+        return false;
     }
 
     info.channelCount = static_cast<unsigned int>(vorbisInfo->channels);
