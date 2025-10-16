@@ -444,7 +444,12 @@ function(sfml_add_test target SOURCES DEPENDS)
     endif()
 
     # Add the test
-    catch_discover_tests(${target} WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
+    if (ANDROID)
+        find_program(ADB adb)
+        add_test(NAME ${target} COMMAND ${ADB} shell "cd /data/local/tmp; export LD_LIBRARY_PATH=/data/local/tmp; ./$<TARGET_FILE_NAME:${target}>" )
+    else()
+        catch_discover_tests(${target} WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR} TEST_EXECUTABLE biff)
+    endif()
 endfunction()
 
 # Generate a SFMLConfig.cmake file (and associated files) from the targets registered
