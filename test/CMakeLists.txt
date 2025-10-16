@@ -63,7 +63,7 @@ add_subdirectory(Window)
 
 if(SFML_OS_ANDROID)
     # We can only write to the tmp directory on the Android virtual device
-    set(TARGET_DIR "/data/local/tmp/")
+    set(TARGET_DIR "/data/local/tmp")
 
     # adb is required to push to device when running tests on the command line
     # which not everybody will want/need to do, so only cause an error when trying to do that
