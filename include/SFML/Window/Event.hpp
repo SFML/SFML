@@ -32,10 +32,12 @@
 #include <SFML/Window/Mouse.hpp>
 #include <SFML/Window/Sensor.hpp>
 
+#include <SFML/System/String.hpp>
 #include <SFML/System/Vector2.hpp>
 
 #include <type_traits>
 #include <variant>
+#include <vector>
 
 
 namespace sf
@@ -296,6 +298,16 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
+    /// \brief Files dropped event subtype
+    ///
+    ////////////////////////////////////////////////////////////
+    struct FilesDropped
+    {
+        std::vector<String> filenames; //!< Files which were dropped
+        Vector2i            position;  //!< Position of the cursor at the time the files were dropped
+    };
+
+    ////////////////////////////////////////////////////////////
     /// \brief Construct from a given `sf::Event` subtype
     ///
     /// \tparam `TEventSubtype` Type of event subtype used to construct the event
@@ -387,7 +399,8 @@ private:
                  TouchBegan,
                  TouchMoved,
                  TouchEnded,
-                 SensorChanged>
+                 SensorChanged,
+                 FilesDropped>
         m_data; //!< Event data
 
     ////////////////////////////////////////////////////////////

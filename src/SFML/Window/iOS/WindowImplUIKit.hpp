@@ -204,7 +204,7 @@ public:
     /// \param event Event to forward
     ///
     ////////////////////////////////////////////////////////////
-    void forwardEvent(Event event);
+    void forwardEvent(const Event& event);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the window's view
