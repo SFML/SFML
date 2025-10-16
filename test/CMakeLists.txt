@@ -88,7 +88,8 @@ if(SFML_OS_ANDROID)
             COMMAND ${ADB} push "${CMAKE_CURRENT_LIST_DIR}/Graphics/."  ${TARGET_DIR}
             COMMAND ${ADB} push "${CMAKE_CURRENT_LIST_DIR}/System/."    ${TARGET_DIR}
             COMMAND ${ADB} push "${CMAKE_CURRENT_LIST_DIR}/Audio/."     ${TARGET_DIR}
-            COMMAND ${ADB} shell "chmod -R 775 ${TARGET_DIR} && ls -la  ${TARGET_DIR}"
+            COMMAND ${ADB} shell "chmod -R 775 ${TARGET_DIR}"
+            COMMAND ${ADB} shell "ls -la  ${TARGET_DIR}"
         )
 
         # If using shared STL that also needs to be copied
