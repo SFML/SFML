@@ -34,6 +34,229 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
+void U8StringCharTraits::assign(char_type& c1, char_type c2)
+{
+    c1 = c2;
+}
+
+
+////////////////////////////////////////////////////////////
+U8StringCharTraits::char_type* U8StringCharTraits::assign(char_type* s, std::size_t n, char_type c)
+{
+    return reinterpret_cast<U8StringCharTraits::char_type*>(
+        std::char_traits<char>::assign(reinterpret_cast<char*>(s), n, static_cast<char>(c)));
+}
+
+
+////////////////////////////////////////////////////////////
+bool U8StringCharTraits::eq(char_type c1, char_type c2)
+{
+    return c1 == c2;
+}
+
+
+////////////////////////////////////////////////////////////
+bool U8StringCharTraits::lt(char_type c1, char_type c2)
+{
+    return c1 < c2;
+}
+
+
+////////////////////////////////////////////////////////////
+U8StringCharTraits::char_type* U8StringCharTraits::move(char_type* s1, const char_type* s2, std::size_t n)
+{
+    std::memmove(s1, s2, n);
+    return s1;
+}
+
+
+////////////////////////////////////////////////////////////
+U8StringCharTraits::char_type* U8StringCharTraits::copy(char_type* s1, const char_type* s2, std::size_t n)
+{
+    std::memcpy(s1, s2, n);
+    return s1;
+}
+
+
+////////////////////////////////////////////////////////////
+int U8StringCharTraits::compare(const char_type* s1, const char_type* s2, std::size_t n)
+{
+    return std::memcmp(s1, s2, n);
+}
+
+
+////////////////////////////////////////////////////////////
+std::size_t U8StringCharTraits::length(const char_type* s)
+{
+    return std::strlen(reinterpret_cast<const char*>(s));
+}
+
+
+////////////////////////////////////////////////////////////
+const U8StringCharTraits::char_type* U8StringCharTraits::find(const char_type* s, std::size_t n, const char_type& c)
+{
+    return reinterpret_cast<const U8StringCharTraits::char_type*>(
+        std::char_traits<char>::find(reinterpret_cast<const char*>(s), n, static_cast<char>(c)));
+}
+
+
+////////////////////////////////////////////////////////////
+U8StringCharTraits::char_type U8StringCharTraits::to_char_type(int_type i)
+{
+    return static_cast<U8StringCharTraits::char_type>(std::char_traits<char>::to_char_type(i));
+}
+
+
+////////////////////////////////////////////////////////////
+U8StringCharTraits::int_type U8StringCharTraits::to_int_type(char_type c)
+{
+    return std::char_traits<char>::to_int_type(static_cast<char>(c));
+}
+
+
+////////////////////////////////////////////////////////////
+bool U8StringCharTraits::eq_int_type(int_type i1, int_type i2)
+{
+    return i1 == i2;
+}
+
+
+////////////////////////////////////////////////////////////
+U8StringCharTraits::int_type U8StringCharTraits::eof()
+{
+    return std::char_traits<char>::eof();
+}
+
+
+////////////////////////////////////////////////////////////
+U8StringCharTraits::int_type U8StringCharTraits::not_eof(int_type i)
+{
+    return std::char_traits<char>::not_eof(i);
+}
+
+
+////////////////////////////////////////////////////////////
+void Uint16CharTraits::assign(char_type& c1, char_type c2)
+{
+    c1 = c2;
+}
+
+
+////////////////////////////////////////////////////////////
+Uint16CharTraits::char_type* Uint16CharTraits::assign(char_type* s, std::size_t n, char_type c)
+{
+    for (std::size_t i = 0; i < n; ++i)
+        s[i] = c;
+    return s;
+}
+
+
+////////////////////////////////////////////////////////////
+bool Uint16CharTraits::eq(char_type c1, char_type c2)
+{
+    return c1 == c2;
+}
+
+
+////////////////////////////////////////////////////////////
+bool Uint16CharTraits::lt(char_type c1, char_type c2)
+{
+    return c1 < c2;
+}
+
+
+////////////////////////////////////////////////////////////
+Uint16CharTraits::char_type* Uint16CharTraits::move(char_type* s1, const char_type* s2, std::size_t n)
+{
+    if (n == 0)
+        return s1;
+    std::memmove(s1, s2, n * sizeof(char_type));
+    return s1;
+}
+
+
+////////////////////////////////////////////////////////////
+Uint16CharTraits::char_type* Uint16CharTraits::copy(char_type* s1, const char_type* s2, std::size_t n)
+{
+    if (n == 0)
+        return s1;
+    std::memcpy(s1, s2, n * sizeof(char_type));
+    return s1;
+}
+
+
+////////////////////////////////////////////////////////////
+int Uint16CharTraits::compare(const char_type* s1, const char_type* s2, std::size_t n)
+{
+    for (std::size_t i = 0; i < n; ++i)
+    {
+        if (s1[i] < s2[i])
+            return -1;
+        if (s1[i] > s2[i])
+            return 1;
+    }
+    return 0;
+}
+
+
+////////////////////////////////////////////////////////////
+std::size_t Uint16CharTraits::length(const char_type* s)
+{
+    std::size_t len = 0;
+    while (s[len] != 0)
+        ++len;
+    return len;
+}
+
+
+////////////////////////////////////////////////////////////
+const Uint16CharTraits::char_type* Uint16CharTraits::find(const char_type* s, std::size_t n, const char_type& c)
+{
+    for (std::size_t i = 0; i < n; ++i)
+    {
+        if (s[i] == c)
+            return s + i;
+    }
+    return nullptr;
+}
+
+
+////////////////////////////////////////////////////////////
+Uint16CharTraits::char_type Uint16CharTraits::to_char_type(int_type i)
+{
+    return static_cast<char_type>(i);
+}
+
+
+////////////////////////////////////////////////////////////
+Uint16CharTraits::int_type Uint16CharTraits::to_int_type(char_type c)
+{
+    return static_cast<int_type>(c);
+}
+
+
+////////////////////////////////////////////////////////////
+bool Uint16CharTraits::eq_int_type(int_type i1, int_type i2)
+{
+    return i1 == i2;
+}
+
+
+////////////////////////////////////////////////////////////
+Uint16CharTraits::int_type Uint16CharTraits::eof()
+{
+    return static_cast<int_type>(-1);
+}
+
+
+////////////////////////////////////////////////////////////
+Uint16CharTraits::int_type Uint16CharTraits::not_eof(int_type i)
+{
+    return (i == eof()) ? 0 : i;
+}
+
+
+////////////////////////////////////////////////////////////
 const std::size_t String::InvalidPos = std::basic_string<Uint32>::npos;
 
 
@@ -175,10 +398,10 @@ std::wstring String::toWideString() const
 
 
 ////////////////////////////////////////////////////////////
-std::basic_string<Uint8> String::toUtf8() const
+sf::U8String String::toUtf8() const
 {
     // Prepare the output string
-    std::basic_string<Uint8> output;
+    sf::U8String output;
     output.reserve(m_string.length());
 
     // Convert
@@ -189,10 +412,10 @@ std::basic_string<Uint8> String::toUtf8() const
 
 
 ////////////////////////////////////////////////////////////
-std::basic_string<Uint16> String::toUtf16() const
+Utf16String String::toUtf16() const
 {
     // Prepare the output string
-    std::basic_string<Uint16> output;
+    Utf16String output;
     output.reserve(m_string.length());
 
     // Convert
