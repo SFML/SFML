@@ -38,6 +38,118 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
+/// \brief Character traits for std::uint8_t
+///
+////////////////////////////////////////////////////////////
+struct SFML_SYSTEM_API U8StringCharTraits
+{
+    typedef unsigned char                           char_type;
+    typedef std::char_traits<char>::int_type        int_type;
+    typedef std::char_traits<char>::off_type        off_type;
+    typedef std::char_traits<char>::pos_type        pos_type;
+    typedef std::char_traits<char>::state_type      state_type;
+
+    static void             assign(char_type& c1, char_type c2);
+    static char_type*       assign(char_type* s, std::size_t n, char_type c);
+    static bool             eq(char_type c1, char_type c2);
+    static bool             lt(char_type c1, char_type c2);
+    static char_type*       move(char_type* s1, const char_type* s2, std::size_t n);
+    static char_type*       copy(char_type* s1, const char_type* s2, std::size_t n);
+    static int              compare(const char_type* s1, const char_type* s2, std::size_t n);
+    static std::size_t      length(const char_type* s);
+    static const char_type* find(const char_type* s, std::size_t n, const char_type& c);
+    static char_type        to_char_type(int_type i);
+    static int_type         to_int_type(char_type c);
+    static bool             eq_int_type(int_type i1, int_type i2);
+    static int_type         eof();
+    static int_type         not_eof(int_type i);
+};
+
+////////////////////////////////////////////////////////////
+/// \brief Portable replacement for std::basic_string<std::uint8_t>
+///
+/// While all major C++ implementations happen to define this
+/// as of early 2024, this specialization is not strictly speaking
+/// standard C++. Thus we can't depend on its continued existence.
+///
+////////////////////////////////////////////////////////////
+typedef std::basic_string<unsigned char, U8StringCharTraits> U8String;
+
+////////////////////////////////////////////////////////////
+/// \brief Character traits for std::uint16_t (unsigned short)
+///
+////////////////////////////////////////////////////////////
+struct SFML_SYSTEM_API Uint16CharTraits
+{
+    typedef unsigned short                          char_type;
+    typedef std::char_traits<char16_t>::int_type    int_type;
+    typedef std::char_traits<char16_t>::off_type    off_type;
+    typedef std::char_traits<char16_t>::pos_type    pos_type;
+    typedef std::char_traits<char16_t>::state_type  state_type;
+
+    static void             assign(char_type& c1, char_type c2);
+    static char_type*       assign(char_type* s, std::size_t n, char_type c);
+    static bool             eq(char_type c1, char_type c2);
+    static bool             lt(char_type c1, char_type c2);
+    static char_type*       move(char_type* s1, const char_type* s2, std::size_t n);
+    static char_type*       copy(char_type* s1, const char_type* s2, std::size_t n);
+    static int              compare(const char_type* s1, const char_type* s2, std::size_t n);
+    static std::size_t      length(const char_type* s);
+    static const char_type* find(const char_type* s, std::size_t n, const char_type& c);
+    static char_type        to_char_type(int_type i);
+    static int_type         to_int_type(char_type c);
+    static bool             eq_int_type(int_type i1, int_type i2);
+    static int_type         eof();
+    static int_type         not_eof(int_type i);
+};
+
+////////////////////////////////////////////////////////////
+/// \brief Portable replacement for std::basic_string<Uint16>
+///
+/// While std::u16string exists, it uses char16_t which is not
+/// compatible with Uint16 (unsigned short) on all platforms.
+///
+////////////////////////////////////////////////////////////
+typedef std::basic_string<unsigned short, Uint16CharTraits> Utf16String;
+
+////////////////////////////////////////////////////////////
+/// \brief Character traits for std::uint32_t (unsigned int)
+///
+////////////////////////////////////////////////////////////
+struct SFML_SYSTEM_API Uint32CharTraits
+{
+    typedef unsigned int                            char_type;
+    typedef std::char_traits<char32_t>::int_type    int_type;
+    typedef std::char_traits<char32_t>::off_type    off_type;
+    typedef std::char_traits<char32_t>::pos_type    pos_type;
+    typedef std::char_traits<char32_t>::state_type  state_type;
+
+    static void             assign(char_type& c1, char_type c2);
+    static char_type*       assign(char_type* s, std::size_t n, char_type c);
+    static bool             eq(char_type c1, char_type c2);
+    static bool             lt(char_type c1, char_type c2);
+    static char_type*       move(char_type* s1, const char_type* s2, std::size_t n);
+    static char_type*       copy(char_type* s1, const char_type* s2, std::size_t n);
+    static int              compare(const char_type* s1, const char_type* s2, std::size_t n);
+    static std::size_t      length(const char_type* s);
+    static const char_type* find(const char_type* s, std::size_t n, const char_type& c);
+    static char_type        to_char_type(int_type i);
+    static int_type         to_int_type(char_type c);
+    static bool             eq_int_type(int_type i1, int_type i2);
+    static int_type         eof();
+    static int_type         not_eof(int_type i);
+};
+
+////////////////////////////////////////////////////////////
+/// \brief Portable replacement for std::basic_string<Uint32>
+///
+/// While std::u32string exists, it uses char32_t which may not
+/// be compatible with Uint32 (unsigned int) on all platforms.
+///
+////////////////////////////////////////////////////////////
+typedef std::basic_string<unsigned int, Uint32CharTraits> Utf32String;
+
+////////////////////////////////////////////////////////////
 /// \brief Utility string class that automatically handles
 ///        conversions between types and encodings
 ///
@@ -49,8 +161,8 @@ public:
     ////////////////////////////////////////////////////////////
     // Types
     ////////////////////////////////////////////////////////////
-    typedef std::basic_string<Uint32>::iterator       Iterator;      //!< Iterator type
-    typedef std::basic_string<Uint32>::const_iterator ConstIterator; //!< Read-only iterator type
+    typedef Utf32String::iterator       Iterator;      //!< Iterator type
+    typedef Utf32String::const_iterator ConstIterator; //!< Read-only iterator type
 
     ////////////////////////////////////////////////////////////
     // Static member data
@@ -147,7 +259,7 @@ public:
     /// \param utf32String UTF-32 string to assign
     ///
     ////////////////////////////////////////////////////////////
-    String(const std::basic_string<Uint32>& utf32String);
+    String(const Utf32String& utf32String);
 
     ////////////////////////////////////////////////////////////
     /// \brief Copy constructor
@@ -190,7 +302,7 @@ public:
     ///
     /// This function is provided for consistency, it is equivalent to
     /// using the constructors that takes a const sf::Uint32* or
-    /// a std::basic_string<sf::Uint32>.
+    /// a sf::Utf32String.
     ///
     /// \param begin Forward iterator to the beginning of the UTF-32 sequence
     /// \param end   Forward iterator to the end of the UTF-32 sequence
@@ -273,7 +385,7 @@ public:
     /// \see toUtf16, toUtf32
     ///
     ////////////////////////////////////////////////////////////
-    std::basic_string<Uint8> toUtf8() const;
+    sf::U8String toUtf8() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert the Unicode string to a UTF-16 string
@@ -283,7 +395,7 @@ public:
     /// \see toUtf8, toUtf32
     ///
     ////////////////////////////////////////////////////////////
-    std::basic_string<Uint16> toUtf16() const;
+    Utf16String toUtf16() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert the Unicode string to a UTF-32 string
@@ -296,7 +408,7 @@ public:
     /// \see toUtf8, toUtf16
     ///
     ////////////////////////////////////////////////////////////
-    std::basic_string<Uint32> toUtf32() const;
+    Utf32String toUtf32() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Overload of assignment operator
@@ -524,7 +636,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::basic_string<Uint32> m_string; //!< Internal string of UTF-32 characters
+    Utf32String m_string; //!< Internal string of UTF-32 characters
 };
 
 ////////////////////////////////////////////////////////////

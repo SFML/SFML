@@ -57,7 +57,7 @@ String ClipboardImpl::getString()
 ////////////////////////////////////////////////////////////
 void ClipboardImpl::setString(const String& text)
 {
-    std::basic_string<Uint8> utf8 = text.toUtf8();
+    U8String utf8 = text.toUtf8();
     NSString* data = [[NSString alloc] initWithBytes:utf8.data()
                                               length:utf8.length()
                                             encoding:NSUTF8StringEncoding];
