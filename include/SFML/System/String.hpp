@@ -38,6 +38,44 @@
 namespace sf
 {
 ////////////////////////////////////////////////////////////
+/// \brief Character traits for std::uint8_t
+///
+////////////////////////////////////////////////////////////
+struct SFML_SYSTEM_API U8StringCharTraits
+{
+    typedef unsigned char                           char_type;
+    typedef std::char_traits<char>::int_type        int_type;
+    typedef std::char_traits<char>::off_type        off_type;
+    typedef std::char_traits<char>::pos_type        pos_type;
+    typedef std::char_traits<char>::state_type      state_type;
+
+    static void             assign(char_type& c1, char_type c2);
+    static char_type*       assign(char_type* s, std::size_t n, char_type c);
+    static bool             eq(char_type c1, char_type c2);
+    static bool             lt(char_type c1, char_type c2);
+    static char_type*       move(char_type* s1, const char_type* s2, std::size_t n);
+    static char_type*       copy(char_type* s1, const char_type* s2, std::size_t n);
+    static int              compare(const char_type* s1, const char_type* s2, std::size_t n);
+    static std::size_t      length(const char_type* s);
+    static const char_type* find(const char_type* s, std::size_t n, const char_type& c);
+    static char_type        to_char_type(int_type i);
+    static int_type         to_int_type(char_type c);
+    static bool             eq_int_type(int_type i1, int_type i2);
+    static int_type         eof();
+    static int_type         not_eof(int_type i);
+};
+
+////////////////////////////////////////////////////////////
+/// \brief Portable replacement for std::basic_string<std::uint8_t>
+///
+/// While all major C++ implementations happen to define this
+/// as of early 2024, this specialization is not strictly speaking
+/// standard C++. Thus we can't depend on its continued existence.
+///
+////////////////////////////////////////////////////////////
+typedef std::basic_string<unsigned char, U8StringCharTraits> U8String;
+
+////////////////////////////////////////////////////////////
 /// \brief Utility string class that automatically handles
 ///        conversions between types and encodings
 ///
@@ -273,7 +311,7 @@ public:
     /// \see toUtf16, toUtf32
     ///
     ////////////////////////////////////////////////////////////
-    std::basic_string<Uint8> toUtf8() const;
+    sf::U8String toUtf8() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert the Unicode string to a UTF-16 string
