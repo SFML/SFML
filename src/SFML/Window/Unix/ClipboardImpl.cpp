@@ -344,7 +344,7 @@ void ClipboardImpl::processEvent(XEvent& windowEvent)
                 {
                     // Respond to a request for conversion to a UTF-8 string
                     // or an encoding of our choosing (we always choose UTF-8)
-                    std::basic_string<Uint8> data = m_clipboardContents.toUtf8();
+                    U8String data = m_clipboardContents.toUtf8();
 
                     XChangeProperty(
                         m_display,
