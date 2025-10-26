@@ -3,6 +3,28 @@
 .vs/
 .vscode/
 build/
-cmake-build-*/
-CMakeUserPresets.json
 .DS_Store
+compile_commands.json
+
+# CMake files
+CMakeUserPresets.json
+CMakeCache.txt
+CMakeFiles
+cmake_install.cmake
+CPack*.cmake
+CTest*.cmake
+_deps
+SFMLConfig.cmake
+SFMLConfigVersion.cmake
+
+# Ninja build files
+*.Ninja*
+
+# Binary output
+*.a
+*.so
+bin
+
+# Test/coverage files
+*include.cmake
+patch_coverage.cmake
