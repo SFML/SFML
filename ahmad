@@ -1,0 +1,255 @@
+/* HackerGUI - C++ (SFML)
+
+Description: A playful "hacker" themed GUI app written in C++ using SFML that simulates a terminal/matrix rain, shows generated "hack" log lines, a progress bar, and simple buttons (Start, Stop, Clear).
+
+Features:
+
+Matrix-style falling characters background
+
+Fake hacking log generator
+
+Buttons: Start Hack, Stop, Clear Log
+
+Progress bar animation
+
+Clickable UI (mouse interaction)
+
+
+Dependencies:
+
+SFML 2.5+ (Graphics, Window, System)
+
+A monospace TTF font file (place in resources/ folder) e.g. resources/DejaVuSansMono.ttf
+
+
+Build (Linux/macOS) example: g++ main.cpp -o HackerGUI -std=c++17 -lsfml-graphics -lsfml-window -lsfml-system
+
+Windows (MinGW) example: g++ main.cpp -o HackerGUI.exe -std=c++17 -lsfml-graphics -lsfml-window -lsfml-system
+
+Usage:
+
+1. Install SFML for your platform (package manager, vcpkg, or from sfml-dev.org).
+
+
+2. Put a mono font at resources/DejaVuSansMono.ttf
+
+
+3. Compile with the command above.
+
+
+4. Run ./HackerGUI
+
+
+
+Note: This is a fun demo; it does not perform real hacking. */
+
+#include <SFML/Graphics.hpp> #include <vector> #include <string> #include <random> #include <chrono> #include <sstream>
+
+// ------------------------ Utilities ------------------------ static std::mt19937 rng((unsigned)std::chrono::high_resolution_clock::now().time_since_epoch().count()); int randInt(int a, int b){ std::uniform_int_distribution<int> d(a,b); return d(rng); } float randFloat(float a, float b){ std::uniform_real_distribution<float> d(a,b); return d(rng); }
+
+// ------------------------ Matrix rain ------------------------ struct RainColumn { std::vector<char> chars; float x; float speed; int maxLen; float timer;
+
+RainColumn(float startX, int heightChars){
+    x = startX;
+    reset(heightChars);
+}
+void reset(int heightChars){
+    maxLen = randInt(6, heightChars/2);
+    speed = randFloat(30.f, 200.f);
+    chars.resize(maxLen);
+    for (int i=0;i<maxLen;i++) chars[i] = (char)randInt(33,126);
+    timer = randFloat(0, heightChars);
+}
+
+};
+
+// ------------------------ Simple UI button ------------------------ struct Button { sf::RectangleShape rect; sf::Text text; bool hovered=false; Button(){} Button(const sf::Vector2f &pos, const sf::Vector2f &size, const sf::Font &font, const std::string &s, unsigned int charSize=18){ rect.setPosition(pos); rect.setSize(size); rect.setFillColor(sf::Color(20,20,20,200)); rect.setOutlineColor(sf::Color(80,200,120)); rect.setOutlineThickness(1.f); text.setFont(font); text.setString(s); text.setCharacterSize(charSize); text.setFillColor(sf::Color::Green); sf::FloatRect tb = text.getLocalBounds(); text.setPosition(pos.x + (size.x - tb.width)/2.f - tb.left, pos.y + (size.y - tb.height)/2.f - tb.top); } bool contains(sf::Vector2f p){ return rect.getGlobalBounds().contains(p); } void draw(sf::RenderWindow &win){ win.draw(rect); win.draw(text); } };
+
+// ------------------------ Main ------------------------ int main(){ const int WINDOW_W = 1000; const int WINDOW_H = 700; sf::RenderWindow window(sf::VideoMode(WINDOW_W, WINDOW_H), "Hacker GUI - C++ (SFML)"); window.setFramerateLimit(60);
+
+// Load font
+sf::Font font;
+if (!font.loadFromFile("resources/DejaVuSansMono.ttf")){
+    // fallback: system font path fallback attempts could be added, but we'll show simple text instead
+    // If font fails, create an empty text so user sees message
+    sf::Font f2; // nothing
+}
+
+// Title
+sf::Text title("HYPERHACK v0.1", font, 28);
+title.setFillColor(sf::Color::Green);
+title.setStyle(sf::Text::Bold);
+title.setPosition(20, 10);
+
+// Subtitle (clock)
+sf::Text subtitle("STATUS: idle", font, 16);
+subtitle.setFillColor(sf::Color(180,255,180));
+subtitle.setPosition(20, 48);
+
+// Matrix setup
+const int charSize = 16;
+const int cols = WINDOW_W / charSize;
+const int rows = WINDOW_H / charSize;
+std::vector<RainColumn> rain;
+for (int i=0;i<cols;i++){
+    RainColumn c(i*charSize + randFloat(-4,4), rows);
+    rain.push_back(c);
+}
+
+// UI buttons
+Button btnStart({780, 20}, {180, 44}, font, "Start Hack");
+Button btnStop({780, 74}, {180, 44}, font, "Stop");
+Button btnClear({780, 128}, {180, 44}, font, "Clear Log");
+
+// Log area
+sf::RectangleShape logBg(sf::Vector2f(440, 520));
+logBg.setPosition(20, 100);
+logBg.setFillColor(sf::Color(0,0,0,160));
+logBg.setOutlineColor(sf::Color(30,200,130));
+logBg.setOutlineThickness(1.f);
+
+std::vector<std::string> logLines;
+auto pushLog = [&](const std::string &s){
+    logLines.push_back(s);
+    if (logLines.size() > 30) logLines.erase(logLines.begin());
+};
+
+bool hacking = false;
+float hackProgress = 0.f; // 0..1
+float hackSpeed = 0.02f;
+sf::Clock timer;
+float logTimer = 0.f;
+
+// Pre-generate some fake targets
+std::vector<std::string> hosts = {"192.168.0.101","10.0.0.5","172.16.12.7","45.77.23.11","203.0.113.9","login.corp.local"};
+std::vector<std::string> actions = {"brute forcing","injecting payload","scanning ports","exploiting CVE-2021-44228","escalating privileges","dumping credentials","opening backdoor"};
+
+// Progress bar rects
+sf::RectangleShape progBg(sf::Vector2f(440, 20));
+progBg.setPosition(20, 640);
+progBg.setFillColor(sf::Color(10,10,10,200));
+progBg.setOutlineColor(sf::Color(40,200,120));
+progBg.setOutlineThickness(1.f);
+sf::RectangleShape progBar(sf::Vector2f(0,20));
+progBar.setPosition(20,640);
+progBar.setFillColor(sf::Color(20,200,80,200));
+
+// Main loop
+while (window.isOpen()){
+    sf::Event event;
+    while (window.pollEvent(event)){
+        if (event.type == sf::Event::Closed) window.close();
+        if (event.type == sf::Event::MouseButtonPressed){
+            sf::Vector2f mp = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+            if (btnStart.contains(mp)){
+                if (!hacking){
+                    hacking = true; hackProgress = 0.f; subtitle.setString("STATUS: hacking..."); pushLog("[INFO] Initiating attack sequence...");
+                }
+            }
+            if (btnStop.contains(mp)){
+                if (hacking){ hacking = false; subtitle.setString("STATUS: stopped"); pushLog("[INFO] Attack stopped by operator."); }
+            }
+            if (btnClear.contains(mp)){
+                logLines.clear(); pushLog("[INFO] Log cleared.");
+            }
+        }
+    }
+
+    float dt = timer.restart().asSeconds();
+
+    // Update rain columns
+    for (auto &col : rain){
+        col.timer += dt * (col.speed/60.f);
+        if (col.timer > rows + col.maxLen){
+            col.reset(rows);
+        } else {
+            // occasionally mutate characters
+            for (int i=0;i<col.maxLen;i++){
+                if (randInt(0,100) < 4) col.chars[i] = (char)randInt(33,126);
+            }
+        }
+    }
+
+    // Hacking behavior
+    if (hacking){
+        hackProgress += hackSpeed * dt;
+        if (hackProgress > 1.f) hackProgress = 1.f;
+        progBar.setSize(sf::Vector2f(440.f * hackProgress, 20));
+        logTimer += dt;
+        if (logTimer > 0.4f){
+            logTimer = 0.f;
+            // generate a fake log line
+            std::ostringstream ss;
+            int type = randInt(0,3);
+            if (type==0) ss << "[SCAN] " << hosts[randInt(0, hosts.size()-1)] << ": port " << randInt(20, 65000) << " open";
+            else if (type==1) ss << "[PROC] " << actions[randInt(0, actions.size()-1)] << " on " << hosts[randInt(0, hosts.size()-1)];
+            else if (type==2) ss << "[CRACK] password found: '" << (char)randInt(97,122) << (char)randInt(97,122) << randInt(100,999) << "'";
+            else ss << "[OK] Payload delivered to " << hosts[randInt(0, hosts.size()-1)];
+            pushLog(ss.str());
+        }
+        if (hackProgress >= 1.f){
+            hacking = false;
+            pushLog("[SUCCESS] Target compromised.");
+            subtitle.setString("STATUS: idle");
+        }
+    } else {
+        // idle progress decay
+        progBar.setSize(sf::Vector2f(440.f * hackProgress, 20));
+        hackProgress = std::max(0.f, hackProgress - 0.02f * dt);
+    }
+
+    // Draw
+    window.clear(sf::Color(0,0,0));
+
+    // Draw matrix rain
+    sf::Text chText("", font, charSize);
+    for (int i=0;i<rain.size();i++){
+        RainColumn &c = rain[i];
+        for (int j=0;j<c.maxLen;j++){
+            float y = (c.timer - j) * charSize;
+            if (y < -charSize || y > WINDOW_H + charSize) continue;
+            chText.setString(std::string(1, c.chars[j]));
+            // brighter head
+            if (j==0) chText.setFillColor(sf::Color(180,255,180));
+            else chText.setFillColor(sf::Color(0,180,100, (sf::Uint8)std::max(60, 200 - j*20)));
+            chText.setPosition(c.x, y);
+            window.draw(chText);
+        }
+    }
+
+    // Overlay: left panel title and log
+    window.draw(logBg);
+    window.draw(title);
+    window.draw(subtitle);
+
+    // Draw log lines
+    sf::Text logText("", font, 14);
+    logText.setFillColor(sf::Color(120,255,140));
+    float ly = 110.f;
+    for (int i=0;i<logLines.size();i++){
+        logText.setString(logLines[i]);
+        logText.setPosition(26, ly);
+        window.draw(logText);
+        ly += 18;
+    }
+
+    // Draw buttons and progress
+    btnStart.draw(window);
+    btnStop.draw(window);
+    btnClear.draw(window);
+    window.draw(progBg);
+    window.draw(progBar);
+
+    // bottom-right small watermark
+    sf::Text wm("[ simulated environment ]", font, 12);
+    wm.setPosition(780, 680);
+    wm.setFillColor(sf::Color(80,180,120));
+    window.draw(wm);
+
+    window.display();
+}
+
+return 0;
+
+}
+
