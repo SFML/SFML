@@ -58,12 +58,12 @@ SFOpenGLView* getSFOpenGLViewFromSFMLWindow(const sf::WindowBase& window)
     const id nsHandle = static_cast<id>(window.getNativeHandle());
 
     // Get our SFOpenGLView from ...
-    SFOpenGLView* view = nil;
+    SFOpenGLView* _Nullable view = nil;
 
     if ([nsHandle isKindOfClass:[NSWindow class]])
     {
         // If system handle is a window then from its content view.
-        view = [nsHandle contentView];
+        view = static_cast<SFOpenGLView*>([nsHandle contentView]);
 
         // Subview doesn't match ?
         if (![view isKindOfClass:[SFOpenGLView class]])
