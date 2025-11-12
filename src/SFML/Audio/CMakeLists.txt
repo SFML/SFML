@@ -177,6 +177,13 @@ else()
             target_compile_definitions(FLAC PRIVATE _FILE_OFFSET_BITS=32)
         endif()
 
+        # Disable all warnings
+        if(SFML_COMPILER_MSVC)
+            target_compile_options(FLAC PRIVATE /w)
+        elseif(SFML_COMPILER_GCC OR SFML_COMPILER_CLANG)
+            target_compile_options(FLAC PRIVATE -w)
+        endif()
+
         # aliases were introduced only after 1.3.7 was released
         add_library(Vorbis::vorbis ALIAS vorbis)
         add_library(Vorbis::vorbisenc ALIAS vorbisenc)
