@@ -178,11 +178,11 @@ else()
         endif()
 
         # Disable all warnings
-        if(SFML_COMPILER_MSVC)
-            target_compile_options(FLAC PRIVATE /w)
-        elseif(SFML_COMPILER_GCC OR SFML_COMPILER_CLANG)
-            target_compile_options(FLAC PRIVATE -w)
-        endif()
+        target_compile_options(ogg PRIVATE -w)
+        target_compile_options(FLAC PRIVATE -w)
+        target_compile_options(vorbis PRIVATE -w)
+        target_compile_options(vorbisenc PRIVATE -w)
+        target_compile_options(vorbisfile PRIVATE -w)
 
         # aliases were introduced only after 1.3.7 was released
         add_library(Vorbis::vorbis ALIAS vorbis)
