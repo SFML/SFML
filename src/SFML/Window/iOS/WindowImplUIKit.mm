@@ -47,7 +47,7 @@ WindowImplUIKit::WindowImplUIKit(WindowHandle /* handle */)
 
 
 ////////////////////////////////////////////////////////////
-WindowImplUIKit::WindowImplUIKit(VideoMode /* mode */,
+WindowImplUIKit::WindowImplUIKit(VideoMode mode,
                                  const String& /* title */,
                                  std::uint32_t style,
                                  State         state,
@@ -58,8 +58,8 @@ WindowImplUIKit::WindowImplUIKit(VideoMode /* mode */,
     // Apply the fullscreen flag
     [UIApplication sharedApplication].statusBarHidden = !(style & Style::Titlebar) || (state == State::Fullscreen);
 
-    // Create the window
-    const CGRect frame = [UIScreen mainScreen].bounds; // Ignore user size, it wouldn't make sense to use something else
+    // Create the window the size of the screen
+    const CGRect frame = [UIScreen mainScreen].bounds;
     m_window           = [[UIWindow alloc] initWithFrame:frame];
     m_hasFocus         = true;
 
@@ -80,6 +80,12 @@ WindowImplUIKit::WindowImplUIKit(VideoMode /* mode */,
 
     // Make it the current window
     [m_window makeKeyAndVisible];
+    
+    // If the size doesn't match what the user requested, we must notify them so they can adjust
+    if (mode.size.x != frame.size.width || mode.size.y != frame.size.height)
+    {
+        forwardEvent(sf::Event::Resized{getSize()});
+    }
 }
 
 
