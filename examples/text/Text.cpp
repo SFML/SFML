@@ -3,6 +3,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics.hpp>
 
+#include <SFML/Main.hpp>
 #include <algorithm>
 #include <array>
 #include <chrono>
@@ -24,6 +25,14 @@
 
 namespace
 {
+std::filesystem::path resourcesDir()
+{
+#ifdef SFML_SYSTEM_IOS
+    return "";
+#else
+    return "resources";
+#endif
+}
 constexpr auto windowWidth           = 1200u;
 constexpr auto textSize              = 23u;
 constexpr auto textSpacing           = 5.0f;
@@ -37,7 +46,7 @@ constexpr auto rainbowDeltaPerSecond = 60.f;
 struct DemoText
 {
     DemoText(const std::filesystem::path& fontFilename, std::string_view message) :
-        font(std::make_unique<sf::Font>("resources" / fontFilename)),
+        font(std::make_unique<sf::Font>(resourcesDir() / fontFilename)),
         text(*font, sf::String::fromUtf8(message.begin(), message.end()), textSize)
     {
         // Generate per-character effect data
@@ -634,7 +643,7 @@ int main()
     sf::RenderWindow window(sf::VideoMode({windowWidth, 800u}), "SFML Text", sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
 
-    const sf::Font font("resources/tuffy.ttf");
+    const sf::Font font(resourcesDir() / "tuffy.ttf");
     sf::Text       instructions(font,
                           "F1: Toggle text bounding box\nF2: Toggle glyph bounding box\nF3: Toggle cursor\nF4: Cycle "
                                 "pre-processing (None, Color, Outline, Italicize, Embolden)\nLeft/Right "
@@ -836,4 +845,5 @@ int main()
         window.draw(instructions);
         window.display();
     }
+    return 0;
 }
