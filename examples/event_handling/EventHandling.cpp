@@ -5,9 +5,18 @@
 
 #include <vector>
 
+#include <SFML/Main.hpp>
 
 namespace
 {
+std::filesystem::path resourcesDir()
+{
+#ifdef SFML_SYSTEM_IOS
+    return "";
+#else
+    return "resources";
+#endif
+}
 std::string vec2ToString(const sf::Vector2i vec2)
 {
     return '(' + std::to_string(vec2.x) + ", " + std::to_string(vec2.y) + ')';
@@ -76,6 +85,16 @@ public:
         {
             return "Touch Began: " + vec2ToString(touchBegan.position);
         }
+        
+        std::optional<std::string> operator()(const sf::Event::TouchEnded& touchEnded)
+        {
+            return "Touch Ended: " + vec2ToString(touchEnded.position);
+        }
+        
+        std::optional<std::string> operator()(const sf::Event::TouchMoved& touchMoved)
+        {
+            return "Touch Moved: " + vec2ToString(touchMoved.position);
+        }
 
         // When defining a visitor, make sure all event types can be handled by it.
         // If you don't intend on exhaustively specifying an operator() for each
@@ -137,6 +156,14 @@ public:
                     {
                         m_log.emplace_back("Touch Began: " + vec2ToString(touchBegan->position));
                     }
+                    else if (const auto* touchEnded = event->getIf<sf::Event::TouchEnded>())
+                    {
+                        m_log.emplace_back("Touch Ended: " + vec2ToString(touchEnded->position));
+                    }
+                    else if (const auto* touchMoved = event->getIf<sf::Event::TouchMoved>())
+                    {
+                        m_log.emplace_back("Touch Moved: " + vec2ToString(touchMoved->position));
+                    }
                     else
                     {
                         // All unhandled events will end up here
@@ -176,7 +203,11 @@ public:
                                       { m_log.emplace_back("Mouse Moved: " + vec2ToString(mouseMoved.position)); },
                                       [&](const sf::Event::MouseButtonPressed&) { m_log.emplace_back("Mouse Pressed"); },
                                       [&](const sf::Event::TouchBegan& touchBegan)
-                                      { m_log.emplace_back("Touch Began: " + vec2ToString(touchBegan.position)); });
+                                      { m_log.emplace_back("Touch Began: " + vec2ToString(touchBegan.position)); },
+                                      [&](const sf::Event::TouchEnded& touchEnded)
+                                      { m_log.emplace_back("Touch Ended: " + vec2ToString(touchEnded.position)); },
+                                      [&](const sf::Event::TouchMoved& touchMoved)
+                                      { m_log.emplace_back("Touch Moved: " + vec2ToString(touchMoved.position)); });
 
                 // To handle unhandled events, just add the following lambda to the set of handlers
                 // [&](const auto&) { m_log.emplace_back("Other Event"); }
@@ -217,6 +248,14 @@ public:
                         else if constexpr (std::is_same_v<T, sf::Event::TouchBegan>)
                         {
                             m_log.emplace_back("Touch Began: " + vec2ToString(event.position));
+                        }
+                        else if constexpr (std::is_same_v<T, sf::Event::TouchEnded>)
+                        {
+                            m_log.emplace_back("Touch Ended: " + vec2ToString(event.position));
+                        }
+                        else if constexpr (std::is_same_v<T, sf::Event::TouchMoved>)
+                        {
+                            m_log.emplace_back("Touch Moved: " + vec2ToString(event.position));
                         }
                         else
                         {
@@ -294,6 +333,16 @@ public:
     {
         m_log.emplace_back("Touch Began: " + vec2ToString(touchBegan.position));
     }
+    
+    void handle(const sf::Event::TouchEnded& touchEnded)
+    {
+        m_log.emplace_back("Touch Ended: " + vec2ToString(touchEnded.position));
+    }
+    
+    void handle(const sf::Event::TouchMoved& touchMoved)
+    {
+        m_log.emplace_back("Touch Moved: " + vec2ToString(touchMoved.position));
+    }
 
     template <typename T>
     void handle(const T&)
@@ -316,7 +365,7 @@ private:
     // Member data
     ////////////////////////////////////////////////////////////
     sf::RenderWindow m_window{sf::VideoMode({800u, 600u}), "SFML Event Handling", sf::Style::Titlebar | sf::Style::Close};
-    const sf::Font           m_font{"resources/tuffy.ttf"};
+    const sf::Font           m_font{resourcesDir() / "tuffy.ttf"};
     sf::Text                 m_logText{m_font, "", 20};
     sf::Text                 m_handlerText{m_font, "Current Handler: Classic", 24};
     sf::Text                 m_instructions{m_font, "Press Enter to change handler type", 24};
@@ -335,4 +384,5 @@ int main()
 {
     Application application;
     application.run();
+    return 0;
 }
