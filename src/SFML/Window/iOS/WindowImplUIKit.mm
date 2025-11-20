@@ -80,7 +80,7 @@ WindowImplUIKit::WindowImplUIKit(VideoMode mode,
 
     // Make it the current window
     [m_window makeKeyAndVisible];
-    
+
     // If the size doesn't match what the user requested, we must notify them so they can adjust
     if (mode.size.x != frame.size.width || mode.size.y != frame.size.height)
     {
