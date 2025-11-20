@@ -445,8 +445,15 @@ function(sfml_add_test target SOURCES DEPENDS)
         target_compile_options(${target} PRIVATE /utf-8)
     endif()
 
-    # Add the test
-    catch_discover_tests(${target} WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
+    # Add the test - catch_discover_tests uses the absolute path to the exe on the host machine, which can only work
+    # if you deploy it to the same path on the device. While this might work on unix hosts it can't work on windows
+    # where the absolute path includes the colon after the drive letter that makes the path invalid 
+    if (ANDROID)
+        find_program(ADB adb)
+        add_test(NAME ${target} COMMAND ${ADB} shell "cd /data/local/tmp; export LD_LIBRARY_PATH=/data/local/tmp; ./$<TARGET_FILE_NAME:${target}>" )
+    else()
+        catch_discover_tests(${target} WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR} TEST_EXECUTABLE biff)
+    endif()
 endfunction()
 
 # Generate a SFMLConfig.cmake file (and associated files) from the targets registered
