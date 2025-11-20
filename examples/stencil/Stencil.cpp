@@ -3,6 +3,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics.hpp>
 
+#include <SFML/Main.hpp>
+
 #include <cstdlib>
 
 
