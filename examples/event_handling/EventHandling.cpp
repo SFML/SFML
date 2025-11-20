@@ -3,9 +3,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics.hpp>
 
-#include <vector>
-
 #include <SFML/Main.hpp>
+#include <vector>
 
 namespace
 {
@@ -85,12 +84,12 @@ public:
         {
             return "Touch Began: " + vec2ToString(touchBegan.position);
         }
-        
+
         std::optional<std::string> operator()(const sf::Event::TouchEnded& touchEnded)
         {
             return "Touch Ended: " + vec2ToString(touchEnded.position);
         }
-        
+
         std::optional<std::string> operator()(const sf::Event::TouchMoved& touchMoved)
         {
             return "Touch Moved: " + vec2ToString(touchMoved.position);
@@ -333,12 +332,12 @@ public:
     {
         m_log.emplace_back("Touch Began: " + vec2ToString(touchBegan.position));
     }
-    
+
     void handle(const sf::Event::TouchEnded& touchEnded)
     {
         m_log.emplace_back("Touch Ended: " + vec2ToString(touchEnded.position));
     }
-    
+
     void handle(const sf::Event::TouchMoved& touchMoved)
     {
         m_log.emplace_back("Touch Moved: " + vec2ToString(touchMoved.position));
