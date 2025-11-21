@@ -6,6 +6,7 @@ set(NETWORK_SRC
     Socket.test.cpp
     SocketSelector.test.cpp
     TcpListener.test.cpp
+    TcpLoopback.test.cpp
     TcpSocket.test.cpp
     UdpSocket.test.cpp
 )
