@@ -19,10 +19,20 @@
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
+#include <filesystem>
 
 
 namespace
 {
+std::filesystem::path resourcesDir()
+{
+#ifdef SFML_SYSTEM_IOS
+    return "";
+#else
+    return "resources";
+#endif
+}
+
 // Width and height of the application window
 constexpr sf::Vector2u windowSize(800, 600);
 
@@ -430,7 +440,7 @@ int main()
     sf::RenderWindow window(sf::VideoMode(windowSize), "SFML Island", sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
 
-    const sf::Font font("resources/tuffy.ttf");
+    const sf::Font font(resourcesDir() / "tuffy.ttf");
 
     // Create all of our graphics resources
     sf::Text         hudText(font);
@@ -459,7 +469,7 @@ int main()
     {
         statusText.setString("Shaders and/or Vertex Buffers Unsupported");
     }
-    else if (!terrainShader.loadFromFile("resources/terrain.vert", "resources/terrain.frag"))
+    else if (!terrainShader.loadFromFile(resourcesDir() / "terrain.vert", resourcesDir() / "terrain.frag"))
     {
         statusText.setString("Failed to load shader program");
     }
