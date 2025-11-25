@@ -28,6 +28,9 @@ if(SFML_OS_ANDROID)
 
     # glad sources
     target_include_directories(sfml-main SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/glad/include")
+
+    # Android libraries
+    target_link_libraries(sfml-main PRIVATE android)
 elseif(SFML_OS_IOS)
     target_link_libraries(sfml-main PUBLIC SFML::Window)
 endif()
