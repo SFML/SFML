@@ -24,6 +24,13 @@
 
 #pragma once
 
+////////////////////////////////////////////////////////////
+// Headers
+////////////////////////////////////////////////////////////
+#include <SFML/Window/Joystick.hpp>
+
+#include <optional>
+
 
 namespace sf::priv
 {
@@ -70,7 +77,7 @@ public:
     /// \brief Close the joystick
     ///
     ////////////////////////////////////////////////////////////
-    void close();
+    void close() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the joystick capabilities
@@ -94,13 +101,23 @@ public:
     /// \return Joystick state
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] JoystickState update();
+    [[nodiscard]] JoystickState update() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Translate SFML axis code to Android axis index
+    ///
+    /// \return Android-compatible ID of the given axis
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] static int sfAxisToAndroid(Joystick::Axis axis);
 
 private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    Joystick::Identification m_identification; ///< Joystick identification
+    Joystick::Identification    m_identification; ///< Joystick identification
+    JoystickCaps                m_capabilities;
+    std::optional<std::int32_t> m_currentDeviceIdx; ///< Physical device ID
 };
 
 } // namespace sf::priv
