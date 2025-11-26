@@ -186,9 +186,6 @@
     // Now that we have a window, set up correctly the scale factor and cursor grabbing
     [self updateScaleFactor];
     [self updateCursorGrabbed]; // update for fullscreen
-
-    // Register the drag types that this view can accept
-    //[self registerForDraggedTypes:[NSArray arrayWithObjects:NSFilenamesPboardType, nil]];
 }
 
 
