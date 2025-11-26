@@ -152,16 +152,18 @@ Texture::Texture(const Texture& copy) :
     m_isRepeated(copy.m_isRepeated),
     m_cacheId(TextureImpl::getUniqueId())
 {
-    if (copy.m_texture)
+    if (!copy.m_texture)
     {
-        if (resize(copy.getSize(), copy.isSrgb()))
-        {
-            update(copy);
-        }
-        else
-        {
-            err() << "Failed to copy texture, failed to resize texture" << std::endl;
-        }
+        return;
+    }
+
+    if (resize(copy.getSize(), copy.isSrgb()))
+    {
+        update(copy);
+    }
+    else
+    {
+        err() << "Failed to copy texture, failed to resize texture" << std::endl;
     }
 }
 
@@ -559,33 +561,35 @@ void Texture::update(const std::uint8_t* pixels, Vector2u size, Vector2u dest)
     assert(dest.x + size.x <= m_size.x && "Destination x coordinate is outside of texture");
     assert(dest.y + size.y <= m_size.y && "Destination y coordinate is outside of texture");
 
-    if (pixels && m_texture)
+    if (!pixels || !m_texture)
     {
-        const TransientContextLock lock;
-
-        // Make sure that the current texture binding will be preserved
-        const priv::TextureSaver save;
-
-        // Copy pixels from the given array to the texture
-        glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
-        glCheck(glTexSubImage2D(GL_TEXTURE_2D,
-                                0,
-                                static_cast<GLint>(dest.x),
-                                static_cast<GLint>(dest.y),
-                                static_cast<GLsizei>(size.x),
-                                static_cast<GLsizei>(size.y),
-                                GL_RGBA,
-                                GL_UNSIGNED_BYTE,
-                                pixels));
-        glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
-        m_hasMipmap     = false;
-        m_pixelsFlipped = false;
-        m_cacheId       = TextureImpl::getUniqueId();
-
-        // Force an OpenGL flush, so that the texture data will appear updated
-        // in all contexts immediately (solves problems in multi-threaded apps)
-        glCheck(glFlush());
+        return;
     }
+
+    const TransientContextLock lock;
+
+    // Make sure that the current texture binding will be preserved
+    const priv::TextureSaver save;
+
+    // Copy pixels from the given array to the texture
+    glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
+    glCheck(glTexSubImage2D(GL_TEXTURE_2D,
+                            0,
+                            static_cast<GLint>(dest.x),
+                            static_cast<GLint>(dest.y),
+                            static_cast<GLsizei>(size.x),
+                            static_cast<GLsizei>(size.y),
+                            GL_RGBA,
+                            GL_UNSIGNED_BYTE,
+                            pixels));
+    glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
+    m_hasMipmap     = false;
+    m_pixelsFlipped = false;
+    m_cacheId       = TextureImpl::getUniqueId();
+
+    // Force an OpenGL flush, so that the texture data will appear updated
+    // in all contexts immediately (solves problems in multi-threaded apps)
+    glCheck(glFlush());
 }
 
 
@@ -746,63 +750,69 @@ void Texture::update(const Window& window, Vector2u dest)
     assert(dest.x + window.getSize().x <= m_size.x && "Destination x coordinate is outside of texture");
     assert(dest.y + window.getSize().y <= m_size.y && "Destination y coordinate is outside of texture");
 
-    if (m_texture && window.setActive(true))
+    if (!m_texture || !window.setActive(true))
     {
-        const TransientContextLock lock;
-
-        // Make sure that the current texture binding will be preserved
-        const priv::TextureSaver save;
-
-        // Copy pixels from the back-buffer to the texture
-        glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
-        glCheck(glCopyTexSubImage2D(GL_TEXTURE_2D,
-                                    0,
-                                    static_cast<GLint>(dest.x),
-                                    static_cast<GLint>(dest.y),
-                                    0,
-                                    0,
-                                    static_cast<GLsizei>(window.getSize().x),
-                                    static_cast<GLsizei>(window.getSize().y)));
-        glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
-        m_hasMipmap     = false;
-        m_pixelsFlipped = true;
-        m_cacheId       = TextureImpl::getUniqueId();
-
-        // Force an OpenGL flush, so that the texture will appear updated
-        // in all contexts immediately (solves problems in multi-threaded apps)
-        glCheck(glFlush());
+        return;
     }
+
+    const TransientContextLock lock;
+
+    // Make sure that the current texture binding will be preserved
+    const priv::TextureSaver save;
+
+    // Copy pixels from the back-buffer to the texture
+    glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
+    glCheck(glCopyTexSubImage2D(GL_TEXTURE_2D,
+                                0,
+                                static_cast<GLint>(dest.x),
+                                static_cast<GLint>(dest.y),
+                                0,
+                                0,
+                                static_cast<GLsizei>(window.getSize().x),
+                                static_cast<GLsizei>(window.getSize().y)));
+    glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
+    m_hasMipmap     = false;
+    m_pixelsFlipped = true;
+    m_cacheId       = TextureImpl::getUniqueId();
+
+    // Force an OpenGL flush, so that the texture will appear updated
+    // in all contexts immediately (solves problems in multi-threaded apps)
+    glCheck(glFlush());
 }
 
 
 ////////////////////////////////////////////////////////////
 void Texture::setSmooth(bool smooth)
 {
-    if (smooth != m_isSmooth)
+    if (smooth == m_isSmooth)
     {
-        m_isSmooth = smooth;
+        return;
+    }
 
-        if (m_texture)
-        {
-            const TransientContextLock lock;
+    m_isSmooth = smooth;
 
-            // Make sure that the current texture binding will be preserved
-            const priv::TextureSaver save;
+    if (!m_texture)
+    {
+        return;
+    }
 
-            glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
-            glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
+    const TransientContextLock lock;
 
-            if (m_hasMipmap)
-            {
-                glCheck(glTexParameteri(GL_TEXTURE_2D,
-                                        GL_TEXTURE_MIN_FILTER,
-                                        m_isSmooth ? GL_LINEAR_MIPMAP_LINEAR : GL_NEAREST_MIPMAP_LINEAR));
-            }
-            else
-            {
-                glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
-            }
-        }
+    // Make sure that the current texture binding will be preserved
+    const priv::TextureSaver save;
+
+    glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
+    glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
+
+    if (m_hasMipmap)
+    {
+        glCheck(glTexParameteri(GL_TEXTURE_2D,
+                                GL_TEXTURE_MIN_FILTER,
+                                m_isSmooth ? GL_LINEAR_MIPMAP_LINEAR : GL_NEAREST_MIPMAP_LINEAR));
+    }
+    else
+    {
+        glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
     }
 }
 
@@ -824,45 +834,48 @@ bool Texture::isSrgb() const
 ////////////////////////////////////////////////////////////
 void Texture::setRepeated(bool repeated)
 {
-    if (repeated != m_isRepeated)
+    if (repeated == m_isRepeated)
     {
-        m_isRepeated = repeated;
+        return;
+    }
 
-        if (m_texture)
+    m_isRepeated = repeated;
+
+    if (!m_texture)
+    {
+        return;
+    }
+
+    const TransientContextLock lock;
+
+    // Make sure that the current texture binding will be preserved
+    const priv::TextureSaver save;
+
+    static const bool textureEdgeClamp = GLEXT_texture_edge_clamp;
+
+    if (!m_isRepeated && !textureEdgeClamp)
+    {
+        static bool warned = false;
+
+        if (!warned)
         {
-            const TransientContextLock lock;
+            err() << "OpenGL extension SGIS_texture_edge_clamp unavailable" << '\n'
+                  << "Artifacts may occur along texture edges" << '\n'
+                  << "Ensure that hardware acceleration is enabled if available" << std::endl;
 
-            // Make sure that the current texture binding will be preserved
-            const priv::TextureSaver save;
-
-            static const bool textureEdgeClamp = GLEXT_texture_edge_clamp;
-
-            if (!m_isRepeated && !textureEdgeClamp)
-            {
-                static bool warned = false;
-
-                if (!warned)
-                {
-                    err() << "OpenGL extension SGIS_texture_edge_clamp unavailable" << '\n'
-                          << "Artifacts may occur along texture edges" << '\n'
-                          << "Ensure that hardware acceleration is enabled if available" << std::endl;
-
-                    warned = true;
-                }
-            }
-
-#ifndef SFML_OPENGL_ES
-            const GLint textureWrapParam = m_isRepeated ? GL_REPEAT
-                                                        : (textureEdgeClamp ? GLEXT_GL_CLAMP_TO_EDGE : GLEXT_GL_CLAMP);
-#else
-            const GLint textureWrapParam = m_isRepeated ? GL_REPEAT : GLEXT_GL_CLAMP_TO_EDGE;
-#endif
-
-            glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
-            glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, textureWrapParam));
-            glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, textureWrapParam));
+            warned = true;
         }
     }
+
+#ifndef SFML_OPENGL_ES
+    const GLint textureWrapParam = m_isRepeated ? GL_REPEAT : (textureEdgeClamp ? GLEXT_GL_CLAMP_TO_EDGE : GLEXT_GL_CLAMP);
+#else
+    const GLint textureWrapParam = m_isRepeated ? GL_REPEAT : GLEXT_GL_CLAMP_TO_EDGE;
+#endif
+
+    glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
+    glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, textureWrapParam));
+    glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, textureWrapParam));
 }
 
 
