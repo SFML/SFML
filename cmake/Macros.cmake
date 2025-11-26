@@ -354,6 +354,8 @@ macro(sfml_add_example target)
     # set the properties required for debugging
     set_target_properties(${target} PROPERTIES 
         VS_DEBUGGER_WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        
+        XCODE_SCHEME_WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         XCODE_GENERATE_SCHEME ON)
 
     # link the target to its SFML dependencies
@@ -405,6 +407,7 @@ function(sfml_add_test target SOURCES DEPENDS)
 
         XCODE_GENERATE_SCHEME ON # Required to set arguments
         XCODE_SCHEME_ARGUMENTS "-b" # Break into debugger
+        XCODE_SCHEME_WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} # set the Xcode startup path for debugging
     )
 
     # link the target to its SFML dependencies
