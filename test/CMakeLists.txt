@@ -61,42 +61,85 @@ add_subdirectory(Network)
 add_subdirectory(System)
 add_subdirectory(Window)
 
-if(SFML_OS_ANDROID AND DEFINED ENV{LIBCXX_SHARED_SO})
-    # Because we can only write to the tmp directory on the Android virtual device we will need to build our directory tree under it
-    set(TARGET_DIR "/data/local/tmp/$<TARGET_FILE_DIR:test-sfml-system>")
+if(SFML_OS_ANDROID)
+    # We can only write to the tmp directory on the Android virtual device
+    set(TARGET_DIR "/data/local/tmp")
 
-    # Generate script that copies necessary files over to the Android virtual device
-    file(GENERATE OUTPUT "${PROJECT_BINARY_DIR}/prepare-android-files.sh" CONTENT
-        "#!/bin/bash\n\
-        adb shell \"mkdir -p ${TARGET_DIR}\"\n\
-        adb push $<TARGET_FILE:test-sfml-audio>       ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:test-sfml-graphics>    ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:test-sfml-network>     ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:test-sfml-system>      ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:test-sfml-window>      ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:SFML::Audio>           ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:SFML::Graphics>        ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:SFML::Network>         ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:SFML::System>          ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:SFML::Window>          ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:Catch2>                ${TARGET_DIR}\n\
-        adb push $<TARGET_FILE:Catch2WithMain>        ${TARGET_DIR}\n\
-        adb push $ENV{LIBCXX_SHARED_SO}               ${TARGET_DIR}\n\
-        adb push ${CMAKE_CURRENT_LIST_DIR}/Audio/.    ${TARGET_DIR}\n\
-        adb push ${CMAKE_CURRENT_LIST_DIR}/Graphics/. ${TARGET_DIR}\n\
-        adb push ${CMAKE_CURRENT_LIST_DIR}/System/.   ${TARGET_DIR}\n\
-        adb push ${CMAKE_CURRENT_LIST_DIR}/Window/.   ${TARGET_DIR}\n\
-        adb shell \"chmod -R 775 ${TARGET_DIR} && ls -la ${TARGET_DIR}\"\n"
-        FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE)
+    # adb is required to push to device when running tests on the command line
+    # which not everybody will want/need to do, so only cause an error when trying to do that
+    find_program(ADB adb)
 
-    # Add the target to invoke the file copy script
-    add_custom_target(prepare-android-files COMMAND "${PROJECT_BINARY_DIR}/prepare-android-files.sh")
+    if(ADB)
+        # Copy binaries for all the required targets
+        add_custom_target(prepare-android-files
+            COMMAND ${ADB} push "$<TARGET_FILE:test-sfml-audio>"        ${TARGET_DIR}/$<TARGET_FILE_NAME:test-sfml-audio>
+            COMMAND ${ADB} push "$<TARGET_FILE:test-sfml-graphics>"     ${TARGET_DIR}/$<TARGET_FILE_NAME:test-sfml-graphics>
+            COMMAND ${ADB} push "$<TARGET_FILE:test-sfml-network>"      ${TARGET_DIR}/$<TARGET_FILE_NAME:test-sfml-network>
+            COMMAND ${ADB} push "$<TARGET_FILE:test-sfml-system>"       ${TARGET_DIR}/$<TARGET_FILE_NAME:test-sfml-system>
+            COMMAND ${ADB} push "$<TARGET_FILE:test-sfml-window>"       ${TARGET_DIR}/$<TARGET_FILE_NAME:test-sfml-window>
+            COMMAND ${ADB} push "$<TARGET_FILE:SFML::Audio>"            ${TARGET_DIR}/$<TARGET_FILE_NAME:SFML::Audio>
+            COMMAND ${ADB} push "$<TARGET_FILE:SFML::Graphics>"         ${TARGET_DIR}/$<TARGET_FILE_NAME:SFML::Graphics>
+            COMMAND ${ADB} push "$<TARGET_FILE:SFML::Network>"          ${TARGET_DIR}/$<TARGET_FILE_NAME:SFML::Network>
+            COMMAND ${ADB} push "$<TARGET_FILE:SFML::System>"           ${TARGET_DIR}/$<TARGET_FILE_NAME:SFML::System>
+            COMMAND ${ADB} push "$<TARGET_FILE:SFML::Window>"           ${TARGET_DIR}/$<TARGET_FILE_NAME:SFML::Window>
+            COMMAND ${ADB} push "$<TARGET_FILE:Catch2>"                 ${TARGET_DIR}/$<TARGET_FILE_NAME:Catch2>
+            COMMAND ${ADB} push "$<TARGET_FILE:Catch2WithMain>"         ${TARGET_DIR}/$<TARGET_FILE_NAME:Catch2WithMain>
+            COMMAND ${ADB} push "${CMAKE_CURRENT_LIST_DIR}/Audio/."     ${TARGET_DIR}
+            COMMAND ${ADB} push "${CMAKE_CURRENT_LIST_DIR}/Graphics/."  ${TARGET_DIR}
+            COMMAND ${ADB} push "${CMAKE_CURRENT_LIST_DIR}/System/."    ${TARGET_DIR}
+            COMMAND ${ADB} push "${CMAKE_CURRENT_LIST_DIR}/Audio/."     ${TARGET_DIR}
+            COMMAND ${ADB} shell "chmod -R 775            ${TARGET_DIR}"
+            COMMAND ${ADB} shell "ls -la                  ${TARGET_DIR}"
+        )
 
-    # Generate proxy script that translates CTest commands into adb shell commands
-    file(GENERATE OUTPUT "${PROJECT_BINARY_DIR}/run-in-adb-shell.sh" CONTENT
-        "#!/bin/bash\n\
-        adb shell \"cd ${TARGET_DIR}; LD_LIBRARY_PATH=${TARGET_DIR} /data/local/tmp/$1 \\\"$2\\\" \\\"$3\\\" \\\"$4\\\" \\\"$5\\\" \\\"$6\\\" \\\"$7\\\" \\\"$8\\\" \\\"$9\\\"\"\n"
-        FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE)
+        # Generate proxy script that translates CTest commands into adb shell commands
+        if(CMAKE_HOST_WIN32)
+            file(GENERATE OUTPUT "${PROJECT_BINARY_DIR}/run-in-adb-shell.bat" CONTENT
+                "@echo off\n\
+                for %%f in (\"%1\") do set \"exe=%%~nxf\"\n\
+                adb shell \"cd ${TARGET_DIR}; LD_LIBRARY_PATH=${TARGET_DIR} /data/local/tmp/%exe% \\\"%2\\\" \\\"%3\\\" \\\"%4\\\" \\\"%5\\\" \\\"%6\\\" \\\"%7\\\" \\\"%8\\\" \\\"%9\\\"\"\n"
+                FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE)
+        else()
+            file(GENERATE OUTPUT "${PROJECT_BINARY_DIR}/run-in-adb-shell.sh" CONTENT
+                "#!/bin/bash\n\
+                exe=$(basename $1)
+                adb shell \"cd ${TARGET_DIR}; LD_LIBRARY_PATH=${TARGET_DIR} /data/local/tmp/$exe \\\"$2\\\" \\\"$3\\\" \\\"$4\\\" \\\"$5\\\" \\\"$6\\\" \\\"$7\\\" \\\"$8\\\" \\\"$9\\\"\"\n"
+                FILE_PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE)
+        endif()
+
+        # If using shared STL that also needs to be copied
+        if(CMAKE_ANDROID_STL_TYPE STREQUAL "c++_shared")
+            # Find it in the ndk first. It's located in a path specific to both host and target arch
+            if(CMAKE_HOST_WIN32)
+                set(HOST_FOLDER "windows-x86_64")
+            elseif(CMAKE_HOST_APPLE)
+                set(HOST_FOLDER "darwin-x86_64")
+            else()
+                set(HOST_FOLDER "linux-x86_64")
+            endif()
+
+            if(CMAKE_ANDROID_ARCH_ABI STREQUAL "arm64-v8a")
+                set(TARGET_FOLDER "aarch64-linux-android")
+            elseif(CMAKE_ANDROID_ARCH_ABI STREQUAL "armeabi-v7a")
+                set(TARGET_FOLDER "arm-linux-androideabi")
+            elseif(CMAKE_ANDROID_ARCH_ABI STREQUAL "x86_64")
+                set(TARGET_FOLDER "x86_64-linux-android")
+            elseif(CMAKE_ANDROID_ARCH_ABI STREQUAL "x86")
+                set(TARGET_FOLDER "i686-linux-android")
+            endif()
+
+            find_file(STL_LIB libc++_shared.so PATHS
+                ${CMAKE_ANDROID_NDK}/toolchains/llvm/prebuilt/${HOST_FOLDER}/sysroot/usr/lib/${TARGET_FOLDER}
+                REQUIRED)
+            add_custom_command(TARGET prepare-android-files POST_BUILD
+                COMMAND ${ADB} push "${STL_LIB}" ${TARGET_DIR}/libc++_shared.so)
+        endif()
+    else()
+        # Error message and fail
+        add_custom_target(prepare-android-files
+            COMMAND ${CMAKE_COMMAND} -E echo "adb wasn't found, install it and reconfigure"
+            COMMAND ${CMAKE_COMMAND} -E false)
+    endif()
 endif()
 
 if(SFML_ENABLE_COVERAGE AND SFML_OS_WINDOWS AND NOT SFML_COMPILER_GCC)
