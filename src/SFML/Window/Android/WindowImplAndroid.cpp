@@ -685,6 +685,8 @@ Keyboard::Key WindowImplAndroid::androidKeyToSF(std::int32_t key)
 ////////////////////////////////////////////////////////////
 Keyboard::Scancode WindowImplAndroid::androidScanToSF(std::int32_t key)
 {
+    // Referencing https://android.googlesource.com/platform/frameworks/base/+/cd92588/data/keyboards/Generic.kl
+    // as the best source for how to map an android scancode to SFML
     // clang-format off
     switch (key)
     {

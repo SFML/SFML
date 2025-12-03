@@ -228,7 +228,6 @@ String getDescription(Keyboard::Scancode code)
 }
 
 
-
 ////////////////////////////////////////////////////////////
 void setVirtualKeyboardVisible(bool visible)
 {
