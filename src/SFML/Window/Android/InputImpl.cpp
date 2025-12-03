@@ -75,7 +75,7 @@ String getDescription(Keyboard::Scancode code)
 {
     switch (code)
     {
-        // clang-format off
+            // clang-format off
         case sf::Keyboard::Scan::A:                 return "A";
         case sf::Keyboard::Scan::B:                 return "B";
         case sf::Keyboard::Scan::C:                 return "C";
@@ -223,7 +223,7 @@ String getDescription(Keyboard::Scancode code)
         case sf::Keyboard::Scan::LaunchMail:        return "Launch Mail";
         case sf::Keyboard::Scan::LaunchMediaSelect: return "Launch Media Select";
         default: return "Unknown key";
-        // clang-format on
+            // clang-format on
     }
 }
 
