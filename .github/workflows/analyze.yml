@@ -2,6 +2,10 @@ name: Analyze and Sanitize
 
 on: workflow_call
 
+concurrency:
+  group: ${{ github.workflow }}-analyze-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   DISPLAY: ":99" # Display number to use for the X server
 

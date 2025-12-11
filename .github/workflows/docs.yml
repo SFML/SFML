@@ -2,6 +2,10 @@ name: Documentation
 
 on: workflow_call
 
+concurrency:
+  group: ${{ github.workflow }}-docs-${{ github.ref }}
+  cancel-in-progress: true
+
 defaults:
   run:
     shell: bash
