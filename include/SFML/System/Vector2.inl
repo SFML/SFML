@@ -57,9 +57,89 @@ constexpr Vector2<T>::operator Vector2<U>() const
 
 ////////////////////////////////////////////////////////////
 template <typename T>
+Vector2<T>::Vector2(T r, Angle phi) :
+    x(r * static_cast<T>(std::cos(phi.asRadians()))),
+    y(r * static_cast<T>(std::sin(phi.asRadians())))
+{
+    static_assert(std::is_floating_point_v<T>, "Vector2::Vector2(T, Angle) is only supported for floating point types");
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+T Vector2<T>::length() const
+{
+    static_assert(std::is_floating_point_v<T>, "Vector2::length() is only supported for floating point types");
+
+    return std::hypot(x, y);
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
 constexpr T Vector2<T>::lengthSquared() const
 {
     return dot(*this);
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+Vector2<T> Vector2<T>::normalized() const
+{
+    static_assert(std::is_floating_point_v<T>, "Vector2::normalized() is only supported for floating point types");
+
+    assert(*this != Vector2<T>());
+    return (*this) / length();
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+Angle Vector2<T>::angleTo(Vector2<T> rhs) const
+{
+    static_assert(std::is_floating_point_v<T>, "Vector2::angleTo() is only supported for floating point types");
+
+    assert(*this != Vector2<T>());
+    assert(rhs != Vector2<T>());
+    return radians(std::atan2(cross(rhs), dot(rhs)));
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+Angle Vector2<T>::angle() const
+{
+    static_assert(std::is_floating_point_v<T>, "Vector2::angle() is only supported for floating point types");
+
+    assert(*this != Vector2<T>());
+    return radians(std::atan2(y, x));
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+Vector2<T> Vector2<T>::rotatedBy(Angle phi) const
+{
+    static_assert(std::is_floating_point_v<T>, "Vector2::rotatedBy() is only supported for floating point types");
+
+    // No zero vector assert, because rotating a zero vector is well-defined (yields always itself)
+    T cos = std::cos(phi.asRadians());
+    T sin = std::sin(phi.asRadians());
+
+    // Don't manipulate x and y separately, otherwise they're overwritten too early
+    return Vector2<T>(cos * x - sin * y, sin * x + cos * y);
+}
+
+
+////////////////////////////////////////////////////////////
+template <typename T>
+constexpr Vector2<T> Vector2<T>::projectedOnto(Vector2<T> axis) const
+{
+    static_assert(std::is_floating_point_v<T>, "Vector2::projectedOnto() is only supported for floating point types");
+
+    assert(axis != Vector2<T>());
+    return dot(axis) / axis.lengthSquared() * axis;
 }
 
 
