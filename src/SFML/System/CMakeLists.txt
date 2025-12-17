@@ -25,10 +25,8 @@ set(SRC
     ${INCROOT}/Utf.inl
     ${SRCROOT}/Utils.hpp
     ${SRCROOT}/Utils.cpp
-    ${SRCROOT}/Vector2.cpp
     ${INCROOT}/Vector2.hpp
     ${INCROOT}/Vector2.inl
-    ${SRCROOT}/Vector3.cpp
     ${INCROOT}/Vector3.hpp
     ${INCROOT}/Vector3.inl
     ${SRCROOT}/FileInputStream.cpp
