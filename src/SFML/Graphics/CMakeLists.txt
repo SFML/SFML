@@ -112,14 +112,9 @@ if(SFML_USE_SYSTEM_DEPS)
     find_package(Freetype REQUIRED)
     find_package(HarfBuzz REQUIRED)
 else()
-    # use an immediately invoked function to scope option variables we have to set
-    function(sfml_add_graphics_dependencies)
+    # use a block to scope option variables we have to set
+    block()
         include(FetchContent)
-
-        # remember whether we are building SFML as a shared library
-        if(BUILD_SHARED_LIBS)
-            set(SFML_BUILD_SHARED_LIBS ON)
-        endif()
 
         # The FreeType <-> HarfBuzz relationship is a complex one.
         # HarfBuzz relies on FreeType to manage glyph data.
@@ -169,84 +164,79 @@ else()
             PATCH_COMMAND ${CMAKE_COMMAND} -DHARFBUZZ_DIR=${FETCHCONTENT_BASE_DIR}/harfbuzz-src -P ${PROJECT_SOURCE_DIR}/tools/harfbuzz/PatchHarfBuzz.cmake)
 
         FetchContent_MakeAvailable(Freetype HarfBuzz)
+    endblock()
 
-        # add HarfBuzz preprocessor symbols
-        target_compile_definitions(harfbuzz PRIVATE
-            HB_DISABLE_DEPRECATED
-            HB_NO_ATEXIT
-            HB_NO_BORING_EXPANSION
-            HB_NO_BUFFER_MESSAGE
-            HB_NO_BUFFER_SERIALIZE
-            HB_NO_BUFFER_VERIFY
-            HB_NO_BITMAP
-            HB_NO_DRAW
-            HB_NO_ERRNO
-            HB_NO_GETENV
-            HB_NO_MT
-            HB_NO_PAINT
-            HB_NO_SETLOCALE
-            HB_OPTIMIZE_SIZE
-        )
+    # add HarfBuzz preprocessor symbols
+    target_compile_definitions(harfbuzz PRIVATE
+        HB_DISABLE_DEPRECATED
+        HB_NO_ATEXIT
+        HB_NO_BORING_EXPANSION
+        HB_NO_BUFFER_MESSAGE
+        HB_NO_BUFFER_SERIALIZE
+        HB_NO_BUFFER_VERIFY
+        HB_NO_BITMAP
+        HB_NO_DRAW
+        HB_NO_ERRNO
+        HB_NO_GETENV
+        HB_NO_MT
+        HB_NO_PAINT
+        HB_NO_SETLOCALE
+        HB_OPTIMIZE_SIZE
+    )
 
-        # Now that both targets exist, add the HarfBuzz include directories to the freetype target
-        # We can't use target_link_libraries here because creating a circular dependency between FreeType and HarfBuzz
-        # will make it impossible to resolve either of them with find_dependency in SFMLGraphicsDependencies.cmake
-        # because we break the link here ourselves, we will have to re-establish it in Dependencies.cmake so CMake knows
-        # it has to adjust the linker command line by duplicating the libraries that have circular dependencies
-        target_include_directories(freetype SYSTEM PRIVATE $<TARGET_PROPERTY:harfbuzz,INTERFACE_INCLUDE_DIRECTORIES>)
+    # Now that both targets exist, add the HarfBuzz include directories to the freetype target
+    # We can't use target_link_libraries here because creating a circular dependency between FreeType and HarfBuzz
+    # will make it impossible to resolve either of them with find_dependency in SFMLGraphicsDependencies.cmake
+    # because we break the link here ourselves, we will have to re-establish it in Dependencies.cmake so CMake knows
+    # it has to adjust the linker command line by duplicating the libraries that have circular dependencies
+    target_include_directories(freetype SYSTEM PRIVATE $<TARGET_PROPERTY:harfbuzz,INTERFACE_INCLUDE_DIRECTORIES>)
 
-        set_target_properties(freetype harfbuzz PROPERTIES FOLDER "Dependencies" SYSTEM ON)
+    set_target_properties(freetype harfbuzz PROPERTIES FOLDER "Dependencies" SYSTEM ON)
 
-        # if building SFML as a shared library and linking our dependencies in
-        # as static libraries we need to build them with -fPIC
-        if(SFML_BUILD_SHARED_LIBS)
-            set_target_properties(freetype harfbuzz PROPERTIES POSITION_INDEPENDENT_CODE ON)
-        endif()
+    # if building SFML as a shared library and linking our dependencies in
+    # as static libraries we need to build them with -fPIC
+    if(BUILD_SHARED_LIBS)
+        set_target_properties(freetype harfbuzz PROPERTIES POSITION_INDEPENDENT_CODE ON)
+    endif()
 
-        # build using unity build and exclude files that cause issues
-        set_target_properties(freetype PROPERTIES UNITY_BUILD ON UNITY_BUILD_BATCH_SIZE 256)
-        set_source_files_properties(
-            "${FETCHCONTENT_BASE_DIR}/freetype-src/src/pfr/pfr.c"
-            "${FETCHCONTENT_BASE_DIR}/freetype-src/src/smooth/smooth.c"
-            "${FETCHCONTENT_BASE_DIR}/freetype-src/builds/windows/ftsystem.c"
-            "${FETCHCONTENT_BASE_DIR}/freetype-src/builds/windows/ftdebug.c"
-            TARGET_DIRECTORY freetype
-            PROPERTIES SKIP_UNITY_BUILD_INCLUSION ON
-        )
+    # build using unity build and exclude files that cause issues
+    set_target_properties(freetype PROPERTIES UNITY_BUILD ON UNITY_BUILD_BATCH_SIZE 256)
+    set_source_files_properties(
+        "${FETCHCONTENT_BASE_DIR}/freetype-src/src/pfr/pfr.c"
+        "${FETCHCONTENT_BASE_DIR}/freetype-src/src/smooth/smooth.c"
+        "${FETCHCONTENT_BASE_DIR}/freetype-src/builds/windows/ftsystem.c"
+        "${FETCHCONTENT_BASE_DIR}/freetype-src/builds/windows/ftdebug.c"
+        TARGET_DIRECTORY freetype
+        PROPERTIES SKIP_UNITY_BUILD_INCLUSION ON
+    )
 
-        # disable building dependencies as part of our unity build, they have their own internal unity build system
-        set_target_properties(harfbuzz PROPERTIES UNITY_BUILD OFF)
+    # disable building dependencies as part of our unity build, they have their own internal unity build system
+    set_target_properties(harfbuzz PROPERTIES UNITY_BUILD OFF)
 
-        sfml_set_stdlib(freetype)
-        sfml_set_stdlib(harfbuzz)
+    sfml_set_stdlib(freetype)
+    sfml_set_stdlib(harfbuzz)
 
-        # HarfBuzz builds using a unity build system, all its files are combined into harfbuzz.cc
-        # when building using mingw this can lead to "too many sections" and "file too big" errors
-        # thus we will have to activate the -bigobj assembler flag when building using mingw
-        if(WIN32 AND SFML_COMPILER_GCC)
-            target_compile_options(harfbuzz PRIVATE -Wa,-mbig-obj)
-        endif()
+    # HarfBuzz builds using a unity build system, all its files are combined into harfbuzz.cc
+    # when building using mingw this can lead to "too many sections" and "file too big" errors
+    # thus we will have to activate the -bigobj assembler flag when building using mingw
+    if(WIN32 AND SFML_COMPILER_GCC)
+        target_compile_options(harfbuzz PRIVATE -Wa,-mbig-obj)
+    endif()
 
-        # Disable all warnings
-        target_compile_options(freetype PRIVATE -w)
+    # Disable all warnings
+    target_compile_options(freetype PRIVATE -w)
+    target_compile_options(harfbuzz PRIVATE -w)
 
-        add_library(Freetype::Freetype ALIAS freetype)
-        add_library(HarfBuzz::HarfBuzz ALIAS harfbuzz)
-    endfunction()
-    sfml_add_graphics_dependencies()
+    add_library(Freetype::Freetype ALIAS freetype)
+    add_library(HarfBuzz::HarfBuzz ALIAS harfbuzz)
 endif()
 
 target_link_libraries(sfml-graphics PRIVATE Freetype::Freetype HarfBuzz::HarfBuzz)
 
 # we have to build SheenBidi ourselves in both cases since there is no system package for it
-# use an immediately invoked function to scope option variables we have to set
-function(sfml_add_sheenbidi_dependency)
+# use a block to scope option variables we have to set
+block()
     include(FetchContent)
-
-    # remember whether we are building SFML as a shared library
-    if(BUILD_SHARED_LIBS)
-        set(SFML_BUILD_SHARED_LIBS ON)
-    endif()
 
     set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
     set(BUILD_SHARED_LIBS OFF)
@@ -260,25 +250,27 @@ function(sfml_add_sheenbidi_dependency)
         # - turn the library into an object library so we can merge it into sfml-graphics
         PATCH_COMMAND ${CMAKE_COMMAND} -DSHEENBIDI_DIR=${FETCHCONTENT_BASE_DIR}/sheenbidi-src -P ${PROJECT_SOURCE_DIR}/tools/sheenbidi/PatchSheenBidi.cmake)
     FetchContent_MakeAvailable(SheenBidi)
+endblock()
 
-    set_target_properties(SheenBidi PROPERTIES FOLDER "Dependencies")
+set_target_properties(SheenBidi PROPERTIES FOLDER "Dependencies")
 
-    # if building SFML as a shared library and linking our dependencies in
-    # as static libraries we need to build them with -fPIC
-    if(SFML_BUILD_SHARED_LIBS)
-        set_target_properties(SheenBidi PROPERTIES POSITION_INDEPENDENT_CODE ON)
-    endif()
+# disable building SheenBidi as part of our unity build, it has its own internal unity build system
+set_target_properties(SheenBidi PROPERTIES UNITY_BUILD OFF)
 
-    # disable building SheenBidi as part of our unity build, it has its own internal unity build system
-    set_target_properties(SheenBidi PROPERTIES UNITY_BUILD OFF)
+sfml_set_stdlib(SheenBidi)
 
-    sfml_set_stdlib(SheenBidi)
+# add SheenBidi object library and headers to our own target
+target_sources(sfml-graphics PRIVATE $<TARGET_OBJECTS:SheenBidi>)
+target_include_directories(sfml-graphics SYSTEM PRIVATE "${SheenBidi_SOURCE_DIR}/Headers")
 
-    # add SheenBidi object library and headers to our own target
-    target_sources(sfml-graphics PRIVATE $<TARGET_OBJECTS:SheenBidi>)
-    target_include_directories(sfml-graphics SYSTEM PRIVATE "${SheenBidi_SOURCE_DIR}/Headers")
-endfunction()
-sfml_add_sheenbidi_dependency()
+# Disable all warnings
+target_compile_options(SheenBidi PRIVATE -w)
+
+# if building SFML as a shared library and linking our dependencies in
+# as static libraries we need to build them with -fPIC
+if(BUILD_SHARED_LIBS)
+    set_target_properties(SheenBidi PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif()
 
 # add preprocessor symbols
 target_compile_definitions(sfml-graphics PRIVATE "STBI_FAILURE_USERMSG")
