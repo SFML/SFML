@@ -70,6 +70,11 @@ public:
             return "Key Pressed: " + sf::Keyboard::getDescription(keyPress.scancode);
         }
 
+        std::optional<std::string> operator()(const sf::Event::KeyReleased& keyRelease)
+        {
+            return "Key Released: " + sf::Keyboard::getDescription(keyRelease.scancode);
+        }
+
         std::optional<std::string> operator()(const sf::Event::MouseMoved& mouseMoved)
         {
             return "Mouse Moved: " + vec2ToString(mouseMoved.position);
@@ -143,6 +148,10 @@ public:
                             m_handlerText.setString("Current Handler: Visitor");
                         }
                     }
+                    else if (const auto* keyRelease = event->getIf<sf::Event::KeyReleased>())
+                    {
+                        m_log.emplace_back("Key Released: " + sf::Keyboard::getDescription(keyRelease->scancode));
+                    }
                     else if (const auto* mouseMoved = event->getIf<sf::Event::MouseMoved>())
                     {
                         m_log.emplace_back("Mouse Moved: " + vec2ToString(mouseMoved->position));
@@ -198,6 +207,10 @@ public:
                                               m_handlerText.setString("Current Handler: Generic");
                                           }
                                       },
+                                      [&](const sf::Event::KeyReleased& keyRelease) {
+                                          m_log.emplace_back(
+                                              "Key Released: " + sf::Keyboard::getDescription(keyRelease.scancode));
+                                      },
                                       [&](const sf::Event::MouseMoved& mouseMoved)
                                       { m_log.emplace_back("Mouse Moved: " + vec2ToString(mouseMoved.position)); },
                                       [&](const sf::Event::MouseButtonPressed&) { m_log.emplace_back("Mouse Pressed"); },
@@ -235,6 +248,10 @@ public:
                                 m_handlerType = HandlerType::Forward;
                                 m_handlerText.setString("Current Handler: Forward");
                             }
+                        }
+                        else if constexpr (std::is_same_v<T, sf::Event::KeyReleased>)
+                        {
+                            m_log.emplace_back("Key Released: " + sf::Keyboard::getDescription(event.scancode));
                         }
                         else if constexpr (std::is_same_v<T, sf::Event::MouseMoved>)
                         {
@@ -316,6 +333,11 @@ public:
             m_handlerType = HandlerType::Classic;
             m_handlerText.setString("Current Handler: Classic");
         }
+    }
+
+    void handle(const sf::Event::KeyReleased& keyRelease)
+    {
+        m_log.emplace_back("Key Released: " + sf::Keyboard::getDescription(keyRelease.scancode));
     }
 
     void handle(const sf::Event::MouseMoved& mouseMoved)
