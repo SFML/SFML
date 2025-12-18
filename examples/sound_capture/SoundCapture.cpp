@@ -1,8 +1,9 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
+
+#include <SFML/Audio.hpp>
 
 #include <iostream>
 
@@ -31,15 +32,16 @@ int main()
         return EXIT_SUCCESS;
     }
 
-    sf::RenderWindow      window(sf::VideoMode({800, 600}), "Sound capture example");
-    const sf::Font font("resources/tuffy.ttf");
+    sf::RenderWindow window(sf::VideoMode({800, 600}), "Sound capture example");
+    const sf::Font   font("resources/tuffy.ttf");
 
     // List the available capture devices and display text for each
     std::vector<sf::Text> deviceTexts(devices.size(), {font});
     for (auto i = 0u; i < devices.size(); ++i)
     {
         deviceTexts[i].setString(devices[i]);
-        deviceTexts[i].setPosition({10, (static_cast<float>(deviceTexts[i].getCharacterSize()) + 10.f) * static_cast<float>(i)});
+        deviceTexts[i].setPosition(
+            {10, (static_cast<float>(deviceTexts[i].getCharacterSize()) + 10.f) * static_cast<float>(i)});
     }
 
     const auto lastDeviceTextBounds = deviceTexts.back().getGlobalBounds();
@@ -69,12 +71,12 @@ int main()
     // And text to show status
     sf::Text statusText(font);
     statusText.setPosition({10, recordButton.getGlobalBounds().position.y + recordButton.getGlobalBounds().size.y + 10});
-    
+
     // Here we'll use an integrated custom recorder, which saves the captured data into a SoundBuffer
     sf::SoundBufferRecorder recorder;
     sf::Sound               sound(recorder.getBuffer());
 
-    auto setCurrentDevice = [&](uint8_t index)
+    auto setCurrentDevice = [&](auto index)
     {
         assert(index < devices.size());
         if (!recorder.setDevice(devices[index]))
@@ -110,13 +112,13 @@ int main()
         recorder.stop();
         playButton.setFillColor(sf::Color::Green);
         recordButton.setOutlineColor(sf::Color::Transparent);
-        recording = false;
+        recording          = false;
         const auto& buffer = recorder.getBuffer();
         sound.setBuffer(buffer);
         statusText.setString("Recorded: " + std::to_string(buffer.getDuration().asSeconds()) + " seconds");
     };
 
-    bool playing = false;
+    bool playing       = false;
     auto startPlayback = [&]
     {
         sound.play();
@@ -137,10 +139,11 @@ int main()
     {
         while (const auto event = window.pollEvent())
         {
-            if (const auto clickEvent = event->getIf<sf::Event::MouseButtonPressed>(); clickEvent && clickEvent->button == sf::Mouse::Button::Left)
+            if (const auto* clickEvent = event->getIf<sf::Event::MouseButtonPressed>();
+                clickEvent && clickEvent->button == sf::Mouse::Button::Left)
             {
                 // Check if a device is selected
-                for (uint8_t i = 0; i < devices.size(); ++i)
+                for (auto i = 0u; i < devices.size(); ++i)
                 {
                     if (deviceTexts[i].getGlobalBounds().contains(sf::Vector2f{clickEvent->position}))
                     {
