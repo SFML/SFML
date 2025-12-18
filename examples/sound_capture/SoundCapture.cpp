@@ -87,7 +87,7 @@ int main()
         deviceIndicator.setSize(bounds.size);
         deviceIndicator.setPosition(bounds.position);
     };
-    setCurrentDevice(0);
+    setCurrentDevice(0u);
 
     bool recording      = false;
     auto startRecording = [&]
