@@ -32,6 +32,7 @@
 #include <SFML/System/Utf.hpp>
 
 #include <locale>
+#include <optional>
 #include <string>
 #include <string_view>
 
@@ -234,8 +235,9 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Create a new `sf::String` from a UTF-8 encoded string
     ///
-    /// \param begin Forward iterator to the beginning of the UTF-8 sequence
-    /// \param end   Forward iterator to the end of the UTF-8 sequence
+    /// \param begin       Forward iterator to the beginning of the UTF-8 sequence
+    /// \param end         Forward iterator to the end of the UTF-8 sequence
+    /// \param replacement Replacement for characters not convertible from UTF-8 (use nullopt to skip them)
     ///
     /// \return A `sf::String` containing the source string
     ///
@@ -243,13 +245,14 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     template <typename T>
-    [[nodiscard]] static String fromUtf8(T begin, T end);
+    [[nodiscard]] static String fromUtf8(T begin, T end, std::optional<char32_t> replacement = std::nullopt);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new `sf::String` from a UTF-16 encoded string
     ///
-    /// \param begin Forward iterator to the beginning of the UTF-16 sequence
-    /// \param end   Forward iterator to the end of the UTF-16 sequence
+    /// \param begin       Forward iterator to the beginning of the UTF-16 sequence
+    /// \param end         Forward iterator to the end of the UTF-16 sequence
+    /// \param replacement Replacement for characters not convertible from UTF-16 (use nullopt to skip them)
     ///
     /// \return A `sf::String` containing the source string
     ///
@@ -257,7 +260,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     template <typename T>
-    [[nodiscard]] static String fromUtf16(T begin, T end);
+    [[nodiscard]] static String fromUtf16(T begin, T end, std::optional<char32_t> replacement = std::nullopt);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new `sf::String` from a UTF-32 encoded string
@@ -292,7 +295,7 @@ public:
     /// \see `toAnsiString`, `operator std::wstring`
     ///
     ////////////////////////////////////////////////////////////
-    operator std::string() const;
+    [[deprecated("Use toAnsiString() instead")]] operator std::string() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Implicit conversion operator to `std::wstring` (wide string)
@@ -307,57 +310,60 @@ public:
     /// \see `toWideString`, `operator std::string`
     ///
     ////////////////////////////////////////////////////////////
-    operator std::wstring() const;
+    [[deprecated("Use toWideString() instead")]] operator std::wstring() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert the Unicode string to an ANSI string
     ///
     /// The UTF-32 string is converted to an ANSI string in
     /// the encoding defined by `locale`.
-    /// Characters that do not fit in the target encoding are
-    /// discarded from the returned string.
     ///
-    /// \param locale Locale to use for conversion
+    /// \param locale      Locale to use for conversion
+    /// \param replacement Replacement for characters not convertible to ANSI (use nullopt to skip them)
     ///
     /// \return Converted ANSI string
     ///
     /// \see `toWideString`, `operator std::string`
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] std::string toAnsiString(const std::locale& locale = {}) const;
+    [[nodiscard]] std::string toAnsiString(const std::locale&  locale      = {},
+                                           std::optional<char> replacement = std::nullopt) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert the Unicode string to a wide string
     ///
-    /// Characters that do not fit in the target encoding are
-    /// discarded from the returned string.
+    /// \param replacement Replacement for characters not convertible to wide char (use nullopt to skip them)
     ///
     /// \return Converted wide string
     ///
     /// \see `toAnsiString`, `operator std::wstring`
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] std::wstring toWideString() const;
+    [[nodiscard]] std::wstring toWideString(std::optional<wchar_t> replacement = std::nullopt) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert the Unicode string to a UTF-8 string
+    ///
+    /// \param replacement Replacement for characters not convertible to UTF-8 (use nullopt to skip them)
     ///
     /// \return Converted UTF-8 string
     ///
     /// \see `toUtf16`, `toUtf32`
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] sf::U8String toUtf8() const;
+    [[nodiscard]] sf::U8String toUtf8(std::optional<std::uint8_t> replacement = std::nullopt) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert the Unicode string to a UTF-16 string
+    ///
+    /// \param replacement Replacement for characters not convertible to UTF-16 (use nullopt to skip them)
     ///
     /// \return Converted UTF-16 string
     ///
     /// \see `toUtf8`, `toUtf32`
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] std::u16string toUtf16() const;
+    [[nodiscard]] std::u16string toUtf16(std::optional<std::uint16_t> replacement = std::nullopt) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert the Unicode string to a UTF-32 string

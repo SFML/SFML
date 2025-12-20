@@ -10,6 +10,13 @@
 
 #include <cassert>
 
+// Allow testing deprecated functions
+#ifdef _MSC_VER
+#pragma warning(disable : 4996)
+#else
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 namespace
 {
 // Return either argument depending on whether wchar_t is 16 or 32 bits
@@ -305,9 +312,9 @@ TEST_CASE("[System] sf::String")
         {
             {
                 const sf::String string = L'ú';
-                CHECK(std::string(string) == select("\xFA"s, "\0"s));
+                CHECK(std::string(string) == select("\xFA"s, ""s));
                 CHECK(std::wstring(string) == L"ú"s);
-                CHECK(string.toAnsiString() == select("\xFA"s, "\0"s));
+                CHECK(string.toAnsiString() == select("\xFA"s, ""s));
                 CHECK(string.toWideString() == L"ú"s);
                 CHECK(string.toUtf8() == sf::U8String{0xC3, 0xBA});
                 CHECK(string.toUtf16() == u"ú"s);
@@ -318,9 +325,9 @@ TEST_CASE("[System] sf::String")
             }
             {
                 const sf::String string = L'Ǻ';
-                CHECK(std::string(string) == "\0"s);
+                CHECK(std::string(string).empty());
                 CHECK(std::wstring(string) == L"Ǻ"s);
-                CHECK(string.toAnsiString() == "\0"s);
+                CHECK(string.toAnsiString().empty());
                 CHECK(string.toWideString() == L"Ǻ"s);
                 CHECK(string.toUtf8() == sf::U8String{0xC7, 0xBA});
                 CHECK(string.toUtf16() == u"Ǻ"s);
@@ -348,9 +355,9 @@ TEST_CASE("[System] sf::String")
             }
             {
                 const sf::String string = L"Улитка";
-                CHECK(std::string(string) == "\0\0\0\0\0\0"s);
+                CHECK(std::string(string).empty());
                 CHECK(std::wstring(string) == L"Улитка"s);
-                CHECK(string.toAnsiString() == "\0\0\0\0\0\0"s);
+                CHECK(string.toAnsiString().empty());
                 CHECK(string.toWideString() == L"Улитка"s);
                 CHECK(string.toUtf8() ==
                       sf::U8String{0xD0, 0xA3, 0xD0, 0xBB, 0xD0, 0xB8, 0xD1, 0x82, 0xD0, 0xBA, 0xD0, 0xB0});
@@ -365,9 +372,9 @@ TEST_CASE("[System] sf::String")
         SECTION("Wide string constructor")
         {
             const sf::String string = L"Полжав"s;
-            CHECK(std::string(string) == "\0\0\0\0\0\0"s);
+            CHECK(std::string(string).empty());
             CHECK(std::wstring(string) == L"Полжав"s);
-            CHECK(string.toAnsiString() == "\0\0\0\0\0\0"s);
+            CHECK(string.toAnsiString().empty());
             CHECK(string.toWideString() == L"Полжав"s);
             CHECK(string.toUtf8() == sf::U8String{0xD0, 0x9F, 0xD0, 0xBE, 0xD0, 0xBB, 0xD0, 0xB6, 0xD0, 0xB0, 0xD0, 0xB2});
             CHECK(string.toUtf16() == u"Полжав"s);
@@ -380,9 +387,9 @@ TEST_CASE("[System] sf::String")
         SECTION("Wide string view constructor")
         {
             const sf::String string = L"Полжав"sv;
-            CHECK(std::string(string) == "\0\0\0\0\0\0"s);
+            CHECK(std::string(string).empty());
             CHECK(std::wstring(string) == L"Полжав"s);
-            CHECK(string.toAnsiString() == "\0\0\0\0\0\0"s);
+            CHECK(string.toAnsiString().empty());
             CHECK(string.toWideString() == L"Полжав"s);
             CHECK(string.toUtf8() == sf::U8String{0xD0, 0x9F, 0xD0, 0xBE, 0xD0, 0xBB, 0xD0, 0xB6, 0xD0, 0xB0, 0xD0, 0xB2});
             CHECK(string.toUtf16() == u"Полжав"s);
@@ -395,9 +402,9 @@ TEST_CASE("[System] sf::String")
         SECTION("UTF-32 character constructor")
         {
             const sf::String string = U'🐌';
-            CHECK(std::string(string) == "\0"s);
+            CHECK(std::string(string).empty());
             CHECK(std::wstring(string) == select(L""s, L"🐌"s));
-            CHECK(string.toAnsiString() == "\0"s);
+            CHECK(string.toAnsiString().empty());
             CHECK(string.toWideString() == select(L""s, L"🐌"s));
             CHECK(string.toUtf8() == sf::U8String{0xF0, 0x9F, 0x90, 0x8C});
             CHECK(string.toUtf16() == u"🐌"s);
@@ -424,9 +431,9 @@ TEST_CASE("[System] sf::String")
             }
             {
                 const sf::String string = U"カタツムリ";
-                CHECK(std::string(string) == "\0\0\0\0\0"s);
+                CHECK(std::string(string).empty());
                 CHECK(std::wstring(string) == L"カタツムリ"s);
-                CHECK(string.toAnsiString() == "\0\0\0\0\0"s);
+                CHECK(string.toAnsiString().empty());
                 CHECK(string.toWideString() == L"カタツムリ"s);
                 CHECK(string.toUtf8() ==
                       sf::U8String{0xE3, 0x82, 0xAB, 0xE3, 0x82, 0xBF, 0xE3, 0x83, 0x84, 0xE3, 0x83, 0xA0, 0xE3, 0x83, 0xAA});
@@ -438,9 +445,9 @@ TEST_CASE("[System] sf::String")
             }
             {
                 const sf::String string = U"🐌🐚";
-                CHECK(std::string(string) == "\0\0"s);
+                CHECK(std::string(string).empty());
                 CHECK(std::wstring(string) == select(L""s, L"🐌🐚"s));
-                CHECK(string.toAnsiString() == "\0\0"s);
+                CHECK(string.toAnsiString().empty());
                 CHECK(string.toWideString() == select(L""s, L"🐌🐚"s));
                 CHECK(string.toUtf8() == sf::U8String{0xF0, 0x9F, 0x90, 0x8C, 0xF0, 0x9F, 0x90, 0x9A});
                 CHECK(string.toUtf16() == u"🐌🐚"s);
@@ -454,9 +461,9 @@ TEST_CASE("[System] sf::String")
         SECTION("UTF-32 string constructor")
         {
             const sf::String string = U"گھونگا"s;
-            CHECK(std::string(string) == "\0\0\0\0\0\0"s);
+            CHECK(std::string(string).empty());
             CHECK(std::wstring(string) == L"گھونگا"s);
-            CHECK(string.toAnsiString() == "\0\0\0\0\0\0"s);
+            CHECK(string.toAnsiString().empty());
             CHECK(string.toWideString() == L"گھونگا"s);
             CHECK(string.toUtf8() == sf::U8String{0xDA, 0xAF, 0xDA, 0xBE, 0xD9, 0x88, 0xD9, 0x86, 0xDA, 0xAF, 0xD8, 0xA7});
             CHECK(string.toUtf16() == u"گھونگا"s);
@@ -469,9 +476,9 @@ TEST_CASE("[System] sf::String")
         SECTION("UTF-32 string view constructor")
         {
             const sf::String string = U"گھونگا"sv;
-            CHECK(std::string(string) == "\0\0\0\0\0\0"s);
+            CHECK(std::string(string).empty());
             CHECK(std::wstring(string) == L"گھونگا"s);
-            CHECK(string.toAnsiString() == "\0\0\0\0\0\0"s);
+            CHECK(string.toAnsiString().empty());
             CHECK(string.toWideString() == L"گھونگا"s);
             CHECK(string.toUtf8() == sf::U8String{0xDA, 0xAF, 0xDA, 0xBE, 0xD9, 0x88, 0xD9, 0x86, 0xDA, 0xAF, 0xD8, 0xA7});
             CHECK(string.toUtf16() == u"گھونگا"s);
@@ -487,8 +494,13 @@ TEST_CASE("[System] sf::String")
         {
             constexpr std::array<std::uint8_t, 1> characters{251};
             const sf::String                      string = sf::String::fromUtf8(characters.begin(), characters.end());
+            CHECK(string.isEmpty());
+        }
+        {
+            constexpr std::array<std::uint8_t, 1> characters{251};
+            const sf::String string = sf::String::fromUtf8(characters.begin(), characters.end(), '?');
             CHECK(string.getSize() == 1);
-            CHECK(string[0] == 0);
+            CHECK(string[0] == '?');
         }
         {
             constexpr std::array<std::uint8_t, 4> characters{'w', 'x', 'y', 'z'};
@@ -507,9 +519,9 @@ TEST_CASE("[System] sf::String")
         {
             constexpr std::array<std::uint8_t, 4> characters{0xF0, 0x9F, 0x90, 0x8C};
             const sf::String                      string = sf::String::fromUtf8(characters.begin(), characters.end());
-            CHECK(std::string(string) == "\0"s);
+            CHECK(std::string(string).empty());
             CHECK(std::wstring(string) == select(L""s, L"🐌"s));
-            CHECK(string.toAnsiString() == "\0"s);
+            CHECK(string.toAnsiString().empty());
             CHECK(string.toWideString() == select(L""s, L"🐌"s));
             CHECK(string.toUtf8() == sf::U8String{0xF0, 0x9F, 0x90, 0x8C});
             CHECK(string.toUtf16() == u"🐌"s);
@@ -522,6 +534,28 @@ TEST_CASE("[System] sf::String")
 
     SECTION("fromUtf16()")
     {
+        {
+            constexpr std::array<char16_t, 1> characters{0xD800};
+            const sf::String                  string = sf::String::fromUtf16(characters.begin(), characters.end());
+            CHECK(string.isEmpty());
+        }
+        {
+            constexpr std::array<char16_t, 1> characters{0xD800};
+            const sf::String                  string = sf::String::fromUtf16(characters.begin(), characters.end(), '?');
+            CHECK(string.getSize() == 1);
+            CHECK(string[0] == '?');
+        }
+        {
+            constexpr std::array<char16_t, 2> characters{0xD800, 0xD800};
+            const sf::String                  string = sf::String::fromUtf16(characters.begin(), characters.end());
+            CHECK(string.isEmpty());
+        }
+        {
+            constexpr std::array<char16_t, 2> characters{0xD800, 0xD800};
+            const sf::String                  string = sf::String::fromUtf16(characters.begin(), characters.end(), '?');
+            CHECK(string.getSize() == 2);
+            CHECK(string[0] == '?');
+        }
         {
             constexpr std::u16string_view characters = u"SFML!"sv;
             const sf::String              string     = sf::String::fromUtf16(characters.begin(), characters.end());
@@ -541,11 +575,11 @@ TEST_CASE("[System] sf::String")
             const sf::String              string     = sf::String::fromUtf16(characters.begin(), characters.end());
             CHECK(std::string(string) == select("pi\xF1"
                                                 "ata"s,
-                                                "pi\0ata"s));
+                                                "piata"s));
             CHECK(std::wstring(string) == L"piñata"s);
             CHECK(string.toAnsiString() == select("pi\xF1"
                                                   "ata"s,
-                                                  "pi\0ata"s));
+                                                  "piata"s));
             CHECK(string.toWideString() == L"piñata"s);
             CHECK(string.toUtf8() == sf::U8String{'p', 'i', 0xC3, 0xB1, 'a', 't', 'a'});
             CHECK(string.toUtf16() == u"piñata"s);
@@ -557,9 +591,9 @@ TEST_CASE("[System] sf::String")
         {
             constexpr std::u16string_view characters = u"달팽이"sv;
             const sf::String              string     = sf::String::fromUtf16(characters.begin(), characters.end());
-            CHECK(std::string(string) == "\0\0\0"s);
+            CHECK(std::string(string).empty());
             CHECK(std::wstring(string) == L"달팽이"s);
-            CHECK(string.toAnsiString() == "\0\0\0"s);
+            CHECK(string.toAnsiString().empty());
             CHECK(string.toWideString() == L"달팽이"s);
             CHECK(string.toUtf8() == sf::U8String{0xEB, 0x8B, 0xAC, 0xED, 0x8C, 0xBD, 0xEC, 0x9D, 0xB4});
             CHECK(string.toUtf16() == u"달팽이"s);
@@ -574,9 +608,9 @@ TEST_CASE("[System] sf::String")
     {
         constexpr std::u32string_view characters = U"👍+👎=🤷"sv;
         const sf::String              string     = sf::String::fromUtf32(characters.begin(), characters.end());
-        CHECK(std::string(string) == "\0+\0=\0"s);
+        CHECK(std::string(string) == "+="s);
         CHECK(std::wstring(string) == select(L"+="s, L"👍+👎=🤷"s));
-        CHECK(string.toAnsiString() == "\0+\0=\0"s);
+        CHECK(string.toAnsiString() == "+="s);
         CHECK(string.toWideString() == select(L"+="s, L"👍+👎=🤷"s));
         CHECK(string.toUtf8() ==
               sf::U8String{0xF0, 0x9F, 0x91, 0x8D, '+', 0xF0, 0x9F, 0x91, 0x8E, '=', 0xF0, 0x9F, 0xA4, 0xB7});
