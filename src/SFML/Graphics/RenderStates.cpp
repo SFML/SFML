@@ -79,12 +79,12 @@ RenderStates::RenderStates(const BlendMode&   theBlendMode,
                            CoordinateType     theCoordinateType,
                            const Texture*     theTexture,
                            const Shader*      theShader) :
-blendMode(theBlendMode),
-stencilMode(theStencilMode),
-transform(theTransform),
-coordinateType(theCoordinateType),
-texture(theTexture),
-shader(theShader)
+    blendMode(theBlendMode),
+    stencilMode(theStencilMode),
+    transform(theTransform),
+    coordinateType(theCoordinateType),
+    texture(theTexture),
+    shader(theShader)
 {
 }
 

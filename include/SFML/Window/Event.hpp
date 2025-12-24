@@ -58,6 +58,10 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Resized event subtype
     ///
+    /// Resize events are sent when a window is resized, or when
+    /// the orientation is changed on a mobile platform even if
+    /// a resizable window was not requested
+    ///
     ////////////////////////////////////////////////////////////
     struct Resized
     {

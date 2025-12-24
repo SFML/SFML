@@ -29,6 +29,7 @@
 #include <SFML/System/Utf.hpp>
 
 #include <iterator>
+#include <unicodelib.h>
 #include <utility>
 
 #include <cassert>
@@ -173,7 +174,13 @@ String::String(const char* ansiString, const std::locale& locale)
 
 
 ////////////////////////////////////////////////////////////
-String::String(const std::string& ansiString, const std::locale& locale)
+String::String(const std::string& ansiString, const std::locale& locale) : String(std::string_view(ansiString), locale)
+{
+}
+
+
+////////////////////////////////////////////////////////////
+String::String(std::string_view ansiString, const std::locale& locale)
 {
     m_string.reserve(ansiString.length() + 1);
     Utf32::fromAnsi(ansiString.begin(), ansiString.end(), std::back_inserter(m_string), locale);
@@ -196,7 +203,13 @@ String::String(const wchar_t* wideString)
 
 
 ////////////////////////////////////////////////////////////
-String::String(const std::wstring& wideString)
+String::String(const std::wstring& wideString) : String(std::wstring_view(wideString))
+{
+}
+
+
+////////////////////////////////////////////////////////////
+String::String(std::wstring_view wideString)
 {
     m_string.reserve(wideString.length() + 1);
     Utf32::fromWide(wideString.begin(), wideString.end(), std::back_inserter(m_string));
@@ -211,6 +224,12 @@ String::String(const char32_t* utf32String) : m_string(utf32String ? utf32String
 
 ////////////////////////////////////////////////////////////
 String::String(std::u32string utf32String) : m_string(std::move(utf32String))
+{
+}
+
+
+////////////////////////////////////////////////////////////
+String::String(std::u32string_view utf32String) : m_string(utf32String)
 {
 }
 
@@ -420,6 +439,27 @@ String::Iterator String::end()
 String::ConstIterator String::end() const
 {
     return m_string.end();
+}
+
+
+////////////////////////////////////////////////////////////
+bool String::isGraphemeBoundary(std::size_t position) const
+{
+    return unicode::is_grapheme_boundary(m_string.data(), m_string.size(), position);
+}
+
+
+////////////////////////////////////////////////////////////
+bool String::isWordBoundary(std::size_t position) const
+{
+    return unicode::is_word_boundary(m_string.data(), m_string.size(), position);
+}
+
+
+////////////////////////////////////////////////////////////
+bool String::isSentenceBoundary(std::size_t position) const
+{
+    return unicode::is_sentence_boundary(m_string.data(), m_string.size(), position);
 }
 
 

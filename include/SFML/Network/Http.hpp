@@ -374,6 +374,7 @@ public:
     ///
     /// This function just stores the host address and port, it
     /// doesn't actually connect to it until you send a request.
+    /// It does however try to resolve the address.
     /// The port has a default value of 0, which means that the
     /// HTTP client will use the right port according to the
     /// protocol used (80 for HTTP). You should leave it like
@@ -383,8 +384,10 @@ public:
     /// \param host Web server to connect to
     /// \param port Port to use for connection
     ///
+    /// \return `true` if the host has been resolved and is valid, `false` otherwise
+    ///
     ////////////////////////////////////////////////////////////
-    void setHost(const std::string& host, unsigned short port = 0);
+    bool setHost(const std::string& host, unsigned short port = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Send a HTTP request and return the server's response.
@@ -398,22 +401,23 @@ public:
     /// of `Time::Zero` means that the client will use the system default timeout
     /// (which is usually pretty long).
     ///
-    /// \param request Request to send
-    /// \param timeout Maximum time to wait
+    /// \param request      Request to send
+    /// \param timeout      Maximum time to wait
+    /// \param verifyServer Verify the server if using HTTPS
     ///
     /// \return Server's response
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] Response sendRequest(const Request& request, Time timeout = Time::Zero);
+    [[nodiscard]] Response sendRequest(const Request& request, Time timeout = Time::Zero, bool verifyServer = true) const;
 
 private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    TcpSocket                m_connection; //!< Connection to the host
-    std::optional<IpAddress> m_host;       //!< Web host address
-    std::string              m_hostName;   //!< Web host name
-    unsigned short           m_port{};     //!< Port used for connection with host
+    std::optional<IpAddress> m_host;     //!< Web host address
+    std::string              m_hostName; //!< Web host name
+    unsigned short           m_port{};   //!< Port used for connection with host
+    bool                     m_https{};  //!< Use HTTPS
 };
 
 } // namespace sf
@@ -427,7 +431,7 @@ private:
 /// to communicate with a web server. You can retrieve
 /// web pages, send data to an interactive resource,
 /// download a remote file, etc. The HTTPS protocol is
-/// not supported.
+/// supported using TLS connections only.
 ///
 /// The HTTP client is split into 3 classes:
 /// \li `sf::Http::Request`
@@ -456,11 +460,11 @@ private:
 /// // Create a new HTTP client
 /// sf::Http http;
 ///
-/// // We'll work on http://www.sfml-dev.org
-/// http.setHost("http://www.sfml-dev.org");
+/// // We'll work on https://www.sfml-dev.org
+/// http.setHost("https://www.sfml-dev.org");
 ///
-/// // Prepare a request to get the 'features.php' page
-/// sf::Http::Request request("features.php");
+/// // Prepare a request to get the '/learn/' page
+/// sf::Http::Request request("/learn/");
 ///
 /// // Send the request
 /// sf::Http::Response response = http.sendRequest(request);

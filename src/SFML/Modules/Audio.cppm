@@ -30,9 +30,9 @@ module;
 
 #include <SFML/Audio.hpp>
 
-export module sfml.audio;
+export module sfml:Audio;
 
-export import sfml.system;
+export import :System;
 
 export namespace sf {
     using sf::InputSoundFile;

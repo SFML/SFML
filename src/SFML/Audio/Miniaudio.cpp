@@ -29,5 +29,4 @@
 #pragma GCC diagnostic ignored "-Wnull-dereference" // Work around MinGW warning
 #endif
 // #define MA_DEBUG_OUTPUT // Uncomment to enable miniaudio debug output to console
-#define MINIAUDIO_IMPLEMENTATION
-#include <miniaudio.h>
+#include <miniaudio.c> // NOLINT(bugprone-suspicious-include)

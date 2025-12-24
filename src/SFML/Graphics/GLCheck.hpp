@@ -29,58 +29,41 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 
-#include <SFML/Graphics/GLExtensions.hpp>
-
-#include <SFML/System/Err.hpp>
-
-#include <ostream>
 #include <string_view>
-#include <type_traits>
 
 
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-/// \brief Check the last OpenGL error
+/// \brief Helper class to check for OpenGL errors in debug mode
 ///
-/// \param file Source file where the call is located
-/// \param line Line number of the source file where the call is located
-/// \param expression The evaluated expression as a string
-///
-/// \return `false` if an error occurred, `true` otherwise
+/// This RAII style class is used internally to detect and report OpenGL
+/// errors during development. It captures the location of an OpenGL call
+/// and checks for errors when is object is destroyed (i.e. after the
+/// OpenGL call executes).
 ///
 ////////////////////////////////////////////////////////////
-bool glCheckError(std::string_view file, unsigned int line, std::string_view expression);
+class GlScopedChecker
+{
+public:
+    GlScopedChecker(std::string_view file, std::string_view expression, unsigned int line);
+    ~GlScopedChecker();
+
+private:
+    const std::string_view m_file;
+    const std::string_view m_expression;
+    const unsigned int     m_line;
+};
 
 ////////////////////////////////////////////////////////////
 /// Macro to quickly check every OpenGL API call
 ////////////////////////////////////////////////////////////
 #ifdef SFML_DEBUG
 // In debug mode, perform a test on every OpenGL call
-// The lamdba allows us to call glCheck as an expression and acts as a single statement perfect for if/else statements
-#define glCheck(...)                                                                                                \
-    [](auto&& glCheckInternalFunction)                                                                              \
-    {                                                                                                               \
-        if (const GLenum glCheckInternalError = glGetError(); glCheckInternalError != GL_NO_ERROR)                  \
-            sf::err() << "OpenGL error (" << glCheckInternalError << ") detected during glCheck call" << std::endl; \
-                                                                                                                    \
-        if constexpr (!std::is_void_v<decltype(glCheckInternalFunction())>)                                         \
-        {                                                                                                           \
-            const auto glCheckInternalReturnValue = glCheckInternalFunction();                                      \
-                                                                                                                    \
-            while (!sf::priv::glCheckError(__FILE__, static_cast<unsigned int>(__LINE__), #__VA_ARGS__))            \
-                /* no-op */;                                                                                        \
-                                                                                                                    \
-            return glCheckInternalReturnValue;                                                                      \
-        }                                                                                                           \
-        else                                                                                                        \
-        {                                                                                                           \
-            glCheckInternalFunction();                                                                              \
-                                                                                                                    \
-            while (!sf::priv::glCheckError(__FILE__, static_cast<unsigned int>(__LINE__), #__VA_ARGS__))            \
-                /* no-op */;                                                                                        \
-        }                                                                                                           \
-    }([&] { return __VA_ARGS__; })
+// The comma operator returns the second operand while sequencing the first operand
+#define glCheck(...) \
+    (sf::priv::GlScopedChecker(__FILE__, #__VA_ARGS__, static_cast<unsigned int>(__LINE__)), __VA_ARGS__)
+
 #else
 
 // Else, we don't add any overhead

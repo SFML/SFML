@@ -53,12 +53,12 @@ const BlendMode BlendNone(BlendMode::Factor::One, BlendMode::Factor::Zero, Blend
 
 ////////////////////////////////////////////////////////////
 BlendMode::BlendMode(Factor sourceFactor, Factor destinationFactor, Equation blendEquation) :
-colorSrcFactor(sourceFactor),
-colorDstFactor(destinationFactor),
-colorEquation(blendEquation),
-alphaSrcFactor(sourceFactor),
-alphaDstFactor(destinationFactor),
-alphaEquation(blendEquation)
+    colorSrcFactor(sourceFactor),
+    colorDstFactor(destinationFactor),
+    colorEquation(blendEquation),
+    alphaSrcFactor(sourceFactor),
+    alphaDstFactor(destinationFactor),
+    alphaEquation(blendEquation)
 {
 }
 
@@ -70,12 +70,12 @@ BlendMode::BlendMode(Factor   colorSourceFactor,
                      Factor   alphaSourceFactor,
                      Factor   alphaDestinationFactor,
                      Equation alphaBlendEquation) :
-colorSrcFactor(colorSourceFactor),
-colorDstFactor(colorDestinationFactor),
-colorEquation(colorBlendEquation),
-alphaSrcFactor(alphaSourceFactor),
-alphaDstFactor(alphaDestinationFactor),
-alphaEquation(alphaBlendEquation)
+    colorSrcFactor(colorSourceFactor),
+    colorDstFactor(colorDestinationFactor),
+    colorEquation(colorBlendEquation),
+    alphaSrcFactor(alphaSourceFactor),
+    alphaDstFactor(alphaDestinationFactor),
+    alphaEquation(alphaBlendEquation)
 {
 }
 

@@ -32,7 +32,7 @@ module;
 #include <SFML/System.hpp>
 #include <SFML/System/SuspendAwareClock.hpp>
 
-export module sfml.system;
+export module sfml:System;
 
 #ifdef SFML_SYSTEM_ANDROID
 export using ::ANativeActivity;

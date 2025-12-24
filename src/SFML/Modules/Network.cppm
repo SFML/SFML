@@ -30,9 +30,9 @@ module;
 
 #include <SFML/Network.hpp>
 
-export module sfml.network;
+export module sfml:Network;
 
-export import sfml.system;
+export import :System;
 
 export namespace sf {
     using sf::Ftp;

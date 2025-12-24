@@ -6,9 +6,13 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     return()
 endif()
 
+# Create the module library first
+add_library(sfml-modules)
+
 # System module is always required
 set(SFML_MODULES
     System.cppm
+    SFML.cppm
 )
 
 # Add Window module files if enabled
@@ -42,9 +46,6 @@ if(SFML_BUILD_NETWORK)
     )
     target_compile_definitions(sfml-modules PRIVATE BUILD_NETWORK_MODULE)
 endif()
-
-# Create the module library
-add_library(sfml-modules)
 
 # Add module sources directly
 target_sources(sfml-modules PUBLIC FILE_SET CXX_MODULES FILES ${SFML_MODULES})

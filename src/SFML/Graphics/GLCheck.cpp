@@ -36,18 +36,20 @@
 #include <ostream>
 
 
-namespace sf::priv
+namespace
+{
+namespace glCheckImpl
 {
 ////////////////////////////////////////////////////////////
-bool glCheckError(std::string_view file, unsigned int line, std::string_view expression)
+bool checkError(std::string_view file, unsigned int line, std::string_view expression)
 {
     // Additionally check if a context was active on the thread at the time of the function call
-    if (Context::getActiveContextId() == 0)
+    if (sf::Context::getActiveContextId() == 0)
     {
-        err() << "An internal OpenGL call failed in " << std::filesystem::path(file).filename() << "(" << line << ")."
-              << "\nExpression:\n   " << expression
-              << "\nError description:\n   No active OpenGL context on calling thread.\n"
-              << std::endl;
+        sf::err() << "An internal OpenGL call failed in " << std::filesystem::path(file).filename() << "(" << line << ")."
+                  << "\nExpression:\n   " << expression
+                  << "\nError description:\n   No active OpenGL context on calling thread.\n"
+                  << std::endl;
 
 #if defined(SFML_FATAL_OPENGL_ERRORS)
         assert(false && "OpenGL error (fatal OpenGL errors enabled): No active OpenGL context on calling thread");
@@ -58,9 +60,10 @@ bool glCheckError(std::string_view file, unsigned int line, std::string_view exp
 
     const auto logError = [&](const char* error, const char* description)
     {
-        err() << "An internal OpenGL call failed in " << std::filesystem::path(file).filename() << "(" << line << ")."
-              << "\nExpression:\n   " << expression << "\nError description:\n   " << error << "\n   " << description << '\n'
-              << std::endl;
+        sf::err() << "An internal OpenGL call failed in " << std::filesystem::path(file).filename() << "(" << line << ")."
+                  << "\nExpression:\n   " << expression << "\nError description:\n   " << error << "\n   "
+                  << description << '\n'
+                  << std::endl;
 
 #if defined(SFML_FATAL_OPENGL_ERRORS)
         assert(false && "OpenGL error (fatal OpenGL errors enabled)");
@@ -99,6 +102,29 @@ bool glCheckError(std::string_view file, unsigned int line, std::string_view exp
         default:
             return logError("Unknown error", "Unknown description");
     }
+}
+
+} // namespace glCheckImpl
+} // namespace
+
+namespace sf::priv
+{
+////////////////////////////////////////////////////////////
+GlScopedChecker::GlScopedChecker(const std::string_view file, const std::string_view expression, const unsigned int line) :
+    m_file(file),
+    m_expression(expression),
+    m_line(line)
+{
+    if (const GLenum error = glGetError(); error != GL_NO_ERROR)
+        err() << "OpenGL error (" << error << ") detected during glCheck call" << std::endl;
+}
+
+
+////////////////////////////////////////////////////////////
+GlScopedChecker::~GlScopedChecker()
+{
+    while (!glCheckImpl::checkError(m_file, m_line, m_expression))
+        /* no-op */;
 }
 
 } // namespace sf::priv

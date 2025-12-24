@@ -93,7 +93,7 @@ std::optional<IpAddress> IpAddress::resolve(std::string_view address)
 
 ////////////////////////////////////////////////////////////
 IpAddress::IpAddress(std::uint8_t byte0, std::uint8_t byte1, std::uint8_t byte2, std::uint8_t byte3) :
-m_address(static_cast<std::uint32_t>((byte0 << 24) | (byte1 << 16) | (byte2 << 8) | byte3))
+    m_address(static_cast<std::uint32_t>((byte0 << 24) | (byte1 << 16) | (byte2 << 8) | byte3))
 {
 }
 
@@ -175,7 +175,7 @@ std::optional<IpAddress> IpAddress::getPublicAddress(Time timeout)
     // and parse the result to extract our IP address
     // (not very hard: the web page contains only our IP address).
 
-    Http                 server("www.sfml-dev.org");
+    const Http           server("www.sfml-dev.org");
     const Http::Request  request("/ip-provider.php", Http::Request::Method::Get);
     const Http::Response page = server.sendRequest(request, timeout);
 

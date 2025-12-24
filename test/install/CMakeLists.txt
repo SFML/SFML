@@ -22,3 +22,4 @@ target_link_libraries(test-sfml-install PRIVATE SFML::Graphics SFML::Network SFM
 if(SFML_USE_STATIC_STD_LIBS)
     set_target_properties(test-sfml-install PROPERTIES MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
+

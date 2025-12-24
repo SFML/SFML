@@ -30,9 +30,9 @@ module;
 
 #include <SFML/Graphics.hpp>
 
-export module sfml.graphics;
+export module sfml:Graphics;
 
-export import sfml.window;
+export import :Window;
 
 export namespace sf {
     using sf::BlendMode;

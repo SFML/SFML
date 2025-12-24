@@ -483,8 +483,8 @@ WindowImplX11::WindowImplX11(WindowHandle handle) : m_isExternal(true)
 
 ////////////////////////////////////////////////////////////
 WindowImplX11::WindowImplX11(VideoMode mode, const String& title, std::uint32_t style, State state, const ContextSettings& settings) :
-m_fullscreen(state == State::Fullscreen),
-m_cursorGrabbed(m_fullscreen)
+    m_fullscreen(state == State::Fullscreen),
+    m_cursorGrabbed(m_fullscreen)
 {
     using namespace WindowImplX11Impl;
 

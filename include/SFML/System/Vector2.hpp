@@ -24,9 +24,12 @@
 
 #pragma once
 
-#include <SFML/System/Export.hpp>
-
 #include <SFML/System/Angle.hpp>
+
+#include <type_traits>
+
+#include <cassert>
+#include <cmath>
 
 
 namespace sf
@@ -78,7 +81,7 @@ public:
     /// * `Vector2(r, phi) == Vector2(r, phi + n * 360_deg)`
     ///
     ////////////////////////////////////////////////////////////
-    SFML_SYSTEM_API Vector2(T r, Angle phi);
+    Vector2(T r, Angle phi);
 
     ////////////////////////////////////////////////////////////
     /// \brief Length of the vector <i><b>(floating-point)</b></i>.
@@ -86,7 +89,7 @@ public:
     /// If you are not interested in the actual length, but only in comparisons, consider using `lengthSquared()`.
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] SFML_SYSTEM_API T length() const;
+    [[nodiscard]] T length() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Square of vector's length.
@@ -102,7 +105,7 @@ public:
     /// \pre `*this` is no zero vector.
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] SFML_SYSTEM_API Vector2 normalized() const;
+    [[nodiscard]] Vector2 normalized() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Signed angle from `*this` to `rhs` <i><b>(floating-point)</b></i>.
@@ -113,7 +116,7 @@ public:
     /// \pre Neither `*this` nor `rhs` is a zero vector.
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] SFML_SYSTEM_API Angle angleTo(Vector2 rhs) const;
+    [[nodiscard]] Angle angleTo(Vector2 rhs) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Signed angle from +X or (1,0) vector <i><b>(floating-point)</b></i>.
@@ -124,7 +127,7 @@ public:
     /// \pre This vector is no zero vector.
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] SFML_SYSTEM_API Angle angle() const;
+    [[nodiscard]] Angle angle() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Rotate by angle \c phi <i><b>(floating-point)</b></i>.
@@ -135,7 +138,7 @@ public:
     /// this amounts to a clockwise rotation by `phi`.
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] SFML_SYSTEM_API Vector2 rotatedBy(Angle phi) const;
+    [[nodiscard]] Vector2 rotatedBy(Angle phi) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Projection of this vector onto `axis` <i><b>(floating-point)</b></i>.
@@ -144,7 +147,7 @@ public:
     /// \pre `axis` must not have length zero.
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] SFML_SYSTEM_API Vector2 projectedOnto(Vector2 axis) const;
+    [[nodiscard]] constexpr Vector2 projectedOnto(Vector2 axis) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Returns a perpendicular vector.

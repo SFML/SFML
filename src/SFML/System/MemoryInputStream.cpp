@@ -36,8 +36,8 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 MemoryInputStream::MemoryInputStream(const void* data, std::size_t sizeInBytes) :
-m_data(static_cast<const std::byte*>(data)),
-m_size(sizeInBytes)
+    m_data(static_cast<const std::byte*>(data)),
+    m_size(sizeInBytes)
 {
 }
 

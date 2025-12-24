@@ -28,6 +28,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Listener.hpp>
+#include <SFML/Audio/PlaybackDevice.hpp>
 
 #include <SFML/System/Vector3.hpp>
 
@@ -123,10 +124,51 @@ public:
     ///
     /// \return `true`, if it was able to set the requested device
     ///
-    /// \see getAvailableDevices, getDefaultDevice
+    /// \see getAvailableDevices, getDefaultDevice, setDeviceToDefault, setDeviceToNull
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] static bool setDevice(const std::string& name);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the audio playback device to the default
+    ///
+    /// This function sets the audio playback device to the
+    /// default device. It can be called on the fly (i.e:
+    /// while sounds are playing).
+    ///
+    /// If there are sounds playing when the audio playback
+    /// device is switched, the sounds will continue playing
+    /// uninterrupted on the new audio playback device.
+    ///
+    /// \return `true`, if it was able to set the audio playback device to the default device
+    ///
+    /// \see getAvailableDevices, getDefaultDevice, setDevice, setDeviceToNull
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] static bool setDeviceToDefault();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the audio playback device to the null device
+    ///
+    /// This function sets the audio playback device to the
+    /// null device. It can be called on the fly (i.e:
+    /// while sounds are playing).
+    ///
+    /// If there are sounds playing when the audio playback
+    /// device is switched, the sounds will continue playing
+    /// uninterrupted on the new audio playback device.
+    ///
+    /// Audio data routed to the null device will be discarded
+    /// by the backend. This can be used to keep sounds playing
+    /// without having them actually output on a physical
+    /// audio playback device.
+    ///
+    /// \return `true`, if it was able to set the audio playback device to the null device
+    ///
+    /// \see getAvailableDevices, getDefaultDevice, setDevice, setDeviceToDefault
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] static bool setDeviceToNull();
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the name of the current audio playback device
@@ -135,6 +177,33 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] static std::optional<std::string> getDevice();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the sample rate of the current audio playback device
+    ///
+    /// \return The sample rate of the current audio playback device or `std::nullopt` if there is none
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] static std::optional<std::uint32_t> getDeviceSampleRate();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Check if the current playback device is the default device
+    ///
+    /// This function will return `false` if there is no
+    /// current playback device.
+    ///
+    /// \return `true`, if the current playback device is the default device
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] static bool isDefaultDevice();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set a callback that should be called to notify of changes to the playback device state
+    ///
+    /// \param callback The callback that should be called to notify of changes to the playback device state
+    ///
+    ////////////////////////////////////////////////////////////
+    static void setNotificationCallback(PlaybackDevice::NotificationCallback callback);
 
     struct ResourceEntry
     {
@@ -178,6 +247,16 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     static void unregisterResource(ResourceEntryIter resourceEntry);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Wait for device reading to complete
+    ///
+    /// This is primarily used to ensure changes to the engine
+    /// node graph have been applied so the next read cycle does
+    /// not read from objects that have already been destroyed.
+    ///
+    ////////////////////////////////////////////////////////////
+    static void waitForReadingComplete();
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the global volume of all the sounds and musics
@@ -370,12 +449,13 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::optional<ma_log>     m_log;            //!< The miniaudio log
-    std::optional<ma_context> m_context;        //!< The miniaudio context
-    std::optional<ma_device>  m_playbackDevice; //!< The miniaudio playback device
-    std::optional<ma_engine>  m_engine;         //!< The miniaudio engine (used for effects and spatialization)
-    ResourceEntryList         m_resources;      //!< Registered resources
-    std::mutex                m_resourcesMutex; //!< The mutex guarding the registered resources
+    std::optional<ma_log>     m_log;              //!< The miniaudio log
+    std::optional<ma_context> m_context;          //!< The miniaudio context
+    std::optional<ma_device>  m_playbackDevice;   //!< The miniaudio playback device
+    std::optional<ma_engine>  m_engine;           //!< The miniaudio engine (used for effects and spatialization)
+    ResourceEntryList         m_resources;        //!< Registered resources
+    std::mutex                m_resourcesMutex;   //!< The mutex guarding the registered resources
+    std::mutex                m_readingDataMutex; //!< The mutex guarding data reading cycles by the audio engine
 };
 
 } // namespace sf::priv

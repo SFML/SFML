@@ -30,9 +30,9 @@ module;
 
 #include <SFML/Window.hpp>
 
-export module sfml.window;
+export module sfml:Window;
 
-export import sfml.system;
+export import :System;
 
 export using ::VkInstance;
 export using ::VkSurfaceKHR;
@@ -101,6 +101,7 @@ export namespace sf {
         using sf::Style::Titlebar;
         using sf::Style::Resize;
         using sf::Style::Close;
+        using sf::Style::Default;
     }
     using sf::State;
     using sf::WindowHandle;

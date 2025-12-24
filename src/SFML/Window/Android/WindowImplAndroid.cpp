@@ -62,7 +62,7 @@ WindowImplAndroid::WindowImplAndroid(VideoMode mode,
                                      std::uint32_t /* style */,
                                      State state,
                                      const ContextSettings& /* settings */) :
-m_size(mode.size)
+    m_size(mode.size)
 {
     ActivityStates&       states = getActivity();
     const std::lock_guard lock(states.mutex);
@@ -70,11 +70,16 @@ m_size(mode.size)
     if (state == State::Fullscreen)
         states.fullscreen = true;
 
+    const bool shouldCreateSurface = (states.window != nullptr) && (WindowImplAndroid::singleInstance == nullptr);
+
     WindowImplAndroid::singleInstance = this;
     states.forwardEvent               = forwardEvent;
 
     // Register process event callback
     states.processEvent = processEvent;
+
+    if (shouldCreateSurface)
+        states.forwardEvent(sf::Event::FocusGained{});
 
     states.initialized = true;
 }
@@ -412,13 +417,15 @@ int WindowImplAndroid::processKeyEvent(AInputEvent* inputEvent, ActivityStates& 
     const std::int32_t action = AKeyEvent_getAction(inputEvent);
 
     const std::int32_t key     = AKeyEvent_getKeyCode(inputEvent);
+    const std::int32_t scan    = AKeyEvent_getScanCode(inputEvent);
     const std::int32_t metakey = AKeyEvent_getMetaState(inputEvent);
 
     const auto forwardKeyEvent = [&](auto keyEvent)
     {
-        keyEvent.code  = androidKeyToSF(key);
-        keyEvent.alt   = metakey & AMETA_ALT_ON;
-        keyEvent.shift = metakey & AMETA_SHIFT_ON;
+        keyEvent.code     = androidKeyToSF(key);
+        keyEvent.scancode = androidScanToSF(scan);
+        keyEvent.alt      = metakey & AMETA_ALT_ON;
+        keyEvent.shift    = metakey & AMETA_SHIFT_ON;
         forwardEvent(keyEvent);
     };
 
@@ -670,6 +677,125 @@ Keyboard::Key WindowImplAndroid::androidKeyToSF(std::int32_t key)
         case AKEYCODE_BUTTON_SELECT:
         case AKEYCODE_BUTTON_MODE:
         default:                          return Keyboard::Key::Unknown;
+    }
+    // clang-format on
+}
+
+
+////////////////////////////////////////////////////////////
+Keyboard::Scancode WindowImplAndroid::androidScanToSF(std::int32_t key)
+{
+    // Referencing https://android.googlesource.com/platform/frameworks/base/+/cd92588/data/keyboards/Generic.kl
+    // as the best source for how to map an android scancode to SFML
+    // clang-format off
+    switch (key)
+    {
+        case 1:   return Keyboard::Scan::Escape;
+        case 2:   return Keyboard::Scan::Num1;
+        case 3:   return Keyboard::Scan::Num2;
+        case 4:   return Keyboard::Scan::Num3;
+        case 5:   return Keyboard::Scan::Num4;
+        case 6:   return Keyboard::Scan::Num5;
+        case 7:   return Keyboard::Scan::Num6;
+        case 8:   return Keyboard::Scan::Num7;
+        case 9:   return Keyboard::Scan::Num8;
+        case 10:  return Keyboard::Scan::Num9;
+        case 11:  return Keyboard::Scan::Num0;
+        case 12:  return Keyboard::Scan::Hyphen;
+        case 13:  return Keyboard::Scan::Equal;
+        case 14:  return Keyboard::Scan::Backspace;
+        case 15:  return Keyboard::Scan::Tab;
+        case 16:  return Keyboard::Scan::Q;
+        case 17:  return Keyboard::Scan::W;
+        case 18:  return Keyboard::Scan::E;
+        case 19:  return Keyboard::Scan::R;
+        case 20:  return Keyboard::Scan::T;
+        case 21:  return Keyboard::Scan::Y;
+        case 22:  return Keyboard::Scan::U;
+        case 23:  return Keyboard::Scan::I;
+        case 24:  return Keyboard::Scan::O;
+        case 25:  return Keyboard::Scan::P;
+        case 26:  return Keyboard::Scan::LBracket;
+        case 27:  return Keyboard::Scan::RBracket;
+        case 28:  return Keyboard::Scan::Enter;
+        case 29:  return Keyboard::Scan::LControl;
+        case 30:  return Keyboard::Scan::A;
+        case 31:  return Keyboard::Scan::S;
+        case 32:  return Keyboard::Scan::D;
+        case 33:  return Keyboard::Scan::F;
+        case 34:  return Keyboard::Scan::G;
+        case 35:  return Keyboard::Scan::H;
+        case 36:  return Keyboard::Scan::J;
+        case 37:  return Keyboard::Scan::K;
+        case 38:  return Keyboard::Scan::L;
+        case 39:  return Keyboard::Scan::Semicolon;
+        case 40:  return Keyboard::Scan::Apostrophe;
+        case 41:  return Keyboard::Scan::Grave;
+        case 42:  return Keyboard::Scan::LShift;
+        case 43:  return Keyboard::Scan::Backslash;
+        case 44:  return Keyboard::Scan::Z;
+        case 45:  return Keyboard::Scan::X;
+        case 46:  return Keyboard::Scan::C;
+        case 47:  return Keyboard::Scan::V;
+        case 48:  return Keyboard::Scan::B;
+        case 49:  return Keyboard::Scan::N;
+        case 50:  return Keyboard::Scan::M;
+        case 51:  return Keyboard::Scan::Comma;
+        case 52:  return Keyboard::Scan::Period;
+        case 53:  return Keyboard::Scan::Slash;
+        case 54:  return Keyboard::Scan::RShift;
+        case 55:  return Keyboard::Scan::NumpadMultiply;
+        case 56:  return Keyboard::Scan::LAlt;
+        case 57:  return Keyboard::Scan::Space;
+        case 58:  return Keyboard::Scan::CapsLock;
+        case 59:  return Keyboard::Scan::F1;
+        case 60:  return Keyboard::Scan::F2;
+        case 61:  return Keyboard::Scan::F3;
+        case 62:  return Keyboard::Scan::F4;
+        case 63:  return Keyboard::Scan::F5;
+        case 64:  return Keyboard::Scan::F6;
+        case 65:  return Keyboard::Scan::F7;
+        case 66:  return Keyboard::Scan::F8;
+        case 67:  return Keyboard::Scan::F9;
+        case 68:  return Keyboard::Scan::F10;
+        case 69:  return Keyboard::Scan::NumLock;
+        case 70:  return Keyboard::Scan::ScrollLock;
+        case 71:  return Keyboard::Scan::Numpad7;
+        case 72:  return Keyboard::Scan::Numpad8;
+        case 73:  return Keyboard::Scan::Numpad9;
+        case 74:  return Keyboard::Scan::NumpadMinus;
+        case 75:  return Keyboard::Scan::Numpad4;
+        case 76:  return Keyboard::Scan::Numpad5;
+        case 77:  return Keyboard::Scan::Numpad6;
+        case 78:  return Keyboard::Scan::NumpadPlus;
+        case 79:  return Keyboard::Scan::Numpad1;
+        case 80:  return Keyboard::Scan::Numpad2;
+        case 81:  return Keyboard::Scan::Numpad3;
+        case 82:  return Keyboard::Scan::Numpad0;
+        case 83:  return Keyboard::Scan::NumpadDecimal;
+        case 87:  return Keyboard::Scan::F11;
+        case 88:  return Keyboard::Scan::F12;
+        case 96:  return Keyboard::Scan::NumpadEnter;
+        case 97:  return Keyboard::Scan::RControl;
+        case 100: return Keyboard::Scan::RAlt;
+        case 102: return Keyboard::Scan::Home;
+        case 103: return Keyboard::Scan::Up;
+        case 104: return Keyboard::Scan::PageUp;
+        case 105: return Keyboard::Scan::Left;
+        case 106: return Keyboard::Scan::Right;
+        case 107: return Keyboard::Scan::End;
+        case 108: return Keyboard::Scan::Down;
+        case 109: return Keyboard::Scan::PageDown;
+        case 110: return Keyboard::Scan::Insert;
+        case 111: return Keyboard::Scan::Delete;
+        case 113: return Keyboard::Scan::VolumeMute;
+        case 114: return Keyboard::Scan::VolumeDown;
+        case 115: return Keyboard::Scan::VolumeUp;
+        case 156: return Keyboard::Scan::Favorites;
+        case 166: return Keyboard::Scan::Stop;
+        case 201: return Keyboard::Scan::Pause;
+        case 217: return Keyboard::Scan::Search;
+        default:  return Keyboard::Scan::Unknown;
     }
     // clang-format on
 }

@@ -28,7 +28,12 @@
 #include <SFML/Window/iOS/SFAppDelegate.hpp>
 #include <SFML/Window/iOS/SFMain.hpp>
 
+#import <TargetConditionals.h>
 #include <vector>
+
+#if TARGET_IPHONE_SIMULATOR
+#include <crt_externs.h>
+#endif
 
 
 namespace
@@ -69,8 +74,11 @@ std::vector<sf::Vector2i> touchPositions;
 ////////////////////////////////////////////////////////////
 - (void)runUserMain
 {
-    // Arguments intentionally dropped, see comments in main in sfml-main
+#if TARGET_IPHONE_SIMULATOR
+    sfmlMain(*_NSGetArgc(), *_NSGetArgv());
+#else
     sfmlMain(0, nullptr);
+#endif
 }
 
 
