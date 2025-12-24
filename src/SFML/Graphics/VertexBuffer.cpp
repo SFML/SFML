@@ -83,9 +83,9 @@ VertexBuffer::VertexBuffer(PrimitiveType type, Usage usage) : m_primitiveType(ty
 
 ////////////////////////////////////////////////////////////
 VertexBuffer::VertexBuffer(const VertexBuffer& copy) :
-GlResource(copy),
-m_primitiveType(copy.m_primitiveType),
-m_usage(copy.m_usage)
+    GlResource(copy),
+    m_primitiveType(copy.m_primitiveType),
+    m_usage(copy.m_usage)
 {
     if (copy.m_buffer && copy.m_size)
     {

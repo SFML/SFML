@@ -24,8 +24,10 @@
 
 #pragma once
 
-#include <SFML/System/Export.hpp>
+#include <type_traits>
 
+#include <cassert>
+#include <cmath>
 
 namespace sf
 {
@@ -69,7 +71,7 @@ public:
     /// If you are not interested in the actual length, but only in comparisons, consider using `lengthSquared()`.
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] SFML_SYSTEM_API T length() const;
+    [[nodiscard]] T length() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Square of vector's length.
@@ -85,7 +87,7 @@ public:
     /// \pre `*this` is no zero vector.
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] SFML_SYSTEM_API Vector3 normalized() const;
+    [[nodiscard]] Vector3 normalized() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Dot product of two 3D vectors.
@@ -303,6 +305,7 @@ template <typename T>
 
 // Aliases for the most common types
 using Vector3i = Vector3<int>;
+using Vector3u = Vector3<unsigned int>;
 using Vector3f = Vector3<float>;
 
 } // namespace sf

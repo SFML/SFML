@@ -45,7 +45,7 @@ TEST_CASE("[Graphics] sf::Font", runDisplayTests())
 
             SECTION("Successful load")
             {
-                const sf::Font font("Graphics/tuffy.ttf");
+                const sf::Font font("tuffy.ttf");
                 CHECK(font.getInfo().family == "Tuffy");
                 const auto& glyph = font.getGlyph(0x45, 16, false);
                 CHECK(glyph.advance == 9);
@@ -53,10 +53,10 @@ TEST_CASE("[Graphics] sf::Font", runDisplayTests())
                 CHECK(glyph.rsbDelta == 16);
                 CHECK(glyph.bounds == sf::FloatRect({0, -12}, {8, 12}));
                 CHECK(glyph.textureRect == sf::IntRect({2, 5}, {8, 12}));
-                CHECK(font.hasGlyph(0x41));
-                CHECK(font.hasGlyph(0xC0));
-                CHECK(font.getKerning(0x41, 0x42, 12) == -1);
-                CHECK(font.getKerning(0x43, 0x44, 24, true) == 0);
+                CHECK(font.hasGlyph(U'A'));
+                CHECK(font.hasGlyph(U'À'));
+                CHECK(font.getKerning(U'A', U'B', 12) == -1);
+                CHECK(font.getKerning(U'C', U'D', 24, true) == 0);
                 CHECK(font.getLineSpacing(24) == 30);
                 CHECK(font.getUnderlinePosition(36) == Approx(2.20312f));
                 CHECK(font.getUnderlineThickness(48) == Approx(1.17188f));
@@ -81,7 +81,7 @@ TEST_CASE("[Graphics] sf::Font", runDisplayTests())
 
             SECTION("Successful load")
             {
-                const auto     memory = loadIntoMemory("Graphics/tuffy.ttf");
+                const auto     memory = loadIntoMemory("tuffy.ttf");
                 const sf::Font font(memory.data(), memory.size());
                 CHECK(font.getInfo().family == "Tuffy");
                 const auto& glyph = font.getGlyph(0x45, 16, false);
@@ -90,10 +90,10 @@ TEST_CASE("[Graphics] sf::Font", runDisplayTests())
                 CHECK(glyph.rsbDelta == 16);
                 CHECK(glyph.bounds == sf::FloatRect({0, -12}, {8, 12}));
                 CHECK(glyph.textureRect == sf::IntRect({2, 5}, {8, 12}));
-                CHECK(font.hasGlyph(0x41));
-                CHECK(font.hasGlyph(0xC0));
-                CHECK(font.getKerning(0x41, 0x42, 12) == -1);
-                CHECK(font.getKerning(0x43, 0x44, 24, true) == 0);
+                CHECK(font.hasGlyph(U'A'));
+                CHECK(font.hasGlyph(U'À'));
+                CHECK(font.getKerning(U'A', U'B', 12) == -1);
+                CHECK(font.getKerning(U'C', U'D', 24, true) == 0);
                 CHECK(font.getLineSpacing(24) == 30);
                 CHECK(font.getUnderlinePosition(36) == Approx(2.20312f));
                 CHECK(font.getUnderlineThickness(48) == Approx(1.17188f));
@@ -109,7 +109,7 @@ TEST_CASE("[Graphics] sf::Font", runDisplayTests())
 
         SECTION("Stream")
         {
-            sf::FileInputStream stream("Graphics/tuffy.ttf");
+            sf::FileInputStream stream("tuffy.ttf");
             const sf::Font      font(stream);
             CHECK(font.getInfo().family == "Tuffy");
             const auto& glyph = font.getGlyph(0x45, 16, false);
@@ -118,10 +118,10 @@ TEST_CASE("[Graphics] sf::Font", runDisplayTests())
             CHECK(glyph.rsbDelta == 16);
             CHECK(glyph.bounds == sf::FloatRect({0, -12}, {8, 12}));
             CHECK(glyph.textureRect == sf::IntRect({2, 5}, {8, 12}));
-            CHECK(font.hasGlyph(0x41));
-            CHECK(font.hasGlyph(0xC0));
-            CHECK(font.getKerning(0x41, 0x42, 12) == -1);
-            CHECK(font.getKerning(0x43, 0x44, 24, true) == 0);
+            CHECK(font.hasGlyph(U'A'));
+            CHECK(font.hasGlyph(U'À'));
+            CHECK(font.getKerning(U'A', U'B', 12) == -1);
+            CHECK(font.getKerning(U'C', U'D', 24, true) == 0);
             CHECK(font.getLineSpacing(24) == 30);
             CHECK(font.getUnderlinePosition(36) == Approx(2.20312f));
             CHECK(font.getUnderlineThickness(48) == Approx(1.17188f));
@@ -147,7 +147,7 @@ TEST_CASE("[Graphics] sf::Font", runDisplayTests())
         SECTION("Successful load")
         {
             const std::u32string        filenameSuffix = GENERATE(U"", U"-ń", U"-🐌");
-            const std::filesystem::path filename       = U"Graphics/tuffy" + filenameSuffix + U".ttf";
+            const std::filesystem::path filename       = U"tuffy" + filenameSuffix + U".ttf";
             INFO("Filename: " << reinterpret_cast<const char*>(filename.u8string().c_str()));
 
             REQUIRE(font.openFromFile(filename));
@@ -158,10 +158,10 @@ TEST_CASE("[Graphics] sf::Font", runDisplayTests())
             CHECK(glyph.rsbDelta == 16);
             CHECK(glyph.bounds == sf::FloatRect({0, -12}, {8, 12}));
             CHECK(glyph.textureRect == sf::IntRect({2, 5}, {8, 12}));
-            CHECK(font.hasGlyph(0x41));
-            CHECK(font.hasGlyph(0xC0));
-            CHECK(font.getKerning(0x41, 0x42, 12) == -1);
-            CHECK(font.getKerning(0x43, 0x44, 24, true) == 0);
+            CHECK(font.hasGlyph(U'A'));
+            CHECK(font.hasGlyph(U'À'));
+            CHECK(font.getKerning(U'A', U'B', 12) == -1);
+            CHECK(font.getKerning(U'C', U'D', 24, true) == 0);
             CHECK(font.getLineSpacing(24) == 30);
             CHECK(font.getUnderlinePosition(36) == Approx(2.20312f));
             CHECK(font.getUnderlineThickness(48) == Approx(1.17188f));
@@ -188,7 +188,7 @@ TEST_CASE("[Graphics] sf::Font", runDisplayTests())
 
         SECTION("Successful load")
         {
-            const auto memory = loadIntoMemory("Graphics/tuffy.ttf");
+            const auto memory = loadIntoMemory("tuffy.ttf");
             REQUIRE(font.openFromMemory(memory.data(), memory.size()));
             CHECK(font.getInfo().family == "Tuffy");
             const auto& glyph = font.getGlyph(0x45, 16, false);
@@ -197,10 +197,10 @@ TEST_CASE("[Graphics] sf::Font", runDisplayTests())
             CHECK(glyph.rsbDelta == 16);
             CHECK(glyph.bounds == sf::FloatRect({0, -12}, {8, 12}));
             CHECK(glyph.textureRect == sf::IntRect({2, 5}, {8, 12}));
-            CHECK(font.hasGlyph(0x41));
-            CHECK(font.hasGlyph(0xC0));
-            CHECK(font.getKerning(0x41, 0x42, 12) == -1);
-            CHECK(font.getKerning(0x43, 0x44, 24, true) == 0);
+            CHECK(font.hasGlyph(U'A'));
+            CHECK(font.hasGlyph(U'À'));
+            CHECK(font.getKerning(U'A', U'B', 12) == -1);
+            CHECK(font.getKerning(U'C', U'D', 24, true) == 0);
             CHECK(font.getLineSpacing(24) == 30);
             CHECK(font.getUnderlinePosition(36) == Approx(2.20312f));
             CHECK(font.getUnderlineThickness(48) == Approx(1.17188f));
@@ -226,7 +226,7 @@ TEST_CASE("[Graphics] sf::Font", runDisplayTests())
 
         SECTION("Successful load")
         {
-            REQUIRE(stream.open("Graphics/tuffy.ttf"));
+            REQUIRE(stream.open("tuffy.ttf"));
             REQUIRE(font.openFromStream(stream));
             CHECK(font.getInfo().family == "Tuffy");
             const auto& glyph = font.getGlyph(0x45, 16, false);
@@ -235,10 +235,10 @@ TEST_CASE("[Graphics] sf::Font", runDisplayTests())
             CHECK(glyph.rsbDelta == 16);
             CHECK(glyph.bounds == sf::FloatRect({0, -12}, {8, 12}));
             CHECK(glyph.textureRect == sf::IntRect({2, 5}, {8, 12}));
-            CHECK(font.hasGlyph(0x41));
-            CHECK(font.hasGlyph(0xC0));
-            CHECK(font.getKerning(0x41, 0x42, 12) == -1);
-            CHECK(font.getKerning(0x43, 0x44, 24, true) == 0);
+            CHECK(font.hasGlyph(U'A'));
+            CHECK(font.hasGlyph(U'À'));
+            CHECK(font.getKerning(U'A', U'B', 12) == -1);
+            CHECK(font.getKerning(U'C', U'D', 24, true) == 0);
             CHECK(font.getLineSpacing(24) == 30);
             CHECK(font.getUnderlinePosition(36) == Approx(2.20312f));
             CHECK(font.getUnderlineThickness(48) == Approx(1.17188f));
@@ -254,7 +254,7 @@ TEST_CASE("[Graphics] sf::Font", runDisplayTests())
 
     SECTION("Set/get smooth")
     {
-        sf::Font font("Graphics/tuffy.ttf");
+        sf::Font font("tuffy.ttf");
         font.setSmooth(false);
         CHECK(!font.isSmooth());
     }

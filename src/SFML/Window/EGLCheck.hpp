@@ -29,59 +29,39 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Config.hpp>
 
-#include <SFML/System/Err.hpp>
-
-#include <glad/egl.h>
-
-#include <ostream>
 #include <string_view>
-#include <type_traits>
-
 
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-/// \brief Check the last EGL error
+/// \brief Helper class to check for EGL errors in debug mode
 ///
-/// \param file Source file where the call is located
-/// \param line Line number of the source file where the call is located
-/// \param expression The evaluated expression as a string
-///
-/// \return `false` if an error occurred, `true` otherwise
+/// This RAII style class is used internally to detect and report EGL
+/// errors during development. It captures the location of an EGL call
+/// and checks for errors when is object is destroyed (i.e. after the
+/// EGL call executes).
 ///
 ////////////////////////////////////////////////////////////
-bool eglCheckError(std::string_view file, unsigned int line, std::string_view expression);
+class EglScopedChecker
+{
+public:
+    EglScopedChecker(std::string_view file, std::string_view expression, unsigned int line);
+    ~EglScopedChecker();
+
+private:
+    const std::string_view m_file;
+    const std::string_view m_expression;
+    const unsigned int     m_line;
+};
 
 ////////////////////////////////////////////////////////////
 /// Macro to quickly check every EGL API call
 ////////////////////////////////////////////////////////////
 #ifdef SFML_DEBUG
-
 // In debug mode, perform a test on every EGL call
-// The lamdba allows us to call eglCheck as an expression and acts as a single statement perfect for if/else statements
-#define eglCheck(...)                                                                                              \
-    [](auto&& eglCheckInternalFunction)                                                                            \
-    {                                                                                                              \
-        if (const EGLint eglCheckInternalError = eglGetError(); eglCheckInternalError != EGL_SUCCESS)              \
-            sf::err() << "EGL error (" << eglCheckInternalError << ") detected during eglCheck call" << std::endl; \
-                                                                                                                   \
-        if constexpr (!std::is_void_v<decltype(eglCheckInternalFunction())>)                                       \
-        {                                                                                                          \
-            const auto eglCheckInternalReturnValue = eglCheckInternalFunction();                                   \
-                                                                                                                   \
-            while (!sf::priv::eglCheckError(__FILE__, static_cast<unsigned int>(__LINE__), #__VA_ARGS__))          \
-                /* no-op */;                                                                                       \
-                                                                                                                   \
-            return eglCheckInternalReturnValue;                                                                    \
-        }                                                                                                          \
-        else                                                                                                       \
-        {                                                                                                          \
-            eglCheckInternalFunction();                                                                            \
-                                                                                                                   \
-            while (!sf::priv::eglCheckError(__FILE__, static_cast<unsigned int>(__LINE__), #__VA_ARGS__))          \
-                /* no-op */;                                                                                       \
-        }                                                                                                          \
-    }([&] { return __VA_ARGS__; })
+// The comma operator returns the second operand while sequencing the first operand
+#define eglCheck(...) \
+    (sf::priv::EglScopedChecker(__FILE__, #__VA_ARGS__, static_cast<unsigned int>(__LINE__)), __VA_ARGS__)
 
 #else
 
@@ -89,6 +69,5 @@ bool eglCheckError(std::string_view file, unsigned int line, std::string_view ex
 #define eglCheck(...) (__VA_ARGS__)
 
 #endif
-
 
 } // namespace sf::priv

@@ -191,10 +191,6 @@ public:
     /// }
     /// \endcode
     ///
-    /// Don't focus on the return type, it's equivalent to bool but
-    /// it disallows unwanted implicit conversions to integer or
-    /// pointer types.
-    ///
     /// \return `true` if last data extraction from packet was successful
     ///
     /// \see `endOfPacket`

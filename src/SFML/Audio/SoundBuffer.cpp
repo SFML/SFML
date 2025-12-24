@@ -213,7 +213,7 @@ unsigned int SoundBuffer::getChannelCount() const
 
 
 ////////////////////////////////////////////////////////////
-std::vector<SoundChannel> SoundBuffer::getChannelMap() const
+const std::vector<SoundChannel>& SoundBuffer::getChannelMap() const
 {
     return m_channelMap;
 }

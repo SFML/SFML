@@ -286,6 +286,21 @@ TEST_CASE("[System] sf::String")
             CHECK(string.getData() != nullptr);
         }
 
+        SECTION("ANSI string view constructor")
+        {
+            const sf::String string = "Csiga"sv;
+            CHECK(std::string(string) == "Csiga"s);
+            CHECK(std::wstring(string) == L"Csiga"s);
+            CHECK(string.toAnsiString() == "Csiga"s);
+            CHECK(string.toWideString() == L"Csiga"s);
+            CHECK(string.toUtf8() == sf::U8String{'C', 's', 'i', 'g', 'a'});
+            CHECK(string.toUtf16() == u"Csiga"s);
+            CHECK(string.toUtf32() == U"Csiga"s);
+            CHECK(string.getSize() == 5);
+            CHECK(!string.isEmpty());
+            CHECK(string.getData() != nullptr);
+        }
+
         SECTION("Wide character constructor")
         {
             {
@@ -362,6 +377,21 @@ TEST_CASE("[System] sf::String")
             CHECK(string.getData() != nullptr);
         }
 
+        SECTION("Wide string view constructor")
+        {
+            const sf::String string = L"Полжав"sv;
+            CHECK(std::string(string) == "\0\0\0\0\0\0"s);
+            CHECK(std::wstring(string) == L"Полжав"s);
+            CHECK(string.toAnsiString() == "\0\0\0\0\0\0"s);
+            CHECK(string.toWideString() == L"Полжав"s);
+            CHECK(string.toUtf8() == sf::U8String{0xD0, 0x9F, 0xD0, 0xBE, 0xD0, 0xBB, 0xD0, 0xB6, 0xD0, 0xB0, 0xD0, 0xB2});
+            CHECK(string.toUtf16() == u"Полжав"s);
+            CHECK(string.toUtf32() == U"Полжав"s);
+            CHECK(string.getSize() == 6);
+            CHECK(!string.isEmpty());
+            CHECK(string.getData() != nullptr);
+        }
+
         SECTION("UTF-32 character constructor")
         {
             const sf::String string = U'🐌';
@@ -424,6 +454,21 @@ TEST_CASE("[System] sf::String")
         SECTION("UTF-32 string constructor")
         {
             const sf::String string = U"گھونگا"s;
+            CHECK(std::string(string) == "\0\0\0\0\0\0"s);
+            CHECK(std::wstring(string) == L"گھونگا"s);
+            CHECK(string.toAnsiString() == "\0\0\0\0\0\0"s);
+            CHECK(string.toWideString() == L"گھونگا"s);
+            CHECK(string.toUtf8() == sf::U8String{0xDA, 0xAF, 0xDA, 0xBE, 0xD9, 0x88, 0xD9, 0x86, 0xDA, 0xAF, 0xD8, 0xA7});
+            CHECK(string.toUtf16() == u"گھونگا"s);
+            CHECK(string.toUtf32() == U"گھونگا"s);
+            CHECK(string.getSize() == 6);
+            CHECK(!string.isEmpty());
+            CHECK(string.getData() != nullptr);
+        }
+
+        SECTION("UTF-32 string view constructor")
+        {
+            const sf::String string = U"گھونگا"sv;
             CHECK(std::string(string) == "\0\0\0\0\0\0"s);
             CHECK(std::wstring(string) == L"گھونگا"s);
             CHECK(string.toAnsiString() == "\0\0\0\0\0\0"s);

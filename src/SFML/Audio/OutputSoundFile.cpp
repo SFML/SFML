@@ -32,6 +32,8 @@
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Exception.hpp>
 
+#include <ostream>
+
 #include <cassert>
 
 
