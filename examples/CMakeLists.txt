@@ -1,5 +1,5 @@
 # CLI based examples
-if(NOT SFML_OS_IOS)
+if(NOT SFML_OS_IOS AND NOT SFML_OS_ANDROID)
     if(SFML_BUILD_NETWORK)
         add_subdirectory(ftp)
         add_subdirectory(http)
