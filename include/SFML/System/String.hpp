@@ -234,8 +234,9 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Create a new `sf::String` from a UTF-8 encoded string
     ///
-    /// \param begin Forward iterator to the beginning of the UTF-8 sequence
-    /// \param end   Forward iterator to the end of the UTF-8 sequence
+    /// \param begin       Forward iterator to the beginning of the UTF-8 sequence
+    /// \param end         Forward iterator to the end of the UTF-8 sequence
+    /// \param replacement Replacement for characters not convertible from UTF-8 (use 0 to skip them)
     ///
     /// \return A `sf::String` containing the source string
     ///
@@ -243,13 +244,14 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     template <typename T>
-    [[nodiscard]] static String fromUtf8(T begin, T end);
+    [[nodiscard]] static String fromUtf8(T begin, T end, char32_t replacement = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new `sf::String` from a UTF-16 encoded string
     ///
-    /// \param begin Forward iterator to the beginning of the UTF-16 sequence
-    /// \param end   Forward iterator to the end of the UTF-16 sequence
+    /// \param begin       Forward iterator to the beginning of the UTF-16 sequence
+    /// \param end         Forward iterator to the end of the UTF-16 sequence
+    /// \param replacement Replacement for characters not convertible from UTF-16 (use 0 to skip them)
     ///
     /// \return A `sf::String` containing the source string
     ///
@@ -257,7 +259,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     template <typename T>
-    [[nodiscard]] static String fromUtf16(T begin, T end);
+    [[nodiscard]] static String fromUtf16(T begin, T end, char32_t replacement = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new `sf::String` from a UTF-32 encoded string
