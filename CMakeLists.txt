@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 3.28)
 
+# Prevent in-source builds
+if("${CMAKE_BINARY_DIR}" STREQUAL "${CMAKE_SOURCE_DIR}")
+    message(FATAL_ERROR "In-source builds are not permitted! Make sure to use a separate build directory")
+endif ()
+
 # define a macro that helps defining an option
 macro(sfml_set_option var default type docstring)
     if(NOT DEFINED ${var})
