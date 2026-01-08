@@ -10,12 +10,6 @@ endmacro()
 
 # these options have to be set before CMake detects/configures the toolchain
 
-# use new MSVC debug information format specification mechanism if available
-# we use this mechanism to embed debug information into the object file to allow ccache to cache it
-if(POLICY CMP0141)
-    cmake_policy(SET CMP0141 NEW)
-endif()
-
 # When configuring with `--fresh`, also do a fresh configure for fetched dependencies
 if(POLICY CMP0168)
     cmake_policy(SET CMP0168 NEW)
