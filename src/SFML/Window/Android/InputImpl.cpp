@@ -363,9 +363,6 @@ void setMousePosition(Vector2i position, const WindowBase& /* relativeTo */)
 ////////////////////////////////////////////////////////////
 bool isTouchDown(unsigned int finger)
 {
-    while (ALooper_pollOnce(0, nullptr, nullptr, nullptr) >= 0)
-        ;
-
     ActivityStates&       states = getActivity();
     const std::lock_guard lock(states.mutex);
 
@@ -376,9 +373,6 @@ bool isTouchDown(unsigned int finger)
 ////////////////////////////////////////////////////////////
 Vector2i getTouchPosition(unsigned int finger)
 {
-    while (ALooper_pollOnce(0, nullptr, nullptr, nullptr) >= 0)
-        ;
-
     ActivityStates&       states = getActivity();
     const std::lock_guard lock(states.mutex);
 
