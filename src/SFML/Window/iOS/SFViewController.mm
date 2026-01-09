@@ -25,25 +25,23 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/Event.hpp>
+#include <SFML/Window/iOS/SFAppDelegate.hpp>
 #include <SFML/Window/iOS/SFViewController.hpp>
 
 
 @implementation SFViewController
 
-@synthesize orientationCanChange;
-
-
 ////////////////////////////////////////////////////////////
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
+- (void)viewWillTransitionToSize:(CGSize)size
+       withTransitionCoordinator:(nonnull id<UIViewControllerTransitionCoordinator>)coordinator
 {
-    return self.orientationCanChange;
-}
-
-
-////////////////////////////////////////////////////////////
-- (BOOL)shouldAutorotate
-{
-    return self.orientationCanChange;
+    if ([SFAppDelegate getInstance].sfWindow)
+    {
+        [SFAppDelegate getInstance].sfWindow->forwardEvent(
+            sf::Event::Resized{{static_cast<unsigned int>(size.width), static_cast<unsigned int>(size.height)}});
+    }
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
 }
 
 @end

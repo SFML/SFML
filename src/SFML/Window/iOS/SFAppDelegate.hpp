@@ -102,22 +102,6 @@
 - (void)notifyCharacter:(char32_t)character;
 
 ////////////////////////////////////////////////////////////
-/// \brief Tells if the dimensions of the current window must be flipped when switching to a given orientation
-///
-/// \param orientation the device has changed to
-///
-////////////////////////////////////////////////////////////
-- (bool)needsToFlipFrameForOrientation:(UIDeviceOrientation)orientation;
-
-////////////////////////////////////////////////////////////
-/// \brief Tells if app and view support a requested device orientation or not
-///
-/// \param orientation the device has changed to
-///
-////////////////////////////////////////////////////////////
-- (bool)supportsOrientation:(UIDeviceOrientation)orientation;
-
-////////////////////////////////////////////////////////////
 /// \brief Initializes the factor which is required to convert from points to pixels and back
 ///
 ////////////////////////////////////////////////////////////
