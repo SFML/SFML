@@ -93,14 +93,6 @@ std::vector<sf::Vector2i> touchPositions;
     // Instantiate the motion manager
     self.motionManager = [[CMMotionManager alloc] init];
 
-    // Register orientation changes notifications
-    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-    [[NSNotificationCenter defaultCenter]
-        addObserver:self
-           selector:@selector(deviceOrientationDidChange:)
-               name:UIDeviceOrientationDidChangeNotification
-             object:nil];
-
     // Change the working directory to the resources directory
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] resourcePath]];
 
@@ -166,68 +158,6 @@ std::vector<sf::Vector2i> touchPositions;
     // Generate a Closed event
     if (self.sfWindow)
         sfWindow->forwardEvent(sf::Event::Closed{});
-}
-
-- (bool)supportsOrientation:(UIDeviceOrientation)orientation
-{
-    if (!self.sfWindow)
-        return false;
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wold-style-cast"
-
-    UIViewController* rootViewController = [((__bridge UIWindow*)(self.sfWindow->getNativeHandle())) rootViewController];
-
-#pragma GCC diagnostic pop
-
-    if (!rootViewController || ![rootViewController shouldAutorotate])
-        return false;
-
-    NSArray* supportedOrientations = [[NSBundle mainBundle]
-        objectForInfoDictionaryKey:@"UISupportedInterfaceOrientations"];
-    if (!supportedOrientations)
-        return (1 << orientation) & [rootViewController supportedInterfaceOrientations];
-
-    int appFlags = 0;
-    if ([supportedOrientations containsObject:@"UIInterfaceOrientationPortrait"])
-        appFlags += UIInterfaceOrientationMaskPortrait;
-    if ([supportedOrientations containsObject:@"UIInterfaceOrientationPortraitUpsideDown"])
-        appFlags += UIInterfaceOrientationMaskPortraitUpsideDown;
-    if ([supportedOrientations containsObject:@"UIInterfaceOrientationLandscapeLeft"])
-        appFlags += UIInterfaceOrientationMaskLandscapeLeft;
-    if ([supportedOrientations containsObject:@"UIInterfaceOrientationLandscapeRight"])
-        appFlags += UIInterfaceOrientationMaskLandscapeRight;
-
-    return (1 << orientation) & [rootViewController supportedInterfaceOrientations] & static_cast<unsigned long>(appFlags);
-}
-
-- (bool)needsToFlipFrameForOrientation:(UIDeviceOrientation)orientation
-{
-    sf::Vector2u size = self.sfWindow->getSize();
-    return (!UIDeviceOrientationIsLandscape(orientation) && size.x > size.y) ||
-           (UIDeviceOrientationIsLandscape(orientation) && size.y > size.x);
-}
-
-////////////////////////////////////////////////////////////
-- (void)deviceOrientationDidChange:(NSNotification*)notification
-{
-    if (self.sfWindow)
-    {
-        // Get the new orientation
-        UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
-        // Filter interesting orientations
-        if (UIDeviceOrientationIsValidInterfaceOrientation(orientation))
-        {
-            // Get the new size
-            sf::Vector2u size = self.sfWindow->getSize();
-            // Check if the app can switch to this orientation and if so if the window's size must be adjusted
-            if ([self supportsOrientation:orientation] && [self needsToFlipFrameForOrientation:orientation])
-                std::swap(size.x, size.y);
-
-            // Send a Resized event to the current window
-            sfWindow->forwardEvent(sf::Event::Resized{size});
-        }
-    }
 }
 
 ////////////////////////////////////////////////////////////

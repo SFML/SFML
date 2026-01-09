@@ -37,26 +37,13 @@
 @interface SFViewController : UIViewController
 
 ////////////////////////////////////////////////////////////
-/// \brief Tells if the controller supports auto-rotation (iOS < 6)
+/// \brief Called when the UI orientation changes
 ///
-/// \param interfaceOrientation Orientation to check
-///
-/// \return `true` if auto-rotation is supported, `false` otherwise
-///
-////////////////////////////////////////////////////////////
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation;
-
-////////////////////////////////////////////////////////////
-/// \brief Tells if the controller supports auto-rotation (iOS >= 6)
-///
-/// \return `true` if auto-rotation is supported, `false` otherwise
+/// \param size The new size
+/// \param coordinator The transition coordinator
 ///
 ////////////////////////////////////////////////////////////
-- (BOOL)shouldAutorotate;
-
-////////////////////////////////////////////////////////////
-// Member data
-////////////////////////////////////////////////////////////
-@property(nonatomic) bool orientationCanChange; ///< Tells whether the controller's view can rotate or not
+- (void)viewWillTransitionToSize:(CGSize)size
+       withTransitionCoordinator:(nonnull id<UIViewControllerTransitionCoordinator>)coordinator;
 
 @end
