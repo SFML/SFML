@@ -22,7 +22,6 @@ jobs:
 
     env:
       CMAKE_CXX_COMPILER_LAUNCHER: ccache # Use ccache to cache C++ compiler output
-      HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK: "1" # Work around Homebrew errors within coverallsapp/github-action@v2
 
     strategy:
       fail-fast: false
