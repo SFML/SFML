@@ -139,11 +139,11 @@ jobs:
       if: runner.os == 'macOS'
       run: |
         brew update
-        brew install gcovr ccache || true
+        brew install gcovr ccache
 
     - name: Install macOS System Deps
       if: contains(matrix.config.name, 'System Deps')
-      run: brew install flac libvorbis mbedtls || true
+      run: brew install flac libvorbis mbedtls
 
     # In addition to installing a known working version of CCache, this action also takes care of saving and restoring the cache for us
     # Additionally it outputs information at the end of each job that helps us to verify if the cache is working properly
