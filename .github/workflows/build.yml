@@ -1,0 +1,261 @@
+name: Build and test
+
+on: [workflow_call, workflow_dispatch]
+
+concurrency:
+  group: ${{ github.workflow }}-build-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DISPLAY: ":99" # Display number to use for the X server
+  GALLIUM_DRIVER: llvmpipe # Use Mesa 3D software OpenGL renderer
+  ANDROID_NDK_VERSION: "26.1.10909125" # Android NDK version to use
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    name: ${{ matrix.platform.name }} ${{ matrix.config.name }} ${{ matrix.type.name }}
+    runs-on: ${{ matrix.platform.os }}
+
+    env:
+      CMAKE_CXX_COMPILER_LAUNCHER: ccache # Use ccache to cache C++ compiler output
+
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+        - { name: Windows VS2022 x86,             os: windows-2025, flags: -DSFML_USE_MESA3D=ON -GNinja }
+        - { name: Windows VS2022 x64,             os: windows-2025, flags: -DSFML_USE_MESA3D=ON -GNinja }
+        - { name: Windows VS2022 arm64,           os: windows-2025, flags: -DSFML_USE_MESA3D=OFF -GNinja -DSFML_BUILD_TEST_SUITE=OFF }
+        - { name: Windows VS2022 ClangCL MSBuild, os: windows-2025, flags: -DSFML_USE_MESA3D=ON -T ClangCL } # ninja doesn't support specifying the toolset, so use the ClangCL toolset to test building with MSBuild as well
+        - { name: Windows VS2022 OpenGL ES,       os: windows-2025, flags: -DSFML_USE_MESA3D=ON -DSFML_OPENGL_ES=ON -GNinja }
+        - { name: Windows VS2022 Unity,           os: windows-2025, flags: -DSFML_USE_MESA3D=ON -DCMAKE_UNITY_BUILD=ON -GNinja }
+        - { name: Windows LLVM/Clang,             os: windows-2025, flags: -DSFML_USE_MESA3D=ON -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -GNinja }
+        - { name: Windows MinGW,                  os: windows-2025, flags: -DSFML_USE_MESA3D=ON -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -GNinja }
+        - { name: Linux GCC,                      os: ubuntu-24.04, flags: -GNinja }
+        - { name: Linux Clang,                    os: ubuntu-24.04, flags: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -GNinja , gcovr_options: '--gcov-executable="llvm-cov-$CLANG_VERSION gcov"' }
+        - { name: Linux GCC DRM,                  os: ubuntu-24.04, flags: -DSFML_USE_DRM=ON -DSFML_RUN_DISPLAY_TESTS=OFF -GNinja }
+        - { name: Linux GCC OpenGL ES,            os: ubuntu-24.04, flags: -DSFML_OPENGL_ES=ON -DSFML_RUN_DISPLAY_TESTS=OFF -GNinja }
+        - { name: macOS x64,                      os: macos-15, flags: -GNinja -DCMAKE_OSX_ARCHITECTURES=x86_64 }
+        - { name: macOS x64 Xcode,                os: macos-15, flags: -GXcode -DCMAKE_OSX_ARCHITECTURES=x86_64 }
+        - { name: macOS arm64,                    os: macos-15, flags: -GNinja -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF }
+        - { name: iOS Xcode,                      os: macos-15, flags: -DCMAKE_SYSTEM_NAME=iOS -GXcode -DCMAKE_XCODE_ATTRIBUTE_CODE_SIGNING_ALLOWED=NO }
+        config:
+        - { name: Shared, flags: -DBUILD_SHARED_LIBS=ON }
+        - { name: Static, flags: -DBUILD_SHARED_LIBS=OFF }
+        type:
+        - { name: Release }
+        - { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug -DSFML_ENABLE_COVERAGE=ON -DSFML_FATAL_OPENGL_ERRORS=ON }
+
+        include:
+        - platform: { name: Windows VS2022 x64, os: windows-2025 }
+          config: { name: Static with PCH (MSVC), flags: -DSFML_USE_MESA3D=ON -GNinja -DBUILD_SHARED_LIBS=OFF -DSFML_ENABLE_PCH=ON }
+        - platform: { name: Linux GCC, os: ubuntu-24.04 }
+          config: { name: Static with PCH (GCC), flags: -GNinja -DCMAKE_CXX_COMPILER=g++ -DBUILD_SHARED_LIBS=OFF -DSFML_ENABLE_PCH=ON }
+        - platform: { name: Linux Clang, os: ubuntu-24.04 }
+          config: { name: Static with PCH (Clang), flags: -GNinja -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DBUILD_SHARED_LIBS=OFF -DSFML_ENABLE_PCH=ON }
+        - platform: { name: Linux GCC, os: ubuntu-24.04 }
+          config: { name: Bundled Deps Static, flags: -GNinja -DCMAKE_CXX_COMPILER=g++ -DBUILD_SHARED_LIBS=OFF -DSFML_USE_SYSTEM_DEPS=OFF }
+        - platform: { name: Linux GCC, os: ubuntu-24.04 }
+          config: { name: Bundled Deps Shared, flags: -GNinja -DCMAKE_CXX_COMPILER=g++ -DBUILD_SHARED_LIBS=ON -DSFML_USE_SYSTEM_DEPS=OFF }
+        - platform: { name: Windows MinGW, os: windows-2025 }
+          config: { name: Static Standard Libraries, flags: -GNinja -DSFML_USE_MESA3D=ON -DCMAKE_CXX_COMPILER=g++ -DSFML_USE_STATIC_STD_LIBS=ON }
+        - platform: { name: Windows MinGW, os: windows-2025 }
+          config: { name: Static with PCH (GCC), flags: -GNinja -DSFML_USE_MESA3D=ON -DCMAKE_CXX_COMPILER=g++ -DBUILD_SHARED_LIBS=OFF -DSFML_ENABLE_PCH=ON -DSFML_ENABLE_STDLIB_ASSERTIONS=OFF } # disabling stdlib assertions due to false positive
+        - platform: { name: macOS, os: macos-14 }
+          config: { name: Frameworks, flags: -GNinja -DSFML_BUILD_FRAMEWORKS=ON -DBUILD_SHARED_LIBS=ON }
+        - platform: { name: macOS , os: macos-14 }
+          config: { name: System Deps, flags: -GNinja -DBUILD_SHARED_LIBS=ON -DSFML_USE_SYSTEM_DEPS=ON }
+        - platform: { name: Android, os: ubuntu-24.04 }
+          config:
+            name: x86 (API 21)
+            flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=x86 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=21 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=ON -DCMAKE_ANDROID_STL_TYPE=c++_shared -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF
+            arch: x86
+            api: 21
+          type: { name: Release }
+        - platform: { name: Android, os: ubuntu-24.04 }
+          config:
+            name: x86_64 (API 24)
+            flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=x86_64 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=24 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=ON -DCMAKE_ANDROID_STL_TYPE=c++_shared -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF
+            arch: x86_64
+            api: 24
+          type: { name: Release }
+        - platform: { name: Android, os: ubuntu-24.04 }
+          config:
+            name: armeabi-v7a (API 29)
+            flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=armeabi-v7a -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=29 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=ON -DCMAKE_ANDROID_STL_TYPE=c++_shared
+            arch: armeabi-v7a
+            api: 29
+          type: { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug -DSFML_FATAL_OPENGL_ERRORS=ON }
+        - platform: { name: Android, os: ubuntu-24.04 }
+          config:
+            name: arm64-v8a (API 33)
+            flags: -GNinja -DCMAKE_ANDROID_ARCH_ABI=arm64-v8a -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=33 -DCMAKE_ANDROID_NDK=$ANDROID_NDK_ROOT -DBUILD_SHARED_LIBS=ON -DCMAKE_ANDROID_STL_TYPE=c++_shared -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_RUN_AUDIO_DEVICE_TESTS=OFF
+            arch: arm64-v8a
+            api: 33
+          type: { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug -DSFML_FATAL_OPENGL_ERRORS=ON }
+        exclude: # Shared libraries are not supported on iOS
+        - platform: { name: iOS Xcode }
+          config: { name: Shared }
+
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set Visual Studio Architecture
+      if: contains(matrix.platform.name, 'Windows VS') && !contains(matrix.platform.name, 'MSBuild')
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: ${{ contains(matrix.platform.name, 'arm64') && 'amd64_arm64' || contains(matrix.platform.name, 'x86') && 'x86' || 'x64' }}
+
+    - name: Get CMake and Ninja
+      uses: lukka/get-cmake@latest
+      with:
+        cmakeVersion: 3.28
+        ninjaVersion: latest
+
+    - name: Install Linux Dependencies and Tools
+      if: runner.os == 'Linux'
+      run: |
+        CLANG_VERSION=$(clang++ --version | sed -n 's/.*version \([0-9]\+\)\..*/\1/p')
+        echo "CLANG_VERSION=$CLANG_VERSION" >> $GITHUB_ENV
+        sudo apt-get update
+        sudo apt-get install xorg-dev libharfbuzz-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev libmbedtls-dev xvfb fluxbox ccache gcovr ${{ matrix.platform.name == 'Linux Clang' && 'llvm-$CLANG_VERSION' || '' }}
+
+    - name: Install Android Components
+      if: matrix.platform.name == 'Android'
+      run: |
+        echo "y" | ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --install "build-tools;33.0.2"
+        echo "y" | ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager --install "ndk;26.1.10909125"
+        ANDROID_NDK_ROOT=$(echo $ANDROID_SDK_ROOT/ndk/$ANDROID_NDK_VERSION)
+        echo "ANDROID_NDK_ROOT=$ANDROID_NDK_ROOT" >> $GITHUB_ENV
+
+    - name: Install macOS Tools
+      if: runner.os == 'macOS'
+      run: |
+        brew update
+        brew install gcovr ccache
+
+    - name: Install macOS System Deps
+      if: contains(matrix.config.name, 'System Deps')
+      run: brew install flac libvorbis mbedtls
+
+    # In addition to installing a known working version of CCache, this action also takes care of saving and restoring the cache for us
+    # Additionally it outputs information at the end of each job that helps us to verify if the cache is working properly
+    - name: Setup CCache
+      uses: hendrikmuhs/ccache-action@v1.2.12
+      with:
+        verbose: 2
+        key: ${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}
+
+    - name: Install Gcovr for MinGW
+      if: matrix.type.name == 'Debug' && contains(matrix.platform.name, 'MinGW')
+      uses: threeal/pipx-install-action@v1.0.0
+      with:
+        packages: gcovr
+
+    - name: Install OpenCppCoverage
+      uses: nick-fields/retry@v3
+      if: matrix.type.name == 'Debug' && runner.os == 'Windows'
+      with:
+        max_attempts: 10
+        timeout_minutes: 3
+        command: choco install OpenCppCoverage -y
+
+    - name: Cache MinGW
+      if: matrix.platform.name == 'Windows MinGW'
+      id: mingw-cache
+      uses: actions/cache@v4
+      with:
+        path: "C:\\Program Files\\mingw64"
+        key: winlibs-x86_64-posix-seh-gcc-14.2.0-llvm-19.1.7-mingw-w64msvcrt-12.0.0-r3
+
+    - name: Install MinGW
+      if: matrix.platform.name == 'Windows MinGW' && steps.mingw-cache.outputs.cache-hit != 'true'
+      run: |
+        curl -Lo mingw64.zip https://github.com/brechtsanders/winlibs_mingw/releases/download/14.2.0posix-19.1.7-12.0.0-msvcrt-r3/winlibs-x86_64-posix-seh-gcc-14.2.0-llvm-19.1.7-mingw-w64msvcrt-12.0.0-r3.zip
+        unzip -qq -d "C:\Program Files" mingw64.zip
+
+    - name: Add OpenCppCoverage and MinGW to PATH and remove MinGW-supplied CCache & CMake
+      if: runner.os == 'Windows'
+      run: |
+        echo "C:\Program Files\OpenCppCoverage" >> $GITHUB_PATH
+        echo "C:\Program Files\mingw64\bin" >> $GITHUB_PATH
+        rm -f "C:\Program Files\mingw64\bin\ccache.exe"
+        echo "Using $(which ccache)"
+        ccache --version
+        rm -f "C:\Program Files\mingw64\bin\cmake.exe"
+        echo "Using $(which cmake)"
+        cmake --version
+
+    - name: Configure CMake
+      run: cmake --preset dev -DCMAKE_VERBOSE_MAKEFILE=ON ${{matrix.platform.flags}} ${{matrix.config.flags}} ${{matrix.type.flags}}
+
+    - name: Build
+      run: cmake --build build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} --target install
+
+    - name: Build Android example
+      if: matrix.platform.name == 'Android'
+      run: examples/android/gradlew ${{ matrix.type.name == 'Debug' && 'assembleDebug' || 'assembleRelease' }} -p examples/android -P ARCH_ABI=${{matrix.config.arch}} -P MIN_SDK=${{matrix.config.api}}
+
+    - name: Prepare Test
+      run: |
+        set -e
+        # Start up Xvfb and fluxbox to host display tests
+        if [ "${{ runner.os }}" == "Linux" ]; then
+          Xvfb $DISPLAY -screen 0 1920x1080x24 &
+          sleep 5
+          fluxbox > /dev/null 2>&1 &
+          sleep 5
+        fi
+        # Make sure the build/bin directory exists so that the find command does not fail if no executables are built
+        mkdir -p build/bin
+        # Make use of a test to print OpenGL vendor/renderer/version info to the console
+        find build/bin -name test-sfml-window -or -name test-sfml-window.exe -exec sh -c "{} *sf::Context* --section=\"Version String\" --success | grep OpenGL" \;
+
+    - name: Test (Windows)
+      if: runner.os == 'Windows' && !contains(matrix.platform.name, 'MinGW') && !contains(matrix.platform.name, 'arm64')
+      run: |
+        cmake --build build --target runtests --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }}
+
+    - name: Test (Linux/macOS/MinGW)
+      if: (runner.os != 'Windows' || contains(matrix.platform.name, 'MinGW')) && !contains(matrix.platform.name, 'iOS') && !contains(matrix.platform.name, 'Android')
+      run: |
+        ctest --test-dir build --output-on-failure -C ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} --repeat until-pass:3
+        # Run gcovr to extract coverage information from the test run
+        if [ "${{ matrix.type.name }}" == "Debug" ]; then
+          gcovr -r $GITHUB_WORKSPACE -x build/coverage.out -s -f 'src/SFML/.*' -f 'include/SFML/.*' ${{ matrix.platform.gcovr_options }} $GITHUB_WORKSPACE
+        fi
+        ls build/
+
+    - name: Upload Coverage Report to Coveralls
+      if: matrix.type.name == 'Debug' && github.repository == 'SFML/SFML' && !contains(matrix.platform.name, 'iOS') && !contains(matrix.platform.name, 'Android')  && !contains(matrix.platform.name, 'arm64') # Disable upload in forks
+      uses: coverallsapp/github-action@v2
+      with:
+        file: ./build/coverage.out
+        flag-name: ${{ matrix.platform.name }} ${{ matrix.config.name }} ${{ matrix.type.name }}
+        parallel: true
+        allow-empty: true
+        base-path: ${{ github.workspace }}
+
+    - name: Test Install Interface
+      if: matrix.platform.name != 'Android'
+      run: |
+        cmake -S test/install -B test/install/build -DCMAKE_PREFIX_PATH=$GITHUB_WORKSPACE/build/install -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} ${{matrix.platform.flags}} ${{matrix.config.flags}} ${{matrix.type.flags}}
+        cmake --build test/install/build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }}
+
+  coverage:
+    name: Finalize Coverage Upload
+    needs: build
+    runs-on: ubuntu-24.04
+    if: github.repository == 'SFML/SFML' # Disable upload in forks
+
+    steps:
+    - name: Coveralls Finished
+      uses: coverallsapp/github-action@v2
+      with:
+        parallel-finished: true
