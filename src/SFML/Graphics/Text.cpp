@@ -464,6 +464,33 @@ void Text::setLineSpacing(float spacingFactor)
 
 
 ////////////////////////////////////////////////////////////
+void Text::setLetterSpacingRounding(bool enabled)
+{
+    if(m_roundLetterSpacing != enabled)
+    {
+        m_roundLetterSpacing = enabled;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void Text::setLineSpacingRounding(bool enabled)
+{
+    if(m_roundLineSpacing != enabled)
+    {
+        m_roundLineSpacing = enabled;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+float Text::roundToPixel(float value) const
+{
+    return std::round(value);
+}
+
+
+////////////////////////////////////////////////////////////
 void Text::setStyle(std::uint32_t style)
 {
     if (m_style != style)
@@ -791,8 +818,11 @@ void Text::ensureGeometryUpdate() const
 
     // Precompute the variables needed by the algorithm
     const float whitespaceWidth = m_font->getGlyph(U' ', m_characterSize, isBold).advance;
-    const float letterSpacing   = (whitespaceWidth / 3.0f) * (m_letterSpacingFactor - 1.0f);
-    const float lineSpacing     = m_font->getLineSpacing(m_characterSize) * m_lineSpacingFactor;
+    const float letterSpacingFactor = m_roundLetterSpacing ? roundToPixel(m_letterSpacingFactor) : m_letterSpacingFactor;
+    const float letterSpacing = (whitespaceWidth / 3.0f) * (letterSpacingFactor - 1.0f);
+    const float lineSpacingFactor = m_roundLineSpacing ? roundToPixel(m_lineSpacingFactor) : m_lineSpacingFactor;
+    const float lineSpacing = m_font->getLineSpacing(m_characterSize) * lineSpacingFactor;
+
     float       x               = 0.0f;
     auto        y = (m_textOrientation == TextOrientation::Default) ? static_cast<float>(m_characterSize) : 0.0f;
 
