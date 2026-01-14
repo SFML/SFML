@@ -1,0 +1,112 @@
+name: Analyze and Sanitize
+
+on: [workflow_call, workflow_dispatch]
+
+concurrency:
+  group: ${{ github.workflow }}-analyze-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DISPLAY: ":99" # Display number to use for the X server
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  tidy:
+    name: Analyzing on ${{ matrix.platform.name }}
+    runs-on: ${{ matrix.platform.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+        - { name: Windows,         os: windows-2025, flags: -GNinja }
+        - { name: Linux,           os: ubuntu-24.04 }
+        - { name: Linux DRM,       os: ubuntu-24.04, flags: -DSFML_USE_DRM=ON }
+        - { name: Linux OpenGL ES, os: ubuntu-24.04, flags: -DSFML_OPENGL_ES=ON }
+        - { name: macOS,           os: macos-14 }
+        - { name: iOS,             os: macos-14,     flags: -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=arm64 }
+        - { name: Android,         os: ubuntu-24.04, flags: -DCMAKE_ANDROID_ARCH_ABI=x86_64 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=21 -DCMAKE_ANDROID_NDK=$ANDROID_NDK -DCMAKE_ANDROID_STL_TYPE=c++_shared }
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Get CMake and Ninja
+      uses: lukka/get-cmake@latest
+      with:
+        cmakeVersion: latest
+        ninjaVersion: latest
+
+    - name: Install Windows Dependencies
+      if: runner.os == 'Windows'
+      run: |
+        curl.exe -o run-clang-tidy https://raw.githubusercontent.com/llvm/llvm-project/llvmorg-15.0.7/clang-tools-extra/clang-tidy/tool/run-clang-tidy.py
+
+    - name: Install Linux Dependencies
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install libharfbuzz-dev libfreetype-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev libmbedtls-dev
+
+    - name: Install macOS Dependencies
+      if: runner.os == 'macOS'
+      run: |
+        brew update
+        brew install llvm@18
+        echo "$(brew --prefix llvm@18)/bin" >> $GITHUB_PATH
+
+    - name: Configure
+      run: cmake --preset dev ${{ matrix.platform.name != 'Android' && '-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++' || ''}} -DCMAKE_UNITY_BUILD=ON ${{matrix.platform.flags}}
+
+    - name: Analyze Code
+      run: cmake --build build --target tidy
+
+  sanitize:
+    name: Sanitizing on ${{ matrix.platform.name }}
+    runs-on: ${{ matrix.platform.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+        - { name: Linux,               os: ubuntu-24.04 }
+        - { name: Linux DRM,           os: ubuntu-24.04, flags: -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_USE_DRM=ON }
+        - { name: Linux GCC OpenGL ES, os: ubuntu-24.04, flags: -DSFML_RUN_DISPLAY_TESTS=OFF -DSFML_OPENGL_ES=ON }
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Get CMake and Ninja
+      uses: lukka/get-cmake@latest
+      with:
+        cmakeVersion: latest
+        ninjaVersion: latest
+
+    - name: Install Linux Dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install xorg-dev libharfbuzz-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev libmbedtls-dev xvfb fluxbox
+
+    - name: Configure
+      run: cmake --preset dev -GNinja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DSFML_BUILD_EXAMPLES=OFF -DSFML_ENABLE_SANITIZERS=ON ${{matrix.platform.flags}}
+
+    - name: Build
+      run: cmake --build build
+
+    - name: Prepare Test
+      run: |
+        set -e
+        # Start up Xvfb and fluxbox to host display tests
+        if [ "${{ runner.os }}" == "Linux" ]; then
+          Xvfb $DISPLAY -screen 0 1920x1080x24 &
+          sleep 5
+          fluxbox > /dev/null 2>&1 &
+          sleep 5
+        fi
+
+    - name: Test
+      run: ctest --test-dir build --output-on-failure
