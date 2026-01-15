@@ -466,9 +466,9 @@ void Text::setLineSpacing(float spacingFactor)
 ////////////////////////////////////////////////////////////
 void Text::setTextSpacingRounding(bool enabled)
 {
-    if(m_roundTextSpacing != enabled)
+    if (m_roundTextSpacing != enabled)
     {
-        m_roundTextSpacing = enabled;
+        m_roundTextSpacing   = enabled;
         m_geometryNeedUpdate = true;
     }
 }
@@ -802,18 +802,18 @@ void Text::ensureGeometryUpdate() const
 
     // Precompute the variables needed by the algorithm
     const float whitespaceWidth = m_font->getGlyph(U' ', m_characterSize, isBold).advance;
-    float letterSpacing = (whitespaceWidth / 3.0f) * (m_letterSpacingFactor - 1.0f);
-    float lineSpacing = m_font->getLineSpacing(m_characterSize) * m_lineSpacingFactor;
+    float       letterSpacing   = (whitespaceWidth / 3.0f) * (m_letterSpacingFactor - 1.0f);
+    float       lineSpacing     = m_font->getLineSpacing(m_characterSize) * m_lineSpacingFactor;
 
     // Round line and letter spacing if round text spacing is enabled
-    if(m_roundTextSpacing)
+    if (m_roundTextSpacing)
     {
         letterSpacing = std::round(letterSpacing);
-        lineSpacing = std::round(lineSpacing);
+        lineSpacing   = std::round(lineSpacing);
     }
 
-    float       x               = 0.0f;
-    auto        y = (m_textOrientation == TextOrientation::Default) ? static_cast<float>(m_characterSize) : 0.0f;
+    float x = 0.0f;
+    auto  y = (m_textOrientation == TextOrientation::Default) ? static_cast<float>(m_characterSize) : 0.0f;
 
     // Variables used to compute bounds
     auto minX = static_cast<float>(m_characterSize);

@@ -433,7 +433,7 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] float getLineSpacing() const;
-    
+
     ////////////////////////////////////////////////////////////
     /// \brief Tell whether line and letter spacing rounding is enabled
     ///
@@ -820,16 +820,16 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    String                m_string;                                      //!< String to display
-    const Font*           m_font{};                                      //!< Font used to display the string
-    unsigned int          m_characterSize{30};                           //!< Base size of characters, in pixels
-    float                 m_letterSpacingFactor{1.f};                    //!< Spacing factor between letters
-    float                 m_lineSpacingFactor{1.f};                      //!< Spacing factor between lines
-    bool                  m_roundTextSpacing = false;                    //!< Does the letter and line spacing need to be rounded?
-    std::uint32_t         m_style{Regular};                              //!< Text style (see Style enum)
-    Color                 m_fillColor{Color::White};                     //!< Text fill color
-    Color                 m_outlineColor{Color::Black};                  //!< Text outline color
-    float                 m_outlineThickness{0.f};                       //!< Thickness of the text's outline
+    String                m_string;                     //!< String to display
+    const Font*           m_font{};                     //!< Font used to display the string
+    unsigned int          m_characterSize{30};          //!< Base size of characters, in pixels
+    float                 m_letterSpacingFactor{1.f};   //!< Spacing factor between letters
+    float                 m_lineSpacingFactor{1.f};     //!< Spacing factor between lines
+    bool                  m_roundTextSpacing = false;   //!< Does the letter and line spacing need to be rounded?
+    std::uint32_t         m_style{Regular};             //!< Text style (see Style enum)
+    Color                 m_fillColor{Color::White};    //!< Text fill color
+    Color                 m_outlineColor{Color::Black}; //!< Text outline color
+    float                 m_outlineThickness{0.f};      //!< Thickness of the text's outline
     LineAlignment         m_lineAlignment{LineAlignment::Default};       //!< Line alignment for a multi-line text
     TextOrientation       m_textOrientation{TextOrientation::Default};   //!< Text orientation
     ClusterGrouping       m_clusterGrouping{ClusterGrouping::Character}; //!< Cluster grouping algorithm
