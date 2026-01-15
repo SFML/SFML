@@ -256,56 +256,23 @@ public:
     void setLetterSpacing(float spacingFactor);
 
     ////////////////////////////////////////////////////////////
-    /// \brief Enable or disable rounding of letter spacing
+    /// \brief Enable or disable rounding of letter and line spacing
     ///
     /// When enabled, the computed positions of glyphs affected
-    /// by letter spacing will be rounded to pixel boundaries
+    /// by letter and line spacing will be rounded to pixel boundaries
     /// before rendering.
     ///
     /// This can be useful to improve text sharpness when using
-    /// fractional letter spacing factors, at the cost of slightly
+    /// fractional spacing factors, at the cost of slightly
     /// altered spacing compared to the exact mathematical layout.
     ///
-    /// By default, letter spacing rounding is disabled.
+    /// By default, rounding is disabled.
     ///
-    /// \param enabled True to enable letter spacing rounding, false to disable it
+    /// \param enabled True to enable rounding, false to disable it
     ///
-    /// \see `getLetterSpacingRounding`, `setLetterSpacing`
+    /// \see `getTextSpacingRounding`, `setLetterSpacing`, 'setLineSpacing'
     ////////////////////////////////////////////////////////////
-    void setLetterSpacingRounding(bool enabled);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Enable or disable rounding of line spacing
-    ///
-    /// When enabled, the computed vertical positions of lines
-    /// affected by line spacing will be rounded to pixel
-    /// boundaries before rendering.
-    ///
-    /// This can be useful to improve text sharpness when using
-    /// fractional line spacing factors, at the cost of slightly
-    /// altered vertical spacing.
-    ///
-    /// By default, line spacing rounding is disabled.
-    ///
-    /// \param enabled True to enable line spacing rounding, false to disable it
-    ///
-    /// \see `getLineSpacingRounding`, `setLineSpacing`
-    ////////////////////////////////////////////////////////////
-    void setLineSpacingRounding(bool enabled);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Round a value to the nearest pixel coordinate
-    ///
-    /// This function rounds the given floating-point value to
-    /// the nearest integer value, which corresponds to a pixel
-    /// boundary in window coordinates.
-    ///
-    /// \param value Value to round
-    ///
-    /// \return Rounded value
-    ////////////////////////////////////////////////////////////
-    float roundToPixel(float value) const;
-
+    void setTextSpacingRounding(bool enabled);
 
     ////////////////////////////////////////////////////////////
     /// \brief Set the text's style
@@ -468,24 +435,14 @@ public:
     [[nodiscard]] float getLineSpacing() const;
     
     ////////////////////////////////////////////////////////////
-    /// \brief Tell whether letter spacing rounding is enabled
+    /// \brief Tell whether line and letter spacing rounding is enabled
     ///
-    /// \return True if letter spacing rounding is enabled, false otherwise
+    /// \return True if rounding is enabled, false otherwise
     ///
-    /// \see `setLetterSpacingRounding`
-    ///
-    ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool getLetterSpacingRounding() const;
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Tell whether line spacing rounding is enabled
-    ///
-    /// \return True if line spacing rounding is enabled, false otherwise
-    ///
-    /// \see `setLineSpacingRounding`
+    /// \see `setTextSpacingRounding`
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool getLineSpacingRounding() const;
+    [[nodiscard]] bool getTextSpacingRounding() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the text's style
@@ -868,8 +825,7 @@ private:
     unsigned int          m_characterSize{30};                           //!< Base size of characters, in pixels
     float                 m_letterSpacingFactor{1.f};                    //!< Spacing factor between letters
     float                 m_lineSpacingFactor{1.f};                      //!< Spacing factor between lines
-    bool                  m_roundLetterSpacing = false;                  //!< Does the letter spacing need to be rounded?
-    bool                  m_roundLineSpacing = false;                    //!< Does the line spacing need to be rounded?
+    bool                  m_roundTextSpacing = false;                    //!< Does the letter and line spacing need to be rounded?
     std::uint32_t         m_style{Regular};                              //!< Text style (see Style enum)
     Color                 m_fillColor{Color::White};                     //!< Text fill color
     Color                 m_outlineColor{Color::Black};                  //!< Text outline color
