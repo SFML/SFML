@@ -487,8 +487,13 @@ TEST_CASE("[System] sf::String")
         {
             constexpr std::array<std::uint8_t, 1> characters{251};
             const sf::String                      string = sf::String::fromUtf8(characters.begin(), characters.end());
+            CHECK(string.isEmpty());
+        }
+        {
+            constexpr std::array<std::uint8_t, 1> characters{251};
+            const sf::String string = sf::String::fromUtf8(characters.begin(), characters.end(), '?');
             CHECK(string.getSize() == 1);
-            CHECK(string[0] == 0);
+            CHECK(string[0] == '?');
         }
         {
             constexpr std::array<std::uint8_t, 4> characters{'w', 'x', 'y', 'z'};
@@ -522,6 +527,28 @@ TEST_CASE("[System] sf::String")
 
     SECTION("fromUtf16()")
     {
+        {
+            constexpr std::array<char16_t, 1> characters{0xD800};
+            const sf::String                  string = sf::String::fromUtf16(characters.begin(), characters.end());
+            CHECK(string.isEmpty());
+        }
+        {
+            constexpr std::array<char16_t, 1> characters{0xD800};
+            const sf::String                  string = sf::String::fromUtf16(characters.begin(), characters.end(), '?');
+            CHECK(string.getSize() == 1);
+            CHECK(string[0] == '?');
+        }
+        {
+            constexpr std::array<char16_t, 2> characters{0xD800, 0xD800};
+            const sf::String                  string = sf::String::fromUtf16(characters.begin(), characters.end());
+            CHECK(string.isEmpty());
+        }
+        {
+            constexpr std::array<char16_t, 2> characters{0xD800, 0xD800};
+            const sf::String                  string = sf::String::fromUtf16(characters.begin(), characters.end(), '?');
+            CHECK(string.getSize() == 2);
+            CHECK(string[0] == '?');
+        }
         {
             constexpr std::u16string_view characters = u"SFML!"sv;
             const sf::String              string     = sf::String::fromUtf16(characters.begin(), characters.end());
