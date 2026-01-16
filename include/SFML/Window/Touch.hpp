@@ -45,12 +45,15 @@ namespace Touch
 ////////////////////////////////////////////////////////////
 /// \brief Check if a touch event is currently down
 ///
+/// \deprecated Use `sf::Event::TouchBegan` and `sf::Event::TouchEnded`
+///
 /// \param finger Finger index
 ///
 /// \return `true` if \a finger is currently touching the screen, `false` otherwise
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] SFML_WINDOW_API bool isDown(unsigned int finger);
+[[deprecated("Use sf::Event::TouchBegan and sf::Event::TouchEnded")]] [[nodiscard]] SFML_WINDOW_API bool isDown(
+    unsigned int finger);
 
 ////////////////////////////////////////////////////////////
 /// \brief Get the current position of a touch in desktop coordinates
@@ -58,12 +61,17 @@ namespace Touch
 /// This function returns the current touch position
 /// in global (desktop) coordinates.
 ///
+/// \deprecated Use position member of `sf::Event::TouchBegan`, `sf::Event::TouchEnded` and `sf::Event::TouchMoved`
+///
 /// \param finger Finger index
 ///
 /// \return Current position of \a finger, or undefined if it's not down
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] SFML_WINDOW_API Vector2i getPosition(unsigned int finger);
+[[deprecated(
+    "Use position member of sf::Event::TouchBegan, sf::Event::TouchEnded and "
+    "sf::Event::TouchMoved")]] [[nodiscard]] SFML_WINDOW_API Vector2i
+    getPosition(unsigned int finger);
 
 ////////////////////////////////////////////////////////////
 /// \brief Get the current position of a touch in window coordinates
@@ -71,13 +79,18 @@ namespace Touch
 /// This function returns the current touch position
 /// relative to the given window.
 ///
+/// \deprecated Use position member of `sf::Event::TouchBegan`, `sf::Event::TouchEnded` and `sf::Event::TouchMoved`
+///
 /// \param finger Finger index
 /// \param relativeTo Reference window
 ///
 /// \return Current position of \a finger, or undefined if it's not down
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] SFML_WINDOW_API Vector2i getPosition(unsigned int finger, const WindowBase& relativeTo);
+[[deprecated(
+    "Use position member of sf::Event::TouchBegan, sf::Event::TouchEnded and "
+    "sf::Event::TouchMoved")]] [[nodiscard]] SFML_WINDOW_API Vector2i
+    getPosition(unsigned int finger, const WindowBase& relativeTo);
 } // namespace Touch
 
 } // namespace sf
@@ -89,6 +102,8 @@ namespace Touch
 ///
 /// `sf::Touch` provides an interface to the state of the
 /// touches.
+///
+/// \warning This namespace is deprecated and will be removed in a future release. Events should be used instead.
 ///
 /// This namespace allows users to query the touches state at any
 /// time and directly, without having to deal with a window and
