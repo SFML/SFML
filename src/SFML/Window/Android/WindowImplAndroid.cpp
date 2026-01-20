@@ -64,24 +64,26 @@ WindowImplAndroid::WindowImplAndroid(VideoMode mode,
                                      const ContextSettings& /* settings */) :
     m_size(mode.size)
 {
-    ActivityStates&       states = getActivity();
-    const std::lock_guard lock(states.mutex);
+    ActivityStates& states = getActivity();
+    {
+        const std::lock_guard lock(states.mutex);
 
-    if (state == State::Fullscreen)
-        states.fullscreen = true;
+        if (state == State::Fullscreen)
+            states.fullscreen = true;
 
-    const bool shouldCreateSurface = (states.window != nullptr) && (WindowImplAndroid::singleInstance == nullptr);
+        WindowImplAndroid::singleInstance = this;
+        states.forwardEvent               = forwardEvent;
 
-    WindowImplAndroid::singleInstance = this;
-    states.forwardEvent               = forwardEvent;
+        // Register process event callback
+        states.processEvent = processEvent;
+        states.initialized  = true;
+    }
 
-    // Register process event callback
-    states.processEvent = processEvent;
-
-    if (shouldCreateSurface)
-        states.forwardEvent(sf::Event::FocusGained{});
-
-    states.initialized = true;
+    // Wait for window to be created
+    while (states.window == nullptr)
+    {
+        ALooper_pollOnce(0, nullptr, nullptr, nullptr);
+    }
 }
 
 
@@ -111,12 +113,6 @@ void WindowImplAndroid::processEvents()
 
     ActivityStates&       states = getActivity();
     const std::lock_guard lock(states.mutex);
-
-    if (m_windowBeingCreated)
-    {
-        states.context->createSurface(states.window);
-        m_windowBeingCreated = false;
-    }
 
     if (m_windowBeingDestroyed)
     {
@@ -244,8 +240,7 @@ void WindowImplAndroid::forwardEvent(const Event& event)
         {
             WindowImplAndroid::singleInstance->m_size = Vector2u(
                 Vector2i(ANativeWindow_getWidth(states.window), ANativeWindow_getHeight(states.window)));
-            WindowImplAndroid::singleInstance->m_windowBeingCreated = true;
-            WindowImplAndroid::singleInstance->m_hasFocus           = true;
+            WindowImplAndroid::singleInstance->m_hasFocus = true;
         }
         else if (event.is<Event::FocusLost>())
         {
