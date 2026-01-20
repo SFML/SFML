@@ -164,12 +164,8 @@ EglContext::EglContext(EglContext*                        shared,
     // Create EGL context
     createContext(shared);
 
-#if !defined(SFML_SYSTEM_ANDROID)
-    // Create EGL surface (except on Android because the window is created
-    // asynchronously, its activity manager will call it for us)
-    createSurface(owner.getNativeHandle());
-
-#endif
+    // Create EGL surface
+    createSurface(static_cast<EGLNativeWindowType>(owner.getNativeHandle()));
 }
 
 
