@@ -39,6 +39,7 @@
 #include <array>
 #include <dbt.h>
 #include <ostream>
+#include <shellapi.h>
 #include <vector>
 
 #include <cstddef>
@@ -300,6 +301,11 @@ WindowHandle WindowImplWin32::getNativeHandle() const
     return m_handle;
 }
 
+
+void WindowImplWin32::setFileDroppingEnabled(bool enabled)
+{
+    DragAcceptFiles(m_handle, enabled);
+}
 
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::processEvents()
@@ -1164,6 +1170,32 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             if (shouldResize)
                 SetWindowPos(m_handle, pos.hwndInsertAfter, pos.x, pos.y, pos.cx, pos.cy, 0);
 
+            break;
+        }
+
+        // Files dropped event
+        case WM_DROPFILES:
+        {
+            auto* hDrop = reinterpret_cast<HDROP>(wParam);
+
+            const unsigned int count = DragQueryFileW(hDrop, 0xFFFFFFFF, nullptr, 0);
+
+            if (count == 0)
+                break;
+
+            // Get the filenames as wchar_t then add it to the files vector
+            std::vector<String> files;
+            for (unsigned int i = 0; i < count; i++)
+            {
+                std::vector<wchar_t> buffer(DragQueryFileW(hDrop, i, nullptr, 0) + 1);
+                DragQueryFileW(hDrop, i, buffer.data(), static_cast<UINT>(buffer.size()));
+                files.emplace_back(buffer.data());
+            }
+
+            // Let the Windows API know we are done
+            DragFinish(hDrop);
+
+            pushEvent(Event::FilesDropped{files, Mouse::getPosition()});
             break;
         }
     }
