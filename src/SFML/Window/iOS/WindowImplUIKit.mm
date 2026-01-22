@@ -73,10 +73,9 @@ WindowImplUIKit::WindowImplUIKit(VideoMode mode,
     [m_view resignFirstResponder];
 
     // Create the view controller
-    m_viewController                      = [SFViewController alloc];
-    m_viewController.view                 = m_view;
-    m_viewController.orientationCanChange = style & Style::Resize;
-    m_window.rootViewController           = m_viewController;
+    m_viewController            = [SFViewController alloc];
+    m_viewController.view       = m_view;
+    m_window.rootViewController = m_viewController;
 
     // Make it the current window
     [m_window makeKeyAndVisible];

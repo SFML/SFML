@@ -49,29 +49,11 @@
 + (SFAppDelegate*)getInstance;
 
 ////////////////////////////////////////////////////////////
-/// \brief Show or hide the virtual keyboard
-///
-/// \param visible `true` to show, `false` to hide
-///
-////////////////////////////////////////////////////////////
 - (void)setVirtualKeyboardVisible:(bool)visible;
 
 ////////////////////////////////////////////////////////////
-/// \brief Get the current touch position for a given finger
-///
-/// \param index Finger index
-///
-/// \return Current touch position, or (-1, -1) if no touch
-///
-////////////////////////////////////////////////////////////
 - (sf::Vector2i)getTouchPosition:(unsigned int)index;
 
-////////////////////////////////////////////////////////////
-/// \brief Receive an external touch begin notification
-///
-/// \param index    Finger index
-/// \param position Position of the touch
-///
 ////////////////////////////////////////////////////////////
 - (void)notifyTouchBegin:(unsigned int)index atPosition:(sf::Vector2i)position;
 
@@ -100,22 +82,6 @@
 ///
 ////////////////////////////////////////////////////////////
 - (void)notifyCharacter:(char32_t)character;
-
-////////////////////////////////////////////////////////////
-/// \brief Tells if the dimensions of the current window must be flipped when switching to a given orientation
-///
-/// \param orientation the device has changed to
-///
-////////////////////////////////////////////////////////////
-- (bool)needsToFlipFrameForOrientation:(UIDeviceOrientation)orientation;
-
-////////////////////////////////////////////////////////////
-/// \brief Tells if app and view support a requested device orientation or not
-///
-/// \param orientation the device has changed to
-///
-////////////////////////////////////////////////////////////
-- (bool)supportsOrientation:(UIDeviceOrientation)orientation;
 
 ////////////////////////////////////////////////////////////
 /// \brief Initializes the factor which is required to convert from points to pixels and back
