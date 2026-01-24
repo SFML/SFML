@@ -441,7 +441,9 @@ function(sfml_add_test target SOURCES DEPENDS)
     endif()
 
     # Delay test registration when cross compiling to avoid running crosscompiled app on host OS
-    if(CMAKE_CROSSCOMPILING)
+    # Do the same when using Xcode, as otherwise it runs as a post-build step before codesigning and fails
+    # see https://gitlab.kitware.com/cmake/cmake/-/issues/21845
+    if(CMAKE_CROSSCOMPILING OR XCODE)
         set(CMAKE_CATCH_DISCOVER_TESTS_DISCOVERY_MODE PRE_TEST)
 
         # When running tests on Android, use a custom shell script to invoke commands using adb shell
