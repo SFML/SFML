@@ -39,6 +39,7 @@
 #include <array>
 #include <dbt.h>
 #include <ostream>
+#include <iostream>
 #include <vector>
 
 #include <cstddef>
@@ -760,31 +761,33 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Resize event
         case WM_SIZE:
         {
-            // Consider only events triggered by a maximize or a un-maximize
-            if (!m_resizing && m_lastSize != getSize())
+            switch(wParam)
             {
-                // Update the last handled size
-                m_lastSize = getSize();
-
-                // Check for special cases for window minimize or maximize
-                // Standard resize event otherwise
-                switch (wParam)
+                case SIZE_MINIMIZED:
+                    pushEvent(Event::Minimized{});
+                    break;
+                case SIZE_MAXIMIZED:
+                    pushEvent(Event::Maximized{});
+                    m_lastSize = getSize();
+                    pushEvent(Event::Resized{m_lastSize});
+                    break;
+                case SIZE_RESTORED:
+                    m_lastSize = getSize();
+                    pushEvent(Event::Resized{m_lastSize});
+                    break;
+                default:
                 {
-                    case SIZE_MINIMIZED:
-                        pushEvent(Event::Minimized{});
-                        break;
-                    case SIZE_MAXIMIZED:
-                        pushEvent(Event::Maximized{});
-                        break;
-                    default:
+                    if (!m_resizing && m_lastSize != getSize())
+                    {
                         // Push a resize event
                         pushEvent(Event::Resized{m_lastSize});
-                        break;
+                    }
+                    break;
                 }
-
-                // Restore/update cursor grabbing
-                grabCursor(m_cursorGrabbed);
             }
+            
+            // Restore/update cursor grabbing
+            grabCursor(m_cursorGrabbed);
             break;
         }
 
@@ -1182,10 +1185,10 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
 
         case WM_SYSCOMMAND:
         {
-            if (wParam == SC_MINIMIZED)
-            {
-                pushEvent(Event::Minimized{});
-            }
+            // if (wParam == SC_MINIMIZED)
+            // {
+            //     pushEvent(Event::Minimized{});
+            // }
             break;
         }
     }
