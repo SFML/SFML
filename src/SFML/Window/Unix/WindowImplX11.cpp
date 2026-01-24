@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 
+#include "WindowImplX11.hpp"
 #include <SFML/Window/InputImpl.hpp>
 #include <SFML/Window/Unix/ClipboardImpl.hpp>
 #include <SFML/Window/Unix/Display.hpp>
@@ -39,6 +40,8 @@
 #include <SFML/System/Time.hpp>
 #include <SFML/System/Utf.hpp>
 
+#include <X11/X.h>
+#include <X11/Xlib.h>
 #include <X11/Xlibint.h>
 #undef min // Defined by `Xlibint.h`, conflicts with standard headers
 #undef max // Defined by `Xlibint.h`, conflicts with standard headers
@@ -1663,6 +1666,104 @@ void WindowImplX11::cleanup()
     setMouseCursorVisible(true);
 }
 
+bool WindowImplX11::isMinimized() const
+{
+    const Atom wmState = sf::priv::getAtom("_NET_WM_STATE");
+    const Atom wmHidden = sf::priv::getAtom("_NET_WM_STATE_HIDDEN");
+
+    int format { 0 };
+    unsigned long nitems {};
+    unsigned long bytes_after {};
+    Atom type {};
+    Atom* atoms { nullptr };
+
+    if (XGetWindowProperty(
+            m_display.get(),
+            m_window,
+            wmState,
+            0,
+            1028,
+            false,
+            XA_ATOM,
+            &type,
+            &format,
+            &nitems,
+            &bytes_after,
+            reinterpret_cast<unsigned char**>(&atoms)
+        ) == Success)
+    {
+        if (atoms)
+        {
+            for (unsigned long i = 0; i < nitems; i++)
+            {
+                if (atoms[i] == wmHidden)
+                {
+                    XFree(atoms);
+                    return true;
+                }
+            }
+            XFree(atoms);
+        }
+    }
+
+    return false;
+}
+
+bool WindowImplX11::isMaximized() const
+{
+    const Atom wmState = sf::priv::getAtom("_NET_WM_STATE");
+    const Atom wmMaxHorizontal = sf::priv::getAtom("_NET_WM_STATE_MAXIMIZED_HORZ");
+    const Atom wmMaxVertical = sf::priv::getAtom("_NET_WM_STATE_MAXIMIZED_VERT");
+
+    int format { 0 };
+    unsigned long nitems {};
+    unsigned long bytes_after {};
+    Atom type {};
+    Atom* atoms { nullptr };
+
+    if (XGetWindowProperty(
+            m_display.get(),
+            m_window, wmState,
+            0,
+            1028,
+            false,
+            XA_ATOM,
+            &type,
+            &format,
+            &nitems,
+            &bytes_after,
+            reinterpret_cast<unsigned char**>(&atoms)
+        ) == Success)
+    {
+        if (atoms)
+        {
+            bool has_horz { false };
+            bool has_vert { false };
+
+            for (unsigned long i = 0; i < nitems; i++)
+            {
+                if (atoms[i] == wmMaxVertical)
+                {
+                    has_vert = true;
+                }
+
+                if (atoms[i] == wmMaxHorizontal)
+                {
+                    has_horz = true;
+                }
+            }
+
+            XFree(atoms);
+            if (has_vert && has_horz)
+            {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 
 ////////////////////////////////////////////////////////////
 bool WindowImplX11::processEvent(XEvent& windowEvent)
@@ -1752,6 +1853,15 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             // ConfigureNotify can be triggered for other reasons, check if the size has actually changed
             if ((windowEvent.xconfigure.width != m_previousSize.x) || (windowEvent.xconfigure.height != m_previousSize.y))
             {
+                if (isMaximized())
+                {
+                    pushEvent(Event::Maximized{});
+                }
+                if (isMinimized())
+                {
+                    pushEvent(Event::Minimized{});
+                }
+
                 pushEvent(Event::Resized{Vector2u(Vector2(windowEvent.xconfigure.width, windowEvent.xconfigure.height))});
 
                 m_previousSize.x = windowEvent.xconfigure.width;
@@ -2039,6 +2149,10 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             if (!m_lastInputTime)
                 m_lastInputTime = windowEvent.xproperty.time;
 
+            if (isMinimized())
+            {
+                pushEvent(Event::Minimized{});
+            }
             break;
         }
 
