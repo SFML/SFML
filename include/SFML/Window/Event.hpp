@@ -71,7 +71,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Event for window minimization
     ///
-    /// TODO: write more description here
+    /// Triggered on window minimization
     ///
     ////////////////////////////////////////////////////////////
     struct Minimized
@@ -81,7 +81,7 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Event for window maximization
     ///
-    /// TODO: write more description here
+    /// Triggered on window maximization
     ///
     ////////////////////////////////////////////////////////////
     struct Maximized
