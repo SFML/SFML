@@ -151,15 +151,6 @@ int main()
                 window.close();
             }
 
-            if (event->is<sf::Event::Minimized>())
-            {
-                std::cout << "Window minimized\n";
-            }
-            if (event->is<sf::Event::Maximized>())
-            {
-                std::cout << "Window maximized\n";
-            }
-
             // Resize event: adjust the viewport
             if (const auto* resized = event->getIf<sf::Event::Resized>())
             {
