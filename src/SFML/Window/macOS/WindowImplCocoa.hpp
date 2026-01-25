@@ -117,8 +117,6 @@ public:
     ///
     /// Send the event to SFML WindowImpl class.
     ///
-    /// \param size new width and height
-    ///
     ////////////////////////////////////////////////////////////
     void windowMinimized();
 
@@ -126,8 +124,6 @@ public:
     /// \brief Window Maximized Event - called by the cocoa window object
     ///
     /// Send the event to SFML WindowImpl class.
-    ///
-    /// \param size new width and height
     ///
     ////////////////////////////////////////////////////////////
     void windowMaximized();
