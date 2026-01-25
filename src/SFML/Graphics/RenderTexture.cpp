@@ -95,7 +95,7 @@ bool RenderTexture::resize(Vector2u size, const ContextSettings& settings)
 
     // Initialize the render texture
     // We pass the actual size of our texture since OpenGL ES requires that all attachments have identical sizes
-    if (!m_impl->create(m_texture.m_actualSize, m_texture.m_texture, settings))
+    if (!m_impl->create(m_texture.m_actualSize, m_texture.getNativeHandle(), settings))
         return false;
 
     // We can now initialize the render target part
@@ -183,7 +183,7 @@ void RenderTexture::display()
     }
 
     // Update the target texture
-    m_impl->updateTexture(m_texture.m_texture);
+    m_impl->updateTexture(m_texture.getNativeHandle());
     m_texture.m_pixelsFlipped = true;
     m_texture.invalidateMipmap();
 }
