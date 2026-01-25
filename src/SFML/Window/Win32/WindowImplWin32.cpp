@@ -39,7 +39,6 @@
 #include <array>
 #include <dbt.h>
 #include <ostream>
-#include <iostream>
 #include <vector>
 
 #include <cstddef>
@@ -785,7 +784,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
                     break;
                 }
             }
-            
+
             // Restore/update cursor grabbing
             grabCursor(m_cursorGrabbed);
             break;
@@ -1180,15 +1179,6 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             if (shouldResize)
                 SetWindowPos(m_handle, pos.hwndInsertAfter, pos.x, pos.y, pos.cx, pos.cy, 0);
 
-            break;
-        }
-
-        case WM_SYSCOMMAND:
-        {
-            // if (wParam == SC_MINIMIZED)
-            // {
-            //     pushEvent(Event::Minimized{});
-            // }
             break;
         }
     }
