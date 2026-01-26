@@ -442,4 +442,9 @@ function(sfml_export_targets)
                   "${CMAKE_CURRENT_BINARY_DIR}/SFMLConfigVersion.cmake"
             DESTINATION ${config_package_location}
             COMPONENT devel)
+
+    # Install custom openal find module
+    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/cmake/Modules/FindOpenAL.cmake"
+            DESTINATION ${config_package_location}/Modules
+            COMPONENT devel)
 endfunction()

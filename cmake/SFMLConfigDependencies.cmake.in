@@ -75,7 +75,6 @@ if(SFML_STATIC_LIBRARIES)
     # sfml-audio
     list(FIND SFML_FIND_COMPONENTS "audio" FIND_SFML_AUDIO_COMPONENT_INDEX)
     if(FIND_SFML_AUDIO_COMPONENT_INDEX GREATER -1)
-        sfml_bind_dependency(TARGET OpenAL FRIENDLY_NAME "OpenAL" SEARCH_NAMES "OpenAL" "openal" "openal32")
         if (NOT FIND_SFML_OS_IOS)
             sfml_bind_dependency(TARGET VORBIS FRIENDLY_NAME "VorbisFile" SEARCH_NAMES "vorbisfile")
             sfml_bind_dependency(TARGET VORBIS FRIENDLY_NAME "VorbisEnc" SEARCH_NAMES "vorbisenc")
@@ -83,6 +82,12 @@ if(SFML_STATIC_LIBRARIES)
         sfml_bind_dependency(TARGET VORBIS FRIENDLY_NAME "Vorbis" SEARCH_NAMES "vorbis")
         sfml_bind_dependency(TARGET VORBIS FRIENDLY_NAME "Ogg" SEARCH_NAMES "ogg")
         sfml_bind_dependency(TARGET FLAC FRIENDLY_NAME "FLAC" SEARCH_NAMES "FLAC")
+
+        # For OpenAL targets use our custom find module so runtime dependencies are properly propagated
+        list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/Modules/")
+        list(APPEND CMAKE_PREFIX_PATH "${CMAKE_CURRENT_LIST_DIR}/../..") # For it to find our packaged openAL library
+        set(OPENAL_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/../../include") # Include dir isn't needed but find module will error out if not set
+        find_package(OpenAL REQUIRED)
     endif()
 
     if (FIND_SFML_DEPENDENCIES_NOTFOUND)
