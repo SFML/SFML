@@ -100,6 +100,18 @@ public:
             return "Touch Moved: " + vec2ToString(touchMoved.position);
         }
 
+        std::optional<std::string> operator()(const sf::Event::Maximized& maximized)
+        {
+            (void)maximized;
+            return "Maximized";
+        }
+
+        std::optional<std::string> operator()(const sf::Event::Minimized& minimized)
+        {
+            (void)minimized;
+            return "Minimized";
+        }
+
         // When defining a visitor, make sure all event types can be handled by it.
         // If you don't intend on exhaustively specifying an operator() for each
         // event type, you can provide a templated operator() that will be selected
@@ -172,6 +184,14 @@ public:
                     {
                         m_log.emplace_back("Touch Moved: " + vec2ToString(touchMoved->position));
                     }
+                    else if (const auto* maximized = event->getIf<sf::Event::Maximized>())
+                    {
+                        m_log.emplace_back("Maximized");
+                    }
+                    else if (const auto* minimized = event->getIf<sf::Event::Minimized>())
+                    {
+                        m_log.emplace_back("Minimized");
+                    }
                     else
                     {
                         // All unhandled events will end up here
@@ -218,6 +238,16 @@ public:
                                       { m_log.emplace_back("Touch Began: " + vec2ToString(touchBegan.position)); },
                                       [&](const sf::Event::TouchEnded& touchEnded)
                                       { m_log.emplace_back("Touch Ended: " + vec2ToString(touchEnded.position)); },
+                                      [&](const sf::Event::Maximized& maximized)
+                                      { 
+                                        (void)maximized;
+                                        m_log.emplace_back("Maximized"); 
+                                      },
+                                      [&](const sf::Event::Minimized& minimized)
+                                      { 
+                                        (void)minimized;
+                                        m_log.emplace_back("Minimized"); 
+                                      },
                                       [&](const sf::Event::TouchMoved& touchMoved)
                                       { m_log.emplace_back("Touch Moved: " + vec2ToString(touchMoved.position)); });
 
@@ -272,6 +302,14 @@ public:
                         else if constexpr (std::is_same_v<T, sf::Event::TouchMoved>)
                         {
                             m_log.emplace_back("Touch Moved: " + vec2ToString(event.position));
+                        }
+                        else if constexpr (std::is_same_v<T, sf::Event::Maximized>)
+                        {
+                            m_log.emplace_back("Maximized");
+                        }
+                        else if constexpr (std::is_same_v<T, sf::Event::Minimized>)
+                        {
+                            m_log.emplace_back("Minimized");
                         }
                         else
                         {
@@ -365,6 +403,18 @@ public:
         m_log.emplace_back("Touch Moved: " + vec2ToString(touchMoved.position));
     }
 
+    void handle(const sf::Event::Maximized& maximized)
+    {
+        (void)maximized;
+        m_log.emplace_back("Maximized");
+    }
+
+    void handle(const sf::Event::Minimized& minimized)
+    {
+        (void)minimized;
+        m_log.emplace_back("Minimized");
+    }
+
     template <typename T>
     void handle(const T&)
     {
@@ -385,7 +435,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    sf::RenderWindow m_window{sf::VideoMode({800u, 600u}), "SFML Event Handling", sf::Style::Titlebar | sf::Style::Close};
+    sf::RenderWindow m_window{sf::VideoMode({800u, 600u}), "SFML Event Handling", sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize};
     const sf::Font           m_font{resourcesDir() / "tuffy.ttf"};
     sf::Text                 m_logText{m_font, "", 20};
     sf::Text                 m_handlerText{m_font, "Current Handler: Classic", 24};
