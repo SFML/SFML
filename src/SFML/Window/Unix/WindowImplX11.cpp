@@ -1673,7 +1673,7 @@ bool WindowImplX11::isMinimized() const
 
     int format { 0 };
     unsigned long nitems {};
-    unsigned long bytes_after {};
+    unsigned long bytesAfter {};
     Atom type {};
     Atom* atoms { nullptr };
 
@@ -1688,7 +1688,7 @@ bool WindowImplX11::isMinimized() const
             &type,
             &format,
             &nitems,
-            &bytes_after,
+            &bytesAfter,
             reinterpret_cast<unsigned char**>(&atoms)
         ) == Success)
     {
@@ -1717,7 +1717,7 @@ bool WindowImplX11::isMaximized() const
 
     int format { 0 };
     unsigned long nitems {};
-    unsigned long bytes_after {};
+    unsigned long bytesAfter {};
     Atom type {};
     Atom* atoms { nullptr };
 
@@ -1731,30 +1731,30 @@ bool WindowImplX11::isMaximized() const
             &type,
             &format,
             &nitems,
-            &bytes_after,
+            &bytesAfter,
             reinterpret_cast<unsigned char**>(&atoms)
         ) == Success)
     {
         if (atoms)
         {
-            bool has_horz { false };
-            bool has_vert { false };
+            bool hasHorizontal { false };
+            bool hasVertical { false };
 
             for (unsigned long i = 0; i < nitems; i++)
             {
                 if (atoms[i] == wmMaxVertical)
                 {
-                    has_vert = true;
+                    hasVertical = true;
                 }
 
                 if (atoms[i] == wmMaxHorizontal)
                 {
-                    has_horz = true;
+                    hasHorizontal = true;
                 }
             }
 
             XFree(atoms);
-            if (has_vert && has_horz)
+            if (hasVertical && hasHorizontal)
             {
                 return true;
             }
