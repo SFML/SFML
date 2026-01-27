@@ -25,9 +25,11 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/System/Err.hpp>
 #include <SFML/System/Utf.hpp> // NOLINT(misc-header-include-cycle)
 
 #include <iterator>
+#include <ostream>
 
 
 ////////////////////////////////////////////////////////////
@@ -83,16 +85,27 @@ In Utf<8>::decode(In begin, In end, char32_t& output, char32_t replacement)
 
     // clang-format off
     // Some useful precomputed data
+    // We use the value 9 to mark bytes that should never occur at the start of a sequence
+    // UTF-8 cannot encode byte sequences longer than 7 bytes in theory so using 9 should be safe here
     static constexpr std::array<std::uint8_t, 256> trailing =
     {
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
-        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5
+    //  0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 0 - ASCII Control Characters
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 1 - ASCII Control Characters
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 2 - ASCII
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 3 - ASCII
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 4 - ASCII
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 5 - ASCII
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 6 - ASCII
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // 7 - ASCII
+        9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, // 8 - Continuation bytes
+        9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, // 9 - Continuation bytes
+        9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, // A - Continuation bytes
+        9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, // B - Continuation bytes
+        9, 9, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // C - Leading bytes (Excluding C0-C1)
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // D - Leading bytes
+        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, // E - Leading bytes
+        3, 3, 3, 3, 3, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9  // F - Leading bytes (Excluding F5-FF)
     };
 
     static constexpr std::array<std::uint32_t, 6> offsets =
@@ -103,7 +116,18 @@ In Utf<8>::decode(In begin, In end, char32_t& output, char32_t replacement)
 
     // decode the character
     const auto trailingBytes = trailing[static_cast<std::uint8_t>(*begin)];
-    if (trailingBytes < std::distance(begin, end))
+    if (trailingBytes == 9)
+    {
+        // Invalid byte at the start of a sequence
+        // Replace it and let the caller attempt decoding from the next byte
+#ifdef SFML_DEBUG
+        err() << "Attempted to convert invalid UTF-8 byte sequence beginning with "
+              << "0x" << std::uppercase << std::hex << (static_cast<std::uint32_t>(*begin) & 0xFFu) << std::endl;
+#endif
+        output = replacement;
+        ++begin;
+    }
+    else if (trailingBytes < std::distance(begin, end))
     {
         output = 0;
 
@@ -123,9 +147,14 @@ In Utf<8>::decode(In begin, In end, char32_t& output, char32_t replacement)
     }
     else
     {
-        // Incomplete character
-        begin  = end;
+        // Incomplete sequence
+        // Replace the first byte and let the caller attempt decoding from the next byte
+#ifdef SFML_DEBUG
+        err() << "Attempted to convert truncated UTF-8 byte sequence beginning with "
+              << "0x" << std::uppercase << std::hex << (static_cast<std::uint32_t>(*begin) & 0xFFu) << std::endl;
+#endif
         output = replacement;
+        ++begin;
     }
 
     return begin;
@@ -311,7 +340,7 @@ Out Utf<8>::toLatin1(In begin, In end, Out output, char replacement)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<8>::toUtf8(In begin, In end, Out output)
+Out Utf<8>::toUtf8(In begin, In end, Out output, std::uint8_t)
 {
     static_assert(sizeof(decltype(*begin)) == sizeof(char));
 
@@ -321,15 +350,20 @@ Out Utf<8>::toUtf8(In begin, In end, Out output)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<8>::toUtf16(In begin, In end, Out output)
+Out Utf<8>::toUtf16(In begin, In end, Out output, char16_t replacement)
 {
     static_assert(sizeof(decltype(*begin)) == sizeof(char));
 
     while (begin != end)
     {
+        // Because we first convert to UTF-32 we have to make
+        // use of a sentinel value to detect sequences that were
+        // not convertible in this conversion
+        // 0xFFFFFFFF is not a valid UTF-32 codepoint so it is safe to use
+        // When encoding it will trigger the replacement
         char32_t codepoint = 0;
-        begin              = decode(begin, end, codepoint);
-        output             = Utf<16>::encode(codepoint, output);
+        begin              = decode(begin, end, codepoint, 0xFFFFFFFFU);
+        output             = Utf<16>::encode(codepoint, output, replacement);
     }
 
     return output;
@@ -338,15 +372,27 @@ Out Utf<8>::toUtf16(In begin, In end, Out output)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<8>::toUtf32(In begin, In end, Out output)
+Out Utf<8>::toUtf32(In begin, In end, Out output, char32_t replacement)
 {
     static_assert(sizeof(decltype(*begin)) == sizeof(char));
 
     while (begin != end)
     {
+        // In order to skip invalid codepoints when replacement = 0
+        // we have to make use of a sentinel value to detect sequences
+        // that were not convertible in this conversion
+        // 0xFFFFFFFF is not a valid UTF-32 codepoint so it is safe to use
+        // Skip replacement if it is returned by decoding
         char32_t codepoint = 0;
-        begin              = decode(begin, end, codepoint);
-        *output++          = codepoint;
+        begin              = decode(begin, end, codepoint, 0xFFFFFFFFU);
+        if (codepoint != 0xFFFFFFFFU)
+        {
+            *output++ = codepoint;
+        }
+        else if (replacement)
+        {
+            *output++ = replacement;
+        }
     }
 
     return output;
@@ -366,22 +412,35 @@ In Utf<16>::decode(In begin, In end, char32_t& output, char32_t replacement)
     {
         if (begin != end)
         {
-            const std::uint32_t second = *begin++;
+            const std::uint32_t second = *begin;
             if ((second >= 0xDC00) && (second <= 0xDFFF))
             {
                 // The second element is valid: convert the two elements to a UTF-32 character
                 output = ((first - 0xD800u) << 10) + (second - 0xDC00) + 0x0010000;
+
+                // Increment position past second element
+                ++begin;
             }
             else
             {
                 // Invalid character
+                // Return position after reading the first element
+#ifdef SFML_DEBUG
+                err() << "Attempted to convert invalid UTF-16 sequence "
+                      << "0x" << std::uppercase << std::hex << (static_cast<std::uint32_t>(first) & 0xFFFFu) << " 0x"
+                      << std::uppercase << std::hex << (static_cast<std::uint32_t>(second) & 0xFFFFu) << std::endl;
+#endif
                 output = replacement;
             }
         }
         else
         {
             // Invalid character
-            begin  = end;
+            // Return position after reading the first element
+#ifdef SFML_DEBUG
+            err() << "Attempted to convert invalid UTF-16 sequence beginning with "
+                  << "0x" << std::uppercase << std::hex << (static_cast<std::uint32_t>(first) & 0xFFFFu) << std::endl;
+#endif
             output = replacement;
         }
     }
@@ -558,15 +617,20 @@ Out Utf<16>::toLatin1(In begin, In end, Out output, char replacement)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<16>::toUtf8(In begin, In end, Out output)
+Out Utf<16>::toUtf8(In begin, In end, Out output, std::uint8_t replacement)
 {
     static_assert(sizeof(decltype(*begin)) == sizeof(char16_t));
 
     while (begin != end)
     {
+        // Because we first convert to UTF-32 we have to make
+        // use of a sentinel value to detect sequences that were
+        // not convertible in this conversion
+        // 0xFFFFFFFF is not a valid UTF-32 codepoint so it is safe to use
+        // When encoding it will trigger the replacement
         char32_t codepoint = 0;
-        begin              = decode(begin, end, codepoint);
-        output             = Utf<8>::encode(codepoint, output);
+        begin              = decode(begin, end, codepoint, 0xFFFFFFFFU);
+        output             = Utf<8>::encode(codepoint, output, replacement);
     }
 
     return output;
@@ -575,7 +639,7 @@ Out Utf<16>::toUtf8(In begin, In end, Out output)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<16>::toUtf16(In begin, In end, Out output)
+Out Utf<16>::toUtf16(In begin, In end, Out output, char16_t)
 {
     static_assert(sizeof(decltype(*begin)) == sizeof(char16_t));
 
@@ -585,15 +649,27 @@ Out Utf<16>::toUtf16(In begin, In end, Out output)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<16>::toUtf32(In begin, In end, Out output)
+Out Utf<16>::toUtf32(In begin, In end, Out output, char32_t replacement)
 {
     static_assert(sizeof(decltype(*begin)) == sizeof(char16_t));
 
     while (begin != end)
     {
+        // In order to skip invalid codepoints when replacement = 0
+        // we have to make use of a sentinel value to detect sequences
+        // that were not convertible in this conversion
+        // 0xFFFFFFFF is not a valid UTF-32 codepoint so it is safe to use
+        // Skip replacement if it is returned by decoding
         char32_t codepoint = 0;
-        begin              = decode(begin, end, codepoint);
-        *output++          = codepoint;
+        begin              = decode(begin, end, codepoint, 0xFFFFFFFFU);
+        if (codepoint != 0xFFFFFFFFU)
+        {
+            *output++ = codepoint;
+        }
+        else if (replacement)
+        {
+            *output++ = replacement;
+        }
     }
 
     return output;
@@ -724,24 +800,24 @@ Out Utf<32>::toLatin1(In begin, In end, Out output, char replacement)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<32>::toUtf8(In begin, In end, Out output)
+Out Utf<32>::toUtf8(In begin, In end, Out output, std::uint8_t replacement)
 {
     static_assert(sizeof(decltype(*begin)) == sizeof(char32_t));
 
     while (begin != end)
-        output = Utf<8>::encode(*begin++, output);
+        output = Utf<8>::encode(*begin++, output, replacement);
 
     return output;
 }
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<32>::toUtf16(In begin, In end, Out output)
+Out Utf<32>::toUtf16(In begin, In end, Out output, char16_t replacement)
 {
     static_assert(sizeof(decltype(*begin)) == sizeof(char32_t));
 
     while (begin != end)
-        output = Utf<16>::encode(*begin++, output);
+        output = Utf<16>::encode(*begin++, output, replacement);
 
     return output;
 }
@@ -749,7 +825,7 @@ Out Utf<32>::toUtf16(In begin, In end, Out output)
 
 ////////////////////////////////////////////////////////////
 template <typename In, typename Out>
-Out Utf<32>::toUtf32(In begin, In end, Out output)
+Out Utf<32>::toUtf32(In begin, In end, Out output, char32_t /*replacement*/)
 {
     static_assert(sizeof(decltype(*begin)) == sizeof(char32_t));
 

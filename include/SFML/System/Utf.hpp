@@ -194,7 +194,7 @@ public:
     /// \param begin       Iterator pointing to the beginning of the input sequence
     /// \param end         Iterator pointing to the end of the input sequence
     /// \param output      Iterator pointing to the beginning of the output sequence
-    /// \param replacement Replacement for characters not convertible to wide (use 0 to skip them)
+    /// \param replacement Replacement for characters not convertible to latin-1 (use 0 to skip them)
     ///
     /// \return Iterator to the end of the output sequence which has been written
     ///
@@ -210,41 +210,44 @@ public:
     /// specializations of the `sf::Utf<>` template, and allow
     /// generic code to be written on top of it.
     ///
-    /// \param begin  Iterator pointing to the beginning of the input sequence
-    /// \param end    Iterator pointing to the end of the input sequence
-    /// \param output Iterator pointing to the beginning of the output sequence
+    /// \param begin       Iterator pointing to the beginning of the input sequence
+    /// \param end         Iterator pointing to the end of the input sequence
+    /// \param output      Iterator pointing to the beginning of the output sequence
+    /// \param replacement Unused, kept to stay compatible with other specializations
     ///
     /// \return Iterator to the end of the output sequence which has been written
     ///
     ////////////////////////////////////////////////////////////
     template <typename In, typename Out>
-    static Out toUtf8(In begin, In end, Out output);
+    static Out toUtf8(In begin, In end, Out output, std::uint8_t replacement = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert a UTF-8 characters range to UTF-16
     ///
-    /// \param begin  Iterator pointing to the beginning of the input sequence
-    /// \param end    Iterator pointing to the end of the input sequence
-    /// \param output Iterator pointing to the beginning of the output sequence
+    /// \param begin       Iterator pointing to the beginning of the input sequence
+    /// \param end         Iterator pointing to the end of the input sequence
+    /// \param output      Iterator pointing to the beginning of the output sequence
+    /// \param replacement Replacement for characters not convertible to UTF-16 (use 0 to skip them)
     ///
     /// \return Iterator to the end of the output sequence which has been written
     ///
     ////////////////////////////////////////////////////////////
     template <typename In, typename Out>
-    static Out toUtf16(In begin, In end, Out output);
+    static Out toUtf16(In begin, In end, Out output, char16_t replacement = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert a UTF-8 characters range to UTF-32
     ///
-    /// \param begin  Iterator pointing to the beginning of the input sequence
-    /// \param end    Iterator pointing to the end of the input sequence
-    /// \param output Iterator pointing to the beginning of the output sequence
+    /// \param begin       Iterator pointing to the beginning of the input sequence
+    /// \param end         Iterator pointing to the end of the input sequence
+    /// \param output      Iterator pointing to the beginning of the output sequence
+    /// \param replacement Replacement for characters not convertible to UTF-32 (use 0 to skip them)
     ///
     /// \return Iterator to the end of the output sequence which has been written
     ///
     ////////////////////////////////////////////////////////////
     template <typename In, typename Out>
-    static Out toUtf32(In begin, In end, Out output);
+    static Out toUtf32(In begin, In end, Out output, char32_t replacement = 0);
 };
 
 ////////////////////////////////////////////////////////////
@@ -400,7 +403,7 @@ public:
     /// \param begin       Iterator pointing to the beginning of the input sequence
     /// \param end         Iterator pointing to the end of the input sequence
     /// \param output      Iterator pointing to the beginning of the output sequence
-    /// \param replacement Replacement for characters not convertible to wide (use 0 to skip them)
+    /// \param replacement Replacement for characters not convertible to latin-1 (use 0 to skip them)
     ///
     /// \return Iterator to the end of the output sequence which has been written
     ///
@@ -411,15 +414,16 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Convert a UTF-16 characters range to UTF-8
     ///
-    /// \param begin  Iterator pointing to the beginning of the input sequence
-    /// \param end    Iterator pointing to the end of the input sequence
-    /// \param output Iterator pointing to the beginning of the output sequence
+    /// \param begin       Iterator pointing to the beginning of the input sequence
+    /// \param end         Iterator pointing to the end of the input sequence
+    /// \param output      Iterator pointing to the beginning of the output sequence
+    /// \param replacement Replacement for characters not convertible to UTF-8 (use 0 to skip them)
     ///
     /// \return Iterator to the end of the output sequence which has been written
     ///
     ////////////////////////////////////////////////////////////
     template <typename In, typename Out>
-    static Out toUtf8(In begin, In end, Out output);
+    static Out toUtf8(In begin, In end, Out output, std::uint8_t replacement = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert a UTF-16 characters range to UTF-16
@@ -429,28 +433,30 @@ public:
     /// specializations of the `sf::Utf<>` template, and allow
     /// generic code to be written on top of it.
     ///
-    /// \param begin  Iterator pointing to the beginning of the input sequence
-    /// \param end    Iterator pointing to the end of the input sequence
-    /// \param output Iterator pointing to the beginning of the output sequence
+    /// \param begin       Iterator pointing to the beginning of the input sequence
+    /// \param end         Iterator pointing to the end of the input sequence
+    /// \param output      Iterator pointing to the beginning of the output sequence
+    /// \param replacement Unused, kept to stay compatible with other specializations
     ///
     /// \return Iterator to the end of the output sequence which has been written
     ///
     ////////////////////////////////////////////////////////////
     template <typename In, typename Out>
-    static Out toUtf16(In begin, In end, Out output);
+    static Out toUtf16(In begin, In end, Out output, char16_t replacement = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert a UTF-16 characters range to UTF-32
     ///
-    /// \param begin  Iterator pointing to the beginning of the input sequence
-    /// \param end    Iterator pointing to the end of the input sequence
-    /// \param output Iterator pointing to the beginning of the output sequence
+    /// \param begin       Iterator pointing to the beginning of the input sequence
+    /// \param end         Iterator pointing to the end of the input sequence
+    /// \param output      Iterator pointing to the beginning of the output sequence
+    /// \param replacement Replacement for characters not convertible to UTF-32 (use 0 to skip them)
     ///
     /// \return Iterator to the end of the output sequence which has been written
     ///
     ////////////////////////////////////////////////////////////
     template <typename In, typename Out>
-    static Out toUtf32(In begin, In end, Out output);
+    static Out toUtf32(In begin, In end, Out output, char32_t replacement = 0);
 };
 
 ////////////////////////////////////////////////////////////
@@ -607,7 +613,7 @@ public:
     /// \param begin       Iterator pointing to the beginning of the input sequence
     /// \param end         Iterator pointing to the end of the input sequence
     /// \param output      Iterator pointing to the beginning of the output sequence
-    /// \param replacement Replacement for characters not convertible to wide (use 0 to skip them)
+    /// \param replacement Replacement for characters not convertible to latin-1 (use 0 to skip them)
     ///
     /// \return Iterator to the end of the output sequence which has been written
     ///
@@ -618,28 +624,30 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Convert a UTF-32 characters range to UTF-8
     ///
-    /// \param begin  Iterator pointing to the beginning of the input sequence
-    /// \param end    Iterator pointing to the end of the input sequence
-    /// \param output Iterator pointing to the beginning of the output sequence
+    /// \param begin       Iterator pointing to the beginning of the input sequence
+    /// \param end         Iterator pointing to the end of the input sequence
+    /// \param output      Iterator pointing to the beginning of the output sequence
+    /// \param replacement Replacement for characters not convertible to UTF-8 (use 0 to skip them)
     ///
     /// \return Iterator to the end of the output sequence which has been written
     ///
     ////////////////////////////////////////////////////////////
     template <typename In, typename Out>
-    static Out toUtf8(In begin, In end, Out output);
+    static Out toUtf8(In begin, In end, Out output, std::uint8_t replacement = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert a UTF-32 characters range to UTF-16
     ///
-    /// \param begin  Iterator pointing to the beginning of the input sequence
-    /// \param end    Iterator pointing to the end of the input sequence
-    /// \param output Iterator pointing to the beginning of the output sequence
+    /// \param begin       Iterator pointing to the beginning of the input sequence
+    /// \param end         Iterator pointing to the end of the input sequence
+    /// \param output      Iterator pointing to the beginning of the output sequence
+    /// \param replacement Replacement for characters not convertible to UTF-16 (use 0 to skip them)
     ///
     /// \return Iterator to the end of the output sequence which has been written
     ///
     ////////////////////////////////////////////////////////////
     template <typename In, typename Out>
-    static Out toUtf16(In begin, In end, Out output);
+    static Out toUtf16(In begin, In end, Out output, char16_t replacement = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Convert a UTF-32 characters range to UTF-32
@@ -649,15 +657,16 @@ public:
     /// specializations of the `sf::Utf<>` template, and allow
     /// generic code to be written on top of it.
     ///
-    /// \param begin  Iterator pointing to the beginning of the input sequence
-    /// \param end    Iterator pointing to the end of the input sequence
-    /// \param output Iterator pointing to the beginning of the output sequence
+    /// \param begin       Iterator pointing to the beginning of the input sequence
+    /// \param end         Iterator pointing to the end of the input sequence
+    /// \param output      Iterator pointing to the beginning of the output sequence
+    /// \param replacement Unused, kept to stay compatible with other specializations
     ///
     /// \return Iterator to the end of the output sequence which has been written
     ///
     ////////////////////////////////////////////////////////////
     template <typename In, typename Out>
-    static Out toUtf32(In begin, In end, Out output);
+    static Out toUtf32(In begin, In end, Out output, char32_t replacement = 0);
 
     ////////////////////////////////////////////////////////////
     /// \brief Decode a single ANSI character to UTF-32
