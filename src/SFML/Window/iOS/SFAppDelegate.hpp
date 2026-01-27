@@ -49,29 +49,11 @@
 + (SFAppDelegate*)getInstance;
 
 ////////////////////////////////////////////////////////////
-/// \brief Show or hide the virtual keyboard
-///
-/// \param visible `true` to show, `false` to hide
-///
-////////////////////////////////////////////////////////////
 - (void)setVirtualKeyboardVisible:(bool)visible;
 
 ////////////////////////////////////////////////////////////
-/// \brief Get the current touch position for a given finger
-///
-/// \param index Finger index
-///
-/// \return Current touch position, or (-1, -1) if no touch
-///
-////////////////////////////////////////////////////////////
 - (sf::Vector2i)getTouchPosition:(unsigned int)index;
 
-////////////////////////////////////////////////////////////
-/// \brief Receive an external touch begin notification
-///
-/// \param index    Finger index
-/// \param position Position of the touch
-///
 ////////////////////////////////////////////////////////////
 - (void)notifyTouchBegin:(unsigned int)index atPosition:(sf::Vector2i)position;
 

@@ -329,6 +329,10 @@ macro(sfml_add_example target)
                                                    MACOSX_BUNDLE_INFO_PLIST ${INFO_PLIST}
                                                    MACOSX_BUNDLE_ICON_FILE icon.icns)
         target_link_libraries(${target} PRIVATE SFML::Main)
+    elseif(THIS_GUI_APP AND SFML_OS_ANDROID)
+        # Executables on android are shared libraries loaded by the native activity
+        add_library(${target} SHARED ${target_input})
+        target_link_libraries(${target} PRIVATE SFML::Main)
     else()
         add_executable(${target} ${target_input})
     endif()
@@ -342,8 +346,10 @@ macro(sfml_add_example target)
     set_target_warnings(${target})
     set_public_symbols_hidden(${target})
 
-    # set the debug suffix
-    set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
+    # set the debug suffix, except on android where the activity requires a single name for the library in all configurations
+    if (NOT SFML_OS_ANDROID)
+        set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
+    endif()
 
     # set the target's folder (for IDEs that support it, e.g. Visual Studio)
     set_target_properties(${target} PROPERTIES FOLDER "Examples")
