@@ -243,7 +243,7 @@ block()
 
     FetchContent_Declare(SheenBidi
         GIT_REPOSITORY https://github.com/Tehreer/SheenBidi.git
-        GIT_TAG v2.9.0
+        GIT_TAG v3.0.0
         GIT_SHALLOW ON
         # patch out parts we don't want of the SheenBidi CMake configuration
         # - disable installation
