@@ -186,10 +186,12 @@ public:
                     }
                     else if (const auto* maximized = event->getIf<sf::Event::Maximized>())
                     {
+                        (void)maximized;
                         m_log.emplace_back("Maximized");
                     }
                     else if (const auto* minimized = event->getIf<sf::Event::Minimized>())
                     {
+                        (void) minimized;
                         m_log.emplace_back("Minimized");
                     }
                     else
@@ -239,14 +241,14 @@ public:
                                       [&](const sf::Event::TouchEnded& touchEnded)
                                       { m_log.emplace_back("Touch Ended: " + vec2ToString(touchEnded.position)); },
                                       [&](const sf::Event::Maximized& maximized)
-                                      { 
+                                      {
                                         (void)maximized;
-                                        m_log.emplace_back("Maximized"); 
+                                        m_log.emplace_back("Maximized");
                                       },
                                       [&](const sf::Event::Minimized& minimized)
-                                      { 
+                                      {
                                         (void)minimized;
-                                        m_log.emplace_back("Minimized"); 
+                                        m_log.emplace_back("Minimized");
                                       },
                                       [&](const sf::Event::TouchMoved& touchMoved)
                                       { m_log.emplace_back("Touch Moved: " + vec2ToString(touchMoved.position)); });
