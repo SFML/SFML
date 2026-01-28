@@ -189,7 +189,7 @@ namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 RenderTargetImplDefault::RenderTargetImplDefault(RenderTarget& owner) :
-m_owner(owner),
+m_owner(&owner),
 m_id(getUniqueId())
 {
 }
@@ -207,7 +207,7 @@ void RenderTargetImplDefault::initialize()
 ////////////////////////////////////////////////////////////
 void RenderTargetImplDefault::clear(Color color)
 {
-    if (isActive(m_id) || m_owner.setActive(true))
+    if (isActive(m_id) || m_owner->setActive(true))
     {
         // Unbind texture to fix RenderTexture preventing clear
         applyTexture(nullptr, CoordinateType::Pixels);
@@ -225,7 +225,7 @@ void RenderTargetImplDefault::clear(Color color)
 ////////////////////////////////////////////////////////////
 void RenderTargetImplDefault::clearStencil(StencilValue stencilValue)
 {
-    if (isActive(m_id) || m_owner.setActive(true))
+    if (isActive(m_id) || m_owner->setActive(true))
     {
         // Unbind texture to fix RenderTexture preventing clear
         applyTexture(nullptr, CoordinateType::Pixels);
@@ -243,7 +243,7 @@ void RenderTargetImplDefault::clearStencil(StencilValue stencilValue)
 ////////////////////////////////////////////////////////////
 void RenderTargetImplDefault::clear(Color color, StencilValue stencilValue)
 {
-    if (isActive(m_id) || m_owner.setActive(true))
+    if (isActive(m_id) || m_owner->setActive(true))
     {
         // Unbind texture to fix RenderTexture preventing clear
         applyTexture(nullptr, CoordinateType::Pixels);
@@ -301,7 +301,7 @@ bool RenderTargetImplDefault::setActive(bool active)
 ////////////////////////////////////////////////////////////
 void RenderTargetImplDefault::pushGLStates()
 {
-    if (isActive(m_id) || m_owner.setActive(true))
+    if (isActive(m_id) || m_owner->setActive(true))
     {
 #ifdef SFML_DEBUG
         // make sure that the user didn't leave an unchecked OpenGL error
@@ -332,7 +332,7 @@ void RenderTargetImplDefault::pushGLStates()
 ////////////////////////////////////////////////////////////
 void RenderTargetImplDefault::popGLStates()
 {
-    if (isActive(m_id) || m_owner.setActive(true))
+    if (isActive(m_id) || m_owner->setActive(true))
     {
         glCheck(glMatrixMode(GL_PROJECTION));
         glCheck(glPopMatrix());
@@ -361,7 +361,7 @@ void RenderTargetImplDefault::resetGLStates()
     }
 #endif
 
-    if (isActive(m_id) || m_owner.setActive(true))
+    if (isActive(m_id) || m_owner->setActive(true))
     {
         ensureExtensionsInit();
 
@@ -418,9 +418,9 @@ void RenderTargetImplDefault::invalidateView()
 ////////////////////////////////////////////////////////////
 void RenderTargetImplDefault::applyCurrentView()
 {
-    const View& view = m_owner.getView();
-    const IntRect viewport = m_owner.getViewport(view);
-    const int     viewportTop = static_cast<int>(m_owner.getSize().y) - (viewport.position.y + viewport.size.y);
+    const View& view = m_owner->getView();
+    const IntRect viewport = m_owner->getViewport(view);
+    const int     viewportTop = static_cast<int>(m_owner->getSize().y) - (viewport.position.y + viewport.size.y);
     glCheck(glViewport(viewport.position.x, viewportTop, viewport.size.x, viewport.size.y));
 
     if (view.getScissor() == FloatRect({0, 0}, {1, 1}))
@@ -433,8 +433,8 @@ void RenderTargetImplDefault::applyCurrentView()
     }
     else
     {
-        const IntRect pixelScissor = m_owner.getScissor(view);
-        const int     scissorTop   = static_cast<int>(m_owner.getSize().y) - (pixelScissor.position.y + pixelScissor.size.y);
+        const IntRect pixelScissor = m_owner->getScissor(view);
+        const int     scissorTop   = static_cast<int>(m_owner->getSize().y) - (pixelScissor.position.y + pixelScissor.size.y);
         glCheck(glScissor(pixelScissor.position.x, scissorTop, pixelScissor.size.x, pixelScissor.size.y));
 
         if (!m_cache.enable || !m_cache.scissorEnabled)
@@ -546,12 +546,12 @@ void RenderTargetImplDefault::applyShader(const Shader* shader)
 ////////////////////////////////////////////////////////////
 void RenderTargetImplDefault::setupDraw(bool useVertexCache, const RenderStates& states)
 {
-    if (!isActive(m_id) && !m_owner.setActive(true))
+    if (!isActive(m_id) && !m_owner->setActive(true))
         return;
 #ifndef SFML_OPENGL_ES
     if (!m_cache.enable)
     {
-        if (m_owner.isSrgb())
+        if (m_owner->isSrgb())
             glCheck(glEnable(GL_FRAMEBUFFER_SRGB));
         else if (GLEXT_framebuffer_sRGB)
             glCheck(glDisable(GL_FRAMEBUFFER_SRGB));
@@ -606,7 +606,7 @@ void RenderTargetImplDefault::drawVertices(const Vertex* vertices,
     if (!vertices || vertexCount == 0)
         return;
 
-    if (!isActive(m_id) && !m_owner.setActive(true))
+    if (!isActive(m_id) && !m_owner->setActive(true))
         return;
 
     const bool useVertexCache = (vertexCount <= m_cache.vertexCache.size());
@@ -672,6 +672,47 @@ void RenderTargetImplDefault::cleanupDraw(const RenderStates& states)
         glCheck(glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE));
 
     m_cache.enable = true;
+}
+
+////////////////////////////////////////////////////////////
+void RenderTargetImplDefault::setOwner(RenderTarget& newOwner)
+{
+    m_owner = &newOwner;
+}
+
+////////////////////////////////////////////////////////////
+void RenderTargetImplDefault::setupVertexBufferDraw(const RenderStates& states)
+{
+    // When using a VBO, the vertex data is already in GPU memory
+    // We need to set up the vertex attribute pointers with offsets instead of addresses
+    // The VBO must be bound before calling this function
+
+    // Set up vertex pointer (offset 0 from the start of each Vertex struct)
+    glCheck(glVertexPointer(2, GL_FLOAT, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, position))));
+
+    // Set up color pointer (offset of color member in Vertex struct)
+    glCheck(glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, color))));
+
+    // Set up texture coordinate pointer (offset of texCoords member in Vertex struct)
+    glCheck(glTexCoordPointer(2, GL_FLOAT, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, texCoords))));
+
+    // Enable or disable texture coordinate array based on whether a texture is used
+    if (states.texture)
+    {
+        if (!m_cache.enable || !m_cache.texCoordsArrayEnabled)
+        {
+            glCheck(glEnableClientState(GL_TEXTURE_COORD_ARRAY));
+            m_cache.texCoordsArrayEnabled = true;
+        }
+    }
+    else
+    {
+        if (!m_cache.enable || m_cache.texCoordsArrayEnabled)
+        {
+            glCheck(glDisableClientState(GL_TEXTURE_COORD_ARRAY));
+            m_cache.texCoordsArrayEnabled = false;
+        }
+    }
 }
 
 } // namespace sf::priv

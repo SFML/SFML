@@ -165,6 +165,8 @@ public:
                       PrimitiveType type,
                       const RenderStates& states) override;
 
+    void setupVertexBufferDraw(const RenderStates& states) override;
+
     ////////////////////////////////////////////////////////////
     /// \brief Draw the primitives
     ///
@@ -176,7 +178,11 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     void cleanupDraw(const RenderStates& states) override;
-
+    ////////////////////////////////////////////////////////////
+    /// rief Update the owner reference after a move
+    ///
+    ////////////////////////////////////////////////////////////
+    void setOwner(RenderTarget& newOwner) override;
 private:
     ////////////////////////////////////////////////////////////
     /// \brief Render states cache
@@ -201,7 +207,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    RenderTarget& m_owner; //!< The RenderTarget that owns this implementation
+    RenderTarget* m_owner; //!< The RenderTarget that owns this implementation
     StatesCache   m_cache; //!< Render states cache
     std::uint64_t m_id;    //!< Unique number that identifies the RenderTarget
 };

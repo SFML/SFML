@@ -53,11 +53,32 @@ RenderTarget::~RenderTarget() = default;
 
 
 ////////////////////////////////////////////////////////////
-RenderTarget::RenderTarget(RenderTarget&&) noexcept = default;
+RenderTarget::RenderTarget(RenderTarget&& other) noexcept :
+m_defaultView(other.m_defaultView),
+m_view(other.m_view),
+m_impl(std::move(other.m_impl))
+{
+    // Update the impl's owner reference to point to this object
+    if (m_impl)
+        m_impl->setOwner(*this);
+}
 
 
 ////////////////////////////////////////////////////////////
-RenderTarget& RenderTarget::operator=(RenderTarget&&) noexcept = default;
+RenderTarget& RenderTarget::operator=(RenderTarget&& other) noexcept
+{
+    if (this != &other)
+    {
+        m_defaultView = other.m_defaultView;
+        m_view = other.m_view;
+        m_impl = std::move(other.m_impl);
+        
+        // Update the impl's owner reference to point to this object
+        if (m_impl)
+            m_impl->setOwner(*this);
+    }
+    return *this;
+}
 
 
 ////////////////////////////////////////////////////////////
@@ -216,6 +237,8 @@ void RenderTarget::draw(const VertexBuffer& vertexBuffer, std::size_t firstVerte
 
     // Bind vertex buffer
     VertexBuffer::bind(&vertexBuffer);
+
+    m_impl->setupVertexBufferDraw(states);
 
     m_impl->drawPrimitives(vertexBuffer.getPrimitiveType(), firstVertex, vertexCount);
 

@@ -202,6 +202,8 @@ public:
     ////////////////////////////////////////////////////////////
     virtual void drawPrimitives(PrimitiveType type, std::size_t firstVertex, std::size_t vertexCount) = 0;
 
+    virtual void setupVertexBufferDraw(const RenderStates& states) = 0;
+
     ////////////////////////////////////////////////////////////
     /// \brief Clean up environment after drawing
     ///
@@ -209,7 +211,13 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     virtual void cleanupDraw(const RenderStates& states) = 0;
-};
+    ////////////////////////////////////////////////////////////
+    /// rief Update the owner reference after a move
+    ///
+    /// \param newOwner The new owner of this implementation
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void setOwner(RenderTarget& newOwner) = 0;};
 
 } // namespace priv
 } // namespace sf
