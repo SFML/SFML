@@ -760,7 +760,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Resize event
         case WM_SIZE:
         {
-            switch(wParam)
+            switch (wParam)
             {
                 case SIZE_MINIMIZED:
                     pushEvent(Event::Minimized{});
