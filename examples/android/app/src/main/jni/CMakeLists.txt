@@ -17,3 +17,6 @@ target_link_libraries(sfml-example PUBLIC
   SFML::Main
   -Wl,--no-whole-archive
 )
+
+# Google Play requires all new apps to support 16 KB page sizes.
+target_link_options(sfml-example PRIVATE "-Wl,-z,max-page-size=16384")

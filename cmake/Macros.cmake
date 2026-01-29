@@ -222,6 +222,9 @@ macro(sfml_add_library module)
         # Always use position-independent code on Android, even when linking statically.
         # This is needed because all c++ code is placed in a shared library on Android.
         set_target_properties(${target} PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
+        # Google Play requires all new apps to support 16 KB page sizes.
+        target_link_options(${target} PRIVATE "-Wl,-z,max-page-size=16384")
     endif()
 
     if(BUILD_SHARED_LIBS)
@@ -333,6 +336,9 @@ macro(sfml_add_example target)
         # Executables on android are shared libraries loaded by the native activity
         add_library(${target} SHARED ${target_input})
         target_link_libraries(${target} PRIVATE SFML::Main)
+
+        # Google Play requires all new apps to support 16 KB page sizes.
+        target_link_options(${target} PRIVATE "-Wl,-z,max-page-size=16384")
     else()
         add_executable(${target} ${target_input})
     endif()
