@@ -242,10 +242,16 @@ jobs:
         allow-empty: true
         base-path: ${{ github.workspace }}
 
-    - name: Test Install Interface
+    - name: Test Install Interface (Package path)
       if: matrix.platform.name != 'Android'
       run: |
-        cmake -S test/install -B test/install/build -DCMAKE_PREFIX_PATH=$GITHUB_WORKSPACE/build/install -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} ${{matrix.platform.flags}} ${{matrix.config.flags}} ${{matrix.type.flags}}
+        cmake -S test/install -B test/install/build -DCMAKE_PREFIX_PATH=$GITHUB_WORKSPACE/build/install -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} ${{matrix.platform.flags}} ${{matrix.config.flags}} ${{matrix.type.flags}} -DCMAKE_FIND_ROOT_PATH_MODE_PACKAGE=BOTH
+        cmake --build test/install/build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }}
+
+    - name: Test Install Interface (Config path)
+      if: matrix.platform.name != 'Android' && !contains(matrix.config.name, 'Frameworks')
+      run: |
+        cmake -S test/install -B test/install/build -DSFML_DIR=$GITHUB_WORKSPACE/build/install/lib/cmake/SFML -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} ${{matrix.platform.flags}} ${{matrix.config.flags}} ${{matrix.type.flags}} --fresh
         cmake --build test/install/build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }}
 
   coverage:
