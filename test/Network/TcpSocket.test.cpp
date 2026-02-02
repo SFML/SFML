@@ -1,7 +1,7 @@
 #include <SFML/Network/TcpSocket.hpp>
 
 // Other 1st party headers
-#include <SFML/Network/IpAddress.hpp>
+#include <SFML/Network/Dns.hpp>
 
 #include <catch2/catch_test_macros.hpp>
 
@@ -28,33 +28,58 @@ TEST_CASE("[Network] sf::TcpSocket")
     }
 }
 
-TEST_CASE("[Network] sf::TcpSocket Connection", runConnectionTests())
+TEST_CASE("[Network] sf::TcpSocket Connection (IPv4 Internet)", runIpV4InternetTests())
 {
-    SECTION("Connection")
+    const auto githubAddresses = resolveV4("github.com");
+    REQUIRE_FALSE(githubAddresses.empty());
+
+    sf::TcpSocket tcpSocket;
+    CHECK(tcpSocket.setupTlsServer("", "") == sf::TcpSocket::TlsStatus::NotConnected);
+    CHECK(tcpSocket.setupTlsClient("") == sf::TcpSocket::TlsStatus::NotConnected);
+
+    SECTION("Non-TLS")
     {
-        const auto githubAddress = sf::IpAddress::resolve("github.com");
-        REQUIRE(githubAddress.has_value());
+        CHECK(tcpSocket.connect(githubAddresses.front(), 80, sf::milliseconds(1000)) == sf::TcpSocket::Status::Done);
+        CHECK_FALSE(tcpSocket.getCurrentCiphersuiteName().has_value());
+    }
 
-        sf::TcpSocket tcpSocket;
-        CHECK(tcpSocket.setupTlsServer("", "") == sf::TcpSocket::TlsStatus::NotConnected);
-        CHECK(tcpSocket.setupTlsClient("") == sf::TcpSocket::TlsStatus::NotConnected);
+    SECTION("TLS")
+    {
+        CHECK(tcpSocket.connect(githubAddresses.front(), 443, sf::milliseconds(1000)) == sf::TcpSocket::Status::Done);
+        CHECK(tcpSocket.setupTlsClient("github.com") == sf::TcpSocket::TlsStatus::HandshakeComplete);
 
-        SECTION("Non-TLS")
+        SECTION("Ciphersuite")
         {
-            CHECK(tcpSocket.connect(*githubAddress, 80, sf::milliseconds(1000)) == sf::TcpSocket::Status::Done);
-            CHECK_FALSE(tcpSocket.getCurrentCiphersuiteName().has_value());
+            REQUIRE(tcpSocket.getCurrentCiphersuiteName().has_value());
+            CHECK_FALSE(tcpSocket.getCurrentCiphersuiteName()->empty());
         }
+    }
+}
 
-        SECTION("TLS")
+TEST_CASE("[Network] sf::TcpSocket Connection (IPv6 Internet)", runIpV6InternetTests())
+{
+    const auto microsoftAddresses = resolveV6("microsoft.com");
+    REQUIRE_FALSE(microsoftAddresses.empty());
+
+    sf::TcpSocket tcpSocket;
+    CHECK(tcpSocket.setupTlsServer("", "") == sf::TcpSocket::TlsStatus::NotConnected);
+    CHECK(tcpSocket.setupTlsClient("") == sf::TcpSocket::TlsStatus::NotConnected);
+
+    SECTION("Non-TLS")
+    {
+        CHECK(tcpSocket.connect(microsoftAddresses.front(), 80, sf::milliseconds(1000)) == sf::TcpSocket::Status::Done);
+        CHECK_FALSE(tcpSocket.getCurrentCiphersuiteName().has_value());
+    }
+
+    SECTION("TLS")
+    {
+        CHECK(tcpSocket.connect(microsoftAddresses.front(), 443, sf::milliseconds(1000)) == sf::TcpSocket::Status::Done);
+        CHECK(tcpSocket.setupTlsClient("microsoft.com") == sf::TcpSocket::TlsStatus::HandshakeComplete);
+
+        SECTION("Ciphersuite")
         {
-            CHECK(tcpSocket.connect(*githubAddress, 443, sf::milliseconds(1000)) == sf::TcpSocket::Status::Done);
-            CHECK(tcpSocket.setupTlsClient("github.com") == sf::TcpSocket::TlsStatus::HandshakeComplete);
-
-            SECTION("Ciphersuite")
-            {
-                REQUIRE(tcpSocket.getCurrentCiphersuiteName().has_value());
-                CHECK_FALSE(tcpSocket.getCurrentCiphersuiteName()->empty());
-            }
+            REQUIRE(tcpSocket.getCurrentCiphersuiteName().has_value());
+            CHECK_FALSE(tcpSocket.getCurrentCiphersuiteName()->empty());
         }
     }
 }
