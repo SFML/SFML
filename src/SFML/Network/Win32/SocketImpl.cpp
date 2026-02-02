@@ -28,6 +28,7 @@
 #include <SFML/Network/SocketImpl.hpp>
 
 #include <cstdint>
+#include <cstring>
 
 
 namespace
@@ -62,6 +63,19 @@ sockaddr_in SocketImpl::createAddress(std::uint32_t address, unsigned short port
     addr.sin_addr.s_addr = htonl(address);
     addr.sin_family      = AF_INET;
     addr.sin_port        = htons(port);
+
+    return addr;
+}
+
+
+////////////////////////////////////////////////////////////
+sockaddr_in6 SocketImpl::createAddress(std::array<std::uint8_t, 16> address, unsigned short port)
+{
+    auto addr = sockaddr_in6();
+    static_assert(sizeof(addr.sin6_addr.s6_addr) == sizeof(address));
+    std::memcpy(addr.sin6_addr.s6_addr, address.data(), address.size());
+    addr.sin6_family = AF_INET6;
+    addr.sin6_port   = htons(port);
 
     return addr;
 }

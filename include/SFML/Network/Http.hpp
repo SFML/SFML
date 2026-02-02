@@ -38,6 +38,7 @@
 #include <map>
 #include <optional>
 #include <string>
+#include <vector>
 
 
 namespace sf
@@ -351,11 +352,12 @@ public:
     /// this unless you really need a port other than the
     /// standard one, or use an unknown protocol.
     ///
-    /// \param host Web server to connect to
-    /// \param port Port to use for connection
+    /// \param host        Web server to connect to
+    /// \param port        Port to use for the connection
+    /// \param addressType Address type to use for the connection
     ///
     ////////////////////////////////////////////////////////////
-    Http(const std::string& host, unsigned short port = 0);
+    Http(const std::string& host, unsigned short port = 0, IpAddress::Type addressType = IpAddress::Type::Any);
 
     ////////////////////////////////////////////////////////////
     /// \brief Deleted copy constructor
@@ -381,13 +383,14 @@ public:
     /// this unless you really need a port other than the
     /// standard one, or use an unknown protocol.
     ///
-    /// \param host Web server to connect to
-    /// \param port Port to use for connection
+    /// \param host        Web server to connect to
+    /// \param port        Port to use for the connection
+    /// \param addressType Address type to use for the connection
     ///
     /// \return `true` if the host has been resolved and is valid, `false` otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool setHost(const std::string& host, unsigned short port = 0);
+    bool setHost(const std::string& host, unsigned short port = 0, IpAddress::Type addressType = IpAddress::Type::Any);
 
     ////////////////////////////////////////////////////////////
     /// \brief Send a HTTP request and return the server's response.
@@ -414,10 +417,11 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::optional<IpAddress> m_host;     //!< Web host address
-    std::string              m_hostName; //!< Web host name
-    unsigned short           m_port{};   //!< Port used for connection with host
-    bool                     m_https{};  //!< Use HTTPS
+    std::vector<IpAddress> m_hosts;         //!< Web host addresses
+    IpAddress::Type        m_addressType{}; //!< Address type
+    std::string            m_hostName;      //!< Web host name
+    unsigned short         m_port{};        //!< Port used for connection with host
+    bool                   m_https{};       //!< Use HTTPS
 };
 
 } // namespace sf

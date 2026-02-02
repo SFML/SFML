@@ -707,11 +707,19 @@ unsigned short TcpSocket::getLocalPort() const
     if (getNativeHandle() != priv::SocketImpl::invalidSocket())
     {
         // Retrieve information about the local end of the socket
-        sockaddr_in                  address{};
-        priv::SocketImpl::AddrLength size = sizeof(address);
-        if (getsockname(getNativeHandle(), reinterpret_cast<sockaddr*>(&address), &size) != -1)
+        sockaddr_in6                 addressV6{};
+        priv::SocketImpl::AddrLength size = sizeof(addressV6);
+        if (getsockname(getNativeHandle(), reinterpret_cast<sockaddr*>(&addressV6), &size) != -1)
         {
-            return ntohs(address.sin_port);
+            if (addressV6.sin6_family == PF_INET6)
+                return ntohs(addressV6.sin6_port);
+
+            if (addressV6.sin6_family == PF_INET)
+            {
+                sockaddr_in addressV4{};
+                std::memcpy(&addressV4, &addressV6, sizeof(addressV4));
+                return ntohs(addressV4.sin_port);
+            }
         }
     }
 
@@ -725,12 +733,45 @@ std::optional<IpAddress> TcpSocket::getRemoteAddress() const
 {
     if (getNativeHandle() != priv::SocketImpl::invalidSocket())
     {
-        // Retrieve information about the remote end of the socket
-        sockaddr_in                  address{};
+        // Get the address family of the socket
+        sockaddr_in6                 address{};
         priv::SocketImpl::AddrLength size = sizeof(address);
-        if (getpeername(getNativeHandle(), reinterpret_cast<sockaddr*>(&address), &size) != -1)
+
+        if (getsockname(getNativeHandle(), reinterpret_cast<sockaddr*>(&address), &size) == -1)
+            return std::nullopt;
+
+        // Retrieve information about the remote end of the socket
+        if (address.sin6_family == PF_INET)
         {
-            return IpAddress(ntohl(address.sin_addr.s_addr));
+            sockaddr_in                  addressV4{};
+            priv::SocketImpl::AddrLength sizeV4 = sizeof(address);
+            if (getpeername(getNativeHandle(), reinterpret_cast<sockaddr*>(&addressV4), &sizeV4) != -1)
+                return IpAddress(ntohl(addressV4.sin_addr.s_addr));
+        }
+        else if (address.sin6_family == PF_INET6)
+        {
+            sockaddr_in6                 addressV6{};
+            priv::SocketImpl::AddrLength sizeV6 = sizeof(addressV6);
+            if (getpeername(getNativeHandle(), reinterpret_cast<sockaddr*>(&addressV6), &sizeV6) != -1)
+            {
+                return IpAddress(
+                    {addressV6.sin6_addr.s6_addr[0],
+                     addressV6.sin6_addr.s6_addr[1],
+                     addressV6.sin6_addr.s6_addr[2],
+                     addressV6.sin6_addr.s6_addr[3],
+                     addressV6.sin6_addr.s6_addr[4],
+                     addressV6.sin6_addr.s6_addr[5],
+                     addressV6.sin6_addr.s6_addr[6],
+                     addressV6.sin6_addr.s6_addr[7],
+                     addressV6.sin6_addr.s6_addr[8],
+                     addressV6.sin6_addr.s6_addr[9],
+                     addressV6.sin6_addr.s6_addr[10],
+                     addressV6.sin6_addr.s6_addr[11],
+                     addressV6.sin6_addr.s6_addr[12],
+                     addressV6.sin6_addr.s6_addr[13],
+                     addressV6.sin6_addr.s6_addr[14],
+                     addressV6.sin6_addr.s6_addr[15]});
+            }
         }
     }
 
@@ -745,11 +786,19 @@ unsigned short TcpSocket::getRemotePort() const
     if (getNativeHandle() != priv::SocketImpl::invalidSocket())
     {
         // Retrieve information about the remote end of the socket
-        sockaddr_in                  address{};
-        priv::SocketImpl::AddrLength size = sizeof(address);
-        if (getpeername(getNativeHandle(), reinterpret_cast<sockaddr*>(&address), &size) != -1)
+        sockaddr_in6                 addressV6{};
+        priv::SocketImpl::AddrLength size = sizeof(addressV6);
+        if (getpeername(getNativeHandle(), reinterpret_cast<sockaddr*>(&addressV6), &size) != -1)
         {
-            return ntohs(address.sin_port);
+            if (addressV6.sin6_family == PF_INET6)
+                return ntohs(addressV6.sin6_port);
+
+            if (addressV6.sin6_family == PF_INET)
+            {
+                sockaddr_in addressV4{};
+                std::memcpy(&addressV4, &addressV6, sizeof(addressV4));
+                return ntohs(addressV4.sin_port);
+            }
         }
     }
 
@@ -764,18 +813,39 @@ Socket::Status TcpSocket::connect(IpAddress remoteAddress, unsigned short remote
     // Disconnect the socket if it is already connected
     disconnect();
 
-    // Create the internal socket if it doesn't exist
-    create();
-
     // Create the remote address
-    sockaddr_in address = priv::SocketImpl::createAddress(remoteAddress.toInteger(), remotePort);
+    sockaddr_in                  addressV4{};
+    sockaddr_in6                 addressV6{};
+    sockaddr*                    sockaddrPtr{};
+    priv::SocketImpl::AddrLength sockaddrSize{};
+
+    if (remoteAddress.isV4())
+    {
+        addressV4    = priv::SocketImpl::createAddress(remoteAddress.toInteger(), remotePort);
+        sockaddrPtr  = reinterpret_cast<sockaddr*>(&addressV4);
+        sockaddrSize = sizeof(addressV4);
+
+        // Create the internal socket if it doesn't exist
+        create(AddressFamily::IpV4);
+    }
+    else if (remoteAddress.isV6())
+    {
+        addressV6    = priv::SocketImpl::createAddress(remoteAddress.toBytes(), remotePort);
+        sockaddrPtr  = reinterpret_cast<sockaddr*>(&addressV6);
+        sockaddrSize = sizeof(addressV6);
+
+        // Create the internal socket if it doesn't exist
+        create(AddressFamily::IpV6);
+    }
+
+    assert(sockaddrPtr && sockaddrSize);
 
     if (timeout <= Time::Zero)
     {
         // ----- We're not using a timeout: just try to connect -----
 
         // Connect the socket
-        if (::connect(getNativeHandle(), reinterpret_cast<sockaddr*>(&address), sizeof(address)) == -1)
+        if (::connect(getNativeHandle(), sockaddrPtr, sockaddrSize) == -1)
             return priv::SocketImpl::getErrorStatus();
 
         // Connection succeeded
@@ -792,7 +862,7 @@ Socket::Status TcpSocket::connect(IpAddress remoteAddress, unsigned short remote
         setBlocking(false);
 
     // Try to connect to the remote address
-    if (::connect(getNativeHandle(), reinterpret_cast<sockaddr*>(&address), sizeof(address)) >= 0)
+    if (::connect(getNativeHandle(), sockaddrPtr, sockaddrSize) >= 0)
     {
         // We got instantly connected! (it may no happen a lot...)
         setBlocking(blocking);

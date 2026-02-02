@@ -55,7 +55,7 @@ std::mt19937                  rng(rd());
 std::uniform_int_distribution dist;
 } // namespace
 
-TEST_CASE("[Network] sf::Tcp Loopback", runLoopbackTests())
+TEST_CASE("[Network] sf::Tcp Loopback (IPv4)", runIpV4LoopbackTests())
 {
     std::vector<std::byte> testData(1024 * 1024);
     std::generate(testData.begin(), testData.end(), [] { return static_cast<std::byte>(dist(rng)); });
@@ -65,7 +65,7 @@ TEST_CASE("[Network] sf::Tcp Loopback", runLoopbackTests())
 
     sf::TcpListener tcpListener;
     tcpListener.setBlocking(false);
-    REQUIRE(tcpListener.listen(sf::Socket::AnyPort) == sf::TcpListener::Status::Done);
+    REQUIRE(tcpListener.listen(sf::Socket::AnyPort, sf::IpAddress::Any) == sf::TcpListener::Status::Done);
 
     const auto localPort = tcpListener.getLocalPort();
     CHECK_FALSE(localPort == 0);
@@ -75,7 +75,7 @@ TEST_CASE("[Network] sf::Tcp Loopback", runLoopbackTests())
         sf::TcpSocket serverSocket;
         sf::TcpSocket clientSocket;
         clientSocket.setBlocking(false);
-        CHECK(clientSocket.connect(sf::IpAddress(127, 0, 0, 1), localPort, sf::milliseconds(10000)) ==
+        CHECK(clientSocket.connect(sf::IpAddress::LocalHost, localPort, sf::milliseconds(10000)) ==
               sf::TcpSocket::Status::NotReady);
 
         auto start = std::chrono::steady_clock::now();
@@ -149,7 +149,7 @@ TEST_CASE("[Network] sf::Tcp Loopback", runLoopbackTests())
         sf::TcpSocket serverSocket;
         sf::TcpSocket clientSocket;
         clientSocket.setBlocking(false);
-        REQUIRE(clientSocket.connect(sf::IpAddress(127, 0, 0, 1), localPort, sf::milliseconds(10000)) ==
+        REQUIRE(clientSocket.connect(sf::IpAddress::LocalHost, localPort, sf::milliseconds(10000)) ==
                 sf::TcpSocket::Status::NotReady);
 
         auto start = std::chrono::steady_clock::now();
@@ -238,5 +238,368 @@ TEST_CASE("[Network] sf::Tcp Loopback", runLoopbackTests())
         }
 
         CHECK(std::equal(buffer.begin(), buffer.end(), testData.begin()));
+    }
+}
+
+TEST_CASE("[Network] sf::Tcp Loopback (IPv6)", runIpV6LoopbackTests())
+{
+    std::vector<std::byte> testData(1024 * 1024);
+    std::generate(testData.begin(), testData.end(), [] { return static_cast<std::byte>(dist(rng)); });
+    const auto*            sendEnd = testData.data() + testData.size();
+    std::vector<std::byte> buffer(testData.size());
+    const auto*            recvEnd = buffer.data() + buffer.size();
+
+    sf::TcpListener tcpListener;
+    tcpListener.setBlocking(false);
+    REQUIRE(tcpListener.listen(sf::Socket::AnyPort, sf::IpAddress::AnyV6) == sf::TcpListener::Status::Done);
+
+    const auto localPort = tcpListener.getLocalPort();
+    CHECK_FALSE(localPort == 0);
+
+    SECTION("IPv6 Client")
+    {
+
+        SECTION("Non-TLS")
+        {
+            sf::TcpSocket serverSocket;
+            sf::TcpSocket clientSocket;
+            clientSocket.setBlocking(false);
+            CHECK(clientSocket.connect(sf::IpAddress::LocalHostV6, localPort, sf::milliseconds(10000)) ==
+                  sf::TcpSocket::Status::NotReady);
+
+            auto start = std::chrono::steady_clock::now();
+
+            while (true)
+            {
+                const auto result = tcpListener.accept(serverSocket);
+
+                REQUIRE(((result == sf::TcpListener::Status::NotReady) || (result == sf::TcpListener::Status::Done)));
+
+                if (result == sf::TcpListener::Status::Done)
+                    break;
+
+                REQUIRE(std::chrono::steady_clock::now() - start < std::chrono::milliseconds(10000));
+            }
+
+            serverSocket.setBlocking(false);
+            CHECK_FALSE(clientSocket.getRemoteAddress() == std::nullopt);
+            CHECK_FALSE(serverSocket.getRemoteAddress() == std::nullopt);
+            CHECK_FALSE(clientSocket.getLocalPort() == 0);
+            CHECK_FALSE(serverSocket.getLocalPort() == 0);
+            CHECK_FALSE(clientSocket.getRemotePort() == 0);
+            CHECK_FALSE(serverSocket.getRemotePort() == 0);
+
+            CHECK(serverSocket.getCurrentCiphersuiteName() == std::nullopt);
+            CHECK(clientSocket.getCurrentCiphersuiteName() == std::nullopt);
+
+            const auto* sendPtr = testData.data();
+            auto*       recvPtr = buffer.data();
+
+            start = std::chrono::steady_clock::now();
+
+            while (true)
+            {
+                if (sendPtr != sendEnd)
+                {
+                    std::size_t sent{};
+                    const auto  status = serverSocket.send(sendPtr, static_cast<std::size_t>(sendEnd - sendPtr), sent);
+                    REQUIRE_FALSE(status == sf::TcpSocket::Status::Error);
+                    REQUIRE_FALSE(status == sf::TcpSocket::Status::Disconnected);
+                    sendPtr += sent;
+                }
+                else if (serverSocket.getRemoteAddress())
+                {
+                    serverSocket.disconnect();
+                }
+
+                {
+                    std::size_t received{};
+                    const auto status = clientSocket.receive(recvPtr, static_cast<std::size_t>(recvEnd - recvPtr), received);
+                    REQUIRE_FALSE(status == sf::TcpSocket::Status::Error);
+                    if (received > 0)
+                        REQUIRE_FALSE(status == sf::TcpSocket::Status::Disconnected);
+                    recvPtr += received;
+
+                    if (status == sf::TcpSocket::Status::Disconnected)
+                    {
+                        clientSocket.disconnect();
+                        break;
+                    }
+                }
+
+                REQUIRE(std::chrono::steady_clock::now() - start < std::chrono::milliseconds(10000));
+            }
+
+            CHECK(std::equal(buffer.begin(), buffer.end(), testData.begin()));
+        }
+
+        SECTION("TLS")
+        {
+            sf::TcpSocket serverSocket;
+            sf::TcpSocket clientSocket;
+            clientSocket.setBlocking(false);
+            REQUIRE(clientSocket.connect(sf::IpAddress::LocalHostV6, localPort, sf::milliseconds(10000)) ==
+                    sf::TcpSocket::Status::NotReady);
+
+            auto start = std::chrono::steady_clock::now();
+
+            while (true)
+            {
+                const auto result = tcpListener.accept(serverSocket);
+
+                REQUIRE(((result == sf::TcpListener::Status::NotReady) || (result == sf::TcpListener::Status::Done)));
+
+                if (result == sf::TcpListener::Status::Done)
+                    break;
+
+                REQUIRE(std::chrono::steady_clock::now() - start < std::chrono::milliseconds(10000));
+            }
+
+            serverSocket.setBlocking(false);
+            CHECK_FALSE(clientSocket.getRemoteAddress() == std::nullopt);
+            CHECK_FALSE(serverSocket.getRemoteAddress() == std::nullopt);
+            CHECK_FALSE(clientSocket.getLocalPort() == 0);
+            CHECK_FALSE(serverSocket.getLocalPort() == 0);
+            CHECK_FALSE(clientSocket.getRemotePort() == 0);
+            CHECK_FALSE(serverSocket.getRemotePort() == 0);
+
+            const auto* sendPtr = testData.data();
+            auto*       recvPtr = buffer.data();
+
+            start = std::chrono::steady_clock::now();
+
+            while (true)
+            {
+                const auto serverStatus = serverSocket.setupTlsServer(certificate, privateKey);
+
+                REQUIRE_FALSE(serverStatus == sf::TcpSocket::TlsStatus::Error);
+                REQUIRE_FALSE(serverStatus == sf::TcpSocket::TlsStatus::NotConnected);
+
+                const auto clientStatus = clientSocket.setupTlsClient(commonName, certificate);
+
+                REQUIRE_FALSE(clientStatus == sf::TcpSocket::TlsStatus::Error);
+                REQUIRE_FALSE(clientStatus == sf::TcpSocket::TlsStatus::NotConnected);
+
+                if ((serverStatus == sf::TcpSocket::TlsStatus::HandshakeComplete) &&
+                    (clientStatus == sf::TcpSocket::TlsStatus::HandshakeComplete))
+                    break;
+
+                REQUIRE(std::chrono::steady_clock::now() - start < std::chrono::milliseconds(10000));
+            }
+
+            CHECK_FALSE(serverSocket.getCurrentCiphersuiteName() == std::nullopt);
+            CHECK_FALSE(clientSocket.getCurrentCiphersuiteName() == std::nullopt);
+            CHECK(serverSocket.getCurrentCiphersuiteName() == clientSocket.getCurrentCiphersuiteName());
+
+            start = std::chrono::steady_clock::now();
+
+            while (true)
+            {
+                if (sendPtr != sendEnd)
+                {
+                    std::size_t sent{};
+                    const auto  status = serverSocket.send(sendPtr, static_cast<std::size_t>(sendEnd - sendPtr), sent);
+                    REQUIRE_FALSE(status == sf::TcpSocket::Status::Error);
+                    REQUIRE_FALSE(status == sf::TcpSocket::Status::Disconnected);
+                    sendPtr += sent;
+                }
+                else if (serverSocket.getRemoteAddress())
+                {
+                    serverSocket.disconnect();
+                }
+
+                {
+                    std::size_t received{};
+                    const auto status = clientSocket.receive(recvPtr, static_cast<std::size_t>(recvEnd - recvPtr), received);
+                    REQUIRE_FALSE(status == sf::TcpSocket::Status::Error);
+                    if (received > 0)
+                        REQUIRE_FALSE(status == sf::TcpSocket::Status::Disconnected);
+                    recvPtr += received;
+
+                    if (status == sf::TcpSocket::Status::Disconnected)
+                    {
+                        clientSocket.disconnect();
+                        break;
+                    }
+                }
+
+                REQUIRE(std::chrono::steady_clock::now() - start < std::chrono::milliseconds(10000));
+            }
+
+            CHECK(std::equal(buffer.begin(), buffer.end(), testData.begin()));
+        }
+    }
+
+    SECTION("IPv4 Client")
+    {
+        SECTION("Non-TLS")
+        {
+            sf::TcpSocket serverSocket;
+            sf::TcpSocket clientSocket;
+            clientSocket.setBlocking(false);
+            CHECK(clientSocket.connect(sf::IpAddress::LocalHost, localPort, sf::milliseconds(10000)) ==
+                  sf::TcpSocket::Status::NotReady);
+
+            auto start = std::chrono::steady_clock::now();
+
+            while (true)
+            {
+                const auto result = tcpListener.accept(serverSocket);
+
+                REQUIRE(((result == sf::TcpListener::Status::NotReady) || (result == sf::TcpListener::Status::Done)));
+
+                if (result == sf::TcpListener::Status::Done)
+                    break;
+
+                REQUIRE(std::chrono::steady_clock::now() - start < std::chrono::milliseconds(10000));
+            }
+
+            serverSocket.setBlocking(false);
+            CHECK_FALSE(clientSocket.getRemoteAddress() == std::nullopt);
+            CHECK_FALSE(serverSocket.getRemoteAddress() == std::nullopt);
+            CHECK_FALSE(clientSocket.getLocalPort() == 0);
+            CHECK_FALSE(serverSocket.getLocalPort() == 0);
+            CHECK_FALSE(clientSocket.getRemotePort() == 0);
+            CHECK_FALSE(serverSocket.getRemotePort() == 0);
+
+            CHECK(serverSocket.getCurrentCiphersuiteName() == std::nullopt);
+            CHECK(clientSocket.getCurrentCiphersuiteName() == std::nullopt);
+
+            const auto* sendPtr = testData.data();
+            auto*       recvPtr = buffer.data();
+
+            start = std::chrono::steady_clock::now();
+
+            while (true)
+            {
+                if (sendPtr != sendEnd)
+                {
+                    std::size_t sent{};
+                    const auto  status = serverSocket.send(sendPtr, static_cast<std::size_t>(sendEnd - sendPtr), sent);
+                    REQUIRE_FALSE(status == sf::TcpSocket::Status::Error);
+                    REQUIRE_FALSE(status == sf::TcpSocket::Status::Disconnected);
+                    sendPtr += sent;
+                }
+                else if (serverSocket.getRemoteAddress())
+                {
+                    serverSocket.disconnect();
+                }
+
+                {
+                    std::size_t received{};
+                    const auto status = clientSocket.receive(recvPtr, static_cast<std::size_t>(recvEnd - recvPtr), received);
+                    REQUIRE_FALSE(status == sf::TcpSocket::Status::Error);
+                    if (received > 0)
+                        REQUIRE_FALSE(status == sf::TcpSocket::Status::Disconnected);
+                    recvPtr += received;
+
+                    if (status == sf::TcpSocket::Status::Disconnected)
+                    {
+                        clientSocket.disconnect();
+                        break;
+                    }
+                }
+
+                REQUIRE(std::chrono::steady_clock::now() - start < std::chrono::milliseconds(10000));
+            }
+
+            CHECK(std::equal(buffer.begin(), buffer.end(), testData.begin()));
+        }
+
+        SECTION("TLS")
+        {
+            sf::TcpSocket serverSocket;
+            sf::TcpSocket clientSocket;
+            clientSocket.setBlocking(false);
+            REQUIRE(clientSocket.connect(sf::IpAddress::LocalHost, localPort, sf::milliseconds(10000)) ==
+                    sf::TcpSocket::Status::NotReady);
+
+            auto start = std::chrono::steady_clock::now();
+
+            while (true)
+            {
+                const auto result = tcpListener.accept(serverSocket);
+
+                REQUIRE(((result == sf::TcpListener::Status::NotReady) || (result == sf::TcpListener::Status::Done)));
+
+                if (result == sf::TcpListener::Status::Done)
+                    break;
+
+                REQUIRE(std::chrono::steady_clock::now() - start < std::chrono::milliseconds(10000));
+            }
+
+            serverSocket.setBlocking(false);
+            CHECK_FALSE(clientSocket.getRemoteAddress() == std::nullopt);
+            CHECK_FALSE(serverSocket.getRemoteAddress() == std::nullopt);
+            CHECK_FALSE(clientSocket.getLocalPort() == 0);
+            CHECK_FALSE(serverSocket.getLocalPort() == 0);
+            CHECK_FALSE(clientSocket.getRemotePort() == 0);
+            CHECK_FALSE(serverSocket.getRemotePort() == 0);
+
+            const auto* sendPtr = testData.data();
+            auto*       recvPtr = buffer.data();
+
+            start = std::chrono::steady_clock::now();
+
+            while (true)
+            {
+                const auto serverStatus = serverSocket.setupTlsServer(certificate, privateKey);
+
+                REQUIRE_FALSE(serverStatus == sf::TcpSocket::TlsStatus::Error);
+                REQUIRE_FALSE(serverStatus == sf::TcpSocket::TlsStatus::NotConnected);
+
+                const auto clientStatus = clientSocket.setupTlsClient(commonName, certificate);
+
+                REQUIRE_FALSE(clientStatus == sf::TcpSocket::TlsStatus::Error);
+                REQUIRE_FALSE(clientStatus == sf::TcpSocket::TlsStatus::NotConnected);
+
+                if ((serverStatus == sf::TcpSocket::TlsStatus::HandshakeComplete) &&
+                    (clientStatus == sf::TcpSocket::TlsStatus::HandshakeComplete))
+                    break;
+
+                REQUIRE(std::chrono::steady_clock::now() - start < std::chrono::milliseconds(10000));
+            }
+
+            CHECK_FALSE(serverSocket.getCurrentCiphersuiteName() == std::nullopt);
+            CHECK_FALSE(clientSocket.getCurrentCiphersuiteName() == std::nullopt);
+            CHECK(serverSocket.getCurrentCiphersuiteName() == clientSocket.getCurrentCiphersuiteName());
+
+            start = std::chrono::steady_clock::now();
+
+            while (true)
+            {
+                if (sendPtr != sendEnd)
+                {
+                    std::size_t sent{};
+                    const auto  status = serverSocket.send(sendPtr, static_cast<std::size_t>(sendEnd - sendPtr), sent);
+                    REQUIRE_FALSE(status == sf::TcpSocket::Status::Error);
+                    REQUIRE_FALSE(status == sf::TcpSocket::Status::Disconnected);
+                    sendPtr += sent;
+                }
+                else if (serverSocket.getRemoteAddress())
+                {
+                    serverSocket.disconnect();
+                }
+
+                {
+                    std::size_t received{};
+                    const auto status = clientSocket.receive(recvPtr, static_cast<std::size_t>(recvEnd - recvPtr), received);
+                    REQUIRE_FALSE(status == sf::TcpSocket::Status::Error);
+                    if (received > 0)
+                        REQUIRE_FALSE(status == sf::TcpSocket::Status::Disconnected);
+                    recvPtr += received;
+
+                    if (status == sf::TcpSocket::Status::Disconnected)
+                    {
+                        clientSocket.disconnect();
+                        break;
+                    }
+                }
+
+                REQUIRE(std::chrono::steady_clock::now() - start < std::chrono::milliseconds(10000));
+            }
+
+            CHECK(std::equal(buffer.begin(), buffer.end(), testData.begin()));
+        }
     }
 }

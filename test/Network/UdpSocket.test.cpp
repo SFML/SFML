@@ -27,12 +27,25 @@ TEST_CASE("[Network] sf::UdpSocket")
 
     SECTION("bind()/unbind()")
     {
-        sf::UdpSocket udpSocket;
-        CHECK(udpSocket.bind(sf::Socket::AnyPort, sf::IpAddress::Broadcast) == sf::Socket::Status::Error);
-        CHECK(udpSocket.bind(sf::Socket::AnyPort) == sf::Socket::Status::Done);
-        CHECK(udpSocket.getLocalPort() != 0);
+        SECTION("IPv4")
+        {
+            sf::UdpSocket udpSocket;
+            CHECK(udpSocket.bind(sf::Socket::AnyPort, sf::IpAddress::Broadcast) == sf::Socket::Status::Error);
+            CHECK(udpSocket.bind(sf::Socket::AnyPort) == sf::Socket::Status::Done);
+            CHECK(udpSocket.getLocalPort() != 0);
 
-        udpSocket.unbind();
-        CHECK(udpSocket.getLocalPort() == 0);
+            udpSocket.unbind();
+            CHECK(udpSocket.getLocalPort() == 0);
+        }
+
+        SECTION("IPv6")
+        {
+            sf::UdpSocket udpSocket;
+            CHECK(udpSocket.bind(sf::Socket::AnyPort, sf::IpAddress::AnyV6) == sf::Socket::Status::Done);
+            CHECK(udpSocket.getLocalPort() != 0);
+
+            udpSocket.unbind();
+            CHECK(udpSocket.getLocalPort() == 0);
+        }
     }
 }

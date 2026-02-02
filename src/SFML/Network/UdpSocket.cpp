@@ -35,6 +35,7 @@
 #include <ostream>
 
 #include <cstddef>
+#include <cstring>
 
 
 namespace sf
@@ -51,11 +52,28 @@ unsigned short UdpSocket::getLocalPort() const
     if (getNativeHandle() != priv::SocketImpl::invalidSocket())
     {
         // Retrieve information about the local end of the socket
-        sockaddr_in                  address{};
-        priv::SocketImpl::AddrLength size = sizeof(address);
-        if (getsockname(getNativeHandle(), reinterpret_cast<sockaddr*>(&address), &size) != -1)
+        // We try first using sockaddr_in6 since it is the bigger structure
+        // If the sin6_family field indicates we have an IPv4 socket retry with sockaddr_in
         {
-            return ntohs(address.sin_port);
+            sockaddr_in6                 address{};
+            priv::SocketImpl::AddrLength size = sizeof(address);
+            if (getsockname(getNativeHandle(), reinterpret_cast<sockaddr*>(&address), &size) != -1)
+            {
+                if (address.sin6_family == PF_INET6)
+                    return ntohs(address.sin6_port);
+
+                // Give up if the socket isn't IPv4 either
+                if (address.sin6_family != PF_INET)
+                    return 0;
+            }
+        }
+
+        // Retry for IPv4
+        {
+            sockaddr_in                  address{};
+            priv::SocketImpl::AddrLength size = sizeof(address);
+            if (getsockname(getNativeHandle(), reinterpret_cast<sockaddr*>(&address), &size) != -1)
+                return ntohs(address.sin_port);
         }
     }
 
@@ -70,16 +88,46 @@ Socket::Status UdpSocket::bind(unsigned short port, IpAddress address)
     // Close the socket if it is already bound
     close();
 
-    // Create the internal socket if it doesn't exist
-    create();
-
     // Check if the address is valid
     if (address == IpAddress::Broadcast)
         return Status::Error;
 
+    // Create the remote address
+    sockaddr_in                  addressV4{};
+    sockaddr_in6                 addressV6{};
+    sockaddr*                    sockaddrPtr{};
+    priv::SocketImpl::AddrLength sockaddrSize{};
+
+    if (address.isV4())
+    {
+        addressV4    = priv::SocketImpl::createAddress(address.toInteger(), port);
+        sockaddrPtr  = reinterpret_cast<sockaddr*>(&addressV4);
+        sockaddrSize = sizeof(addressV4);
+
+        // Create the internal socket if it doesn't exist
+        create(AddressFamily::IpV4);
+    }
+    else if (address.isV6())
+    {
+        addressV6    = priv::SocketImpl::createAddress(address.toBytes(), port);
+        sockaddrPtr  = reinterpret_cast<sockaddr*>(&addressV6);
+        sockaddrSize = sizeof(addressV6);
+
+        // Create the internal socket if it doesn't exist
+        create(AddressFamily::IpV6);
+
+        // Disable IPv6 sockets only binding to IPv6 addresses,
+        // i.e. allow them to handle both IPv4 and IPv6 simultaneously
+        int no = 0;
+        if (setsockopt(getNativeHandle(), IPPROTO_IPV6, IPV6_V6ONLY, reinterpret_cast<char*>(&no), sizeof(no)) == -1)
+        {
+            err() << "Failed to set socket option \"IPV6_V6ONLY\" ; "
+                  << "IPv6 sockets will only handle IPv6 packets" << std::endl;
+        }
+    }
+
     // Bind the socket
-    sockaddr_in addr = priv::SocketImpl::createAddress(address.toInteger(), port);
-    if (::bind(getNativeHandle(), reinterpret_cast<sockaddr*>(&addr), sizeof(addr)) == -1)
+    if (::bind(getNativeHandle(), sockaddrPtr, sockaddrSize) == -1)
     {
         err() << "Failed to bind socket to port " << port << std::endl;
         return Status::Error;
@@ -100,9 +148,6 @@ void UdpSocket::unbind()
 ////////////////////////////////////////////////////////////
 Socket::Status UdpSocket::send(const void* data, std::size_t size, IpAddress remoteAddress, unsigned short remotePort)
 {
-    // Create the internal socket if it doesn't exist
-    create();
-
     // Make sure that all the data will fit in one datagram
     if (size > MaxDatagramSize)
     {
@@ -111,8 +156,30 @@ Socket::Status UdpSocket::send(const void* data, std::size_t size, IpAddress rem
         return Status::Error;
     }
 
-    // Build the target address
-    sockaddr_in address = priv::SocketImpl::createAddress(remoteAddress.toInteger(), remotePort);
+    // Create the remote address
+    sockaddr_in                  addressV4{};
+    sockaddr_in6                 addressV6{};
+    sockaddr*                    sockaddrPtr{};
+    priv::SocketImpl::AddrLength sockaddrSize{};
+
+    if (remoteAddress.isV4())
+    {
+        addressV4    = priv::SocketImpl::createAddress(remoteAddress.toInteger(), remotePort);
+        sockaddrPtr  = reinterpret_cast<sockaddr*>(&addressV4);
+        sockaddrSize = sizeof(addressV4);
+
+        // Create the internal socket if it doesn't exist
+        create(AddressFamily::IpV4);
+    }
+    else if (remoteAddress.isV6())
+    {
+        addressV6    = priv::SocketImpl::createAddress(remoteAddress.toBytes(), remotePort);
+        sockaddrPtr  = reinterpret_cast<sockaddr*>(&addressV6);
+        sockaddrSize = sizeof(addressV6);
+
+        // Create the internal socket if it doesn't exist
+        create(AddressFamily::IpV6);
+    }
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wuseless-cast"
@@ -122,8 +189,8 @@ Socket::Status UdpSocket::send(const void* data, std::size_t size, IpAddress rem
                static_cast<const char*>(data),
                static_cast<priv::SocketImpl::Size>(size),
                0,
-               reinterpret_cast<sockaddr*>(&address),
-               sizeof(address)));
+               sockaddrPtr,
+               sockaddrSize));
 #pragma GCC diagnostic pop
 
     // Check for errors
@@ -154,7 +221,7 @@ Socket::Status UdpSocket::receive(void*                     data,
     }
 
     // Data that will be filled with the other computer's address
-    sockaddr_in address = priv::SocketImpl::createAddress(INADDR_ANY, 0);
+    sockaddr_in6 address{};
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wuseless-cast"
@@ -174,9 +241,36 @@ Socket::Status UdpSocket::receive(void*                     data,
         return priv::SocketImpl::getErrorStatus();
 
     // Fill the sender information
-    received      = static_cast<std::size_t>(sizeReceived);
-    remoteAddress = IpAddress(ntohl(address.sin_addr.s_addr));
-    remotePort    = ntohs(address.sin_port);
+    received = static_cast<std::size_t>(sizeReceived);
+
+    if (address.sin6_family == PF_INET6)
+    {
+        remoteAddress = IpAddress(
+            {address.sin6_addr.s6_addr[0],
+             address.sin6_addr.s6_addr[1],
+             address.sin6_addr.s6_addr[2],
+             address.sin6_addr.s6_addr[3],
+             address.sin6_addr.s6_addr[4],
+             address.sin6_addr.s6_addr[5],
+             address.sin6_addr.s6_addr[6],
+             address.sin6_addr.s6_addr[7],
+             address.sin6_addr.s6_addr[8],
+             address.sin6_addr.s6_addr[9],
+             address.sin6_addr.s6_addr[10],
+             address.sin6_addr.s6_addr[11],
+             address.sin6_addr.s6_addr[12],
+             address.sin6_addr.s6_addr[13],
+             address.sin6_addr.s6_addr[14],
+             address.sin6_addr.s6_addr[15]});
+        remotePort = ntohs(address.sin6_port);
+    }
+    else if (address.sin6_family == PF_INET)
+    {
+        sockaddr_in addressV4{};
+        std::memcpy(&addressV4, &address, sizeof(addressV4));
+        remoteAddress = IpAddress(ntohl(addressV4.sin_addr.s_addr));
+        remotePort    = ntohs(addressV4.sin_port);
+    }
 
     return Status::Done;
 }

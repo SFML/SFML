@@ -28,6 +28,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 
+#include <SFML/Network/Dns.hpp>
 #include <SFML/Network/Ftp.hpp>
 #include <SFML/Network/Http.hpp>
 #include <SFML/Network/IpAddress.hpp>

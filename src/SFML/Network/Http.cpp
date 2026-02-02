@@ -25,6 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Network/Dns.hpp>
 #include <SFML/Network/Http.hpp>
 
 #include <SFML/System/Err.hpp>
@@ -291,14 +292,14 @@ void Http::Response::parseFields(std::istream& in)
 
 
 ////////////////////////////////////////////////////////////
-Http::Http(const std::string& host, unsigned short port)
+Http::Http(const std::string& host, unsigned short port, IpAddress::Type addressType)
 {
-    setHost(host, port);
+    setHost(host, port, addressType);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool Http::setHost(const std::string& host, unsigned short port)
+bool Http::setHost(const std::string& host, unsigned short port, IpAddress::Type addressType)
 {
     // Check the protocol
     if (toLower(host.substr(0, 7)) == "http://")
@@ -325,8 +326,10 @@ bool Http::setHost(const std::string& host, unsigned short port)
     if (!m_hostName.empty() && (*m_hostName.rbegin() == '/'))
         m_hostName.erase(m_hostName.size() - 1);
 
-    m_host = IpAddress::resolve(m_hostName);
-    return m_host.has_value();
+    m_hosts       = Dns::resolve(m_hostName);
+    m_addressType = addressType;
+
+    return !m_hosts.empty();
 }
 
 
@@ -362,52 +365,78 @@ Http::Response Http::sendRequest(const Http::Request& request, Time timeout, boo
         toSend.setField("Connection", "close");
     }
 
+    auto hosts = m_hosts;
+
+    if (m_addressType == IpAddress::Type::IpV4)
+        hosts.erase(std::remove_if(hosts.begin(), hosts.end(), [](const auto& host) { return host.isV6(); }), hosts.end());
+
+    if (m_addressType == IpAddress::Type::IpV6)
+        hosts.erase(std::remove_if(hosts.begin(), hosts.end(), [](const auto& host) { return host.isV4(); }), hosts.end());
+
     // Prepare the response
     Response received;
 
-    TcpSocket connection;
-    // Connect the socket to the host
-    if (m_host.has_value() && connection.connect(m_host.value(), m_port, timeout) == Socket::Status::Done)
+    for (const auto& host : m_hosts)
     {
-        if (m_https && (connection.setupTlsClient(m_hostName, verifyServer) != sf::TcpSocket::TlsStatus::HandshakeComplete))
-            return received;
+        if ((m_addressType != IpAddress::Type::Any) && (host.getType() != m_addressType))
+            continue;
 
-        // Convert the request to string and send it through the connected socket
-        const std::string requestStr = toSend.prepare();
+        TcpSocket connection;
 
-        if (!requestStr.empty())
+        // Connect the socket to the host
+        if (connection.connect(host, m_port, timeout) == Socket::Status::Done)
         {
-            // Send it through the socket
-            if (connection.send(requestStr.c_str(), requestStr.size()) == Socket::Status::Done)
+            if (m_https &&
+                (connection.setupTlsClient(m_hostName, verifyServer) != sf::TcpSocket::TlsStatus::HandshakeComplete))
+                continue;
+
+            // Convert the request to string and send it through the connected socket
+            const std::string requestStr = toSend.prepare();
+
+            if (!requestStr.empty())
             {
-                // Wait for the server's response
-                std::string            receivedStr;
-                std::size_t            size = 0;
-                std::array<char, 1024> buffer{};
-
-                // When the HTTPS connection makes use of TLS 1.3 new session ticket
-                // messages can be received by the client from the server at any time
-                // When these messages are received the receive function will return Socket::Status::Partial
-                // In this case We just continue to call receive until actual payload
-                // data is available, the connection is closed or an error occurs
-                auto result = connection.receive(buffer.data(), buffer.size(), size);
-
-                while ((result == Socket::Status::Done) || (result == Socket::Status::Partial))
+                // Send it through the socket
+                if (connection.send(requestStr.c_str(), requestStr.size()) == Socket::Status::Done)
                 {
-                    // Only append payload data when it has been completely received
-                    if (result == Socket::Status::Done)
-                        receivedStr.append(buffer.data(), buffer.data() + size);
+                    // Wait for the server's response
+                    std::string            receivedStr;
+                    std::size_t            size = 0;
+                    std::array<char, 1024> buffer{};
 
-                    result = connection.receive(buffer.data(), buffer.size(), size);
+                    // When the HTTPS connection makes use of TLS 1.3 new session ticket
+                    // messages can be received by the client from the server at any time
+                    // When these messages are received the receive function will return Socket::Status::Partial
+                    // In this case We just continue to call receive until actual payload
+                    // data is available, the connection is closed or an error occurs
+                    auto result = connection.receive(buffer.data(), buffer.size(), size);
+
+                    while ((result == Socket::Status::Done) || (result == Socket::Status::Partial))
+                    {
+                        // Only append payload data when it has been completely received
+                        if (result == Socket::Status::Done)
+                            receivedStr.append(buffer.data(), buffer.data() + size);
+
+                        result = connection.receive(buffer.data(), buffer.size(), size);
+                    }
+
+                    // Build the Response object from the received data
+                    received.parse(receivedStr);
+
+                    // If we received any data (even if it doesn't contain a HTTP 200 response)
+                    // we successfully found a host that we can connect to under the hostname
+                    // Stop attempting to connect to further addresses in this case
+                    if (!receivedStr.empty())
+                    {
+                        // Close the connection
+                        connection.disconnect();
+                        break;
+                    }
                 }
-
-                // Build the Response object from the received data
-                received.parse(receivedStr);
             }
-        }
 
-        // Close the connection
-        connection.disconnect();
+            // Close the connection
+            connection.disconnect();
+        }
     }
 
     return received;
