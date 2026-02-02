@@ -51,6 +51,8 @@
 
 #endif
 
+#include <array>
+
 #include <cstdint>
 
 
@@ -85,6 +87,17 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     static sockaddr_in createAddress(std::uint32_t address, unsigned short port);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create an internal sockaddr_in6 address
+    ///
+    /// \param address Target address
+    /// \param port    Target port
+    ///
+    /// \return sockaddr_in6 ready to be used by socket functions
+    ///
+    ////////////////////////////////////////////////////////////
+    static sockaddr_in6 createAddress(std::array<std::uint8_t, 16> address, unsigned short port);
 
     ////////////////////////////////////////////////////////////
     /// \brief Return the value of the invalid socket

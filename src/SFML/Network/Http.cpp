@@ -25,6 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Network/Dns.hpp>
 #include <SFML/Network/Http.hpp>
 
 #include <SFML/System/Err.hpp>
@@ -291,14 +292,14 @@ void Http::Response::parseFields(std::istream& in)
 
 
 ////////////////////////////////////////////////////////////
-Http::Http(const std::string& host, unsigned short port)
+Http::Http(const std::string& host, unsigned short port, bool preferV6)
 {
-    setHost(host, port);
+    setHost(host, port, preferV6);
 }
 
 
 ////////////////////////////////////////////////////////////
-bool Http::setHost(const std::string& host, unsigned short port)
+bool Http::setHost(const std::string& host, unsigned short port, bool preferV6)
 {
     // Check the protocol
     if (toLower(host.substr(0, 7)) == "http://")
@@ -325,7 +326,21 @@ bool Http::setHost(const std::string& host, unsigned short port)
     if (!m_hostName.empty() && (*m_hostName.rbegin() == '/'))
         m_hostName.erase(m_hostName.size() - 1);
 
-    m_host = IpAddress::resolve(m_hostName);
+    m_host.reset();
+
+    if (auto addresses = Dns::resolve(m_hostName); !addresses.empty())
+    {
+        if (preferV6)
+        {
+            // If IPv6 is preferred, sort IPv6 addresses to the front
+            std::sort(addresses.begin(),
+                      addresses.end(),
+                      [](const auto& left, const auto& right) { return left.isV6() && !right.isV6(); });
+        }
+
+        m_host = addresses.front();
+    }
+
     return m_host.has_value();
 }
 

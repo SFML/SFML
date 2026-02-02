@@ -100,12 +100,14 @@ SocketHandle Socket::getNativeHandle() const
 
 
 ////////////////////////////////////////////////////////////
-void Socket::create()
+void Socket::create(AddressFamily addressFamily)
 {
     // Don't create the socket if it already exists
     if (m_socket == priv::SocketImpl::invalidSocket())
     {
-        const SocketHandle handle = socket(PF_INET, m_type == Type::Tcp ? SOCK_STREAM : SOCK_DGRAM, 0);
+        const SocketHandle handle = socket(addressFamily == AddressFamily::IpV4 ? PF_INET : PF_INET6,
+                                           m_type == Type::Tcp ? SOCK_STREAM : SOCK_DGRAM,
+                                           0);
 
         if (handle == priv::SocketImpl::invalidSocket())
         {

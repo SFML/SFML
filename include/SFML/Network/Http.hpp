@@ -351,11 +351,12 @@ public:
     /// this unless you really need a port other than the
     /// standard one, or use an unknown protocol.
     ///
-    /// \param host Web server to connect to
-    /// \param port Port to use for connection
+    /// \param host     Web server to connect to
+    /// \param port     Port to use for the connection
+    /// \param preferV6 Prefer using IPv6 for the connection
     ///
     ////////////////////////////////////////////////////////////
-    Http(const std::string& host, unsigned short port = 0);
+    Http(const std::string& host, unsigned short port = 0, bool preferV6 = true);
 
     ////////////////////////////////////////////////////////////
     /// \brief Deleted copy constructor
@@ -381,13 +382,14 @@ public:
     /// this unless you really need a port other than the
     /// standard one, or use an unknown protocol.
     ///
-    /// \param host Web server to connect to
-    /// \param port Port to use for connection
+    /// \param host     Web server to connect to
+    /// \param port     Port to use for the connection
+    /// \param preferV6 Prefer using IPv6 for the connection
     ///
     /// \return `true` if the host has been resolved and is valid, `false` otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool setHost(const std::string& host, unsigned short port = 0);
+    bool setHost(const std::string& host, unsigned short port = 0, bool preferV6 = true);
 
     ////////////////////////////////////////////////////////////
     /// \brief Send a HTTP request and return the server's response.

@@ -3,6 +3,8 @@ set(SRCROOT ${PROJECT_SOURCE_DIR}/src/SFML/Network)
 
 # all source files
 set(SRC
+    ${SRCROOT}/Dns.cpp
+    ${INCROOT}/Dns.hpp
     ${INCROOT}/Export.hpp
     ${SRCROOT}/Ftp.cpp
     ${INCROOT}/Ftp.hpp
@@ -47,7 +49,9 @@ sfml_add_library(Network
 # setup dependencies
 target_link_libraries(sfml-network PUBLIC SFML::System)
 if(SFML_OS_WINDOWS)
-    target_link_libraries(sfml-network PRIVATE Crypt32 ws2_32)
+    target_link_libraries(sfml-network PRIVATE Crypt32 ws2_32 Dnsapi)
+elseif(SFML_OS_LINUX OR SFML_OS_IOS OR SFML_OS_MACOS)
+    target_link_libraries(sfml-network PRIVATE resolv)
 endif()
 
 if(SFML_USE_SYSTEM_DEPS)
