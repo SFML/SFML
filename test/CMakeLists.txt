@@ -31,7 +31,7 @@ add_library(sfml-test-main STATIC
     TestUtilities/AudioUtil.cpp
 )
 target_include_directories(sfml-test-main PUBLIC TestUtilities)
-target_link_libraries(sfml-test-main PUBLIC SFML::System)
+target_link_libraries(sfml-test-main PUBLIC SFML::Network SFML::System)
 
 # Main is required on some platforms and is completely removed on others, so we can only depend on it when it exists
 if(TARGET SFML::Main)
@@ -47,19 +47,38 @@ sfml_set_stdlib(Catch2)
 sfml_set_stdlib(Catch2WithMain)
 sfml_set_stdlib(sfml-test-main)
 
-sfml_set_option(SFML_RUN_DISPLAY_TESTS ON BOOL "ON to run tests that require a display, OFF to ignore it")
+sfml_set_option(SFML_RUN_DISPLAY_TESTS ON BOOL "ON to run tests that require a display, OFF to ignore them")
 if(SFML_RUN_DISPLAY_TESTS)
     target_compile_definitions(sfml-test-main PRIVATE SFML_RUN_DISPLAY_TESTS)
 endif()
 
-sfml_set_option(SFML_RUN_AUDIO_DEVICE_TESTS ON BOOL "ON to run tests that require an audio device, OFF to ignore it")
+sfml_set_option(SFML_RUN_AUDIO_DEVICE_TESTS ON BOOL "ON to run tests that require an audio device, OFF to ignore them")
 if(SFML_RUN_AUDIO_DEVICE_TESTS)
     target_compile_definitions(sfml-test-main PRIVATE SFML_RUN_AUDIO_DEVICE_TESTS)
 endif()
 
 if(NOT SFML_OS_IOS)
-    target_compile_definitions(sfml-test-main PRIVATE SFML_RUN_CONNECTION_TESTS)
     target_compile_definitions(sfml-test-main PRIVATE SFML_RUN_LOOPBACK_TESTS)
+endif()
+
+sfml_set_option(SFML_RUN_IPV4_LINK_TESTS ON BOOL "ON to run tests that require an IPv4 link to be available, OFF to ignore them")
+if(SFML_RUN_IPV4_LINK_TESTS)
+    target_compile_definitions(sfml-test-main PRIVATE SFML_RUN_IPV4_LINK_TESTS)
+endif()
+
+sfml_set_option(SFML_RUN_IPV4_INTERNET_TESTS OFF BOOL "ON to run tests that require an IPv4 route to the internet to be available, OFF to ignore them")
+if(SFML_RUN_IPV4_INTERNET_TESTS)
+    target_compile_definitions(sfml-test-main PRIVATE SFML_RUN_IPV4_INTERNET_TESTS)
+endif()
+
+sfml_set_option(SFML_RUN_IPV6_LINK_TESTS OFF BOOL "ON to run tests that require an IPv6 link to be available, OFF to ignore them")
+if(SFML_RUN_IPV6_LINK_TESTS)
+    target_compile_definitions(sfml-test-main PRIVATE SFML_RUN_IPV6_LINK_TESTS)
+endif()
+
+sfml_set_option(SFML_RUN_IPV6_INTERNET_TESTS OFF BOOL "ON to run tests that require an IPv6 route to the internet to be available, OFF to ignore them")
+if(SFML_RUN_IPV6_INTERNET_TESTS)
+    target_compile_definitions(sfml-test-main PRIVATE SFML_RUN_IPV6_INTERNET_TESTS)
 endif()
 
 add_subdirectory(Audio)

@@ -161,6 +161,12 @@ Ftp::~Ftp()
 ////////////////////////////////////////////////////////////
 Ftp::Response Ftp::connect(IpAddress server, unsigned short port, Time timeout)
 {
+    if (server.isV6())
+    {
+        err() << "FTP Error: Connecting to IPv6 servers is not supported" << std::endl;
+        return Response(Response::Status::ConnectionFailed);
+    }
+
     // Connect to the server
     if (m_commandSocket.connect(server, port, timeout) != Socket::Status::Done)
         return Response(Response::Status::ConnectionFailed);
