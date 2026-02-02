@@ -2386,22 +2386,6 @@ void WindowImplX11::setWindowSizeConstraints() const
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setFileDroppingEnabled(bool enabled)
 {
-    // Xdnd does not work on Wayland, so we check if Wayland is currently active before we enable Xdnd
-    // Checking if this exists isn't a perfect solution, as a user could set this
-    // in their environment variables, but it's better than crashing
-
-    const char* value = std::getenv("WAYLAND_DISPLAY");
-
-    // If this variable exists, then that (usually) means that wayland is being used instead of X11, so don't turn on file dropping
-    if (value != nullptr)
-    {
-        // If we are enabling it give it an error, but don't give an error if we are disabling it
-        if (enabled)
-            sf::err() << "Drag and drop is not supported on Xwayland!" << std::endl;
-
-        return;
-    }
-
     // In order for item dropping to be enabled, the XdndAware property must be set.
     if (enabled)
     {
