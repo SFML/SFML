@@ -34,20 +34,20 @@ namespace sf
 {
 ////////////////////////////////////////////////////////////
 template <typename T>
-String String::fromUtf8(T begin, T end)
+String String::fromUtf8(T begin, T end, std::optional<char32_t> replacement)
 {
     String string;
-    Utf8::toUtf32(begin, end, std::back_inserter(string.m_string));
+    Utf8::toUtf32(begin, end, std::back_inserter(string.m_string), replacement);
     return string;
 }
 
 
 ////////////////////////////////////////////////////////////
 template <typename T>
-String String::fromUtf16(T begin, T end)
+String String::fromUtf16(T begin, T end, std::optional<char32_t> replacement)
 {
     String string;
-    Utf16::toUtf32(begin, end, std::back_inserter(string.m_string));
+    Utf16::toUtf32(begin, end, std::back_inserter(string.m_string), replacement);
     return string;
 }
 

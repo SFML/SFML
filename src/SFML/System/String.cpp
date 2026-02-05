@@ -249,56 +249,56 @@ String::operator std::wstring() const
 
 
 ////////////////////////////////////////////////////////////
-std::string String::toAnsiString(const std::locale& locale) const
+std::string String::toAnsiString(const std::locale& locale, std::optional<char> replacement) const
 {
     // Prepare the output string
     std::string output;
     output.reserve(m_string.length() + 1);
 
     // Convert
-    Utf32::toAnsi(m_string.begin(), m_string.end(), std::back_inserter(output), 0, locale);
+    Utf32::toAnsi(m_string.begin(), m_string.end(), std::back_inserter(output), replacement, locale);
 
     return output;
 }
 
 
 ////////////////////////////////////////////////////////////
-std::wstring String::toWideString() const
+std::wstring String::toWideString(std::optional<wchar_t> replacement) const
 {
     // Prepare the output string
     std::wstring output;
     output.reserve(m_string.length() + 1);
 
     // Convert
-    Utf32::toWide(m_string.begin(), m_string.end(), std::back_inserter(output), 0);
+    Utf32::toWide(m_string.begin(), m_string.end(), std::back_inserter(output), replacement);
 
     return output;
 }
 
 
 ////////////////////////////////////////////////////////////
-U8String String::toUtf8() const
+U8String String::toUtf8(std::optional<std::uint8_t> replacement) const
 {
     // Prepare the output string
     U8String output;
     output.reserve(m_string.length());
 
     // Convert
-    Utf32::toUtf8(m_string.begin(), m_string.end(), std::back_inserter(output));
+    Utf32::toUtf8(m_string.begin(), m_string.end(), std::back_inserter(output), replacement);
 
     return output;
 }
 
 
 ////////////////////////////////////////////////////////////
-std::u16string String::toUtf16() const
+std::u16string String::toUtf16(std::optional<std::uint16_t> replacement) const
 {
     // Prepare the output string
     std::u16string output;
     output.reserve(m_string.length());
 
     // Convert
-    Utf32::toUtf16(m_string.begin(), m_string.end(), std::back_inserter(output));
+    Utf32::toUtf16(m_string.begin(), m_string.end(), std::back_inserter(output), replacement);
 
     return output;
 }

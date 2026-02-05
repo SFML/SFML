@@ -67,12 +67,12 @@ public:
                 application.m_handlerText.setString("Current Handler: Overload");
             }
 
-            return "Key Pressed: " + sf::Keyboard::getDescription(keyPress.scancode);
+            return "Key Pressed: " + sf::Keyboard::getDescription(keyPress.scancode).toAnsiString();
         }
 
         std::optional<std::string> operator()(const sf::Event::KeyReleased& keyRelease)
         {
-            return "Key Released: " + sf::Keyboard::getDescription(keyRelease.scancode);
+            return "Key Released: " + sf::Keyboard::getDescription(keyRelease.scancode).toAnsiString();
         }
 
         std::optional<std::string> operator()(const sf::Event::MouseMoved& mouseMoved)
@@ -139,7 +139,8 @@ public:
 
                     if (const auto* keyPress = event->getIf<sf::Event::KeyPressed>())
                     {
-                        m_log.emplace_back("Key Pressed: " + sf::Keyboard::getDescription(keyPress->scancode));
+                        m_log.emplace_back(
+                            "Key Pressed: " + sf::Keyboard::getDescription(keyPress->scancode).toAnsiString());
 
                         // When the enter key is pressed, switch to the next handler type
                         if (keyPress->code == sf::Keyboard::Key::Enter)
@@ -150,7 +151,8 @@ public:
                     }
                     else if (const auto* keyRelease = event->getIf<sf::Event::KeyReleased>())
                     {
-                        m_log.emplace_back("Key Released: " + sf::Keyboard::getDescription(keyRelease->scancode));
+                        m_log.emplace_back(
+                            "Key Released: " + sf::Keyboard::getDescription(keyRelease->scancode).toAnsiString());
                     }
                     else if (const auto* mouseMoved = event->getIf<sf::Event::MouseMoved>())
                     {
@@ -198,7 +200,8 @@ public:
                                       [&](const sf::Event::KeyPressed& keyPress)
                                       {
                                           m_log.emplace_back(
-                                              "Key Pressed: " + sf::Keyboard::getDescription(keyPress.scancode));
+                                              "Key Pressed: " +
+                                              sf::Keyboard::getDescription(keyPress.scancode).toAnsiString());
 
                                           // When the enter key is pressed, switch to the next handler type
                                           if (keyPress.code == sf::Keyboard::Key::Enter)
@@ -209,7 +212,8 @@ public:
                                       },
                                       [&](const sf::Event::KeyReleased& keyRelease) {
                                           m_log.emplace_back(
-                                              "Key Released: " + sf::Keyboard::getDescription(keyRelease.scancode));
+                                              "Key Released: " +
+                                              sf::Keyboard::getDescription(keyRelease.scancode).toAnsiString());
                                       },
                                       [&](const sf::Event::MouseMoved& mouseMoved)
                                       { m_log.emplace_back("Mouse Moved: " + vec2ToString(mouseMoved.position)); },
@@ -240,7 +244,8 @@ public:
                         }
                         else if constexpr (std::is_same_v<T, sf::Event::KeyPressed>)
                         {
-                            m_log.emplace_back("Key Pressed: " + sf::Keyboard::getDescription(event.scancode));
+                            m_log.emplace_back(
+                                "Key Pressed: " + sf::Keyboard::getDescription(event.scancode).toAnsiString());
 
                             // When the enter key is pressed, switch to the next handler type
                             if (event.code == sf::Keyboard::Key::Enter)
@@ -251,7 +256,8 @@ public:
                         }
                         else if constexpr (std::is_same_v<T, sf::Event::KeyReleased>)
                         {
-                            m_log.emplace_back("Key Released: " + sf::Keyboard::getDescription(event.scancode));
+                            m_log.emplace_back(
+                                "Key Released: " + sf::Keyboard::getDescription(event.scancode).toAnsiString());
                         }
                         else if constexpr (std::is_same_v<T, sf::Event::MouseMoved>)
                         {
@@ -325,7 +331,7 @@ public:
 
     void handle(const sf::Event::KeyPressed& keyPress)
     {
-        m_log.emplace_back("Key Pressed: " + sf::Keyboard::getDescription(keyPress.scancode));
+        m_log.emplace_back("Key Pressed: " + sf::Keyboard::getDescription(keyPress.scancode).toAnsiString());
 
         // When the enter key is pressed, switch to the next handler type
         if (keyPress.code == sf::Keyboard::Key::Enter)
@@ -337,7 +343,7 @@ public:
 
     void handle(const sf::Event::KeyReleased& keyRelease)
     {
-        m_log.emplace_back("Key Released: " + sf::Keyboard::getDescription(keyRelease.scancode));
+        m_log.emplace_back("Key Released: " + sf::Keyboard::getDescription(keyRelease.scancode).toAnsiString());
     }
 
     void handle(const sf::Event::MouseMoved& mouseMoved)
