@@ -347,8 +347,12 @@ void onNativeWindowCreated(ANativeActivity* activity, ANativeWindow* window)
     // Update the activity states
     states.window = window;
 
-    // Notify SFML mechanism
-    states.forwardEvent(sf::Event::FocusGained{});
+    // If we have no context it's during window creation so don't send the focus event or it will try
+    // to recreate the surface again
+    if (states.context)
+    {
+        states.forwardEvent(sf::Event::FocusGained{});
+    }
 
     // Wait for the event to be taken into account by SFML
     states.updated = false;

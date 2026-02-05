@@ -114,6 +114,12 @@ void WindowImplAndroid::processEvents()
     ActivityStates&       states = getActivity();
     const std::lock_guard lock(states.mutex);
 
+    if (m_windowBeingCreated)
+    {
+        states.context->createSurface(states.window);
+        m_windowBeingCreated = false;
+    }
+
     if (m_windowBeingDestroyed)
     {
         states.context->destroySurface();
@@ -240,7 +246,8 @@ void WindowImplAndroid::forwardEvent(const Event& event)
         {
             WindowImplAndroid::singleInstance->m_size = Vector2u(
                 Vector2i(ANativeWindow_getWidth(states.window), ANativeWindow_getHeight(states.window)));
-            WindowImplAndroid::singleInstance->m_hasFocus = true;
+            WindowImplAndroid::singleInstance->m_windowBeingCreated = true;
+            WindowImplAndroid::singleInstance->m_hasFocus           = true;
         }
         else if (event.is<Event::FocusLost>())
         {
