@@ -212,13 +212,7 @@ void setMousePosition(Vector2i position)
     const CGPoint pos   = CGPointMake(position.x / scale, position.y / scale);
 
     // Place the cursor.
-    CGEventRef event = CGEventCreateMouseEvent(nullptr,
-                                               kCGEventMouseMoved,
-                                               pos,
-                                               /* we don't care about this: */ kCGMouseButtonLeft);
-    CGEventPost(kCGHIDEventTap, event);
-    CFRelease(event);
-    // This is a workaround to deprecated CGSetLocalEventsSuppressionInterval.
+    CGWarpMouseCursorPosition(pos);
 }
 
 
