@@ -66,16 +66,16 @@ WindowImplAndroid::WindowImplAndroid(VideoMode mode,
 {
     ActivityStates& states = getActivity();
     {
-    const std::lock_guard lock(states.mutex);
+        const std::lock_guard lock(states.mutex);
 
-    if (state == State::Fullscreen)
-        states.fullscreen = true;
+        if (state == State::Fullscreen)
+            states.fullscreen = true;
 
-    WindowImplAndroid::singleInstance = this;
-    states.forwardEvent               = forwardEvent;
+        WindowImplAndroid::singleInstance = this;
+        states.forwardEvent               = forwardEvent;
 
-    // Register process event callback
-    states.processEvent = processEvent;
+        // Register process event callback
+        states.processEvent = processEvent;
         states.initialized  = true;
     }
 
