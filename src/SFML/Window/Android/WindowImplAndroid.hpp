@@ -161,8 +161,9 @@ private:
     static char32_t getUnicode(AInputEvent* event);
 
     Vector2u m_size;
+    bool     m_windowBeingCreated{};
     bool     m_windowBeingDestroyed{};
-    bool     m_hasFocus{};
+    bool     m_hasFocus{true};
 };
 
 } // namespace sf::priv
