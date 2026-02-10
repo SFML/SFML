@@ -380,12 +380,22 @@ macro(sfml_add_example target)
     endif()
 
     if(SFML_OS_WINDOWS AND SFML_USE_MESA3D)
-        add_dependencies(${target} "install-mesa3d")
+        add_custom_command(TARGET ${target} POST_BUILD 
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${MESA3D_FILE_LIST} $<TARGET_FILE_DIR:${target}>
+            COMMENT "Copying Mesa3D dlls"
+            COMMAND_EXPAND_LISTS)
     endif()
 
     # Enable support for UTF-8 characters in source code
     if(SFML_COMPILER_MSVC)
         target_compile_options(${target} PRIVATE /utf-8)
+    endif()
+
+    if(SFML_OS_WINDOWS AND BUILD_SHARED_LIBS)
+        add_custom_command(TARGET ${target} POST_BUILD 
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:${target}> $<TARGET_FILE_DIR:${target}>
+            COMMENT "Copying dependencies"
+            COMMAND_EXPAND_LISTS)
     endif()
 endmacro()
 
@@ -437,7 +447,10 @@ function(sfml_add_test target SOURCES DEPENDS)
     endif()
 
     if(SFML_OS_WINDOWS AND SFML_USE_MESA3D)
-        add_dependencies(${target} "install-mesa3d")
+        add_custom_command(TARGET ${target} POST_BUILD 
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${MESA3D_FILE_LIST} $<TARGET_FILE_DIR:${target}>
+            COMMENT "Copying Mesa3D dlls"
+            COMMAND_EXPAND_LISTS)
     endif()
 
     # Delay test registration when cross compiling to avoid running crosscompiled app on host OS
@@ -464,6 +477,13 @@ function(sfml_add_test target SOURCES DEPENDS)
     # Enable support for UTF-8 characters in source code
     if(SFML_COMPILER_MSVC)
         target_compile_options(${target} PRIVATE /utf-8)
+    endif()
+
+    if(SFML_OS_WINDOWS AND BUILD_SHARED_LIBS)
+        # Copy runtime dependencies to the output
+        add_custom_command(TARGET ${target} POST_BUILD 
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_RUNTIME_DLLS:${target}> $<TARGET_FILE_DIR:${target}> 
+            COMMAND_EXPAND_LISTS)
     endif()
 
     # Add the test
