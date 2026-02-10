@@ -65,7 +65,6 @@ struct ActivityStates
     AInputQueue*    inputQueue{};
     AConfiguration* config{};
 
-    EGLDisplay  display{};
     EglContext* context{};
 
     std::vector<std::byte> savedState;

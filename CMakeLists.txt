@@ -37,11 +37,6 @@ include(cmake/Config.cmake)
 # https://cmake.org/cmake/help/latest/module/GNUInstallDirs.html
 include(GNUInstallDirs)
 
-# disable static libraries on Android
-if(SFML_OS_ANDROID)
-    set(BUILD_SHARED_LIBS ON)
-endif()
-
 # add options to select which modules to build
 sfml_set_option(SFML_BUILD_WINDOW ON BOOL "ON to build SFML's Window module. This setting is ignored, if the graphics module is built.")
 sfml_set_option(SFML_BUILD_GRAPHICS ON BOOL "ON to build SFML's Graphics module.")

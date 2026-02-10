@@ -80,9 +80,9 @@ else()
 
     set_target_properties(mbedtls mbedcrypto mbedx509 PROPERTIES FOLDER "Dependencies" SYSTEM ON)
 
-    # if building SFML as a shared library and linking our dependencies in
+    # if building SFML as a shared library or on android (where exes are shared libs) and linking our dependencies in
     # as static libraries we need to build them with -fPIC
-    if(BUILD_SHARED_LIBS)
+    if(BUILD_SHARED_LIBS OR SFML_OS_ANDROID)
         set_target_properties(mbedtls mbedcrypto mbedx509 PROPERTIES POSITION_INDEPENDENT_CODE ON)
     endif()
 

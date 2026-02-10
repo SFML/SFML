@@ -23,9 +23,6 @@ set_target_properties(sfml-main PROPERTIES
                       RELWITHDEBINFO_POSTFIX "")
 
 if(SFML_OS_ANDROID)
-    # ensure that linking into shared libraries doesn't fail
-    set_target_properties(sfml-main PROPERTIES POSITION_INDEPENDENT_CODE ON)
-
     # glad sources
     target_include_directories(sfml-main SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/glad/include")
 
@@ -34,6 +31,8 @@ if(SFML_OS_ANDROID)
 
     # Ensure this method is not stripped
     target_link_options(sfml-main PUBLIC -u ANativeActivity_onCreate)
+
+    target_link_libraries(sfml-main PUBLIC SFML::System)
 elseif(SFML_OS_IOS)
     target_link_libraries(sfml-main PUBLIC SFML::Window)
 endif()
