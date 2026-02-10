@@ -73,13 +73,8 @@ if(SFML_USE_SYSTEM_DEPS)
     find_package(FLAC REQUIRED)
 else()
     # use an immediately invoked function to scope option variables we have to set
-    function(sfml_add_audio_dependencies)
+    block()
         include(FetchContent)
-
-        # remember whether we are building SFML as a shared library
-        if(BUILD_SHARED_LIBS)
-            set(SFML_BUILD_SHARED_LIBS ON)
-        endif()
 
         set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
         set(CMAKE_POLICY_DEFAULT_CMP0048 NEW)
@@ -127,12 +122,6 @@ else()
         FetchContent_MakeAvailable(ogg flac vorbis)
 
         set_target_properties(ogg FLAC vorbis vorbisenc vorbisfile PROPERTIES FOLDER "Dependencies")
-
-        # if building SFML as a shared library and linking our dependencies in
-        # as static libraries we need to build them with -fPIC
-        if(SFML_BUILD_SHARED_LIBS)
-            set_target_properties(ogg FLAC vorbis vorbisenc vorbisfile PROPERTIES POSITION_INDEPENDENT_CODE ON)
-        endif()
 
         # build using unity build and exclude files that cause issues
         set_target_properties(ogg FLAC vorbis vorbisenc vorbisfile PROPERTIES UNITY_BUILD ON UNITY_BUILD_BATCH_SIZE 256)
@@ -188,8 +177,13 @@ else()
         add_library(Vorbis::vorbis ALIAS vorbis)
         add_library(Vorbis::vorbisenc ALIAS vorbisenc)
         add_library(Vorbis::vorbisfile ALIAS vorbisfile)
-    endfunction()
-    sfml_add_audio_dependencies()
+    endblock()
+
+    # if building SFML as a shared library or on android (where exes are shared libs) and linking our dependencies in
+    # as static libraries we need to build them with -fPIC
+    if(BUILD_SHARED_LIBS OR SFML_OS_ANDROID)
+        set_target_properties(ogg FLAC vorbis vorbisenc vorbisfile PROPERTIES POSITION_INDEPENDENT_CODE ON)
+    endif()
 endif()
 
 find_package(Threads REQUIRED)

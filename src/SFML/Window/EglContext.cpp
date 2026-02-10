@@ -60,16 +60,6 @@ namespace EglContextImpl
 {
 EGLDisplay getInitializedDisplay()
 {
-#if defined(SFML_SYSTEM_ANDROID)
-
-    // On Android, its native activity handles this for us
-    sf::priv::ActivityStates& states = sf::priv::getActivity();
-    const std::lock_guard     lock(states.mutex);
-
-    return states.display;
-
-#endif
-
     static EGLDisplay display = EGL_NO_DISPLAY;
 
     if (display == EGL_NO_DISPLAY)

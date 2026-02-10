@@ -282,8 +282,12 @@ if(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
 endif()
 target_link_libraries(sfml-window PUBLIC SFML::System)
 
-# glad sources
-target_include_directories(sfml-window SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/glad/include")
+# glad sources, must be public for android as the system module includes EglContext.hpp  which includes glad
+set(GLAD_INCLUDE_PATH "${PROJECT_SOURCE_DIR}/extlibs/headers/glad/include")
+if (SFML_OS_ANDROID)
+    target_include_directories(sfml-window SYSTEM PUBLIC $<BUILD_INTERFACE:${GLAD_INCLUDE_PATH}>)
+endif()
+target_include_directories(sfml-window SYSTEM PRIVATE ${GLAD_INCLUDE_PATH})
 
 # When static linking on macOS, we need to add this flag for objective C to work
 # https://developer.apple.com/library/archive/qa/qa1490/_index.html
