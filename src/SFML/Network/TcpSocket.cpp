@@ -82,161 +82,112 @@ std::string tlsErrorString(int errnum)
     return buffer.data();
 }
 
-bool loadSystemCertificates([[maybe_unused]] mbedtls_x509_crt* x509crt, [[maybe_unused]] mbedtls_x509_crl* x509crl)
-{
+bool loadSystemCertificates([[maybe_unused]] mbedtls_x509_crt* x509crt, [[maybe_unused]] mbedtls_x509_crl* x509crl) {
 #if defined(SFML_SYSTEM_WINDOWS)
-    static const auto getErrorString = [](DWORD error) -> std::string
-    {
+    static const auto getErrorString = [](DWORD error) -> std::string {
         PTCHAR buffer = nullptr;
         if (FormatMessage(FORMAT_MESSAGE_MAX_WIDTH_MASK | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-                          nullptr,
-                          error,
-                          0,
-                          reinterpret_cast<PTCHAR>(&buffer),
-                          0,
-                          nullptr) == 0)
-        {
+                          nullptr, error, 0, reinterpret_cast<LPTSTR>(&buffer), 0, nullptr) == 0) {
             return "Unknown error.";
         }
-
         const sf::String message = buffer;
         LocalFree(buffer);
         return message.toAnsiString();
     };
 
-    const auto loadStore = [&](const char* store)
-    {
+    const auto loadStore = [&](const char* store) {
         auto* systemStore = CertOpenSystemStoreA(0, store);
-
-        if (systemStore == nullptr)
-        {
-            sf::err() << "Failed to open Windows certificate store: " << getErrorString(GetLastError()) << std::endl;
+        if (systemStore == nullptr) {
+            const DWORD error = GetLastError();
+            sf::err() << "Failed to open Windows certificate store: " << getErrorString(error) << std::endl;
             return false;
         }
 
         const CERT_CONTEXT* cert{};
         cert = CertEnumCertificatesInStore(systemStore, cert);
-
-        while (cert)
-        {
-            if (cert->dwCertEncodingType == X509_ASN_ENCODING)
-            {
-                // Certificate parsing might fail because a certificate makes use of intentionally removed features
-                // We can just ignore the certificate and move on to the next one
+        while (cert) {
+            if (cert->dwCertEncodingType == X509_ASN_ENCODING) {
                 mbedtls_x509_crt_parse(x509crt, cert->pbCertEncoded, cert->cbCertEncoded);
             }
-
             cert = CertEnumCertificatesInStore(systemStore, cert);
         }
 
         const CRL_CONTEXT* crl{};
         crl = CertEnumCRLsInStore(systemStore, crl);
-
-        while (crl)
-        {
-            if (crl->dwCertEncodingType == X509_ASN_ENCODING)
-            {
-                // CRL parsing might fail because a CRL makes use of intentionally removed features
-                // We can just ignore the CRL and move on to the next one
+        while (crl) {
+            if (crl->dwCertEncodingType == X509_ASN_ENCODING) {
                 mbedtls_x509_crl_parse(x509crl, crl->pbCrlEncoded, crl->cbCrlEncoded);
             }
-
             crl = CertEnumCRLsInStore(systemStore, crl);
         }
 
-        if (!CertCloseStore(systemStore, 0))
-            sf::err() << "Failed to close Windows certificate store: " << getErrorString(GetLastError()) << std::endl;
-
-        return true;
-    };
-
-    return loadStore("ROOT") && loadStore("CA");
-#elif (defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_ANDROID) || defined(SFML_SYSTEM_FREEBSD) || \
-       defined(SFML_SYSTEM_OPENBSD) || defined(SFML_SYSTEM_NETBSD))
-    auto loadStore = [&](const char* path)
-    {
-        // Just trying to load all known paths is simpler than specifying paths per distribution
-        if (!std::filesystem::exists(path))
-            return true;
-
-        if (auto result = mbedtls_x509_crt_parse_path(x509crt, path); result < 0)
-        {
-            sf::err() << "Failed to load CA certificate directory: " << tlsErrorString(result) << std::endl;
+        if (!CertCloseStore(systemStore, CERT_CLOSE_STORE_FORCE_FLAG)) {
+            const DWORD error = GetLastError();
+            sf::err() << "Failed to close Windows certificate store: " << getErrorString(error) << std::endl;
             return false;
         }
 
         return true;
     };
 
-    // TODO: Handle revocation directory as well
+    return loadStore("ROOT") && loadStore("CA");
 
-#if defined(SFML_SYSTEM_LINUX)
-    return loadStore("/etc/ssl/") && loadStore("/etc/ssl/certs/") && loadStore("/etc/pki/ca-trust/extracted/pem/") &&
-           loadStore("/etc/pki/tls/") && loadStore("/etc/pki/tls/certs/");
-#elif defined(SFML_SYSTEM_ANDROID)
-    return loadStore("/system/etc/security/cacerts/") && loadStore("/data/misc/keychain/cacerts-added/");
-#elif defined(SFML_SYSTEM_FREEBSD)
-    return loadStore("/usr/local/share/certs");
-#elif defined(SFML_SYSTEM_OPENBSD)
-    return loadStore("/etc/ssl/");
-#elif defined(SFML_SYSTEM_NETBSD)
-    return loadStore("/etc/openssl/certs");
-#endif
+#elif (defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_ANDROID) || defined(SFML_SYSTEM_FREEBSD) || \
+    defined(SFML_SYSTEM_OPENBSD) || defined(SFML_SYSTEM_NETBSD))
+    // Loading from standard locations for Unix-like systems
+    auto loadStore = [&](const char* path) {
+        if (!std::filesystem::exists(path)) return true;
+
+        if (auto result = mbedtls_x509_crt_parse_path(x509crt, path); result < 0) {
+            sf::err() << "Failed to load CA certificate directory: " << tlsErrorString(result) << std::endl;
+            return false;
+        }
+        return true;
+    };
+
+    return loadStore("/etc/ssl/") && loadStore("/etc/ssl/certs/") && loadStore("/etc/pki/ca-trust/extracted/pem/");
+
 #elif defined(SFML_SYSTEM_MACOS)
-    auto loadStore = [&](SecTrustSettingsDomain domain)
-    {
-        static constexpr auto osStatusErrorString = [](OSStatus status)
-        {
+    auto loadStore = [&](SecTrustSettingsDomain domain) {
+        static constexpr auto osStatusErrorString = [](OSStatus status) -> std::string {
             CFStringRef stringRef = SecCopyErrorMessageString(status, nullptr);
             std::string string(CFStringGetCStringPtr(stringRef, kCFStringEncodingUTF8));
             CFRelease(stringRef);
             return string;
         };
 
-        CFArrayRef     certs{};
+        CFArrayRef certs{};
         const OSStatus status = SecTrustSettingsCopyCertificates(domain, &certs);
-
-        if (status == errSecNoTrustSettings)
-            return true;
-
-        if (status != errSecSuccess)
-        {
-            sf::err() << "Failed to load system certificates: " << osStatusErrorString(status);
+        if (status == errSecNoTrustSettings) return true;
+        if (status != errSecSuccess) {
+            sf::err() << "Failed to load system certificates: " << osStatusErrorString(status) << std::endl;
             return false;
         }
 
-        for (auto i = 0; i < CFArrayGetCount(certs); ++i)
-        {
+        for (auto i = 0; i < CFArrayGetCount(certs); ++i) {
             const auto* cert = CFArrayGetValueAtIndex(certs, i);
-            CFDataRef   der{};
-
-            if (auto result = SecItemExport(cert, kSecFormatX509Cert, 0, nullptr, &der); result != errSecSuccess)
-            {
+            CFDataRef der{};
+            if (auto result = SecItemExport(cert, kSecFormatX509Cert, 0, nullptr, &der); result != errSecSuccess) {
                 CFRelease(der);
                 CFRelease(certs);
-                sf::err() << "Failed to load system certificate: " << osStatusErrorString(result);
+                sf::err() << "Failed to load system certificate: " << osStatusErrorString(result) << std::endl;
                 return false;
             }
 
-            // Certificate parsing might fail because a certificate makes use of intentionally removed features
-            // We can just ignore the certificate and move on to the next one
-            mbedtls_x509_crt_parse(x509crt,
-                                   reinterpret_cast<const unsigned char*>(CFDataGetBytePtr(der)),
-                                   static_cast<std::size_t>(CFDataGetLength(der)));
-
+            mbedtls_x509_crt_parse(x509crt, reinterpret_cast<const unsigned char*>(CFDataGetBytePtr(der)), static_cast<size_t>(CFDataGetLength(der)));
             CFRelease(der);
         }
 
         return true;
     };
 
-    return (loadStore(kSecTrustSettingsDomainUser) && loadStore(kSecTrustSettingsDomainAdmin) &&
-            loadStore(kSecTrustSettingsDomainSystem));
+    return (loadStore(kSecTrustSettingsDomainUser) && loadStore(kSecTrustSettingsDomainAdmin) && loadStore(kSecTrustSettingsDomainSystem));
+
 #else
-    // Add implementations for other system certificate stores here
     return false;
 #endif
 }
+
 
 // When building MbedTLS ourselves, it doesn't provide its own built-in cross-platform mutex implementation
 // Instead it delegates mutex management to our code with the use of the following callbacks
