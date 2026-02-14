@@ -122,6 +122,16 @@ public:
 
 protected:
     ////////////////////////////////////////////////////////////
+    /// \brief Types of address families that the socket can use
+    ///
+    ////////////////////////////////////////////////////////////
+    enum class AddressFamily
+    {
+        IpV4, //!< IPv4
+        IpV6  //!< IPv6
+    };
+
+    ////////////////////////////////////////////////////////////
     /// \brief Types of protocols that the socket can use
     ///
     ////////////////////////////////////////////////////////////
@@ -158,8 +168,10 @@ protected:
     ///
     /// This function can only be accessed by derived classes.
     ///
+    /// \param addressFamily The address family of the socket
+    ///
     ////////////////////////////////////////////////////////////
-    void create();
+    void create(AddressFamily addressFamily = AddressFamily::IpV4);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create the internal representation of the socket

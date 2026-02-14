@@ -51,73 +51,82 @@
 
 #endif
 
+#include <array>
+
 #include <cstdint>
 
 
-namespace sf::priv
-{
 ////////////////////////////////////////////////////////////
-/// \brief Helper class implementing all the non-portable
+/// \brief Helper namespace implementing all the non-portable
 ///        socket stuff
 ///
 ////////////////////////////////////////////////////////////
-class SocketImpl
+namespace sf::priv::SocketImpl
 {
-public:
-    ////////////////////////////////////////////////////////////
-    // Types
-    ////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+// Types
+////////////////////////////////////////////////////////////
 #if defined(SFML_SYSTEM_WINDOWS)
-    using AddrLength = int;
-    using Size       = int;
+using AddrLength = int;
+using Size       = int;
 #else
-    using AddrLength = socklen_t;
-    using Size       = std::size_t;
+using AddrLength = socklen_t;
+using Size       = std::size_t;
 #endif
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Create an internal sockaddr_in address
-    ///
-    /// \param address Target address
-    /// \param port    Target port
-    ///
-    /// \return sockaddr_in ready to be used by socket functions
-    ///
-    ////////////////////////////////////////////////////////////
-    static sockaddr_in createAddress(std::uint32_t address, unsigned short port);
+////////////////////////////////////////////////////////////
+/// \brief Create an internal sockaddr_in address
+///
+/// \param address Target address
+/// \param port    Target port
+///
+/// \return sockaddr_in ready to be used by socket functions
+///
+////////////////////////////////////////////////////////////
+sockaddr_in createAddress(std::uint32_t address, unsigned short port);
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Return the value of the invalid socket
-    ///
-    /// \return Special value of the invalid socket
-    ///
-    ////////////////////////////////////////////////////////////
-    static SocketHandle invalidSocket();
+////////////////////////////////////////////////////////////
+/// \brief Create an internal sockaddr_in6 address
+///
+/// \param address Target address
+/// \param port    Target port
+///
+/// \return sockaddr_in6 ready to be used by socket functions
+///
+////////////////////////////////////////////////////////////
+sockaddr_in6 createAddress(std::array<std::uint8_t, 16> address, unsigned short port);
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Close and destroy a socket
-    ///
-    /// \param sock Handle of the socket to close
-    ///
-    ////////////////////////////////////////////////////////////
-    static void close(SocketHandle sock);
+////////////////////////////////////////////////////////////
+/// \brief Return the value of the invalid socket
+///
+/// \return Special value of the invalid socket
+///
+////////////////////////////////////////////////////////////
+SocketHandle invalidSocket();
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Set a socket as blocking or non-blocking
-    ///
-    /// \param sock  Handle of the socket
-    /// \param block New blocking state of the socket
-    ///
-    ////////////////////////////////////////////////////////////
-    static void setBlocking(SocketHandle sock, bool block);
+////////////////////////////////////////////////////////////
+/// \brief Close and destroy a socket
+///
+/// \param sock Handle of the socket to close
+///
+////////////////////////////////////////////////////////////
+void close(SocketHandle sock);
 
-    ////////////////////////////////////////////////////////////
-    /// Get the last socket error status
-    ///
-    /// \return Status corresponding to the last socket error
-    ///
-    ////////////////////////////////////////////////////////////
-    static Socket::Status getErrorStatus();
-};
+////////////////////////////////////////////////////////////
+/// \brief Set a socket as blocking or non-blocking
+///
+/// \param sock  Handle of the socket
+/// \param block New blocking state of the socket
+///
+////////////////////////////////////////////////////////////
+void setBlocking(SocketHandle sock, bool block);
 
-} // namespace sf::priv
+////////////////////////////////////////////////////////////
+/// Get the last socket error status
+///
+/// \return Status corresponding to the last socket error
+///
+////////////////////////////////////////////////////////////
+Socket::Status getErrorStatus();
+
+} // namespace sf::priv::SocketImpl

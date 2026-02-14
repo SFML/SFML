@@ -113,7 +113,10 @@ void runTcpClient(unsigned short port, bool tls)
     do
     {
         std::cout << "Type the address or name of the server to connect to: ";
-        std::cin >> server;
+        std::string hostname;
+        std::cin >> hostname;
+        if (const auto addresses = sf::Dns::resolve(hostname); !addresses.empty())
+            server = addresses.front();
     } while (!server.has_value());
 
     // Create a socket for communicating with the server
