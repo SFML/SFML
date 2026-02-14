@@ -41,10 +41,8 @@
 
 #include <SFML/System/Vector2.hpp>
 
-#include <array>
-
+#include <memory>
 #include <cstddef>
-#include <cstdint>
 
 
 namespace sf
@@ -54,6 +52,11 @@ class Shader;
 class Texture;
 class Transform;
 class VertexBuffer;
+
+namespace priv
+{
+class RenderTargetImpl;
+}
 
 ////////////////////////////////////////////////////////////
 /// \brief Base class for all render targets (window, texture, ...)
@@ -66,7 +69,7 @@ public:
     /// \brief Destructor
     ///
     ////////////////////////////////////////////////////////////
-    virtual ~RenderTarget() = default;
+    virtual ~RenderTarget();
 
     ////////////////////////////////////////////////////////////
     /// \brief Deleted copy constructor
@@ -84,13 +87,13 @@ public:
     /// \brief Move constructor
     ///
     ////////////////////////////////////////////////////////////
-    RenderTarget(RenderTarget&&) noexcept = default;
+    RenderTarget(RenderTarget&&) noexcept;
 
     ////////////////////////////////////////////////////////////
     /// \brief Move assignment
     ///
     ////////////////////////////////////////////////////////////
-    RenderTarget& operator=(RenderTarget&&) noexcept = default;
+    RenderTarget& operator=(RenderTarget&&) noexcept;
 
     ////////////////////////////////////////////////////////////
     /// \brief Clear the entire target with a single color
@@ -455,7 +458,7 @@ protected:
     /// \brief Default constructor
     ///
     ////////////////////////////////////////////////////////////
-    RenderTarget() = default;
+    RenderTarget();
 
     ////////////////////////////////////////////////////////////
     /// \brief Performs the common initialization step after creation
@@ -466,7 +469,6 @@ protected:
     ////////////////////////////////////////////////////////////
     void initialize();
 
-private:
     ////////////////////////////////////////////////////////////
     /// \brief Apply the current view
     ///
@@ -541,33 +543,15 @@ private:
     ////////////////////////////////////////////////////////////
     void cleanupDraw(const RenderStates& states);
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Render states cache
-    ///
-    ////////////////////////////////////////////////////////////
-    struct StatesCache
-    {
-        bool                  enable{};                //!< Is the cache enabled?
-        bool                  glStatesSet{};           //!< Are our internal GL states set yet?
-        bool                  viewChanged{};           //!< Has the current view changed since last draw?
-        bool                  scissorEnabled{};        //!< Is scissor testing enabled?
-        bool                  stencilEnabled{};        //!< Is stencil testing enabled?
-        BlendMode             lastBlendMode;           //!< Cached blending mode
-        StencilMode           lastStencilMode;         //!< Cached stencil
-        std::uint64_t         lastTextureId{};         //!< Cached texture
-        CoordinateType        lastCoordinateType{};    //!< Texture coordinate type
-        bool                  texCoordsArrayEnabled{}; //!< Is `GL_TEXTURE_COORD_ARRAY` client state enabled?
-        bool                  useVertexCache{};        //!< Did we previously use the vertex cache?
-        std::array<Vertex, 4> vertexCache{};           //!< Pre-transformed vertices cache
-    };
+private:
+    friend class RenderTargetImpl;
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    View          m_defaultView; //!< Default view
-    View          m_view;        //!< Current view
-    StatesCache   m_cache{};     //!< Render states cache
-    std::uint64_t m_id{};        //!< Unique number that identifies the RenderTarget
+    View                                     m_defaultView; //!< Default view
+    View                                     m_view;        //!< Current view
+    std::unique_ptr<priv::RenderTargetImpl> m_impl;         //!< Implementation detail
 };
 
 } // namespace sf

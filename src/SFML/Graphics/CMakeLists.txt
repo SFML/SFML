@@ -83,10 +83,27 @@ set(RENDER_TEXTURE_SRC
 )
 source_group("render texture" FILES ${RENDER_TEXTURE_SRC})
 
+# implementation sources
+set(IMPL_SRC
+    ${SRCROOT}/RenderTargetImpl.hpp
+    ${SRCROOT}/OpenGL/RenderTargetImplDefault.hpp
+    ${SRCROOT}/OpenGL/RenderTargetImplDefault.cpp
+    ${SRCROOT}/ShaderImpl.hpp
+    ${SRCROOT}/OpenGL/ShaderImplDefault.hpp
+    ${SRCROOT}/OpenGL/ShaderImplDefault.cpp
+    ${SRCROOT}/TextureImpl.hpp
+    ${SRCROOT}/OpenGL/TextureImplDefault.hpp
+    ${SRCROOT}/OpenGL/TextureImplDefault.cpp
+    ${SRCROOT}/VertexBufferImpl.hpp
+    ${SRCROOT}/OpenGL/VertexBufferImplDefault.hpp
+    ${SRCROOT}/OpenGL/VertexBufferImplDefault.cpp
+)
+source_group("implementation" FILES ${IMPL_SRC})
+
 
 # define the sfml-graphics target
 sfml_add_library(Graphics
-                 SOURCES ${SRC} ${DRAWABLES_SRC} ${RENDER_TEXTURE_SRC}
+                 SOURCES ${SRC} ${DRAWABLES_SRC} ${RENDER_TEXTURE_SRC} ${IMPL_SRC}
                  DEPENDENCIES "Dependencies.cmake.in")
 
 # setup dependencies
