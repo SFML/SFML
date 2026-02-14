@@ -49,6 +49,18 @@
 - (void)updateScaleFactor;
 
 ////////////////////////////////////////////////////////////
+/// \brief Handle window minimize event
+///
+////////////////////////////////////////////////////////////
+- (void)updateMinimized;
+
+////////////////////////////////////////////////////////////
+/// \brief Handle window maximized event
+///
+////////////////////////////////////////////////////////////
+- (void)updateMaximized;
+
+////////////////////////////////////////////////////////////
 /// \brief Handle view resized event
 ///
 ////////////////////////////////////////////////////////////
@@ -171,6 +183,18 @@
                name:NSWindowWillCloseNotification
              object:[self window]];
 
+    // Register window minimized and maximized
+    [[NSNotificationCenter defaultCenter]
+        addObserver:self
+           selector:@selector(updateMinimized)
+               name:NSWindowDidMiniaturizeNotification
+             object:[self window]];
+    [[NSNotificationCenter defaultCenter]
+        addObserver:self
+           selector:@selector(updateMaximized)
+               name:NSWindowDidEnterFullScreenNotification
+             object:[self window]];
+
     // Register for changed screen and changed screen's profile events
     [[NSNotificationCenter defaultCenter]
         addObserver:self
@@ -252,6 +276,20 @@
 
 
 ////////////////////////////////////////////////////////
+- (void)updateMinimized
+{
+    m_requester->windowMinimized();
+}
+
+
+////////////////////////////////////////////////////////
+- (void)updateMaximized
+{
+    m_requester->windowMaximized();
+}
+
+
+////////////////////////////////////////////////////////
 - (void)viewDidEndLiveResize
 {
     // We use viewDidEndLiveResize to notify the user ONCE
@@ -278,6 +316,7 @@
 
     // The new size
     NSSize newSize = [self frame].size;
+
     m_requester->windowResized({static_cast<unsigned int>(newSize.width), static_cast<unsigned int>(newSize.height)});
 }
 
