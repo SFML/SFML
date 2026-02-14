@@ -26,13 +26,16 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/InputImpl.hpp>
+#include <SFML/Window/Win32/Utils.hpp>
 #include <SFML/Window/Window.hpp>
 
 #include <SFML/System/EnumArray.hpp>
+#include <SFML/System/Err.hpp>
 #include <SFML/System/String.hpp>
 #include <SFML/System/Win32/WindowsHeader.hpp>
 
 #include <optional>
+#include <ostream>
 
 
 namespace
@@ -703,7 +706,10 @@ Vector2i getMousePosition(const WindowBase& relativeTo)
     if (const WindowHandle handle = relativeTo.getNativeHandle())
     {
         POINT point;
-        GetCursorPos(&point);
+        if (!GetCursorPos(&point))
+        {
+            err() << "Failed to set mouse position: " << getErrorString(GetLastError()) << std::endl;
+        }
         ScreenToClient(handle, &point);
         return {point.x, point.y};
     }
@@ -715,7 +721,10 @@ Vector2i getMousePosition(const WindowBase& relativeTo)
 ////////////////////////////////////////////////////////////
 void setMousePosition(Vector2i position)
 {
-    SetCursorPos(position.x, position.y);
+    if (!SetCursorPos(position.x, position.y))
+    {
+        err() << "Failed to set mouse position: " << getErrorString(GetLastError()) << std::endl;
+    }
 }
 
 
