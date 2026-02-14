@@ -20,6 +20,15 @@ std::string vec2ToString(const sf::Vector2i vec2)
 {
     return '(' + std::to_string(vec2.x) + ", " + std::to_string(vec2.y) + ')';
 }
+std::string filesDroppedToString(const sf::Event::FilesDropped& filesDropped)
+{
+    auto str = std::to_string(filesDropped.filenames.size()) + " file(s) dropped: ";
+    for (const auto& filename : filesDropped.filenames)
+    {
+        str += "\n- " + filename;
+    }
+    return str;
+}
 } // namespace
 
 
@@ -34,7 +43,7 @@ public:
     Application()
     {
         m_window.setVerticalSyncEnabled(true);
-        m_logText.setFillColor(sf::Color::White);
+        m_window.setFileDroppingEnabled(true);
         m_handlerText.setFillColor(sf::Color::White);
         m_handlerText.setStyle(sf::Text::Bold);
         m_handlerText.setPosition({380.f, 260.f});
@@ -98,6 +107,11 @@ public:
         std::optional<std::string> operator()(const sf::Event::TouchMoved& touchMoved)
         {
             return "Touch Moved: " + vec2ToString(touchMoved.position);
+        }
+
+        std::optional<std::string> operator()(const sf::Event::FilesDropped& filesDropped)
+        {
+            return filesDroppedToString(filesDropped);
         }
 
         // When defining a visitor, make sure all event types can be handled by it.
@@ -174,6 +188,10 @@ public:
                     {
                         m_log.emplace_back("Touch Moved: " + vec2ToString(touchMoved->position));
                     }
+                    else if (const auto* filesDropped = event->getIf<sf::Event::FilesDropped>())
+                    {
+                        m_log.emplace_back(filesDroppedToString(*filesDropped));
+                    }
                     else
                     {
                         // All unhandled events will end up here
@@ -223,7 +241,9 @@ public:
                                       [&](const sf::Event::TouchEnded& touchEnded)
                                       { m_log.emplace_back("Touch Ended: " + vec2ToString(touchEnded.position)); },
                                       [&](const sf::Event::TouchMoved& touchMoved)
-                                      { m_log.emplace_back("Touch Moved: " + vec2ToString(touchMoved.position)); });
+                                      { m_log.emplace_back("Touch Moved: " + vec2ToString(touchMoved.position)); },
+                                      [&](const sf::Event::FilesDropped& filesDropped)
+                                      { m_log.emplace_back(filesDroppedToString(filesDropped)); });
 
                 // To handle unhandled events, just add the following lambda to the set of handlers
                 // [&](const auto&) { m_log.emplace_back("Other Event"); }
@@ -279,6 +299,10 @@ public:
                         {
                             m_log.emplace_back("Touch Moved: " + vec2ToString(event.position));
                         }
+                        else if constexpr (std::is_same_v<T, sf::Event::FilesDropped>)
+                        {
+                            m_log.emplace_back(filesDroppedToString(event));
+                        }
                         else
                         {
                             // All unhandled events will end up here
@@ -305,12 +329,13 @@ public:
 
             // Draw the contents of the log to the window
             m_window.clear();
-
+            sf::Text logText{m_font, "", 20};
             for (std::size_t i = 0; i < m_log.size(); ++i)
             {
-                m_logText.setPosition({50.f, static_cast<float>(i * 20) + 50.f});
-                m_logText.setString(m_log[i]);
-                m_window.draw(m_logText);
+                const auto previousBounds = logText.getGlobalBounds();
+                logText.setPosition({50.f, previousBounds.position.y + previousBounds.size.y});
+                logText.setString(m_log[i]);
+                m_window.draw(logText);
             }
 
             m_window.draw(m_handlerText);
@@ -371,6 +396,11 @@ public:
         m_log.emplace_back("Touch Moved: " + vec2ToString(touchMoved.position));
     }
 
+    void handle(const sf::Event::FilesDropped& filesDropped)
+    {
+        m_log.emplace_back(filesDroppedToString(filesDropped));
+    }
+
     template <typename T>
     void handle(const T&)
     {
@@ -393,7 +423,6 @@ private:
     ////////////////////////////////////////////////////////////
     sf::RenderWindow m_window{sf::VideoMode({800u, 600u}), "SFML Event Handling", sf::Style::Titlebar | sf::Style::Close};
     const sf::Font           m_font{resourcesDir() / "tuffy.ttf"};
-    sf::Text                 m_logText{m_font, "", 20};
     sf::Text                 m_handlerText{m_font, "Current Handler: Classic", 24};
     sf::Text                 m_instructions{m_font, "Press Enter to change handler type", 24};
     std::vector<std::string> m_log;
