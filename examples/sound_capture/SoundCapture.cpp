@@ -1,6 +1,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Graphics.hpp>
+
 #include <SFML/Audio.hpp>
 
 #include <iostream>
@@ -19,112 +21,181 @@ int main()
     // Check that the device can capture audio
     if (!sf::SoundRecorder::isAvailable())
     {
-        std::cout << "Sorry, audio capture is not supported by your system" << std::endl;
+        sf::err() << "Sorry, audio capture is not supported by your system" << std::endl;
         return EXIT_SUCCESS;
     }
 
-    // List the available capture devices
-    auto devices = sf::SoundRecorder::getAvailableDevices();
-
-    std::cout << "Available capture devices:\n" << std::endl;
-
-    for (auto i = 0u; i < devices.size(); ++i)
-        std::cout << i << ": " << devices[i] << '\n';
-
-    std::cout << std::endl;
-
-    std::size_t deviceIndex = 0;
-
-    // Choose the capture device
-    if (devices.size() > 1)
+    const auto devices = sf::SoundRecorder::getAvailableDevices();
+    if (devices.empty())
     {
-        deviceIndex = devices.size();
-        std::cout << "Please choose the capture device to use [0-" << devices.size() - 1 << "]: ";
-        do
-        {
-            std::cin >> deviceIndex;
-            std::cin.ignore(10'000, '\n');
-        } while (deviceIndex >= devices.size());
+        sf::err() << "No sound recording devices available" << std::endl;
+        return EXIT_SUCCESS;
     }
 
-    // Choose the sample rate
-    unsigned int sampleRate = 0;
-    std::cout << "Please choose the sample rate for sound capture (44100 is CD quality): ";
-    std::cin >> sampleRate;
-    std::cin.ignore(10'000, '\n');
+    sf::RenderWindow window(sf::VideoMode({800, 600}), "Sound capture example");
+    const sf::Font   font("resources/tuffy.ttf");
 
-    // Wait for user input...
-    std::cout << "Press enter to start recording audio";
-    std::cin.ignore(10'000, '\n');
+    // List the available capture devices and display text for each
+    std::vector<sf::Text> deviceTexts(devices.size(), {font});
+    for (auto i = 0u; i < devices.size(); ++i)
+    {
+        deviceTexts[i].setString(devices[i]);
+        deviceTexts[i].setPosition(
+            {10, (static_cast<float>(deviceTexts[i].getCharacterSize()) + 10.f) * static_cast<float>(i)});
+    }
+
+    const auto lastDeviceTextBounds = deviceTexts.back().getGlobalBounds();
+    const auto buttonYOffset        = lastDeviceTextBounds.position.y + lastDeviceTextBounds.size.y * 2;
+
+    // An indicator to show current device
+    sf::RectangleShape deviceIndicator;
+    deviceIndicator.setFillColor(sf::Color::Transparent);
+    deviceIndicator.setOutlineColor(sf::Color::White);
+    deviceIndicator.setOutlineThickness(3);
+
+    // A red circle "record" button
+    sf::CircleShape recordButton(100);
+    recordButton.setFillColor(sf::Color::Red);
+    recordButton.setPosition({100, buttonYOffset});
+    recordButton.setOutlineColor(sf::Color::Transparent);
+    recordButton.setOutlineThickness(5);
+
+    // A green triangle "play" button
+    sf::CircleShape playButton(100, 3);
+    playButton.setFillColor(sf::Color::Transparent);
+    playButton.setPosition({static_cast<float>(window.getSize().x) - 100.f, buttonYOffset});
+    playButton.setRotation(sf::degrees(90));
+    playButton.setOutlineThickness(5);
+    playButton.setOutlineColor(sf::Color::Transparent);
+
+    // And text to show status
+    sf::Text statusText(font);
+    statusText.setPosition({10, recordButton.getGlobalBounds().position.y + recordButton.getGlobalBounds().size.y + 10});
 
     // Here we'll use an integrated custom recorder, which saves the captured data into a SoundBuffer
     sf::SoundBufferRecorder recorder;
+    sf::Sound               sound(recorder.getBuffer());
 
-    if (!recorder.setDevice(devices[deviceIndex]))
+    auto setCurrentDevice = [&](auto index)
     {
-        std::cerr << "Failed to set the capture device" << std::endl;
-        return EXIT_FAILURE;
-    }
-
-    // Audio capture is done in a separate thread, so we can block the main thread while it is capturing
-    if (!recorder.start(sampleRate))
-    {
-        std::cerr << "Failed to start recorder" << std::endl;
-        return EXIT_FAILURE;
-    }
-
-    std::cout << "Recording... press enter to stop";
-    std::cin.ignore(10'000, '\n');
-    recorder.stop();
-
-    // Get the buffer containing the captured data
-    const sf::SoundBuffer& buffer = recorder.getBuffer();
-
-    // Display captured sound information
-    std::cout << "Sound information:" << '\n'
-              << " " << buffer.getDuration().asSeconds() << " seconds" << '\n'
-              << " " << buffer.getSampleRate() << " samples / seconds" << '\n'
-              << " " << buffer.getChannelCount() << " channels" << std::endl;
-
-    // Choose what to do with the recorded sound data
-    char choice = 0;
-    std::cout << "What do you want to do with captured sound (p = play, s = save) ? ";
-    std::cin >> choice;
-    std::cin.ignore(10'000, '\n');
-
-    if (choice == 's')
-    {
-        // Choose the filename
-        std::string filename;
-        std::cout << "Choose the file to create: ";
-        std::getline(std::cin, filename);
-
-        // Save the buffer
-        if (!buffer.saveToFile(filename))
-            std::cerr << "Could not save sound buffer to file" << std::endl;
-    }
-    else
-    {
-        // Create a sound instance and play it
-        sf::Sound sound(buffer);
-        sound.play();
-
-        // Wait until finished
-        while (sound.getStatus() == sf::Sound::Status::Playing)
+        assert(index < devices.size());
+        if (!recorder.setDevice(devices[index]))
         {
-            // Display the playing position
-            std::cout << "\rPlaying... " << sound.getPlayingOffset().asSeconds() << " sec        ";
-            std::cout << std::flush;
-
-            // Leave some CPU time for other threads
-            sf::sleep(sf::milliseconds(100));
+            sf::err() << "Unable to set device to " << devices[index];
         }
+        const auto bounds = deviceTexts[index].getGlobalBounds();
+        deviceIndicator.setSize(bounds.size);
+        deviceIndicator.setPosition(bounds.position);
+    };
+    setCurrentDevice(0u);
+
+    bool recording      = false;
+    auto startRecording = [&]
+    {
+        assert(!recording);
+        if (!recorder.start())
+        {
+            sf::err() << "Failed to start recording" << std::endl;
+        }
+        else
+        {
+            recording = true;
+            playButton.setFillColor(sf::Color::Transparent);
+            recordButton.setOutlineColor(sf::Color::White);
+        }
+        statusText.setString("Recording...");
+    };
+
+    auto stopRecording = [&]
+    {
+        assert(recording);
+        recorder.stop();
+        playButton.setFillColor(sf::Color::Green);
+        recordButton.setOutlineColor(sf::Color::Transparent);
+        recording          = false;
+        const auto& buffer = recorder.getBuffer();
+        sound.setBuffer(buffer);
+        statusText.setString("Recorded: " + std::to_string(buffer.getDuration().asSeconds()) + " seconds");
+    };
+
+    bool playing       = false;
+    auto startPlayback = [&]
+    {
+        sound.play();
+        recordButton.setFillColor(sf::Color::Transparent);
+        playButton.setOutlineColor(sf::Color::White);
+        playing = true;
+    };
+
+    auto stopPlayback = [&]
+    {
+        sound.stop();
+        recordButton.setFillColor(sf::Color::Red);
+        playButton.setOutlineColor(sf::Color::Transparent);
+        playing = false;
+    };
+
+    while (window.isOpen())
+    {
+        while (const auto event = window.pollEvent())
+        {
+            if (const auto* clickEvent = event->getIf<sf::Event::MouseButtonPressed>();
+                clickEvent && clickEvent->button == sf::Mouse::Button::Left)
+            {
+                // Check if a device is selected
+                for (auto i = 0u; i < devices.size(); ++i)
+                {
+                    if (deviceTexts[i].getGlobalBounds().contains(sf::Vector2f{clickEvent->position}))
+                    {
+                        setCurrentDevice(i);
+                    }
+                }
+
+                // Check for recording button press
+                if ((sf::Vector2f{clickEvent->position} - recordButton.getGlobalBounds().getCenter()).length() <
+                    recordButton.getRadius())
+                {
+                    if (!recording)
+                    {
+                        startRecording();
+                    }
+                    else
+                    {
+                        stopRecording();
+                    }
+                }
+
+                // Check for play button press
+                if (playButton.getGlobalBounds().contains(sf::Vector2f{clickEvent->position}))
+                {
+                    if (!playing)
+                    {
+                        startPlayback();
+                    }
+                    else
+                    {
+                        stopPlayback();
+                    }
+                }
+            }
+        }
+
+        // Check if sound finished playing
+        if (playing && sound.getStatus() == sf::Sound::Status::Stopped)
+        {
+            stopPlayback();
+        }
+
+        window.clear();
+
+        window.draw(deviceIndicator);
+        for (const auto& text : deviceTexts)
+        {
+            window.draw(text);
+        }
+        window.draw(playButton);
+        window.draw(recordButton);
+        window.draw(statusText);
+        window.display();
     }
-
-    // Finished!
-    std::cout << '\n' << "Done!" << std::endl;
-
-    // Wait until the user presses 'enter' key
-    std::cout << "Press enter to exit..." << std::endl;
-    std::cin.ignore(10'000, '\n');
 }
