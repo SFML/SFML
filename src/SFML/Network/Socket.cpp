@@ -121,7 +121,7 @@ void Socket::create()
 ////////////////////////////////////////////////////////////
 void Socket::create(SocketHandle handle)
 {
-    // Don't create the socket if it already exists
+    // If the socket already exists, just (re)apply options,  otherwise create it
     if (m_socket == priv::SocketImpl::invalidSocket())
     {
         // Assign the new handle

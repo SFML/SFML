@@ -364,8 +364,8 @@ Http::Response Http::sendRequest(const Http::Request& request, Time timeout, boo
 
     // Prepare the response
     Response received;
-
     TcpSocket connection;
+
     // Connect the socket to the host
     if (m_host.has_value() && connection.connect(m_host.value(), m_port, timeout) == Socket::Status::Done)
     {
@@ -374,29 +374,33 @@ Http::Response Http::sendRequest(const Http::Request& request, Time timeout, boo
 
         // Convert the request to string and send it through the connected socket
         const std::string requestStr = toSend.prepare();
-
         if (!requestStr.empty())
         {
             // Send it through the socket
             if (connection.send(requestStr.c_str(), requestStr.size()) == Socket::Status::Done)
             {
                 // Wait for the server's response
-                std::string            receivedStr;
-                std::size_t            size = 0;
+                std::string receivedStr;
+                std::size_t size = 0;
                 std::array<char, 1024> buffer{};
 
                 // When the HTTPS connection makes use of TLS 1.3 new session ticket
                 // messages can be received by the client from the server at any time
                 // When these messages are received the receive function will return Socket::Status::Partial
-                // In this case We just continue to call receive until actual payload
+                // In this case we just continue to call receive until actual payload
                 // data is available, the connection is closed or an error occurs
                 auto result = connection.receive(buffer.data(), buffer.size(), size);
-
-                while ((result == Socket::Status::Done) || (result == Socket::Status::Partial))
+                while (result == Socket::Status::Done || result == Socket::Status::Partial)
                 {
                     // Only append payload data when it has been completely received
                     if (result == Socket::Status::Done)
+                    {
                         receivedStr.append(buffer.data(), buffer.data() + size);
+
+                        // Exit on clean EOF (server closed connection after sending all data)
+                        if (size == 0)
+                            break;
+                    }
 
                     result = connection.receive(buffer.data(), buffer.size(), size);
                 }

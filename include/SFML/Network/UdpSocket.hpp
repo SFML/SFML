@@ -75,6 +75,19 @@ public:
     [[nodiscard]] unsigned short getLocalPort() const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the address to which the socket is bound locally
+    ///
+    /// If the socket is not bound to an address, this function
+    /// returns `std::nullopt`.
+    ///
+    /// \return Address to which the socket is bound
+    ///
+    /// \see `bind`
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] std::optional<IpAddress> getLocalAddress() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Bind the socket to a specific port
     ///
     /// Binding the socket to a port is necessary for being

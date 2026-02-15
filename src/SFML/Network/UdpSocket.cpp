@@ -135,21 +135,25 @@ Socket::Status UdpSocket::send(const void* data, std::size_t size, IpAddress rem
 
 
 ////////////////////////////////////////////////////////////
-Socket::Status UdpSocket::receive(void*                     data,
-                                  std::size_t               size,
-                                  std::size_t&              received,
+Socket::Status UdpSocket::receive(void* data,
+                                  std::size_t size,
+                                  std::size_t& received,
                                   std::optional<IpAddress>& remoteAddress,
-                                  unsigned short&           remotePort)
+                                  unsigned short& remotePort)
 {
-    // First clear the variables to fill
-    received      = 0;
-    remoteAddress = std::nullopt;
-    remotePort    = 0;
+    create();  // (si ya decidiste agregarlo, ponlo primero)
 
-    // Check the destination buffer
-    if (!data)
+    // First clear the variables to fill
+    received = 0;
+    remoteAddress = std::nullopt;
+    remotePort = 0;
+
+// Check the destination buffer and size
+    // Validate input parameters before attempting to receive
+    if (!data || size == 0)
     {
-        err() << "Cannot receive data from the network (the destination buffer is invalid)" << std::endl;
+        err() << "Cannot receive data from the network "
+              << "(invalid buffer or zero size)" << std::endl;
         return Status::Error;
     }
 
