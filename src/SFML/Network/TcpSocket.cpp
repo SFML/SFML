@@ -28,6 +28,7 @@
 #include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/Packet.hpp>
 #include <SFML/Network/SocketImpl.hpp>
+#include <SFML/Network/SocketSelector.hpp>
 #include <SFML/Network/TcpSocket.hpp>
 
 #include <SFML/System/Err.hpp>
@@ -810,17 +811,11 @@ Socket::Status TcpSocket::connect(IpAddress remoteAddress, unsigned short remote
     if (status == Socket::Status::NotReady)
     {
         // Setup the selector
-        fd_set selector;
-        FD_ZERO(&selector);
-        FD_SET(getNativeHandle(), &selector);
+        SocketSelector selector;
+        selector.add(*this, SocketSelector::ReadinessType::Send);
 
-        // Setup the timeout
-        timeval time{};
-        time.tv_sec  = static_cast<long>(timeout.asMicroseconds() / 1'000'000);
-        time.tv_usec = static_cast<int>(timeout.asMicroseconds() % 1'000'000);
-
-        // Wait for something to write on our socket (which means that the connection request has returned)
-        if (select(static_cast<int>(getNativeHandle() + 1), nullptr, &selector, nullptr, &time) > 0)
+        // Wait for our socket to become ready to send (which means that the connection request has returned)
+        if (selector.wait(timeout))
         {
             // At this point the connection may have been either accepted or refused.
             // To know whether it's a success or a failure, we must check the address of the connected peer

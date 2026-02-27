@@ -96,6 +96,10 @@ endif()
 
 target_link_libraries(sfml-network PRIVATE mbedtls mbedcrypto mbedx509)
 
+if(SFML_OS_WINDOWS)
+    target_include_directories(sfml-network SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/wepoll")
+endif()
+
 if(SFML_OS_MACOS)
     target_link_libraries(sfml-network PRIVATE "-framework Security" "-framework CoreFoundation")
 endif()
