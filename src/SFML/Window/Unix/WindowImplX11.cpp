@@ -531,13 +531,9 @@ WindowImplX11::WindowImplX11(VideoMode mode, const String& title, std::uint32_t 
                     // Center on primary monitor using its actual size
                     windowPosition.x = primaryPos.x + (static_cast<int>(crtcInfo->width) - static_cast<int>(mode.size.x)) / 2;
                     windowPosition.y = primaryPos.y + (static_cast<int>(crtcInfo->height) - static_cast<int>(mode.size.y)) / 2;
-                    
-                    sf::err() << "DEBUG: Primary monitor size: " << crtcInfo->width << "x" << crtcInfo->height << std::endl;
                 }
             }
         }
-        
-        sf::err() << "DEBUG: Final window position: " << windowPosition.x << "," << windowPosition.y << std::endl;
     }
 
     const unsigned int width  = mode.size.x;
@@ -673,10 +669,6 @@ WindowImplX11::WindowImplX11(VideoMode mode, const String& title, std::uint32_t 
         XSizeHints checkHints{};
         long suppliedReturn = 0;
         XGetWMNormalHints(m_display.get(), m_window, &checkHints, &suppliedReturn);
-        sf::err() << "DEBUG: Size hints set - flags: " << checkHints.flags << std::endl;
-        sf::err() << "DEBUG: min_width: " << checkHints.min_width << " max_width: " << checkHints.max_width << std::endl;
-        sf::err() << "DEBUG: PMinSize in flags: " << ((checkHints.flags & PMinSize) ? "YES" : "NO") << std::endl;
-        sf::err() << "DEBUG: PMaxSize in flags: " << ((checkHints.flags & PMaxSize) ? "YES" : "NO") << std::endl;
         
         // Use PPosition only - softer hint that suggests position
         XSizeHints wmHints{};
@@ -686,10 +678,6 @@ WindowImplX11::WindowImplX11(VideoMode mode, const String& title, std::uint32_t 
         XSetWMProperties(m_display.get(), m_window, nullptr, nullptr, nullptr, 0, &wmHints, nullptr, nullptr);
 
         // Also try XMoveWindow as a backup
-        sf::err() << "DEBUG: windowPosition.x = " << windowPosition.x 
-            << ", windowPosition.y = " << windowPosition.y << std::endl;
-        sf::err() << "DEBUG: Display size: " << DisplayWidth(m_display.get(), m_screen) 
-                << "x" << DisplayHeight(m_display.get(), m_screen) << std::endl;
         XMoveWindow(m_display.get(), m_window, windowPosition.x, windowPosition.y);
         
         // Force the window manager to reconsider
@@ -1655,7 +1643,6 @@ void WindowImplX11::initialize()
     // Force position again after window is mapped
     if (!m_fullscreen && !(m_style & Style::Resize))
     {
-        // Declare windowPosition here
         Vector2i windowPosition;
         
         // Get primary monitor position and size
@@ -1679,8 +1666,6 @@ void WindowImplX11::initialize()
                     
                     XMoveWindow(m_display.get(), m_window, windowPosition.x, windowPosition.y);
                     XFlush(m_display.get());
-                    
-                    sf::err() << "DEBUG: Forced position after map: " << windowPosition.x << "," << windowPosition.y << std::endl;
                 }
             }
         }
