@@ -449,7 +449,9 @@ struct XDeleter<XRRCrtcInfo>
 
 
 ////////////////////////////////////////////////////////////
-WindowImplX11::WindowImplX11(WindowHandle handle) : m_isExternal(true)
+WindowImplX11::WindowImplX11(WindowHandle handle) : 
+    m_isExternal(true),
+    m_style(0)
 {
     using namespace WindowImplX11Impl;
 
@@ -507,7 +509,7 @@ WindowImplX11::WindowImplX11(VideoMode mode, const String& title, std::uint32_t 
     else
     {
         // Get primary monitor position
-        Vector2i primaryPos = getPrimaryMonitorPosition();
+        const Vector2i primaryPos = getPrimaryMonitorPosition();
         
         // Get the mode that matches the primary monitor
         // For now, assume the primary monitor is the first one with a matching mode
@@ -518,7 +520,7 @@ WindowImplX11::WindowImplX11(VideoMode mode, const String& title, std::uint32_t 
         
         if (res)
         {
-            RROutput output = getOutputPrimary(rootWindow, res.get());
+            const RROutput output = getOutputPrimary(rootWindow, res.get());
             const auto outputInfo = X11Ptr<XRROutputInfo>(XRRGetOutputInfo(m_display.get(), res.get(), output));
             
             if (outputInfo && outputInfo->crtc)
@@ -669,8 +671,8 @@ WindowImplX11::WindowImplX11(VideoMode mode, const String& title, std::uint32_t 
         
         // Verify the hints were set
         XSizeHints checkHints{};
-        long supplied_return = 0;
-        XGetWMNormalHints(m_display.get(), m_window, &checkHints, &supplied_return);
+        long suppliedReturn = 0;
+        XGetWMNormalHints(m_display.get(), m_window, &checkHints, &suppliedReturn);
         sf::err() << "DEBUG: Size hints set - flags: " << checkHints.flags << std::endl;
         sf::err() << "DEBUG: min_width: " << checkHints.min_width << " max_width: " << checkHints.max_width << std::endl;
         sf::err() << "DEBUG: PMinSize in flags: " << ((checkHints.flags & PMinSize) ? "YES" : "NO") << std::endl;
@@ -1657,13 +1659,13 @@ void WindowImplX11::initialize()
         Vector2i windowPosition;
         
         // Get primary monitor position and size
-        Vector2i primaryPos = getPrimaryMonitorPosition();
+        const Vector2i primaryPos = getPrimaryMonitorPosition();
         ::Window rootWindow = RootWindow(m_display.get(), m_screen);
         const auto res = X11Ptr<XRRScreenResources>(XRRGetScreenResources(m_display.get(), rootWindow));
         
         if (res)
         {
-            RROutput output = getOutputPrimary(rootWindow, res.get());
+            const RROutput output = getOutputPrimary(rootWindow, res.get());
             const auto outputInfo = X11Ptr<XRROutputInfo>(XRRGetOutputInfo(m_display.get(), res.get(), output));
             
             if (outputInfo && outputInfo->crtc)
