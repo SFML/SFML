@@ -484,7 +484,9 @@ WindowImplX11::WindowImplX11(WindowHandle handle) : m_isExternal(true)
 ////////////////////////////////////////////////////////////
 WindowImplX11::WindowImplX11(VideoMode mode, const String& title, std::uint32_t style, State state, const ContextSettings& settings) :
     m_fullscreen(state == State::Fullscreen),
-    m_cursorGrabbed(m_fullscreen)
+    m_cursorGrabbed(m_fullscreen),
+    m_mode(mode),
+    m_style(style)
 {
     using namespace WindowImplX11Impl;
 
@@ -504,8 +506,36 @@ WindowImplX11::WindowImplX11(VideoMode mode, const String& title, std::uint32_t 
     }
     else
     {
-        const Vector2i displaySize(DisplayWidth(m_display.get(), m_screen), DisplayHeight(m_display.get(), m_screen));
-        windowPosition = displaySize - Vector2i(mode.size) / 2;
+        // Get primary monitor position
+        Vector2i primaryPos = getPrimaryMonitorPosition();
+        
+        // Get the mode that matches the primary monitor
+        // For now, assume the primary monitor is the first one with a matching mode
+        
+        // Let's get all monitors info using XRandR directly
+        ::Window rootWindow = RootWindow(m_display.get(), m_screen);
+        const auto res = X11Ptr<XRRScreenResources>(XRRGetScreenResources(m_display.get(), rootWindow));
+        
+        if (res)
+        {
+            RROutput output = getOutputPrimary(rootWindow, res.get());
+            const auto outputInfo = X11Ptr<XRROutputInfo>(XRRGetOutputInfo(m_display.get(), res.get(), output));
+            
+            if (outputInfo && outputInfo->crtc)
+            {
+                const auto crtcInfo = X11Ptr<XRRCrtcInfo>(XRRGetCrtcInfo(m_display.get(), res.get(), outputInfo->crtc));
+                if (crtcInfo)
+                {
+                    // Center on primary monitor using its actual size
+                    windowPosition.x = primaryPos.x + (static_cast<int>(crtcInfo->width) - static_cast<int>(mode.size.x)) / 2;
+                    windowPosition.y = primaryPos.y + (static_cast<int>(crtcInfo->height) - static_cast<int>(mode.size.y)) / 2;
+                    
+                    sf::err() << "DEBUG: Primary monitor size: " << crtcInfo->width << "x" << crtcInfo->height << std::endl;
+                }
+            }
+        }
+        
+        sf::err() << "DEBUG: Final window position: " << windowPosition.x << "," << windowPosition.y << std::endl;
     }
 
     const unsigned int width  = mode.size.x;
@@ -631,14 +661,37 @@ WindowImplX11::WindowImplX11(VideoMode mode, const String& title, std::uint32_t 
     // This is a hack to force some windows managers to disable resizing
     if (!(style & Style::Resize))
     {
-        m_useSizeHints = true;
         XSizeHints sizeHints{};
-        sizeHints.flags     = PMinSize | PMaxSize | USPosition;
+        sizeHints.flags = PMinSize | PMaxSize;
         sizeHints.min_width = sizeHints.max_width = static_cast<int>(width);
         sizeHints.min_height = sizeHints.max_height = static_cast<int>(height);
-        sizeHints.x                                 = windowPosition.x;
-        sizeHints.y                                 = windowPosition.y;
         XSetWMNormalHints(m_display.get(), m_window, &sizeHints);
+        
+        // Verify the hints were set
+        XSizeHints checkHints{};
+        long supplied_return = 0;
+        XGetWMNormalHints(m_display.get(), m_window, &checkHints, &supplied_return);
+        sf::err() << "DEBUG: Size hints set - flags: " << checkHints.flags << std::endl;
+        sf::err() << "DEBUG: min_width: " << checkHints.min_width << " max_width: " << checkHints.max_width << std::endl;
+        sf::err() << "DEBUG: PMinSize in flags: " << ((checkHints.flags & PMinSize) ? "YES" : "NO") << std::endl;
+        sf::err() << "DEBUG: PMaxSize in flags: " << ((checkHints.flags & PMaxSize) ? "YES" : "NO") << std::endl;
+        
+        // Use PPosition only - softer hint that suggests position
+        XSizeHints wmHints{};
+        wmHints.flags = PPosition;
+        wmHints.x = windowPosition.x;
+        wmHints.y = windowPosition.y;
+        XSetWMProperties(m_display.get(), m_window, nullptr, nullptr, nullptr, 0, &wmHints, nullptr, nullptr);
+
+        // Also try XMoveWindow as a backup
+        sf::err() << "DEBUG: windowPosition.x = " << windowPosition.x 
+            << ", windowPosition.y = " << windowPosition.y << std::endl;
+        sf::err() << "DEBUG: Display size: " << DisplayWidth(m_display.get(), m_screen) 
+                << "x" << DisplayHeight(m_display.get(), m_screen) << std::endl;
+        XMoveWindow(m_display.get(), m_window, windowPosition.x, windowPosition.y);
+        
+        // Force the window manager to reconsider
+        XSync(m_display.get(), False);
     }
 
     // Set the window's WM class (this can be used by window managers)
@@ -1593,6 +1646,43 @@ void WindowImplX11::initialize()
 
     // Show the window
     setVisible(true);
+
+    // Small delay to let window manager settle
+    sf::sleep(sf::milliseconds(50));
+
+    // Force position again after window is mapped
+    if (!m_fullscreen && !(m_style & Style::Resize))
+    {
+        // Declare windowPosition here
+        Vector2i windowPosition;
+        
+        // Get primary monitor position and size
+        Vector2i primaryPos = getPrimaryMonitorPosition();
+        ::Window rootWindow = RootWindow(m_display.get(), m_screen);
+        const auto res = X11Ptr<XRRScreenResources>(XRRGetScreenResources(m_display.get(), rootWindow));
+        
+        if (res)
+        {
+            RROutput output = getOutputPrimary(rootWindow, res.get());
+            const auto outputInfo = X11Ptr<XRROutputInfo>(XRRGetOutputInfo(m_display.get(), res.get(), output));
+            
+            if (outputInfo && outputInfo->crtc)
+            {
+                const auto crtcInfo = X11Ptr<XRRCrtcInfo>(XRRGetCrtcInfo(m_display.get(), res.get(), outputInfo->crtc));
+                if (crtcInfo)
+                {
+                    // Use the actual window size from m_mode
+                    windowPosition.x = primaryPos.x + (static_cast<int>(crtcInfo->width) - static_cast<int>(m_mode.size.x)) / 2;
+                    windowPosition.y = primaryPos.y + (static_cast<int>(crtcInfo->height) - static_cast<int>(m_mode.size.y)) / 2;
+                    
+                    XMoveWindow(m_display.get(), m_window, windowPosition.x, windowPosition.y);
+                    XFlush(m_display.get());
+                    
+                    sf::err() << "DEBUG: Forced position after map: " << windowPosition.x << "," << windowPosition.y << std::endl;
+                }
+            }
+        }
+    }
 
     // Raise the window and grab input focus
     grabFocus();
