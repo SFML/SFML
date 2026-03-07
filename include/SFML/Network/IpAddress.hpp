@@ -171,7 +171,11 @@ public:
     // NOLINTEND(readability-identifier-naming)
 
 private:
+#if defined(SFML_SYSTEM_WINDOWS)
     friend SFML_NETWORK_API bool operator<(IpAddress left, IpAddress right);
+#else
+    friend bool operator<(IpAddress left, IpAddress right);
+#endif
 
     ////////////////////////////////////////////////////////////
     // Member data

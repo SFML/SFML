@@ -641,8 +641,13 @@ public:
     [[nodiscard]] bool isSentenceBoundary(std::size_t position) const;
 
 private:
+#if defined(SFML_SYSTEM_WINDOWS)
     friend SFML_SYSTEM_API bool operator==(const String& left, const String& right);
     friend SFML_SYSTEM_API bool operator<(const String& left, const String& right);
+#else
+    friend bool operator==(const String& left, const String& right);
+    friend bool operator<(const String& left, const String& right);
+#endif
 
     ////////////////////////////////////////////////////////////
     // Member data
