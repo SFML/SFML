@@ -150,8 +150,8 @@
 
 #else // Linux, FreeBSD, macOS
 
-#define SFML_API_EXPORT __attribute__((__visibility__("default")))
-#define SFML_API_IMPORT __attribute__((__visibility__("default")))
+#define SFML_API_EXPORT [[gnu::visibility("default")]]
+#define SFML_API_IMPORT [[gnu::visibility("default")]]
 
 #endif
 
