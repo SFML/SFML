@@ -46,7 +46,11 @@ class IpAddress;
 /// \brief A FTP client
 ///
 ////////////////////////////////////////////////////////////
-class SFML_NETWORK_API Ftp
+#if defined(SFML_SYSTEM_WINDOWS)
+class SFML_NETWORK_API [[deprecated("Use sf::Sftp if possible")]] Ftp
+#else
+class [[gnu::visibility("default"), deprecated("Use sf::Sftp if possible")]] Ftp
+#endif
 {
 public:
     ////////////////////////////////////////////////////////////
