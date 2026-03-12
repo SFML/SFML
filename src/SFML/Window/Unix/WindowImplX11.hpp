@@ -204,6 +204,9 @@ private:
     Pixmap m_iconPixmap{};     ///< The current icon pixmap if in use
     Pixmap m_iconMaskPixmap{}; ///< The current icon mask pixmap if in use
     ::Time m_lastInputTime{};  ///< Last time we received user input
+
+    sf::VideoMode m_mode;
+    std::uint32_t m_style;
 };
 
 } // namespace sf::priv
