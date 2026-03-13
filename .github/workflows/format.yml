@@ -12,18 +12,20 @@ defaults:
 
 jobs:
  format:
-    name: Formatting
-    runs-on: ubuntu-24.04
+    name: format-${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-15, windows-2025]
 
     steps:
-    - name: Install Clang Format
-      run: sudo apt-get install clang-format-17
-
     - name: Checkout Code
       uses: actions/checkout@v4
 
     - name: Format Code
-      run: cmake -DCLANG_FORMAT_EXECUTABLE=clang-format-17 -P cmake/Format.cmake
+      run: cmake -P cmake/Format.cmake
 
     - name: Check Formatting
       run: git diff --exit-code
