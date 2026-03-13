@@ -40,4 +40,11 @@ TEST_CASE("[Audio] sf::OutputSoundFile")
         outputSoundFile.close();
         CHECK(std::filesystem::remove(filename));
     }
+    
+    SECTION("openFromFile() fails for invalid channel configuration")
+    {
+        sf::OutputSoundFile outputSoundFile;
+        CHECK(!outputSoundFile.openFromFile(filename, 44'100, static_cast<unsigned int>(channelMap.size()) + 1, channelMap));
+        CHECK(!std::filesystem::exists(filename));
+    }
 }

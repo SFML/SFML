@@ -58,6 +58,12 @@ bool OutputSoundFile::openFromFile(const std::filesystem::path&     filename,
 {
     // If the file is already open, first close it
     close();
+    
+    if (!sampleRate || !channelCount || (channelMap.size() != channelCount))
+    {
+        err() << "Failed to open output sound file from file (invalid sample rate/channel configuration)" << std::endl;
+        return false;
+    }
 
     // Find a suitable writer for the file type
     m_writer = SoundFileFactory::createWriterFromFilename(filename);
