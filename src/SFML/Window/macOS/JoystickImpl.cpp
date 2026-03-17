@@ -43,9 +43,8 @@ namespace
 // Convert a CFStringRef to std::string
 std::string stringFromCFString(CFStringRef cfString)
 {
-    const CFIndex     length = CFStringGetLength(cfString);
-    std::vector<char> str(static_cast<std::size_t>(length));
-    const CFIndex     maxSize = CFStringGetMaximumSizeForEncoding(length, kCFStringEncodingUTF8);
+    const CFIndex     maxSize = CFStringGetMaximumSizeForEncoding(CFStringGetLength(cfString), kCFStringEncodingUTF8);
+    std::vector<char> str(static_cast<std::size_t>(maxSize) + 1, '\0');
     CFStringGetCString(cfString, str.data(), maxSize, kCFStringEncodingUTF8);
     return str.data();
 }
