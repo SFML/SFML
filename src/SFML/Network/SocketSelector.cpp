@@ -194,7 +194,10 @@ struct SocketSelector::SocketSelectorImpl
     bool wait(Time timeout)
     {
         events.resize(sockets.size());
-        const auto result = epoll_wait(epollHandle, events.data(), static_cast<int>(events.size()), timeout.asMilliseconds());
+        const auto result = epoll_wait(epollHandle,
+                                       events.data(),
+                                       static_cast<int>(events.size()),
+                                       timeout != Time::Zero ? timeout.asMilliseconds() : -1);
         if (result > 0)
         {
             eventsCount = result;
