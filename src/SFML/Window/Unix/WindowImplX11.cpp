@@ -150,6 +150,69 @@ std::filesystem::path findExecutableName()
     return "sfml";
 }
 
+// Get features supported by the current window manager
+const std::vector<std::string>& getSupportedFeatures()
+{
+    static const auto supported = []
+    {
+        std::vector<std::string> strings;
+        const auto               netSupported = sf::priv::getAtom("_NET_SUPPORTED", true);
+
+        if (!netSupported)
+            return strings;
+
+        const auto                      display      = sf::priv::openDisplay();
+        Atom                            actualType   = 0;
+        int                             actualFormat = 0;
+        unsigned long                   numItems     = 0;
+        unsigned long                   numBytes     = 0;
+        unsigned char*                  data         = nullptr;
+        sf::priv::X11Ptr<unsigned char> dataPtr;
+
+        if (XGetWindowProperty(display.get(),
+                               DefaultRootWindow(display.get()),
+                               netSupported,
+                               0,
+                               0x7fffffff,
+                               False,
+                               AnyPropertyType,
+                               &actualType,
+                               &actualFormat,
+                               &numItems,
+                               &numBytes,
+                               &data) == Success)
+        {
+            dataPtr.reset(data);
+        }
+        else
+        {
+            return strings;
+        }
+
+        if ((actualType != XA_ATOM) || (actualFormat != 32) || (data == nullptr))
+            return strings;
+
+        const auto* atoms = reinterpret_cast<const Atom*>(data);
+
+        for (auto i = 0u; i < numItems; ++i)
+        {
+            const sf::priv::X11Ptr<char> name(XGetAtomName(display.get(), atoms[i]));
+            strings.emplace_back(name.get());
+        }
+
+        return strings;
+    }();
+
+    return supported;
+}
+
+// Check if a feature is supported by the current window manager
+bool isFeatureSupported(std::string_view feature)
+{
+    static const auto& supported = getSupportedFeatures();
+    return (std::find(supported.begin(), supported.end(), feature) != supported.end());
+}
+
 // Check if Extended Window Manager Hints are supported
 bool ewmhSupported()
 {
@@ -161,19 +224,18 @@ bool ewmhSupported()
 
     checked = true;
 
-    const Atom netSupportingWmCheck = sf::priv::getAtom("_NET_SUPPORTING_WM_CHECK", true);
-    const Atom netSupported         = sf::priv::getAtom("_NET_SUPPORTED", true);
+    const auto netSupportingWmCheck = sf::priv::getAtom("_NET_SUPPORTING_WM_CHECK");
 
-    if (!netSupportingWmCheck || !netSupported)
+    if (!netSupportingWmCheck)
         return false;
 
-    const auto display = sf::priv::openDisplay();
-
-    Atom           actualType   = 0;
-    int            actualFormat = 0;
-    unsigned long  numItems     = 0;
-    unsigned long  numBytes     = 0;
-    unsigned char* data         = nullptr;
+    const auto                      display      = sf::priv::openDisplay();
+    Atom                            actualType   = 0;
+    int                             actualFormat = 0;
+    unsigned long                   numItems     = 0;
+    unsigned long                   numBytes     = 0;
+    unsigned char*                  data         = nullptr;
+    sf::priv::X11Ptr<unsigned char> dataPtr;
 
     int result = XGetWindowProperty(display.get(),
                                     DefaultRootWindow(display.get()),
@@ -188,25 +250,19 @@ bool ewmhSupported()
                                     &numBytes,
                                     &data);
 
-    if (result != Success || actualType != XA_WINDOW || numItems != 1)
-    {
-        if (result == Success)
-            XFree(data);
+    if (result == Success)
+        dataPtr.reset(data);
 
+    if (result != Success || actualType != XA_WINDOW || numItems != 1)
         return false;
-    }
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wcast-align"
-    const ::Window rootWindow = *reinterpret_cast<::Window*>(data);
+    const auto rootWindow = *reinterpret_cast<const ::Window*>(data);
 #pragma GCC diagnostic pop
 
-    XFree(data);
-
     if (!rootWindow)
-    {
         return false;
-    }
 
     result = XGetWindowProperty(display.get(),
                                 rootWindow,
@@ -221,20 +277,16 @@ bool ewmhSupported()
                                 &numBytes,
                                 &data);
 
-    if (result != Success || actualType != XA_WINDOW || numItems != 1)
-    {
-        if (result == Success)
-            XFree(data);
+    if (result == Success)
+        dataPtr.reset(data);
 
+    if (result != Success || actualType != XA_WINDOW || numItems != 1)
         return false;
-    }
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wcast-align"
-    const ::Window childWindow = *reinterpret_cast<::Window*>(data);
+    const auto childWindow = *reinterpret_cast<const ::Window*>(data);
 #pragma GCC diagnostic pop
-
-    XFree(data);
 
     if (!childWindow)
         return false;
@@ -247,15 +299,19 @@ bool ewmhSupported()
 
     // We try to get the name of the window manager
     // for window manager specific workarounds
-    const Atom netWmName = sf::priv::getAtom("_NET_WM_NAME", true);
+    if (!isFeatureSupported("_NET_WM_NAME"))
+        return true;
+
+    const auto netWmName = sf::priv::getAtom("_NET_WM_NAME");
 
     if (!netWmName)
         return true;
 
-    Atom utf8StringType = sf::priv::getAtom("UTF8_STRING");
-
-    if (!utf8StringType)
-        utf8StringType = XA_STRING;
+    const auto utf8StringType = []
+    {
+        const auto atom = sf::priv::getAtom("UTF8_STRING");
+        return atom ? atom : XA_STRING;
+    }();
 
     result = XGetWindowProperty(display.get(),
                                 rootWindow,
@@ -270,18 +326,18 @@ bool ewmhSupported()
                                 &numBytes,
                                 &data);
 
+    if (result == Success)
+        dataPtr.reset(data);
+
     if (actualType && numItems)
     {
         // It seems the wm name string reply is not necessarily
         // null-terminated. The work around is to get its actual
         // length to build a proper string
-        const char* begin = reinterpret_cast<const char*>(data);
-        const char* end   = begin + numItems;
+        const auto* begin = reinterpret_cast<const char*>(data);
+        const auto* end   = begin + numItems;
         windowManagerName = sf::String::fromUtf8(begin, end);
     }
-
-    if (result == Success)
-        XFree(data);
 
     return true;
 }
@@ -306,10 +362,12 @@ bool ewmhSupported()
 // Get the Frame Extents from EWMH WMs that support it.
 bool getEWMHFrameExtents(::Display* disp, ::Window win, long& xFrameExtent, long& yFrameExtent)
 {
-    if (!ewmhSupported())
+    static const auto supported = isFeatureSupported("_NET_FRAME_EXTENTS");
+
+    if (!supported)
         return false;
 
-    const Atom frameExtents = sf::priv::getAtom("_NET_FRAME_EXTENTS", true);
+    static const auto frameExtents = sf::priv::getAtom("_NET_FRAME_EXTENTS");
 
     if (frameExtents == None)
         return false;
@@ -496,17 +554,18 @@ WindowImplX11::WindowImplX11(VideoMode mode, const String& title, std::uint32_t 
 
     m_screen = DefaultScreen(m_display.get());
 
-    // Compute position and size
-    Vector2i windowPosition;
-    if (m_fullscreen)
-    {
-        windowPosition = getPrimaryMonitorPosition();
-    }
-    else
-    {
-        const Vector2i displaySize(DisplayWidth(m_display.get(), m_screen), DisplayHeight(m_display.get(), m_screen));
-        windowPosition = displaySize - Vector2i(mode.size) / 2;
-    }
+    // If creating a fullscreen window, position the window
+    // at the top-left corner of the primary monitor
+    // We will use this position when creating the window
+    // and setting the WM_NORMAL_HINTS
+    // If not creating a fullscreen window, we use the
+    // position (0, 0) during window creation and don't
+    // specify a size in WM_NORMAL_HINTS
+    // In the unlikely case the window manager still relies
+    // on the position passed to XCreateWindow instead of
+    // WM_NORMAL_HINTS the non-fullscreen window will be
+    // placed at the top-left corner of the default screen
+    const auto windowPosition = m_fullscreen ? getPrimaryMonitorPosition() : Vector2i{};
 
     const unsigned int width  = mode.size.x;
     const unsigned int height = mode.size.y;
@@ -568,7 +627,9 @@ WindowImplX11::WindowImplX11(VideoMode mode, const String& title, std::uint32_t 
     // change our window's decorations and functions according to the requested style)
     if (!m_fullscreen)
     {
-        if (const Atom wmHintsAtom = getAtom("_MOTIF_WM_HINTS", false))
+        static const auto wmHintsAtom = getAtom("_MOTIF_WM_HINTS");
+
+        if (wmHintsAtom)
         {
             // NOLINTBEGIN(readability-identifier-naming)
             // Disable naming check so these better match the contents of the Motif library
@@ -601,6 +662,19 @@ WindowImplX11::WindowImplX11(VideoMode mode, const String& title, std::uint32_t 
                 unsigned long state{};
             } hints;
 
+            // Not specifying Style::Close and thus MWM_FUNC_CLOSE will prevent
+            // the window from being able to be closed by the window manager
+            // including using hotkeys, this can be confusing when no titlebar is shown
+            // We have to assume the reason Style::Close was not specified
+            // is to prevent the close button from appearing in the window titlebar
+            // If the style combination leads to a titlebar being shown then
+            // it is up to the user to enable closing the window using Style::Close
+            // However, if no titlebar is shown then specifying Style::Close
+            // no longer has a visual effect and only a functional effect
+            // In this special case (no titlebar shown) we add MWM_FUNC_CLOSE
+            // anyway to enable the user to still close the window using hotkeys
+            // In this case it also wouldn't hurt to allow the user to minimize
+            // and move the window as well
             if (style & Style::Titlebar)
             {
                 hints.decorations |= MWM_DECOR_BORDER | MWM_DECOR_TITLE | MWM_DECOR_MINIMIZE | MWM_DECOR_MENU;
@@ -616,6 +690,8 @@ WindowImplX11::WindowImplX11(VideoMode mode, const String& title, std::uint32_t 
                 hints.decorations |= 0;
                 hints.functions |= MWM_FUNC_CLOSE;
             }
+            if (style == 0) // We can't use Style::None here since None is a macro defined by X.h
+                hints.functions = MWM_FUNC_MOVE | MWM_FUNC_MINIMIZE | MWM_FUNC_CLOSE;
 
             XChangeProperty(m_display.get(),
                             m_window,
@@ -628,18 +704,33 @@ WindowImplX11::WindowImplX11(VideoMode mode, const String& title, std::uint32_t 
         }
     }
 
+    XSizeHints sizeHints{};
+
     // This is a hack to force some windows managers to disable resizing
     if (!(style & Style::Resize))
     {
         m_useSizeHints = true;
-        XSizeHints sizeHints{};
-        sizeHints.flags     = PMinSize | PMaxSize | USPosition;
+        sizeHints.flags |= PMinSize | PMaxSize;
         sizeHints.min_width = sizeHints.max_width = static_cast<int>(width);
         sizeHints.min_height = sizeHints.max_height = static_cast<int>(height);
-        sizeHints.x                                 = windowPosition.x;
-        sizeHints.y                                 = windowPosition.y;
-        XSetWMNormalHints(m_display.get(), m_window, &sizeHints);
     }
+
+    // Because we don't support Xinerama or _NET_WM_FULLSCREEN_MONITORS yet
+    // we emulate positioning the window on the primary monitor by explicitly
+    // setting the window position to the top-left corner of the primary monitor
+    // In all other cases i.e. non-fullscreen windows we don't try to explicitly
+    // position the window and instead rely on the window manager to position the
+    // window for us
+    if (m_fullscreen)
+    {
+        sizeHints.flags |= PPosition;
+        sizeHints.x = windowPosition.x;
+        sizeHints.y = windowPosition.y;
+    }
+
+    // It is possible in the case of resizable non-fullscreen windows
+    // that an empty WM_NORMAL_HINTS is set, this is intentional
+    XSetWMNormalHints(m_display.get(), m_window, &sizeHints);
 
     // Set the window's WM class (this can be used by window managers)
     XClassHint hint{};
@@ -673,11 +764,11 @@ WindowImplX11::WindowImplX11(VideoMode mode, const String& title, std::uint32_t 
     {
         // Disable hint for min and max size,
         // otherwise some windows managers will not remove window decorations
-        XSizeHints sizeHints{};
-        long       flags = 0;
-        XGetWMNormalHints(m_display.get(), m_window, &sizeHints, &flags);
-        sizeHints.flags &= ~(PMinSize | PMaxSize);
-        XSetWMNormalHints(m_display.get(), m_window, &sizeHints);
+        XSizeHints fullscreenSizeHints{};
+        long       flags{};
+        XGetWMNormalHints(m_display.get(), m_window, &fullscreenSizeHints, &flags);
+        fullscreenSizeHints.flags &= ~(PMinSize | PMaxSize);
+        XSetWMNormalHints(m_display.get(), m_window, &fullscreenSizeHints);
 
         setVideoMode(mode);
         switchToFullscreen();
@@ -719,6 +810,9 @@ WindowImplX11::~WindowImplX11()
     // Remove this window from the global list of windows (required for focus request)
     const std::lock_guard lock(allWindowsMutex);
     allWindows.erase(std::find(allWindows.begin(), allWindows.end(), this));
+
+    // Set window group IDs on all existing windows, lock must be held
+    setWindowGroupIds();
 }
 
 
@@ -893,7 +987,9 @@ void WindowImplX11::setSize(Vector2u size)
     if (m_useSizeHints)
     {
         XSizeHints sizeHints{};
-        sizeHints.flags     = PMinSize | PMaxSize;
+        long       flags{};
+        XGetWMNormalHints(m_display.get(), m_window, &sizeHints, &flags);
+        sizeHints.flags |= PMinSize | PMaxSize;
         sizeHints.min_width = sizeHints.max_width = static_cast<int>(size.x);
         sizeHints.min_height = sizeHints.max_height = static_cast<int>(size.y);
         XSetWMNormalHints(m_display.get(), m_window, &sizeHints);
@@ -923,35 +1019,53 @@ void WindowImplX11::setMaximumSize(const std::optional<Vector2u>& maximumSize)
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setTitle(const String& title)
 {
+    using namespace WindowImplX11Impl;
+
     // Bare X11 has no Unicode window title support.
     // There is however an option to tell the window manager your Unicode title via hints.
 
     // Convert to UTF-8 encoding.
-    const auto utf8Title = title.toUtf8();
+    const auto        utf8Title = title.toUtf8();
+    static const auto useUtf8   = getAtom("UTF8_STRING");
 
-    const Atom useUtf8 = getAtom("UTF8_STRING", false);
+    if (useUtf8)
+    {
+        if (isFeatureSupported("_NET_WM_NAME"))
+        {
+            // Set the _NET_WM_NAME atom, which specifies a UTF-8 encoded window title.
+            static const auto wmName = getAtom("_NET_WM_NAME");
 
-    // Set the _NET_WM_NAME atom, which specifies a UTF-8 encoded window title.
-    const Atom wmName = getAtom("_NET_WM_NAME", false);
-    XChangeProperty(m_display.get(),
-                    m_window,
-                    wmName,
-                    useUtf8,
-                    8,
-                    PropModeReplace,
-                    utf8Title.c_str(),
-                    static_cast<int>(utf8Title.size()));
+            if (wmName)
+            {
+                XChangeProperty(m_display.get(),
+                                m_window,
+                                wmName,
+                                useUtf8,
+                                8,
+                                PropModeReplace,
+                                utf8Title.c_str(),
+                                static_cast<int>(utf8Title.size()));
+            }
+        }
 
-    // Set the _NET_WM_ICON_NAME atom, which specifies a UTF-8 encoded window title.
-    const Atom wmIconName = getAtom("_NET_WM_ICON_NAME", false);
-    XChangeProperty(m_display.get(),
-                    m_window,
-                    wmIconName,
-                    useUtf8,
-                    8,
-                    PropModeReplace,
-                    utf8Title.c_str(),
-                    static_cast<int>(utf8Title.size()));
+        if (isFeatureSupported("_NET_WM_ICON_NAME"))
+        {
+            // Set the _NET_WM_ICON_NAME atom, which specifies a UTF-8 encoded window title.
+            static const auto wmIconName = getAtom("_NET_WM_ICON_NAME", false);
+
+            if (wmIconName)
+            {
+                XChangeProperty(m_display.get(),
+                                m_window,
+                                wmIconName,
+                                useUtf8,
+                                8,
+                                PropModeReplace,
+                                utf8Title.c_str(),
+                                static_cast<int>(utf8Title.size()));
+            }
+        }
+    }
 
     // Set the non-Unicode title as a fallback for window managers who don't support _NET_WM_NAME.
     Xutf8SetWMProperties(m_display.get(),
@@ -1032,11 +1146,13 @@ void WindowImplX11::setIcon(Vector2u size, const std::uint8_t* pixels)
                                                    1);
 
     // Send our new icon to the window through the WMHints
-    XWMHints hints{};
-    hints.flags       = IconPixmapHint | IconMaskHint;
-    hints.icon_pixmap = m_iconPixmap;
-    hints.icon_mask   = m_iconMaskPixmap;
-    XSetWMHints(m_display.get(), m_window, &hints);
+    auto hints = X11Ptr<XWMHints>(XGetWMHints(m_display.get(), m_window));
+    if (hints == nullptr)
+        hints.reset(XAllocWMHints());
+    hints->flags |= (IconPixmapHint | IconMaskHint);
+    hints->icon_pixmap = m_iconPixmap;
+    hints->icon_mask   = m_iconMaskPixmap;
+    XSetWMHints(m_display.get(), m_window, hints.get());
 
     // ICCCM wants BGRA pixels: swap red and blue channels
     // ICCCM also wants the first 2 unsigned 32-bit values to be width and height
@@ -1055,16 +1171,22 @@ void WindowImplX11::setIcon(Vector2u size, const std::uint8_t* pixels)
             (pixels[i * 4 + 2] << 0) | (pixels[i * 4 + 1] << 8) | (pixels[i * 4 + 0] << 16) | (pixels[i * 4 + 3] << 24));
     }
 
-    const Atom netWmIcon = getAtom("_NET_WM_ICON");
+    if (WindowImplX11Impl::isFeatureSupported("_NET_WM_ICON"))
+    {
+        static const auto netWmIcon = getAtom("_NET_WM_ICON");
 
-    XChangeProperty(m_display.get(),
-                    m_window,
-                    netWmIcon,
-                    XA_CARDINAL,
-                    32,
-                    PropModeReplace,
-                    reinterpret_cast<const unsigned char*>(icccmIconPixels.data()),
-                    static_cast<int>(2 + size.x * size.y));
+        if (netWmIcon)
+        {
+            XChangeProperty(m_display.get(),
+                            m_window,
+                            netWmIcon,
+                            XA_CARDINAL,
+                            32,
+                            PropModeReplace,
+                            reinterpret_cast<const unsigned char*>(icccmIconPixels.data()),
+                            static_cast<int>(2 + size.x * size.y));
+        }
+    }
 
     XFlush(m_display.get());
 }
@@ -1233,11 +1355,6 @@ void WindowImplX11::grabFocus()
 {
     using namespace WindowImplX11Impl;
 
-    Atom netActiveWindow = None;
-
-    if (ewmhSupported())
-        netActiveWindow = getAtom("_NET_ACTIVE_WINDOW");
-
     // Only try to grab focus if the window is mapped
     XWindowAttributes attr;
 
@@ -1245,6 +1362,8 @@ void WindowImplX11::grabFocus()
 
     if (attr.map_state == IsUnmapped)
         return;
+
+    static const auto netActiveWindow = isFeatureSupported("_NET_ACTIVE_WINDOW") ? getAtom("_NET_ACTIVE_WINDOW") : None;
 
     if (netActiveWindow)
     {
@@ -1426,24 +1545,10 @@ void WindowImplX11::switchToFullscreen()
 
     grabFocus();
 
-    if (ewmhSupported())
+    if (isFeatureSupported("_NET_WM_STATE") && isFeatureSupported("_NET_WM_STATE_FULLSCREEN"))
     {
-        if (const Atom netWmBypassCompositor = getAtom("_NET_WM_BYPASS_COMPOSITOR"))
-        {
-            constexpr unsigned long bypassCompositor = 1;
-
-            XChangeProperty(m_display.get(),
-                            m_window,
-                            netWmBypassCompositor,
-                            XA_CARDINAL,
-                            32,
-                            PropModeReplace,
-                            reinterpret_cast<const unsigned char*>(&bypassCompositor),
-                            1);
-        }
-
-        const Atom netWmState           = getAtom("_NET_WM_STATE", true);
-        const Atom netWmStateFullscreen = getAtom("_NET_WM_STATE_FULLSCREEN", true);
+        static const auto netWmState           = getAtom("_NET_WM_STATE");
+        static const auto netWmStateFullscreen = getAtom("_NET_WM_STATE_FULLSCREEN");
 
         if (!netWmState || !netWmStateFullscreen)
         {
@@ -1478,8 +1583,7 @@ void WindowImplX11::setProtocols()
 {
     using namespace WindowImplX11Impl;
 
-    const Atom wmProtocols    = getAtom("WM_PROTOCOLS");
-    const Atom wmDeleteWindow = getAtom("WM_DELETE_WINDOW");
+    static const auto wmProtocols = getAtom("WM_PROTOCOLS");
 
     if (!wmProtocols)
     {
@@ -1488,6 +1592,7 @@ void WindowImplX11::setProtocols()
     }
 
     std::vector<Atom> atoms;
+    static const auto wmDeleteWindow = getAtom("WM_DELETE_WINDOW");
 
     if (wmDeleteWindow)
     {
@@ -1498,29 +1603,26 @@ void WindowImplX11::setProtocols()
         err() << "Failed to request WM_DELETE_WINDOW atom." << std::endl;
     }
 
-    Atom netWmPing = None;
-    Atom netWmPid  = None;
-
-    if (ewmhSupported())
+    if (isFeatureSupported("_NET_WM_PING") && isFeatureSupported("_NET_WM_PID"))
     {
-        netWmPing = getAtom("_NET_WM_PING", true);
-        netWmPid  = getAtom("_NET_WM_PID", true);
-    }
+        static const auto netWmPing = getAtom("_NET_WM_PING");
+        static const auto netWmPid  = getAtom("_NET_WM_PID");
 
-    if (netWmPing && netWmPid)
-    {
-        const long pid = getpid();
+        if (netWmPing && netWmPid)
+        {
+            const long pid = getpid();
 
-        XChangeProperty(m_display.get(),
-                        m_window,
-                        netWmPid,
-                        XA_CARDINAL,
-                        32,
-                        PropModeReplace,
-                        reinterpret_cast<const unsigned char*>(&pid),
-                        1);
+            XChangeProperty(m_display.get(),
+                            m_window,
+                            netWmPid,
+                            XA_CARDINAL,
+                            32,
+                            PropModeReplace,
+                            reinterpret_cast<const unsigned char*>(&pid),
+                            1);
 
-        atoms.push_back(netWmPing);
+            atoms.push_back(netWmPing);
+        }
     }
 
     if (!atoms.empty())
@@ -1569,19 +1671,42 @@ void WindowImplX11::initialize()
         err() << "Failed to create input context for window -- TextEntered event won't be able to return unicode"
               << std::endl;
 
-    const Atom wmWindowType       = getAtom("_NET_WM_WINDOW_TYPE", false);
-    Atom       wmWindowTypeNormal = getAtom("_NET_WM_WINDOW_TYPE_NORMAL", false);
-
-    if (wmWindowType && wmWindowTypeNormal)
+    if (isFeatureSupported("_NET_WM_WINDOW_TYPE") && isFeatureSupported("_NET_WM_WINDOW_TYPE_NORMAL"))
     {
-        XChangeProperty(m_display.get(),
-                        m_window,
-                        wmWindowType,
-                        XA_ATOM,
-                        32,
-                        PropModeReplace,
-                        reinterpret_cast<const unsigned char*>(&wmWindowTypeNormal),
-                        1);
+        static const auto wmWindowType       = getAtom("_NET_WM_WINDOW_TYPE");
+        static const auto wmWindowTypeNormal = getAtom("_NET_WM_WINDOW_TYPE_NORMAL");
+
+        if (wmWindowType && wmWindowTypeNormal)
+        {
+            XChangeProperty(m_display.get(),
+                            m_window,
+                            wmWindowType,
+                            XA_ATOM,
+                            32,
+                            PropModeReplace,
+                            reinterpret_cast<const unsigned char*>(&wmWindowTypeNormal),
+                            1);
+        }
+    }
+
+    // Always try to bypass the compositor if supported
+    if (isFeatureSupported("_NET_WM_BYPASS_COMPOSITOR"))
+    {
+        static const auto netWmBypassCompositor = getAtom("_NET_WM_BYPASS_COMPOSITOR");
+
+        if (netWmBypassCompositor)
+        {
+            constexpr unsigned long bypassCompositor = 1;
+
+            XChangeProperty(m_display.get(),
+                            m_window,
+                            netWmBypassCompositor,
+                            XA_CARDINAL,
+                            32,
+                            PropModeReplace,
+                            reinterpret_cast<const unsigned char*>(&bypassCompositor),
+                            1);
+        }
     }
 
     // Enable raw input in first window
@@ -1606,6 +1731,9 @@ void WindowImplX11::initialize()
     // Add this window to the global list of windows (required for focus request)
     const std::lock_guard lock(allWindowsMutex);
     allWindows.push_back(this);
+
+    // Set window group IDs on all existing windows, lock must be held
+    setWindowGroupIds();
 }
 
 
@@ -1614,18 +1742,23 @@ void WindowImplX11::updateLastInputTime(::Time time)
 {
     if (time && (time != m_lastInputTime))
     {
-        const Atom netWmUserTime = getAtom("_NET_WM_USER_TIME", true);
+        static const auto supported = WindowImplX11Impl::isFeatureSupported("_NET_WM_USER_TIME");
 
-        if (netWmUserTime)
+        if (supported)
         {
-            XChangeProperty(m_display.get(),
-                            m_window,
-                            netWmUserTime,
-                            XA_CARDINAL,
-                            32,
-                            PropModeReplace,
-                            reinterpret_cast<const unsigned char*>(&time),
-                            1);
+            static const auto netWmUserTime = getAtom("_NET_WM_USER_TIME");
+
+            if (netWmUserTime)
+            {
+                XChangeProperty(m_display.get(),
+                                m_window,
+                                netWmUserTime,
+                                XA_CARDINAL,
+                                32,
+                                PropModeReplace,
+                                reinterpret_cast<const unsigned char*>(&time),
+                                1);
+            }
         }
 
         m_lastInputTime = time;
@@ -1766,13 +1899,13 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
             // Input methods might want random ClientMessage events
             if (!XFilterEvent(&windowEvent, None))
             {
-                static const Atom wmProtocols = getAtom("WM_PROTOCOLS");
+                static const auto wmProtocols = getAtom("WM_PROTOCOLS");
 
                 // Handle window manager protocol messages we support
-                if (windowEvent.xclient.message_type == wmProtocols)
+                if (wmProtocols && (windowEvent.xclient.message_type == wmProtocols))
                 {
-                    static const Atom wmDeleteWindow = getAtom("WM_DELETE_WINDOW");
-                    static const Atom netWmPing      = ewmhSupported() ? getAtom("_NET_WM_PING", true) : None;
+                    static const auto wmDeleteWindow = getAtom("WM_DELETE_WINDOW");
+                    static const auto netWmPing = isFeatureSupported("_NET_WM_PING") ? getAtom("_NET_WM_PING") : None;
 
                     if ((windowEvent.xclient.format == 32) &&
                         (windowEvent.xclient.data.l[0]) == static_cast<long>(wmDeleteWindow))
@@ -2151,6 +2284,8 @@ void WindowImplX11::setWindowSizeConstraints() const
         return;
 
     XSizeHints sizeHints{};
+    long       flags{};
+    XGetWMNormalHints(m_display.get(), m_window, &sizeHints, &flags);
     if (const auto minimumSize = getMinimumSize())
     {
         sizeHints.flags |= PMinSize;
@@ -2164,6 +2299,56 @@ void WindowImplX11::setWindowSizeConstraints() const
         sizeHints.max_height = static_cast<int>(maximumSize->y);
     }
     XSetWMNormalHints(m_display.get(), m_window, &sizeHints);
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplX11::setWindowGroupIds()
+{
+    using namespace WindowImplX11Impl;
+
+    // Nothing to do if there are no windows left
+    if (allWindows.empty())
+        return;
+
+    const auto display = sf::priv::openDisplay();
+
+    // Set window group IDs for all windows
+    // Setting the window group ID lets the window manager
+    // know that all our windows belong to the same group
+    // The window manager can use this information to treat
+    // multiple windows as a group instead of individual windows
+    // What effect this has in practice depends on how each window
+    // manager is implemented and whether it cares about groups
+    // We use the the first window in our list as the group leader
+    const auto groupLeader = allWindows.front()->m_window;
+
+    // Prepare the atom necessary to set the WM_CLIENT_LEADER property
+    static const auto wmClientLeaderAtom = getAtom("WM_CLIENT_LEADER");
+
+    for (const auto* window : allWindows)
+    {
+        // Update the WM_HINTS group ID
+        auto hints = X11Ptr<XWMHints>(XGetWMHints(display.get(), window->m_window));
+        if (hints == nullptr)
+            hints.reset(XAllocWMHints());
+        hints->flags |= WindowGroupHint;
+        hints->window_group = groupLeader;
+        XSetWMHints(display.get(), window->m_window, hints.get());
+
+        // Set the WM_CLIENT_LEADER property
+        if (wmClientLeaderAtom)
+        {
+            XChangeProperty(display.get(),
+                            window->m_window,
+                            wmClientLeaderAtom,
+                            XA_WINDOW,
+                            32,
+                            PropModeReplace,
+                            reinterpret_cast<const unsigned char*>(&groupLeader),
+                            1);
+        }
+    }
 }
 
 } // namespace sf::priv
