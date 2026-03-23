@@ -141,7 +141,7 @@ else()
 
         FetchContent_Declare(Freetype
             GIT_REPOSITORY https://github.com/freetype/freetype.git
-            GIT_TAG VER-2-13-2
+            GIT_TAG VER-2-14-3
             GIT_SHALLOW ON
             OVERRIDE_FIND_PACKAGE
             # patch out parts we don't want of the FreeType CMake configuration
