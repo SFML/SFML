@@ -1,5 +1,75 @@
 # Changelog
 
+## SFML 3.1.0
+
+### General
+
+-  Documentation improvements (#3357, #3357, #3457, )
+-  Improve header inclusion (#3362, #3379)
+-  Reduce raw pointer usage (#3363)
+-  Improve code quality (#3374, #3378, #3397, #3401, #3440, #3443)
+-  Update CI (#3391)
+-  Improve CMake configuration (#3426, #3445, #3462)
+
+### System
+
+**Features**
+
+**Bugfixes**
+
+### Window
+
+**Features**
+
+-  Add non-const overload of `sf::Event::getIf` (#3367)
+-  Add non-const overload of `Event::visit` (#3396)
+-  Improved `Event::visit` and `WindowBase::handleEvents` (#3399, #3400)
+
+**Bugfixes**
+
+-  [Windows] Fix using Emoji in Windows window titles (#3437)
+-  [Windows] Fix using Emoji with `sf::Clipboard` (#3435)
+-
+### Graphics
+
+**Features**
+
+**Bugfixes**
+
+-  Fix `sf::Image` support for Unicode filenames save/load (#647, #3403)
+-  Fix opening `sf::Font` from non-ASCII path (#3422)
+-  [Android] Fixed normalized texture coordinates when NPOT textures aren't supported (#3460, #3461)
+
+### Audio
+
+**Features**
+
+**Bugfixes**
+
+-  Fix saving FLAC files to non-ASCII paths (#3421)
+
+### Network
+
+**Features**
+
+**Bugfixes**
+
+### Unit Tests
+
+-  Update Catch2 to v3.8.0 (#3387)
+-  Harden copyability tests to test for triviality (#3411)
+-  Tests for loading files with non-ASCII filenames (#3410, #3413, #3415, #3416)
+-  Test for trivial move operations (#3414)
+-  Revamp `sf::String` tests (#3418)
+-  Add tests for `sf::OutputSoundFile` (#3419)
+-  Use Catch2 generators to simplify tests (#3420)
+-  Add a CMake option to disable internet tests (#3429)
+-  Add test for empty window title (#3438)
+-  Revamp `sf::Utf<N>` tests (#3430)
+-  [Windows] Add testcases for Win32 `WindowHandle` (#3439, #3444)
+-  Fix printing `sf::Vector2` in window tests (#3452)
+
+
 ## SFML 3.0.2
 
 ### General
@@ -15,7 +85,7 @@
 
 -   Add explicit cast for charN_t conversion for Clang 21 (#3571)
 
-### Windows
+### Window
 
 **Bugfixes**
 
@@ -33,6 +103,7 @@
 **Bugfixes**
 
 -   Fixed audio engine attempting to read data from previously destroyed objects (#3503, #3522)
+
 
 ## SFML 3.0.1
 
@@ -79,6 +150,7 @@
 
 -   Fixed comments and address ordering in IpAddress::getLocalAddress (#3428)
 -   Fixed unsigned overflow in `sf::Packet` size check (#3441)
+
 
 ## SFML 3.0.0
 
