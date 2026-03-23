@@ -95,7 +95,7 @@ else()
 
         FetchContent_Declare(ogg
             GIT_REPOSITORY https://github.com/xiph/ogg.git
-            GIT_TAG v1.3.5
+            GIT_TAG v1.3.6
             GIT_SHALLOW ON
             # patch out parts we don't want of the Ogg CMake configuration
             # - installing headers & pkgconfig files
