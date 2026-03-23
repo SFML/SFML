@@ -104,7 +104,7 @@ jobs:
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Set Visual Studio Architecture
       if: contains(matrix.platform.name, 'Windows VS') && !contains(matrix.platform.name, 'MSBuild')
@@ -147,7 +147,7 @@ jobs:
     # In addition to installing a known working version of CCache, this action also takes care of saving and restoring the cache for us
     # Additionally it outputs information at the end of each job that helps us to verify if the cache is working properly
     - name: Setup CCache
-      uses: hendrikmuhs/ccache-action@v1.2.12
+      uses: hendrikmuhs/ccache-action@v1.2.21
       with:
         verbose: 2
         key: ${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}
@@ -159,7 +159,7 @@ jobs:
         packages: gcovr
 
     - name: Install OpenCppCoverage
-      uses: nick-fields/retry@v3
+      uses: nick-fields/retry@v4
       if: matrix.type.name == 'Debug' && runner.os == 'Windows'
       with:
         max_attempts: 10
@@ -169,7 +169,7 @@ jobs:
     - name: Cache MinGW
       if: matrix.platform.name == 'Windows MinGW'
       id: mingw-cache
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: "C:\\Program Files\\mingw64"
         key: winlibs-x86_64-posix-seh-gcc-14.2.0-llvm-19.1.7-mingw-w64msvcrt-12.0.0-r3
