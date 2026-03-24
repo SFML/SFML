@@ -845,7 +845,7 @@ Sftp::PathResult Sftp::resolvePath(const std::filesystem::path& path, const Time
     if ((path == ".") && !m_impl->cachedHomePath.empty())
         return {Result(Result::Value::Success), m_impl->cachedHomePath};
 
-    const auto             pathString = path.generic_u8string();
+    const auto             pathString = path.generic_string();
     std::array<char, 4096> buffer{};
     const auto             result = m_impl->waitForOperationComplete(
         [&]
@@ -888,7 +888,7 @@ Sftp::AttributesResult Sftp::getAttributes(const std::filesystem::path& path, bo
 {
     LIBSSH2_SFTP_ATTRIBUTES attributes{};
 
-    const auto pathString = path.generic_u8string();
+    const auto pathString = path.generic_string();
     const auto result     = m_impl->waitForOperationComplete(
         [&]
         {
@@ -916,7 +916,7 @@ Sftp::ListingResult Sftp::getDirectoryListing(const std::filesystem::path& path,
     LIBSSH2_SFTP_HANDLE* handle{};
 
     {
-        const auto pathString = path.generic_u8string();
+        const auto pathString = path.generic_string();
         const auto result     = m_impl->waitForOperationComplete(
             [&]
             {
@@ -989,7 +989,7 @@ Sftp::Result Sftp::createDirectory(const std::filesystem::path& path,
                                    std::filesystem::perms       permissions,
                                    const TimeoutWithPredicate&  timeout)
 {
-    const auto pathString = path.generic_u8string();
+    const auto pathString = path.generic_string();
     const auto result     = m_impl->waitForOperationComplete(
         [&]
         {
@@ -1013,7 +1013,7 @@ Sftp::Result Sftp::createDirectory(const std::filesystem::path& path,
 ////////////////////////////////////////////////////////////
 Sftp::Result Sftp::deleteDirectory(const std::filesystem::path& path, const TimeoutWithPredicate& timeout)
 {
-    const auto pathString = path.generic_u8string();
+    const auto pathString = path.generic_string();
     const auto result     = m_impl->waitForOperationComplete(
         [&]
         {
@@ -1039,8 +1039,8 @@ Sftp::Result Sftp::rename(const std::filesystem::path& oldPath,
                           bool                         overwrite,
                           const TimeoutWithPredicate&  timeout)
 {
-    const auto oldPathString = oldPath.generic_u8string();
-    const auto newPathString = newPath.generic_u8string();
+    const auto oldPathString = oldPath.generic_string();
+    const auto newPathString = newPath.generic_string();
 
     // POSIX rename is only supported starting from libssh2 1.11.1
 #if (LIBSSH2_VERSION_NUM >= 0x010b01)
@@ -1097,7 +1097,7 @@ Sftp::Result Sftp::rename(const std::filesystem::path& oldPath,
 ////////////////////////////////////////////////////////////
 Sftp::Result Sftp::deleteFile(const std::filesystem::path& path, const TimeoutWithPredicate& timeout)
 {
-    const auto pathString = path.generic_u8string();
+    const auto pathString = path.generic_string();
     const auto result     = m_impl->waitForOperationComplete(
         [&]
         {
@@ -1130,7 +1130,7 @@ Sftp::Result Sftp::download(const std::filesystem::path&                        
 
     // Open the file for reading
     {
-        const auto pathString = remotePath.generic_u8string();
+        const auto pathString = remotePath.generic_string();
         const auto result     = m_impl->waitForOperationComplete(
             [&]
             {
@@ -1247,7 +1247,7 @@ Sftp::Result Sftp::upload(const std::filesystem::path&                          
 
     // Open the file for writing
     {
-        const auto pathString = remotePath.generic_u8string();
+        const auto pathString = remotePath.generic_string();
         const auto result     = m_impl->waitForOperationComplete(
             [&]
             {
