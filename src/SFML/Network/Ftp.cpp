@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2026 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -40,6 +40,12 @@
 #include <cctype>
 #include <cstddef>
 #include <cstdint>
+
+#ifdef _MSC_VER
+#pragma warning(disable : 4996)
+#else
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
 
 
 namespace sf
@@ -161,6 +167,12 @@ Ftp::~Ftp()
 ////////////////////////////////////////////////////////////
 Ftp::Response Ftp::connect(IpAddress server, unsigned short port, Time timeout)
 {
+    if (server.isV6())
+    {
+        err() << "FTP Error: Connecting to IPv6 servers is not supported" << std::endl;
+        return Response(Response::Status::ConnectionFailed);
+    }
+
     // Connect to the server
     if (m_commandSocket.connect(server, port, timeout) != Socket::Status::Done)
         return Response(Response::Status::ConnectionFailed);

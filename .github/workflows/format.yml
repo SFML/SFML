@@ -1,0 +1,29 @@
+name: Format
+
+on: [workflow_call, workflow_dispatch]
+
+concurrency:
+  group: ${{ github.workflow }}-format-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+ format:
+    name: Formatting
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Install Clang Format
+      run: sudo apt-get install clang-format-17
+
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Format Code
+      run: cmake -DCLANG_FORMAT_EXECUTABLE=clang-format-17 -P cmake/Format.cmake
+
+    - name: Check Formatting
+      run: git diff --exit-code

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2025 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2026 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -145,14 +145,8 @@ class WindowImplCocoa;
 @interface SFOpenGLView (keyboard)
 
 ////////////////////////////////////////////////////////////
-/// \brief Enable key repeat
-///
-////////////////////////////////////////////////////////////
 - (void)enableKeyRepeat;
 
-////////////////////////////////////////////////////////////
-/// \brief Disable key repeat
-///
 ////////////////////////////////////////////////////////////
 - (void)disableKeyRepeat;
 
@@ -160,9 +154,6 @@ class WindowImplCocoa;
 
 @interface SFOpenGLView (mouse)
 
-////////////////////////////////////////////////////////////
-/// \brief Set the system cursor for the window area
-///
 ////////////////////////////////////////////////////////////
 - (void)setCursor:(NSCursor*)cursor;
 

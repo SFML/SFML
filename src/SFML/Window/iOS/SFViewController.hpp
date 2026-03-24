@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2026 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -37,26 +37,13 @@
 @interface SFViewController : UIViewController
 
 ////////////////////////////////////////////////////////////
-/// \brief Tells if the controller supports auto-rotation (iOS < 6)
+/// \brief Called when the UI orientation changes
 ///
-/// \param interfaceOrientation Orientation to check
-///
-/// \return `true` if auto-rotation is supported, `false` otherwise
-///
-////////////////////////////////////////////////////////////
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation;
-
-////////////////////////////////////////////////////////////
-/// \brief Tells if the controller supports auto-rotation (iOS >= 6)
-///
-/// \return `true` if auto-rotation is supported, `false` otherwise
+/// \param size The new size
+/// \param coordinator The transition coordinator
 ///
 ////////////////////////////////////////////////////////////
-- (BOOL)shouldAutorotate;
-
-////////////////////////////////////////////////////////////
-// Member data
-////////////////////////////////////////////////////////////
-@property(nonatomic) bool orientationCanChange; ///< Tells whether the controller's view can rotate or not
+- (void)viewWillTransitionToSize:(CGSize)size
+       withTransitionCoordinator:(nonnull id<UIViewControllerTransitionCoordinator>)coordinator;
 
 @end

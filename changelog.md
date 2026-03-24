@@ -1,5 +1,39 @@
 # Changelog
 
+## SFML 3.0.2
+
+### General
+
+-   Automatic release CI builds (#3538)
+-   Documentation improvements (#3547, 3548)
+-   GitHub Actions updates (#3517, #3536)
+-   CMake adjustments (#3504, #3510, #3511)
+
+### System
+
+**Bugfixes**
+
+-   Add explicit cast for charN_t conversion for Clang 21 (#3571)
+
+### Windows
+
+**Bugfixes**
+
+-   [Android] Fix issue with Re-creation of Windows on Android (#3507)
+
+### Graphics
+
+**Bugfixes**
+
+-   Assert positive size and in-bounds position for copy area (#3539, #3541)
+-   [Android] Fixed normalized texture coordinates when NPOT textures aren't supported (#3460, #3461)
+
+### Audio
+
+**Bugfixes**
+
+-   Fixed audio engine attempting to read data from previously destroyed objects (#3503, #3522)
+
 ## SFML 3.0.1
 
 ### General

@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2026 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -38,6 +38,7 @@
 #include <map>
 #include <optional>
 #include <string>
+#include <vector>
 
 
 namespace sf
@@ -351,11 +352,12 @@ public:
     /// this unless you really need a port other than the
     /// standard one, or use an unknown protocol.
     ///
-    /// \param host Web server to connect to
-    /// \param port Port to use for connection
+    /// \param host        Web server to connect to
+    /// \param port        Port to use for the connection
+    /// \param addressType Address type to use for the connection, `std::nullopt` to specify no preference
     ///
     ////////////////////////////////////////////////////////////
-    Http(const std::string& host, unsigned short port = 0);
+    Http(const std::string& host, unsigned short port = 0, std::optional<IpAddress::Type> addressType = std::nullopt);
 
     ////////////////////////////////////////////////////////////
     /// \brief Deleted copy constructor
@@ -381,13 +383,14 @@ public:
     /// this unless you really need a port other than the
     /// standard one, or use an unknown protocol.
     ///
-    /// \param host Web server to connect to
-    /// \param port Port to use for connection
+    /// \param host        Web server to connect to
+    /// \param port        Port to use for the connection
+    /// \param addressType Address type to use for the connection, `std::nullopt` to specify no preference
     ///
     /// \return `true` if the host has been resolved and is valid, `false` otherwise
     ///
     ////////////////////////////////////////////////////////////
-    bool setHost(const std::string& host, unsigned short port = 0);
+    bool setHost(const std::string& host, unsigned short port = 0, std::optional<IpAddress::Type> addressType = std::nullopt);
 
     ////////////////////////////////////////////////////////////
     /// \brief Send a HTTP request and return the server's response.
@@ -414,10 +417,11 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::optional<IpAddress> m_host;     //!< Web host address
-    std::string              m_hostName; //!< Web host name
-    unsigned short           m_port{};   //!< Port used for connection with host
-    bool                     m_https{};  //!< Use HTTPS
+    std::vector<IpAddress>         m_hosts;       //!< Web host addresses
+    std::optional<IpAddress::Type> m_addressType; //!< Address type
+    std::string                    m_hostName;    //!< Web host name
+    unsigned short                 m_port{};      //!< Port used for connection with host
+    bool                           m_https{};     //!< Use HTTPS
 };
 
 } // namespace sf

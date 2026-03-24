@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2026 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -33,6 +33,7 @@
 #include <ostream>
 
 #include <cerrno>
+#include <cstring>
 
 
 namespace sf::priv
@@ -47,6 +48,23 @@ sockaddr_in SocketImpl::createAddress(std::uint32_t address, unsigned short port
 
 #if defined(SFML_SYSTEM_MACOS)
     addr.sin_len = sizeof(addr);
+#endif
+
+    return addr;
+}
+
+
+////////////////////////////////////////////////////////////
+sockaddr_in6 SocketImpl::createAddress(std::array<std::uint8_t, 16> address, unsigned short port)
+{
+    auto addr = sockaddr_in6();
+    static_assert(sizeof(addr.sin6_addr.s6_addr) == sizeof(address));
+    std::memcpy(addr.sin6_addr.s6_addr, address.data(), address.size());
+    addr.sin6_family = AF_INET6;
+    addr.sin6_port   = htons(port);
+
+#if defined(SFML_SYSTEM_MACOS)
+    addr.sin6_len = sizeof(addr);
 #endif
 
     return addr;

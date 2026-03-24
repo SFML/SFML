@@ -64,24 +64,26 @@ WindowImplAndroid::WindowImplAndroid(VideoMode mode,
                                      const ContextSettings& /* settings */) :
     m_size(mode.size)
 {
-    ActivityStates&       states = getActivity();
-    const std::lock_guard lock(states.mutex);
+    ActivityStates& states = getActivity();
+    {
+        const std::lock_guard lock(states.mutex);
 
-    if (state == State::Fullscreen)
-        states.fullscreen = true;
+        if (state == State::Fullscreen)
+            states.fullscreen = true;
 
-    const bool shouldCreateSurface = (states.window != nullptr) && (WindowImplAndroid::singleInstance == nullptr);
+        WindowImplAndroid::singleInstance = this;
+        states.forwardEvent               = forwardEvent;
 
-    WindowImplAndroid::singleInstance = this;
-    states.forwardEvent               = forwardEvent;
+        // Register process event callback
+        states.processEvent = processEvent;
+        states.initialized  = true;
+    }
 
-    // Register process event callback
-    states.processEvent = processEvent;
-
-    if (shouldCreateSurface)
-        states.forwardEvent(sf::Event::FocusGained{});
-
-    states.initialized = true;
+    // Wait for window to be created
+    while (states.window == nullptr)
+    {
+        ALooper_pollOnce(0, nullptr, nullptr, nullptr);
+    }
 }
 
 
@@ -835,6 +837,12 @@ char32_t WindowImplAndroid::getUnicode(AInputEvent* event)
     const jint  scancode  = AKeyEvent_getScanCode(event);
     const jint  flags     = AKeyEvent_getFlags(event);
     const jint  source    = AInputEvent_getSource(event);
+
+    // Backspace doesn't have a unicode char, so we generate '\b' for consistency with other platforms
+    if (code == AKEYCODE_DEL)
+    {
+        return '\b';
+    }
 
     // Construct a KeyEvent object from the event data
     jclass    classKeyEvent       = lJNIEnv->FindClass("android/view/KeyEvent");

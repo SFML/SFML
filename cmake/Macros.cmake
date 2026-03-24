@@ -222,6 +222,9 @@ macro(sfml_add_library module)
         # Always use position-independent code on Android, even when linking statically.
         # This is needed because all c++ code is placed in a shared library on Android.
         set_target_properties(${target} PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
+        # Google Play requires all new apps to support 16 KB page sizes.
+        target_link_options(${target} PRIVATE "-Wl,-z,max-page-size=16384")
     endif()
 
     if(BUILD_SHARED_LIBS)
@@ -329,6 +332,13 @@ macro(sfml_add_example target)
                                                    MACOSX_BUNDLE_INFO_PLIST ${INFO_PLIST}
                                                    MACOSX_BUNDLE_ICON_FILE icon.icns)
         target_link_libraries(${target} PRIVATE SFML::Main)
+    elseif(THIS_GUI_APP AND SFML_OS_ANDROID)
+        # Executables on android are shared libraries loaded by the native activity
+        add_library(${target} SHARED ${target_input})
+        target_link_libraries(${target} PRIVATE SFML::Main)
+
+        # Google Play requires all new apps to support 16 KB page sizes.
+        target_link_options(${target} PRIVATE "-Wl,-z,max-page-size=16384")
     else()
         add_executable(${target} ${target_input})
     endif()
@@ -342,8 +352,10 @@ macro(sfml_add_example target)
     set_target_warnings(${target})
     set_public_symbols_hidden(${target})
 
-    # set the debug suffix
-    set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
+    # set the debug suffix, except on android where the activity requires a single name for the library in all configurations
+    if (NOT SFML_OS_ANDROID)
+        set_target_properties(${target} PROPERTIES DEBUG_POSTFIX -d)
+    endif()
 
     # set the target's folder (for IDEs that support it, e.g. Visual Studio)
     set_target_properties(${target} PROPERTIES FOLDER "Examples")
@@ -429,12 +441,18 @@ function(sfml_add_test target SOURCES DEPENDS)
     endif()
 
     # Delay test registration when cross compiling to avoid running crosscompiled app on host OS
-    if(CMAKE_CROSSCOMPILING)
+    # Do the same when using Xcode, as otherwise it runs as a post-build step before codesigning and fails
+    # see https://gitlab.kitware.com/cmake/cmake/-/issues/21845
+    if(CMAKE_CROSSCOMPILING OR XCODE)
         set(CMAKE_CATCH_DISCOVER_TESTS_DISCOVERY_MODE PRE_TEST)
 
         # When running tests on Android, use a custom shell script to invoke commands using adb shell
         if(SFML_OS_ANDROID)
-            set_target_properties(${target} PROPERTIES CROSSCOMPILING_EMULATOR "${PROJECT_BINARY_DIR}/run-in-adb-shell.sh")
+            if(CMAKE_HOST_WIN32)
+                set_target_properties(${target} PROPERTIES CROSSCOMPILING_EMULATOR "${PROJECT_BINARY_DIR}/run-in-adb-shell.bat")
+            else()
+                set_target_properties(${target} PROPERTIES CROSSCOMPILING_EMULATOR "${PROJECT_BINARY_DIR}/run-in-adb-shell.sh")
+            endif()
         endif()
     endif()
 

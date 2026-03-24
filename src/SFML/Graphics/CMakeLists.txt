@@ -193,9 +193,9 @@ else()
 
     set_target_properties(freetype harfbuzz PROPERTIES FOLDER "Dependencies" SYSTEM ON)
 
-    # if building SFML as a shared library and linking our dependencies in
+    # if building SFML as a shared library or on android (where exes are shared libs) and linking our dependencies in
     # as static libraries we need to build them with -fPIC
-    if(BUILD_SHARED_LIBS)
+    if(BUILD_SHARED_LIBS OR SFML_OS_ANDROID)
         set_target_properties(freetype harfbuzz PROPERTIES POSITION_INDEPENDENT_CODE ON)
     endif()
 
@@ -243,7 +243,7 @@ block()
 
     FetchContent_Declare(SheenBidi
         GIT_REPOSITORY https://github.com/Tehreer/SheenBidi.git
-        GIT_TAG v2.9.0
+        GIT_TAG v3.0.0
         GIT_SHALLOW ON
         # patch out parts we don't want of the SheenBidi CMake configuration
         # - disable installation
@@ -266,9 +266,9 @@ target_include_directories(sfml-graphics SYSTEM PRIVATE "${SheenBidi_SOURCE_DIR}
 # Disable all warnings
 target_compile_options(SheenBidi PRIVATE -w)
 
-# if building SFML as a shared library and linking our dependencies in
+# if building SFML as a shared library or on android (where exes are shared libs) and linking our dependencies in
 # as static libraries we need to build them with -fPIC
-if(BUILD_SHARED_LIBS)
+if(BUILD_SHARED_LIBS OR SFML_OS_ANDROID)
     set_target_properties(SheenBidi PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif()
 

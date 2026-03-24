@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2025 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2026 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -203,9 +203,6 @@ void SFContext::createContext(SFContext* shared, unsigned int bitsPerPixel, cons
         // Antialiasing level
         attrs.push_back(NSOpenGLPFASamples);
         attrs.push_back(static_cast<NSOpenGLPixelFormatAttribute>(m_settings.antiAliasingLevel));
-
-        // No software renderer - only hardware renderer
-        attrs.push_back(NSOpenGLPFAAccelerated);
     }
 
     // Support for OpenGL 3.2 on Mac OS X Lion and later:

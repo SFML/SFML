@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2026 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -100,12 +100,14 @@ SocketHandle Socket::getNativeHandle() const
 
 
 ////////////////////////////////////////////////////////////
-void Socket::create()
+void Socket::create(IpAddress::Type addressType)
 {
     // Don't create the socket if it already exists
     if (m_socket == priv::SocketImpl::invalidSocket())
     {
-        const SocketHandle handle = socket(PF_INET, m_type == Type::Tcp ? SOCK_STREAM : SOCK_DGRAM, 0);
+        const SocketHandle handle = socket(addressType == IpAddress::Type::IpV4 ? PF_INET : PF_INET6,
+                                           m_type == Type::Tcp ? SOCK_STREAM : SOCK_DGRAM,
+                                           0);
 
         if (handle == priv::SocketImpl::invalidSocket())
         {

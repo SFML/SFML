@@ -299,11 +299,7 @@ int main()
             // We get the position of the mouse cursor (or touch), so that we can move the box accordingly
             sf::Vector2i pos;
 
-#ifdef SFML_SYSTEM_IOS
-            pos = sf::Touch::getPosition(0);
-#else
             pos = sf::Mouse::getPosition(window);
-#endif
 
             const float x = static_cast<float>(pos.x) * 200.f / static_cast<float>(window.getSize().x) - 100.f;
             const float y = -static_cast<float>(pos.y) * 200.f / static_cast<float>(window.getSize().y) + 100.f;

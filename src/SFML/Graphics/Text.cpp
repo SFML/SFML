@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2026 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -124,7 +124,7 @@ std::vector<TextSegment> segmentString(const sf::String& input)
                                                 static_cast<const void*>(input.getData()),
                                                 input.getSize()};
     auto* const               scriptLocator   = SBScriptLocatorCreate();
-    auto* const               algorithm       = SBAlgorithmCreate(&codepointSequence);
+    const auto* const         algorithm       = SBAlgorithmCreate(&codepointSequence);
     SBUInteger                paragraphOffset = 0;
 
     while (paragraphOffset < input.getSize())
@@ -145,10 +145,10 @@ std::vector<TextSegment> segmentString(const sf::String& input)
         if (separatorLength < paragraphLength)
             paragraphLength -= separatorLength;
 
-        auto* const paragraph = SBAlgorithmCreateParagraph(algorithm, paragraphOffset, paragraphLength, SBLevelDefaultLTR);
-        auto* const line     = SBParagraphCreateLine(paragraph, paragraphOffset, paragraphLength);
-        const auto  runCount = SBLineGetRunCount(line);
-        const auto* runArray = SBLineGetRunsPtr(line);
+        const auto* const paragraph = SBAlgorithmCreateParagraph(algorithm, paragraphOffset, paragraphLength, SBLevelDefaultLTR);
+        const auto* const line     = SBParagraphCreateLine(paragraph, paragraphOffset, paragraphLength);
+        const auto        runCount = SBLineGetRunCount(line);
+        const auto*       runArray = SBLineGetRunsPtr(line);
 
         for (SBUInteger i = 0; i < runCount; i++)
         {

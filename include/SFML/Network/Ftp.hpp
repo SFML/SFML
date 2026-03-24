@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2026 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -46,7 +46,7 @@ class IpAddress;
 /// \brief A FTP client
 ///
 ////////////////////////////////////////////////////////////
-class SFML_NETWORK_API Ftp
+class SFML_NETWORK_API [[deprecated("Use sf::Sftp if possible")]] Ftp
 {
 public:
     ////////////////////////////////////////////////////////////
@@ -592,8 +592,19 @@ private:
 /// // Create a new FTP client
 /// sf::Ftp ftp;
 ///
+/// // Get the address of the server
+/// const auto addresses = sf::Dns::resolve("ftp.myserver.com");
+///
+/// // Check if we have a valid address
+/// // Robust code should additionally ensure that the address is IPv4
+/// // since sf::Ftp does not support connecting to IPv6 addresses
+/// if (!addresses.has_value() || addresses->empty())
+/// {
+///     // Handle no valid address...
+/// }
+///
 /// // Connect to the server
-/// sf::Ftp::Response response = ftp.connect("ftp://ftp.myserver.com");
+/// sf::Ftp::Response response = ftp.connect(addresses->front());
 /// if (response.isOk())
 ///     std::cout << "Connected" << std::endl;
 ///

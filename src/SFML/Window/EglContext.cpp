@@ -60,16 +60,6 @@ namespace EglContextImpl
 {
 EGLDisplay getInitializedDisplay()
 {
-#if defined(SFML_SYSTEM_ANDROID)
-
-    // On Android, its native activity handles this for us
-    sf::priv::ActivityStates& states = sf::priv::getActivity();
-    const std::lock_guard     lock(states.mutex);
-
-    return states.display;
-
-#endif
-
     static EGLDisplay display = EGL_NO_DISPLAY;
 
     if (display == EGL_NO_DISPLAY)
@@ -164,12 +154,8 @@ EglContext::EglContext(EglContext*                        shared,
     // Create EGL context
     createContext(shared);
 
-#if !defined(SFML_SYSTEM_ANDROID)
-    // Create EGL surface (except on Android because the window is created
-    // asynchronously, its activity manager will call it for us)
-    createSurface(owner.getNativeHandle());
-
-#endif
+    // Create EGL surface
+    createSurface(static_cast<EGLNativeWindowType>(owner.getNativeHandle()));
 }
 
 

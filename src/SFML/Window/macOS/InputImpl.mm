@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2025 Marco Antognini (antognini.marco@gmail.com),
+// Copyright (C) 2007-2026 Marco Antognini (antognini.marco@gmail.com),
 //                         Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
@@ -212,13 +212,7 @@ void setMousePosition(Vector2i position)
     const CGPoint pos   = CGPointMake(position.x / scale, position.y / scale);
 
     // Place the cursor.
-    CGEventRef event = CGEventCreateMouseEvent(nullptr,
-                                               kCGEventMouseMoved,
-                                               pos,
-                                               /* we don't care about this: */ kCGMouseButtonLeft);
-    CGEventPost(kCGHIDEventTap, event);
-    CFRelease(event);
-    // This is a workaround to deprecated CGSetLocalEventsSuppressionInterval.
+    CGWarpMouseCursorPosition(pos);
 }
 
 

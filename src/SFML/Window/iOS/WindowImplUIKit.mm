@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2026 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -73,10 +73,9 @@ WindowImplUIKit::WindowImplUIKit(VideoMode mode,
     [m_view resignFirstResponder];
 
     // Create the view controller
-    m_viewController                      = [SFViewController alloc];
-    m_viewController.view                 = m_view;
-    m_viewController.orientationCanChange = style & Style::Resize;
-    m_window.rootViewController           = m_viewController;
+    m_viewController            = [SFViewController alloc];
+    m_viewController.view       = m_view;
+    m_window.rootViewController = m_viewController;
 
     // Make it the current window
     [m_window makeKeyAndVisible];

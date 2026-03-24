@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2026 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -41,94 +41,37 @@ namespace sf::priv
 {
 
 ////////////////////////////////////////////////////////////
-/// \brief Give access to the system clipboard
-///
-////////////////////////////////////////////////////////////
 class ClipboardImpl
 {
 public:
     ////////////////////////////////////////////////////////////
-    /// \brief Get the content of the clipboard as string data
-    ///
-    /// This function returns the content of the clipboard
-    /// as a string. If the clipboard does not contain string
-    /// it returns an empty sf::String object.
-    ///
-    /// \return Current content of the clipboard
-    ///
-    ////////////////////////////////////////////////////////////
     static String getString();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Set the content of the clipboard as string data
-    ///
-    /// This function sets the content of the clipboard as a
-    /// string.
-    ///
-    /// \param text sf::String object containing the data to be sent
-    /// to the clipboard
-    ///
-    ////////////////////////////////////////////////////////////
     static void setString(const String& text);
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Process pending events for the hidden clipboard window
-    ///
-    /// This function has to be called as part of normal window
-    /// event processing in order for our application to respond
-    /// to selection requests from other applications.
-    ///
     ////////////////////////////////////////////////////////////
     static void processEvents();
 
 private:
     ////////////////////////////////////////////////////////////
-    /// \brief Constructor
-    ///
-    ////////////////////////////////////////////////////////////
     ClipboardImpl();
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Destructor
-    ///
     ////////////////////////////////////////////////////////////
     ~ClipboardImpl();
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get singleton instance
-    ///
-    /// \return Singleton instance
-    ///
-    ////////////////////////////////////////////////////////////
     static ClipboardImpl& getInstance();
 
-    ////////////////////////////////////////////////////////////
-    /// \brief getString implementation
-    ///
-    /// \return Current content of the clipboard
-    ///
     ////////////////////////////////////////////////////////////
     String getStringImpl();
 
     ////////////////////////////////////////////////////////////
-    /// \brief setString implementation
-    ///
-    /// \param text sf::String object containing the data to be sent to the clipboard
-    ///
-    ////////////////////////////////////////////////////////////
     void setStringImpl(const String& text);
 
     ////////////////////////////////////////////////////////////
-    /// \brief processEvents implementation
-    ///
-    ////////////////////////////////////////////////////////////
     void processEventsImpl();
 
-    ////////////////////////////////////////////////////////////
-    /// \brief Process an incoming event from the window
-    ///
-    /// \param windowEvent Event which has been received
-    ///
     ////////////////////////////////////////////////////////////
     void processEvent(XEvent& windowEvent);
 

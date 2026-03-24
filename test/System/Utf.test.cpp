@@ -1,7 +1,13 @@
+// Some versions of GCC produce a false positive maybe-uninitialized warning when building this file in release
+#if (!defined(SFML_DEBUG) && defined(__GNUC__) && !defined(__clang__))
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
+
 #include <SFML/System/Utf.hpp>
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <array>
 #include <string_view>
 
 namespace
@@ -32,17 +38,161 @@ using u8string_view = std::basic_string_view<decltype(u8' ')>;
 TEST_CASE("[System] sf::Utf8")
 {
     static constexpr auto utf8 = u8"SFML 🐌"sv;
+    static_assert(utf8.length() == 9);
 
     SECTION("decode")
     {
-        std::u32string output;
-        for (auto begin = utf8.cbegin(); begin < utf8.cend();)
+        SECTION("Valid sequence")
         {
-            char32_t character = 0;
-            begin              = sf::Utf8::decode(begin, utf8.cend(), character);
-            output.push_back(character);
+            SECTION("Complete sequence")
+            {
+                std::u32string output;
+                for (auto begin = utf8.cbegin(); begin < utf8.cend();)
+                {
+                    char32_t character = 0;
+                    begin              = sf::Utf8::decode(begin, utf8.cend(), character);
+                    output.push_back(character);
+                }
+                CHECK(output == U"SFML 🐌"sv);
+            }
+
+            SECTION("Complete codepoint")
+            {
+                SECTION("1 Byte")
+                {
+                    // Ensure ASCII (0x00-0x7F) is decoded 1:1
+                    for (auto i = 0x00; i <= 0x7F; ++i)
+                    {
+                        char32_t   character = 0;
+                        const auto c         = static_cast<std::uint8_t>(i);
+                        const auto next      = sf::Utf8::decode(&c, &c + 1, character);
+                        CHECK(character == static_cast<char32_t>(c));
+                        CHECK(next == (&c + 1));
+                    }
+                }
+
+                SECTION("2 Bytes")
+                {
+                    {
+                        static constexpr auto sequence = u8"\u0080"sv;
+                        static_assert(sequence.length() == 2);
+                        char32_t   character = 0;
+                        const auto next      = sf::Utf8::decode(sequence.cbegin(), sequence.cend(), character);
+                        CHECK(character == U'\u0080');
+                        CHECK(next == sequence.cend());
+                    }
+
+                    {
+                        static constexpr auto sequence = u8"\u07FF"sv;
+                        static_assert(sequence.length() == 2);
+                        char32_t   character = 0;
+                        const auto next      = sf::Utf8::decode(sequence.cbegin(), sequence.cend(), character);
+                        CHECK(character == U'\u07FF');
+                        CHECK(next == sequence.cend());
+                    }
+                }
+
+                SECTION("3 Bytes")
+                {
+                    {
+                        static constexpr auto sequence = u8"\u0800"sv;
+                        static_assert(sequence.length() == 3);
+                        char32_t   character = 0;
+                        const auto next      = sf::Utf8::decode(sequence.cbegin(), sequence.cend(), character);
+                        CHECK(character == U'\u0800');
+                        CHECK(next == sequence.cend());
+                    }
+
+                    {
+                        static constexpr auto sequence = u8"\uFFFF"sv;
+                        static_assert(sequence.length() == 3);
+                        char32_t   character = 0;
+                        const auto next      = sf::Utf8::decode(sequence.cbegin(), sequence.cend(), character);
+                        CHECK(character == U'\uFFFF');
+                        CHECK(next == sequence.cend());
+                    }
+                }
+
+                SECTION("4 Bytes")
+                {
+                    {
+                        static constexpr auto sequence = u8"\U00010000"sv;
+                        static_assert(sequence.length() == 4);
+                        char32_t   character = 0;
+                        const auto next      = sf::Utf8::decode(sequence.cbegin(), sequence.cend(), character);
+                        CHECK(character == U'\U00010000');
+                        CHECK(next == sequence.cend());
+                    }
+
+                    {
+                        static constexpr auto sequence = u8"\U0010FFFF"sv;
+                        static_assert(sequence.length() == 4);
+                        char32_t   character = 0;
+                        const auto next      = sf::Utf8::decode(sequence.cbegin(), sequence.cend(), character);
+                        CHECK(character == U'\U0010FFFF');
+                        CHECK(next == sequence.cend());
+                    }
+                }
+            }
         }
-        CHECK(output == U"SFML 🐌"sv);
+
+        SECTION("Invalid sequence")
+        {
+            SECTION("Incomplete sequence")
+            {
+                const auto end = utf8.cend() - 1;
+
+                SECTION("Default replacement character")
+                {
+                    std::u32string output;
+                    for (auto begin = utf8.cbegin(); begin < end;)
+                    {
+                        char32_t character = 0;
+                        begin              = sf::Utf8::decode(begin, end, character);
+                        output.push_back(character);
+                    }
+                    CHECK(output == U"SFML \0\0\0"sv);
+                }
+
+                SECTION("Custom replacement character")
+                {
+                    std::u32string output;
+                    for (auto begin = utf8.cbegin(); begin < end;)
+                    {
+                        char32_t character = 0;
+                        begin              = sf::Utf8::decode(begin, end, character, '?');
+                        output.push_back(character);
+                    }
+                    CHECK(output == U"SFML ???"sv);
+                }
+            }
+
+            SECTION("Invalid leading byte")
+            {
+                static constexpr std::array<unsigned char, 13>
+                    invalid{0xC0, 0xC1, 0xF5, 0xF6, 0xF7, 0xF8, 0xF9, 0xFA, 0xFB, 0xFC, 0xFD, 0xFE, 0xFF};
+
+                for (auto begin = invalid.cbegin(); begin < invalid.cend(); ++begin)
+                {
+                    char32_t   character = 0;
+                    const auto next      = sf::Utf8::decode(begin, begin + 1, character);
+                    CHECK(character == '\0');
+                    CHECK(next == begin + 1);
+                }
+            }
+
+            SECTION("Leading continuation byte")
+            {
+                for (auto i = 0x80; i <= 0xBF; ++i)
+                {
+                    char32_t   character = 0;
+                    const auto c         = static_cast<std::uint8_t>(i);
+                    const auto next      = sf::Utf8::decode(&c, &c + 1, character);
+                    CHECK(character == '\0');
+                    CHECK(next == (&c + 1));
+                }
+            }
+        }
     }
 
     SECTION("encode")
@@ -90,11 +240,13 @@ TEST_CASE("[System] sf::Utf8")
 
     SECTION("count")
     {
+        // Attempting to read an incomplete byte sequence should result in each byte
+        // of the incomplete sequence being replaced by the replacement character
         REQUIRE(utf8.size() == 9);
         CHECK(sf::Utf8::count(utf8.cbegin(), utf8.cend()) == 6);
         CHECK(sf::Utf8::count(utf8.cbegin(), utf8.cbegin() + 9) == 6);
-        CHECK(sf::Utf8::count(utf8.cbegin(), utf8.cbegin() + 8) == 6);
-        CHECK(sf::Utf8::count(utf8.cbegin(), utf8.cbegin() + 7) == 6);
+        CHECK(sf::Utf8::count(utf8.cbegin(), utf8.cbegin() + 8) == 8);
+        CHECK(sf::Utf8::count(utf8.cbegin(), utf8.cbegin() + 7) == 7);
         CHECK(sf::Utf8::count(utf8.cbegin(), utf8.cbegin() + 6) == 6);
         CHECK(sf::Utf8::count(utf8.cbegin(), utf8.cbegin() + 5) == 5);
         CHECK(sf::Utf8::count(utf8.cbegin(), utf8.cbegin() + 4) == 4);
@@ -135,9 +287,15 @@ TEST_CASE("[System] sf::Utf8")
     {
         std::string output;
 
-        SECTION("Default replacement character")
+        SECTION("No replacement character")
         {
             sf::Utf8::toAnsi(utf8.cbegin(), utf8.cend(), std::back_inserter(output));
+            CHECK(output == "SFML "sv);
+        }
+
+        SECTION("NULL replacement character")
+        {
+            sf::Utf8::toAnsi(utf8.cbegin(), utf8.cend(), std::back_inserter(output), '\0');
             CHECK(output == "SFML \0"sv);
         }
 
@@ -169,9 +327,15 @@ TEST_CASE("[System] sf::Utf8")
     {
         std::string output;
 
-        SECTION("Default replacement character")
+        SECTION("No replacement character")
         {
             sf::Utf8::toLatin1(utf8.cbegin(), utf8.cend(), std::back_inserter(output));
+            CHECK(output == "SFML "sv);
+        }
+
+        SECTION("NULL replacement character")
+        {
+            sf::Utf8::toLatin1(utf8.cbegin(), utf8.cend(), std::back_inserter(output), '\0');
             CHECK(output == "SFML \0"sv);
         }
 
@@ -308,9 +472,15 @@ TEST_CASE("[System] sf::Utf16")
     {
         std::string output;
 
-        SECTION("Default replacement character")
+        SECTION("No replacement character")
         {
             sf::Utf16::toAnsi(utf16.cbegin(), utf16.cend(), std::back_inserter(output));
+            CHECK(output == "SFML "sv);
+        }
+
+        SECTION("NULL replacement character")
+        {
+            sf::Utf16::toAnsi(utf16.cbegin(), utf16.cend(), std::back_inserter(output), '\0');
             CHECK(output == "SFML \0"sv);
         }
 
@@ -342,9 +512,15 @@ TEST_CASE("[System] sf::Utf16")
     {
         std::string output;
 
-        SECTION("Default replacement character")
+        SECTION("No replacement character")
         {
             sf::Utf16::toLatin1(utf16.cbegin(), utf16.cend(), std::back_inserter(output));
+            CHECK(output == "SFML "sv);
+        }
+
+        SECTION("NULL replacement character")
+        {
+            sf::Utf16::toLatin1(utf16.cbegin(), utf16.cend(), std::back_inserter(output), '\0');
             CHECK(output == "SFML \0\0"sv);
         }
 
@@ -463,9 +639,15 @@ TEST_CASE("[System] sf::Utf32")
     {
         std::string output;
 
-        SECTION("Default replacement character")
+        SECTION("No replacement character")
         {
             sf::Utf32::toAnsi(utf32.cbegin(), utf32.cend(), std::back_inserter(output));
+            CHECK(output == "SFML "sv);
+        }
+
+        SECTION("NULL replacement character")
+        {
+            sf::Utf32::toAnsi(utf32.cbegin(), utf32.cend(), std::back_inserter(output), '\0');
             CHECK(output == "SFML \0"sv);
         }
 
@@ -486,6 +668,12 @@ TEST_CASE("[System] sf::Utf32")
             CHECK(output == select(L"SFML "sv, L"SFML 🐌"sv));
         }
 
+        SECTION("NULL replacement character")
+        {
+            sf::Utf32::toWide(utf32.cbegin(), utf32.cend(), std::back_inserter(output), L'\0');
+            CHECK(output == select(L"SFML \0"sv, L"SFML 🐌"sv));
+        }
+
         SECTION("Custom replacement character")
         {
             sf::Utf32::toWide(utf32.cbegin(), utf32.cend(), std::back_inserter(output), L'_');
@@ -497,9 +685,15 @@ TEST_CASE("[System] sf::Utf32")
     {
         std::string output;
 
-        SECTION("Default replacement character")
+        SECTION("No replacement character")
         {
             sf::Utf32::toLatin1(utf32.cbegin(), utf32.cend(), std::back_inserter(output));
+            CHECK(output == "SFML "sv);
+        }
+
+        SECTION("NULL replacement character")
+        {
+            sf::Utf32::toLatin1(utf32.cbegin(), utf32.cend(), std::back_inserter(output), '\0');
             CHECK(output == "SFML \0"sv);
         }
 
@@ -553,7 +747,7 @@ TEST_CASE("[System] sf::Utf32")
     {
         std::string output;
 
-        SECTION("Default replacement character")
+        SECTION("No replacement character")
         {
             sf::Utf32::encodeAnsi(U' ', std::back_inserter(output));
             CHECK(output == " "sv);
@@ -562,6 +756,18 @@ TEST_CASE("[System] sf::Utf32")
             sf::Utf32::encodeAnsi(U'a', std::back_inserter(output));
             CHECK(output == " _a"sv);
             sf::Utf32::encodeAnsi(U'🐌', std::back_inserter(output));
+            CHECK(output == " _a"sv);
+        }
+
+        SECTION("NULL replacement character")
+        {
+            sf::Utf32::encodeAnsi(U' ', std::back_inserter(output), '\0');
+            CHECK(output == " "sv);
+            sf::Utf32::encodeAnsi(U'_', std::back_inserter(output), '\0');
+            CHECK(output == " _"sv);
+            sf::Utf32::encodeAnsi(U'a', std::back_inserter(output), '\0');
+            CHECK(output == " _a"sv);
+            sf::Utf32::encodeAnsi(U'🐌', std::back_inserter(output), '\0');
             CHECK(output == " _a\0"sv);
         }
 

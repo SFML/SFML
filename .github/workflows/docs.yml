@@ -1,0 +1,31 @@
+name: Documentation
+
+on: [workflow_call, workflow_dispatch]
+
+concurrency:
+  group: ${{ github.workflow }}-docs-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  docs:
+    name: Documentation
+    runs-on: macos-14
+
+    steps:
+    - name: Install Doxygen
+      run: |
+        brew update
+        brew install doxygen
+
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Configure
+      run: cmake -B build -DSFML_BUILD_DOC=ON -DSFML_BUILD_WINDOW=OFF -DSFML_BUILD_GRAPHICS=OFF -DSFML_BUILD_AUDIO=OFF -DSFML_BUILD_NETWORK=OFF
+
+    - name: Build Doxygen Site
+      run: cmake --build build --target doc

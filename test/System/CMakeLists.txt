@@ -9,6 +9,7 @@ set(SYSTEM_SRC
     Sleep.test.cpp
     String.test.cpp
     Time.test.cpp
+    TimeoutWithPredicate.test.cpp
     Utf.test.cpp
     Vector2.test.cpp
     Vector3.test.cpp
