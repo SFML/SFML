@@ -20,17 +20,6 @@
 #define GL_SRGB8_ALPHA8 0x8C43
 #endif
 
-namespace
-{
-std::filesystem::path resourcesDir()
-{
-#ifdef SFML_SYSTEM_IOS
-    return "";
-#else
-    return "resources";
-#endif
-}
-} // namespace
 
 ////////////////////////////////////////////////////////////
 /// Entry point of application
@@ -61,11 +50,11 @@ int main()
         window.setMaximumSize(sf::Vector2u(1200, 900));
 
         // Create a sprite for the background
-        const sf::Texture backgroundTexture(resourcesDir() / "background.jpg", sRgb);
+        const sf::Texture backgroundTexture(std::filesystem::path("resources/background.jpg"), sRgb);
         const sf::Sprite  background(backgroundTexture);
 
         // Create some text to draw on top of our OpenGL object
-        const sf::Font font(resourcesDir() / "tuffy.ttf");
+        const sf::Font font("resources/tuffy.ttf");
 
         sf::Text text(font, "SFML / OpenGL demo");
         sf::Text sRgbInstructions(font, "Press space to toggle sRGB conversion");
@@ -78,7 +67,7 @@ int main()
         mipmapInstructions.setPosition({200.f, 550.f});
 
         // Load a texture to apply to our 3D cube
-        sf::Texture texture(resourcesDir() / "logo.png");
+        sf::Texture texture("resources/logo.png");
 
         // Attempt to generate a mipmap for our cube texture
         // We don't check the return value here since
@@ -222,7 +211,7 @@ int main()
                     if (mipmapEnabled)
                     {
                         // We simply reload the texture to disable mipmapping
-                        texture = sf::Texture(resourcesDir() / "logo.png");
+                        texture = sf::Texture("resources/logo.png");
 
                         // Rebind the texture
                         sf::Texture::bind(&texture);
