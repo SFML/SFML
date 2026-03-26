@@ -62,7 +62,7 @@ jobs:
       run: cmake --preset dev ${{ matrix.platform.name != 'Android' && '-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++' || ''}} -DCMAKE_UNITY_BUILD=ON -DSFML_RUN_IPV4_LINK_TESTS=ON -DSFML_RUN_IPV4_INTERNET_TESTS=ON -DSFML_RUN_IPV6_LINK_TESTS=ON ${{matrix.platform.flags}}
 
     - name: Analyze Code
-      run: cmake --build build --target tidy
+      run: cmake --build build/dev --target tidy
 
   sanitize:
     name: Sanitizing on ${{ matrix.platform.name }}
@@ -95,7 +95,7 @@ jobs:
       run: cmake --preset dev -GNinja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DSFML_BUILD_EXAMPLES=OFF -DSFML_ENABLE_SANITIZERS=ON -DSFML_RUN_IPV4_LINK_TESTS=ON -DSFML_RUN_IPV4_INTERNET_TESTS=ON -DSFML_RUN_IPV6_LINK_TESTS=ON ${{matrix.platform.flags}}
 
     - name: Build
-      run: cmake --build build
+      run: cmake --build build/dev
 
     - name: Prepare Test
       run: |
