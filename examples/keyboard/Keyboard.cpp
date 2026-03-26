@@ -17,15 +17,6 @@
 
 namespace
 {
-std::filesystem::path resourcesDir()
-{
-#ifdef SFML_SYSTEM_IOS
-    return "";
-#else
-    return "resources";
-#endif
-}
-
 // Get the C++ enumerator name of the given `sf::Keyboard::Key` value including `Key::` prefix
 std::string keyIdentifier(sf::Keyboard::Key code)
 {
@@ -756,9 +747,9 @@ int main()
     window.setFramerateLimit(25);
 
     // Load sound buffers
-    const sf::SoundBuffer errorSoundBuffer(resourcesDir() / "error_005.ogg");
-    const sf::SoundBuffer pressedSoundBuffer(resourcesDir() / "mouseclick1.ogg");
-    const sf::SoundBuffer releasedSoundBuffer(resourcesDir() / "mouserelease1.ogg");
+    const sf::SoundBuffer errorSoundBuffer("resources/error_005.ogg");
+    const sf::SoundBuffer pressedSoundBuffer("resources/mouseclick1.ogg");
+    const sf::SoundBuffer releasedSoundBuffer("resources/mouserelease1.ogg");
 
     // Create sound objects to play them upon keyboard events
     sf::Sound errorSound(errorSoundBuffer);
@@ -766,7 +757,7 @@ int main()
     sf::Sound releasedSound(releasedSoundBuffer);
 
     // Open the font used for all texts
-    const sf::Font font(resourcesDir() / "Tuffy.ttf");
+    const sf::Font font("resources/Tuffy.ttf");
 
     // Create object to display all scancodes descriptions, related events and real-time state
     KeyboardView keyboardView(font);
