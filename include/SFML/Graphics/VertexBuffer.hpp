@@ -35,6 +35,7 @@
 
 #include <SFML/Window/GlResource.hpp>
 
+#include <memory>
 #include <cstddef>
 
 
@@ -42,6 +43,11 @@ namespace sf
 {
 class RenderTarget;
 struct Vertex;
+
+namespace priv
+{
+class VertexBufferImpl;
+}
 
 ////////////////////////////////////////////////////////////
 /// \brief Vertex buffer storage for one or more 2D primitives
@@ -73,7 +79,7 @@ public:
     /// Creates an empty vertex buffer.
     ///
     ////////////////////////////////////////////////////////////
-    VertexBuffer() = default;
+    VertexBuffer();
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct a `VertexBuffer` with a specific `PrimitiveType`
@@ -334,10 +340,10 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int  m_buffer{};                             //!< Internal buffer identifier
-    std::size_t   m_size{};                               //!< Size in Vertices of the currently allocated buffer
-    PrimitiveType m_primitiveType{PrimitiveType::Points}; //!< Type of primitives to draw
-    Usage         m_usage{Usage::Stream};                 //!< How this vertex buffer is to be used
+    std::unique_ptr<priv::VertexBufferImpl> m_impl;                             //!< Platform-specific implementation
+    std::size_t                             m_size{};                           //!< Size in Vertices of the currently allocated buffer
+    PrimitiveType                           m_primitiveType{PrimitiveType::Points}; //!< Type of primitives to draw
+    Usage                                   m_usage{Usage::Stream};              //!< How this vertex buffer is to be used
 };
 
 ////////////////////////////////////////////////////////////
