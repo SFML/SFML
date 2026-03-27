@@ -81,6 +81,23 @@ struct SftpSessionDeleter
     }
 };
 
+// Portable UTF-8 string conversions for C++17/C++20 compatibility
+// See: https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p1423r3.html
+std::string pathToUtf8(const std::filesystem::path& path)
+{
+    const auto s = path.generic_u8string();
+    return {s.begin(), s.end()};
+}
+
+std::filesystem::path pathFromUtf8(std::string_view utf8Str)
+{
+#if defined(__cpp_lib_char8_t)
+    return {std::u8string(utf8Str.begin(), utf8Str.end())};
+#else
+    return std::filesystem::u8path(utf8Str);
+#endif
+}
+
 int makePermissions(std::filesystem::perms permissions)
 {
     int        result{};
@@ -845,7 +862,7 @@ Sftp::PathResult Sftp::resolvePath(const std::filesystem::path& path, const Time
     if ((path == ".") && !m_impl->cachedHomePath.empty())
         return {Result(Result::Value::Success), m_impl->cachedHomePath};
 
-    const auto             pathString = path.generic_u8string();
+    const auto             pathString = pathToUtf8(path);
     std::array<char, 4096> buffer{};
     const auto             result = m_impl->waitForOperationComplete(
         [&]
@@ -865,14 +882,14 @@ Sftp::PathResult Sftp::resolvePath(const std::filesystem::path& path, const Time
     if (result < 0)
         return {makeError(m_impl->ssh2Session.get(), m_impl->sftpSession.get()), {}};
 
-    const auto genericPath = std::filesystem::path(std::string_view(buffer.data(), static_cast<std::size_t>(result)))
-                                 .generic_u8string();
+    // The path from libssh2 is UTF-8 encoded, convert before constructing filesystem::path
+    const auto resolvedPath = pathFromUtf8({buffer.data(), static_cast<std::size_t>(result)});
 
     // Cache the result for the home path
     if (path == ".")
-        m_impl->cachedHomePath = genericPath;
+        m_impl->cachedHomePath = resolvedPath;
 
-    return {Result(Result::Value::Success), genericPath};
+    return {Result(Result::Value::Success), resolvedPath};
 }
 
 
@@ -888,7 +905,7 @@ Sftp::AttributesResult Sftp::getAttributes(const std::filesystem::path& path, bo
 {
     LIBSSH2_SFTP_ATTRIBUTES attributes{};
 
-    const auto pathString = path.generic_u8string();
+    const auto pathString = pathToUtf8(path);
     const auto result     = m_impl->waitForOperationComplete(
         [&]
         {
@@ -916,7 +933,7 @@ Sftp::ListingResult Sftp::getDirectoryListing(const std::filesystem::path& path,
     LIBSSH2_SFTP_HANDLE* handle{};
 
     {
-        const auto pathString = path.generic_u8string();
+        const auto pathString = pathToUtf8(path);
         const auto result     = m_impl->waitForOperationComplete(
             [&]
             {
@@ -955,9 +972,9 @@ Sftp::ListingResult Sftp::getDirectoryListing(const std::filesystem::path& path,
 
             if (result > 0)
             {
+                // The filename from libssh2 is UTF-8 encoded, convert before constructing filesystem::path
                 listing.emplace_back(
-                    makeAttributes((path / std::string_view(buffer.data(), static_cast<std::size_t>(result))).generic_u8string(),
-                                   attributes));
+                    makeAttributes(path / pathFromUtf8({buffer.data(), static_cast<std::size_t>(result)}), attributes));
 
                 continue;
             }
@@ -989,7 +1006,7 @@ Sftp::Result Sftp::createDirectory(const std::filesystem::path& path,
                                    std::filesystem::perms       permissions,
                                    const TimeoutWithPredicate&  timeout)
 {
-    const auto pathString = path.generic_u8string();
+    const auto pathString = pathToUtf8(path);
     const auto result     = m_impl->waitForOperationComplete(
         [&]
         {
@@ -1013,7 +1030,7 @@ Sftp::Result Sftp::createDirectory(const std::filesystem::path& path,
 ////////////////////////////////////////////////////////////
 Sftp::Result Sftp::deleteDirectory(const std::filesystem::path& path, const TimeoutWithPredicate& timeout)
 {
-    const auto pathString = path.generic_u8string();
+    const auto pathString = pathToUtf8(path);
     const auto result     = m_impl->waitForOperationComplete(
         [&]
         {
@@ -1039,8 +1056,8 @@ Sftp::Result Sftp::rename(const std::filesystem::path& oldPath,
                           bool                         overwrite,
                           const TimeoutWithPredicate&  timeout)
 {
-    const auto oldPathString = oldPath.generic_u8string();
-    const auto newPathString = newPath.generic_u8string();
+    const auto oldPathString = pathToUtf8(oldPath);
+    const auto newPathString = pathToUtf8(newPath);
 
     // POSIX rename is only supported starting from libssh2 1.11.1
 #if (LIBSSH2_VERSION_NUM >= 0x010b01)
@@ -1097,7 +1114,7 @@ Sftp::Result Sftp::rename(const std::filesystem::path& oldPath,
 ////////////////////////////////////////////////////////////
 Sftp::Result Sftp::deleteFile(const std::filesystem::path& path, const TimeoutWithPredicate& timeout)
 {
-    const auto pathString = path.generic_u8string();
+    const auto pathString = pathToUtf8(path);
     const auto result     = m_impl->waitForOperationComplete(
         [&]
         {
@@ -1130,7 +1147,7 @@ Sftp::Result Sftp::download(const std::filesystem::path&                        
 
     // Open the file for reading
     {
-        const auto pathString = remotePath.generic_u8string();
+        const auto pathString = pathToUtf8(remotePath);
         const auto result     = m_impl->waitForOperationComplete(
             [&]
             {
@@ -1247,7 +1264,7 @@ Sftp::Result Sftp::upload(const std::filesystem::path&                          
 
     // Open the file for writing
     {
-        const auto pathString = remotePath.generic_u8string();
+        const auto pathString = pathToUtf8(remotePath);
         const auto result     = m_impl->waitForOperationComplete(
             [&]
             {
