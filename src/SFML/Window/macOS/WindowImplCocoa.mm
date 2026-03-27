@@ -245,6 +245,11 @@ void WindowImplCocoa::windowFocusGained()
     pushEvent(Event::FocusGained{});
 }
 
+void WindowImplCocoa::handleFileDroppingEvent(std::vector<String> files, Vector2i position)
+{
+    pushEvent(Event::FilesDropped{std::move(files), position});
+}
+
 #pragma mark
 #pragma mark WindowImplCocoa's mouse-event methods
 
@@ -491,5 +496,10 @@ bool WindowImplCocoa::hasFocus() const
     return [m_delegate hasFocus];
 }
 
+////////////////////////////////////////////////////////////
+void WindowImplCocoa::setFileDroppingEnabled(bool enabled)
+{
+    [m_delegate setFileDroppingEnabled:enabled];
+}
 
 } // namespace sf::priv
