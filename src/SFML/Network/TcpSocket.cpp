@@ -33,6 +33,7 @@
 
 #include <SFML/System/Err.hpp>
 #include <SFML/System/String.hpp>
+#include <SFML/System/Version.hpp>
 
 #include <mbedtls/version.h>
 #if (MBEDTLS_VERSION_MAJOR < 4)
@@ -351,12 +352,8 @@ struct MbedTlsSharedState
         mbedtls_ctr_drbg_init(&ctrDrbgContext);
 
         // We use a personalization string as a cheap way to minimally seed the RNG in case entropy is low
-#define SFML_NUMBER_TO_STRING_HELPER(x) #x
-#define SFML_NUMBER_TO_STRING(x)        SFML_NUMBER_TO_STRING_HELPER(x)
-
-        static constexpr std::string_view
-            personalizationString = "sfml-network-" SFML_NUMBER_TO_STRING(SFML_VERSION_MAJOR) "." SFML_NUMBER_TO_STRING(
-            SFML_VERSION_MINOR) "." SFML_NUMBER_TO_STRING(SFML_VERSION_PATCH) "-mbedtls-" MBEDTLS_VERSION_STRING_FULL;
+        static const auto personalizationString = "sfml-network-" + std::string(sf::version().string) +
+                                                  "-mbedtls-" MBEDTLS_VERSION_STRING_FULL;
 
         if (auto result = mbedtls_ctr_drbg_seed(&ctrDrbgContext,
                                                 mbedtls_entropy_func,

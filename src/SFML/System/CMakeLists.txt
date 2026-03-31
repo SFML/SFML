@@ -31,6 +31,8 @@ set(SRC
     ${INCROOT}/Vector2.inl
     ${INCROOT}/Vector3.hpp
     ${INCROOT}/Vector3.inl
+    ${SRCROOT}/Version.cpp
+    ${INCROOT}/Version.hpp
     ${SRCROOT}/FileInputStream.cpp
     ${INCROOT}/FileInputStream.hpp
     ${SRCROOT}/MemoryInputStream.cpp
