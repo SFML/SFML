@@ -9,6 +9,7 @@
 
 #include <NetworkUtil.hpp>
 #include <algorithm>
+#include <iostream>
 #include <list>
 #include <memory>
 #include <random>
@@ -36,8 +37,12 @@ TEST_CASE("[Network] sf::SocketSelector")
 
 TEST_CASE("[Network] sf::SocketSelector Many Connections", runIpV4LoopbackTests())
 {
-    // Setting connection count to 1024 / 2 + 1 should force this test to fail if the select()-based backend is used
-    static constexpr std::size_t connectionCount = 1024 / 2 + 1;
+    std::cout << "Running sf::SocketSelector Many Connections tests with SFML_NETWORK_TESTS_MAX_FDS set to "
+              << SFML_NETWORK_TESTS_MAX_FDS << std::endl;
+    // Setting SFML_NETWORK_TESTS_MAX_FDS to 1025 and thus connection count to (1025 - 1) / 2
+    // should force this test to fail if the select()-based backend is used
+    // Remember: The listener also makes use of a file descriptor for itself
+    static constexpr std::size_t connectionCount = (SFML_NETWORK_TESTS_MAX_FDS - 1) / 2;
     static constexpr auto connectionBacklogMax   = 64; // Try to stay under the typical system listen queue size of 128
     static constexpr std::size_t randomDataSize  = 32 * 1500; // 32x typical MTU size
 

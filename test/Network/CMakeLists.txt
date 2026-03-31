@@ -13,6 +13,10 @@ set(NETWORK_SRC
     UdpSocket.test.cpp
 )
 sfml_add_test(test-sfml-network "${NETWORK_SRC}" SFML::Network)
+
+sfml_set_option(SFML_NETWORK_TESTS_MAX_FDS 256 STRING "The maximum number of open file descriptors a test should use")
+target_compile_definitions(test-sfml-network PRIVATE SFML_NETWORK_TESTS_MAX_FDS=${SFML_NETWORK_TESTS_MAX_FDS})
+
 if(SFML_RUN_IP_DISCOVERY_TESTS)
     target_compile_definitions(test-sfml-network PRIVATE SFML_RUN_IP_DISCOVERY_TESTS)
 endif()

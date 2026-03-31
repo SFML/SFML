@@ -193,7 +193,7 @@ jobs:
         cmake --version
 
     - name: Configure CMake
-      run: cmake --preset dev -DCMAKE_VERBOSE_MAKEFILE=ON -DSFML_RUN_IPV4_LINK_TESTS=ON -DSFML_RUN_IPV4_INTERNET_TESTS=ON -DSFML_RUN_IPV6_LINK_TESTS=ON ${{matrix.platform.flags}} ${{matrix.config.flags}} ${{matrix.type.flags}}
+      run: cmake --preset dev -DCMAKE_VERBOSE_MAKEFILE=ON -DSFML_RUN_IPV4_LINK_TESTS=ON -DSFML_RUN_IPV4_INTERNET_TESTS=ON -DSFML_RUN_IPV6_LINK_TESTS=ON -DSFML_NETWORK_TESTS_MAX_FDS=1028 ${{matrix.platform.flags}} ${{matrix.config.flags}} ${{matrix.type.flags}}
 
     - name: Build
       run: cmake --build build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} --target install

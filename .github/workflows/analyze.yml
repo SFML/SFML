@@ -59,7 +59,7 @@ jobs:
         echo "$(brew --prefix llvm@18)/bin" >> $GITHUB_PATH
 
     - name: Configure
-      run: cmake --preset dev ${{ matrix.platform.name != 'Android' && '-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++' || ''}} -DCMAKE_UNITY_BUILD=ON -DSFML_RUN_IPV4_LINK_TESTS=ON -DSFML_RUN_IPV4_INTERNET_TESTS=ON -DSFML_RUN_IPV6_LINK_TESTS=ON ${{matrix.platform.flags}}
+      run: cmake --preset dev ${{ matrix.platform.name != 'Android' && '-DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++' || ''}} -DCMAKE_UNITY_BUILD=ON -DSFML_RUN_IPV4_LINK_TESTS=ON -DSFML_RUN_IPV4_INTERNET_TESTS=ON -DSFML_RUN_IPV6_LINK_TESTS=ON -DSFML_NETWORK_TESTS_MAX_FDS=1028 ${{matrix.platform.flags}}
 
     - name: Analyze Code
       run: cmake --build build --target tidy
@@ -92,7 +92,7 @@ jobs:
         sudo apt-get install xorg-dev libharfbuzz-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev libmbedtls-dev libssh2-1-dev xvfb fluxbox
 
     - name: Configure
-      run: cmake --preset dev -GNinja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DSFML_BUILD_EXAMPLES=OFF -DSFML_ENABLE_SANITIZERS=ON -DSFML_RUN_IPV4_LINK_TESTS=ON -DSFML_RUN_IPV4_INTERNET_TESTS=ON -DSFML_RUN_IPV6_LINK_TESTS=ON ${{matrix.platform.flags}}
+      run: cmake --preset dev -GNinja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DSFML_BUILD_EXAMPLES=OFF -DSFML_ENABLE_SANITIZERS=ON -DSFML_RUN_IPV4_LINK_TESTS=ON -DSFML_RUN_IPV4_INTERNET_TESTS=ON -DSFML_RUN_IPV6_LINK_TESTS=ON -DSFML_NETWORK_TESTS_MAX_FDS=1028 ${{matrix.platform.flags}}
 
     - name: Build
       run: cmake --build build
