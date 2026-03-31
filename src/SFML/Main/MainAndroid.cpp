@@ -40,11 +40,13 @@
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Sleep.hpp>
 #include <SFML/System/Time.hpp>
+#include <SFML/System/Utf.hpp>
 
 #include <android/native_activity.h>
 #include <android/window.h>
 
 #include <mutex>
+#include <string>
 #include <thread>
 
 #include <cassert>
@@ -55,6 +57,58 @@ extern int main(int argc, char* argv[]);
 
 namespace
 {
+////////////////////////////////////////////////////////////
+void nativeOnTextInput(JNIEnv* env, jobject /* object */, jstring text)
+{
+    if (text == nullptr)
+        return;
+
+    const jsize length = env->GetStringLength(text);
+    auto* const chars  = env->GetStringChars(text, nullptr);
+    if (chars == nullptr)
+        return;
+
+    std::u16string utf16Text(static_cast<std::size_t>(length), u'\0');
+    for (jsize i = 0; i < length; ++i)
+        utf16Text[static_cast<std::size_t>(i)] = static_cast<char16_t>(chars[i]);
+
+    env->ReleaseStringChars(text, chars);
+
+    sf::priv::ActivityStates& states = sf::priv::getActivity();
+    const std::lock_guard     lock(states.mutex);
+
+    auto iterator = utf16Text.begin();
+    while (iterator != utf16Text.end())
+    {
+        char32_t codepoint = 0;
+        iterator           = sf::Utf<16>::decode(iterator, utf16Text.end(), codepoint, 0);
+        if (codepoint != 0)
+            states.textEvents.push_back(codepoint);
+    }
+}
+
+////////////////////////////////////////////////////////////
+void registerTextInputCallback(ANativeActivity* activity)
+{
+    JNIEnv* env = activity->env;
+
+    const JNINativeMethod methods[]{{const_cast<char*>("nativeOnTextInput"),
+                                     const_cast<char*>("(Ljava/lang/String;)V"),
+                                     reinterpret_cast<void*>(&nativeOnTextInput)}};
+
+    jclass activityClass = env->GetObjectClass(activity->clazz);
+    if (activityClass == nullptr)
+    {
+        sf::err() << "Failed to retrieve activity class for nativeOnTextInput registration" << std::endl;
+        return;
+    }
+
+    if (env->RegisterNatives(activityClass, methods, 1) < 0)
+        sf::err() << "Failed to register nativeOnTextInput callback. Java IME bridge will be unavailable." << std::endl;
+
+    env->DeleteLocalRef(activityClass);
+}
+
 ////////////////////////////////////////////////////////////
 void initializeMain(sf::priv::ActivityStates& states)
 {
@@ -536,6 +590,7 @@ JNIEXPORT void ANativeActivity_onCreate(ANativeActivity* activity, void* savedSt
 
     // Share this activity with the callback functions
     states->activity = activity;
+    registerTextInputCallback(activity);
 
     // Keep the screen turned on and bright
     ANativeActivity_setWindowFlags(activity, AWINDOW_FLAG_KEEP_SCREEN_ON, AWINDOW_FLAG_KEEP_SCREEN_ON);
