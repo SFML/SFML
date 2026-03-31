@@ -15,14 +15,6 @@
 #include <cmath>
 
 
-#define STR_HELPER(x) #x
-#define STR(x)        STR_HELPER(x)
-
-// SFML version string wrapped in unicode directional formatting characters
-#define SFML_VERSION_STRING \
-    "\u202A" STR(SFML_VERSION_MAJOR) "." STR(SFML_VERSION_MINOR) "." STR(SFML_VERSION_PATCH) "\u202C"
-
-
 namespace
 {
 std::filesystem::path resourcesDir()
@@ -37,6 +29,9 @@ constexpr auto windowWidth           = 1200u;
 constexpr auto textSize              = 23u;
 constexpr auto textSpacing           = 5.0f;
 constexpr auto rainbowDeltaPerSecond = 60.f;
+
+// NOLINTNEXTLINE(misc-misleading-bidirectional) SFML version string wrapped in unicode directional formatting characters
+const auto sfmlVersionString = "\u202A" + std::string(sf::version().string) + "\u202C";
 } // namespace
 
 
@@ -686,7 +681,7 @@ int main()
     auto& zalgoText               = demoTexts.emplace_back("NotoSerif-Regular.ttf",          u8"Z̴̢̧͕̱͍͖̱̙̲̳͉̘̐̒͜a̴̲̖̖̖͈͉̪͎̜̽̓̀̀̒͌l̸̰͙̳̗͎͙̼͓̭̥͖̾̀̅̏͐̾͊̃͂̾ͅg̷̡̢͚̗͎̰̦͔̰̬͍̖̩̺̞͕̓̃̇ö̴̜̳̼̘̗͖͍̻͎͓̣̮̝̯͉̞́̄̉̀̄͆̈́͛̐̂̾͐̓̄");
     auto& tabText                 = demoTexts.emplace_back("NotoSerif-Regular.ttf",          u8"Tab: >\t<");
     auto& rainboxText             = demoTexts.emplace_back("NotoSerif-Regular.ttf",          u8"Rainbow Text!");
-    auto& bidiText                = demoTexts.emplace_back("NotoNaskhArabic-Regular.ttf",    u8"Aligned multi-line\nنص ثنائي الاتجاه باستخدام مكتبة SFML الإصدار " SFML_VERSION_STRING ".\nالأرقام: 0123456789");
+    auto& bidiText                = demoTexts.emplace_back("NotoNaskhArabic-Regular.ttf",    u8"Aligned multi-line\nنص ثنائي الاتجاه باستخدام مكتبة SFML الإصدار " + sfmlVersionString + u8".\nالأرقام: 0123456789");
     auto& leftAligned             = demoTexts.emplace_back("NotoNaskhArabic-Regular.ttf",    u8"Left-Aligned\nText\nنص محاذي");
     auto& centered                = demoTexts.emplace_back("NotoNaskhArabic-Regular.ttf",    u8"Center-Aligned\nText\nنص محاذي");
     auto& rightAligned            = demoTexts.emplace_back("NotoNaskhArabic-Regular.ttf",    u8"Right-Aligned\nText\nنص محاذي");
@@ -722,7 +717,7 @@ int main()
     leftAligned.setPosition({20.0f, 150.0f});
     leftAligned.setLineAlignment(sf::Text::LineAlignment::Left);
 
-    centered.setPosition({windowWidth / 2.0f, 10.0f});
+    centered.setPosition({windowWidth / 2.0f - 40.0f, 10.0f});
     centered.setLineAlignment(sf::Text::LineAlignment::Center);
 
     rightAligned.setPosition({windowWidth - 20.0f, 600.0f});

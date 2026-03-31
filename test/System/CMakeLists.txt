@@ -13,6 +13,7 @@ set(SYSTEM_SRC
     Utf.test.cpp
     Vector2.test.cpp
     Vector3.test.cpp
+    Version.test.cpp
 )
 sfml_add_test(test-sfml-system "${SYSTEM_SRC}" "")
 target_compile_definitions(test-sfml-system PRIVATE
