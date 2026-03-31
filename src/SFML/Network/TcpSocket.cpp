@@ -154,6 +154,36 @@ bool loadSystemCertificates([[maybe_unused]] mbedtls_x509_crt* x509crt, [[maybe_
     return loadStore("ROOT") && loadStore("CA");
 #elif (defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_ANDROID) || defined(SFML_SYSTEM_FREEBSD) || \
        defined(SFML_SYSTEM_OPENBSD) || defined(SFML_SYSTEM_NETBSD))
+#if defined(SFML_CA_PATH)
+    if (!std::filesystem::exists(SFML_CA_PATH))
+    {
+        sf::err() << "Failed to load CA certificates: " << SFML_CA_PATH << " does not exist" << std::endl;
+        return false;
+    }
+
+    int result{};
+
+    if (std::filesystem::is_directory(SFML_CA_PATH))
+    {
+        result = mbedtls_x509_crt_parse_path(x509crt, SFML_CA_PATH);
+    }
+    else
+    {
+        result = mbedtls_x509_crt_parse_file(x509crt, SFML_CA_PATH);
+    }
+
+    if (result < 0)
+    {
+        sf::err() << "Failed to load CA certificates from " << SFML_CA_PATH << ": " << tlsErrorString(result) << std::endl;
+        return false;
+    }
+    else if (result > 0)
+    {
+        sf::err() << result << " certificates failed to load from " << SFML_CA_PATH << std::endl;
+    }
+
+    return true;
+#else
     auto loadStore = [&](const char* path)
     {
         // Just trying to load all known paths is simpler than specifying paths per distribution
@@ -182,6 +212,7 @@ bool loadSystemCertificates([[maybe_unused]] mbedtls_x509_crt* x509crt, [[maybe_
     return loadStore("/etc/ssl/");
 #elif defined(SFML_SYSTEM_NETBSD)
     return loadStore("/etc/openssl/certs");
+#endif
 #endif
 #elif defined(SFML_SYSTEM_MACOS)
     auto loadStore = [&](SecTrustSettingsDomain domain)
