@@ -1,13 +1,17 @@
 #include <SFML/Graphics.hpp>
+
 #include <SFML/Audio.hpp>
+
 #include <SFML/Network.hpp>
+
 #include <SFML/Window.hpp>
+
 #include <SFML/System.hpp>
 
 // Do we want to showcase direct JNI/NDK interaction?
 // Undefine this to get real cross-platform code.
 // Uncomment this to try JNI access; this seems to be broken in latest NDKs
-// #define USE_JNI
+//#define USE_JNI
 
 #if defined(USE_JNI)
 // These headers are only needed for direct NDK/JDK interaction
@@ -96,7 +100,7 @@ int main(int argc, char* argv[])
     text.setFillColor(sf::Color::Black);
     text.setPosition({10, 10});
 
-    sf::View view = window.getDefaultView();
+    sf::View  view       = window.getDefaultView();
     sf::Color background = sf::Color::White;
 
     // We shouldn't try drawing to the screen while in background
@@ -208,13 +212,13 @@ int main(int argc, char* argv[])
                     if (!inputString.isEmpty())
                         inputString.erase(inputString.getSize() - 1, 1);
                 }
-                    // Enter closes input
+                // Enter closes input
                 else if (unicode == 13 || unicode == '\n' || unicode == '\r')
                 {
                     inputFocused = false;
                     sf::Keyboard::setVirtualKeyboardVisible(false);
                 }
-                    // Printable chars
+                // Printable chars
                 else if (unicode >= 32)
                 {
                     inputString += unicode;

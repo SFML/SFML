@@ -63,8 +63,8 @@ void nativeOnTextInput(JNIEnv* env, jobject /* object */, jstring text)
     if (text == nullptr)
         return;
 
-    const jsize length = env->GetStringLength(text);
-    auto* const chars  = env->GetStringChars(text, nullptr);
+    const jsize       length = env->GetStringLength(text);
+    const auto* const chars  = env->GetStringChars(text, nullptr);
     if (chars == nullptr)
         return;
 
@@ -92,9 +92,10 @@ void registerTextInputCallback(ANativeActivity* activity)
 {
     JNIEnv* env = activity->env;
 
-    const JNINativeMethod methods[]{{const_cast<char*>("nativeOnTextInput"),
-                                     const_cast<char*>("(Ljava/lang/String;)V"),
-                                     reinterpret_cast<void*>(&nativeOnTextInput)}};
+    const std::array<JNINativeMethod, 1> methods{
+        {{const_cast<char*>("nativeOnTextInput"),
+          const_cast<char*>("(Ljava/lang/String;)V"),
+          reinterpret_cast<void*>(&nativeOnTextInput)}}};
 
     jclass activityClass = env->GetObjectClass(activity->clazz);
     if (activityClass == nullptr)
@@ -103,7 +104,7 @@ void registerTextInputCallback(ANativeActivity* activity)
         return;
     }
 
-    if (env->RegisterNatives(activityClass, methods, 1) < 0)
+    if (env->RegisterNatives(activityClass, methods.data(), methods.size()) < 0)
         sf::err() << "Failed to register nativeOnTextInput callback. Java IME bridge will be unavailable." << std::endl;
 
     env->DeleteLocalRef(activityClass);
