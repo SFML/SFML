@@ -1890,6 +1890,12 @@ bool WindowImplX11::processEvent(XEvent& windowEvent)
                 m_previousSize.x = windowEvent.xconfigure.width;
                 m_previousSize.y = windowEvent.xconfigure.height;
             }
+            const sf::Vector2i previousPosition(windowEvent.xconfigure.x, windowEvent.xconfigure.y);
+            if (m_previousPosition != previousPosition)
+            {
+                pushEvent(Event::WindowMoved{previousPosition});
+                m_previousPosition = previousPosition;
+            }
             break;
         }
 
