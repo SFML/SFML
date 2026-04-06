@@ -30,7 +30,7 @@ if(SFML_OS_ANDROID)
     target_link_libraries(sfml-main PRIVATE android)
 
     # Ensure this method is not stripped
-    target_link_options(sfml-main PUBLIC "LINKER:-u ANativeActivity_onCreate")
+    target_link_options(sfml-main PUBLIC "LINKER:-u,ANativeActivity_onCreate")
 
     target_link_libraries(sfml-main PUBLIC SFML::System)
 elseif(SFML_OS_IOS)
