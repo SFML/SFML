@@ -112,7 +112,7 @@ JoystickManager::JoystickManager()
 ////////////////////////////////////////////////////////////
 JoystickManager::~JoystickManager()
 {
-    for (Item& item : m_joysticks) // NOLINT(misc-const-correctness)
+    for (Item& item : m_joysticks)
     {
         if (item.state.connected)
             item.joystick.close();

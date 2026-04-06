@@ -109,9 +109,9 @@ bool JoystickImpl::isConnected(unsigned int index)
 
 
 ////////////////////////////////////////////////////////////
-bool JoystickImpl::open(unsigned int joyIndex)
+bool JoystickImpl::open(unsigned int index)
 {
-    if (joyIndex >= Joystick::Count)
+    if (index >= Joystick::Count)
         return false;
 
     // Retrieve activity states
@@ -144,7 +144,7 @@ bool JoystickImpl::open(unsigned int joyIndex)
         if (!inputDevice->supportsSource(AINPUT_SOURCE_GAMEPAD | AINPUT_SOURCE_JOYSTICK))
             continue;
 
-        if (foundGamepadsSoFar < joyIndex)
+        if (foundGamepadsSoFar < index)
         {
             ++foundGamepadsSoFar;
             continue;
@@ -178,13 +178,14 @@ bool JoystickImpl::open(unsigned int joyIndex)
 
 
 ////////////////////////////////////////////////////////////
-void JoystickImpl::close() const
+void JoystickImpl::close()
 {
     ActivityStates&       states = getActivity();
     const std::lock_guard lock(states.mutex);
 
     if (m_currentDeviceIdx)
         states.joystickStates.erase(*m_currentDeviceIdx);
+    m_currentDeviceIdx.reset();
 }
 
 

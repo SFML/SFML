@@ -51,7 +51,7 @@ public:
     [[nodiscard]] bool open(unsigned int index);
 
     ////////////////////////////////////////////////////////////
-    void close() const;
+    void close();
 
     ////////////////////////////////////////////////////////////
     [[nodiscard]] JoystickCaps getCapabilities() const;
