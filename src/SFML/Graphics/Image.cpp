@@ -37,6 +37,10 @@
 #endif
 
 #define QOI_IMPLEMENTATION
+#define qoi_decode sf_qoi_decode
+#define qoi_encode sf_qoi_encode
+#define qoi_read   sf_qoi_read
+#define qoi_write  sf_qoi_write
 #include <qoi.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
