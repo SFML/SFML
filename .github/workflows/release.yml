@@ -60,17 +60,12 @@ jobs:
     - name: Get CMake and Ninja
       uses: lukka/get-cmake@latest
       with:
-        cmakeVersion: '3.25'
+        cmakeVersion: '3.28'
         ninjaVersion: latest
 
-    - name: Install Linux Dependencies and Tools
+    - name: Install Linux Dependencies
       if: runner.os == 'Linux'
-      run: sudo apt-get update && sudo apt-get install xorg-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev
-
-    - name: Install macOS Tools
-      if: runner.os == 'macOS'
-      run: |
-        brew update
+      run: sudo apt-get update && sudo apt-get install xorg-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libflac-dev libvorbis-dev libmbedtls-dev libssh2-1-dev libharfbuzz-dev libgl1-mesa-dev libegl1-mesa-dev
 
     - name: Cache MinGW x86
       if: matrix.platform.name == 'Windows MinGW x86'
@@ -139,6 +134,7 @@ jobs:
         rm './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/CMakeLists.txt'
         find './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples' -type f -name CMakeLists.txt -delete
         rm -r './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/android'
+        rm -r './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/projects'
         rm -r './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/include'
         rm -r './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/vulkan/vulkan.h'
         rm -r './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/island/stb_perlin.h'
@@ -150,18 +146,22 @@ jobs:
         rm -r './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/cocoa'
         cp ./build/bin/event_handling.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/event_handling'
         cp ./build/bin/ftp.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/ftp'
+        cp ./build/bin/http.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/http'
         cp ./build/bin/island.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/island'
         cp ./build/bin/joystick.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/joystick'
         cp ./build/bin/keyboard.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/keyboard'
         cp ./build/bin/opengl.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/opengl'
         cp ./build/bin/raw_input.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/raw_input'
+        cp ./build/bin/sftp.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/sftp'
         cp ./build/bin/shader.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/shader'
         cp ./build/bin/sockets.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/sockets'
         cp ./build/bin/sound-capture.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/sound_capture'
+        cp ./build/bin/sound-device.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/sound_device'
         cp ./build/bin/sound-effects.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/sound_effects'
         cp ./build/bin/sound.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/sound'
         cp ./build/bin/stencil.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/stencil'
         cp ./build/bin/tennis.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/tennis'
+        cp ./build/bin/text.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/text'
         cp ./build/bin/voip.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/voip'
         cp ./build/bin/vulkan.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/vulkan'
         cp ./build/bin/win32.exe './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/win32'
@@ -175,18 +175,22 @@ jobs:
         cp ./build/bin/X11Example './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/X11'
         cp ./build/bin/event_handling './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/event_handling'
         cp ./build/bin/ftp './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/ftp'
+        cp ./build/bin/http './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/http'
         cp ./build/bin/island './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/island'
         cp ./build/bin/joystick './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/joystick'
         cp ./build/bin/keyboard './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/keyboard'
         cp ./build/bin/opengl './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/opengl'
         cp ./build/bin/raw_input './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/raw_input'
+        cp ./build/bin/sftp './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/sftp'
         cp ./build/bin/shader './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/shader'
         cp ./build/bin/sockets './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/sockets'
         cp ./build/bin/sound-capture './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/sound_capture'
+        cp ./build/bin/sound-device './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/sound_device'
         cp ./build/bin/sound-effects './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/sound_effects'
         cp ./build/bin/sound './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/sound'
         cp ./build/bin/stencil './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/stencil'
         cp ./build/bin/tennis './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/tennis'
+        cp ./build/bin/text './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/text'
         cp ./build/bin/voip './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/voip'
         cp ./build/bin/vulkan './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/vulkan'
         cp ./build/bin/window './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/window'
@@ -200,17 +204,21 @@ jobs:
         cp -r ./build/bin/cocoa.app './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/cocoa'
         cp ./build/bin/event_handling './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/event_handling'
         cp ./build/bin/ftp './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/ftp'
+        cp ./build/bin/http './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/http'
         cp ./build/bin/island './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/island'
         cp ./build/bin/joystick './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/joystick'
         cp ./build/bin/keyboard './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/keyboard'
         cp ./build/bin/opengl './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/opengl'
+        cp ./build/bin/sftp './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/sftp'
         cp ./build/bin/shader './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/shader'
         cp ./build/bin/sockets './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/sockets'
         cp ./build/bin/sound-capture './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/sound_capture'
+        cp ./build/bin/sound-device './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/sound_device'
         cp ./build/bin/sound-effects './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/sound_effects'
         cp ./build/bin/sound './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/sound'
         cp ./build/bin/stencil './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/stencil'
         cp ./build/bin/tennis './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/tennis'
+        cp ./build/bin/text './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/text'
         cp ./build/bin/voip './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/voip'
         cp ./build/bin/vulkan './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/vulkan'
         cp ./build/bin/window './SFML-${{ matrix.platform.name }}-${{ matrix.config.name }}-${{ matrix.type.name }}/examples/window'
