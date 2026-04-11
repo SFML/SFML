@@ -692,6 +692,34 @@ bool AudioDevice::initialize()
     playbackDeviceConfig.playback.format    = ma_format_f32;
     playbackDeviceConfig.playback.pDeviceID = deviceId ? &*deviceId : nullptr;
 
+    // Set the period size to 64 frames worth of data
+    // This value serves as a buffer size hint to the device driver but
+    // will be clamped to stay within valid minimum and maximum values
+    // The value also determines the rate at which data is pulled through
+    // the audio node graph
+    // Leaving this value at the default of 0 would instruct miniaudio to
+    // automatically determine how much data it should attempt to pull
+    // through the node graph every time new data is required
+    // When playing very short audio clips with a low frame count the total
+    // number of frames might not be enough to fill the allocated buffer
+    // This is more likely the higher the device sample rate is due to a
+    // bigger frame buffer being allocated to accomodate higher sample rate data
+    // Testing shows that if the buffer cannot be entirely filled with data,
+    // playing the short audio clip will lead to no audio being output until
+    // enough data has been pulled through the node graph to fill an entire
+    // buffer worth of data, subsequent playing of the audio clip after the
+    // buffer has already been filled the first time plays without issues
+    // In order to support playing short audio clips we therefore have to
+    // explicitly set periodSizeInFrames to a low value to ensure that initial
+    // data does not get stuck in the buffer which would lead to no output
+    // Decreasing periodSizeInFrames technically does increase CPU load since
+    // data is pulled through the node graph more frequently but empirical
+    // testing shows that this additional overhead is not significant
+    // If this does cause issues we would have to expose setting this value
+    // through the public API so the developer can set it to an appropriate
+    // value depending on the audio data they intend to play
+    playbackDeviceConfig.periodSizeInFrames = 64;
+
     if (const auto result = ma_device_init(&*m_context, &playbackDeviceConfig, &*m_playbackDevice); result != MA_SUCCESS)
     {
         m_playbackDevice.reset();
