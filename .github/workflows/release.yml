@@ -60,17 +60,12 @@ jobs:
     - name: Get CMake and Ninja
       uses: lukka/get-cmake@latest
       with:
-        cmakeVersion: '3.25'
+        cmakeVersion: '3.28'
         ninjaVersion: latest
 
-    - name: Install Linux Dependencies and Tools
+    - name: Install Linux Dependencies
       if: runner.os == 'Linux'
-      run: sudo apt-get update && sudo apt-get install xorg-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev
-
-    - name: Install macOS Tools
-      if: runner.os == 'macOS'
-      run: |
-        brew update
+      run: sudo apt-get update && sudo apt-get install xorg-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libflac-dev libvorbis-dev libmbedtls-dev libssh2-1-dev libharfbuzz-dev libgl1-mesa-dev libegl1-mesa-dev
 
     - name: Cache MinGW x86
       if: matrix.platform.name == 'Windows MinGW x86'
