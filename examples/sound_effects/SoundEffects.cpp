@@ -811,7 +811,8 @@ struct HighPassFilter : BiquadFilter
     {
         static constexpr auto cutoffFrequency = 2000.f;
 
-        const auto c = std::tan(pi * cutoffFrequency / static_cast<float>(getMusic().getSampleRate()));
+        const auto c = std::tan(
+            pi * cutoffFrequency / static_cast<float>(sf::PlaybackDevice::getDeviceSampleRate().value_or(44100)));
 
         Coefficients coefficients;
 
@@ -835,7 +836,8 @@ struct LowPassFilter : BiquadFilter
     {
         static constexpr auto cutoffFrequency = 500.f;
 
-        const auto c = 1.f / std::tan(pi * cutoffFrequency / static_cast<float>(getMusic().getSampleRate()));
+        const auto c = 1.f / std::tan(pi * cutoffFrequency /
+                                      static_cast<float>(sf::PlaybackDevice::getDeviceSampleRate().value_or(44100)));
 
         Coefficients coefficients;
 
@@ -864,7 +866,7 @@ struct Echo : Processing
         static constexpr auto wet   = 0.8f;
         static constexpr auto dry   = 1.f;
 
-        const auto sampleRate    = music.getSampleRate();
+        const auto sampleRate    = sf::PlaybackDevice::getDeviceSampleRate().value_or(44100);
         const auto delayInFrames = static_cast<unsigned int>(static_cast<float>(sampleRate) * delay);
 
         // We use a mutable lambda to tie the lifetime of the state to the lambda itself
@@ -930,7 +932,7 @@ public:
         // this lambda hence we need to always have a usable state until the Music and the
         // associated lambda are destroyed
         music.setEffectProcessor(
-            [sampleRate = music.getSampleRate(),
+            [sampleRate = sf::PlaybackDevice::getDeviceSampleRate().value_or(44100),
              filters    = std::vector<ReverbFilter<float>>(),
              enabled    = getEnabled()](const float*  inputFrames,
                                      unsigned int& inputFrameCount,
