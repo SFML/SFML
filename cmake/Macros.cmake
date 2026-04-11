@@ -44,7 +44,6 @@ function(sfml_set_common_ios_properties target)
     get_target_property(target_type ${target} TYPE)
     if(target_type STREQUAL "EXECUTABLE")
         set_target_properties(${target} PROPERTIES
-            MACOSX_BUNDLE ON # Bare executables are not usable on iOS, only bundle applications
             MACOSX_BUNDLE_GUI_IDENTIFIER "org.sfml-dev.${target}" # If missing, trying to launch an example in simulator will make Xcode < 9.3 crash
             MACOSX_BUNDLE_BUNDLE_NAME "${target}"
             MACOSX_BUNDLE_BUNDLE_VERSION "${PROJECT_VERSION}"
@@ -318,20 +317,30 @@ macro(sfml_add_example target)
     if(THIS_GUI_APP AND SFML_OS_WINDOWS AND NOT DEFINED CMAKE_CONFIGURATION_TYPES AND ${CMAKE_BUILD_TYPE} STREQUAL "Release")
         add_executable(${target} WIN32 ${target_input})
         target_link_libraries(${target} PRIVATE SFML::Main)
-    elseif(THIS_GUI_APP AND SFML_OS_IOS)
-
-        # For iOS apps we need the launch screen storyboard,
-        # and a custom info.plist to use it
-        set(LAUNCH_SCREEN "${PROJECT_SOURCE_DIR}/examples/assets/LaunchScreen.storyboard")
-        set(LOGO "${PROJECT_SOURCE_DIR}/examples/assets/logo.png")
+    elseif(THIS_GUI_APP AND (SFML_OS_IOS OR SFML_OS_MACOS))
         set(INFO_PLIST "${PROJECT_SOURCE_DIR}/examples/assets/info.plist")
         set(ICONS "${PROJECT_SOURCE_DIR}/examples/assets/icon.icns")
-        add_executable(${target} MACOSX_BUNDLE ${target_input} ${LAUNCH_SCREEN} ${LOGO} ${ICONS})
-        set(RESOURCES ${LAUNCH_SCREEN} ${LOGO} ${ICONS})
+        set(RESOURCES ${ICONS})
+
+        if(SFML_OS_IOS)
+            # For iOS apps we also need the launch screen storyboard and logo
+            set(LAUNCH_SCREEN "${PROJECT_SOURCE_DIR}/examples/assets/LaunchScreen.storyboard")
+            set(LOGO "${PROJECT_SOURCE_DIR}/examples/assets/logo.png")
+            list(APPEND RESOURCES ${LAUNCH_SCREEN} ${LOGO})
+        endif()
+
+        if(THIS_BUNDLE_RESOURCES)
+            # Put the required resources in the app bundle, respecting their relative paths
+            foreach(resource ${THIS_BUNDLE_RESOURCES})
+                cmake_path(GET resource PARENT_PATH resource_parent)
+                set_source_files_properties(${resource} PROPERTIES MACOSX_PACKAGE_LOCATION Resources/${resource_parent})
+            endforeach()
+        endif()
+
+        add_executable(${target} MACOSX_BUNDLE ${target_input} ${RESOURCES})
         set_target_properties(${target} PROPERTIES RESOURCE "${RESOURCES}"
                                                    MACOSX_BUNDLE_INFO_PLIST ${INFO_PLIST}
                                                    MACOSX_BUNDLE_ICON_FILE icon.icns)
-        target_link_libraries(${target} PRIVATE SFML::Main)
     elseif(THIS_GUI_APP AND SFML_OS_ANDROID)
         # Executables on android are shared libraries loaded by the native activity
         add_library(${target} SHARED ${target_input})
@@ -377,6 +386,7 @@ macro(sfml_add_example target)
 
     if(SFML_OS_IOS)
         sfml_set_common_ios_properties(${target})
+        target_link_libraries(${target} PRIVATE SFML::Main)
     endif()
 
     if(SFML_OS_WINDOWS AND SFML_USE_MESA3D)
