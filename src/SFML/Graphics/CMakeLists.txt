@@ -152,6 +152,7 @@ else()
         set(HB_BUILD_SUBSET OFF)
         set(HB_BUILD_RASTER OFF)
         set(HB_BUILD_VECTOR OFF)
+        set(HB_BUILD_GPU OFF)
         set(HB_HAVE_FREETYPE ON)
         set(HB_HAVE_CORETEXT OFF)
 
