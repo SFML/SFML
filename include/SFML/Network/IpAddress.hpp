@@ -63,6 +63,8 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Construct the address from a null-terminated string view
     ///
+    /// \deprecated Use `sf::Dns::resolve()` instead.
+    ///
     /// Here \a address can be either a decimal address
     /// (ex: "192.168.1.56") or a network name (ex: "localhost").
     ///
@@ -74,7 +76,8 @@ public:
     /// \return Address if provided argument was valid, otherwise `std::nullopt`
     ///
     ////////////////////////////////////////////////////////////
-    [[deprecated("Use Dns::resolve() instead")]] [[nodiscard]] static std::optional<IpAddress> resolve(std::string_view address);
+    [[deprecated("Use sf::Dns::resolve() instead")]] [[nodiscard]] static std::optional<IpAddress> resolve(
+        std::string_view address);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct an IPv4 address from 4 bytes
