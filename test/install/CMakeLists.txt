@@ -7,7 +7,7 @@ if(PROJECT_IS_TOP_LEVEL)
         set(SFML_STATIC_LIBRARIES ON)
     endif()
 
-    find_package(SFML 3.1.0 EXACT CONFIG REQUIRED COMPONENTS Graphics Network Audio)
+    find_package(SFML 3.2.0 EXACT CONFIG REQUIRED COMPONENTS Graphics Network Audio)
 endif()
 
 add_executable(test-sfml-install Install.cpp)
