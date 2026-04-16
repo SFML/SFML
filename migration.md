@@ -1,4 +1,172 @@
-# Migration Guide
+# Migration from SFML 3.0 to SFML 3.1
+
+> [!NOTE]
+> For migrating from SFML 2, see the [Migration from SFML 2 to SFML 3](#migration-from-SFML-2-to-SFML-3) section below.
+
+Welcome to SFML 3.1!  
+This release brings major improvements to text layout, networking, audio device management, and more.
+
+## Dependencies
+
+We've introduced a bunch of new dependencies to cover all the improvements:
+
+- FetchContent / System Dependency
+  - [HarfBuzz](https://github.com/harfbuzz/harfbuzz) for complex text layouts
+  - [SheenBidi](https://github.com/Tehreer/SheenBidi) for correct bidirectional text rendering
+  - [Mbed TLS](https://github.com/Mbed-TLS/mbedtls) for TLS support
+  - [libssh2](https://github.com/libssh2/libssh2) for SFTP support
+- Header-only
+  - [cpp-unicodelib](https://github.com/yhirose/cpp-unicodelib) for proper Unicode support
+  - [wepoll](https://github.com/piscisaureus/wepoll) for an improved SocketSelector
+  - [qoi](https://github.com/phoboslab/qoi) to support the QOI image format
+
+## Deprecations
+
+Deprecated functions remain available and fully functional, though you may receive a compiler warning.
+It is recommended to migrate to the alternatives described below, as they generally provide noticable improvements.
+
+### Font Kerning
+
+The `sf::Font::getKerning` overload that uses `std::uint32_t` to represent Unicode code points has been deprecated.
+Use the overload that takes `char32_t` instead.
+The behavior is identical - only the parameter type changes.
+
+v3.0:
+```cpp
+float kerning = font.getKerning(static_cast<std::uint32_t>('A'),
+                                static_cast<std::uint32_t>('V'),
+                                30);
+```
+
+v3.1:
+```cpp
+float kerning = font.getKerning(U'A', U'V', 30);
+```
+
+### Character Positions in Text
+
+`sf::Text::findCharacterPos(std::size_t index)` has been deprecated in favor of `getShapedGlyphs()`.
+
+The old function returned the global-space position of a single character.
+The new function returns the full list of `ShapedGlyph` objects produced during text shaping, giving you access to each glyph's local position, cluster ID, text direction, and baseline in addition to the underlying `sf::Glyph` data.
+
+```cpp
+struct ShapedGlyph
+{
+    Glyph         glyph;         // Glyph data
+    Vector2f      position;      // Local position within the text
+    std::uint32_t cluster;       // Cluster ID (multiple glyphs may share a cluster)
+    TextDirection textDirection; // Direction of the surrounding text run
+    float         baseline;      // Baseline Y position of the line this glyph is on
+    std::size_t   vertexOffset;  // Starting offset into the vertex buffer
+    std::size_t   vertexCount;   // Number of vertices for this glyph
+};
+```
+
+To migrate, iterate over the shaped glyphs and use the `position` field.
+
+> [!NOTE]
+> Note that `getShapedGlyphs()` returns positions in local coordinates, while `findCharacterPos()` returned global coordinates.
+> Apply the text's transform yourself if you need global coordinates.
+
+v3.0:
+```cpp
+// Find the position of the 5th character (global space)
+sf::Vector2f pos = text.findCharacterPos(4);
+```
+
+v3.1:
+```cpp
+// Find the position of the glyph belonging to the 5th character (local space)
+const auto& glyphs = text.getShapedGlyphs();
+if (glyphs.size() > 4)
+{
+    sf::Vector2f localPos = glyphs[4].position;
+    // Convert to global space if needed:
+    sf::Vector2f globalPos = text.getTransform().transformPoint(localPos);
+}
+```
+
+Multiple Unicode code points can form a single grapheme cluster (for example, a base character combined with a combining accent).
+When this happens, several consecutive entries in the glyph list will share the same `cluster` value.
+If you are implementing a text cursor, treat all glyphs in the same cluster as a single unit.
+
+### Real-Time Touch Input
+
+`sf::Touch::isDown(unsigned int finger)` and both overloads of `sf::Touch::getPosition(unsigned int finger)` have been deprecated.
+On Android these functions could crash when queried for a finger that is not currently down; the event-driven approach is always safe.
+
+Use the `position` member of the relevant touch events instead:
+
+| Deprecated function      | Replacement                                                                                      |
+|--------------------------|--------------------------------------------------------------------------------------------------|
+| `sf::Touch::isDown`      | `sf::Event::TouchBegan` / `sf::Event::TouchEnded`                                                |
+| `sf::Touch::getPosition` | `position` field of `sf::Event::TouchBegan`, `sf::Event::TouchMoved`, or `sf::Event::TouchEnded` |
+
+v3.0:
+```cpp
+if (sf::Touch::isDown(0))
+{
+    sf::Vector2i pos = sf::Touch::getPosition(0);
+    // use pos
+}
+```
+
+v3.1:
+```cpp
+// In your event loop:
+window.handleEvents([&](const sf::Event::TouchBegan& touch)
+{
+    if (touch.finger == 0)
+    {
+        sf::Vector2i pos = touch.position;
+        // use pos
+    }
+},
+[&](const sf::Event::TouchMoved& touch)
+{
+    if (touch.finger == 0)
+    {
+        sf::Vector2i pos = touch.position;
+        // use pos
+    }
+});
+```
+
+### FTP Client
+
+`sf::Ftp` has been deprecated in favor of the new `sf::Sftp` class.
+FTP transmits credentials and data in plain text, making SFTP the strongly preferred alternative for any new code.
+
+### Hostname Resolution
+
+`sf::IpAddress::resolve(std::string_view address)` has been deprecated.
+It only resolves to IPv4 addresses and lacks control over the DNS servers or timeout.
+
+Use `sf::Dns::resolve()` instead, which supports both IPv4 and IPv6 and gives you full control over the query.
+
+v3.0:
+```cpp
+std::optional<sf::IpAddress> address = sf::IpAddress::resolve("www.sfml-dev.org");
+if (address)
+{
+    // use *address
+}
+```
+
+v3.1:
+```cpp
+std::optional<std::vector<sf::IpAddress>> addresses = sf::Dns::resolve("www.sfml-dev.org");
+if (addresses && !addresses->empty())
+{
+    sf::IpAddress address = addresses->front();
+    // use address
+}
+```
+
+---
+
+# Migration from SFML 2 to SFML 3
 
 Welcome to SFML 3!
 The SFML Team has put a lot of effort into delivering a library that is both familiar to existing users while also making significant improvements.
