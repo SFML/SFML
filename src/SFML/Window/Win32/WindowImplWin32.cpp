@@ -760,18 +760,33 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Resize event
         case WM_SIZE:
         {
-            // Consider only events triggered by a maximize or a un-maximize
-            if (wParam != SIZE_MINIMIZED && !m_resizing && m_lastSize != getSize())
+            switch (wParam)
             {
-                // Update the last handled size
-                m_lastSize = getSize();
-
-                // Push a resize event
-                pushEvent(Event::Resized{m_lastSize});
-
-                // Restore/update cursor grabbing
-                grabCursor(m_cursorGrabbed);
+                case SIZE_MINIMIZED:
+                    pushEvent(Event::Minimized{});
+                    break;
+                case SIZE_MAXIMIZED:
+                    pushEvent(Event::Maximized{});
+                    m_lastSize = getSize();
+                    pushEvent(Event::Resized{m_lastSize});
+                    break;
+                case SIZE_RESTORED:
+                    m_lastSize = getSize();
+                    pushEvent(Event::Resized{m_lastSize});
+                    break;
+                default:
+                {
+                    if (!m_resizing && m_lastSize != getSize())
+                    {
+                        // Push a resize event
+                        pushEvent(Event::Resized{m_lastSize});
+                    }
+                    break;
+                }
             }
+
+            // Restore/update cursor grabbing
+            grabCursor(m_cursorGrabbed);
             break;
         }
 
