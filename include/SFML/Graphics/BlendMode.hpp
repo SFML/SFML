@@ -28,7 +28,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
-
+#include <SFML/Graphics/Color.hpp>
 
 namespace sf
 {
@@ -47,16 +47,20 @@ struct SFML_GRAPHICS_API BlendMode
     ////////////////////////////////////////////////////////
     enum class Factor
     {
-        Zero,             //!< (0, 0, 0, 0)
-        One,              //!< (1, 1, 1, 1)
-        SrcColor,         //!< (src.r, src.g, src.b, src.a)
-        OneMinusSrcColor, //!< (1, 1, 1, 1) - (src.r, src.g, src.b, src.a)
-        DstColor,         //!< (dst.r, dst.g, dst.b, dst.a)
-        OneMinusDstColor, //!< (1, 1, 1, 1) - (dst.r, dst.g, dst.b, dst.a)
-        SrcAlpha,         //!< (src.a, src.a, src.a, src.a)
-        OneMinusSrcAlpha, //!< (1, 1, 1, 1) - (src.a, src.a, src.a, src.a)
-        DstAlpha,         //!< (dst.a, dst.a, dst.a, dst.a)
-        OneMinusDstAlpha  //!< (1, 1, 1, 1) - (dst.a, dst.a, dst.a, dst.a)
+        Zero,               //!< (0, 0, 0, 0)
+        One,                //!< (1, 1, 1, 1)
+        SrcColor,           //!< (src.r, src.g, src.b, src.a)
+        OneMinusSrcColor,   //!< (1, 1, 1, 1) - (src.r, src.g, src.b, src.a)
+        DstColor,           //!< (dst.r, dst.g, dst.b, dst.a)
+        OneMinusDstColor,   //!< (1, 1, 1, 1) - (dst.r, dst.g, dst.b, dst.a)
+        SrcAlpha,           //!< (src.a, src.a, src.a, src.a)
+        OneMinusSrcAlpha,   //!< (1, 1, 1, 1) - (src.a, src.a, src.a, src.a)
+        DstAlpha,           //!< (dst.a, dst.a, dst.a, dst.a)
+        OneMinusDstAlpha,   //!< (1, 1, 1, 1) - (dst.a, dst.a, dst.a, dst.a)
+        ConstColor,         //!< (cnst.r, cnst.g, cnst.b, cnst.a)
+        OneMinusConstColor, //!< (1, 1, 1, 1) - (cnst.r, cnst.g, cnst.b, cnst.a)
+        ConstAlpha,         //!< (cnst.a, cnst.a, cnst.a, cnst.a)
+        OneMinusConstAlpha  //!< (1, 1, 1, 1) - (cnst.a, cnst.a, cnst.a, cnst.a)
     };
 
     ////////////////////////////////////////////////////////
@@ -122,6 +126,7 @@ struct SFML_GRAPHICS_API BlendMode
     Factor   alphaSrcFactor{BlendMode::Factor::One};            //!< Source blending factor for the alpha channel
     Factor   alphaDstFactor{BlendMode::Factor::OneMinusSrcAlpha}; //!< Destination blending factor for the alpha channel
     Equation alphaEquation{BlendMode::Equation::Add};             //!< Blending equation for the alpha channel
+    Color constColor;
 };
 
 ////////////////////////////////////////////////////////////
