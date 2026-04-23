@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 
 #include <SFML/Window/InputImpl.hpp>
+#include <SFML/Window/MonitorImpl.hpp>
 #include <SFML/Window/Unix/ClipboardImpl.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/Unix/KeyboardImpl.hpp>
@@ -64,6 +65,7 @@
 #include <vector>
 
 #include <cassert>
+#include <cstdint>
 #include <cstring>
 
 #ifdef SFML_OPENGL_ES
@@ -456,6 +458,20 @@ bool initRawMouse(::Display* disp)
 
     return false;
 }
+
+// Area of intersection between two axis-aligned rectangles, given as position + size, in the same coordinate space
+std::uint64_t getOverlapArea(sf::Vector2i aPosition, sf::Vector2u aSize, sf::Vector2i bPosition, sf::Vector2u bSize)
+{
+    const int left   = std::max(aPosition.x, bPosition.x);
+    const int top    = std::max(aPosition.y, bPosition.y);
+    const int right  = std::min(aPosition.x + static_cast<int>(aSize.x), bPosition.x + static_cast<int>(bSize.x));
+    const int bottom = std::min(aPosition.y + static_cast<int>(aSize.y), bPosition.y + static_cast<int>(bSize.y));
+
+    if (right <= left || bottom <= top)
+        return 0;
+
+    return static_cast<std::uint64_t>(right - left) * static_cast<std::uint64_t>(bottom - top);
+}
 } // namespace WindowImplX11Impl
 } // namespace
 
@@ -469,39 +485,6 @@ struct XDeleter<XImage>
     void operator()(XImage* image) const
     {
         XDestroyImage(image);
-    }
-};
-
-
-////////////////////////////////////////////////////////////
-template <>
-struct XDeleter<XRRScreenResources>
-{
-    void operator()(XRRScreenResources* res) const
-    {
-        XRRFreeScreenResources(res);
-    }
-};
-
-
-////////////////////////////////////////////////////////////
-template <>
-struct XDeleter<XRROutputInfo>
-{
-    void operator()(XRROutputInfo* outputInfo) const
-    {
-        XRRFreeOutputInfo(outputInfo);
-    }
-};
-
-
-////////////////////////////////////////////////////////////
-template <>
-struct XDeleter<XRRCrtcInfo>
-{
-    void operator()(XRRCrtcInfo* crtcInfo) const
-    {
-        XRRFreeCrtcInfo(crtcInfo);
     }
 };
 
@@ -565,7 +548,7 @@ WindowImplX11::WindowImplX11(VideoMode mode, const String& title, std::uint32_t 
     // on the position passed to XCreateWindow instead of
     // WM_NORMAL_HINTS the non-fullscreen window will be
     // placed at the top-left corner of the default screen
-    const auto windowPosition = m_fullscreen ? getPrimaryMonitorPosition() : Vector2i{};
+    const auto windowPosition = m_fullscreen ? getPrimaryPosition() : Vector2i{};
 
     const unsigned int width  = mode.size.x;
     const unsigned int height = mode.size.y;
@@ -773,6 +756,20 @@ WindowImplX11::WindowImplX11(VideoMode mode, const String& title, std::uint32_t 
         setVideoMode(mode);
         switchToFullscreen();
     }
+}
+
+
+////////////////////////////////////////////////////////////
+WindowImplX11::WindowImplX11(VideoMode              mode,
+                             const String&          title,
+                             std::uint32_t          style,
+                             State                  state,
+                             const Monitor&         monitor,
+                             const ContextSettings& settings) :
+    WindowImplX11(mode, title, style, state, settings)
+{
+    // Position window on the specified monitor
+    setMonitor(monitor);
 }
 
 
@@ -1013,6 +1010,165 @@ void WindowImplX11::setMaximumSize(const std::optional<Vector2u>& maximumSize)
 {
     WindowImpl::setMaximumSize(maximumSize);
     setWindowSizeConstraints();
+}
+
+
+////////////////////////////////////////////////////////////
+Monitor WindowImplX11::getMonitor() const
+{
+    using namespace WindowImplX11Impl;
+
+    const Vector2i windowPos  = getPosition();
+    const Vector2u windowSize = getSize();
+
+    // Pick whichever monitor covers the largest area of the window, rather than just
+    // testing its top-left corner, so a window spanning multiple monitors is attributed
+    // to the one it's mostly on.
+    const Monitor* bestMonitor = nullptr;
+    std::uint64_t  bestOverlap = 0;
+
+    const auto monitors = Monitor::getAvailableMonitors();
+    for (const auto& monitor : monitors)
+    {
+        const std::uint64_t overlap = getOverlapArea(windowPos, windowSize, monitor.getPosition(), monitor.getResolution());
+
+        if (overlap > bestOverlap)
+        {
+            bestOverlap = overlap;
+            bestMonitor = &monitor;
+        }
+    }
+
+    // If the window doesn't overlap any monitor, fall back to the primary monitor
+    return bestMonitor ? *bestMonitor : Monitor::getPrimary();
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplX11::setMonitor(const Monitor& monitor)
+{
+    using namespace WindowImplX11Impl;
+
+    // Check if the XRandR extension is present
+    if (!checkXRandR())
+    {
+        err() << "XRandR not available, cannot switch monitors" << std::endl;
+        return;
+    }
+
+    // Get root window
+    const ::Window rootWindow = RootWindow(m_display.get(), m_screen);
+
+    // Get the screen resources
+    const auto res = X11Ptr<XRRScreenResources>(XRRGetScreenResources(m_display.get(), rootWindow));
+    if (!res)
+    {
+        err() << "Failed to get screen resources for monitor switching" << std::endl;
+        return;
+    }
+
+    // Find the output matching the monitor identifier
+    RROutput          targetOutput = None;
+    const std::string monitorId    = monitor.getIdentifier().toAnsiString();
+
+    for (int i = 0; i < res->noutput; ++i)
+    {
+        const auto outputInfo = X11Ptr<XRROutputInfo>(XRRGetOutputInfo(m_display.get(), res.get(), res->outputs[i]));
+        if (outputInfo && outputInfo->name)
+        {
+            const std::string outputName(outputInfo->name);
+            if (outputName == monitorId)
+            {
+                targetOutput = res->outputs[i];
+                break;
+            }
+        }
+    }
+
+    if (targetOutput == None)
+    {
+        err() << "Monitor with identifier '" << monitorId << "' not found" << std::endl;
+        return;
+    }
+
+    // Get target output info
+    const auto targetOutputInfo = X11Ptr<XRROutputInfo>(XRRGetOutputInfo(m_display.get(), res.get(), targetOutput));
+    if (!targetOutputInfo || targetOutputInfo->connection != RR_Connected)
+    {
+        err() << "Target monitor is disconnected or unavailable" << std::endl;
+        return;
+    }
+
+    // Get target CRTC info
+    const auto targetCrtcInfo = X11Ptr<XRRCrtcInfo>(XRRGetCrtcInfo(m_display.get(), res.get(), targetOutputInfo->crtc));
+    if (!targetCrtcInfo)
+    {
+        err() << "Failed to get CRTC info for target monitor" << std::endl;
+        return;
+    }
+
+    // Move the window to the target monitor's position
+    const Vector2i targetPos(static_cast<int>(targetCrtcInfo->x), static_cast<int>(targetCrtcInfo->y));
+    setPosition(targetPos);
+
+    // If the window is in fullscreen mode, update the fullscreen to use the new monitor
+    if (m_fullscreen)
+    {
+        // Get the window's current video mode
+        const Vector2u windowSize = getSize();
+
+        // Find a matching mode on the target output
+        bool   modeFound  = false;
+        RRMode targetMode = 0;
+
+        for (int i = 0; i < res->nmode; ++i)
+        {
+            // Handle rotation
+            unsigned int modeWidth  = res->modes[i].width;
+            unsigned int modeHeight = res->modes[i].height;
+
+            if (targetCrtcInfo->rotation == RR_Rotate_90 || targetCrtcInfo->rotation == RR_Rotate_270)
+                std::swap(modeWidth, modeHeight);
+
+            // Check if this mode is available on the target output
+            bool modeAvailable = false;
+            for (int j = 0; j < targetOutputInfo->nmode; ++j)
+            {
+                if (targetOutputInfo->modes[j] == res->modes[i].id)
+                {
+                    modeAvailable = true;
+                    break;
+                }
+            }
+
+            if (modeAvailable && modeWidth == windowSize.x && modeHeight == windowSize.y)
+            {
+                targetMode = res->modes[i].id;
+                modeFound  = true;
+                break;
+            }
+        }
+
+        if (modeFound)
+        {
+            // Apply the new video mode on the target CRTC
+            const int result = XRRSetCrtcConfig(m_display.get(),
+                                                res.get(),
+                                                targetOutputInfo->crtc,
+                                                CurrentTime,
+                                                targetCrtcInfo->x,
+                                                targetCrtcInfo->y,
+                                                targetMode,
+                                                targetCrtcInfo->rotation,
+                                                &targetOutput,
+                                                1);
+
+            if (result != RRSetConfigSuccess)
+            {
+                err() << "Failed to set video mode on target monitor" << std::endl;
+            }
+        }
+    }
 }
 
 
@@ -2242,7 +2398,7 @@ RROutput WindowImplX11::getOutputPrimary(::Window& rootWindow, XRRScreenResource
 
 
 ////////////////////////////////////////////////////////////
-Vector2i WindowImplX11::getPrimaryMonitorPosition()
+Vector2i WindowImplX11::getPrimaryPosition()
 {
     Vector2i monitorPosition;
 

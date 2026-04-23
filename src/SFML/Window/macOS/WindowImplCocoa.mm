@@ -26,6 +26,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/MonitorImpl.hpp>
 #include <SFML/Window/macOS/AutoreleasePoolWrapper.hpp>
 #import <SFML/Window/macOS/SFApplication.h>
 #import <SFML/Window/macOS/SFApplicationDelegate.h>
@@ -38,6 +39,8 @@
 #include <SFML/System/Err.hpp>
 #include <SFML/System/String.hpp>
 
+#include <algorithm>
+#include <cstdint>
 #include <limits>
 #include <ostream>
 
@@ -93,6 +96,22 @@ void showMouseCursor()
         isCursorHidden = false;
     }
 }
+
+
+////////////////////////////////////////////////////////
+// Area of intersection between two axis-aligned rectangles, given as position + size, in the same coordinate space
+std::uint64_t getOverlapArea(Vector2i aPosition, Vector2u aSize, Vector2i bPosition, Vector2u bSize)
+{
+    const int left   = std::max(aPosition.x, bPosition.x);
+    const int top    = std::max(aPosition.y, bPosition.y);
+    const int right  = std::min(aPosition.x + static_cast<int>(aSize.x), bPosition.x + static_cast<int>(bSize.x));
+    const int bottom = std::min(aPosition.y + static_cast<int>(aSize.y), bPosition.y + static_cast<int>(bSize.y));
+
+    if (right <= left || bottom <= top)
+        return 0;
+
+    return static_cast<std::uint64_t>(right - left) * static_cast<std::uint64_t>(bottom - top);
+}
 } // namespace
 
 #pragma mark
@@ -143,6 +162,20 @@ WindowImplCocoa::WindowImplCocoa(VideoMode mode, const String& title, std::uint3
 
     // Finally, set up keyboard helper
     initialiseKeyboardHelper();
+}
+
+
+////////////////////////////////////////////////////////////
+WindowImplCocoa::WindowImplCocoa(VideoMode              mode,
+                                 const String&          title,
+                                 std::uint32_t          style,
+                                 State                  state,
+                                 const Monitor&         monitor,
+                                 const ContextSettings& settings) :
+    WindowImplCocoa(mode, title, style, state, settings)
+{
+    // Position window on the specified monitor
+    setMonitor(monitor);
 }
 
 
@@ -381,6 +414,71 @@ void WindowImplCocoa::setSize(Vector2u size)
     sf::Vector2u backingSize = size;
     scaleInXY(backingSize, m_delegate);
     [m_delegate resizeTo:backingSize];
+}
+
+
+////////////////////////////////////////////////////////////
+Monitor WindowImplCocoa::getMonitor() const
+{
+    const Vector2i windowPos  = getPosition();
+    const Vector2u windowSize = getSize();
+
+    // Pick whichever monitor covers the largest area of the window, rather than just
+    // testing its top-left corner, so a window spanning multiple monitors is attributed
+    // to the one it's mostly on.
+    const Monitor* bestMonitor = nullptr;
+    std::uint64_t  bestOverlap = 0;
+
+    const auto monitors = Monitor::getAvailableMonitors();
+    for (const auto& monitor : monitors)
+    {
+        const std::uint64_t overlap = getOverlapArea(windowPos, windowSize, monitor.getPosition(), monitor.getResolution());
+
+        if (overlap > bestOverlap)
+        {
+            bestOverlap = overlap;
+            bestMonitor = &monitor;
+        }
+    }
+
+    // If the window doesn't overlap any monitor, fall back to the primary monitor
+    return bestMonitor ? *bestMonitor : Monitor::getPrimary();
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplCocoa::setMonitor(const Monitor& monitor)
+{
+    const AutoreleasePool pool;
+
+    // Get all available monitors to find the matching one
+    auto monitors = Monitor::getAvailableMonitors();
+
+    for (const auto& availableMonitor : monitors)
+    {
+        if (availableMonitor.getIdentifier() == monitor.getIdentifier())
+        {
+            // Found the matching monitor, get its position
+            const Vector2i monitorPos = availableMonitor.getPosition();
+
+            // Convert position to a CGPoint and move the window
+            // Note: Cocoa uses bottom-left origin, but getPosition already handles this conversion
+            const NSPoint windowPos = NSMakePoint(monitorPos.x, monitorPos.y);
+
+            // Get the window frame and adjust its origin to the monitor position
+            NSRect frame = [m_delegate.window frame];
+            frame.origin = windowPos;
+
+            // Move the window to the target monitor
+            [m_delegate.window setFrame:frame display:YES animate:NO];
+
+            return;
+        }
+    }
+
+    // Monitor not found - log error
+    const std::string identifierStr = monitor.getIdentifier().toAnsiString();
+    err() << "Monitor with identifier '" << identifierStr << "' not found" << std::endl;
 }
 
 

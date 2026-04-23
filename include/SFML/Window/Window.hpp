@@ -92,6 +92,30 @@ public:
            const ContextSettings& settings = {});
 
     ////////////////////////////////////////////////////////////
+    /// \brief Construct a new window on a specific monitor
+    ///
+    /// This constructor creates the window on the specified monitor with the size and pixel
+    /// depth defined in `mode`. An optional style can be passed to customize the look and
+    /// behavior of the window (borders, title bar, resizable, closable, ...).
+    ///
+    /// The last two parameters specify the window state and advanced OpenGL context settings.
+    ///
+    /// \param mode     Video mode to use (defines the width, height and depth of the rendering area of the window)
+    /// \param title    Title of the window
+    /// \param style    %Window style, a bitwise OR combination of `sf::Style` enumerators
+    /// \param state    %Window state
+    /// \param monitor  Monitor on which to create the window
+    /// \param settings Additional settings for the underlying OpenGL context
+    ///
+    ////////////////////////////////////////////////////////////
+    Window(VideoMode              mode,
+           const String&          title,
+           std::uint32_t          style,
+           State                  state,
+           const Monitor&         monitor,
+           const ContextSettings& settings = {});
+
+    ////////////////////////////////////////////////////////////
     /// \brief Construct a new window
     ///
     /// This constructor creates the window with the size and pixel
@@ -109,6 +133,25 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     Window(VideoMode mode, const String& title, State state, const ContextSettings& settings = {});
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct a new window on a specific monitor
+    ///
+    /// This constructor creates the window on the specified monitor with the size and pixel
+    /// depth defined in `mode`. If `state` is `State::Fullscreen`, then `mode` must be
+    /// a valid video mode.
+    ///
+    /// The last parameter is an optional structure specifying advanced OpenGL context
+    /// settings such as anti-aliasing, depth-buffer bits, etc.
+    ///
+    /// \param mode     Video mode to use (defines the width, height and depth of the rendering area of the window)
+    /// \param title    Title of the window
+    /// \param state    %Window state
+    /// \param monitor  Monitor on which to create the window
+    /// \param settings Additional settings for the underlying OpenGL context
+    ///
+    ////////////////////////////////////////////////////////////
+    Window(VideoMode mode, const String& title, State state, const Monitor& monitor, const ContextSettings& settings = {});
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the window from an existing control
@@ -159,6 +202,12 @@ public:
     Window& operator=(Window&&) noexcept;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Bring base class create() overloads into scope
+    ///
+    ////////////////////////////////////////////////////////////
+    using WindowBase::create;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Create (or recreate) the window
     ///
     /// If the window was already created, it closes it first.
@@ -172,6 +221,30 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     void create(VideoMode mode, const String& title, std::uint32_t style = Style::Default, State state = State::Windowed) override;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create (or recreate) the window on a specific monitor
+    ///
+    /// If the window was already created, it closes it first.
+    /// If `state` is `State::Fullscreen`, then `mode` must be
+    /// a valid video mode.
+    ///
+    /// The last two parameters specify the monitor and advanced OpenGL context settings.
+    ///
+    /// \param mode    Video mode to use (defines the width, height and depth of the rendering area of the window)
+    /// \param title   Title of the window
+    /// \param style   %Window style, a bitwise OR combination of `sf::Style` enumerators
+    /// \param state   %Window state
+    /// \param monitor Monitor on which to create the window
+    /// \param settings Additional settings for the underlying OpenGL context
+    ///
+    ////////////////////////////////////////////////////////////
+    void create(VideoMode              mode,
+                const String&          title,
+                std::uint32_t          style,
+                State                  state,
+                const Monitor&         monitor,
+                const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create (or recreate) the window
@@ -190,7 +263,7 @@ public:
     /// \param settings Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
-    virtual void create(VideoMode mode, const String& title, std::uint32_t style, State state, const ContextSettings& settings);
+    void create(VideoMode mode, const String& title, std::uint32_t style, State state, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create (or recreate) the window
@@ -207,6 +280,24 @@ public:
     void create(VideoMode mode, const String& title, State state) override;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Create (or recreate) the window on a specific monitor
+    ///
+    /// If the window was already created, it closes it first.
+    /// If `state` is `State::Fullscreen`, then `mode` must be
+    /// a valid video mode.
+    ///
+    /// The last two parameters specify the monitor and advanced OpenGL context settings.
+    ///
+    /// \param mode    Video mode to use (defines the width, height and depth of the rendering area of the window)
+    /// \param title   Title of the window
+    /// \param state   %Window state
+    /// \param monitor Monitor on which to create the window
+    /// \param settings Additional settings for the underlying OpenGL context
+    ///
+    ////////////////////////////////////////////////////////////
+    void create(VideoMode mode, const String& title, State state, const Monitor& monitor, const ContextSettings& settings);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Create (or recreate) the window
     ///
     /// If the window was already created, it closes it first.
@@ -222,7 +313,7 @@ public:
     /// \param settings Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
-    virtual void create(VideoMode mode, const String& title, State state, const ContextSettings& settings);
+    void create(VideoMode mode, const String& title, State state, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create (or recreate) the window from an existing control
@@ -251,7 +342,7 @@ public:
     /// \param settings Additional settings for the underlying OpenGL context
     ///
     ////////////////////////////////////////////////////////////
-    virtual void create(WindowHandle handle, const ContextSettings& settings);
+    void create(WindowHandle handle, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     /// \brief Close the window and destroy all the attached resources

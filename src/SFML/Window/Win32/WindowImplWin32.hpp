@@ -55,6 +55,14 @@ public:
     WindowImplWin32(VideoMode mode, const String& title, std::uint32_t style, State state, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
+    WindowImplWin32(VideoMode              mode,
+                    const String&          title,
+                    std::uint32_t          style,
+                    State                  state,
+                    const Monitor&         monitor,
+                    const ContextSettings& settings);
+
+    ////////////////////////////////////////////////////////////
     ~WindowImplWin32() override;
 
     ////////////////////////////////////////////////////////////
@@ -68,6 +76,12 @@ public:
 
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Vector2u getSize() const override;
+
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] Monitor getMonitor() const override;
+
+    ////////////////////////////////////////////////////////////
+    void setMonitor(const Monitor& monitor) override;
 
     ////////////////////////////////////////////////////////////
     void setSize(Vector2u size) override;

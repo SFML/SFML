@@ -159,6 +159,54 @@ std::unique_ptr<WindowImpl> WindowImpl::create(
 
 
 ////////////////////////////////////////////////////////////
+std::unique_ptr<WindowImpl> WindowImpl::create(
+    VideoMode              mode,
+    const String&          title,
+    std::uint32_t          style,
+    State                  state,
+    const Monitor&         monitor,
+    const ContextSettings& settings)
+{
+    // Fullscreen style requires some tests
+    if (state == State::Fullscreen)
+    {
+        // Make sure there's not already a fullscreen window (only one is allowed)
+        if (WindowImplImpl::fullscreenWindow != nullptr)
+        {
+            err() << "Creating two fullscreen windows is not allowed, switching to windowed mode" << std::endl;
+            state = State::Windowed;
+        }
+        // Make sure that the chosen video mode is compatible with this monitor
+        else if (!mode.isValid())
+        {
+            err() << "The requested video mode is not available, switching to a valid mode" << std::endl;
+            const auto& modes = monitor.getAvailableVideoModes();
+            assert(!modes.empty() && "No video modes available for monitor");
+            mode = modes[0];
+            err() << "  VideoMode: { size: { " << mode.size.x << ", " << mode.size.y
+                  << " }, bitsPerPixel: " << mode.bitsPerPixel << " }" << std::endl;
+        }
+    }
+
+    // Check validity of style according to the underlying platform
+#if defined(SFML_SYSTEM_IOS) || defined(SFML_SYSTEM_ANDROID)
+    if (state == State::Fullscreen)
+        style &= ~static_cast<std::uint32_t>(Style::Titlebar);
+    else
+        style |= Style::Titlebar;
+#else
+    if ((style & Style::Close) || (style & Style::Resize))
+        style |= Style::Titlebar;
+#endif
+
+    auto windowImpl = std::make_unique<WindowImplType>(mode, title, style, state, monitor, settings);
+    if (state == State::Fullscreen)
+        WindowImplImpl::fullscreenWindow = windowImpl.get();
+    return windowImpl;
+}
+
+
+////////////////////////////////////////////////////////////
 std::unique_ptr<WindowImpl> WindowImpl::create(WindowHandle handle)
 {
     return std::make_unique<WindowImplType>(handle);

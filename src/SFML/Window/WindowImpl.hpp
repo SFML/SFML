@@ -33,6 +33,7 @@
 #include <SFML/Window/CursorImpl.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Joystick.hpp>
+#include <SFML/Window/Monitor.hpp>
 #include <SFML/Window/Sensor.hpp>
 #include <SFML/Window/SensorImpl.hpp>
 #include <SFML/Window/VideoMode.hpp>
@@ -83,6 +84,27 @@ public:
                                               std::uint32_t          style,
                                               State                  state,
                                               const ContextSettings& settings);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create a new window on a specific monitor
+    ///
+    /// \param mode    Video mode to use
+    /// \param title   Title of the window
+    /// \param style   Window style
+    /// \param state   Window state
+    /// \param monitor Monitor on which to create the window
+    /// \param settings Additional settings for the underlying OpenGL context
+    ///
+    /// \return Pointer to the created window
+    ///
+    ////////////////////////////////////////////////////////////
+    static std::unique_ptr<WindowImpl> create(
+        VideoMode              mode,
+        const String&          title,
+        std::uint32_t          style,
+        State                  state,
+        const Monitor&         monitor,
+        const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new window depending on to the current OS
@@ -192,6 +214,22 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] virtual Vector2u getSize() const = 0;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the monitor on which the window is displayed
+    ///
+    /// \return Monitor information for the display containing the window
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] virtual Monitor getMonitor() const = 0;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the monitor on which the window should be displayed
+    ///
+    /// \param monitor Monitor on which to display the window
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void setMonitor(const Monitor& monitor) = 0;
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the size of the rendering region of the window

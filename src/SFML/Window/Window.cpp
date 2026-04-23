@@ -49,9 +49,28 @@ Window::Window(VideoMode mode, const String& title, std::uint32_t style, State s
 
 
 ////////////////////////////////////////////////////////////
+Window::Window(VideoMode              mode,
+               const String&          title,
+               std::uint32_t          style,
+               State                  state,
+               const Monitor&         monitor,
+               const ContextSettings& settings)
+{
+    Window::create(mode, title, style, state, monitor, settings);
+}
+
+
+////////////////////////////////////////////////////////////
 Window::Window(VideoMode mode, const String& title, State state, const ContextSettings& settings)
 {
     Window::create(mode, title, sf::Style::Default, state, settings);
+}
+
+
+////////////////////////////////////////////////////////////
+Window::Window(VideoMode mode, const String& title, State state, const Monitor& monitor, const ContextSettings& settings)
+{
+    Window::create(mode, title, sf::Style::Default, state, monitor, settings);
 }
 
 
@@ -99,6 +118,28 @@ void Window::create(VideoMode mode, const String& title, std::uint32_t style, St
 
 
 ////////////////////////////////////////////////////////////
+void Window::create(VideoMode              mode,
+                    const String&          title,
+                    std::uint32_t          style,
+                    State                  state,
+                    const Monitor&         monitor,
+                    const ContextSettings& settings)
+{
+    // Ensure the open window is closed first
+    close();
+
+    // Recreate the window implementation on the specified monitor
+    m_impl = priv::WindowImpl::create(mode, title, style, state, monitor, settings);
+
+    // Recreate the context
+    m_context = priv::GlContext::create(settings, *m_impl, mode.bitsPerPixel);
+
+    // Perform common initializations
+    initialize();
+}
+
+
+////////////////////////////////////////////////////////////
 void Window::create(VideoMode mode, const String& title, State state)
 {
     Window::create(mode, title, sf::Style::Default, state, ContextSettings{});
@@ -109,6 +150,13 @@ void Window::create(VideoMode mode, const String& title, State state)
 void Window::create(VideoMode mode, const String& title, State state, const ContextSettings& settings)
 {
     Window::create(mode, title, sf::Style::Default, state, settings);
+}
+
+
+////////////////////////////////////////////////////////////
+void Window::create(VideoMode mode, const String& title, State state, const Monitor& monitor, const ContextSettings& settings)
+{
+    Window::create(mode, title, sf::Style::Default, state, monitor, settings);
 }
 
 

@@ -40,7 +40,20 @@ namespace sf
 RenderWindow::RenderWindow(VideoMode mode, const String& title, std::uint32_t style, State state, const ContextSettings& settings)
 {
     // Don't call the base class constructor because it contains virtual function calls
-    Window::create(mode, title, style, state, settings);
+    create(mode, title, style, state, settings);
+}
+
+
+////////////////////////////////////////////////////////////
+RenderWindow::RenderWindow(VideoMode              mode,
+                           const String&          title,
+                           std::uint32_t          style,
+                           State                  state,
+                           const Monitor&         monitor,
+                           const ContextSettings& settings)
+{
+    // Don't call the base class constructor because it contains virtual function calls
+    create(mode, title, style, state, monitor, settings);
 }
 
 
@@ -48,7 +61,15 @@ RenderWindow::RenderWindow(VideoMode mode, const String& title, std::uint32_t st
 RenderWindow::RenderWindow(VideoMode mode, const String& title, State state, const ContextSettings& settings)
 {
     // Don't call the base class constructor because it contains virtual function calls
-    Window::create(mode, title, sf::Style::Default, state, settings);
+    create(mode, title, sf::Style::Default, state, settings);
+}
+
+
+////////////////////////////////////////////////////////////
+RenderWindow::RenderWindow(VideoMode mode, const String& title, State state, const Monitor& monitor, const ContextSettings& settings)
+{
+    // Don't call the base class constructor because it contains virtual function calls
+    create(mode, title, sf::Style::Default, state, monitor, settings);
 }
 
 
@@ -56,7 +77,7 @@ RenderWindow::RenderWindow(VideoMode mode, const String& title, State state, con
 RenderWindow::RenderWindow(WindowHandle handle, const ContextSettings& settings)
 {
     // Don't call the base class constructor because it contains virtual function calls
-    Window::create(handle, settings);
+    create(handle, settings);
 }
 
 

@@ -46,6 +46,7 @@ namespace sf
 {
 class Image;
 class String;
+class Monitor;
 
 ////////////////////////////////////////////////////////////
 /// \brief Window that can serve as a target for 2D drawing
@@ -69,7 +70,9 @@ public:
     /// This constructor creates the window with the size and pixel
     /// depth defined in `mode`. An optional style can be passed to
     /// customize the look and behavior of the window (borders,
-    /// title bar, resizable, closable, ...).
+    /// title bar, resizable, closable, ...). An optional state can
+    /// be provided. If `state` is `State::Fullscreen`, then `mode`
+    /// must be a valid video mode.
     ///
     /// The last parameter is an optional structure specifying
     /// advanced OpenGL context settings such as anti-aliasing,
@@ -93,6 +96,31 @@ public:
     /// \brief Construct a new window
     ///
     /// This constructor creates the window with the size and pixel
+    /// depth defined in `mode`. An optional style can be passed to
+    /// customize the look and behavior of the window (borders,
+    /// title bar, resizable, closable, ...).
+    ///
+    /// The last two parameters specify the monitor and advanced OpenGL context settings.
+    ///
+    /// \param mode     Video mode to use (defines the width, height and depth of the rendering area of the window)
+    /// \param title    Title of the window
+    /// \param style    %Window style, a bitwise OR combination of `sf::Style` enumerators
+    /// \param state    %Window state
+    /// \param monitor  Monitor on which to create the window
+    /// \param settings Additional settings for the underlying OpenGL context
+    ///
+    ////////////////////////////////////////////////////////////
+    RenderWindow(VideoMode              mode,
+                 const String&          title,
+                 std::uint32_t          style,
+                 State                  state,
+                 const Monitor&         monitor,
+                 const ContextSettings& settings);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct a new window
+    ///
+    /// This constructor creates the window with the size and pixel
     /// depth defined in `mode`. If `state` is `State::Fullscreen`,
     /// then `mode` must be a valid video mode.
     ///
@@ -107,6 +135,24 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     RenderWindow(VideoMode mode, const String& title, State state, const ContextSettings& settings = {});
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct a new window
+    ///
+    /// This constructor creates the window with the size and pixel
+    /// depth defined in `mode`. If `state` is `State::Fullscreen`,
+    /// then `mode` must be a valid video mode.
+    ///
+    /// The last two parameters specify the monitor and advanced OpenGL context settings.
+    ///
+    /// \param mode     Video mode to use (defines the width, height and depth of the rendering area of the window)
+    /// \param title    Title of the window
+    /// \param state    %Window state
+    /// \param monitor  Monitor on which to create the window
+    /// \param settings Additional settings for the underlying OpenGL context
+    ///
+    ////////////////////////////////////////////////////////////
+    RenderWindow(VideoMode mode, const String& title, State state, const Monitor& monitor, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the window from an existing control
