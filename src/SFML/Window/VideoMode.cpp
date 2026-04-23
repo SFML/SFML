@@ -25,11 +25,13 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/Monitor.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/VideoModeImpl.hpp>
 
 #include <algorithm>
 #include <functional>
+#include <unordered_map>
 
 
 namespace sf
@@ -49,6 +51,14 @@ VideoMode VideoMode::getDesktopMode()
 
 
 ////////////////////////////////////////////////////////////
+VideoMode VideoMode::getDesktopMode(const Monitor& monitor)
+{
+    // For a specific monitor, return its desktop video mode
+    return monitor.getDesktopVideoMode();
+}
+
+
+////////////////////////////////////////////////////////////
 const std::vector<VideoMode>& VideoMode::getFullscreenModes()
 {
     static const auto modes = []
@@ -59,6 +69,30 @@ const std::vector<VideoMode>& VideoMode::getFullscreenModes()
     }();
 
     return modes;
+}
+
+
+////////////////////////////////////////////////////////////
+const std::vector<VideoMode>& VideoMode::getFullscreenModes(const Monitor& monitor)
+{
+    // Get available video modes for the specific monitor and sort them
+    static std::unordered_map<std::string, std::vector<VideoMode>> modeCache;
+
+    const std::string cacheKey = monitor.getIdentifier().toAnsiString();
+
+    // Check if we already queried this monitor's modes
+    auto it = modeCache.find(cacheKey);
+    if (it != modeCache.end())
+    {
+        return it->second;
+    }
+
+    // Fetch video modes for the specific monitor
+    auto modes = monitor.getAvailableVideoModes();
+    std::sort(modes.begin(), modes.end(), std::greater<>());
+
+    // Cache the result and return
+    return modeCache.emplace(cacheKey, std::move(modes)).first->second;
 }
 
 

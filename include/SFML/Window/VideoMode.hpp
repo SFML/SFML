@@ -36,6 +36,8 @@
 
 namespace sf
 {
+class Monitor;
+
 ////////////////////////////////////////////////////////////
 /// \brief VideoMode defines a video mode (size, bpp)
 ///
@@ -69,6 +71,16 @@ public:
     [[nodiscard]] static VideoMode getDesktopMode();
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the desktop video mode for a specific monitor
+    ///
+    /// \param monitor The monitor to query
+    ///
+    /// \return Desktop video mode for the monitor
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] static VideoMode getDesktopMode(const Monitor& monitor);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Retrieve all the video modes supported in fullscreen mode
     ///
     /// When creating a fullscreen window, the video mode is restricted
@@ -83,6 +95,21 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] static const std::vector<VideoMode>& getFullscreenModes();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Retrieve all the video modes supported in fullscreen mode for a specific monitor
+    ///
+    /// When creating a fullscreen window on a specific monitor, the video mode is restricted
+    /// to be compatible with what the graphics driver and monitor support. This function
+    /// returns the complete list of all video modes that can be used in fullscreen mode
+    /// on the given monitor.
+    ///
+    /// \param monitor The monitor to query
+    ///
+    /// \return Array containing all the supported fullscreen modes for the monitor
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] static const std::vector<VideoMode>& getFullscreenModes(const Monitor& monitor);
 
     ////////////////////////////////////////////////////////////
     /// \brief Tell whether or not the video mode is valid

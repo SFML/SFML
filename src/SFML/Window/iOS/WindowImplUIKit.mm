@@ -89,6 +89,20 @@ WindowImplUIKit::WindowImplUIKit(VideoMode mode,
 
 
 ////////////////////////////////////////////////////////////
+WindowImplUIKit::WindowImplUIKit(VideoMode              mode,
+                                 const String&          title,
+                                 std::uint32_t          style,
+                                 State                  state,
+                                 const Monitor&         monitor,
+                                 const ContextSettings& settings) :
+    WindowImplUIKit(mode, title, style, state, settings)
+{
+    // Monitor parameter is ignored for iOS (single display environment)
+    (void)monitor; // Suppress unused parameter warning
+}
+
+
+////////////////////////////////////////////////////////////
 void WindowImplUIKit::processEvents()
 {
     while (CFRunLoopRunInMode(kCFRunLoopDefaultMode, 0.0001, true) == kCFRunLoopRunHandledSource)
@@ -140,6 +154,22 @@ void WindowImplUIKit::setSize(Vector2u /* size */)
     // if these sizes are required one day, don't forget to scale them!
     // size.x /= m_backingScale;
     // size.y /= m_backingScale;
+}
+
+
+////////////////////////////////////////////////////////////
+Monitor WindowImplUIKit::getMonitor() const
+{
+    // iOS has a single display
+    return Monitor::getPrimary();
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplUIKit::setMonitor(const Monitor& monitor)
+{
+    // iOS only has one display, setMonitor is a no-op
+    (void)monitor; // Suppress unused parameter warning
 }
 
 

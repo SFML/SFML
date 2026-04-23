@@ -47,6 +47,7 @@ namespace sf
 class Cursor;
 class String;
 class VideoMode;
+class Monitor;
 
 namespace priv
 {
@@ -90,6 +91,22 @@ public:
     WindowBase(VideoMode mode, const String& title, std::uint32_t style = Style::Default, State state = State::Windowed);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Construct a new window on a specific monitor
+    ///
+    /// This constructor creates the window on the specified monitor with the size and pixel
+    /// depth defined in `mode`. An optional style can be passed to customize the look and
+    /// behavior of the window (borders, title bar, resizable, closable, ...).
+    ///
+    /// \param mode    Video mode to use (defines the width, height and depth of the rendering area of the window)
+    /// \param title   Title of the window
+    /// \param style   %Window style, a bitwise OR combination of `sf::Style` enumerators
+    /// \param state   %Window state
+    /// \param monitor Monitor on which to create the window
+    ///
+    ////////////////////////////////////////////////////////////
+    WindowBase(VideoMode mode, const String& title, std::uint32_t style, State state, const Monitor& monitor);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Construct a new window
     ///
     /// This constructor creates the window with the size and pixel
@@ -101,6 +118,20 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     WindowBase(VideoMode mode, const String& title, State state);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Construct a new window on a specific monitor
+    ///
+    /// This constructor creates the window on the specified monitor with the size and pixel
+    /// depth defined in `mode`.
+    ///
+    /// \param mode    Video mode to use (defines the width, height and depth of the rendering area of the window)
+    /// \param title   Title of the window
+    /// \param state   %Window state
+    /// \param monitor Monitor on which to create the window
+    ///
+    ////////////////////////////////////////////////////////////
+    WindowBase(VideoMode mode, const String& title, State state, const Monitor& monitor);
 
     ////////////////////////////////////////////////////////////
     /// \brief Construct the window from an existing control
@@ -158,6 +189,22 @@ public:
     virtual void create(VideoMode mode, const String& title, std::uint32_t style = Style::Default, State state = State::Windowed);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Create (or recreate) the window on a specific monitor
+    ///
+    /// If the window was already created, it closes it first.
+    /// If `state` is `State::Fullscreen`, then `mode` must be
+    /// a valid video mode.
+    ///
+    /// \param mode    Video mode to use (defines the width, height and depth of the rendering area of the window)
+    /// \param title   Title of the window
+    /// \param style   %Window style, a bitwise OR combination of `sf::Style` enumerators
+    /// \param state   %Window state
+    /// \param monitor Monitor on which to create the window
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void create(VideoMode mode, const String& title, std::uint32_t style, State state, const Monitor& monitor);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Create (or recreate) the window
     ///
     /// If the window was already created, it closes it first.
@@ -170,6 +217,21 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     virtual void create(VideoMode mode, const String& title, State state);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Create (or recreate) the window on a specific monitor
+    ///
+    /// If the window was already created, it closes it first.
+    /// If `state` is `State::Fullscreen`, then `mode` must be
+    /// a valid video mode.
+    ///
+    /// \param mode    Video mode to use (defines the width, height and depth of the rendering area of the window)
+    /// \param title   Title of the window
+    /// \param state   %Window state
+    /// \param monitor Monitor on which to create the window
+    ///
+    ////////////////////////////////////////////////////////////
+    virtual void create(VideoMode mode, const String& title, State state, const Monitor& monitor);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create (or recreate) the window from an existing control
@@ -365,6 +427,26 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Vector2u getSize() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the monitor on which the window is displayed
+    ///
+    /// \return Monitor information for the display containing the window
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] Monitor getMonitor() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Set the monitor on which the window should be displayed
+    ///
+    /// This function attempts to move/recreate the window on the specified monitor.
+    /// For fullscreen windows, this will use the monitor's default video mode.
+    /// For windowed windows, this will position the window on the specified monitor.
+    ///
+    /// \param monitor Monitor on which to display the window
+    ///
+    ////////////////////////////////////////////////////////////
+    void setMonitor(const Monitor& monitor);
 
     ////////////////////////////////////////////////////////////
     /// \brief Change the size of the rendering region of the window

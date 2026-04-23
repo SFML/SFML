@@ -28,6 +28,7 @@
 #include <SFML/Window/ContextSettings.hpp>
 #include <SFML/Window/Cursor.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Window/Monitor.hpp>
 #include <SFML/Window/VideoMode.hpp>
 #include <SFML/Window/Vulkan.hpp>
 #include <SFML/Window/WindowBase.hpp>
@@ -56,9 +57,23 @@ WindowBase::WindowBase(VideoMode mode, const String& title, std::uint32_t style,
 
 
 ////////////////////////////////////////////////////////////
+WindowBase::WindowBase(VideoMode mode, const String& title, std::uint32_t style, State state, const Monitor& monitor)
+{
+    WindowBase::create(mode, title, style, state, monitor);
+}
+
+
+////////////////////////////////////////////////////////////
 WindowBase::WindowBase(VideoMode mode, const String& title, State state)
 {
     WindowBase::create(mode, title, Style::Default, state);
+}
+
+
+////////////////////////////////////////////////////////////
+WindowBase::WindowBase(VideoMode mode, const String& title, State state, const Monitor& monitor)
+{
+    WindowBase::create(mode, title, Style::Default, state, monitor);
 }
 
 
@@ -103,9 +118,38 @@ void WindowBase::create(VideoMode mode, const String& title, std::uint32_t style
 
 
 ////////////////////////////////////////////////////////////
+void WindowBase::create(VideoMode mode, const String& title, std::uint32_t style, State state, const Monitor& monitor)
+{
+    // Recreate the window implementation on the specified monitor
+    m_impl = priv::WindowImpl::create(mode,
+                                      title,
+                                      style,
+                                      state,
+                                      monitor,
+                                      ContextSettings{/* depthBits */ 0,
+                                                      /* stencilBits */ 0,
+                                                      /* antiAliasingLevel */ 0,
+                                                      /* majorVersion */ 0,
+                                                      /* minorVersion */ 0,
+                                                      /* attributeFlags */ 0xFFFFFFFF,
+                                                      /* sRgbCapable */ false});
+
+    // Perform common initializations
+    initialize();
+}
+
+
+////////////////////////////////////////////////////////////
 void WindowBase::create(VideoMode mode, const String& title, State state)
 {
     create(mode, title, Style::Default, state);
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowBase::create(VideoMode mode, const String& title, State state, const Monitor& monitor)
+{
+    create(mode, title, Style::Default, state, monitor);
 }
 
 
@@ -191,6 +235,21 @@ void WindowBase::setPosition(Vector2i position)
 Vector2u WindowBase::getSize() const
 {
     return m_size;
+}
+
+
+////////////////////////////////////////////////////////////
+Monitor WindowBase::getMonitor() const
+{
+    return m_impl ? m_impl->getMonitor() : Monitor::getPrimary();
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowBase::setMonitor(const Monitor& monitor)
+{
+    if (m_impl)
+        m_impl->setMonitor(monitor);
 }
 
 

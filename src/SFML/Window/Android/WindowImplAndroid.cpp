@@ -89,6 +89,21 @@ WindowImplAndroid::WindowImplAndroid(VideoMode mode,
 
 
 ////////////////////////////////////////////////////////////
+WindowImplAndroid::WindowImplAndroid(
+    VideoMode              mode,
+    const String&          title,
+    std::uint32_t          style,
+    State                  state,
+    const Monitor&         monitor,
+    const ContextSettings& settings) :
+    WindowImplAndroid(mode, title, style, state, settings)
+{
+    // Monitor parameter is ignored for Android (single display environment)
+    (void)monitor; // Suppress unused parameter warning
+}
+
+
+////////////////////////////////////////////////////////////
 WindowImplAndroid::~WindowImplAndroid()
 {
     WindowImplAndroid::singleInstance = nullptr;
@@ -156,6 +171,22 @@ Vector2u WindowImplAndroid::getSize() const
 ////////////////////////////////////////////////////////////
 void WindowImplAndroid::setSize(Vector2u /* size */)
 {
+}
+
+
+////////////////////////////////////////////////////////////
+Monitor WindowImplAndroid::getMonitor() const
+{
+    // Android has a single display
+    return Monitor::getPrimary();
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplAndroid::setMonitor(const Monitor& monitor)
+{
+    // Android only has one display, setMonitor is a no-op
+    (void)monitor; // Suppress unused parameter warning
 }
 
 

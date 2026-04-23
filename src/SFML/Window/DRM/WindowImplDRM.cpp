@@ -82,6 +82,20 @@ WindowImplDRM::WindowImplDRM(VideoMode mode,
 
 
 ////////////////////////////////////////////////////////////
+WindowImplDRM::WindowImplDRM(VideoMode              mode,
+                             const String&          title,
+                             std::uint32_t          style,
+                             State                  state,
+                             const Monitor&         monitor,
+                             const ContextSettings& settings) :
+    WindowImplDRM(mode, title, style, state, settings)
+{
+    // Monitor parameter is ignored for DRM (single display environment)
+    (void)monitor; // Suppress unused parameter warning
+}
+
+
+////////////////////////////////////////////////////////////
 WindowImplDRM::~WindowImplDRM()
 {
     InputImpl::restoreTerminalConfig();
@@ -118,6 +132,22 @@ Vector2u WindowImplDRM::getSize() const
 ////////////////////////////////////////////////////////////
 void WindowImplDRM::setSize(Vector2u /*size*/)
 {
+}
+
+
+////////////////////////////////////////////////////////////
+Monitor WindowImplDRM::getMonitor() const
+{
+    // DRM (embedded Linux) typically has a single display
+    return Monitor::getPrimary();
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplDRM::setMonitor(const Monitor& monitor)
+{
+    // DRM only has one display, setMonitor is a no-op
+    (void)monitor; // Suppress unused parameter warning
 }
 
 

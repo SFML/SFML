@@ -50,6 +50,14 @@ public:
     WindowImplX11(VideoMode mode, const String& title, std::uint32_t style, State state, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
+    WindowImplX11(VideoMode              mode,
+                  const String&          title,
+                  std::uint32_t          style,
+                  State                  state,
+                  const Monitor&         monitor,
+                  const ContextSettings& settings);
+
+    ////////////////////////////////////////////////////////////
     ~WindowImplX11() override;
 
     ////////////////////////////////////////////////////////////
@@ -63,6 +71,12 @@ public:
 
     ////////////////////////////////////////////////////////////
     [[nodiscard]] Vector2u getSize() const override;
+
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] Monitor getMonitor() const override;
+
+    ////////////////////////////////////////////////////////////
+    void setMonitor(const Monitor& monitor) override;
 
     ////////////////////////////////////////////////////////////
     void setSize(Vector2u size) override;
@@ -174,7 +188,7 @@ private:
     /// \return Position of the primary monitor
     ///
     ////////////////////////////////////////////////////////////
-    Vector2i getPrimaryMonitorPosition();
+    Vector2i getPrimaryPosition();
 
     ////////////////////////////////////////////////////////////
     /// \brief Set min/max window size

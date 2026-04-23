@@ -26,6 +26,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/MonitorImpl.hpp>
 #include <SFML/Window/macOS/AutoreleasePoolWrapper.hpp>
 #import <SFML/Window/macOS/SFApplication.h>
 #import <SFML/Window/macOS/SFApplicationDelegate.h>
@@ -143,6 +144,20 @@ WindowImplCocoa::WindowImplCocoa(VideoMode mode, const String& title, std::uint3
 
     // Finally, set up keyboard helper
     initialiseKeyboardHelper();
+}
+
+
+////////////////////////////////////////////////////////////
+WindowImplCocoa::WindowImplCocoa(VideoMode              mode,
+                                 const String&          title,
+                                 std::uint32_t          style,
+                                 State                  state,
+                                 const Monitor&         monitor,
+                                 const ContextSettings& settings) :
+    WindowImplCocoa(mode, title, style, state, settings)
+{
+    // Position window on the specified monitor
+    setMonitor(monitor);
 }
 
 
@@ -381,6 +396,67 @@ void WindowImplCocoa::setSize(Vector2u size)
     sf::Vector2u backingSize = size;
     scaleInXY(backingSize, m_delegate);
     [m_delegate resizeTo:backingSize];
+}
+
+
+////////////////////////////////////////////////////////////
+Monitor WindowImplCocoa::getMonitor() const
+{
+    // Get window position to find which monitor it's on
+    const Vector2i windowPos = getPosition();
+
+    // Get all available monitors and find the one containing this position
+    const auto monitors = Monitor::getAvailableMonitors();
+    for (const auto& monitor : monitors)
+    {
+        const Vector2i monitorPos = monitor.getPosition();
+        const Vector2u monitorRes = monitor.getResolution();
+
+        if (windowPos.x >= monitorPos.x && windowPos.x < monitorPos.x + static_cast<int>(monitorRes.x) &&
+            windowPos.y >= monitorPos.y && windowPos.y < monitorPos.y + static_cast<int>(monitorRes.y))
+        {
+            return monitor;
+        }
+    }
+
+    // If window is not on any monitor, return primary monitor
+    return Monitor::getPrimary();
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplCocoa::setMonitor(const Monitor& monitor)
+{
+    const AutoreleasePool pool;
+
+    // Get all available monitors to find the matching one
+    auto monitors = Monitor::getAvailableMonitors();
+
+    for (const auto& availableMonitor : monitors)
+    {
+        if (availableMonitor.getIdentifier() == monitor.getIdentifier())
+        {
+            // Found the matching monitor, get its position
+            const Vector2i monitorPos = availableMonitor.getPosition();
+
+            // Convert position to a CGPoint and move the window
+            // Note: Cocoa uses bottom-left origin, but getPosition already handles this conversion
+            const NSPoint windowPos = NSMakePoint(monitorPos.x, monitorPos.y);
+
+            // Get the window frame and adjust its origin to the monitor position
+            NSRect frame = [m_delegate.window frame];
+            frame.origin = windowPos;
+
+            // Move the window to the target monitor
+            [m_delegate.window setFrame:frame display:YES animate:NO];
+
+            return;
+        }
+    }
+
+    // Monitor not found - log error
+    const std::string identifierStr = monitor.getIdentifier().toAnsiString();
+    err() << "Monitor with identifier '" << identifierStr << "' not found" << std::endl;
 }
 
 

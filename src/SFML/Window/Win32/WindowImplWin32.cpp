@@ -26,6 +26,8 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/JoystickImpl.hpp>
+#include <SFML/Window/Monitor.hpp>
+#include <SFML/Window/MonitorImpl.hpp>
 #include <SFML/Window/Win32/WindowImplWin32.hpp>
 #include <SFML/Window/WindowEnums.hpp>
 
@@ -256,6 +258,20 @@ WindowImplWin32::WindowImplWin32(VideoMode     mode,
 
 
 ////////////////////////////////////////////////////////////
+WindowImplWin32::WindowImplWin32(VideoMode              mode,
+                                 const String&          title,
+                                 std::uint32_t          style,
+                                 State                  state,
+                                 const Monitor&         monitor,
+                                 const ContextSettings& settings) :
+    WindowImplWin32(mode, title, style, state, settings)
+{
+    // Position window on the specified monitor
+    setMonitor(monitor);
+}
+
+
+////////////////////////////////////////////////////////////
 WindowImplWin32::~WindowImplWin32()
 {
     // TODO should we restore the cursor shape and visibility?
@@ -352,6 +368,64 @@ void WindowImplWin32::setSize(Vector2u size)
 {
     const auto [width, height] = contentSizeToWindowSize(size);
     SetWindowPos(m_handle, nullptr, 0, 0, width, height, SWP_NOMOVE | SWP_NOZORDER);
+}
+
+
+////////////////////////////////////////////////////////////
+Monitor WindowImplWin32::getMonitor() const
+{
+    // Get the monitor that the window is displayed on
+    HMONITOR hMonitor = MonitorFromWindow(m_handle, MONITOR_DEFAULTTOPRIMARY);
+
+    // Get all available monitors to find a match
+    auto monitors = Monitor::getAvailableMonitors();
+
+    // Get monitor information
+    MONITORINFOEX info;
+    info.cbSize = sizeof(info);
+    if (GetMonitorInfo(hMonitor, &info))
+    {
+        const String deviceName(reinterpret_cast<const char*>(info.szDevice));
+
+        // Find and return the matching monitor
+        for (const auto& monitor : monitors)
+        {
+            if (monitor.getIdentifier() == deviceName)
+                return monitor;
+        }
+    }
+
+    // Fallback to primary monitor
+    return Monitor::getPrimary();
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplWin32::setMonitor(const Monitor& monitor)
+{
+    // Get the device name from the monitor's identifier
+    const String deviceName = monitor.getIdentifier();
+
+    // Get all available monitors and find the matching one
+    auto monitors = Monitor::getAvailableMonitors();
+
+    for (const auto& availableMonitor : monitors)
+    {
+        if (availableMonitor.getIdentifier() == deviceName)
+        {
+            // Found the matching monitor, get its position
+            const Vector2i monitorPos = availableMonitor.getPosition();
+
+            // Move the window to the target monitor
+            SetWindowPos(m_handle, nullptr, monitorPos.x, monitorPos.y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+
+            return;
+        }
+    }
+
+    // Monitor not found - log error
+    const std::string deviceNameStr = deviceName.toAnsiString();
+    err() << "Monitor with identifier '" << deviceNameStr << "' not found" << std::endl;
 }
 
 
