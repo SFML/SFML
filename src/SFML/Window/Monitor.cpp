@@ -29,99 +29,114 @@
 #include <SFML/Window/MonitorImpl.hpp>
 #include <SFML/Window/VideoMode.hpp>
 
-#include <algorithm>
-
 
 namespace sf
 {
 ////////////////////////////////////////////////////////////
+Monitor::Monitor(std::shared_ptr<priv::MonitorImpl> impl) : m_impl(impl)
+{
+}
+
+
+////////////////////////////////////////////////////////////
 String Monitor::getName() const
 {
-    return m_name;
+    return m_impl ? m_impl->getName() : String();
 }
 
 
 ////////////////////////////////////////////////////////////
 String Monitor::getIdentifier() const
 {
-    return m_identifier;
+    return m_impl ? m_impl->getIdentifier() : String();
 }
 
 
 ////////////////////////////////////////////////////////////
 bool Monitor::isPrimary() const
 {
-    return m_primary;
+    return m_impl && m_impl->isPrimary();
 }
 
 
 ////////////////////////////////////////////////////////////
 Vector2i Monitor::getPosition() const
 {
-    return m_position;
+    return m_impl ? m_impl->getPosition() : Vector2i();
 }
 
 
 ////////////////////////////////////////////////////////////
 Vector2u Monitor::getResolution() const
 {
-    return m_resolution;
+    return m_impl ? m_impl->getResolution() : Vector2u();
 }
 
 
 ////////////////////////////////////////////////////////////
 unsigned int Monitor::getRefreshRate() const
 {
-    return m_refreshRate;
+    return m_impl ? m_impl->getRefreshRate() : 0;
 }
 
 
 ////////////////////////////////////////////////////////////
 Vector2u Monitor::getScaledResolution() const
 {
-    return m_scaledResolution;
+    return m_impl ? m_impl->getScaledResolution() : Vector2u();
 }
 
 
 ////////////////////////////////////////////////////////////
-IntRect Monitor::getWorkArea() const
+Vector2i Monitor::getWorkAreaPosition() const
 {
-    return m_workArea;
+    return m_impl ? m_impl->getWorkAreaPosition() : Vector2i();
+}
+
+////////////////////////////////////////////////////////////
+Vector2u Monitor::getWorkAreaSize() const
+{
+    return m_impl ? m_impl->getWorkAreaSize() : Vector2u();
 }
 
 
 ////////////////////////////////////////////////////////////
 VideoMode Monitor::getDesktopVideoMode() const
 {
-    return VideoMode(m_resolution);
+    return m_impl ? VideoMode(m_impl->getResolution()) : VideoMode();
 }
 
 
 ////////////////////////////////////////////////////////////
 std::vector<VideoMode> Monitor::getAvailableVideoModes() const
 {
-    return priv::MonitorImpl::getAvailableVideoModesForMonitor(m_identifier);
+    return m_impl ? m_impl->getAvailableVideoModes() : std::vector<VideoMode>();
 }
 
 
 ////////////////////////////////////////////////////////////
 Monitor Monitor::getPrimary()
 {
-    return priv::MonitorImpl::getPrimary();
+    return Monitor(priv::MonitorImpl::getPrimary());
 }
 
 
 ////////////////////////////////////////////////////////////
 std::vector<Monitor> Monitor::getAvailableMonitors()
 {
-    return priv::MonitorImpl::getAvailableMonitors();
+    std::vector<Monitor> result;
+    for (auto&& impl : priv::MonitorImpl::getAvailableMonitors())
+    {
+        result.emplace_back(std::move(impl));
+    }
+    return result;
 }
 
 
 ////////////////////////////////////////////////////////////
 bool operator==(const Monitor& left, const Monitor& right)
 {
-    return (left.getIdentifier() == right.getIdentifier());
+    return left.getIdentifier() == right.getIdentifier();
 }
 
 

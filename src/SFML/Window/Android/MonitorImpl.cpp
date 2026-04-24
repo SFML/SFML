@@ -25,7 +25,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Monitor.hpp>
 #include <SFML/Window/MonitorImpl.hpp>
 #include <SFML/Window/VideoMode.hpp>
 
@@ -33,22 +32,46 @@
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-std::vector<Monitor> MonitorImpl::getAvailableMonitors()
+MonitorImpl::MonitorImpl() = default;
+
+
+////////////////////////////////////////////////////////////
+MonitorImpl::~MonitorImpl() = default;
+
+
+////////////////////////////////////////////////////////////
+std::vector<VideoMode> MonitorImpl::getAvailableVideoModes() const
 {
-    std::vector<Monitor> monitors;
+    std::vector<VideoMode> modes;
+
+    // Android doesn't really support multiple video modes
+    // Return the current display resolution as the only available mode
+    if (m_identifier == "android_0")
+    {
+        const VideoMode mode(Vector2u(1920, 1080)); // Default resolution
+        modes.push_back(mode);
+    }
+
+    return modes;
+}
+
+
+////////////////////////////////////////////////////////////
+std::vector<std::shared_ptr<MonitorImpl>> MonitorImpl::getAvailableMonitors()
+{
+    std::vector<std::shared_ptr<MonitorImpl>> monitors;
 
     // Android typically has a single display
-    // Screen dimensions would come from ActivityStates in a full implementation
-
-    Monitor monitor;
-    monitor.m_primary          = true;
-    monitor.m_name             = "Android Display";
-    monitor.m_identifier       = "android_0";
-    monitor.m_position         = {0, 0};
-    monitor.m_resolution       = {1920, 1080}; // Default, would be queried from ActivityStates
-    monitor.m_refreshRate      = 60;
-    monitor.m_scaledResolution = {1920, 1080};
-    monitor.m_workArea         = IntRect(0, 0, 1920, 1080);
+    auto monitor                = std::make_shared<MonitorImpl>();
+    monitor->m_primary          = true;
+    monitor->m_name             = "Android Display";
+    monitor->m_identifier       = "android_0";
+    monitor->m_position         = {0, 0};
+    monitor->m_resolution       = {1920, 1080}; // Default, would be queried from ActivityStates
+    monitor->m_refreshRate      = 60;
+    monitor->m_scaledResolution = {1920, 1080};
+    monitor->m_workAreaPosition = {0, 0};
+    monitor->m_workAreaSize     = {1920, 1080};
 
     monitors.push_back(monitor);
 
@@ -57,36 +80,20 @@ std::vector<Monitor> MonitorImpl::getAvailableMonitors()
 
 
 ////////////////////////////////////////////////////////////
-Monitor MonitorImpl::getPrimary()
+std::shared_ptr<MonitorImpl> MonitorImpl::getPrimary()
 {
-    Monitor monitor;
-    monitor.m_primary          = true;
-    monitor.m_name             = "Android Display";
-    monitor.m_identifier       = "android_0";
-    monitor.m_position         = {0, 0};
-    monitor.m_resolution       = {1920, 1080};
-    monitor.m_refreshRate      = 60;
-    monitor.m_scaledResolution = {1920, 1080};
-    monitor.m_workArea         = IntRect(0, 0, 1920, 1080);
+    auto monitor                = std::make_shared<MonitorImpl>();
+    monitor->m_primary          = true;
+    monitor->m_name             = "Android Display";
+    monitor->m_identifier       = "android_0";
+    monitor->m_position         = {0, 0};
+    monitor->m_resolution       = {1920, 1080};
+    monitor->m_refreshRate      = 60;
+    monitor->m_scaledResolution = {1920, 1080};
+    monitor->m_workAreaPosition = {0, 0};
+    monitor->m_workAreaSize     = {1920, 1080};
 
     return monitor;
-}
-
-
-////////////////////////////////////////////////////////////
-std::vector<VideoMode> MonitorImpl::getAvailableVideoModesForMonitor(const String& monitorIdentifier)
-{
-    std::vector<VideoMode> modes;
-
-    // Android doesn't really support multiple video modes
-    // Return the current display resolution as the only available mode
-    if (monitorIdentifier == "android_0")
-    {
-        const VideoMode mode(Vector2u(1920, 1080)); // Default resolution
-        modes.push_back(mode);
-    }
-
-    return modes;
 }
 
 } // namespace sf::priv

@@ -64,7 +64,9 @@ std::vector<Monitor> MonitorImpl::getAvailableMonitors()
                                               static_cast<unsigned int>(bounds.size.height));
 
         // Work area (iOS typically uses full screen)
-        monitor.m_workArea = IntRect(0, 0, static_cast<int>(bounds.size.width), static_cast<int>(bounds.size.height));
+        monitor.m_workAreaPosition = {0, 0};
+        monitor.m_workAreaSize     = {static_cast<unsigned int>(bounds.size.width),
+                                      static_cast<unsigned int>(bounds.size.height)};
 
         monitors.push_back(monitor);
     }
@@ -80,7 +82,8 @@ std::vector<Monitor> MonitorImpl::getAvailableMonitors()
         defaultMonitor.m_resolution       = {1920, 1080};
         defaultMonitor.m_refreshRate      = 60;
         defaultMonitor.m_scaledResolution = {1920, 1080};
-        defaultMonitor.m_workArea         = IntRect(0, 0, 1920, 1080);
+        defaultMonitor.m_workAreaPosition = {0, 0};
+        defaultMonitor.m_workAreaSize     = {1920, 1080};
 
         monitors.push_back(defaultMonitor);
     }
@@ -108,14 +111,17 @@ Monitor MonitorImpl::getPrimary()
         monitor.m_refreshRate      = static_cast<unsigned int>(mainScreen.maximumFramesPerSecond);
         monitor.m_scaledResolution = Vector2u(static_cast<unsigned int>(bounds.size.width),
                                               static_cast<unsigned int>(bounds.size.height));
-        monitor.m_workArea = IntRect(0, 0, static_cast<int>(bounds.size.width), static_cast<int>(bounds.size.height));
+        monitor.m_workAreaPosition = {0, 0};
+        monitor.m_workAreaSize     = {static_cast<unsigned int>(bounds.size.width),
+                                      static_cast<unsigned int>(bounds.size.height)};
     }
     else
     {
         monitor.m_resolution       = {1920, 1080};
         monitor.m_refreshRate      = 60;
         monitor.m_scaledResolution = {1920, 1080};
-        monitor.m_workArea         = IntRect(0, 0, 1920, 1080);
+        monitor.m_workAreaPosition = {0, 0};
+        monitor.m_workAreaSize     = {1920, 1080};
     }
 
     return monitor;

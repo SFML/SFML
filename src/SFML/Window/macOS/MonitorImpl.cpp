@@ -25,7 +25,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Monitor.hpp>
 #include <SFML/Window/MonitorImpl.hpp>
 #include <SFML/Window/VideoMode.hpp>
 
@@ -42,21 +41,90 @@
 
 namespace sf::priv
 {
+////////////////////////////////////////////////////////////
+MonitorImpl::MonitorImpl() = default;
+
+
+////////////////////////////////////////////////////////////
+MonitorImpl::~MonitorImpl() = default;
+
+
+////////////////////////////////////////////////////////////
+std::vector<VideoMode> MonitorImpl::getAvailableVideoModes() const
+{
+    std::vector<VideoMode> modes;
+
+    // Get all connected displays
+    std::array<CGDirectDisplayID, 128> displays    = {};
+    uint32_t                           numDisplays = 0;
+
+    if (CGGetOnlineDisplayList(128, displays.data(), &numDisplays) != kCGErrorSuccess)
+    {
+        numDisplays = 1;
+        displays[0] = CGMainDisplayID();
+    }
+
+    // Extract display ID from identifier
+    CGDirectDisplayID targetDisplay = 0;
+    if (std::sscanf(m_identifier.toAnsiString().c_str(), "Display_%x", &targetDisplay) == 1)
+    {
+        for (uint32_t i = 0; i < numDisplays; ++i)
+        {
+            if (displays[i] == targetDisplay)
+            {
+                // Get available modes for this display
+                CFArrayRef modeArray = CGDisplayCopyAllDisplayModes(displays[i], nullptr);
+                if (modeArray)
+                {
+                    const CFIndex modeCount = CFArrayGetCount(modeArray);
+                    for (CFIndex m = 0; m < modeCount; ++m)
+                    {
+                        auto* modeRef = const_cast<CGDisplayModeRef>(
+                            static_cast<const CGDisplayMode*>(CFArrayGetValueAtIndex(modeArray, m)));
+                        if (modeRef)
+                        {
+                            const size_t width  = CGDisplayModeGetWidth(modeRef);
+                            const size_t height = CGDisplayModeGetHeight(modeRef);
+
+                            const VideoMode mode(
+                                Vector2u(static_cast<unsigned int>(width), static_cast<unsigned int>(height)));
+
+                            // Avoid duplicates
+                            if (std::find(modes.begin(), modes.end(), mode) == modes.end())
+                            {
+                                modes.push_back(mode);
+                            }
+                        }
+                    }
+
+                    CFRelease(modeArray);
+                }
+                break;
+            }
+        }
+    }
+
+    // Sort modes from best to worst
+    std::sort(modes.begin(), modes.end(), std::greater<>());
+
+    return modes;
+}
+
+
 namespace
 {
 // Get model identifier for a display
-std::string getDisplayModel(CGDirectDisplayID displayID)
+String getDisplayModel(CGDirectDisplayID displayID)
 {
     std::ostringstream oss;
     oss << "Display_" << std::hex << std::setfill('0') << std::setw(8) << displayID;
-    return oss.str();
+    return String(oss.str().c_str());
 }
 
 // Get display name
-std::string getDisplayName(CGDirectDisplayID displayID)
+String getDisplayName(CGDirectDisplayID displayID)
 {
-    // Try to get the monitor name from IOKit
-    std::string name = getDisplayModel(displayID);
+    std::string name = getDisplayModel(displayID).toAnsiString();
 
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
@@ -100,15 +168,60 @@ std::string getDisplayName(CGDirectDisplayID displayID)
         mach_port_deallocate(mach_task_self(), displayPort);
     }
 
-    return name;
+    return String(name.c_str());
+}
+
+// Create MonitorImpl from display ID
+std::shared_ptr<MonitorImpl> getMonitorImplFromDisplay(CGDirectDisplayID displayID)
+{
+    auto impl = std::make_shared<MonitorImpl>();
+
+    impl->m_identifier = getDisplayModel(displayID);
+    impl->m_name       = getDisplayName(displayID);
+    impl->m_primary    = (displayID == CGMainDisplayID());
+
+    // Get bounds
+    const CGRect bounds  = CGDisplayBounds(displayID);
+    impl->m_position.x   = static_cast<int>(bounds.origin.x);
+    impl->m_position.y   = static_cast<int>(bounds.origin.y);
+    impl->m_resolution.x = static_cast<unsigned int>(bounds.size.width);
+    impl->m_resolution.y = static_cast<unsigned int>(bounds.size.height);
+
+    // Work area on macOS - for now, same as full bounds
+    impl->m_workAreaPosition.x = static_cast<int>(bounds.origin.x);
+    impl->m_workAreaPosition.y = static_cast<int>(bounds.origin.y);
+    impl->m_workAreaSize.x     = static_cast<unsigned int>(bounds.size.width);
+    impl->m_workAreaSize.y     = static_cast<unsigned int>(bounds.size.height);
+
+    // Get refresh rate
+    CGDisplayModeRef mode = CGDisplayCopyDisplayMode(displayID);
+    if (mode)
+    {
+        const double refreshRate = CGDisplayModeGetRefreshRate(mode);
+        impl->m_refreshRate      = (refreshRate > 0) ? static_cast<unsigned int>(std::lround(refreshRate)) : 60;
+        CFRelease(mode);
+    }
+    else
+    {
+        impl->m_refreshRate = 60;
+    }
+
+    // Calculate scaled resolution based on DPI
+    const CGFloat dpiScale   = CGDisplayScreenSize(displayID).width > 0
+                                   ? (bounds.size.width * 25.4) / CGDisplayScreenSize(displayID).width
+                                   : 96.0;
+    impl->m_scaledResolution = Vector2u(static_cast<unsigned int>(impl->m_resolution.x * 96.0 / dpiScale),
+                                        static_cast<unsigned int>(impl->m_resolution.y * 96.0 / dpiScale));
+
+    return impl;
 }
 } // namespace
 
 
 ////////////////////////////////////////////////////////////
-std::vector<Monitor> MonitorImpl::getAvailableMonitors()
+std::vector<std::shared_ptr<MonitorImpl>> MonitorImpl::getAvailableMonitors()
 {
-    std::vector<Monitor> monitors;
+    std::vector<std::shared_ptr<MonitorImpl>> monitors;
 
     // Get all connected displays
     std::array<CGDirectDisplayID, 128> displays    = {};
@@ -116,7 +229,6 @@ std::vector<Monitor> MonitorImpl::getAvailableMonitors()
 
     if (CGGetOnlineDisplayList(128, displays.data(), &numDisplays) != kCGErrorSuccess)
     {
-        // Fallback to main display
         numDisplays = 1;
         displays[0] = CGMainDisplayID();
     }
@@ -132,63 +244,22 @@ std::vector<Monitor> MonitorImpl::getAvailableMonitors()
                 continue;
         }
 
-        Monitor monitor;
-
-        // Get display identifier
-        monitor.m_identifier = getDisplayModel(displayID);
-        monitor.m_name       = String(getDisplayName(displayID).c_str());
-        monitor.m_primary    = (displayID == CGMainDisplayID());
-
-        // Get bounds
-        const CGRect bounds    = CGDisplayBounds(displayID);
-        monitor.m_position.x   = static_cast<int>(bounds.origin.x);
-        monitor.m_position.y   = static_cast<int>(bounds.origin.y);
-        monitor.m_resolution.x = static_cast<unsigned int>(bounds.size.width);
-        monitor.m_resolution.y = static_cast<unsigned int>(bounds.size.height);
-
-        // Work area on macOS - for now, same as full bounds
-        // (proper implementation would use NSScreen.visibleFrame)
-        monitor.m_workArea = IntRect(static_cast<int>(bounds.origin.x),
-                                     static_cast<int>(bounds.origin.y),
-                                     static_cast<int>(bounds.size.width),
-                                     static_cast<int>(bounds.size.height));
-
-        // Get refresh rate - get current mode and extract refresh rate
-        CGDisplayModeRef mode = CGDisplayCopyDisplayMode(displayID);
-        if (mode)
-        {
-            const double refreshRate = CGDisplayModeGetRefreshRate(mode);
-            monitor.m_refreshRate    = (refreshRate > 0) ? static_cast<unsigned int>(std::lround(refreshRate)) : 60;
-            CFRelease(mode);
-        }
-        else
-        {
-            monitor.m_refreshRate = 60; // Default
-        }
-
-        // Calculate scaled resolution based on DPI
-        // macOS typically has standard DPI, we can use the scale factor
-        const CGFloat dpiScale     = CGDisplayScreenSize(displayID).width > 0
-                                         ? (bounds.size.width * 25.4) / CGDisplayScreenSize(displayID).width
-                                         : 96.0;
-        monitor.m_scaledResolution = Vector2u(static_cast<unsigned int>(monitor.m_resolution.x * 96.0 / dpiScale),
-                                              static_cast<unsigned int>(monitor.m_resolution.y * 96.0 / dpiScale));
-
-        monitors.push_back(monitor);
+        monitors.push_back(getMonitorImplFromDisplay(displayID));
     }
 
     // Fallback: if no monitors found, create a default one
     if (monitors.empty())
     {
-        Monitor defaultMonitor;
-        defaultMonitor.m_primary          = true;
-        defaultMonitor.m_name             = "Display";
-        defaultMonitor.m_identifier       = "Display_0";
-        defaultMonitor.m_resolution       = {1920, 1080};
-        defaultMonitor.m_position         = {0, 0};
-        defaultMonitor.m_refreshRate      = 60;
-        defaultMonitor.m_scaledResolution = {1920, 1080};
-        defaultMonitor.m_workArea         = IntRect(0, 0, 1920, 1080);
+        auto defaultMonitor                = std::make_shared<MonitorImpl>();
+        defaultMonitor->m_primary          = true;
+        defaultMonitor->m_name             = "Display";
+        defaultMonitor->m_identifier       = "Display_0";
+        defaultMonitor->m_resolution       = {1920, 1080};
+        defaultMonitor->m_position         = {0, 0};
+        defaultMonitor->m_refreshRate      = 60;
+        defaultMonitor->m_scaledResolution = {1920, 1080};
+        defaultMonitor->m_workAreaPosition = {0, 0};
+        defaultMonitor->m_workAreaSize     = {1920, 1080};
 
         monitors.push_back(defaultMonitor);
     }
@@ -198,119 +269,27 @@ std::vector<Monitor> MonitorImpl::getAvailableMonitors()
 
 
 ////////////////////////////////////////////////////////////
-Monitor MonitorImpl::getPrimary()
+std::shared_ptr<MonitorImpl> MonitorImpl::getPrimary()
 {
     const CGDirectDisplayID primaryDisplay = CGMainDisplayID();
 
-    Monitor monitor;
+    auto impl = getMonitorImplFromDisplay(primaryDisplay);
+    if (impl)
+        return impl;
 
-    monitor.m_identifier = getDisplayModel(primaryDisplay);
-    monitor.m_name       = String(getDisplayName(primaryDisplay).c_str());
-    monitor.m_primary    = true;
+    // Fallback
+    auto defaultMonitor                = std::make_shared<MonitorImpl>();
+    defaultMonitor->m_primary          = true;
+    defaultMonitor->m_name             = "Display";
+    defaultMonitor->m_identifier       = "Display_0";
+    defaultMonitor->m_resolution       = {1920, 1080};
+    defaultMonitor->m_position         = {0, 0};
+    defaultMonitor->m_refreshRate      = 60;
+    defaultMonitor->m_scaledResolution = {1920, 1080};
+    defaultMonitor->m_workAreaPosition = {0, 0};
+    defaultMonitor->m_workAreaSize     = {1920, 1080};
 
-    const CGRect bounds    = CGDisplayBounds(primaryDisplay);
-    monitor.m_position.x   = static_cast<int>(bounds.origin.x);
-    monitor.m_position.y   = static_cast<int>(bounds.origin.y);
-    monitor.m_resolution.x = static_cast<unsigned int>(bounds.size.width);
-    monitor.m_resolution.y = static_cast<unsigned int>(bounds.size.height);
-
-    // Work area
-    monitor.m_workArea = IntRect(static_cast<int>(bounds.origin.x),
-                                 static_cast<int>(bounds.origin.y),
-                                 static_cast<int>(bounds.size.width),
-                                 static_cast<int>(bounds.size.height));
-
-    CGDisplayModeRef mode = CGDisplayCopyDisplayMode(primaryDisplay);
-    if (mode)
-    {
-        const double refreshRate = CGDisplayModeGetRefreshRate(mode);
-        monitor.m_refreshRate    = (refreshRate > 0) ? static_cast<unsigned int>(std::lround(refreshRate)) : 60;
-        CFRelease(mode);
-    }
-    else
-    {
-        monitor.m_refreshRate = 60;
-    }
-
-    const CGFloat dpiScale     = CGDisplayScreenSize(primaryDisplay).width > 0
-                                     ? (bounds.size.width * 25.4) / CGDisplayScreenSize(primaryDisplay).width
-                                     : 96.0;
-    monitor.m_scaledResolution = Vector2u(static_cast<unsigned int>(monitor.m_resolution.x * 96.0 / dpiScale),
-                                          static_cast<unsigned int>(monitor.m_resolution.y * 96.0 / dpiScale));
-
-    return monitor;
-}
-
-
-////////////////////////////////////////////////////////////
-std::vector<VideoMode> MonitorImpl::getAvailableVideoModesForMonitor(const String& monitorIdentifier)
-{
-    std::vector<VideoMode> modes;
-
-    // Get all connected displays
-    std::array<CGDirectDisplayID, 128> displays    = {};
-    uint32_t                           numDisplays = 0;
-
-    if (CGGetOnlineDisplayList(128, displays.data(), &numDisplays) != kCGErrorSuccess)
-    {
-        // Fallback to main display
-        numDisplays = 1;
-        displays[0] = CGMainDisplayID();
-    }
-
-    const std::string monitorIdStr = monitorIdentifier.toAnsiString();
-
-    // Find the matching display
-    for (uint32_t i = 0; i < numDisplays; ++i)
-    {
-        const CGDirectDisplayID displayID = displays[i];
-
-        // Skip mirrored displays
-        if (CGDisplayIsInMirrorSet(displayID))
-        {
-            if (CGDisplayPrimaryDisplay(displayID) != displayID)
-                continue;
-        }
-
-        // Check if this is the display we're looking for
-        const std::string displayModel = getDisplayModel(displayID);
-        if (displayModel == monitorIdStr)
-        {
-            // Get available modes for this display
-            CFArrayRef modeArray = CGDisplayCopyAllDisplayModes(displayID, nullptr);
-            if (modeArray)
-            {
-                const CFIndex modeCount = CFArrayGetCount(modeArray);
-                for (CFIndex m = 0; m < modeCount; ++m)
-                {
-                    auto* modeRef = const_cast<CGDisplayModeRef>(
-                        static_cast<const CGDisplayMode*>(CFArrayGetValueAtIndex(modeArray, m)));
-                    if (modeRef)
-                    {
-                        const size_t width  = CGDisplayModeGetWidth(modeRef);
-                        const size_t height = CGDisplayModeGetHeight(modeRef);
-
-                        const VideoMode mode(Vector2u(static_cast<unsigned int>(width), static_cast<unsigned int>(height)));
-
-                        // Avoid duplicates
-                        if (std::find(modes.begin(), modes.end(), mode) == modes.end())
-                        {
-                            modes.push_back(mode);
-                        }
-                    }
-                }
-
-                CFRelease(modeArray);
-            }
-
-            break;
-        }
-    }
-
-    // Sort modes from best to worst
-    std::sort(modes.begin(), modes.end(), std::greater<>());
-
-    return modes;
+    return defaultMonitor;
 }
 
 } // namespace sf::priv

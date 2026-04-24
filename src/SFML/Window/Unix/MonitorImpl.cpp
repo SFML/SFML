@@ -25,7 +25,6 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Monitor.hpp>
 #include <SFML/Window/MonitorImpl.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/Unix/Utils.hpp>
@@ -46,6 +45,70 @@
 
 namespace sf::priv
 {
+////////////////////////////////////////////////////////////
+MonitorImpl::MonitorImpl() = default;
+
+
+////////////////////////////////////////////////////////////
+MonitorImpl::~MonitorImpl() = default;
+
+
+////////////////////////////////////////////////////////////
+std::vector<VideoMode> MonitorImpl::getAvailableVideoModes() const
+{
+    std::vector<VideoMode> modes;
+
+    if (const auto display = openDisplay())
+    {
+        const int    screen = DefaultScreen(display.get());
+        const Window root   = RootWindow(display.get(), screen);
+
+        if (const auto resources = X11Ptr<XRRScreenResources>(XRRGetScreenResources(display.get(), root)))
+        {
+            const std::string idStr = m_identifier.toAnsiString();
+
+            // Find the output matching the identifier
+            for (int i = 0; i < resources->noutput; ++i)
+            {
+                const RROutput output = resources->outputs[i];
+
+                if (const auto outputInfo = X11Ptr<XRROutputInfo>(XRRGetOutputInfo(display.get(), resources.get(), output)))
+                {
+                    if (outputInfo->name && outputInfo->nameLen > 0)
+                    {
+                        const String outputName(outputInfo->name);
+                        if (outputName.toAnsiString() == idStr && outputInfo->connection == RR_Connected)
+                        {
+                            // Found the monitor, collect all available modes
+                            for (int m = 0; m < outputInfo->nmode; ++m)
+                            {
+                                const RRMode modeId = outputInfo->modes[m];
+
+                                for (int r = 0; r < resources->nmode; ++r)
+                                {
+                                    if (resources->modes[r].id == modeId)
+                                    {
+                                        const VideoMode mode(
+                                            Vector2u(resources->modes[r].width, resources->modes[r].height));
+                                        modes.push_back(mode);
+                                        break;
+                                    }
+                                }
+                            }
+
+                            std::sort(modes.begin(), modes.end(), std::greater<>());
+                            return modes;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return modes;
+}
+
+
 ////////////////////////////////////////////////////////////
 // Helper template specializations for XRandR types
 ////////////////////////////////////////////////////////////
@@ -76,19 +139,111 @@ struct XDeleter<XRRCrtcInfo>
     }
 };
 
-////////////////////////////////////////////////////////////
-std::vector<Monitor> MonitorImpl::getAvailableMonitors()
+namespace
 {
-    std::vector<Monitor> monitors;
+// Create MonitorImpl from output information
+std::shared_ptr<MonitorImpl> getMonitorImplFromOutput(
+    Display*            display,
+    XRRScreenResources* resources,
+    RROutput            output,
+    XRROutputInfo*      outputInfo,
+    bool                isPrimary)
+{
+    auto impl = std::make_shared<MonitorImpl>();
 
-    // Open a connection with the X server
+    if (!outputInfo || outputInfo->connection != RR_Connected)
+        return nullptr;
+
+    // Get output name
+    if (outputInfo->name && outputInfo->nameLen > 0)
+    {
+        impl->m_name       = String(outputInfo->name);
+        impl->m_identifier = String(outputInfo->name);
+    }
+    else
+    {
+        return nullptr;
+    }
+
+    impl->m_primary = isPrimary;
+
+    // Get CRTC information if the output is active
+    if (outputInfo->crtc != None)
+    {
+        if (const auto crtcInfo = X11Ptr<XRRCrtcInfo>(XRRGetCrtcInfo(display, resources, outputInfo->crtc)))
+        {
+            impl->m_position.x = static_cast<int>(crtcInfo->x);
+            impl->m_position.y = static_cast<int>(crtcInfo->y);
+
+            impl->m_resolution.x = crtcInfo->width;
+            impl->m_resolution.y = crtcInfo->height;
+
+            // Handle rotation
+            if (crtcInfo->rotation == RR_Rotate_90 || crtcInfo->rotation == RR_Rotate_270)
+                std::swap(impl->m_resolution.x, impl->m_resolution.y);
+
+            // Get refresh rate from mode
+            if (crtcInfo->mode != None)
+            {
+                for (int m = 0; m < resources->nmode; ++m)
+                {
+                    if (resources->modes[m].id == crtcInfo->mode)
+                    {
+                        if (resources->modes[m].hTotal > 0 && resources->modes[m].vTotal > 0)
+                        {
+                            const double refreshRate = static_cast<double>(resources->modes[m].dotClock) /
+                                                       (resources->modes[m].hTotal * resources->modes[m].vTotal);
+                            impl->m_refreshRate      = static_cast<unsigned int>(std::lround(refreshRate));
+                        }
+                        else
+                        {
+                            impl->m_refreshRate = 60;
+                        }
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                impl->m_refreshRate = 60;
+            }
+        }
+    }
+
+    // Set scaled resolution accounting for DPI
+    if (outputInfo->mm_width > 0 && outputInfo->mm_height > 0)
+    {
+        const double dpiX        = (impl->m_resolution.x * 25.4) / static_cast<double>(outputInfo->mm_width);
+        const double dpiScale    = dpiX / 96.0;
+        impl->m_scaledResolution = Vector2u(static_cast<unsigned int>(impl->m_resolution.x / dpiScale),
+                                            static_cast<unsigned int>(impl->m_resolution.y / dpiScale));
+    }
+    else
+    {
+        impl->m_scaledResolution = impl->m_resolution;
+    }
+
+    // Work area
+    impl->m_workAreaPosition.x = impl->m_position.x;
+    impl->m_workAreaPosition.y = impl->m_position.y;
+    impl->m_workAreaSize.x     = static_cast<unsigned int>(impl->m_resolution.x);
+    impl->m_workAreaSize.y     = static_cast<unsigned int>(impl->m_resolution.y);
+
+    return impl;
+}
+} // namespace
+
+
+////////////////////////////////////////////////////////////
+std::vector<std::shared_ptr<MonitorImpl>> MonitorImpl::getAvailableMonitors()
+{
+    std::vector<std::shared_ptr<MonitorImpl>> monitors;
+
     if (const auto display = openDisplay())
     {
-        // Get the default screen
         const int    screen = DefaultScreen(display.get());
         const Window root   = RootWindow(display.get(), screen);
 
-        // Get screen resources (outputs, crtcs, modes)
         if (const auto resources = X11Ptr<XRRScreenResources>(XRRGetScreenResources(display.get(), root)))
         {
             // Iterate through all outputs
@@ -96,115 +251,36 @@ std::vector<Monitor> MonitorImpl::getAvailableMonitors()
             {
                 const RROutput output = resources->outputs[i];
 
-                // Get output information
                 if (const auto outputInfo = X11Ptr<XRROutputInfo>(XRRGetOutputInfo(display.get(), resources.get(), output)))
                 {
-                    // Only process connected outputs
                     if (outputInfo->connection != RR_Connected)
                         continue;
 
-                    Monitor monitor;
-
-                    // Get output name
-                    if (outputInfo->name && outputInfo->nameLen > 0)
+                    const bool isPrimary = (i == 0); // First output is typically primary
+                    if (auto impl = getMonitorImplFromOutput(display.get(), resources.get(), output, outputInfo.get(), isPrimary))
                     {
-                        monitor.m_name       = String(outputInfo->name);
-                        monitor.m_identifier = String(outputInfo->name);
+                        monitors.push_back(impl);
                     }
-                    else
-                    {
-                        continue; // Skip outputs with no name
-                    }
-
-                    // Get CRTC information if the output is active
-                    if (outputInfo->crtc != None)
-                    {
-                        if (const auto crtcInfo = X11Ptr<XRRCrtcInfo>(
-                                XRRGetCrtcInfo(display.get(), resources.get(), outputInfo->crtc)))
-                        {
-                            // Get position
-                            monitor.m_position.x = static_cast<int>(crtcInfo->x);
-                            monitor.m_position.y = static_cast<int>(crtcInfo->y);
-
-                            // Get resolution
-                            monitor.m_resolution.x = crtcInfo->width;
-                            monitor.m_resolution.y = crtcInfo->height;
-
-                            // Handle rotation
-                            if (crtcInfo->rotation == RR_Rotate_90 || crtcInfo->rotation == RR_Rotate_270)
-                                std::swap(monitor.m_resolution.x, monitor.m_resolution.y);
-
-                            // Get refresh rate from mode
-                            if (crtcInfo->mode != None)
-                            {
-                                for (int m = 0; m < resources->nmode; ++m)
-                                {
-                                    if (resources->modes[m].id == crtcInfo->mode)
-                                    {
-                                        // Calculate refresh rate
-                                        if (resources->modes[m].hTotal > 0 && resources->modes[m].vTotal > 0)
-                                        {
-                                            const double refreshRate = static_cast<double>(resources->modes[m].dotClock) /
-                                                                       (resources->modes[m].hTotal *
-                                                                        resources->modes[m].vTotal);
-                                            monitor.m_refreshRate = static_cast<unsigned int>(std::lround(refreshRate));
-                                        }
-                                        else
-                                        {
-                                            monitor.m_refreshRate = 60; // Default
-                                        }
-                                        break;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                monitor.m_refreshRate = 60; // Default
-                            }
-                        }
-                    }
-
-                    // Set scaled resolution accounting for DPI
-                    if (outputInfo->mm_width > 0 && outputInfo->mm_height > 0)
-                    {
-                        // DPI = (pixels * 25.4) / mm
-                        const double dpiX = (monitor.m_resolution.x * 25.4) / static_cast<double>(outputInfo->mm_width);
-                        const double dpiScale = dpiX / 96.0;
-                        monitor.m_scaledResolution = Vector2u(static_cast<unsigned int>(monitor.m_resolution.x / dpiScale),
-                                                              static_cast<unsigned int>(monitor.m_resolution.y / dpiScale));
-                    }
-                    else
-                    {
-                        monitor.m_scaledResolution = monitor.m_resolution; // No DPI info, use physical resolution
-                    }
-
-                    // Work area (X11 typically uses full resolution for now)
-                    monitor.m_workArea = IntRect(monitor.m_position.x,
-                                                 monitor.m_position.y,
-                                                 static_cast<int>(monitor.m_resolution.x),
-                                                 static_cast<int>(monitor.m_resolution.y));
-
-                    // Check if this is the primary monitor
-                    monitor.m_primary = (output == resources->outputs[0]); // First output is typically primary
-
-                    monitors.push_back(monitor);
                 }
             }
         }
     }
 
-    // Fallback: if no monitors found, create a default one
+    // Fallback
     if (monitors.empty())
     {
-        Monitor defaultMonitor;
-        defaultMonitor.m_primary          = true;
-        defaultMonitor.m_name             = "Default";
-        defaultMonitor.m_identifier       = "Default";
-        defaultMonitor.m_resolution       = {1920, 1080};
-        defaultMonitor.m_position         = {0, 0};
-        defaultMonitor.m_refreshRate      = 60;
-        defaultMonitor.m_scaledResolution = {1920, 1080};
-        defaultMonitor.m_workArea         = IntRect(0, 0, 1920, 1080);
+        auto defaultMonitor                = std::make_shared<MonitorImpl>();
+        defaultMonitor->m_primary          = true;
+        defaultMonitor->m_name             = "Default";
+        defaultMonitor->m_identifier       = "Default";
+        defaultMonitor->m_resolution       = {1920, 1080};
+        defaultMonitor->m_position         = {0, 0};
+        defaultMonitor->m_refreshRate      = 60;
+        defaultMonitor->m_scaledResolution = {1920, 1080};
+        defaultMonitor->m_workAreaLeft     = 0;
+        defaultMonitor->m_workAreaTop      = 0;
+        defaultMonitor->m_workAreaWidth    = 1920;
+        defaultMonitor->m_workAreaHeight   = 1080;
 
         monitors.push_back(defaultMonitor);
     }
@@ -214,87 +290,27 @@ std::vector<Monitor> MonitorImpl::getAvailableMonitors()
 
 
 ////////////////////////////////////////////////////////////
-Monitor MonitorImpl::getPrimary()
+std::shared_ptr<MonitorImpl> MonitorImpl::getPrimary()
 {
-    auto monitors = getAvailableMonitors();
+    const auto monitors = getAvailableMonitors();
 
-    // First output is typically the primary
     if (!monitors.empty())
         return monitors[0];
 
-    // Fallback
-    Monitor defaultMonitor;
-    defaultMonitor.m_primary          = true;
-    defaultMonitor.m_name             = "Default";
-    defaultMonitor.m_identifier       = "Default";
-    defaultMonitor.m_resolution       = {1920, 1080};
-    defaultMonitor.m_position         = {0, 0};
-    defaultMonitor.m_refreshRate      = 60;
-    defaultMonitor.m_scaledResolution = {1920, 1080};
-    defaultMonitor.m_workArea         = IntRect(0, 0, 1920, 1080);
+    auto defaultMonitor                = std::make_shared<MonitorImpl>();
+    defaultMonitor->m_primary          = true;
+    defaultMonitor->m_name             = "Default";
+    defaultMonitor->m_identifier       = "Default";
+    defaultMonitor->m_resolution       = {1920, 1080};
+    defaultMonitor->m_position         = {0, 0};
+    defaultMonitor->m_refreshRate      = 60;
+    defaultMonitor->m_scaledResolution = {1920, 1080};
+    defaultMonitor->m_workAreaLeft     = 0;
+    defaultMonitor->m_workAreaTop      = 0;
+    defaultMonitor->m_workAreaWidth    = 1920;
+    defaultMonitor->m_workAreaHeight   = 1080;
 
     return defaultMonitor;
-}
-
-
-////////////////////////////////////////////////////////////
-std::vector<VideoMode> MonitorImpl::getAvailableVideoModesForMonitor(const String& monitorIdentifier)
-{
-    std::vector<VideoMode> modes;
-
-    // Open a connection with the X server
-    if (const auto display = openDisplay())
-    {
-        // Get the default screen
-        const int    screen = DefaultScreen(display.get());
-        const Window root   = RootWindow(display.get(), screen);
-
-        // Get screen resources (outputs, crtcs, modes)
-        if (const auto resources = X11Ptr<XRRScreenResources>(XRRGetScreenResources(display.get(), root)))
-        {
-            // Find the output matching the identifier
-            for (int i = 0; i < resources->noutput; ++i)
-            {
-                const RROutput output = resources->outputs[i];
-
-                // Get output information
-                if (const auto outputInfo = X11Ptr<XRROutputInfo>(XRRGetOutputInfo(display.get(), resources.get(), output)))
-                {
-                    // Check if this is the monitor we're looking for
-                    if (outputInfo->name && outputInfo->nameLen > 0)
-                    {
-                        const String outputName(outputInfo->name);
-                        if (outputName == monitorIdentifier && outputInfo->connection == RR_Connected)
-                        {
-                            // Found the monitor, collect all available modes
-                            for (int m = 0; m < outputInfo->nmode; ++m)
-                            {
-                                const RRMode modeId = outputInfo->modes[m];
-
-                                // Find the mode details in the resources
-                                for (int r = 0; r < resources->nmode; ++r)
-                                {
-                                    if (resources->modes[r].id == modeId)
-                                    {
-                                        const VideoMode mode(
-                                            Vector2u(resources->modes[r].width, resources->modes[r].height));
-                                        modes.push_back(mode);
-                                        break;
-                                    }
-                                }
-                            }
-
-                            // Sort modes from best to worst
-                            std::sort(modes.begin(), modes.end(), std::greater<>());
-                            return modes;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    return modes;
 }
 
 } // namespace sf::priv

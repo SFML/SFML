@@ -7,7 +7,7 @@
 // In no event will the authors be held liable for any damages arising from the use of this software.
 //
 // Permission is granted to anyone to use this software for any purpose,
-// including commercial applications, and to alter it and redistribute it freely,
+// including commercial applications, and to alter this and redistribute it freely,
 // subject to the following restrictions:
 //
 // 1. The origin of this software must not be misrepresented;
@@ -32,6 +32,7 @@
 #include <SFML/System/String.hpp>
 #include <SFML/System/Vector2.hpp>
 
+#include <memory>
 #include <vector>
 
 
@@ -62,6 +63,7 @@ struct IntRect
     {
     }
 };
+
 ////////////////////////////////////////////////////////////
 // Forward declarations
 ////////////////////////////////////////////////////////////
@@ -82,10 +84,16 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Default constructor
     ///
-    /// This constructor initializes all members to default values.
+    /// This constructor initializes a monitor with default values.
     ///
     ////////////////////////////////////////////////////////////
     Monitor() = default;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Constructor with implementation pointer
+    ///
+    ////////////////////////////////////////////////////////////
+    explicit Monitor(std::shared_ptr<priv::MonitorImpl> impl);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the name/identifier of the monitor
@@ -139,15 +147,26 @@ public:
     [[nodiscard]] Vector2u getScaledResolution() const;
 
     ////////////////////////////////////////////////////////////
-    /// \brief Get the work area of the monitor
+    /// \brief Get the position of the work area of the monitor
     ///
     /// The work area is the usable portion of the monitor, excluding
     /// taskbars, menu bars, or other system UI elements.
     ///
-    /// \return Work area as a rectangle (position and size in pixels)
+    /// \return Position of the top-left corner of the work area in pixels
     ///
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] IntRect getWorkArea() const;
+    [[nodiscard]] Vector2i getWorkAreaPosition() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the size of the work area of the monitor
+    ///
+    /// The work area is the usable portion of the monitor, excluding
+    /// taskbars, menu bars, or other system UI elements.
+    ///
+    /// \return Size of the work area in pixels
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] Vector2u getWorkAreaSize() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the current refresh rate of the monitor
@@ -191,19 +210,11 @@ public:
     ////////////////////////////////////////////////////////////
     [[nodiscard]] static std::vector<Monitor> getAvailableMonitors();
 
+private:
     ////////////////////////////////////////////////////////////
-    // Member data
+    // Member data - pImpl pointer
     ////////////////////////////////////////////////////////////
-    // NOLINTBEGIN(readability-identifier-naming)
-    String       m_name;             //!< Monitor name/identifier
-    String       m_identifier;       //!< Unique monitor identifier
-    bool         m_primary = false;  //!< Whether this is primary monitor
-    Vector2i     m_position;         //!< Top-left position in virtual desktop
-    Vector2u     m_resolution;       //!< Current resolution in pixels
-    unsigned int m_refreshRate = 0;  //!< Refresh rate in Hz
-    Vector2u     m_scaledResolution; //!< Scaled resolution accounting for DPI scaling
-    IntRect      m_workArea;         //!< Work area (usable area excluding taskbars, etc.)
-    // NOLINTEND(readability-identifier-naming)
+    std::shared_ptr<priv::MonitorImpl> m_impl;
 };
 
 ////////////////////////////////////////////////////////////
