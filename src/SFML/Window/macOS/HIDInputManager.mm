@@ -979,6 +979,15 @@ bool HIDInputManager::isPressed(IOHIDElements& elements) const
         IOHIDValueRef value = nil;
 
         IOHIDDeviceRef device = IOHIDElementGetDevice(*it);
+
+        if (!device)
+        {
+            // This means some kind of error / disconnection so we remove this element from our database.
+            CFRelease(*it);
+            it = elements.erase(it);
+            continue;
+        }
+
         IOHIDDeviceGetValue(device, *it, &value);
 
         if (!value)
