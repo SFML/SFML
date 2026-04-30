@@ -434,14 +434,18 @@ JoystickState JoystickImpl::update()
     unsigned int i = 0;
     for (auto it = m_buttons.begin(); it != m_buttons.end(); ++it, ++i)
     {
-        IOHIDValueRef value = nil;
-        IOHIDDeviceGetValue(IOHIDElementGetDevice(*it), *it, &value);
+        IOHIDValueRef  value  = nil;
+        IOHIDDeviceRef device = IOHIDElementGetDevice(*it);
 
-        // Check for plug out.
-        if (!value)
-        {
+        // Check for unplugging
+        if (!device)
             return disconnectedState;
-        }
+
+        IOHIDDeviceGetValue(device, *it, &value);
+
+        // Check for unplugging
+        if (!value)
+            return disconnectedState;
 
         // 1 means pressed, others mean released
         state.buttons[i] = IOHIDValueGetIntegerValue(value) == 1;
@@ -450,14 +454,18 @@ JoystickState JoystickImpl::update()
     // Update axes' state
     for (const auto& [axis, iohidElementRef] : m_axis)
     {
-        IOHIDValueRef value = nil;
-        IOHIDDeviceGetValue(IOHIDElementGetDevice(iohidElementRef), iohidElementRef, &value);
+        IOHIDValueRef  value  = nil;
+        IOHIDDeviceRef device = IOHIDElementGetDevice(iohidElementRef);
 
-        // Check for plug out.
-        if (!value)
-        {
+        // Check for unplugging
+        if (!device)
             return disconnectedState;
-        }
+
+        IOHIDDeviceGetValue(device, iohidElementRef, &value);
+
+        // Check for unplugging
+        if (!value)
+            return disconnectedState;
 
         // We want to bind [physicalMin,physicalMax] to [-100=min,100=max].
         //
@@ -487,14 +495,18 @@ JoystickState JoystickImpl::update()
     //
     if (m_hat != nullptr)
     {
-        IOHIDValueRef value = nil;
-        IOHIDDeviceGetValue(IOHIDElementGetDevice(m_hat), m_hat, &value);
+        IOHIDValueRef  value  = nil;
+        IOHIDDeviceRef device = IOHIDElementGetDevice(m_hat);
 
-        // Check for plug out.
-        if (!value)
-        {
+        // Check for unplugging
+        if (!device)
             return disconnectedState;
-        }
+
+        IOHIDDeviceGetValue(device, m_hat, &value);
+
+        // Check for unplugging
+        if (!value)
+            return disconnectedState;
 
         const CFIndex raw = IOHIDValueGetIntegerValue(value);
 
