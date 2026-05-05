@@ -106,8 +106,8 @@ public:
         bool               shift{};      //!< Is the Shift key pressed?
         bool               system{};     //!< Is the System key pressed?
         bool               capsLock{};   //!< Is the CapsLock key toggled?
-        bool               numLock{};    //!< Is the NumLock key toggled? (Not supported on macOS)
-        bool               scrollLock{}; //!< Is the ScrollLock key toggled?
+        bool               numLock{};    //!< Is the NumLock key toggled?
+        bool               scrollLock{}; //!< Is the ScrollLock key toggled? (Not supported on macOS)
     };
 
     ////////////////////////////////////////////////////////////
@@ -123,8 +123,8 @@ public:
         bool               shift{};      //!< Is the Shift key pressed?
         bool               system{};     //!< Is the System key pressed?
         bool               capsLock{};   //!< Is the CapsLock key toggled?
-        bool               numLock{};    //!< Is the NumLock key toggled? (Not supported on macOS)
-        bool               scrollLock{}; //!< Is the ScrollLock key toggled?
+        bool               numLock{};    //!< Is the NumLock key toggled?
+        bool               scrollLock{}; //!< Is the ScrollLock key toggled? (Not supported on macOS)
     };
 
     ////////////////////////////////////////////////////////////
