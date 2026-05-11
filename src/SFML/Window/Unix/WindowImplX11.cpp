@@ -1193,6 +1193,38 @@ void WindowImplX11::setIcon(Vector2u size, const std::uint8_t* pixels)
 
 
 ////////////////////////////////////////////////////////////
+void WindowImplX11::setState(State state)
+{
+    auto currentState = getState();
+
+    switch (state)
+    {
+        case State::Fullscreen:
+            if (currentState != State::Fullscreen)
+            {
+                m_fullscreen = true;
+                switchToFullscreen();
+            }
+            break;
+        case State::Windowed:
+            if (currentState == State::Fullscreen)
+            {
+                m_fullscreen = false;
+                switchToWindowed();
+            }
+            break;
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+State WindowImplX11::getState() const
+{
+    return m_fullscreen ? State::Fullscreen : State::Windowed;
+}
+
+
+////////////////////////////////////////////////////////////
 void WindowImplX11::setVisible(bool visible)
 {
     if (visible)
@@ -1577,6 +1609,42 @@ void WindowImplX11::switchToFullscreen()
     }
 }
 
+
+////////////////////////////////////////////////////////////
+void WindowImplX11::switchToWindowed()
+{
+    using namespace WindowImplX11Impl;
+
+    resetVideoMode();
+
+    if (isFeatureSupported("_NET_WM_STATE") && isFeatureSupported("_NET_WM_STATE_FULLSCREEN"))
+    {
+        static const auto netWmState           = getAtom("_NET_WM_STATE");
+        static const auto netWmStateFullscreen = getAtom("_NET_WM_STATE_FULLSCREEN");
+
+        if (netWmState && netWmStateFullscreen)
+        {
+            auto event                 = XEvent();
+            event.type                 = ClientMessage;
+            event.xclient.window       = m_window;
+            event.xclient.format       = 32;
+            event.xclient.message_type = netWmState;
+            event.xclient.data.l[0]    = 0; // _NET_WM_STATE_REMOVE
+            event.xclient.data.l[1]    = static_cast<long>(netWmStateFullscreen);
+            event.xclient.data.l[2]    = 0; // No second property
+            event.xclient.data.l[3]    = 1; // Normal window
+
+            const int result = XSendEvent(m_display.get(),
+                                          DefaultRootWindow(m_display.get()),
+                                          False,
+                                          SubstructureNotifyMask | SubstructureRedirectMask,
+                                          &event);
+
+            if (!result)
+                err() << "Exiting fullscreen failed, could not send \"_NET_WM_STATE\" event" << std::endl;
+        }
+    }
+}
 
 ////////////////////////////////////////////////////////////
 void WindowImplX11::setProtocols()

@@ -425,6 +425,25 @@ public:
     void setIcon(Vector2u size, const std::uint8_t* pixels);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Set the window state
+    ///
+    /// \note This function will reuse the window's current size
+    /// when switching modes.
+    ///
+    /// \param state New state to be applied to the window
+    ///
+    ////////////////////////////////////////////////////////////
+    void setState(State state);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the window's current state
+    ///
+    /// \return Current state of the window
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] State getState() const;
+
+    ////////////////////////////////////////////////////////////
     /// \brief Show or hide the window
     ///
     /// The window is shown by default.
