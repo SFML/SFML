@@ -78,6 +78,14 @@ TEST_CASE("[Window] sf::Event")
         CHECK(event.is<sf::Event::FocusLost>());
         CHECK(event.getIf<sf::Event::FocusLost>());
 
+        event = sf::Event::Minimized{};
+        CHECK(event.is<sf::Event::Minimized>());
+        CHECK(event.getIf<sf::Event::Minimized>());
+
+        event = sf::Event::Maximized{};
+        CHECK(event.is<sf::Event::Maximized>());
+        CHECK(event.getIf<sf::Event::Maximized>());
+
         event = sf::Event::FocusGained{};
         CHECK(event.is<sf::Event::FocusGained>());
         CHECK(event.getIf<sf::Event::FocusGained>());
