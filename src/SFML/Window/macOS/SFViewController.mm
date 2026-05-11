@@ -284,5 +284,13 @@
     [context setView:m_oglView];
 }
 
+////////////////////////////////////////////////////////
+- (void)setFileDroppingEnabled:(bool)enabled
+{
+    if (enabled)
+        [m_oglView registerForDraggedTypes:[NSArray arrayWithObjects:NSFilenamesPboardType, nil]];
+    else
+        [m_oglView unregisterDraggedTypes];
+}
 
 @end

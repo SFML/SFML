@@ -98,7 +98,12 @@ public:
     [[nodiscard]] bool hasFocus() const override;
 
     ////////////////////////////////////////////////////////////
-    void forwardEvent(Event event);
+    /// \brief Notify an event
+    ///
+    /// \param event Event to forward
+    ///
+    ////////////////////////////////////////////////////////////
+    void forwardEvent(const Event& event);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the window's view
