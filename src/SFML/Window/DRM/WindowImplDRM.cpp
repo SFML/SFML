@@ -146,6 +146,27 @@ void WindowImplDRM::setIcon(Vector2u /*size*/, const std::uint8_t* /*pixels*/)
 
 
 ////////////////////////////////////////////////////////////
+void WindowImplDRM::setState(State /*state*/)
+{
+    // TODO: Not implemented yet
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplDRM::setState(State /*state*/, Vector2u /*size*/)
+{
+    // TODO: Not implemented yet
+}
+
+
+////////////////////////////////////////////////////////////
+State WindowImplDRM::getState() const
+{
+    return State::Windowed;
+}
+
+
+////////////////////////////////////////////////////////////
 void WindowImplDRM::setVisible(bool /*visible*/)
 {
 }
