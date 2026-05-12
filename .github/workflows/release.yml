@@ -19,10 +19,10 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-        - { name: Windows VS2022 x86, os: windows-2025 }
-        - { name: Windows VS2022 x64, os: windows-2025 }
-        - { name: Windows MinGW x86,  os: windows-2025, flags: -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ }
-        - { name: Windows MinGW x64,  os: windows-2025, flags: -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ }
+        - { name: Windows VS2026 x86, os: windows-2025-vs2026 }
+        - { name: Windows VS2026 x64, os: windows-2025-vs2026 }
+        - { name: Windows MinGW x86,  os: windows-2025-vs2026, flags: -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ }
+        - { name: Windows MinGW x64,  os: windows-2025-vs2026, flags: -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ }
         - { name: Linux GCC,          os: ubuntu-24.04 }
         - { name: macOS x64,          os: macos-15,     flags: -DCMAKE_OSX_ARCHITECTURES=x86_64 }
         - { name: macOS arm64,        os: macos-15 }
@@ -282,10 +282,10 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-        - { name: Windows VS2022 x86, os: windows-2025 }
-        - { name: Windows VS2022 x64, os: windows-2025 }
-        - { name: Windows MinGW x86,  os: windows-2025 }
-        - { name: Windows MinGW x64,  os: windows-2025 }
+        - { name: Windows VS2026 x86, os: windows-2025-vs2026 }
+        - { name: Windows VS2026 x64, os: windows-2025-vs2026 }
+        - { name: Windows MinGW x86,  os: windows-2025-vs2026 }
+        - { name: Windows MinGW x64,  os: windows-2025-vs2026 }
         - { name: Linux GCC,          os: ubuntu-24.04 }
         - { name: macOS x64,          os: macos-15 }
         - { name: macOS arm64,        os: macos-15 }
