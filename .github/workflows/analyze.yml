@@ -22,7 +22,7 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-        - { name: Windows,         os: windows-2025, flags: -GNinja }
+        - { name: Windows,         os: windows-2025-vs2026, flags: -GNinja }
         - { name: Linux,           os: ubuntu-24.04 }
         - { name: Linux DRM,       os: ubuntu-24.04, flags: -DSFML_USE_DRM=ON }
         - { name: Linux OpenGL ES, os: ubuntu-24.04, flags: -DSFML_OPENGL_ES=ON }
