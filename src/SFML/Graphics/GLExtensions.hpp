@@ -111,7 +111,7 @@ inline int SF_GL_OES_vertex_buffer_object = 1;
 #define GLEXT_blend_equation_separate_dependencies SF_GLAD_GL_OES_blend_equation_separate, glBlendEquationSeparateOES
 
 // Core since 2.0 - OES_texture_npot
-#define GLEXT_texture_non_power_of_two false
+#define GLEXT_texture_non_power_of_two SF_GLAD_GL_OES_texture_npot
 
 // Core since 2.0 - OES_framebuffer_object
 #define GLEXT_framebuffer_object               SF_GLAD_GL_OES_framebuffer_object
