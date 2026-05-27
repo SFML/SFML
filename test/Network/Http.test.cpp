@@ -15,31 +15,6 @@ TEST_CASE("[Network] sf::Http")
         STATIC_CHECK(!std::is_nothrow_move_assignable_v<sf::Http>);
     }
 
-    SECTION("setHost")
-    {
-        sf::Http http;
-
-        SECTION("Valid host w/ prefix")
-        {
-            CHECK(http.setHost("http://google.com"));
-        }
-
-        SECTION("Valid host w/o prefix")
-        {
-            CHECK(http.setHost("google.com"));
-        }
-
-        SECTION("Invalid host w/ prefix")
-        {
-            CHECK(!http.setHost("http://dummy"));
-        }
-
-        SECTION("Invalid host w/o prefix")
-        {
-            CHECK(!http.setHost("dummy"));
-        }
-    }
-
     SECTION("Request")
     {
         SECTION("Type traits")
@@ -75,6 +50,32 @@ TEST_CASE("[Network] sf::Http")
 
 TEST_CASE("[Network] sf::Http Connection", runIpV4InternetTests())
 {
+    // Setting the host causes a name lookup to be performed and thus requires internet connectivity
+    SECTION("setHost")
+    {
+        sf::Http http;
+
+        SECTION("Valid host w/ prefix")
+        {
+            CHECK(http.setHost("http://google.com"));
+        }
+
+        SECTION("Valid host w/o prefix")
+        {
+            CHECK(http.setHost("google.com"));
+        }
+
+        SECTION("Invalid host w/ prefix")
+        {
+            CHECK_FALSE(http.setHost("http://dummy"));
+        }
+
+        SECTION("Invalid host w/o prefix")
+        {
+            CHECK_FALSE(http.setHost("dummy"));
+        }
+    }
+
     SECTION("HTTP Connection")
     {
         const sf::Http http("http://github.com");

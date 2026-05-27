@@ -7,6 +7,89 @@
 using namespace std::string_literals;
 using namespace std::string_view_literals;
 
+TEST_CASE("[Network] sf::Dns (Invalid hosts)")
+{
+    // Strings that fail parsing as an IP address will be treated as hostnames
+    // and cause a name lookup to be performed if the string satisfies the
+    // hostname grammar specified in RFC 952 and RFC 1123
+    // According to RFC 1123:
+    // Whenever a user inputs the identity of an Internet host, it SHOULD
+    // be possible to enter either (1) a host domain name or (2) an IP
+    // address in dotted-decimal ("#.#.#.#") form.  The host SHOULD check
+    // the string syntactically for a dotted-decimal number before
+    // looking it up in the Domain Name System.
+
+    // If we deliberately want the resolution to fail we have to pass strings
+    // that are neither valid IP addresses nor valid hostnames
+
+    // In the following a label refers to a sequence of valid non-dot characters between dot characters
+    // If no trailing dot character is specified at the end of a hostname one is implied
+
+    SECTION("IPv4")
+    {
+        // Hostnames are not allowed to be empty
+        CHECK(resolveV4(""s).empty());
+
+        // Hostnames are not allowed to contain spaces
+        CHECK(resolveV4(" "s).empty());
+
+        // Hostnames must start with a digit or letter
+        CHECK(resolveV4("!"s).empty());
+        CHECK(resolveV4("@+"s).empty());
+        CHECK(resolveV4("-0.0.0.0"s).empty());
+
+        // Labels not directly under the root zone must not be empty
+        // A string consisting of a single dot is a valid hostname and refers to the root zone
+        CHECK(resolveV4(".."s).empty());
+        CHECK(resolveV4(".com"s).empty());
+        CHECK(resolveV4(".com."s).empty());
+        CHECK(resolveV4(".org"s).empty());
+        CHECK(resolveV4(".org."s).empty());
+
+        // The maximum label length must not exceed 63 characters
+        CHECK(resolveV4("0123456789012345678901234567890123456789012345678901234567890123"s).empty());
+
+        // The total length of the hostname must not exceed 255 characters
+        CHECK(resolveV4("0123456789012345678901234567890123456789012345678901234567890123"
+                        "0123456789012345678901234567890123456789012345678901234567890123"
+                        "0123456789012345678901234567890123456789012345678901234567890123"
+                        "0123456789012345678901234567890123456789012345678901234567890123"s)
+                  .empty());
+    }
+
+    SECTION("IPv6")
+    {
+        // Hostnames are not allowed to be empty
+        CHECK(resolveV6(""s).empty());
+
+        // Hostnames are not allowed to contain spaces
+        CHECK(resolveV6(" "s).empty());
+
+        // Hostnames must start with a digit or letter
+        CHECK(resolveV6("!"s).empty());
+        CHECK(resolveV6("@+"s).empty());
+        CHECK(resolveV6("-0::0"s).empty());
+
+        // Labels not directly under the root zone must not be empty
+        // A string consisting of a single dot is a valid hostname and refers to the root zone
+        CHECK(resolveV6(".."s).empty());
+        CHECK(resolveV6(".com"s).empty());
+        CHECK(resolveV6(".com."s).empty());
+        CHECK(resolveV6(".org"s).empty());
+        CHECK(resolveV6(".org."s).empty());
+
+        // The maximum label length must not exceed 63 characters
+        CHECK(resolveV6("0123456789012345678901234567890123456789012345678901234567890123"s).empty());
+
+        // The total length of the hostname must not exceed 255 characters
+        CHECK(resolveV6("0123456789012345678901234567890123456789012345678901234567890123"
+                        "0123456789012345678901234567890123456789012345678901234567890123"
+                        "0123456789012345678901234567890123456789012345678901234567890123"
+                        "0123456789012345678901234567890123456789012345678901234567890123"s)
+                  .empty());
+    }
+}
+
 TEST_CASE("[Network] sf::Dns (IPv4)", runIpV4InternetTests())
 {
     SECTION("Well known hosts")

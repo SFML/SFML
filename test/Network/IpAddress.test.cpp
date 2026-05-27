@@ -58,8 +58,51 @@ TEST_CASE("[Network] sf::IpAddress")
             CHECK(localHost->toInteger() == 0x7F'00'00'01);
             CHECK(*localHost == sf::IpAddress::LocalHost);
 
-            CHECK_FALSE(sf::IpAddress::resolve("255.255.255.256"s).has_value());
-            CHECK_FALSE(sf::IpAddress::resolve("").has_value());
+            // Strings that fail parsing as an IP address will be treated as hostnames
+            // and cause a name lookup to be performed if the string satisfies the
+            // hostname grammar specified in RFC 952 and RFC 1123
+            // According to RFC 1123:
+            // Whenever a user inputs the identity of an Internet host, it SHOULD
+            // be possible to enter either (1) a host domain name or (2) an IP
+            // address in dotted-decimal ("#.#.#.#") form.  The host SHOULD check
+            // the string syntactically for a dotted-decimal number before
+            // looking it up in the Domain Name System.
+
+            // If we deliberately want the resolution to fail we have to pass strings
+            // that are neither valid IP addresses nor valid hostnames
+
+            // Hostnames are not allowed to be empty
+            CHECK_FALSE(sf::IpAddress::resolve(""s).has_value());
+
+            // Hostnames are not allowed to contain spaces
+            CHECK_FALSE(sf::IpAddress::resolve(" "s).has_value());
+
+            // Hostnames must start with a digit or letter
+            CHECK_FALSE(sf::IpAddress::resolve("!"s).has_value());
+            CHECK_FALSE(sf::IpAddress::resolve("@+"s).has_value());
+            CHECK_FALSE(sf::IpAddress::resolve("-0.0.0.0"s).has_value());
+
+            // In the following a label refers to a sequence of valid non-dot characters between dot characters
+            // If no trailing dot character is specified at the end of a hostname one is implied
+
+            // Labels not directly under the root zone must not be empty
+            // A string consisting of a single dot is a valid hostname and refers to the root zone
+            CHECK_FALSE(sf::IpAddress::resolve(".."s).has_value());
+            CHECK_FALSE(sf::IpAddress::resolve(".com"s).has_value());
+            CHECK_FALSE(sf::IpAddress::resolve(".com."s).has_value());
+            CHECK_FALSE(sf::IpAddress::resolve(".org"s).has_value());
+            CHECK_FALSE(sf::IpAddress::resolve(".org."s).has_value());
+
+            // The maximum label length must not exceed 63 characters
+            CHECK_FALSE(
+                sf::IpAddress::resolve("0123456789012345678901234567890123456789012345678901234567890123"s).has_value());
+
+            // The total length of the hostname must not exceed 255 characters
+            CHECK_FALSE(sf::IpAddress::resolve("0123456789012345678901234567890123456789012345678901234567890123"
+                                               "0123456789012345678901234567890123456789012345678901234567890123"
+                                               "0123456789012345678901234567890123456789012345678901234567890123"
+                                               "0123456789012345678901234567890123456789012345678901234567890123"s)
+                            .has_value());
         }
 
         SECTION("Constants")

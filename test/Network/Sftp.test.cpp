@@ -169,9 +169,8 @@ TEST_CASE("[Network] sf::Sftp")
 
     SECTION("Connect to non-existant server and timeout")
     {
-        sf::Sftp sftp;
-        // 213.0.113.0/24 is reserved for TEST-NET-3 and shouldn't contain hosts under normal circumstances
-        const auto result = sftp.connect(sf::IpAddress(213, 0, 113, 1), 22, sf::milliseconds(1));
+        sf::Sftp   sftp;
+        const auto result = sftp.connect(sf::IpAddress::Any, 22, sf::milliseconds(1));
         CHECK(result.getValue() != sf::Sftp::Result::Value::Success);
         CHECK(result.getMessage().empty());
         CHECK_FALSE(sftp.getSessionInfo().has_value());
