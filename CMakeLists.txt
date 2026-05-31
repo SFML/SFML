@@ -102,6 +102,10 @@ else()
 endif()
 
 sfml_set_option(SFML_USE_SYSTEM_DEPS ${SFML_USE_SYSTEM_DEPS_DEFAULT} BOOL "ON to use system dependencies, OFF to use the bundled ones.")
+sfml_set_option(SFML_USE_SYSTEM_FLAC_VORBIS ${SFML_USE_SYSTEM_DEPS} BOOL "ON to use system FLAC and Vorbis, OFF to use the bundled ones.")
+sfml_set_option(SFML_USE_SYSTEM_FREETYPE_HARFBUZZ ${SFML_USE_SYSTEM_DEPS} BOOL "ON to use system Freetype and HarfBuzz, OFF to use the bundled ones.")
+sfml_set_option(SFML_USE_SYSTEM_LIBSSH2_MBEDTLS ${SFML_USE_SYSTEM_DEPS} BOOL "ON to use system libssh2 and MbedTLS, OFF to use the bundled ones.")
+sfml_set_option(SFML_USE_SYSTEM_SHEENBIDI OFF BOOL "ON to use system SheenBidi, OFF to use the bundled one.")
 
 if(SFML_COMPILER_MSVC)
     # add an option to choose whether PDB debug symbols should be generated (defaults to true when possible)
