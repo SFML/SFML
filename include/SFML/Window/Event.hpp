@@ -71,6 +71,13 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Lost focus event subtype
     ///
+    /// This event is triggered when the window loses keyboard
+    /// focus, typically when the user clicks on another window
+    /// or switches away via Alt+Tab.
+    ///
+    /// \note Behavior verified on Windows only. Other platforms
+    ///       may differ.
+    ///
     ////////////////////////////////////////////////////////////
     struct FocusLost
     {
@@ -79,6 +86,17 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Gained focus event subtype
     ///
+    /// This event is triggered when the window gains keyboard
+    /// focus, typically when the user clicks on it or switches
+    /// to it via Alt+Tab.
+    ///
+    /// \note This event is NOT triggered when the window is
+    ///       first created, only when focus is regained after
+    ///       having been lost.
+    ///
+    /// \note Behavior verified on Windows only. Other platforms
+    ///       may differ.
+    ///
     ////////////////////////////////////////////////////////////
     struct FocusGained
     {
@@ -86,6 +104,21 @@ public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Text event subtype
+    ///
+    /// This event is triggered when a key that produces a
+    /// printable character is pressed, such as letters,
+    /// numbers, Enter, and Backspace.
+    ///
+    /// \note This event is NOT triggered for modifier keys
+    ///       such as Shift, Ctrl, Alt, or arrow keys as
+    ///       they do not produce printable characters.
+    ///
+    /// \note Unlike KeyPressed, this event returns the
+    ///       actual Unicode character produced, making it
+    ///       suitable for text input handling.
+    ///
+    /// \note Behavior verified on Windows only. Other
+    ///       platforms may differ.
     ///
     ////////////////////////////////////////////////////////////
     struct TextEntered
@@ -130,6 +163,12 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Mouse wheel scrolled event subtype
     ///
+    /// This event is triggered when the mouse wheel is
+    /// scrolled in any direction.
+    ///
+    /// \note Behavior verified on Windows only. Other
+    ///       platforms may differ.
+    ///
     ////////////////////////////////////////////////////////////
     struct MouseWheelScrolled
     {
@@ -141,6 +180,12 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Mouse button pressed event subtype
     ///
+    /// This event is triggered when any mouse button
+    /// is pressed.
+    ///
+    /// \note Behavior verified on Windows only. Other
+    ///       platforms may differ.
+    ///
     ////////////////////////////////////////////////////////////
     struct MouseButtonPressed
     {
@@ -151,6 +196,12 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Mouse button released event subtype
     ///
+    /// This event is triggered when any mouse button
+    /// is released.
+    ///
+    /// \note Behavior verified on Windows only. Other
+    ///       platforms may differ.
+    ///
     ////////////////////////////////////////////////////////////
     struct MouseButtonReleased
     {
@@ -160,6 +211,12 @@ public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Mouse move event subtype
+    ///
+    /// This event is triggered when the mouse cursor moves
+    /// within the window's area.
+    ///
+    /// \note Behavior verified on Windows only. Other
+    ///       platforms may differ.
     ///
     ////////////////////////////////////////////////////////////
     struct MouseMoved
@@ -203,6 +260,15 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Mouse entered event subtype
     ///
+    /// This event is triggered when the mouse cursor enters
+    /// the window's area. This includes:
+    /// - The cursor physically moving into the window
+    /// - The window being created or moved so that it overlaps
+    ///   a stationary cursor
+    ///
+    /// \note Behavior verified on Windows only. Other platforms
+    ///       may differ.
+    ///
     ////////////////////////////////////////////////////////////
     struct MouseEntered
     {
@@ -210,6 +276,14 @@ public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Mouse left event subtype
+    ///
+    /// This event is triggered when the mouse cursor leaves
+    /// the window's area. This includes:
+    /// - The cursor physically moving out of the window
+    /// - The window being moved away from a stationary cursor
+    ///
+    /// \note Behavior verified on Windows only. Other platforms
+    ///       may differ.
     ///
     ////////////////////////////////////////////////////////////
     struct MouseLeft
