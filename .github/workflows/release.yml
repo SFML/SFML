@@ -49,7 +49,7 @@ jobs:
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
 
     - name: Set Visual Studio Architecture
       if: contains(matrix.platform.name, 'Windows VS')
@@ -70,7 +70,7 @@ jobs:
     - name: Cache MinGW x86
       if: matrix.platform.name == 'Windows MinGW x86'
       id: mingw32-cache
-      uses: actions/cache@v5
+      uses: actions/cache@v6
       with:
         path: "C:\\Program Files\\mingw32"
         key: winlibs-i686-posix-dwarf-gcc-14.2.0-mingw-w64ucrt-12.0.0-r2
@@ -89,7 +89,7 @@ jobs:
     - name: Cache MinGW x64
       if: matrix.platform.name == 'Windows MinGW x64'
       id: mingw64-cache
-      uses: actions/cache@v5
+      uses: actions/cache@v6
       with:
         path: "C:\\Program Files\\mingw64"
         key: winlibs-x86_64-posix-seh-gcc-14.2.0-mingw-w64ucrt-12.0.0-r2
@@ -258,7 +258,7 @@ jobs:
         brew install --formula doxygen || true
 
     - name: Checkout
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
 
     - name: Configure
       run: cmake -B build -DSFML_BUILD_DOC=ON -DSFML_BUILD_WINDOW=OFF -DSFML_BUILD_GRAPHICS=OFF -DSFML_BUILD_AUDIO=OFF -DSFML_BUILD_NETWORK=OFF
