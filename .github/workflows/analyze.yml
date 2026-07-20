@@ -22,12 +22,12 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-        - { name: Windows,         os: windows-2025, flags: -GNinja }
+        - { name: Windows,         os: windows-2025-vs2026, flags: -GNinja }
         - { name: Linux,           os: ubuntu-24.04 }
         - { name: Linux DRM,       os: ubuntu-24.04, flags: -DSFML_USE_DRM=ON }
         - { name: Linux OpenGL ES, os: ubuntu-24.04, flags: -DSFML_OPENGL_ES=ON }
-        - { name: macOS,           os: macos-14 }
-        - { name: iOS,             os: macos-14,     flags: -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=arm64 }
+        - { name: macOS,           os: macos-15 }
+        - { name: iOS,             os: macos-15,     flags: -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_ARCHITECTURES=arm64 }
         - { name: Android,         os: ubuntu-24.04, flags: -DCMAKE_ANDROID_ARCH_ABI=x86_64 -DCMAKE_SYSTEM_NAME=Android -DCMAKE_SYSTEM_VERSION=22 -DCMAKE_ANDROID_NDK=$ANDROID_NDK -DCMAKE_ANDROID_STL_TYPE=c++_shared }
 
     steps:

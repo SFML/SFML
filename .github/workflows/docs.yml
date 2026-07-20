@@ -13,7 +13,7 @@ defaults:
 jobs:
   docs:
     name: Documentation
-    runs-on: macos-14
+    runs-on: macos-15
 
     steps:
     - name: Install Doxygen
