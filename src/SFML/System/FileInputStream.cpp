@@ -160,8 +160,7 @@ std::optional<std::size_t> FileInputStream::getSize()
 
     if (std::fseek(m_file.get(), 0, SEEK_END) != 0)
     {
-        if (seek(*position).has_value())
-            return std::nullopt;
+        (void)seek(*position);
         return std::nullopt;
     }
 
