@@ -158,28 +158,19 @@ std::optional<std::size_t> FileInputStream::getSize()
     if (!position)
         return std::nullopt;
 
-    struct PositionRestorer
-    {
-        PositionRestorer(FileInputStream& stream, std::size_t savedPosition) :
-            m_stream(stream),
-            m_position(savedPosition)
-        {
-        }
-
-        ~PositionRestorer()
-        {
-            (void)m_stream.seek(m_position);
-        }
-
-        FileInputStream& m_stream;
-        std::size_t      m_position;
-    };
-    PositionRestorer restorer(*this, *position);
-
     if (std::fseek(m_file.get(), 0, SEEK_END) != 0)
+    {
+        if (seek(*position).has_value())
+            return std::nullopt;
+        return std::nullopt;
+    }
+
+    const auto size = tell();
+
+    if (!seek(*position).has_value())
         return std::nullopt;
 
-    return tell();
+    return size;
 }
 
 } // namespace sf
