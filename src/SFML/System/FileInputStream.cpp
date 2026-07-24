@@ -154,12 +154,31 @@ std::optional<std::size_t> FileInputStream::getSize()
 #endif
     if (!m_file)
         return std::nullopt;
-    const auto position = tell().value();
-    std::fseek(m_file.get(), 0, SEEK_END);
-    const std::optional size = tell();
 
-    if (!seek(position).has_value())
+    // 1. Save current position
+    const auto originalPos = tell();
+    if (!originalPos.has_value())
         return std::nullopt;
+
+    // 2. Seek to end
+    if (std::fseek(m_file.get(), 0, SEEK_END) != 0)
+    {
+        // Attempt to restore even if seek fails; the state is indeterminate,
+        // but this is the best we can do.
+        (void)seek(*originalPos);
+        return std::nullopt;
+    }
+
+    // 3. Obtain size
+    const auto size = tell();
+    if (!size.has_value())
+    {
+        (void)seek(*originalPos);
+        return std::nullopt;
+    }
+
+    // 4. Restore original position (failure here is not critical for the result)
+    (void)seek(*originalPos);
 
     return size;
 }

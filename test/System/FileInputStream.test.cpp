@@ -108,4 +108,11 @@ TEST_CASE("[System] sf::FileInputStream")
         CHECK(fileInputStream.seek(6) == 6);
         CHECK(fileInputStream.tell() == 6);
     }
+
+    SECTION("getSize() on an unopened stream returns nullopt")
+    {
+        sf::FileInputStream fileInputStream;
+        CHECK(!fileInputStream.open("this_file_does_not_exist.xyz"));
+        CHECK(fileInputStream.getSize() == std::nullopt);
+    }
 }
