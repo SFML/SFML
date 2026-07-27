@@ -51,13 +51,14 @@ std::string formatDebugPathInfo(const std::filesystem::path& path)
     return oss.str();
 }
 
-std::FILE* openFile(const std::filesystem::path& filename, std::string_view mode)
+std::FILE* openFile(const std::filesystem::path& filename, const char* mode)
 {
 #ifdef SFML_SYSTEM_WINDOWS
-    const std::wstring wmode(mode.begin(), mode.end());
+    const std::string_view modeView(mode);
+    const std::wstring    wmode(modeView.begin(), modeView.end());
     return _wfopen(filename.c_str(), wmode.data());
 #else
-    return std::fopen(filename.c_str(), mode.data());
+    return std::fopen(filename.c_str(), mode);
 #endif
 }
 

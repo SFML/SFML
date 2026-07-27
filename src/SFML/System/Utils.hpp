@@ -54,5 +54,5 @@ template <typename IntegerType, typename... Bytes>
     return ((integer |= static_cast<IntegerType>(static_cast<IntegerType>(byte) << 8 * index++)), ...);
 }
 
-[[nodiscard]] SFML_SYSTEM_API std::FILE* openFile(const std::filesystem::path& filename, std::string_view mode);
+[[nodiscard]] SFML_SYSTEM_API std::FILE* openFile(const std::filesystem::path& filename, const char* mode);
 } // namespace sf
