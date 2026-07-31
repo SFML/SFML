@@ -706,7 +706,7 @@ std::unique_ptr<GlContext> GlContext::create(const ContextSettings& settings, co
         }
         catch (...)
         {
-            sharedContext->context->makeCurrent(false);
+            static_cast<GlContext&>(sharedContext->context.value()).makeCurrent(false);
             auto& currentContext = GlContextImpl::CurrentContext::get();
             currentContext.id    = 0;
             currentContext.ptr   = nullptr;
@@ -798,7 +798,7 @@ std::unique_ptr<GlContext> GlContext::create(const ContextSettings& settings, Ve
         }
         catch (...)
         {
-            sharedContext->context->makeCurrent(false);
+            static_cast<GlContext&>(sharedContext->context.value()).makeCurrent(false);
             auto& currentContext = GlContextImpl::CurrentContext::get();
             currentContext.id    = 0;
             currentContext.ptr   = nullptr;

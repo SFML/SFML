@@ -81,9 +81,10 @@ WindowImplUIKit::WindowImplUIKit(VideoMode mode,
     [m_window makeKeyAndVisible];
 
     // If the size doesn't match what the user requested, we must notify them so they can adjust
-    if (mode.size.x != frame.size.width || mode.size.y != frame.size.height)
+    const Vector2u actualSize = getSize();
+    if (mode.size != actualSize)
     {
-        forwardEvent(sf::Event::Resized{getSize()});
+        forwardEvent(sf::Event::Resized{actualSize});
     }
 }
 
@@ -126,9 +127,10 @@ void WindowImplUIKit::setPosition(Vector2i /* position */)
 ////////////////////////////////////////////////////////////
 Vector2u WindowImplUIKit::getSize() const
 {
-    const CGRect physicalFrame = m_window.frame;
-    return {static_cast<unsigned int>(physicalFrame.size.width * static_cast<double>(m_backingScale)),
-            static_cast<unsigned int>(physicalFrame.size.height * static_cast<double>(m_backingScale))};
+    const CGRect viewBounds   = m_view.bounds;
+    const double backingScale = static_cast<double>(m_view.contentScaleFactor);
+    return {static_cast<unsigned int>(viewBounds.size.width * backingScale),
+            static_cast<unsigned int>(viewBounds.size.height * backingScale)};
 }
 
 

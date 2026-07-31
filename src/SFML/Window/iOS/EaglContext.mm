@@ -290,9 +290,11 @@ void EaglContext::createContext(EaglContext*           shared,
         m_context = [[EAGLContext alloc] initWithAPI:api];
     }
 
-    m_settings.majorVersion   = api == kEAGLRenderingAPIOpenGLES3 ? 3 : 2;
-    m_settings.minorVersion   = 0;
-    m_settings.attributeFlags = ContextSettings::Default;
+    m_settings.majorVersion      = api == kEAGLRenderingAPIOpenGLES3 ? 3 : 2;
+    m_settings.minorVersion      = 0;
+    m_settings.attributeFlags    = ContextSettings::Default;
+    m_settings.antiAliasingLevel = 0;
+    m_settings.sRgbCapable       = false;
 
     if (!m_context)
     {

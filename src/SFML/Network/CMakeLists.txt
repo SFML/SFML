@@ -124,7 +124,11 @@ else()
 
     # Set libssh2 to include/link to MbedTLS
     target_compile_definitions(libssh2_static PRIVATE LIBSSH2_MBEDTLS)
-    target_include_directories(libssh2_static PRIVATE "${FETCHCONTENT_BASE_DIR}/mbedtls-src/include")
+    if(FETCHCONTENT_SOURCE_DIR_MBEDTLS)
+        target_include_directories(libssh2_static PRIVATE "${FETCHCONTENT_SOURCE_DIR_MBEDTLS}/include")
+    else()
+        target_include_directories(libssh2_static PRIVATE "${FETCHCONTENT_BASE_DIR}/mbedtls-src/include")
+    endif()
 
     # Disable all warnings
     target_compile_options(libssh2_static PRIVATE -w)

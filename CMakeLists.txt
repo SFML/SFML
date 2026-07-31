@@ -47,6 +47,12 @@ if(SFML_BUILD_WINDOW)
     # add an option for choosing the OpenGL implementation
     sfml_set_option(SFML_OPENGL_ES ${OPENGL_ES} BOOL "ON to use an OpenGL ES implementation, OFF to use a desktop OpenGL implementation")
 
+    # These platforms only expose OpenGL ES, so a stale or explicitly disabled
+    # cache entry must not select the desktop OpenGL loader.
+    if(SFML_OS_IOS OR SFML_OS_ANDROID)
+        set(SFML_OPENGL_ES ON CACHE BOOL "ON to use an OpenGL ES implementation, OFF to use a desktop OpenGL implementation" FORCE)
+    endif()
+
     # add an option for choosing whether to use the DRM windowing backend
     if(SFML_OS_LINUX)
         sfml_set_option(SFML_USE_DRM OFF BOOL "ON to use DRM windowing backend")

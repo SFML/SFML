@@ -38,8 +38,9 @@
 {
     if ([SFAppDelegate getInstance].sfWindow)
     {
-        [SFAppDelegate getInstance].sfWindow->forwardEvent(
-            sf::Event::Resized{{static_cast<unsigned int>(size.width), static_cast<unsigned int>(size.height)}});
+        const double backingScale = [SFAppDelegate getInstance].backingScaleFactor;
+        [SFAppDelegate getInstance].sfWindow->forwardEvent(sf::Event::Resized{
+            {static_cast<unsigned int>(size.width * backingScale), static_cast<unsigned int>(size.height * backingScale)}});
     }
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
 }
