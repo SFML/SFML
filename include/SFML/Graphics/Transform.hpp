@@ -80,7 +80,7 @@ public:
     ///
     /// \code
     /// sf::Transform transform = ...;
-    /// glLoadMatrixf(transform.getMatrix());
+    /// glUniformMatrix4fv(location, 1, GL_FALSE, transform.getMatrix());
     /// \endcode
     ///
     /// \return Pointer to a 4x4 matrix

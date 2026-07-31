@@ -44,7 +44,9 @@
 namespace sf
 {
 class InputStream;
+class RenderTarget;
 class Texture;
+class Transform;
 
 ////////////////////////////////////////////////////////////
 /// \brief Shader class (vertex, geometry and fragment)
@@ -128,8 +130,9 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Construct from a shader file
     ///
-    /// This constructor loads a single shader, vertex, geometry or
-    /// fragment, identified by the second argument.
+    /// This constructor loads a single vertex or fragment shader and
+    /// completes it with SFML's matching baseline stage. A geometry
+    /// shader must be loaded with both a vertex and fragment shader.
     /// The source must be a text file containing a valid
     /// shader in GLSL language. GLSL is a C-like language
     /// dedicated to OpenGL shaders; you'll probably need to
@@ -194,8 +197,9 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Construct from shader in memory
     ///
-    /// This constructor loads a single shader, vertex, geometry
-    /// or fragment, identified by the second argument.
+    /// This constructor loads a single vertex or fragment shader and
+    /// completes it with SFML's matching baseline stage. A geometry
+    /// shader must be loaded with both a vertex and fragment shader.
     /// The source code must be a valid shader in GLSL language.
     /// GLSL is a C-like language dedicated to OpenGL shaders;
     /// you'll probably need to read a good documentation for
@@ -257,8 +261,9 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Construct from a shader stream
     ///
-    /// This constructor loads a single shader, vertex, geometry
-    /// or fragment, identified by the second argument.
+    /// This constructor loads a single vertex or fragment shader and
+    /// completes it with SFML's matching baseline stage. A geometry
+    /// shader must be loaded with both a vertex and fragment shader.
     /// The source code must be a valid shader in GLSL language.
     /// GLSL is a C-like language dedicated to OpenGL shaders;
     /// you'll probably need to read a good documentation for it
@@ -320,8 +325,9 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Load the vertex, geometry or fragment shader from a file
     ///
-    /// This function loads a single shader, vertex, geometry or
-    /// fragment, identified by the second argument.
+    /// This function loads a single vertex or fragment shader and
+    /// completes it with SFML's matching baseline stage. A geometry
+    /// shader must be loaded with both a vertex and fragment shader.
     /// The source must be a text file containing a valid
     /// shader in GLSL language. GLSL is a C-like language
     /// dedicated to OpenGL shaders; you'll probably need to
@@ -387,8 +393,9 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Load the vertex, geometry or fragment shader from a source code in memory
     ///
-    /// This function loads a single shader, vertex, geometry
-    /// or fragment, identified by the second argument.
+    /// This function loads a single vertex or fragment shader and
+    /// completes it with SFML's matching baseline stage. A geometry
+    /// shader must be loaded with both a vertex and fragment shader.
     /// The source code must be a valid shader in GLSL language.
     /// GLSL is a C-like language dedicated to OpenGL shaders;
     /// you'll probably need to read a good documentation for
@@ -452,8 +459,9 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Load the vertex, geometry or fragment shader from a custom stream
     ///
-    /// This function loads a single shader, vertex, geometry
-    /// or fragment, identified by the second argument.
+    /// This function loads a single vertex or fragment shader and
+    /// completes it with SFML's matching baseline stage. A geometry
+    /// shader must be loaded with both a vertex and fragment shader.
     /// The source code must be a valid shader in GLSL language.
     /// GLSL is a C-like language dedicated to OpenGL shaders;
     /// you'll probably need to read a good documentation for it
@@ -845,11 +853,34 @@ public:
     [[nodiscard]] static bool isGeometryAvailable();
 
 private:
+    friend class RenderTarget;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the built-in GLSL 1.10 / ESSL 1.00 shader sources
+    ///
+    /// These shaders implement the standard SFML vertex/color/texture
+    /// pipeline and are also used to complete single-stage shaders.
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] static std::string_view getDefaultVertexShaderSource();
+    [[nodiscard]] static std::string_view getDefaultFragmentShaderSource();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Bind the shader and upload SFML's per-draw state
+    ///
+    /// \param modelView      Model-view matrix
+    /// \param projection     Projection matrix
+    /// \param textureMatrix  Texture coordinate transform
+    /// \param textureEnabled Whether the current draw uses a texture
+    ///
+    ////////////////////////////////////////////////////////////
+    void bindForDraw(const Transform& modelView, const Transform& projection, const float* textureMatrix, bool textureEnabled) const;
+
     ////////////////////////////////////////////////////////////
     /// \brief Compile the shader(s) and create the program
     ///
-    /// If one of the arguments is a null pointer, the corresponding shader
-    /// is not created.
+    /// A missing baseline vertex or fragment stage is completed with
+    /// SFML's built-in stage. Geometry shaders require all three stages.
     ///
     /// \param vertexShaderCode   Source code of the vertex shader
     /// \param geometryShaderCode Source code of the geometry shader
@@ -901,8 +932,14 @@ private:
     ////////////////////////////////////////////////////////////
     unsigned int m_shaderProgram{};    //!< OpenGL identifier for the program
     int          m_currentTexture{-1}; //!< Location of the current texture in the shader
-    TextureTable m_textures;           //!< Texture variables in the shader, mapped to their location
-    UniformTable m_uniforms;           //!< Parameters location cache
+    int          m_modelViewMatrix{-1};
+    int          m_projectionMatrix{-1};
+    int          m_modelViewProjectionMatrix{-1};
+    int          m_textureMatrix{-1};
+    int          m_textureEnabled{-1};
+    int          m_defaultTexture{-1};
+    TextureTable m_textures; //!< Texture variables in the shader, mapped to their location
+    UniformTable m_uniforms; //!< Parameters location cache
 };
 
 } // namespace sf
@@ -921,10 +958,18 @@ private:
 /// \li Geometry shaders, that process primitives
 /// \li Fragment (pixel) shaders, that process pixels
 ///
-/// A `sf::Shader` can be composed of either a vertex shader
-/// alone, a geometry shader alone, a fragment shader alone,
-/// or any combination of them. (see the variants of the
-/// load functions).
+/// A `sf::Shader` can be composed of a vertex shader, a fragment
+/// shader, both stages, or a complete vertex + geometry + fragment
+/// program. A single baseline vertex or fragment shader is completed
+/// with SFML's matching built-in stage. A geometry shader cannot be
+/// loaded on its own.
+///
+/// SFML vertex data and per-draw matrices use the following GLSL
+/// contract:
+/// \li attributes `sf_Vertex`, `sf_Color`, `sf_MultiTexCoord0`
+/// \li uniforms `sf_ModelViewMatrix`, `sf_ProjectionMatrix`,
+///     `sf_ModelViewProjectionMatrix`, `sf_TextureMatrix`
+/// \li varyings `sf_FrontColor`, `sf_TexCoord0`
 ///
 /// Shaders are written in GLSL, which is a C-like
 /// language dedicated to OpenGL shaders. You'll probably

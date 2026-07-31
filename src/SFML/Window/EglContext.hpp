@@ -65,8 +65,6 @@ public:
 
     ////////////////////////////////////////////////////////////
     /// \brief Create a new context that embeds its own rendering target
-    /// \warning This constructor is currently not implemented; use a different overload.
-    ///
     /// \param shared   Context to share the new one with
     /// \param settings Creation parameters
     /// \param size     Back buffer width and height, in pixels
@@ -128,7 +126,10 @@ public:
     /// \param settings     Creation parameters
     ///
     ////////////////////////////////////////////////////////////
-    void createContext(EglContext* shared);
+    void createContext(EglContext*           shared,
+                       const ContextSettings& settings,
+                       unsigned int           bitsPerPixel,
+                       EGLint                 surfaceType);
 
     ////////////////////////////////////////////////////////////
     /// \brief Create the EGL surface
@@ -160,7 +161,10 @@ public:
     /// \return The best EGL config
     ///
     ////////////////////////////////////////////////////////////
-    static EGLConfig getBestConfig(EGLDisplay display, unsigned int bitsPerPixel, const ContextSettings& settings);
+    static EGLConfig getBestConfig(EGLDisplay            display,
+                                   unsigned int          bitsPerPixel,
+                                   const ContextSettings& settings,
+                                   EGLint                surfaceType = EGL_WINDOW_BIT | EGL_PBUFFER_BIT);
 
 #if defined(SFML_SYSTEM_LINUX) && !defined(SFML_USE_DRM)
     ////////////////////////////////////////////////////////////

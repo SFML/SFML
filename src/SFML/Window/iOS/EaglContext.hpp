@@ -33,8 +33,6 @@
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Vector2.hpp>
 
-#include <glad/gl.h>
-
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
@@ -96,9 +94,9 @@ private:
     // Member data
     ////////////////////////////////////////////////////////////
     EAGLContext* m_context;        ///< The internal context
-    GLuint       m_framebuffer{};  ///< Frame buffer associated to the context
-    GLuint       m_colorbuffer{};  ///< Color render buffer
-    GLuint       m_depthbuffer{};  ///< Depth render buffer
+    unsigned int m_framebuffer{};  ///< Frame buffer associated to the context
+    unsigned int m_colorbuffer{};  ///< Color render buffer
+    unsigned int m_depthbuffer{};  ///< Depth render buffer
     bool         m_vsyncEnabled{}; ///< Vertical sync activation flag
     Clock        m_clock;          ///< Measures the elapsed time for the fake v-sync implementation
 };

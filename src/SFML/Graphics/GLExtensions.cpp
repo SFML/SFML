@@ -29,7 +29,7 @@
 
 #include <SFML/Window/Context.hpp>
 
-#include <SFML/System/Err.hpp>
+#include <SFML/System/Exception.hpp>
 
 // We check for this definition in order to avoid multiple definitions of GLAD
 // entities during unity builds of SFML.
@@ -39,42 +39,38 @@
 #include <glad/gl.h>
 #endif
 
-#include <ostream>
-
-#if !defined(GL_MAJOR_VERSION)
-#define GL_MAJOR_VERSION 0x821B
-#endif
-
-#if !defined(GL_MINOR_VERSION)
-#define GL_MINOR_VERSION 0x821C
-#endif
-
+#include <mutex>
+#include <string>
+#include <type_traits>
 
 namespace
 {
 ////////////////////////////////////////////////////////////
 void extensionSanityCheck()
 {
-    static const auto check = [](int& flag, auto... entryPoints)
+    static const auto check = [](auto&& flag, auto... entryPoints)
     {
         // If a required entry point is missing, flag the whole extension as unavailable
         if (!(entryPoints && ...))
-            flag = 0;
+        {
+            if constexpr (std::is_lvalue_reference_v<decltype(flag)> &&
+                          !std::is_const_v<std::remove_reference_t<decltype(flag)>>)
+                flag = 0;
+        }
     };
 #ifdef SFML_OPENGL_ES
     check(GLEXT_multitexture_dependencies);
     check(GLEXT_vertex_buffer_object_dependencies);
-    check(GLEXT_OES_blend_subtract_dependencies);
+    check(GLEXT_blend_subtract_dependencies);
     check(GLEXT_blend_func_separate_dependencies);
     check(GLEXT_blend_equation_separate_dependencies);
     check(GLEXT_framebuffer_object_dependencies);
-    check(GLEXT_EXT_blend_minmax_dependencies);
+    check(GLEXT_blend_minmax_dependencies);
 #else
     check(GLEXT_blend_minmax_dependencies);
     check(GLEXT_multitexture_dependencies);
     check(GLEXT_blend_func_separate_dependencies);
     check(GLEXT_vertex_buffer_object_dependencies);
-    check(GLEXT_shader_objects_dependencies);
     check(GLEXT_blend_equation_separate_dependencies);
     check(GLEXT_framebuffer_object_dependencies);
     check(GLEXT_framebuffer_blit_dependencies);
@@ -89,16 +85,36 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 void ensureExtensionsInit()
 {
-    static bool initialized = false;
-    if (!initialized)
-    {
-        initialized = true;
+    static std::mutex mutex;
+    const std::lock_guard lock(mutex);
 
+    if (Context::getActiveContextId() == 0)
+        throw Exception("Cannot initialize OpenGL entry points without an active context");
+
+    const auto getString = reinterpret_cast<PFNGLGETSTRINGPROC>(Context::getFunction("glGetString"));
+    if (!getString)
+        throw Exception("Cannot query the active OpenGL context version");
+
+    const auto* version = reinterpret_cast<const char*>(getString(GL_VERSION));
+    if (!version)
+        throw Exception("Cannot query the active OpenGL context version");
+
+    static std::string loadedContextVersion;
+
+    if (loadedContextVersion != version)
+    {
+        int loadedVersion = 0;
 #ifdef SFML_OPENGL_ES
-        gladLoadGLES1(Context::getFunction);
+        loadedVersion = gladLoadGLES2(Context::getFunction);
 #else
-        gladLoadGL(Context::getFunction);
+        loadedVersion = gladLoadGL(Context::getFunction);
 #endif
+
+        if (!loadedVersion || (GLAD_VERSION_MAJOR(loadedVersion) < 2))
+            throw Exception("Failed to load the OpenGL 2.0 shader rendering entry points required by sfml-graphics");
+
+        loadedContextVersion = version;
+
         // Some GL implementations don't fully follow extension specifications
         // and advertise support for extensions although not providing the
         // entry points specified for the corresponding extension.
@@ -106,38 +122,6 @@ void ensureExtensionsInit()
         // a sanity check to ensure an extension is _really_ supported, even
         // from an entry point perspective.
         extensionSanityCheck();
-
-        // Retrieve the context version number
-        int majorVersion = 0;
-        int minorVersion = 0;
-
-        // Try the new way first
-        glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
-        glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
-
-        if (glGetError() == GL_INVALID_ENUM)
-        {
-            // Try the old way
-            const GLubyte* version = glGetString(GL_VERSION);
-            if (version)
-            {
-                // The beginning of the returned string is "major.minor" (this is standard)
-                majorVersion = version[0] - '0';
-                minorVersion = version[2] - '0';
-            }
-            else
-            {
-                // Can't get the version number, assume 1.1
-                majorVersion = 1;
-                minorVersion = 1;
-            }
-        }
-
-        if ((majorVersion < 1) || ((majorVersion == 1) && (minorVersion < 1)))
-        {
-            err() << "sfml-graphics requires support for OpenGL 1.1 or greater" << '\n'
-                  << "Ensure that hardware acceleration is enabled if available" << std::endl;
-        }
     }
 }
 

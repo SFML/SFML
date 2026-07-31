@@ -57,11 +57,12 @@ endfunction()
 # add a new target which is a SFML library
 # example: sfml_add_library(Graphics
 #                           SOURCES sprite.cpp image.cpp ...
-#                           [STATIC]) # Always create a static library and ignore BUILD_SHARED_LIBS
+#                           [STATIC]                      # Always create a static library and ignore BUILD_SHARED_LIBS
+#                           [INSTALL_SHARED_DEPENDENCIES]) # Install its dependency file for shared builds too
 macro(sfml_add_library module)
 
     # parse the arguments
-    cmake_parse_arguments(THIS "STATIC" "DEPENDENCIES" "SOURCES" ${ARGN})
+    cmake_parse_arguments(THIS "STATIC;INSTALL_SHARED_DEPENDENCIES" "DEPENDENCIES" "SOURCES" ${ARGN})
     if(NOT "${THIS_UNPARSED_ARGUMENTS}" STREQUAL "")
         message(FATAL_ERROR "Extra unparsed arguments when calling sfml_add_library: ${THIS_UNPARSED_ARGUMENTS}")
     endif()
@@ -260,9 +261,9 @@ macro(sfml_add_library module)
     list(APPEND SFML_ADD_LIBRARY_MODULES ${module})
     set_property(GLOBAL PROPERTY SFML_ADD_LIBRARY_MODULES_PROPERTY "${SFML_ADD_LIBRARY_MODULES}")
 
-    # when static linking, generate and install dependency configuration
-    if(NOT BUILD_SHARED_LIBS AND THIS_DEPENDENCIES)
-        # if we are building static libraries, generate and install dependencies config file
+    # Generate and install dependency configuration for static libraries and
+    # shared libraries that expose a system dependency in their link interface.
+    if(THIS_DEPENDENCIES AND (NOT BUILD_SHARED_LIBS OR THIS_INSTALL_SHARED_DEPENDENCIES))
         include(CMakePackageConfigHelpers)
 
         configure_package_config_file("${THIS_DEPENDENCIES}" "${CMAKE_CURRENT_BINARY_DIR}/SFML${module}Dependencies.cmake"

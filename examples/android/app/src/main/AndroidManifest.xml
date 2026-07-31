@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <uses-feature android:glEsVersion="0x00010001" />
+    <uses-feature android:glEsVersion="0x00020000" />
 
     <uses-permission android:name="android.permission.VIBRATE" />
 

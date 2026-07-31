@@ -11,6 +11,7 @@ set(SRC
     ${SRCROOT}/Cursor.cpp
     ${INCROOT}/Cursor.hpp
     ${SRCROOT}/CursorImpl.hpp
+    ${SRCROOT}/EglFunctionLoader.hpp
     ${INCROOT}/Export.hpp
     ${SRCROOT}/GlContext.cpp
     ${SRCROOT}/GlContext.hpp
@@ -268,9 +269,21 @@ elseif(SFML_OS_ANDROID)
 endif()
 
 # define the sfml-window target
+set(WINDOW_LIBRARY_OPTIONS)
+if(SFML_OPENGL_ES AND NOT SFML_OS_IOS)
+    list(APPEND WINDOW_LIBRARY_OPTIONS INSTALL_SHARED_DEPENDENCIES)
+endif()
+
 sfml_add_library(Window
                  SOURCES ${SRC} ${PLATFORM_SRC}
-                 DEPENDENCIES "Dependencies.cmake.in")
+                 DEPENDENCIES "Dependencies.cmake.in"
+                 ${WINDOW_LIBRARY_OPTIONS})
+unset(WINDOW_LIBRARY_OPTIONS)
+
+if(SFML_OPENGL_ES)
+    target_compile_definitions(sfml-window PUBLIC SFML_OPENGL_ES)
+endif()
+
 # DRM libraries
 if(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
     if(SFML_USE_DRM)
@@ -309,10 +322,10 @@ endif()
 
 if(SFML_OS_IOS)
     target_link_libraries(sfml-window PRIVATE "-framework OpenGLES")
-elseif(SFML_OS_ANDROID)
+elseif(SFML_OPENGL_ES)
     find_package(EGL REQUIRED)
     find_package(GLES REQUIRED)
-    target_link_libraries(sfml-window PRIVATE EGL::EGL GLES::GLES)
+    target_link_libraries(sfml-window PRIVATE EGL::EGL ${CMAKE_DL_LIBS} PUBLIC GLES::GLES)
 else()
     find_package(OpenGL REQUIRED COMPONENTS OpenGL)
     target_link_libraries(sfml-window PRIVATE OpenGL::GL)

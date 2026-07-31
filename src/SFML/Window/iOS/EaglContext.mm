@@ -35,8 +35,11 @@
 
 #include <OpenGLES/EAGL.h>
 #include <OpenGLES/EAGLDrawable.h>
+#include <OpenGLES/ES2/gl.h>
+#include <OpenGLES/ES2/glext.h>
 #include <QuartzCore/CAEAGLLayer.h>
 #include <array>
+#include <cstring>
 #include <dlfcn.h>
 #include <ostream>
 
@@ -44,65 +47,16 @@
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
 
-namespace
-{
-PFNGLBINDFRAMEBUFFEROESPROC            glBindFramebufferOESFunc            = nullptr;
-PFNGLBINDRENDERBUFFEROESPROC           glBindRenderbufferOESFunc           = nullptr;
-PFNGLCHECKFRAMEBUFFERSTATUSOESPROC     glCheckFramebufferStatusOESFunc     = nullptr;
-PFNGLDELETEFRAMEBUFFERSOESPROC         glDeleteFramebuffersOESFunc         = nullptr;
-PFNGLDELETERENDERBUFFERSOESPROC        glDeleteRenderbuffersOESFunc        = nullptr;
-PFNGLFRAMEBUFFERRENDERBUFFEROESPROC    glFramebufferRenderbufferOESFunc    = nullptr;
-PFNGLGENFRAMEBUFFERSOESPROC            glGenFramebuffersOESFunc            = nullptr;
-PFNGLGENRENDERBUFFERSOESPROC           glGenRenderbuffersOESFunc           = nullptr;
-PFNGLGETRENDERBUFFERPARAMETERIVOESPROC glGetRenderbufferParameterivOESFunc = nullptr;
-PFNGLRENDERBUFFERSTORAGEOESPROC        glRenderbufferStorageOESFunc        = nullptr;
-
-
-void ensureInit()
-{
-    static bool initialized = false;
-    if (!initialized)
-    {
-        initialized = true;
-
-        glBindFramebufferOESFunc = reinterpret_cast<PFNGLBINDFRAMEBUFFEROESPROC>(
-            sf::priv::EaglContext::getFunction("glBindFramebufferOES"));
-        glBindRenderbufferOESFunc = reinterpret_cast<PFNGLBINDRENDERBUFFEROESPROC>(
-            sf::priv::EaglContext::getFunction("glBindRenderbufferOES"));
-        glCheckFramebufferStatusOESFunc = reinterpret_cast<PFNGLCHECKFRAMEBUFFERSTATUSOESPROC>(
-            sf::priv::EaglContext::getFunction("glCheckFramebufferStatusOES"));
-        glDeleteFramebuffersOESFunc = reinterpret_cast<PFNGLDELETEFRAMEBUFFERSOESPROC>(
-            sf::priv::EaglContext::getFunction("glDeleteFramebuffersOES"));
-        glDeleteRenderbuffersOESFunc = reinterpret_cast<PFNGLDELETERENDERBUFFERSOESPROC>(
-            sf::priv::EaglContext::getFunction("glDeleteRenderbuffersOES"));
-        glFramebufferRenderbufferOESFunc = reinterpret_cast<PFNGLFRAMEBUFFERRENDERBUFFEROESPROC>(
-            sf::priv::EaglContext::getFunction("glFramebufferRenderbufferOES"));
-        glGenFramebuffersOESFunc = reinterpret_cast<PFNGLGENFRAMEBUFFERSOESPROC>(
-            sf::priv::EaglContext::getFunction("glGenFramebuffersOES"));
-        glGenRenderbuffersOESFunc = reinterpret_cast<PFNGLGENRENDERBUFFERSOESPROC>(
-            sf::priv::EaglContext::getFunction("glGenRenderbuffersOES"));
-        glGetRenderbufferParameterivOESFunc = reinterpret_cast<PFNGLGETRENDERBUFFERPARAMETERIVOESPROC>(
-            sf::priv::EaglContext::getFunction("glGetRenderbufferParameterivOES"));
-        glRenderbufferStorageOESFunc = reinterpret_cast<PFNGLRENDERBUFFERSTORAGEOESPROC>(
-            sf::priv::EaglContext::getFunction("glRenderbufferStorageOES"));
-    }
-}
-} // namespace
-
-
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
 EaglContext::EaglContext(EaglContext* shared) : m_context(nil)
 {
-    ensureInit();
-
-    // Create the context
+    const EAGLRenderingAPI api = shared ? [shared->m_context API] : kEAGLRenderingAPIOpenGLES2;
     if (shared)
-        m_context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1
-                                          sharegroup:[shared->m_context sharegroup]];
+        m_context = [[EAGLContext alloc] initWithAPI:api sharegroup:[shared->m_context sharegroup]];
     else
-        m_context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
+        m_context = [[EAGLContext alloc] initWithAPI:api];
 }
 
 
@@ -110,8 +64,6 @@ EaglContext::EaglContext(EaglContext* shared) : m_context(nil)
 EaglContext::EaglContext(EaglContext* shared, const ContextSettings& settings, const WindowImpl& owner, unsigned int bitsPerPixel) :
     m_context(nil)
 {
-    ensureInit();
-
     const auto& window = static_cast<const WindowImplUIKit&>(owner);
 
     createContext(shared, window, bitsPerPixel, settings);
@@ -119,13 +71,30 @@ EaglContext::EaglContext(EaglContext* shared, const ContextSettings& settings, c
 
 
 ////////////////////////////////////////////////////////////
-EaglContext::EaglContext(EaglContext* /* shared */, const ContextSettings& /* settings */, Vector2u /* size */) :
-    m_context(nil)
+EaglContext::EaglContext(EaglContext* shared, const ContextSettings& settings, Vector2u /* size */) : m_context(nil)
 {
-    ensureInit();
+    EAGLRenderingAPI api = shared ? [shared->m_context API]
+                                 : (settings.majorVersion >= 3 ? kEAGLRenderingAPIOpenGLES3
+                                                               : kEAGLRenderingAPIOpenGLES2);
 
-    // This constructor should never be used by implementation
-    err() << "Calling bad EaglContext constructor, please contact your developer :)" << std::endl;
+    if (shared)
+        m_context = [[EAGLContext alloc] initWithAPI:api sharegroup:[shared->m_context sharegroup]];
+    else
+        m_context = [[EAGLContext alloc] initWithAPI:api];
+
+    if (!m_context && !shared && (api == kEAGLRenderingAPIOpenGLES3))
+    {
+        err() << "Warning: Failed to create an OpenGL ES 3 context; falling back to OpenGL ES 2.0" << std::endl;
+        api       = kEAGLRenderingAPIOpenGLES2;
+        m_context = [[EAGLContext alloc] initWithAPI:api];
+    }
+
+    m_settings                   = settings;
+    m_settings.majorVersion      = api == kEAGLRenderingAPIOpenGLES3 ? 3 : 2;
+    m_settings.minorVersion      = 0;
+    m_settings.attributeFlags    = ContextSettings::Default;
+    m_settings.antiAliasingLevel = 0;
+    m_settings.sRgbCapable       = false;
 }
 
 
@@ -143,11 +112,11 @@ EaglContext::~EaglContext()
 
         // Destroy the buffers
         if (m_framebuffer)
-            glDeleteFramebuffersOESFunc(1, &m_framebuffer);
+            glDeleteFramebuffers(1, &m_framebuffer);
         if (m_colorbuffer)
-            glDeleteRenderbuffersOESFunc(1, &m_colorbuffer);
+            glDeleteRenderbuffers(1, &m_colorbuffer);
         if (m_depthbuffer)
-            glDeleteRenderbuffersOESFunc(1, &m_depthbuffer);
+            glDeleteRenderbuffers(1, &m_depthbuffer);
 
         // Restore the previous context
         [EAGLContext setCurrentContext:previousContext];
@@ -163,8 +132,7 @@ GlFunctionPointer EaglContext::getFunction(const char* name)
 {
     static void* module = nullptr;
 
-    static constexpr std::array libs = {"libGLESv1_CM.dylib",
-                                        "/System/Library/Frameworks/OpenGLES.framework/OpenGLES",
+    static constexpr std::array libs = {"/System/Library/Frameworks/OpenGLES.framework/OpenGLES",
                                         "OpenGLES.framework/OpenGLES"};
 
     for (const auto& lib : libs)
@@ -188,47 +156,60 @@ void EaglContext::recreateRenderBuffers(SFView* glView)
     [EAGLContext setCurrentContext:m_context];
 
     // Bind the frame buffer
-    glBindFramebufferOESFunc(GL_FRAMEBUFFER_OES, m_framebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, m_framebuffer);
 
     // Destroy previous render-buffers
     if (m_colorbuffer)
-        glDeleteRenderbuffersOESFunc(1, &m_colorbuffer);
+        glDeleteRenderbuffers(1, &m_colorbuffer);
     if (m_depthbuffer)
-        glDeleteRenderbuffersOESFunc(1, &m_depthbuffer);
+        glDeleteRenderbuffers(1, &m_depthbuffer);
 
     // Create the color buffer
-    glGenRenderbuffersOESFunc(1, &m_colorbuffer);
-    glBindRenderbufferOESFunc(GL_RENDERBUFFER_OES, m_colorbuffer);
+    glGenRenderbuffers(1, &m_colorbuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, m_colorbuffer);
     if (glView)
-        [m_context renderbufferStorage:GL_RENDERBUFFER_OES fromDrawable:(static_cast<CAEAGLLayer*>(glView.layer))];
-    glFramebufferRenderbufferOESFunc(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_OES, GL_RENDERBUFFER_OES, m_colorbuffer);
+        [m_context renderbufferStorage:GL_RENDERBUFFER fromDrawable:(static_cast<CAEAGLLayer*>(glView.layer))];
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, m_colorbuffer);
 
     // Create a depth buffer if requested
     if (m_settings.depthBits > 0)
     {
         // Find the best internal format
-        const GLenum format = m_settings.depthBits > 16
-                                  ? (m_settings.stencilBits == 0 ? GL_DEPTH_COMPONENT24_OES : GL_DEPTH24_STENCIL8_OES)
-                                  : GL_DEPTH_COMPONENT16_OES;
+        const bool  isGles3    = [m_context API] == kEAGLRenderingAPIOpenGLES3;
+        const char* extensions = isGles3 ? nullptr : reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
+        const bool  hasDepth24 = isGles3 || (extensions && std::strstr(extensions, "GL_OES_depth24"));
+        const bool  hasPackedDepthStencil =
+            isGles3 || (extensions && std::strstr(extensions, "GL_OES_packed_depth_stencil"));
+
+        if ((m_settings.stencilBits > 0) && !hasPackedDepthStencil)
+            m_settings.stencilBits = 0;
+
+        GLenum format = GL_DEPTH_COMPONENT16;
+        if (m_settings.stencilBits > 0)
+            format = GL_DEPTH24_STENCIL8_OES;
+        else if ((m_settings.depthBits > 16) && hasDepth24)
+            format = GL_DEPTH_COMPONENT24_OES;
+        else
+            m_settings.depthBits = 16;
 
         // Get the size of the color-buffer (which fits the current size of the GL view)
         GLint width  = 0;
         GLint height = 0;
-        glGetRenderbufferParameterivOESFunc(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_WIDTH_OES, &width);
-        glGetRenderbufferParameterivOESFunc(GL_RENDERBUFFER_OES, GL_RENDERBUFFER_HEIGHT_OES, &height);
+        glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &width);
+        glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &height);
 
         // Create the depth buffer
-        glGenRenderbuffersOESFunc(1, &m_depthbuffer);
-        glBindRenderbufferOESFunc(GL_RENDERBUFFER_OES, m_depthbuffer);
-        glRenderbufferStorageOESFunc(GL_RENDERBUFFER_OES, format, width, height);
-        glFramebufferRenderbufferOESFunc(GL_FRAMEBUFFER_OES, GL_DEPTH_ATTACHMENT_OES, GL_RENDERBUFFER_OES, m_depthbuffer);
+        glGenRenderbuffers(1, &m_depthbuffer);
+        glBindRenderbuffer(GL_RENDERBUFFER, m_depthbuffer);
+        glRenderbufferStorage(GL_RENDERBUFFER, format, width, height);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthbuffer);
         if (m_settings.stencilBits > 0)
-            glFramebufferRenderbufferOESFunc(GL_FRAMEBUFFER_OES, GL_STENCIL_ATTACHMENT_OES, GL_RENDERBUFFER_OES, m_depthbuffer);
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, m_depthbuffer);
     }
 
     // Make sure that everything's ok
-    const GLenum status = glCheckFramebufferStatusOESFunc(GL_FRAMEBUFFER_OES);
-    if (status != GL_FRAMEBUFFER_COMPLETE_OES)
+    const GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (status != GL_FRAMEBUFFER_COMPLETE)
         err() << "Failed to create a valid frame buffer (error code: " << status << ")" << std::endl;
 
     // Restore the previous context
@@ -249,8 +230,8 @@ bool EaglContext::makeCurrent(bool current)
 ////////////////////////////////////////////////////////////
 void EaglContext::display()
 {
-    glBindRenderbufferOESFunc(GL_RENDERBUFFER_OES, m_colorbuffer);
-    [m_context presentRenderbuffer:GL_RENDERBUFFER_OES];
+    glBindRenderbuffer(GL_RENDERBUFFER, m_colorbuffer);
+    [m_context presentRenderbuffer:GL_RENDERBUFFER];
 
     // The proper way of doing v-sync on iOS would be to use CADisplayLink
     // notifications, but it is not compatible with the way SFML is designed;
@@ -286,24 +267,48 @@ void EaglContext::createContext(EaglContext*           shared,
     else if (m_settings.depthBits > 0)
         m_settings.depthBits = 16;
 
-    // Create the context
+    // Create the context, matching the process-wide share group API when present
+    EAGLRenderingAPI api = shared ? [shared->m_context API]
+                                 : (settings.majorVersion >= 3 ? kEAGLRenderingAPIOpenGLES3
+                                                               : kEAGLRenderingAPIOpenGLES2);
+
     if (shared)
     {
         [EAGLContext setCurrentContext:nil];
 
-        m_context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1
-                                          sharegroup:[shared->m_context sharegroup]];
+        m_context = [[EAGLContext alloc] initWithAPI:api sharegroup:[shared->m_context sharegroup]];
     }
     else
     {
-        m_context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
+        m_context = [[EAGLContext alloc] initWithAPI:api];
+    }
+
+    if (!m_context && !shared && (api == kEAGLRenderingAPIOpenGLES3))
+    {
+        err() << "Warning: Failed to create an OpenGL ES 3 context; falling back to OpenGL ES 2.0" << std::endl;
+        api       = kEAGLRenderingAPIOpenGLES2;
+        m_context = [[EAGLContext alloc] initWithAPI:api];
+    }
+
+    m_settings.majorVersion   = api == kEAGLRenderingAPIOpenGLES3 ? 3 : 2;
+    m_settings.minorVersion   = 0;
+    m_settings.attributeFlags = ContextSettings::Default;
+
+    if (!m_context)
+    {
+        err() << "Failed to create an OpenGL ES context" << std::endl;
+        return;
     }
 
     // Activate it
-    makeCurrent(true);
+    if (!makeCurrent(true))
+    {
+        err() << "Failed to activate an OpenGL ES context" << std::endl;
+        return;
+    }
 
     // Create the framebuffer (this is the only allowed drawable on iOS)
-    glGenFramebuffersOESFunc(1, &m_framebuffer);
+    glGenFramebuffers(1, &m_framebuffer);
 
     // Create the render buffers
     recreateRenderBuffers(window.getGlView());

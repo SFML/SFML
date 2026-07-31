@@ -22,8 +22,8 @@ TEST_CASE("[Window] sf::ContextSettings")
             STATIC_CHECK(contextSettings.depthBits == 0);
             STATIC_CHECK(contextSettings.stencilBits == 0);
             STATIC_CHECK(contextSettings.antiAliasingLevel == 0);
-            STATIC_CHECK(contextSettings.majorVersion == 1);
-            STATIC_CHECK(contextSettings.minorVersion == 1);
+            STATIC_CHECK(contextSettings.majorVersion == 2);
+            STATIC_CHECK(contextSettings.minorVersion == 0);
             STATIC_CHECK(contextSettings.attributeFlags == sf::ContextSettings::Default);
             STATIC_CHECK(contextSettings.sRgbCapable == false);
         }

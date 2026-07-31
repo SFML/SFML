@@ -50,6 +50,11 @@ if(SFML_BUILD_WINDOW)
     # add an option for choosing whether to use the DRM windowing backend
     if(SFML_OS_LINUX)
         sfml_set_option(SFML_USE_DRM OFF BOOL "ON to use DRM windowing backend")
+
+        if(SFML_USE_DRM)
+            # The DRM backend uses the same GLES2+ context path as EGL/Android.
+            set(SFML_OPENGL_ES ON CACHE BOOL "ON to use an OpenGL ES implementation, OFF to use a desktop OpenGL implementation" FORCE)
+        endif()
     endif()
 endif()
 

@@ -55,8 +55,8 @@ struct ContextSettings
     unsigned int  depthBits{};                        //!< Bits of the depth buffer
     unsigned int  stencilBits{};                      //!< Bits of the stencil buffer
     unsigned int  antiAliasingLevel{};                //!< Level of anti-aliasing
-    unsigned int  majorVersion{1};                    //!< Major number of the context version to create
-    unsigned int  minorVersion{1};                    //!< Minor number of the context version to create
+    unsigned int  majorVersion{2};                    //!< Major number of the context version to create
+    unsigned int  minorVersion{0};                    //!< Minor number of the context version to create
     std::uint32_t attributeFlags{Attribute::Default}; //!< The attribute flags to create the context with
     bool          sRgbCapable{};                      //!< Whether the context framebuffer is sRGB capable
 };
@@ -84,10 +84,11 @@ struct ContextSettings
 /// multisampling levels for anti-aliasing.
 ///
 /// majorVersion and minorVersion define the version of the
-/// OpenGL context that you want. Only versions greater or
-/// equal to 3.0 are relevant; versions lesser than 3.0 are
-/// all handled the same way (i.e. you can use any version
-/// < 3.0 if you don't want an OpenGL 3 context).
+/// OpenGL context that you want. SFML requires OpenGL 2.0
+/// (OpenGL ES 2.0 on mobile platforms), so lower requests are
+/// promoted to 2.0. On OpenGL ES platforms, requesting version
+/// 3.x makes SFML try to create an ES 3 context and fall back
+/// to the process-wide shared context version when unavailable.
 ///
 /// When requesting a context with a version greater or equal
 /// to 3.2, you have the option of specifying whether the
@@ -115,11 +116,10 @@ struct ContextSettings
 /// OpenGL Capabilities Tables</a> page. macOS also currently does
 /// not support debug contexts.
 ///
-/// Please note that these values are only a hint.
-/// No failure will be reported if one or more of these values
-/// are not supported by the system; instead, SFML will try to
-/// find the closest valid match. You can then retrieve the
-/// settings that the window actually used to create its context,
-/// with `Window::getSettings()`.
+/// Please note that values above SFML's OpenGL 2.0 / OpenGL ES
+/// 2.0 baseline are only a hint. SFML will try to find the closest
+/// valid match and `Window::getSettings()` reports the context that
+/// was actually created. Context creation fails when the baseline
+/// version or its required shader entry points are unavailable.
 ///
 ////////////////////////////////////////////////////////////

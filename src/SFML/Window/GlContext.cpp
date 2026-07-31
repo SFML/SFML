@@ -30,10 +30,12 @@
 #include <SFML/Window/GlContext.hpp>
 
 #include <SFML/System/Err.hpp>
+#include <SFML/System/Exception.hpp>
 
 #include <glad/gl.h>
 
 #include <algorithm>
+#include <array>
 #include <atomic>
 #include <iomanip>
 #include <memory>
@@ -193,6 +195,33 @@ private:
 
 namespace sf::priv
 {
+namespace
+{
+////////////////////////////////////////////////////////////
+ContextSettings normalizeContextSettings(ContextSettings settings)
+{
+    if (settings.majorVersion < 2)
+    {
+        settings.majorVersion = 2;
+        settings.minorVersion = 0;
+    }
+
+#ifdef SFML_OPENGL_ES
+    if (settings.majorVersion > 3)
+    {
+        settings.majorVersion = 3;
+        settings.minorVersion = 2;
+    }
+    else if ((settings.majorVersion == 3) && (settings.minorVersion > 2))
+    {
+        settings.minorVersion = 2;
+    }
+#endif
+
+    return settings;
+}
+} // namespace
+
 // This structure contains all the state necessary to
 // track SharedContext usage
 struct GlContext::SharedContext
@@ -299,6 +328,64 @@ struct GlContext::SharedContext
                         extensions.emplace_back(extensionString);
             }
         }
+    }
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Re-create the process-wide hidden shared context
+    ////////////////////////////////////////////////////////////
+    void recreateContext(const ContextSettings& settings)
+    {
+        context.emplace(nullptr, settings, Vector2u(1, 1));
+        context->initialize(settings);
+        loadExtensions();
+    }
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Reconcile a request with the process-wide ES share group
+    ////////////////////////////////////////////////////////////
+    ContextSettings prepareSettings(const ContextSettings& requestedSettings, bool canRecreate)
+    {
+        ContextSettings settings = normalizeContextSettings(requestedSettings);
+
+#ifdef SFML_OPENGL_ES
+        const auto isHigherVersion = [](const ContextSettings& lhs, const ContextSettings& rhs)
+        {
+            return (lhs.majorVersion > rhs.majorVersion) ||
+                   ((lhs.majorVersion == rhs.majorVersion) && (lhs.minorVersion > rhs.minorVersion));
+        };
+
+        if ((settings.majorVersion >= 3) && isHigherVersion(settings, context->m_settings))
+        {
+            if (canRecreate)
+            {
+                const ContextSettings sharedSettings{/* depthBits */ 0,
+                                                     /* stencilBits */ 0,
+                                                     /* antiAliasingLevel */ 0,
+                                                     settings.majorVersion,
+                                                     settings.minorVersion,
+                                                     ContextSettings::Default};
+
+                recreateContext(sharedSettings);
+            }
+            else
+            {
+                err() << "Warning: OpenGL ES share group is already locked to version "
+                      << context->m_settings.majorVersion << "." << context->m_settings.minorVersion
+                      << "; falling back from requested version " << requestedSettings.majorVersion << "."
+                      << requestedSettings.minorVersion << std::endl;
+            }
+        }
+
+        // EAGL requires all contexts in a share group to use the same API.
+        // Applying the same rule to EGL keeps resource sharing deterministic.
+        settings.majorVersion = context->m_settings.majorVersion;
+        settings.minorVersion = context->m_settings.minorVersion;
+        settings.attributeFlags = ContextSettings::Default;
+#else
+        (void)canRecreate;
+#endif
+
+        return settings;
     }
 
     // AMD drivers have issues with internal synchronization
@@ -580,41 +667,85 @@ std::unique_ptr<GlContext> GlContext::create(const ContextSettings& settings, co
 
     const std::lock_guard lock(sharedContext->mutex);
 
+    const bool      canRecreateShareGroup = sharedContext.use_count() == 2;
+    ContextSettings effectiveSettings     = sharedContext->prepareSettings(settings, canRecreateShareGroup);
+
     // If use_count is 2 (GlResource + sharedContext) we know that we are inside sf::Context or sf::Window
     // Only in this situation we allow the user to indirectly re-create the shared context as a core context
 
     // Check if we need to convert our shared context into a core context
-    if ((sharedContext.use_count() == 2) && (settings.attributeFlags & ContextSettings::Core) &&
+    if ((sharedContext.use_count() == 2) && (effectiveSettings.attributeFlags & ContextSettings::Core) &&
         !(sharedContext->context->m_settings.attributeFlags & ContextSettings::Core))
     {
         // Re-create our shared context as a core context
         const ContextSettings sharedSettings{/* depthBits */ 0,
                                              /* stencilBits */ 0,
                                              /* antiAliasingLevel */ 0,
-                                             settings.majorVersion,
-                                             settings.minorVersion,
-                                             settings.attributeFlags};
+                                             effectiveSettings.majorVersion,
+                                             effectiveSettings.minorVersion,
+                                             effectiveSettings.attributeFlags};
 
-        sharedContext->context.emplace(nullptr, sharedSettings, Vector2u(1, 1));
-        sharedContext->context->initialize(sharedSettings);
-
-        // Reload our extensions vector
-        sharedContext->loadExtensions();
+        sharedContext->recreateContext(sharedSettings);
     }
+
+    const auto createContext = [&](const ContextSettings& creationSettings)
+    {
+        // We don't use acquireTransientContext here since we have
+        // to ensure we have exclusive access to the shared context
+        // in order to make sure it is not active during context creation
+        sharedContext->context->setActive(true);
+
+        try
+        {
+            auto context =
+                std::make_unique<ContextType>(&sharedContext->context.value(), creationSettings, owner, bitsPerPixel);
+
+            sharedContext->context->setActive(false);
+            context->initialize(creationSettings);
+            return context;
+        }
+        catch (...)
+        {
+            sharedContext->context->makeCurrent(false);
+            auto& currentContext = GlContextImpl::CurrentContext::get();
+            currentContext.id    = 0;
+            currentContext.ptr   = nullptr;
+            throw;
+        }
+    };
 
     std::unique_ptr<GlContext> context;
 
-    // We don't use acquireTransientContext here since we have
-    // to ensure we have exclusive access to the shared context
-    // in order to make sure it is not active during context creation
-    sharedContext->context->setActive(true);
+#ifdef SFML_OPENGL_ES
+    try
+    {
+        context = createContext(effectiveSettings);
+    }
+    catch (const Exception& exception)
+    {
+        if (!canRecreateShareGroup || (effectiveSettings.majorVersion < 3))
+            throw;
 
-    // Create the context
-    context = std::make_unique<ContextType>(&sharedContext->context.value(), settings, owner, bitsPerPixel);
+        err() << "Warning: Failed to create the requested OpenGL ES " << effectiveSettings.majorVersion << "."
+              << effectiveSettings.minorVersion << " window context (" << exception.what()
+              << "); rebuilding the share group as OpenGL ES 2.0" << std::endl;
 
-    sharedContext->context->setActive(false);
+        const ContextSettings fallbackSettings{/* depthBits */ 0,
+                                               /* stencilBits */ 0,
+                                               /* antiAliasingLevel */ 0,
+                                               /* majorVersion */ 2,
+                                               /* minorVersion */ 0,
+                                               ContextSettings::Default};
+        sharedContext->recreateContext(fallbackSettings);
+        effectiveSettings.majorVersion   = sharedContext->context->m_settings.majorVersion;
+        effectiveSettings.minorVersion   = sharedContext->context->m_settings.minorVersion;
+        effectiveSettings.attributeFlags = ContextSettings::Default;
+        context                          = createContext(effectiveSettings);
+    }
+#else
+    context = createContext(effectiveSettings);
+#endif
 
-    context->initialize(settings);
     context->checkSettings(settings);
 
     return context;
@@ -629,39 +760,84 @@ std::unique_ptr<GlContext> GlContext::create(const ContextSettings& settings, Ve
 
     const std::lock_guard lock(sharedContext->mutex);
 
+    const bool      canRecreateShareGroup = sharedContext.use_count() == 2;
+    ContextSettings effectiveSettings     = sharedContext->prepareSettings(settings, canRecreateShareGroup);
+
     // If use_count is 2 (GlResource + sharedContext) we know that we are inside sf::Context or sf::Window
     // Only in this situation we allow the user to indirectly re-create the shared context as a core context
 
     // Check if we need to convert our shared context into a core context
-    if ((sharedContext.use_count() == 2) && (settings.attributeFlags & ContextSettings::Core) &&
+    if ((sharedContext.use_count() == 2) && (effectiveSettings.attributeFlags & ContextSettings::Core) &&
         !(sharedContext->context->m_settings.attributeFlags & ContextSettings::Core))
     {
         // Re-create our shared context as a core context
         const ContextSettings sharedSettings{/* depthBits */ 0,
                                              /* stencilBits */ 0,
                                              /* antiAliasingLevel */ 0,
-                                             settings.majorVersion,
-                                             settings.minorVersion,
-                                             settings.attributeFlags};
+                                             effectiveSettings.majorVersion,
+                                             effectiveSettings.minorVersion,
+                                             effectiveSettings.attributeFlags};
 
-        sharedContext->context.emplace(nullptr, sharedSettings, Vector2u(1, 1));
-        sharedContext->context->initialize(sharedSettings);
-
-        // Reload our extensions vector
-        sharedContext->loadExtensions();
+        sharedContext->recreateContext(sharedSettings);
     }
 
-    // We don't use acquireTransientContext here since we have
-    // to ensure we have exclusive access to the shared context
-    // in order to make sure it is not active during context creation
-    sharedContext->context->setActive(true);
+    const auto createContext = [&](const ContextSettings& creationSettings)
+    {
+        // We don't use acquireTransientContext here since we have
+        // to ensure we have exclusive access to the shared context
+        // in order to make sure it is not active during context creation
+        sharedContext->context->setActive(true);
 
-    // Create the context
-    auto context = std::make_unique<ContextType>(&sharedContext->context.value(), settings, size);
+        try
+        {
+            auto context = std::make_unique<ContextType>(&sharedContext->context.value(), creationSettings, size);
 
-    sharedContext->context->setActive(false);
+            sharedContext->context->setActive(false);
+            context->initialize(creationSettings);
+            return context;
+        }
+        catch (...)
+        {
+            sharedContext->context->makeCurrent(false);
+            auto& currentContext = GlContextImpl::CurrentContext::get();
+            currentContext.id    = 0;
+            currentContext.ptr   = nullptr;
+            throw;
+        }
+    };
 
-    context->initialize(settings);
+    std::unique_ptr<GlContext> context;
+
+#ifdef SFML_OPENGL_ES
+    try
+    {
+        context = createContext(effectiveSettings);
+    }
+    catch (const Exception& exception)
+    {
+        if (!canRecreateShareGroup || (effectiveSettings.majorVersion < 3))
+            throw;
+
+        err() << "Warning: Failed to create the requested OpenGL ES " << effectiveSettings.majorVersion << "."
+              << effectiveSettings.minorVersion << " offscreen context (" << exception.what()
+              << "); rebuilding the share group as OpenGL ES 2.0" << std::endl;
+
+        const ContextSettings fallbackSettings{/* depthBits */ 0,
+                                               /* stencilBits */ 0,
+                                               /* antiAliasingLevel */ 0,
+                                               /* majorVersion */ 2,
+                                               /* minorVersion */ 0,
+                                               ContextSettings::Default};
+        sharedContext->recreateContext(fallbackSettings);
+        effectiveSettings.majorVersion   = sharedContext->context->m_settings.majorVersion;
+        effectiveSettings.minorVersion   = sharedContext->context->m_settings.minorVersion;
+        effectiveSettings.attributeFlags = ContextSettings::Default;
+        context                          = createContext(effectiveSettings);
+    }
+#else
+    context = createContext(effectiveSettings);
+#endif
+
     context->checkSettings(settings);
 
     return context;
@@ -876,7 +1052,8 @@ void GlContext::cleanupUnsharedResources()
 void GlContext::initialize(const ContextSettings& requestedSettings)
 {
     // Activate the context
-    setActive(true);
+    if (!setActive(true))
+        throw Exception("Failed to activate OpenGL context during initialization");
 
     // Retrieve the context version number
     int majorVersion = 0;
@@ -891,8 +1068,13 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
 
     if (!glGetIntegervFunc || !glGetErrorFunc || !glGetStringFunc || !glEnableFunc || !glIsEnabledFunc)
     {
-        err() << "Could not load necessary function to initialize OpenGL context" << std::endl;
-        return;
+        throw Exception("Could not load the functions required to initialize an OpenGL context");
+    }
+
+    // Discard errors left by platform-specific context/surface setup so that
+    // the version query fallback only reacts to GL_MAJOR_VERSION support.
+    while (glGetErrorFunc() != GL_NO_ERROR)
+    {
     }
 
     glGetIntegervFunc(GL_MAJOR_VERSION, &majorVersion);
@@ -907,9 +1089,8 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
     {
         // Try the old way
 
-        // If we can't get the version number, assume 1.1
-        m_settings.majorVersion = 1;
-        m_settings.minorVersion = 1;
+        m_settings.majorVersion = 0;
+        m_settings.minorVersion = 0;
 
         if (const char* version = reinterpret_cast<const char*>(glGetStringFunc(GL_VERSION)))
         {
@@ -918,23 +1099,29 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
             // OpenGL ES Full profile:        The beginning of the returned string is "OpenGL ES major.minor"
             // Desktop OpenGL:                The beginning of the returned string is "major.minor"
 
-            // Helper to parse OpenGL version strings
+            // Helper to parse both desktop and OpenGL ES version strings
             static const auto parseVersionString =
                 [](const char* versionString, const char* prefix, unsigned int& major, unsigned int& minor)
             {
                 const std::size_t prefixLength = std::strlen(prefix);
 
-                if ((std::strlen(versionString) >= (prefixLength + 3)) &&
-                    (std::strncmp(versionString, prefix, prefixLength) == 0) && std::isdigit(versionString[prefixLength]) &&
-                    (versionString[prefixLength + 1] == '.') && std::isdigit(versionString[prefixLength + 2]))
-                {
-                    major = static_cast<unsigned int>(versionString[prefixLength] - '0');
-                    minor = static_cast<unsigned int>(versionString[prefixLength + 2] - '0');
+                if (std::strncmp(versionString, prefix, prefixLength) != 0)
+                    return false;
 
-                    return true;
-                }
+                char*       end    = nullptr;
+                const auto  parsed = std::strtoul(versionString + prefixLength, &end, 10);
+                if ((end == versionString + prefixLength) || (*end != '.'))
+                    return false;
 
-                return false;
+                char*      minorEnd    = nullptr;
+                const auto parsedMinor = std::strtoul(end + 1, &minorEnd, 10);
+                if (minorEnd == end + 1)
+                    return false;
+
+                major = static_cast<unsigned int>(parsed);
+                minor = static_cast<unsigned int>(parsedMinor);
+
+                return true;
             };
 
             if (!parseVersionString(version, "OpenGL ES-CL ", m_settings.majorVersion, m_settings.minorVersion) &&
@@ -942,14 +1129,63 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
                 !parseVersionString(version, "OpenGL ES ", m_settings.majorVersion, m_settings.minorVersion) &&
                 !parseVersionString(version, "", m_settings.majorVersion, m_settings.minorVersion))
             {
-                err() << "Unable to parse OpenGL version string: " << std::quoted(version) << ", defaulting to 1.1"
-                      << std::endl;
+                err() << "Unable to parse OpenGL version string: " << std::quoted(version) << std::endl;
             }
         }
         else
         {
-            err() << "Unable to retrieve OpenGL version string, defaulting to 1.1" << std::endl;
+            err() << "Unable to retrieve OpenGL version string" << std::endl;
         }
+    }
+
+    if (m_settings.majorVersion < 2)
+    {
+        throw Exception("SFML requires OpenGL 2.0 or OpenGL ES 2.0; created context reports version " +
+                        std::to_string(m_settings.majorVersion) + "." + std::to_string(m_settings.minorVersion));
+    }
+
+    static constexpr std::array requiredEntryPoints = {"glCreateShader",
+                                                       "glShaderSource",
+                                                       "glCompileShader",
+                                                       "glGetShaderiv",
+                                                       "glGetShaderInfoLog",
+                                                       "glDeleteShader",
+                                                       "glCreateProgram",
+                                                       "glAttachShader",
+                                                       "glBindAttribLocation",
+                                                       "glLinkProgram",
+                                                       "glGetProgramiv",
+                                                       "glGetProgramInfoLog",
+                                                       "glDeleteProgram",
+                                                       "glUseProgram",
+                                                       "glGetUniformLocation",
+                                                       "glUniform1f",
+                                                       "glUniform2f",
+                                                       "glUniform3f",
+                                                       "glUniform4f",
+                                                       "glUniform1i",
+                                                       "glUniform2i",
+                                                       "glUniform3i",
+                                                       "glUniform4i",
+                                                       "glUniform1fv",
+                                                       "glUniform2fv",
+                                                       "glUniform3fv",
+                                                       "glUniform4fv",
+                                                       "glUniformMatrix3fv",
+                                                       "glUniformMatrix4fv",
+                                                       "glActiveTexture",
+                                                       "glVertexAttribPointer",
+                                                       "glEnableVertexAttribArray",
+                                                       "glDisableVertexAttribArray",
+                                                       "glGetVertexAttribfv",
+                                                       "glGetVertexAttribiv",
+                                                       "glGetVertexAttribPointerv",
+                                                       "glVertexAttrib4fv"};
+
+    for (const char* entryPoint : requiredEntryPoints)
+    {
+        if (!getFunction(entryPoint))
+            throw Exception(std::string("SFML requires OpenGL shader entry point ") + entryPoint);
     }
 
     // 3.0 contexts only deprecate features, but do not remove them yet
@@ -970,6 +1206,7 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
 
     m_settings.attributeFlags = ContextSettings::Default;
 
+#ifndef SFML_OPENGL_ES
     if (m_settings.majorVersion >= 3)
     {
         // Retrieve the context flags
@@ -1012,8 +1249,10 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
                 m_settings.attributeFlags |= ContextSettings::Core;
         }
     }
+#endif
 
     // Enable anti-aliasing if requested by the user and supported
+#ifndef SFML_OPENGL_ES
     if ((requestedSettings.antiAliasingLevel > 0) && (m_settings.antiAliasingLevel > 0))
     {
         glEnableFunc(GL_MULTISAMPLE);
@@ -1022,8 +1261,13 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
     {
         m_settings.antiAliasingLevel = 0;
     }
+#else
+    if (requestedSettings.antiAliasingLevel == 0)
+        m_settings.antiAliasingLevel = 0;
+#endif
 
     // Enable sRGB if requested by the user and supported
+#ifndef SFML_OPENGL_ES
     if (requestedSettings.sRgbCapable && m_settings.sRgbCapable)
     {
         glEnableFunc(GL_FRAMEBUFFER_SRGB);
@@ -1039,6 +1283,9 @@ void GlContext::initialize(const ContextSettings& requestedSettings)
     {
         m_settings.sRgbCapable = false;
     }
+#else
+    m_settings.sRgbCapable = false;
+#endif
 }
 
 

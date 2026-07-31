@@ -5,7 +5,7 @@
 
 #include <X11/Xlib.h>
 #define GLAD_GL_IMPLEMENTATION
-#include <gl.h>
+#include <GL2Utils.hpp>
 
 #include <array>
 #include <iostream>
@@ -21,7 +21,7 @@
 /// \return True if operation was successful, false otherwise
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] bool initialize(sf::Window& window)
+[[nodiscard]] bool initialize(sf::Window& window, const gl2::Program& program, GLint projectionUniform)
 {
     // Activate the window
     if (!window.setActive())
@@ -46,19 +46,9 @@
     glDepthMask(GL_TRUE);
 
     // Setup a perspective projection
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
     const float extent = std::tan(sf::degrees(45).asRadians());
-
-#ifdef SFML_OPENGL_ES
-    glFrustumf(-extent, extent, -extent, extent, 1.0f, 500.0f);
-#else
-    glFrustum(-extent, extent, -extent, extent, 1.0f, 500.0f);
-#endif
-
-    // Enable position and texture coordinates vertex components
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
+    program.use();
+    gl2::setMatrix(projectionUniform, gl2::frustum(-extent, extent, -extent, extent, 1.f, 500.f));
 
     return true;
 }
@@ -73,7 +63,7 @@
 /// \return True if operation was successful, false otherwise
 ///
 ////////////////////////////////////////////////////////////
-[[nodiscard]] bool draw(sf::Window& window, float elapsedTime)
+[[nodiscard]] bool draw(sf::Window& window, const gl2::Program& program, GLint modelViewUniform, float elapsedTime)
 {
     // Activate the window
     if (!window.setActive())
@@ -86,12 +76,9 @@
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Apply some transformations
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glTranslatef(0.f, 0.f, -200.f);
-    glRotatef(elapsedTime * 10.f, 1.f, 0.f, 0.f);
-    glRotatef(elapsedTime * 6.f, 0.f, 1.f, 0.f);
-    glRotatef(elapsedTime * 18.f, 0.f, 0.f, 1.f);
+    program.use();
+    gl2::setMatrix(modelViewUniform,
+                   gl2::modelView(0.f, 0.f, -200.f, elapsedTime * 10.f, elapsedTime * 6.f, elapsedTime * 18.f));
 
     // Define a 3D cube (6 faces made of 2 triangles composed by 3 vertices)
     // clang-format off
@@ -143,8 +130,11 @@
     // clang-format on
 
     // Draw the cube
-    glVertexPointer(3, GL_FLOAT, 6 * sizeof(GLfloat), cube.data());
-    glColorPointer(3, GL_FLOAT, 6 * sizeof(GLfloat), cube.data() + 3);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glEnableVertexAttribArray(0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), cube.data());
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), cube.data() + 3);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     return true;
@@ -234,19 +224,30 @@ int main()
     }
 
 #ifdef SFML_OPENGL_ES
-    gladLoadGLES1(sf::Context::getFunction);
+    if (!gladLoadGLES2(sf::Context::getFunction))
 #else
-    gladLoadGL(sf::Context::getFunction);
+    if (!gladLoadGL(sf::Context::getFunction))
 #endif
+    {
+        std::cerr << "Failed to load OpenGL entry points" << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    gl2::Program program;
+    if (!program.load(gl2::colorVertexShader, gl2::colorFragmentShader, {{0, "position"}, {1, "color"}}))
+        return EXIT_FAILURE;
+
+    const GLint projectionUniform = program.uniform("projection");
+    const GLint modelViewUniform  = program.uniform("modelView");
 
     // Initialize our views
-    if (!initialize(sfmlView1))
+    if (!initialize(sfmlView1, program, projectionUniform))
     {
         std::cerr << "Failed to initialize view 1" << std::endl;
         return EXIT_FAILURE;
     }
 
-    if (!initialize(sfmlView2))
+    if (!initialize(sfmlView2, program, projectionUniform))
     {
         std::cerr << "Failed to initialize view 2" << std::endl;
         return EXIT_FAILURE;
@@ -273,13 +274,13 @@ int main()
         }
 
         // Draw something into our views
-        if (!draw(sfmlView1, clock.getElapsedTime().asSeconds()))
+        if (!draw(sfmlView1, program, modelViewUniform, clock.getElapsedTime().asSeconds()))
         {
             std::cerr << "Failed to draw on view 1" << std::endl;
             return EXIT_FAILURE;
         }
 
-        if (!draw(sfmlView2, clock.getElapsedTime().asSeconds() * 0.3f))
+        if (!draw(sfmlView2, program, modelViewUniform, clock.getElapsedTime().asSeconds() * 0.3f))
         {
             std::cerr << "Failed to draw on view 2" << std::endl;
             return EXIT_FAILURE;
@@ -288,6 +289,12 @@ int main()
         // Display the views on screen
         sfmlView1.display();
         sfmlView2.display();
+    }
+
+    if (sfmlView1.setActive())
+    {
+        glUseProgram(0);
+        program.reset();
     }
 
     // Close our SFML views before destroying the underlying window

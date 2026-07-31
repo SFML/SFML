@@ -15,9 +15,20 @@ uniform vec2 storm_position;
 uniform float storm_total_radius;
 uniform float storm_inner_radius;
 
+attribute vec4 sf_Vertex;
+attribute vec4 sf_Color;
+attribute vec4 sf_MultiTexCoord0;
+
+uniform mat4 sf_ModelViewMatrix;
+uniform mat4 sf_ProjectionMatrix;
+uniform mat4 sf_TextureMatrix;
+
+varying vec4 sf_FrontColor;
+varying vec4 sf_TexCoord0;
+
 void main()
 {
-    vec4 vertex = gl_ModelViewMatrix * gl_Vertex;
+    vec4 vertex = sf_ModelViewMatrix * sf_Vertex;
     vec2 offset = vertex.xy - storm_position;
     float len = length(offset);
     if (len < storm_total_radius)
@@ -26,9 +37,9 @@ void main()
         vertex.xy = storm_position + normalize(offset) * push_distance;
     }
 
-    gl_Position = gl_ProjectionMatrix * vertex;
-    gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;
-    gl_FrontColor = gl_Color;
+    gl_Position = sf_ProjectionMatrix * vertex;
+    sf_TexCoord0 = sf_TextureMatrix * sf_MultiTexCoord0;
+    sf_FrontColor = sf_Color;
 }
 )";
 
@@ -49,6 +60,7 @@ layout (triangle_strip, max_vertices = 4) out;
 
 // Output texture coordinates
 out vec2 tex_coord;
+out vec4 sf_FrontColor;
 
 // Main entry point
 void main()
@@ -62,6 +74,8 @@ void main()
     // Iterate over all vertices
     for (int i = 0; i < gl_in.length(); ++i)
     {
+        sf_FrontColor = vec4(1.0);
+
         // Retrieve the passed vertex position
         vec2 pos = gl_in[i].gl_Position.xy;
 
@@ -92,39 +106,28 @@ void main()
 )";
 
 constexpr auto fragmentSource = R"(
+#ifdef GL_ES
+precision mediump float;
+#endif
+
 uniform sampler2D texture;
 uniform float blink_alpha;
 
+varying vec4 sf_FrontColor;
+
 void main()
 {
-    vec4 pixel = gl_Color;
+    vec4 pixel = sf_FrontColor;
     pixel.a = blink_alpha;
     gl_FragColor = pixel;
 }
 )";
 
 #ifdef SFML_RUN_DISPLAY_TESTS
-#ifdef SFML_OPENGL_ES
-constexpr bool skipShaderDummyTest = false;
-constexpr bool skipShaderFullTest  = true;
+constexpr bool skipShaderFullTest = false;
 #else
-constexpr bool skipShaderDummyTest = true;
-constexpr bool skipShaderFullTest  = false;
+constexpr bool skipShaderFullTest = true;
 #endif
-#else
-constexpr bool skipShaderDummyTest = true;
-constexpr bool skipShaderFullTest  = true;
-#endif
-
-std::string skipShaderDummyTests()
-{
-    if constexpr (skipShaderDummyTest)
-        // https://github.com/catchorg/Catch2/blob/devel/docs/test-cases-and-sections.md#special-tags
-        // This tag tells Catch2 to not run a given TEST_CASE
-        return "[.shaderDummy]";
-    else
-        return "";
-}
 
 std::string skipShaderFullTests()
 {
@@ -137,37 +140,6 @@ std::string skipShaderFullTests()
 }
 
 } // namespace
-
-TEST_CASE("[Graphics] sf::Shader (Dummy Implementation)", skipShaderDummyTests())
-{
-    SECTION("Available")
-    {
-        CHECK_FALSE(sf::Shader::isAvailable());
-        CHECK_FALSE(sf::Shader::isGeometryAvailable());
-    }
-
-    SECTION("Construct from memory")
-    {
-        CHECK_THROWS_AS(sf::Shader(std::string_view(vertexSource), sf::Shader::Type::Vertex), sf::Exception);
-        CHECK_THROWS_AS(sf::Shader(std::string_view(geometrySource), sf::Shader::Type::Geometry), sf::Exception);
-        CHECK_THROWS_AS(sf::Shader(std::string_view(fragmentSource), sf::Shader::Type::Fragment), sf::Exception);
-        CHECK_THROWS_AS(sf::Shader(std::string_view(vertexSource), std::string_view(fragmentSource)), sf::Exception);
-        CHECK_THROWS_AS(sf::Shader(std::string_view(vertexSource),
-                                   std::string_view(geometrySource),
-                                   std::string_view(fragmentSource)),
-                        sf::Exception);
-    }
-
-    SECTION("loadFromMemory()")
-    {
-        sf::Shader shader;
-        CHECK_FALSE(shader.loadFromMemory(vertexSource, sf::Shader::Type::Vertex));
-        CHECK_FALSE(shader.loadFromMemory(geometrySource, sf::Shader::Type::Geometry));
-        CHECK_FALSE(shader.loadFromMemory(fragmentSource, sf::Shader::Type::Fragment));
-        CHECK_FALSE(shader.loadFromMemory(vertexSource, fragmentSource));
-        CHECK_FALSE(shader.loadFromMemory(vertexSource, geometrySource, fragmentSource));
-    }
-}
 
 TEST_CASE("[Graphics] sf::Shader", skipShaderFullTests())
 {

@@ -10,7 +10,7 @@
 #include <cstdlib>
 
 #define GLAD_GL_IMPLEMENTATION
-#include <gl.h>
+#include <GL2Utils.hpp>
 
 #ifdef SFML_SYSTEM_IOS
 #include <SFML/Main.hpp>
@@ -45,6 +45,8 @@ int main()
 
     while (!exit)
     {
+        bool restart = false;
+
         // Request a 24-bits depth buffer when creating the window
         sf::ContextSettings contextSettings;
         contextSettings.depthBits   = 24;
@@ -94,10 +96,25 @@ int main()
 
         // Load OpenGL or OpenGL ES entry points using glad
 #ifdef SFML_OPENGL_ES
-        gladLoadGLES1(sf::Context::getFunction);
+        if (!gladLoadGLES2(sf::Context::getFunction))
 #else
-        gladLoadGL(sf::Context::getFunction);
+        if (!gladLoadGL(sf::Context::getFunction))
 #endif
+        {
+            std::cerr << "Failed to load OpenGL entry points" << std::endl;
+            return EXIT_FAILURE;
+        }
+
+        gl2::Program program;
+        if (!program.load(gl2::texturedVertexShader, gl2::texturedFragmentShader, {{0, "position"}, {1, "texCoord"}}))
+        {
+            return EXIT_FAILURE;
+        }
+
+        program.use();
+        const GLint projectionUniform = program.uniform("projection");
+        const GLint modelViewUniform  = program.uniform("modelView");
+        glUniform1i(program.uniform("texture0"), 0);
 
         // Enable Z-buffer read and write
         glEnable(GL_DEPTH_TEST);
@@ -108,24 +125,15 @@ int main()
         glClearDepth(1.f);
 #endif
 
-        // Disable lighting
-        glDisable(GL_LIGHTING);
-
         // Configure the viewport (the same size as the window)
         glViewport(0, 0, static_cast<GLsizei>(window.getSize().x), static_cast<GLsizei>(window.getSize().y));
 
         // Setup a perspective projection
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        const GLfloat ratio = static_cast<float>(window.getSize().x) / static_cast<float>(window.getSize().y);
-#ifdef SFML_OPENGL_ES
-        glFrustumf(-ratio, ratio, -1.f, 1.f, 1.f, 500.f);
-#else
-        glFrustum(-ratio, ratio, -1.f, 1.f, 1.f, 500.f);
-#endif
+        const GLfloat ratio      = static_cast<float>(window.getSize().x) / static_cast<float>(window.getSize().y);
+        gl2::Matrix   projection = gl2::frustum(-ratio, ratio, -1.f, 1.f, 1.f, 500.f);
+        gl2::setMatrix(projectionUniform, projection);
 
         // Bind the texture
-        glEnable(GL_TEXTURE_2D);
         sf::Texture::bind(&texture);
 
         // Define a 3D cube (6 faces made of 2 triangles composed by 3 vertices)
@@ -178,14 +186,11 @@ int main()
         // clang-format on
 
         // Enable position and texture coordinates vertex components
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glVertexPointer(3, GL_FLOAT, 5 * sizeof(GLfloat), cube.data());
-        glTexCoordPointer(2, GL_FLOAT, 5 * sizeof(GLfloat), cube.data() + 3);
-
-        // Disable normal and color vertex components
-        glDisableClientState(GL_NORMAL_ARRAY);
-        glDisableClientState(GL_COLOR_ARRAY);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), cube.data());
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), cube.data() + 3);
 
         // Make the window no longer the active window for OpenGL calls
         if (!window.setActive(false))
@@ -212,7 +217,6 @@ int main()
                      event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Escape))
                 {
                     exit = true;
-                    window.close();
                 }
 
                 // Return key: toggle mipmapping
@@ -239,8 +243,8 @@ int main()
                 if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>();
                     keyPressed && keyPressed->code == sf::Keyboard::Key::Space)
                 {
-                    sRgb = !sRgb;
-                    window.close();
+                    sRgb    = !sRgb;
+                    restart = true;
                 }
 
                 // Adjust the viewport when the window is resized
@@ -257,14 +261,10 @@ int main()
 
                     const auto [width, height] = resized->size;
                     glViewport(0, 0, static_cast<GLsizei>(width), static_cast<GLsizei>(height));
-                    glMatrixMode(GL_PROJECTION);
-                    glLoadIdentity();
                     const GLfloat newRatio = static_cast<float>(width) / static_cast<float>(height);
-#ifdef SFML_OPENGL_ES
-                    glFrustumf(-newRatio, newRatio, -1.f, 1.f, 1.f, 500.f);
-#else
-                    glFrustum(-newRatio, newRatio, -1.f, 1.f, 1.f, 500.f);
-#endif
+                    projection             = gl2::frustum(-newRatio, newRatio, -1.f, 1.f, 1.f, 500.f);
+                    program.use();
+                    gl2::setMatrix(projectionUniform, projection);
 
                     // Make the window no longer the active window for OpenGL calls
                     if (!window.setActive(false))
@@ -279,6 +279,9 @@ int main()
                     window.setView(view);
                 }
             }
+
+            if (exit || restart)
+                break;
 
             // Draw the background
             window.pushGLStates();
@@ -305,12 +308,17 @@ int main()
             const float y = -static_cast<float>(pos.y) * 200.f / static_cast<float>(window.getSize().y) + 100.f;
 
             // Apply some transformations
-            glMatrixMode(GL_MODELVIEW);
-            glLoadIdentity();
-            glTranslatef(x, y, -100.f);
-            glRotatef(clock.getElapsedTime().asSeconds() * 50.f, 1.f, 0.f, 0.f);
-            glRotatef(clock.getElapsedTime().asSeconds() * 30.f, 0.f, 1.f, 0.f);
-            glRotatef(clock.getElapsedTime().asSeconds() * 90.f, 0.f, 0.f, 1.f);
+            const float elapsedTime = clock.getElapsedTime().asSeconds();
+            program.use();
+            gl2::setMatrix(projectionUniform, projection);
+            gl2::setMatrix(modelViewUniform,
+                           gl2::modelView(x, y, -100.f, elapsedTime * 50.f, elapsedTime * 30.f, elapsedTime * 90.f));
+            sf::Texture::bind(&texture);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+            glEnableVertexAttribArray(0);
+            glEnableVertexAttribArray(1);
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), cube.data());
+            glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), cube.data() + 3);
 
             // Draw the cube
             glDrawArrays(GL_TRIANGLES, 0, 36);
@@ -332,6 +340,14 @@ int main()
             // Finally, display the rendered frame on screen
             window.display();
         }
+
+        if (window.setActive(true))
+        {
+            glUseProgram(0);
+            program.reset();
+        }
+
+        window.close();
     }
 
     return EXIT_SUCCESS;

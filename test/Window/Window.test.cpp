@@ -34,8 +34,8 @@ TEST_CASE("[Window] sf::Window", runDisplayTests())
             CHECK(window.getSettings().depthBits == 0);
             CHECK(window.getSettings().stencilBits == 0);
             CHECK(window.getSettings().antiAliasingLevel == 0);
-            CHECK(window.getSettings().majorVersion == 1);
-            CHECK(window.getSettings().minorVersion == 1);
+            CHECK(window.getSettings().majorVersion == 2);
+            CHECK(window.getSettings().minorVersion == 0);
             CHECK(window.getSettings().attributeFlags == sf::ContextSettings::Default);
             CHECK(!window.getSettings().sRgbCapable);
         }

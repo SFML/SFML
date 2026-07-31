@@ -32,6 +32,7 @@
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Sleep.hpp>
 
+#include <algorithm>
 #include <array>
 #include <memory>
 #include <mutex>
@@ -53,6 +54,8 @@
 #include <glad/egl.h>
 #endif
 
+#include <SFML/Window/EglFunctionLoader.hpp>
+
 namespace
 {
 // A nested named namespace is used here to allow unity builds of SFML.
@@ -66,6 +69,11 @@ EGLDisplay getInitializedDisplay()
     {
         display = eglCheck(eglGetDisplay(EGL_DEFAULT_DISPLAY));
         eglCheck(eglInitialize(display, nullptr, nullptr));
+#ifdef SFML_OPENGL_ES
+        eglCheck(eglBindAPI(EGL_OPENGL_ES_API));
+#else
+        eglCheck(eglBindAPI(EGL_OPENGL_API));
+#endif
     }
 
     return display;
@@ -111,18 +119,26 @@ EglContext::EglContext(EglContext* shared)
     // Get the initialized EGL display
     m_display = EglContextImpl::getInitializedDisplay();
 
+    const ContextSettings settings = shared ? shared->m_settings : ContextSettings{};
+
     // Get the best EGL config matching the default video settings
-    m_config = getBestConfig(m_display, VideoMode::getDesktopMode().bitsPerPixel, ContextSettings());
+    m_config = getBestConfig(m_display, VideoMode::getDesktopMode().bitsPerPixel, settings, EGL_PBUFFER_BIT);
+    if (!m_config)
+    {
+        err() << "Failed to find an EGL pbuffer configuration supporting OpenGL ES " << settings.majorVersion << "."
+              << settings.minorVersion << std::endl;
+        return;
+    }
     updateSettings();
+
+    // Create EGL context
+    createContext(shared, settings, VideoMode::getDesktopMode().bitsPerPixel, EGL_PBUFFER_BIT);
 
     // Note: The EGL specs say that attribList can be a null pointer when passed to eglCreatePbufferSurface,
     // but this is resulting in a segfault. Bug in Android?
     static constexpr std::array attribList = {EGL_WIDTH, 1, EGL_HEIGHT, 1, EGL_NONE};
 
     m_surface = eglCheck(eglCreatePbufferSurface(m_display, m_config, attribList.data()));
-
-    // Create EGL context
-    createContext(shared);
 }
 
 
@@ -148,11 +164,31 @@ EglContext::EglContext(EglContext*                        shared,
     m_display = EglContextImpl::getInitializedDisplay();
 
     // Get the best EGL config matching the requested video settings
-    m_config = getBestConfig(m_display, bitsPerPixel, settings);
+    ContextSettings effectiveSettings = settings;
+    m_config = getBestConfig(m_display, bitsPerPixel, effectiveSettings, EGL_WINDOW_BIT);
+    if (!m_config && !shared && (settings.majorVersion >= 3))
+    {
+        err() << "Warning: No EGL configuration supports requested OpenGL ES " << settings.majorVersion << "."
+              << settings.minorVersion << "; falling back to OpenGL ES 2.0" << std::endl;
+        effectiveSettings.majorVersion = 2;
+        effectiveSettings.minorVersion = 0;
+        m_config = getBestConfig(m_display, bitsPerPixel, effectiveSettings, EGL_WINDOW_BIT);
+    }
+
+    if (!m_config)
+    {
+        if (shared)
+            err() << "Failed to find an EGL window configuration matching the locked OpenGL ES share-group version"
+                  << std::endl;
+        else
+            err() << "Failed to find an EGL configuration supporting OpenGL ES 2" << std::endl;
+        return;
+    }
+
     updateSettings();
 
     // Create EGL context
-    createContext(shared);
+    createContext(shared, effectiveSettings, bitsPerPixel, EGL_WINDOW_BIT);
 
     // Create EGL surface
     createSurface(static_cast<EGLNativeWindowType>(owner.getNativeHandle()));
@@ -160,13 +196,44 @@ EglContext::EglContext(EglContext*                        shared,
 
 
 ////////////////////////////////////////////////////////////
-EglContext::EglContext(EglContext* /*shared*/, const ContextSettings& /*settings*/, Vector2u /*size*/)
+EglContext::EglContext(EglContext* shared, const ContextSettings& settings, Vector2u size)
 {
     EglContextImpl::ensureInit();
 
-    err() << "Warning: context has not been initialized. The constructor EglContext(shared, settings, size) is "
-             "currently not implemented."
-          << std::endl;
+    m_display = EglContextImpl::getInitializedDisplay();
+    m_config = getBestConfig(m_display, VideoMode::getDesktopMode().bitsPerPixel, settings, EGL_PBUFFER_BIT);
+
+    ContextSettings effectiveSettings = settings;
+    if (!m_config && !shared && (settings.majorVersion >= 3))
+    {
+        err() << "Warning: No EGL pbuffer configuration supports requested OpenGL ES " << settings.majorVersion << "."
+              << settings.minorVersion << "; falling back to OpenGL ES 2.0" << std::endl;
+        effectiveSettings.majorVersion = 2;
+        effectiveSettings.minorVersion = 0;
+        m_config =
+            getBestConfig(m_display, VideoMode::getDesktopMode().bitsPerPixel, effectiveSettings, EGL_PBUFFER_BIT);
+    }
+
+    if (!m_config)
+    {
+        if (shared)
+            err() << "Failed to find an EGL pbuffer configuration matching the locked OpenGL ES share-group version"
+                  << std::endl;
+        else
+            err() << "Failed to find an EGL configuration supporting OpenGL ES 2" << std::endl;
+        return;
+    }
+
+    updateSettings();
+
+    createContext(shared, effectiveSettings, VideoMode::getDesktopMode().bitsPerPixel, EGL_PBUFFER_BIT);
+
+    const std::array attribList = {EGL_WIDTH,
+                                   static_cast<EGLint>(std::max(size.x, 1u)),
+                                   EGL_HEIGHT,
+                                   static_cast<EGLint>(std::max(size.y, 1u)),
+                                   EGL_NONE};
+    m_surface = eglCheck(eglCreatePbufferSurface(m_display, m_config, attribList.data()));
 }
 
 
@@ -203,7 +270,7 @@ GlFunctionPointer EglContext::getFunction(const char* name)
 {
     EglContextImpl::ensureInit();
 
-    return eglGetProcAddress(name);
+    return getEglGlFunction(name);
 }
 
 
@@ -236,16 +303,53 @@ void EglContext::setVerticalSyncEnabled(bool enabled)
 
 
 ////////////////////////////////////////////////////////////
-void EglContext::createContext(EglContext* shared)
+void EglContext::createContext(EglContext*           shared,
+                               const ContextSettings& settings,
+                               unsigned int           bitsPerPixel,
+                               EGLint                 surfaceType)
 {
-    static constexpr std::array contextVersion = {EGL_CONTEXT_CLIENT_VERSION, 1, EGL_NONE};
-
     const EGLContext toShared = shared ? shared->m_context : EGL_NO_CONTEXT;
     if (toShared != EGL_NO_CONTEXT)
         eglCheck(eglMakeCurrent(m_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT));
 
-    // Create EGL context
-    m_context = eglCheck(eglCreateContext(m_display, m_config, toShared, contextVersion.data()));
+    const auto create = [&](const ContextSettings& requested)
+    {
+        if ((requested.majorVersion >= 3) && (SF_GLAD_EGL_VERSION_1_5 || SF_GLAD_EGL_KHR_create_context))
+        {
+            const std::array contextAttributes = {EGL_CONTEXT_MAJOR_VERSION,
+                                                  static_cast<EGLint>(requested.majorVersion),
+                                                  EGL_CONTEXT_MINOR_VERSION,
+                                                  static_cast<EGLint>(requested.minorVersion),
+                                                  EGL_NONE};
+            return eglCreateContext(m_display, m_config, toShared, contextAttributes.data());
+        }
+
+        const std::array contextAttributes = {
+            EGL_CONTEXT_CLIENT_VERSION, static_cast<EGLint>(requested.majorVersion >= 3 ? 3 : 2), EGL_NONE};
+        return eglCreateContext(m_display, m_config, toShared, contextAttributes.data());
+    };
+
+    m_context = create(settings);
+
+    if ((m_context == EGL_NO_CONTEXT) && (settings.majorVersion >= 3) && (toShared == EGL_NO_CONTEXT))
+    {
+        err() << "Warning: Failed to create requested OpenGL ES " << settings.majorVersion << "."
+              << settings.minorVersion << " context; falling back to OpenGL ES 2.0" << std::endl;
+
+        ContextSettings fallbackSettings = settings;
+        fallbackSettings.majorVersion    = 2;
+        fallbackSettings.minorVersion    = 0;
+
+        m_config = getBestConfig(m_display, bitsPerPixel, fallbackSettings, surfaceType);
+        if (m_config)
+        {
+            updateSettings();
+            m_context = create(fallbackSettings);
+        }
+    }
+
+    if (m_context == EGL_NO_CONTEXT)
+        err() << "Failed to create an OpenGL ES context" << std::endl;
 }
 
 
@@ -268,7 +372,10 @@ void EglContext::destroySurface()
 
 
 ////////////////////////////////////////////////////////////
-EGLConfig EglContext::getBestConfig(EGLDisplay display, unsigned int bitsPerPixel, const ContextSettings& settings)
+EGLConfig EglContext::getBestConfig(EGLDisplay            display,
+                                    unsigned int          bitsPerPixel,
+                                    const ContextSettings& settings,
+                                    EGLint                requestedSurfaceType)
 {
     EglContextImpl::ensureInit();
 
@@ -293,7 +400,9 @@ EGLConfig EglContext::getBestConfig(EGLDisplay display, unsigned int bitsPerPixe
         int renderableType = 0;
         eglCheck(eglGetConfigAttrib(display, configs[i], EGL_SURFACE_TYPE, &surfaceType));
         eglCheck(eglGetConfigAttrib(display, configs[i], EGL_RENDERABLE_TYPE, &renderableType));
-        if (!(surfaceType & (EGL_WINDOW_BIT | EGL_PBUFFER_BIT)) || !(renderableType & EGL_OPENGL_ES_BIT))
+        const int requiredRenderableType =
+            settings.majorVersion >= 3 ? EGL_OPENGL_ES3_BIT_KHR : EGL_OPENGL_ES2_BIT;
+        if (!(surfaceType & requestedSurfaceType) || !(renderableType & requiredRenderableType))
             continue;
 
         // Extract the components of the current config
@@ -335,8 +444,6 @@ EGLConfig EglContext::getBestConfig(EGLDisplay display, unsigned int bitsPerPixe
         }
     }
 
-    assert(bestScore < 0x7FFFFFFF && "Failed to calculate best config");
-
     return bestConfig;
 }
 
@@ -344,8 +451,8 @@ EGLConfig EglContext::getBestConfig(EGLDisplay display, unsigned int bitsPerPixe
 ////////////////////////////////////////////////////////////
 void EglContext::updateSettings()
 {
-    m_settings.majorVersion      = 1;
-    m_settings.minorVersion      = 1;
+    m_settings.majorVersion      = 2;
+    m_settings.minorVersion      = 0;
     m_settings.attributeFlags    = ContextSettings::Default;
     m_settings.depthBits         = 0;
     m_settings.stencilBits       = 0;
@@ -376,7 +483,20 @@ XVisualInfo EglContext::selectBestVisual(::Display* xDisplay, unsigned int bitsP
     EGLDisplay display = EglContextImpl::getInitializedDisplay();
 
     // Get the best EGL config matching the default video settings
-    EGLConfig config = getBestConfig(display, bitsPerPixel, settings);
+    EGLConfig config = getBestConfig(display, bitsPerPixel, settings, EGL_WINDOW_BIT);
+    if (!config && (settings.majorVersion >= 3))
+    {
+        ContextSettings fallbackSettings = settings;
+        fallbackSettings.majorVersion    = 2;
+        fallbackSettings.minorVersion    = 0;
+        config = getBestConfig(display, bitsPerPixel, fallbackSettings, EGL_WINDOW_BIT);
+    }
+
+    if (!config)
+    {
+        err() << "No EGL window configuration supporting OpenGL ES 2 is available" << std::endl;
+        return {};
+    }
 
     // Retrieve the visual id associated with this EGL config
     EGLint nativeVisualId = 0;

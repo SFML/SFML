@@ -14,6 +14,7 @@ layout (triangle_strip, max_vertices = 4) out;
 
 // Output texture coordinates
 out vec2 tex_coord;
+out vec4 sf_FrontColor;
 
 // Main entry point
 void main()
@@ -27,6 +28,8 @@ void main()
     // Iterate over all vertices
     for (int i = 0; i < gl_in.length(); ++i)
     {
+        sf_FrontColor = vec4(1.0);
+
         // Retrieve the passed vertex position
         vec2 pos = gl_in[i].gl_Position.xy;
 

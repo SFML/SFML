@@ -34,6 +34,10 @@
 ////////////////////////////////////////////////////////////
 /// This file just includes the OpenGL headers,
 /// which have actually different paths on each system
+///
+/// OpenGL ES platforms expose the GLES2 baseline here. Applications
+/// using ES3-only entry points must include the appropriate platform
+/// header or use their own function loader.
 ////////////////////////////////////////////////////////////
 #if defined(SFML_SYSTEM_WINDOWS)
 
@@ -45,14 +49,19 @@
 #include <windows.h>
 #endif
 
+#if defined(SFML_OPENGL_ES)
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#else
 #include <GL/gl.h>
+#endif
 
 #elif defined(SFML_SYSTEM_LINUX) || defined(SFML_SYSTEM_FREEBSD) || defined(SFML_SYSTEM_OPENBSD) || \
     defined(SFML_SYSTEM_NETBSD)
 
 #if defined(SFML_OPENGL_ES)
-#include <GLES/gl.h>
-#include <GLES/glext.h>
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
 #else
 #include <GL/gl.h>
 #endif
@@ -63,15 +72,12 @@
 
 #elif defined(SFML_SYSTEM_IOS)
 
-#include <OpenGLES/ES1/gl.h>
-#include <OpenGLES/ES1/glext.h>
+#include <OpenGLES/ES2/gl.h>
+#include <OpenGLES/ES2/glext.h>
 
 #elif defined(SFML_SYSTEM_ANDROID)
 
-#include <GLES/gl.h>
-#include <GLES/glext.h>
-
-// We're not using OpenGL ES 2+ yet, but we can use the sRGB extension
+#include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #include <GLES2/gl2platform.h>
 

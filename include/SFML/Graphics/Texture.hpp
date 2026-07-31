@@ -36,6 +36,7 @@
 
 #include <SFML/System/Vector2.hpp>
 
+#include <array>
 #include <filesystem>
 
 #include <cstddef>
@@ -672,6 +673,9 @@ public:
     /// This function is not part of the graphics API, it mustn't be
     /// used when drawing SFML entities. It must be used only if you
     /// mix `sf::Texture` with OpenGL code.
+    /// It only changes the `GL_TEXTURE_2D` binding. Direct OpenGL
+    /// rendering code is responsible for converting texture coordinates
+    /// in its shader when pixel coordinates are used.
     ///
     /// \code
     /// sf::Texture t1, t2;
@@ -684,20 +688,10 @@ public:
     /// // draw OpenGL stuff that use no texture...
     /// \endcode
     ///
-    /// The `coordinateType` argument controls how texture
-    /// coordinates will be interpreted. If Normalized (the default), they
-    /// must be in range [0 .. 1], which is the default way of handling
-    /// texture coordinates with OpenGL. If Pixels, they must be given
-    /// in pixels (range [0 .. size]). This mode is used internally by
-    /// the graphics classes of SFML, it makes the definition of texture
-    /// coordinates more intuitive for the high-level API, users don't need
-    /// to compute normalized values.
-    ///
     /// \param texture Pointer to the texture to bind, can be null to use no texture
-    /// \param coordinateType Type of texture coordinates to use
     ///
     ////////////////////////////////////////////////////////////
-    static void bind(const Texture* texture, CoordinateType coordinateType = CoordinateType::Normalized);
+    static void bind(const Texture* texture);
 
     ////////////////////////////////////////////////////////////
     /// \brief Get the maximum texture size allowed
@@ -730,6 +724,16 @@ private:
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] static unsigned int getValidSize(unsigned int size);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Compute the shader texture matrix for a coordinate type
+    ///
+    /// \param coordinateType Type of texture coordinates to convert
+    ///
+    /// \return Column-major 4x4 texture matrix
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] std::array<float, 16> getTextureMatrix(CoordinateType coordinateType) const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Invalidate the mipmap if one exists

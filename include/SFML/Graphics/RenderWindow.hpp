@@ -272,8 +272,11 @@ private:
 /// sf::Text text(font);
 /// ...
 ///
-/// // Perform OpenGL initializations
-/// glMatrixMode(GL_PROJECTION);
+/// // Compile and bind an OpenGL shader program, then configure
+/// // its uniforms and generic vertex attributes
+/// const GLuint program = ...;
+/// glUseProgram(program);
+/// glEnableVertexAttribArray(0);
 /// ...
 ///
 /// // Start the rendering loop
@@ -288,10 +291,9 @@ private:
 ///     window.popGLStates();
 ///
 ///     // Draw a 3D object using OpenGL
-///     glBegin(GL_TRIANGLES);
-///         glVertex3f(...);
-///         ...
-///     glEnd();
+///     glUseProgram(program);
+///     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, vertices);
+///     glDrawArrays(GL_TRIANGLES, 0, vertexCount);
 ///
 ///     // Draw text on top of the 3D object
 ///     window.pushGLStates();
