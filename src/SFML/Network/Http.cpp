@@ -273,7 +273,7 @@ void Http::Response::parseFields(std::istream& in)
     std::string line;
     while (std::getline(in, line) && (line.size() > 2))
     {
-        const std::string::size_type pos = line.find(": ");
+        const std::size_t pos = line.find(": ");
         if (pos != std::string::npos)
         {
             // Extract the field name and its value

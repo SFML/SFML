@@ -120,9 +120,9 @@ Ftp::DirectoryResponse::DirectoryResponse(const Ftp::Response& response) : Ftp::
     if (isOk())
     {
         // Extract the directory from the server response
-        const std::string::size_type begin = getMessage().find('"', 0);
-        const std::string::size_type end   = getMessage().find('"', begin + 1);
-        m_directory                        = getMessage().substr(begin + 1, end - begin - 1);
+        const std::size_t begin = getMessage().find('"', 0);
+        const std::size_t end   = getMessage().find('"', begin + 1);
+        m_directory             = getMessage().substr(begin + 1, end - begin - 1);
     }
 }
 
@@ -140,8 +140,8 @@ Ftp::ListingResponse::ListingResponse(const Ftp::Response& response, const std::
     if (isOk())
     {
         // Fill the array of strings
-        std::string::size_type lastPos = 0;
-        for (std::string::size_type pos = data.find("\r\n"); pos != std::string::npos; pos = data.find("\r\n", lastPos))
+        std::size_t lastPos = 0;
+        for (std::size_t pos = data.find("\r\n"); pos != std::string::npos; pos = data.find("\r\n", lastPos))
         {
             m_listing.push_back(data.substr(lastPos, pos - lastPos));
             lastPos = pos + 2;
@@ -536,7 +536,7 @@ Ftp::Response Ftp::DataChannel::open(Ftp::TransferMode mode)
     if (response.isOk())
     {
         // Extract the connection address and port from the response
-        const std::string::size_type begin = response.getMessage().find_first_of("0123456789");
+        const std::size_t begin = response.getMessage().find_first_of("0123456789");
         if (begin != std::string::npos)
         {
             std::array<std::uint8_t, 6> data{};
