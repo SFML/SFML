@@ -51,6 +51,7 @@
 #include <array>
 #include <fstream>
 #include <iomanip>
+#include <limits>
 #include <memory>
 #include <ostream>
 #include <string>
@@ -121,6 +122,12 @@ bool isQoiMagicNumber(std::string_view buffer)
 
     return buffer[0] == 'q' && buffer[1] == 'o' && buffer[2] == 'i' && buffer[3] == 'f';
 }
+
+// Helper to check if the product of width, height, and channels overflows std::size_t
+bool isProductOverflow(sf::Vector2u size, std::size_t channels)
+{
+    return size.x > 0 && size.y > 0 && (size.x > std::numeric_limits<std::size_t>::max() / channels / size.y);
+}
 } // namespace
 
 
@@ -169,6 +176,9 @@ void Image::resize(Vector2u size, Color color)
 {
     if (size.x && size.y)
     {
+        if (isProductOverflow(size, 4))
+            throw Exception("Failed to resize image: size is too large (integer overflow)");
+
         // Create a new pixel buffer first for exception safety's sake
         std::vector<std::uint8_t> newPixels(std::size_t{size.x} * std::size_t{size.y} * 4);
 
@@ -205,8 +215,11 @@ void Image::resize(Vector2u size, const std::uint8_t* pixels)
 {
     if (pixels && size.x && size.y)
     {
+        if (isProductOverflow(size, 4))
+            throw Exception("Failed to resize image: size is too large (integer overflow)");
+
         // Create a new pixel buffer first for exception safety's sake
-        std::vector<std::uint8_t> newPixels(pixels, pixels + size.x * size.y * 4);
+        std::vector<std::uint8_t> newPixels(pixels, pixels + std::size_t{size.x} * std::size_t{size.y} * 4);
 
         // Commit the new pixel buffer
         m_pixels = std::move(newPixels);

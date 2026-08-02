@@ -263,6 +263,25 @@ TEST_CASE("[Graphics] sf::Image")
                 }
             }
         }
+
+        SECTION("resize overflow")
+        {
+            sf::Image image;
+            CHECK_THROWS_AS(image.resize({3'000'000'000, 3'000'000'000}), sf::Exception);
+            std::uint8_t pixel = 0;
+            CHECK_THROWS_AS(image.resize({3'000'000'000, 3'000'000'000}, &pixel), sf::Exception);
+
+            // Test zero dimensions and valid paths
+            CHECK_NOTHROW(image.resize({0, 0}));
+            CHECK_NOTHROW(image.resize({0, 1000}));
+            CHECK_NOTHROW(image.resize({1000, 0}));
+            CHECK_NOTHROW(image.resize({1, 1}));
+
+            // Test boundary overflow cases
+            const std::size_t maxBytes = std::numeric_limits<std::size_t>::max() / 4;
+            if (maxBytes <= std::numeric_limits<unsigned int>::max())
+                CHECK_THROWS_AS(image.resize({static_cast<unsigned int>(maxBytes) + 1, 1}), sf::Exception);
+        }
     }
 
     SECTION("loadFromFile()")
