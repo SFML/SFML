@@ -37,6 +37,12 @@ TEST_CASE("[System] sf::Angle")
         CHECK(sf::degrees(-360).wrapSigned() == Approx(sf::degrees(0)));
         CHECK(sf::degrees(720).wrapSigned() == Approx(sf::degrees(0)));
         CHECK(sf::degrees(-720).wrapSigned() == Approx(sf::degrees(0)));
+
+        // Test offsets near full rotations to break mathematical symmetry
+        CHECK(sf::degrees(361).wrapSigned() == Approx(sf::degrees(1)));
+        CHECK(sf::degrees(-361).wrapSigned() == Approx(sf::degrees(-1)));
+        CHECK(sf::degrees(721).wrapSigned() == Approx(sf::degrees(1)));
+        CHECK(sf::degrees(-721).wrapSigned() == Approx(sf::degrees(-1)));
     }
 
     SECTION("wrapUnsigned()")
