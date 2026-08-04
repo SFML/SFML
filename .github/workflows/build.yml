@@ -34,7 +34,7 @@ jobs:
         - { name: Windows VS2026 OpenGL ES,       os: windows-2025-vs2026, flags: -DSFML_USE_MESA3D=ON -DSFML_OPENGL_ES=ON -GNinja }
         - { name: Windows VS2026 Unity,           os: windows-2025-vs2026, flags: -DSFML_USE_MESA3D=ON -DCMAKE_UNITY_BUILD=ON -GNinja }
         - { name: Windows LLVM/Clang,             os: windows-2025-vs2026, flags: -DSFML_USE_MESA3D=ON -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -GNinja }
-        - { name: Windows MinGW,                  os: windows-2025-vs2026, flags: -DSFML_USE_MESA3D=ON -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DSFML_BUILD_TEST_SUITE=OFF -GNinja } # disabling tests as new runner image causes failures
+        - { name: Windows MinGW,                  os: windows-2025-vs2026, flags: -DSFML_USE_MESA3D=ON -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -GNinja }
         - { name: Linux GCC,                      os: ubuntu-24.04, flags: -GNinja }
         - { name: Linux Clang,                    os: ubuntu-24.04, flags: -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -GNinja , gcovr_options: '--gcov-executable="llvm-cov-$CLANG_VERSION gcov"' }
         - { name: Linux GCC DRM,                  os: ubuntu-24.04, flags: -DSFML_USE_DRM=ON -DSFML_RUN_DISPLAY_TESTS=OFF -GNinja }
@@ -64,7 +64,7 @@ jobs:
         - platform: { name: Windows MinGW, os: windows-2025-vs2026 }
           config: { name: Static Standard Libraries, flags: -GNinja -DSFML_USE_MESA3D=ON -DCMAKE_CXX_COMPILER=g++ -DSFML_USE_STATIC_STD_LIBS=ON }
         - platform: { name: Windows MinGW, os: windows-2025-vs2026 }
-          config: { name: Static with PCH (GCC), flags: -GNinja -DSFML_USE_MESA3D=ON -DCMAKE_CXX_COMPILER=g++ -DBUILD_SHARED_LIBS=OFF -DSFML_ENABLE_PCH=ON -DSFML_ENABLE_STDLIB_ASSERTIONS=OFF -DSFML_BUILD_TEST_SUITE=OFF } # disabling stdlib assertions due to false positive & disabling tests as new runner image causes failures
+          config: { name: Static with PCH (GCC), flags: -GNinja -DSFML_USE_MESA3D=ON -DCMAKE_CXX_COMPILER=g++ -DBUILD_SHARED_LIBS=OFF -DSFML_ENABLE_PCH=ON -DSFML_ENABLE_STDLIB_ASSERTIONS=OFF } # disabling stdlib assertions due to false positive
         - platform: { name: macOS, os: macos-15 }
           config: { name: Frameworks, flags: -GNinja -DSFML_BUILD_FRAMEWORKS=ON -DBUILD_SHARED_LIBS=ON }
         - platform: { name: macOS , os: macos-15 }
@@ -181,6 +181,12 @@ jobs:
         curl -Lo mingw64.zip https://github.com/brechtsanders/winlibs_mingw/releases/download/14.2.0posix-19.1.7-12.0.0-msvcrt-r3/winlibs-x86_64-posix-seh-gcc-14.2.0-llvm-19.1.7-mingw-w64msvcrt-12.0.0-r3.zip
         unzip -qq -d "C:\Program Files" mingw64.zip
 
+    - name: Copy MinGW runtime libraries to build/bin
+      if: matrix.platform.name == 'Windows MinGW'
+      run: |
+        mkdir -p build/bin
+        cp "C:\Program Files\mingw64\libexec\gcc\x86_64-w64-mingw32\14.2.0\libgcc_s_seh-1.dll" "C:\Program Files\mingw64\libexec\gcc\x86_64-w64-mingw32\14.2.0\libwinpthread-1.dll" "C:\Program Files\mingw64\bin\libstdc++-6.dll" build/bin
+
     - name: Add OpenCppCoverage and MinGW to PATH and remove MinGW-supplied CCache & CMake
       if: runner.os == 'Windows'
       run: |
@@ -198,7 +204,6 @@ jobs:
 
     - name: Build
       run: cmake --build build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} --target install
-      continue-on-error: true
 
     - name: Build Android example
       if: matrix.platform.name == 'Android'
