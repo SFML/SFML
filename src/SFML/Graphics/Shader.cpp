@@ -52,7 +52,7 @@ namespace
 {
 constexpr std::string_view defaultVertexShader = R"(
 #ifdef GL_ES
-precision mediump float;
+precision highp float;
 #endif
 
 attribute vec4 sf_Vertex;
@@ -250,7 +250,12 @@ struct Shader::UniformBinder
     {
         // Disable program object
         if (currentProgram && (currentProgram != static_cast<GLuint>(savedProgram)))
-            glCheck(glUseProgram(static_cast<GLuint>(savedProgram)));
+        {
+            // A program deleted while it was bound remains current until a
+            // different program is selected. Its name is invalid afterwards.
+            const auto program = static_cast<GLuint>(savedProgram);
+            glCheck(glUseProgram((program == 0) || glIsProgram(program) ? program : 0));
+        }
     }
 
     ////////////////////////////////////////////////////////////
@@ -879,7 +884,7 @@ bool Shader::isAvailable()
 
     return glActiveTexture && glCreateShader && glShaderSource && glCompileShader && glGetShaderiv &&
            glGetShaderInfoLog && glDeleteShader && glCreateProgram && glAttachShader && glBindAttribLocation &&
-           glLinkProgram && glGetProgramiv && glGetProgramInfoLog && glDeleteProgram && glUseProgram &&
+           glLinkProgram && glGetProgramiv && glGetProgramInfoLog && glDeleteProgram && glUseProgram && glIsProgram &&
            glGetUniformLocation && glUniform1i && glUniformMatrix4fv;
 }
 

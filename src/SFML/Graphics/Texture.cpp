@@ -298,7 +298,7 @@ bool Texture::resize(Vector2u size, bool sRgb)
         }
     }
 
-    static const bool textureSrgb = GLEXT_texture_sRGB;
+    const bool textureSrgb = GLEXT_texture_sRGB;
 
     m_sRgb = sRgb;
 
@@ -335,7 +335,7 @@ bool Texture::resize(Vector2u size, bool sRgb)
                          static_cast<GLsizei>(m_actualSize.x),
                          static_cast<GLsizei>(m_actualSize.y),
                          0,
-                         GL_RGBA,
+                         (m_sRgb ? GLEXT_GL_SRGB_FORMAT : GL_RGBA),
                          GL_UNSIGNED_BYTE,
                          nullptr));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, textureWrapParam));
@@ -421,7 +421,15 @@ bool Texture::loadFromImage(const Image& image, bool sRgb, const IntRect& area)
         glCheck(glBindTexture(GL_TEXTURE_2D, m_texture));
         for (int i = 0; i < rectangle.size.y; ++i)
         {
-            glCheck(glTexSubImage2D(GL_TEXTURE_2D, 0, 0, i, rectangle.size.x, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixels));
+            glCheck(glTexSubImage2D(GL_TEXTURE_2D,
+                                    0,
+                                    0,
+                                    i,
+                                    rectangle.size.x,
+                                    1,
+                                    (m_sRgb ? GLEXT_GL_SRGB_FORMAT : GL_RGBA),
+                                    GL_UNSIGNED_BYTE,
+                                    pixels));
             pixels += 4 * size.x;
         }
 
@@ -579,7 +587,7 @@ void Texture::update(const std::uint8_t* pixels, Vector2u size, Vector2u dest)
                             static_cast<GLint>(dest.y),
                             static_cast<GLsizei>(size.x),
                             static_cast<GLsizei>(size.y),
-                            GL_RGBA,
+                            (m_sRgb ? GLEXT_GL_SRGB_FORMAT : GL_RGBA),
                             GL_UNSIGNED_BYTE,
                             pixels));
     glCheck(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_isSmooth ? GL_LINEAR : GL_NEAREST));
@@ -896,6 +904,16 @@ bool Texture::generateMipmap()
 
     // Make sure that extensions are initialized
     priv::ensureExtensionsInit();
+
+#ifdef SFML_OPENGL_ES
+    // EXT_sRGB explicitly rejects automatic mipmap generation for sRGB
+    // textures. OpenGL ES 3 core removes that restriction.
+    if (m_sRgb && !SF_GLAD_GL_ES_VERSION_3_0 && !SF_GLAD_GL_NV_generate_mipmap_sRGB)
+    {
+        err() << "Cannot generate mipmaps for an OpenGL ES 2 EXT_sRGB texture" << std::endl;
+        return false;
+    }
+#endif
 
     if (!GLEXT_framebuffer_object)
         return false;

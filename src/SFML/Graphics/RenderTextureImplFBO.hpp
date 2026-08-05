@@ -75,6 +75,14 @@ public:
     static bool isAvailable();
 
     ////////////////////////////////////////////////////////////
+    /// \brief Check whether sRGB FBO render textures are supported
+    ///
+    /// \return `true` if sRGB FBO render textures are supported
+    ///
+    ////////////////////////////////////////////////////////////
+    static bool isSrgbAvailable();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Get the maximum anti-aliasing level supported by the system
     ///
     /// \return The maximum anti-aliasing level supported by the system
@@ -147,7 +155,8 @@ private:
 
     FrameBufferObjectMap m_frameBuffers; //!< OpenGL frame buffer objects per context
     FrameBufferObjectMap m_multisampleFrameBuffers; //!< Optional per-context OpenGL frame buffer objects with multisample attachments
-    unsigned int             m_depthStencilBuffer{}; //!< Optional depth/stencil buffer attached to the frame buffer
+    unsigned int             m_depthStencilBuffer{}; //!< Optional depth or packed depth/stencil buffer
+    unsigned int             m_stencilBuffer{};      //!< Optional separate stencil buffer (OpenGL ES 2)
     unsigned int             m_colorBuffer{};        //!< Optional multisample color buffer attached to the frame buffer
     Vector2u                 m_size;                 //!< Width and height of the attachments
     std::unique_ptr<Context> m_context;              //!< Backup OpenGL context, used when none already exist

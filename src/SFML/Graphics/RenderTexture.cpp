@@ -67,19 +67,32 @@ RenderTexture& RenderTexture::operator=(RenderTexture&&) noexcept = default;
 ////////////////////////////////////////////////////////////
 bool RenderTexture::resize(Vector2u size, const ContextSettings& settings)
 {
+    const bool fboAvailable = priv::RenderTextureImplFBO::isAvailable();
+
+    ContextSettings actualSettings = settings;
+    if (fboAvailable && actualSettings.sRgbCapable && !priv::RenderTextureImplFBO::isSrgbAvailable())
+    {
+        err() << "Impossible to enable sRGB encoding for the render texture; falling back to linear encoding" << std::endl;
+        actualSettings.sRgbCapable = false;
+    }
+
     // Create the texture
     // Set texture to be in sRGB scale if requested
-    if (!m_texture.resize(size, settings.sRgbCapable))
+    if (!m_texture.resize(size, actualSettings.sRgbCapable))
     {
         err() << "Impossible to create render texture (failed to create the target texture)" << std::endl;
         return false;
     }
 
+    // Keep the implementation request aligned with the texture format after
+    // Texture has applied any runtime capability fallback.
+    actualSettings.sRgbCapable = m_texture.isSrgb();
+
     // We disable smoothing by default for render textures
     setSmooth(false);
 
     // Create the implementation
-    if (priv::RenderTextureImplFBO::isAvailable())
+    if (fboAvailable)
     {
         // Use frame-buffer object (FBO)
         m_impl = std::make_unique<priv::RenderTextureImplFBO>();
@@ -95,8 +108,25 @@ bool RenderTexture::resize(Vector2u size, const ContextSettings& settings)
 
     // Initialize the render texture
     // We pass the actual size of our texture since OpenGL ES requires that all attachments have identical sizes
-    if (!m_impl->create(m_texture.m_actualSize, m_texture.m_texture, settings))
+    if (!m_impl->create(m_texture.m_actualSize, m_texture.m_texture, actualSettings))
         return false;
+
+    // A pbuffer context may still fall back from an sRGB framebuffer even
+    // when sRGB textures are supported. Keep both sides linear in that case.
+    if (!fboAvailable && m_texture.isSrgb() && !m_impl->isSrgb())
+    {
+        err() << "Impossible to enable sRGB encoding for the render texture context; falling back to linear encoding"
+              << std::endl;
+
+        if (!m_texture.resize(size, false))
+            return false;
+    }
+
+    if (m_texture.isSrgb() != m_impl->isSrgb())
+    {
+        err() << "Impossible to create a render texture with matching framebuffer and texture color encodings" << std::endl;
+        return false;
+    }
 
     // We can now initialize the render target part
     RenderTarget::initialize();

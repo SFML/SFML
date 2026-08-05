@@ -1,15 +1,28 @@
 #include <SFML/Graphics/Shader.hpp>
 
+#include <SFML/Window/Context.hpp>
+
+#include <SFML/OpenGL.hpp>
+
 // Other 1st party headers
 #include <SFML/System/Exception.hpp>
 #include <SFML/System/FileInputStream.hpp>
 
 #include <catch2/catch_test_macros.hpp>
 
+#include <memory>
 #include <type_traits>
 
 namespace
 {
+constexpr unsigned int currentProgramParameter = 0x8B8D; // GL_CURRENT_PROGRAM
+
+#if defined(SFML_SYSTEM_WINDOWS)
+using GlGetInteger = void(APIENTRY*)(GLenum, GLint*);
+#else
+using GlGetInteger = void (*)(GLenum, GLint*);
+#endif
+
 constexpr auto vertexSource = R"(
 uniform vec2 storm_position;
 uniform float storm_total_radius;
@@ -357,6 +370,36 @@ TEST_CASE("[Graphics] sf::Shader", skipShaderFullTests())
             shader = std::move(movedShader);
             CHECK(shader.getNativeHandle() != 0);
         }
+    }
+
+    SECTION("Restore a program deleted while bound")
+    {
+        sf::Context context;
+        REQUIRE(context.setActive(true));
+        REQUIRE(sf::Shader::isAvailable());
+
+        sf::Shader shader{std::string_view(vertexSource), std::string_view(fragmentSource)};
+
+        const auto glGetInteger = reinterpret_cast<GlGetInteger>(sf::Context::getFunction("glGetIntegerv"));
+        REQUIRE(glGetInteger);
+
+        unsigned int deletedProgram = 0;
+        {
+            auto boundShader = std::make_unique<sf::Shader>(std::string_view(vertexSource), std::string_view(fragmentSource));
+            deletedProgram = boundShader->getNativeHandle();
+            sf::Shader::bind(boundShader.get());
+        }
+
+        GLint currentProgram = 0;
+        glGetInteger(currentProgramParameter, &currentProgram);
+        REQUIRE(static_cast<unsigned int>(currentProgram) == deletedProgram);
+
+        shader.setUniform("blink_alpha", 0.5f);
+
+        glGetInteger(currentProgramParameter, &currentProgram);
+        CHECK(currentProgram == 0);
+
+        sf::Shader::bind(nullptr);
     }
 
     SECTION("loadFromFile()")

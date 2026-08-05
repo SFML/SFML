@@ -118,6 +118,7 @@ private:
     ////////////////////////////////////////////////////////////
     std::unique_ptr<Context> m_context; //!< P-Buffer based context
     Vector2u                 m_size;    //!< Width and height of the P-Buffer
+    bool                     m_sRgb{};  //!< Whether drawn pixels are encoded into sRGB color space
 };
 
 } // namespace priv

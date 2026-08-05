@@ -64,6 +64,7 @@ bool RenderTextureImplDefault::create(Vector2u size, unsigned int, const Context
 
     // Create the in-memory OpenGL context
     m_context = std::make_unique<Context>(settings, size);
+    m_sRgb    = settings.sRgbCapable && m_context->getSettings().sRgbCapable;
 
     return true;
 }
@@ -79,7 +80,7 @@ bool RenderTextureImplDefault::activate(bool active)
 ////////////////////////////////////////////////////////////
 bool RenderTextureImplDefault::isSrgb() const
 {
-    return m_context->getSettings().sRgbCapable;
+    return m_sRgb;
 }
 
 

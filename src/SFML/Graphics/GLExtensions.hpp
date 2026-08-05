@@ -127,7 +127,8 @@
 #define GLEXT_glCopyBufferSubData  glCopyBufferSubData
 
 #define GLEXT_texture_sRGB    (SF_GLAD_GL_ES_VERSION_3_0 || SF_GLAD_GL_EXT_sRGB)
-#define GLEXT_GL_SRGB8_ALPHA8 GL_SRGB8_ALPHA8
+#define GLEXT_GL_SRGB8_ALPHA8 (SF_GLAD_GL_ES_VERSION_3_0 ? GL_SRGB8_ALPHA8 : GL_SRGB_ALPHA_EXT)
+#define GLEXT_GL_SRGB_FORMAT  (SF_GLAD_GL_ES_VERSION_3_0 ? GL_RGBA : GL_SRGB_ALPHA_EXT)
 
 #define GLEXT_framebuffer_sRGB false
 
@@ -213,10 +214,12 @@
 
 // Core since 2.1 - EXT_texture_sRGB
 #define GLEXT_texture_sRGB    (SF_GLAD_GL_VERSION_2_1 || SF_GLAD_GL_EXT_texture_sRGB)
+#define GLEXT_GL_SRGB_FORMAT  GL_RGBA
 #define GLEXT_GL_SRGB8_ALPHA8 GL_SRGB8_ALPHA8
 
 // Core since 3.0 - ARB_framebuffer_sRGB
-#define GLEXT_framebuffer_sRGB (SF_GLAD_GL_VERSION_3_0 || SF_GLAD_GL_ARB_framebuffer_sRGB)
+#define GLEXT_framebuffer_sRGB \
+    (SF_GLAD_GL_VERSION_3_0 || SF_GLAD_GL_ARB_framebuffer_sRGB || SF_GLAD_GL_EXT_framebuffer_sRGB)
 
 // Core since 3.0 - EXT_framebuffer_object
 #define GLEXT_framebuffer_object \
