@@ -71,12 +71,14 @@ function(set_target_warnings target)
             -Wlogical-op # warn about logical operations being used where bitwise were probably wanted
             # -Wuseless-cast # warn if you perform a cast to the same type (disabled because it is not portable as some type aliases might vary between platforms)
             $<$<VERSION_GREATER_EQUAL:${CMAKE_CXX_COMPILER_VERSION},8.1>:-Wduplicated-branches> # warn if if / else branches have duplicated code
+            $<$<VERSION_GREATER_EQUAL:${CMAKE_CXX_COMPILER_VERSION},13.1>:-Winvalid-utf8> # warn if an invalid UTF-8 character is found
         )
     endif()
 
     if(SFML_COMPILER_CLANG OR SFML_COMPILER_CLANG_CL)
         target_compile_options(${target} PRIVATE
             -Wno-unknown-warning-option # do not warn on GCC-specific warning diagnostic pragmas
+            $<$<VERSION_GREATER_EQUAL:${CMAKE_CXX_COMPILER_VERSION},15.0>:-Winvalid-utf8> # warn if an invalid UTF-8 character is found
         )
     endif()
 

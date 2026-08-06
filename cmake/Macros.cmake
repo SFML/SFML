@@ -292,6 +292,10 @@ macro(sfml_add_library module)
     # Enable support for UTF-8 characters in source code
     if(SFML_COMPILER_MSVC)
         target_compile_options(${target} PRIVATE /utf-8)
+    elseif(SFML_COMPILER_GCC)
+        target_compile_options(${target} PRIVATE -fexec-charset=UTF-8 -finput-charset=UTF-8)
+    elseif(SFML_COMPILER_CLANG)
+        # clang only supports UTF-8
     endif()
 endmacro()
 
@@ -386,6 +390,10 @@ macro(sfml_add_example target)
     # Enable support for UTF-8 characters in source code
     if(SFML_COMPILER_MSVC)
         target_compile_options(${target} PRIVATE /utf-8)
+    elseif(SFML_COMPILER_GCC)
+        target_compile_options(${target} PRIVATE -fexec-charset=UTF-8 -finput-charset=UTF-8)
+    elseif(SFML_COMPILER_CLANG)
+        # clang only supports UTF-8
     endif()
 endmacro()
 
@@ -464,6 +472,10 @@ function(sfml_add_test target SOURCES DEPENDS)
     # Enable support for UTF-8 characters in source code
     if(SFML_COMPILER_MSVC)
         target_compile_options(${target} PRIVATE /utf-8)
+    elseif(SFML_COMPILER_GCC)
+        target_compile_options(${target} PRIVATE -fexec-charset=UTF-8 -finput-charset=UTF-8)
+    elseif(SFML_COMPILER_CLANG)
+        # clang only supports UTF-8
     endif()
 
     # Add the test
