@@ -287,20 +287,13 @@ bool Image::loadFromFile(const std::filesystem::path& filename)
         file.seekg(0, std::ios::beg);
 
         // Check size bounds before reading (direct file loading path)
-        if (streamSize == -1 || streamSize == 0 || streamSize > std::numeric_limits<int>::max())
-        {
-            err() << "Failed to load QOI image: invalid or too large size" << std::endl;
+        if (streamSize <= 0 || streamSize > std::numeric_limits<int>::max())
             return false;
-        }
 
         // Read in the file contents since QOI doesn't support streams
         std::vector<uint8_t> buffer(static_cast<size_t>(streamSize));
-        file.read(reinterpret_cast<char*>(buffer.data()), streamSize);
-        if (!file)
-        {
-            err() << "Failed to load QOI image: cannot read file data" << std::endl;
+        if (!file.read(reinterpret_cast<char*>(buffer.data()), streamSize))
             return false;
-        }
 
         qoi_desc formatDesc = {};
         if (const auto ptr = MallocPtr(qoi_decode(buffer.data(), static_cast<int>(streamSize), &formatDesc, 4)))
@@ -340,10 +333,7 @@ bool Image::loadFromMemory(const void* data, std::size_t size)
         if (isQoiMagicNumber(std::string_view(qoiMagicNumBuffer, size)))
         {
             if (size == 0 || size > static_cast<std::size_t>(std::numeric_limits<int>::max()))
-            {
-                err() << "Failed to load QOI image: invalid or too large size" << std::endl;
                 return false;
-            }
 
             qoi_desc formatDesc = {};
             if (const auto ptr = MallocPtr(qoi_decode(data, static_cast<int>(size), &formatDesc, 4)))
@@ -402,35 +392,21 @@ bool Image::loadFromStream(InputStream& stream)
     if (qoiMagicCount.has_value() && isQoiMagicNumber(std::string_view(qoiMagicNumber.data(), *qoiMagicCount)))
     {
         const auto streamSize = stream.getSize();
-        if (streamSize && *streamSize > 0 && *streamSize <= static_cast<std::size_t>(std::numeric_limits<int>::max()))
-        {
-            if (!stream.seek(0).has_value())
-            {
-                err() << "Failed to load QOI image: stream does not support seeking" << std::endl;
-                return false;
-            }
-
-            // Read in the file contents since QOI doesn't support streams
-            std::vector<char> buffer(*streamSize);
-            const auto        readDataSize = stream.read(buffer.data(), *streamSize);
-            if (!readDataSize || *readDataSize != *streamSize)
-            {
-                err() << "Failed to load QOI image: cannot read stream data" << std::endl;
-                return false;
-            }
-
-            qoi_desc formatDesc = {};
-            if (const auto ptr = MallocPtr(qoi_decode(buffer.data(), static_cast<int>(*streamSize), &formatDesc, 4)))
-            {
-                const Vector2u imageSize = {formatDesc.width, formatDesc.height};
-                resize(imageSize, static_cast<const uint8_t*>(ptr.get()));
-                return true;
-            }
-        }
-        else
-        {
-            err() << "Failed to load QOI image: invalid or too large size" << std::endl;
+        if (!streamSize || *streamSize == 0 || *streamSize > static_cast<std::size_t>(std::numeric_limits<int>::max()) || !stream.seek(0).has_value())
             return false;
+
+        // Read in the file contents since QOI doesn't support streams
+        std::vector<char> buffer(*streamSize);
+        const auto        readDataSize = stream.read(buffer.data(), *streamSize);
+        if (!readDataSize || *readDataSize != *streamSize)
+            return false;
+
+        qoi_desc formatDesc = {};
+        if (const auto ptr = MallocPtr(qoi_decode(buffer.data(), static_cast<int>(*streamSize), &formatDesc, 4)))
+        {
+            const Vector2u imageSize = {formatDesc.width, formatDesc.height};
+            resize(imageSize, static_cast<const uint8_t*>(ptr.get()));
+            return true;
         }
     }
 

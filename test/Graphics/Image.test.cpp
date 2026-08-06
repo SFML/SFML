@@ -153,32 +153,13 @@ TEST_CASE("[Graphics] sf::Image")
             CHECK(image.getPixel({200, 150}) == sf::Color(144, 208, 62));
         }
 
-        SECTION("Stream loading QOI with invalid stream")
+        SECTION("Stream loading QOI error cases")
         {
-            struct FailingQoiStream : sf::InputStream
+            struct MockQoiStream : sf::InputStream
             {
-                std::optional<std::size_t> read(void* data, std::size_t size) override
-                {
-                    if (size == 4)
-                    {
-                        std::memcpy(data, "qoif", 4);
-                        return 4;
-                    }
-                    return std::nullopt;
-                }
-                std::optional<std::size_t> seek(std::size_t) override { return 0; }
-                std::optional<std::size_t> tell() override { return 0; }
-                std::optional<std::size_t> getSize() override { return 100; }
-            };
-            FailingQoiStream stream;
-            sf::Image image;
-            CHECK(!image.loadFromStream(stream));
-        }
+                std::size_t sizeToReturn = 100;
+                bool shouldFailRead = false;
 
-        SECTION("Stream loading QOI with too large size")
-        {
-            struct TooLargeQoiStream : sf::InputStream
-            {
                 std::optional<std::size_t> read(void* data, std::size_t size) override
                 {
                     if (size == 4)
@@ -186,40 +167,29 @@ TEST_CASE("[Graphics] sf::Image")
                         std::memcpy(data, "qoif", 4);
                         return 4;
                     }
-                    return 0;
+                    return shouldFailRead ? std::nullopt : std::optional<std::size_t>(0);
                 }
                 std::optional<std::size_t> seek(std::size_t) override { return 0; }
                 std::optional<std::size_t> tell() override { return 0; }
-                std::optional<std::size_t> getSize() override
-                {
-                    return static_cast<std::size_t>(std::numeric_limits<int>::max()) + 1;
-                }
+                std::optional<std::size_t> getSize() override { return sizeToReturn; }
             };
-            TooLargeQoiStream stream;
-            sf::Image image;
-            CHECK(!image.loadFromStream(stream));
-        }
 
-        SECTION("Stream loading QOI with zero size")
-        {
-            struct ZeroSizeQoiStream : sf::InputStream
-            {
-                std::optional<std::size_t> read(void* data, std::size_t size) override
-                {
-                    if (size == 4)
-                    {
-                        std::memcpy(data, "qoif", 4);
-                        return 4;
-                    }
-                    return 0;
-                }
-                std::optional<std::size_t> seek(std::size_t) override { return 0; }
-                std::optional<std::size_t> tell() override { return 0; }
-                std::optional<std::size_t> getSize() override { return 0; }
-            };
-            ZeroSizeQoiStream stream;
-            sf::Image         image;
-            CHECK(!image.loadFromStream(stream));
+            sf::Image image;
+
+            // Test 1: Invalid read
+            MockQoiStream stream1;
+            stream1.shouldFailRead = true;
+            CHECK(!image.loadFromStream(stream1));
+
+            // Test 2: Too large size
+            MockQoiStream stream2;
+            stream2.sizeToReturn = static_cast<std::size_t>(std::numeric_limits<int>::max()) + 1;
+            CHECK(!image.loadFromStream(stream2));
+
+            // Test 3: Zero size
+            MockQoiStream stream3;
+            stream3.sizeToReturn = 0;
+            CHECK(!image.loadFromStream(stream3));
         }
 
         SECTION("Vector2 constructor")
