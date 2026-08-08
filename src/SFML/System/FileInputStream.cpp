@@ -33,6 +33,7 @@
 #include <SFML/System/Android/ResourceStream.hpp>
 #endif
 #include <memory>
+#include <system_error>
 
 #include <cstddef>
 
@@ -72,6 +73,10 @@ FileInputStream& FileInputStream::operator=(FileInputStream&&) noexcept = defaul
 ////////////////////////////////////////////////////////////
 bool FileInputStream::open(const std::filesystem::path& filename)
 {
+    std::error_code ec;
+    if (std::filesystem::is_directory(filename, ec))
+        return false;
+
 #ifdef SFML_SYSTEM_ANDROID
     if (priv::getActivityStatesPtr() != nullptr)
     {

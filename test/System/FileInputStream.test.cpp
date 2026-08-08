@@ -112,11 +112,6 @@ TEST_CASE("[System] sf::FileInputStream")
     SECTION("open() directory")
     {
         sf::FileInputStream fileInputStream;
-        // On macOS/Linux, opening a directory might succeed, but on Windows it should fail.
-        // In either case, getSize() should not throw std::bad_optional_access.
-        if (fileInputStream.open(std::filesystem::current_path()))
-        {
-            CHECK(fileInputStream.getSize() == std::nullopt);
-        }
+        CHECK(!fileInputStream.open(std::filesystem::current_path()));
     }
 }
