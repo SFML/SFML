@@ -154,11 +154,19 @@ std::optional<std::size_t> FileInputStream::getSize()
 #endif
     if (!m_file)
         return std::nullopt;
-    const auto position = tell().value();
-    std::fseek(m_file.get(), 0, SEEK_END);
-    const std::optional size = tell();
 
-    if (!seek(position).has_value())
+    const auto position = tell();
+    if (!position)
+        return std::nullopt;
+
+    if (std::fseek(m_file.get(), 0, SEEK_END) != 0)
+        return std::nullopt;
+
+    const auto size = tell();
+    if (!size)
+        return std::nullopt;
+
+    if (!seek(*position).has_value())
         return std::nullopt;
 
     return size;
