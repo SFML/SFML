@@ -52,6 +52,7 @@
 #define SF_GLAD_EGL_IMPLEMENTATION_INCLUDED
 #define SF_GLAD_EGL_IMPLEMENTATION
 #include <glad/egl.h>
+#undef SF_GLAD_EGL_IMPLEMENTATION
 #endif
 
 #include <SFML/Window/EglFunctionLoader.hpp>
