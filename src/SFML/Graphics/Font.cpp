@@ -28,9 +28,6 @@
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/Texture.hpp>
-#ifdef SFML_SYSTEM_ANDROID
-#include <SFML/System/Android/ResourceStream.hpp>
-#endif
 #include <SFML/System/Err.hpp>
 #include <SFML/System/Exception.hpp>
 #include <SFML/System/FileInputStream.hpp>
@@ -164,13 +161,8 @@ bool Font::openFromFile(const std::filesystem::path& filename)
     cleanup();
 
     // Create the input stream and open the file
-#ifndef SFML_SYSTEM_ANDROID
     const auto stream = std::make_shared<FileInputStream>();
     const auto type   = "file"sv;
-#else
-    const auto stream = std::make_shared<priv::ResourceStream>();
-    const auto type   = "Android resource stream"sv;
-#endif
 
     if (!stream->open(filename))
     {

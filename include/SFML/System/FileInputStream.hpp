@@ -108,6 +108,10 @@ public:
     ////////////////////////////////////////////////////////////
     /// \brief Open the stream from a file path
     ///
+    /// On Android, paths are first opened from the application filesystem.
+    /// Relative paths fall back to the packaged asset directory when no
+    /// filesystem file exists.
+    ///
     /// \param filename Name of the file to open
     ///
     /// \return `true` on success, `false` on error

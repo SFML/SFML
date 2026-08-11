@@ -34,6 +34,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cstdint>
 #include <memory>
 #include <mutex>
 #include <ostream>
@@ -62,6 +63,27 @@ namespace
 // A nested named namespace is used here to allow unity builds of SFML.
 namespace EglContextImpl
 {
+#ifdef SFML_SYSTEM_ANDROID
+template <typename T>
+T loadEglBootstrapSymbol(void* handle, const char* name)
+{
+    return reinterpret_cast<T>(reinterpret_cast<std::uintptr_t>(dlsym(handle, name)));
+}
+
+bool loadEglBootstrap()
+{
+    static void* const handle = dlopen("libEGL.so", RTLD_LAZY | RTLD_LOCAL);
+
+    if (!handle)
+        return false;
+
+    eglGetDisplay = loadEglBootstrapSymbol<PFNEGLGETDISPLAYPROC>(handle, "eglGetDisplay");
+    eglInitialize = loadEglBootstrapSymbol<PFNEGLINITIALIZEPROC>(handle, "eglInitialize");
+    eglGetError   = loadEglBootstrapSymbol<PFNEGLGETERRORPROC>(handle, "eglGetError");
+    return eglGetDisplay && eglInitialize && eglGetError;
+}
+#endif
+
 EGLDisplay getInitializedDisplay()
 {
     static EGLDisplay display = EGL_NO_DISPLAY;
@@ -69,11 +91,11 @@ EGLDisplay getInitializedDisplay()
     if (display == EGL_NO_DISPLAY)
     {
         display = eglCheck(eglGetDisplay(EGL_DEFAULT_DISPLAY));
-        eglCheck(eglInitialize(display, nullptr, nullptr));
-#ifdef SFML_OPENGL_ES
-        eglCheck(eglBindAPI(EGL_OPENGL_ES_API));
+#ifdef SFML_SYSTEM_ANDROID
+        if (display == EGL_NO_DISPLAY || eglCheck(eglInitialize(display, nullptr, nullptr)) == EGL_FALSE)
+            display = EGL_NO_DISPLAY;
 #else
-        eglCheck(eglBindAPI(EGL_OPENGL_API));
+        eglCheck(eglInitialize(display, nullptr, nullptr));
 #endif
     }
 
@@ -89,7 +111,11 @@ void ensureInit()
     std::call_once(flag,
                    []
                    {
+#ifdef SFML_SYSTEM_ANDROID
+                       if (!loadEglBootstrap())
+#else
                        if (!gladLoaderLoadEGL(EGL_NO_DISPLAY))
+#endif
                        {
                            // At this point, the failure is unrecoverable
                            // Dump a message to the console and let the application terminate
@@ -101,7 +127,19 @@ void ensureInit()
                        }
 
                        // Continue loading with a display
+#ifdef SFML_SYSTEM_ANDROID
+                       const EGLDisplay display = getInitializedDisplay();
+                       if (display == EGL_NO_DISPLAY || !gladLoaderLoadEGL(display))
+                       {
+                           sf::err() << "Failed to initialize EGL or load display entry points" << std::endl;
+
+                           assert(false);
+
+                           return false;
+                       }
+#else
                        gladLoaderLoadEGL(getInitializedDisplay());
+#endif
 
                        return true;
                    });
