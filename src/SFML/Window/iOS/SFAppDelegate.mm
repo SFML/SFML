@@ -29,6 +29,7 @@
 #include <SFML/Window/iOS/SFMain.hpp>
 
 #import <TargetConditionals.h>
+#include <cstdlib>
 #include <vector>
 
 #if TARGET_IPHONE_SIMULATOR
@@ -75,10 +76,11 @@ std::vector<sf::Vector2i> touchPositions;
 - (void)runUserMain
 {
 #if TARGET_IPHONE_SIMULATOR
-    sfmlMain(*_NSGetArgc(), *_NSGetArgv());
+    const int status = sfmlMain(*_NSGetArgc(), *_NSGetArgv());
 #else
-    sfmlMain(0, nullptr);
+    const int status = sfmlMain(0, nullptr);
 #endif
+    std::exit(status);
 }
 
 

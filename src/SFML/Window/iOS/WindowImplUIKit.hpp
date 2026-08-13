@@ -50,6 +50,9 @@ public:
     WindowImplUIKit(VideoMode mode, const String& title, std::uint32_t style, State state, const ContextSettings& settings);
 
     ////////////////////////////////////////////////////////////
+    ~WindowImplUIKit() override;
+
+    ////////////////////////////////////////////////////////////
     [[nodiscard]] WindowHandle getNativeHandle() const override;
 
     ////////////////////////////////////////////////////////////

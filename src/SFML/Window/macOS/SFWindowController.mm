@@ -103,7 +103,7 @@
         m_requester     = nil;
         m_fullscreen    = NO; // assuming this is the case... too hard to handle anyway.
         m_restoreResize = NO;
-        m_highDpi       = NO;
+        m_highDpi       = YES;
 
         // Retain the window for our own use.
         m_window = [window retain];
@@ -115,7 +115,7 @@
         }
 
         // Create the view.
-        m_oglView = [[SFOpenGLView alloc] initWithFrame:[[m_window contentView] frame] fullscreen:NO highDpi:NO];
+        m_oglView = [[SFOpenGLView alloc] initWithFrame:[[m_window contentView] frame] fullscreen:NO highDpi:m_highDpi];
 
         if (m_oglView == nil)
         {
@@ -156,7 +156,7 @@
         m_requester     = nil;
         m_fullscreen    = (state == sf::State::Fullscreen) ? YES : NO;
         m_restoreResize = NO;
-        m_highDpi       = NO;
+        m_highDpi       = YES;
 
         if (m_fullscreen)
             [self setupFullscreenViewWithMode:mode];
