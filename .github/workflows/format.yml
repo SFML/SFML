@@ -2,6 +2,8 @@ name: Format
 
 on: [workflow_call, workflow_dispatch]
 
+permissions: {}
+
 concurrency:
   group: ${{ github.workflow }}-format-${{ github.ref }}
   cancel-in-progress: true
@@ -20,7 +22,9 @@ jobs:
       run: sudo apt-get install clang-format-17
 
     - name: Checkout Code
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
+      with:
+        persist-credentials: false
 
     - name: Format Code
       run: cmake -DCLANG_FORMAT_EXECUTABLE=clang-format-17 -P cmake/Format.cmake

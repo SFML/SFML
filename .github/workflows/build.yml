@@ -2,6 +2,8 @@ name: Build and test
 
 on: [workflow_call, workflow_dispatch]
 
+permissions: {}
+
 concurrency:
   group: ${{ github.workflow }}-build-${{ github.ref }}
   cancel-in-progress: true
@@ -105,6 +107,8 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v7
+      with:
+        persist-credentials: false
 
     - name: Set Visual Studio Architecture
       if: contains(matrix.platform.name, 'Windows VS') && !contains(matrix.platform.name, 'MSBuild')

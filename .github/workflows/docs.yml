@@ -2,6 +2,8 @@ name: Documentation
 
 on: [workflow_call, workflow_dispatch]
 
+permissions: {}
+
 concurrency:
   group: ${{ github.workflow }}-docs-${{ github.ref }}
   cancel-in-progress: true
@@ -23,6 +25,8 @@ jobs:
 
     - name: Checkout
       uses: actions/checkout@v7
+      with:
+        persist-credentials: false
 
     - name: Configure
       run: cmake -B build -DSFML_BUILD_DOC=ON -DSFML_BUILD_WINDOW=OFF -DSFML_BUILD_GRAPHICS=OFF -DSFML_BUILD_AUDIO=OFF -DSFML_BUILD_NETWORK=OFF

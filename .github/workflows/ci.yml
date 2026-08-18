@@ -2,6 +2,8 @@ name: CI
 
 on: [push, pull_request, workflow_dispatch]
 
+permissions: {}
+
 jobs:
   build:
     uses: ./.github/workflows/build.yml

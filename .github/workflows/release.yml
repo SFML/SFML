@@ -6,6 +6,8 @@ on:
       - .*
   workflow_dispatch:
 
+permissions: {}
+
 defaults:
   run:
     shell: bash
@@ -50,6 +52,8 @@ jobs:
     steps:
     - name: Checkout Code
       uses: actions/checkout@v7
+      with:
+        persist-credentials: false
 
     - name: Set Visual Studio Architecture
       if: contains(matrix.platform.name, 'Windows VS')
@@ -259,6 +263,8 @@ jobs:
 
     - name: Checkout
       uses: actions/checkout@v7
+      with:
+        persist-credentials: false
 
     - name: Configure
       run: cmake -B build -DSFML_BUILD_DOC=ON -DSFML_BUILD_WINDOW=OFF -DSFML_BUILD_GRAPHICS=OFF -DSFML_BUILD_AUDIO=OFF -DSFML_BUILD_NETWORK=OFF
@@ -293,11 +299,15 @@ jobs:
     steps:
       - name: Get version from context
         id: git-version
+        env:
+          REF_TYPE: ${{ github.ref_type }}
+          REF_NAME: ${{ github.ref_name }}
+          SHA: ${{ github.sha }}
         run: |
-          if [[ "${{ github.ref_type }}" == "tag" ]]; then
-            echo "version=${{ github.ref_name }}" >> $GITHUB_OUTPUT
+          if [[ "$REF_TYPE" == "tag" ]]; then
+            echo "version=$REF_NAME" >> "$GITHUB_OUTPUT"
           else
-            echo "version=${{ github.sha }}" >> $GITHUB_OUTPUT
+            echo "version=$SHA" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Retrieve Artifacts
@@ -308,15 +318,17 @@ jobs:
           merge-multiple: true
 
       - name: Unpack Artifacts
+        env:
+          GIT_VERSION: ${{ steps.git-version.outputs.version }}
         run: |
-          mkdir -p upload/SFML-${{ steps.git-version.outputs.version }}
+          mkdir -p upload/SFML-$GIT_VERSION
           if [[ "${{ runner.os }}" == "Windows" ]]; then
             for file in "upload/SFML-${{ matrix.platform.name }}"*.zip; do
-              7z x -y "$file" -oupload/SFML-${{ steps.git-version.outputs.version }}
+              7z x -y "$file" -oupload/SFML-$GIT_VERSION
             done
           else
             for file in "upload/SFML-${{ matrix.platform.name }}"*.tar.gz; do
-              tar -xzvf "$file" -C upload/SFML-${{ steps.git-version.outputs.version }}
+              tar -xzvf "$file" -C upload/SFML-$GIT_VERSION
             done
           fi
 
@@ -328,14 +340,16 @@ jobs:
           merge-multiple: true
 
       - name: Packaging - Create Archive
+        env:
+          GIT_VERSION: ${{ steps.git-version.outputs.version }}
         run: |
           cd upload
           if [[ "${{ runner.os }}" == "Windows" ]]; then
-            7z a -tzip SFML-${{ steps.git-version.outputs.version }}.zip SFML-${{ steps.git-version.outputs.version }}/*
+            7z a -tzip SFML-$GIT_VERSION.zip SFML-$GIT_VERSION/*
           elif [[ "${{ runner.os }}" == "macOS" ]]; then
-            tar -czvf SFML-${{ steps.git-version.outputs.version }}.tar.gz SFML-${{ steps.git-version.outputs.version }}
+            tar -czvf SFML-$GIT_VERSION.tar.gz SFML-$GIT_VERSION
           else
-            tar -chzvf SFML-${{ steps.git-version.outputs.version }}.tar.gz SFML-${{ steps.git-version.outputs.version }}
+            tar -chzvf SFML-$GIT_VERSION.tar.gz SFML-$GIT_VERSION
           fi
 
       - name: Upload Artifact
