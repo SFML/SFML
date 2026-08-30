@@ -179,6 +179,15 @@ VideoMode VideoModeImpl::getDesktopMode()
             // XRandr extension is not supported: we cannot get the video modes
             err() << "Failed to use the XRandR extension while trying to get the desktop video modes" << std::endl;
         }
+
+        // XRandR may provide an empty size list on some multi-monitor setups
+        // (e.g. when only an external display is enabled): fall back to the X11 screen size
+        if (desktopMode.size.x == 0 || desktopMode.size.y == 0)
+        {
+            desktopMode = VideoMode({static_cast<unsigned int>(DisplayWidth(display.get(), screen)),
+                                     static_cast<unsigned int>(DisplayHeight(display.get(), screen))},
+                                    static_cast<unsigned int>(DefaultDepth(display.get(), screen)));
+        }
     }
     else
     {
