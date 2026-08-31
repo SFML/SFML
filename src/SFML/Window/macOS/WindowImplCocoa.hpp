@@ -93,6 +93,22 @@ public:
     void windowResized(Vector2u size);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Window Minimized Event - called by the cocoa window object
+    ///
+    /// Send the event to SFML WindowImpl class.
+    ///
+    ////////////////////////////////////////////////////////////
+    void windowMinimized();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Window Maximized Event - called by the cocoa window object
+    ///
+    /// Send the event to SFML WindowImpl class.
+    ///
+    ////////////////////////////////////////////////////////////
+    void windowMaximized();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Window Lost Focus Event - called by the cocoa window object
     ///
     /// Send the event to SFML WindowImpl class.

@@ -229,6 +229,20 @@ void WindowImplCocoa::windowResized(Vector2u size)
 
 
 ////////////////////////////////////////////////////////////
+void WindowImplCocoa::windowMinimized()
+{
+    pushEvent(Event::Minimized{});
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplCocoa::windowMaximized()
+{
+    pushEvent(Event::Maximized{});
+}
+
+
+////////////////////////////////////////////////////////////
 void WindowImplCocoa::windowFocusLost()
 {
     if (!m_showCursor && [m_delegate isMouseInside])
