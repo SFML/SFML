@@ -378,6 +378,11 @@ inline int SF_GL_OES_vertex_buffer_object = 1;
 
 #define GLEXT_copy_buffer_dependencies SF_GLAD_GL_ARB_copy_buffer, glCopyBufferSubData
 
+// ARB_copy_image
+#define GLEXT_copy_image SF_GLAD_GL_ARB_copy_image
+#define GLEXT_glCopyImageSubData glCopyImageSubData
+#define GLEXT_copy_image_dependencies SF_GLAD_GL_ARB_copy_image, glCopyImageSubData
+
 // Core since 3.2 - ARB_geometry_shader4
 #define GLEXT_geometry_shader4         SF_GLAD_GL_ARB_geometry_shader4
 #define GLEXT_GL_GEOMETRY_SHADER       GL_GEOMETRY_SHADER_ARB
