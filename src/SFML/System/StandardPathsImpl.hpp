@@ -27,32 +27,34 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-
-#include <SFML/Config.hpp>
-
-#include <SFML/System/Angle.hpp>
-#include <SFML/System/Clock.hpp>
-#include <SFML/System/Err.hpp>
-#include <SFML/System/Exception.hpp>
-#include <SFML/System/FileInputStream.hpp>
-#include <SFML/System/InputStream.hpp>
-#include <SFML/System/MemoryInputStream.hpp>
-#include <SFML/System/Sleep.hpp>
 #include <SFML/System/StandardPaths.hpp>
-#include <SFML/System/String.hpp>
-#include <SFML/System/Time.hpp>
-#include <SFML/System/TimeoutWithPredicate.hpp>
-#include <SFML/System/Utf.hpp>
-#include <SFML/System/Vector2.hpp>
-#include <SFML/System/Vector3.hpp>
-#include <SFML/System/Version.hpp>
+
+#include <filesystem>
+#include <optional>
 
 
+namespace sf::priv::StandardPaths
+{
+
 ////////////////////////////////////////////////////////////
-/// \defgroup system System module
-///
-/// Base module of SFML, defining various utilities. It provides
-/// vector classes, Unicode strings and conversion functions,
-/// threads and mutexes, timing classes.
+/// \copydoc sf::getResourceDirectory
 ///
 ////////////////////////////////////////////////////////////
+std::filesystem::path getResourceDirectory();
+
+////////////////////////////////////////////////////////////
+/// \brief Get the base directory used to derive `sf::getUserDataDirectory`
+///
+/// The public `sf::getUserDataDirectory` appends the organization and
+/// application names to the value returned here.
+///
+////////////////////////////////////////////////////////////
+std::filesystem::path getUserDataBaseDirectory();
+
+////////////////////////////////////////////////////////////
+/// \copydoc sf::getUserFolder
+///
+////////////////////////////////////////////////////////////
+std::optional<std::filesystem::path> getUserFolder(UserFolder folder);
+
+} // namespace sf::priv::StandardPaths

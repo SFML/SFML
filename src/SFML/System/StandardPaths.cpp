@@ -22,37 +22,41 @@
 //
 ////////////////////////////////////////////////////////////
 
-#pragma once
-
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-
-#include <SFML/Config.hpp>
-
-#include <SFML/System/Angle.hpp>
-#include <SFML/System/Clock.hpp>
-#include <SFML/System/Err.hpp>
-#include <SFML/System/Exception.hpp>
-#include <SFML/System/FileInputStream.hpp>
-#include <SFML/System/InputStream.hpp>
-#include <SFML/System/MemoryInputStream.hpp>
-#include <SFML/System/Sleep.hpp>
 #include <SFML/System/StandardPaths.hpp>
-#include <SFML/System/String.hpp>
-#include <SFML/System/Time.hpp>
-#include <SFML/System/TimeoutWithPredicate.hpp>
-#include <SFML/System/Utf.hpp>
-#include <SFML/System/Vector2.hpp>
-#include <SFML/System/Vector3.hpp>
-#include <SFML/System/Version.hpp>
+#include <SFML/System/StandardPathsImpl.hpp>
+
+
+namespace sf
+{
+////////////////////////////////////////////////////////////
+std::filesystem::path getResourceDirectory()
+{
+    return priv::StandardPaths::getResourceDirectory();
+}
 
 
 ////////////////////////////////////////////////////////////
-/// \defgroup system System module
-///
-/// Base module of SFML, defining various utilities. It provides
-/// vector classes, Unicode strings and conversion functions,
-/// threads and mutexes, timing classes.
-///
+std::filesystem::path getUserDataDirectory(std::string_view organization, std::string_view application)
+{
+    auto base = priv::StandardPaths::getUserDataBaseDirectory();
+    if (base.empty())
+        return {};
+
+    if (!organization.empty())
+        base /= std::filesystem::path(organization);
+    if (!application.empty())
+        base /= std::filesystem::path(application);
+    return base;
+}
+
+
 ////////////////////////////////////////////////////////////
+std::optional<std::filesystem::path> getUserFolder(UserFolder folder)
+{
+    return priv::StandardPaths::getUserFolder(folder);
+}
+
+} // namespace sf
