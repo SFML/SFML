@@ -1,8 +1,8 @@
 set(MESA3D_URL "https://github.com/pal1000/mesa-dist-win/releases/download/25.2.0/mesa3d-25.2.0-release-msvc.7z")
 set(MESA3D_SHA256 "67e76e9844206c71cf313e09409303af9c01d7561c5f57d7e152771e2408aafe")
 
-get_filename_component(MESA3D_ARCHIVE "${MESA3D_URL}" NAME)
-get_filename_component(MESA3D_ARCHIVE_DIRECTORY "${MESA3D_URL}" NAME_WLE)
+cmake_path(GET MESA3D_URL FILENAME MESA3D_ARCHIVE)
+cmake_path(GET MESA3D_URL STEM LAST_ONLY MESA3D_ARCHIVE_DIRECTORY)
 
 if(ARCH_X64)
     set(MESA3D_ARCH "x64")
@@ -44,45 +44,6 @@ if(SFML_OS_WINDOWS AND SFML_USE_MESA3D)
         file(REMOVE "${MESA3D_ARCHIVE_PATH}")
     endif()
 
-    # add the files as file dependencies to a custom target that we can add as a dependency to executable/test targets
-    file(GLOB MESA3D_FILE_LIST "${MESA3D_ARCH_PATH}/*")
-
-    get_property(IS_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
-
-    foreach(MESA3D_FILE ${MESA3D_FILE_LIST})
-        get_filename_component(MESA3D_FILE_NAME "${MESA3D_FILE}" NAME)
-
-        list(APPEND MESA3D_INSTALLED_FILES "${PROJECT_BINARY_DIR}/bin/$<IF:$<BOOL:${IS_MULTI_CONFIG}>,$<CONFIG>/,>${MESA3D_FILE_NAME}")
-    endforeach()
-
-    # if files are missing from the target directory of the configuration being built, copy them over
-    add_custom_command(OUTPUT ${MESA3D_INSTALLED_FILES} COMMAND "${CMAKE_COMMAND}" ARGS -E copy_if_different ${MESA3D_FILE_LIST} "${PROJECT_BINARY_DIR}/bin$<IF:$<BOOL:${IS_MULTI_CONFIG}>,/$<CONFIG>,>")
-
-    add_custom_target(install-mesa3d DEPENDS ${MESA3D_INSTALLED_FILES})
-
-    set_target_properties(install-mesa3d PROPERTIES EXCLUDE_FROM_ALL ON)
-elseif(SFML_OS_WINDOWS AND MESA3D_ARCH AND EXISTS "${MESA3D_ARCH_PATH}")
-    # we are removing the files
-
-    # compile a list of file names that we have to remove
-    file(GLOB MESA3D_FILE_LIST "${MESA3D_ARCH_PATH}/*")
-
-    foreach(MESA3D_FILE ${MESA3D_FILE_LIST})
-        get_filename_component(MESA3D_FILE_NAME "${MESA3D_FILE}" NAME)
-
-        list(APPEND MESA3D_FILE_NAMES "${MESA3D_FILE_NAME}")
-    endforeach()
-
-    # recursively go through all files in bin and remove files that match the file name of a Mesa 3D file
-    file(GLOB_RECURSE BINARY_FILE_LIST "${PROJECT_BINARY_DIR}/bin/*")
-
-    foreach(BINARY_FILE ${BINARY_FILE_LIST})
-        get_filename_component(BINARY_FILE_NAME "${BINARY_FILE}" NAME)
-
-        list(FIND MESA3D_FILE_NAMES "${BINARY_FILE_NAME}" INDEX)
-
-        if(NOT INDEX EQUAL -1)
-            file(REMOVE "${BINARY_FILE}")
-        endif()
-    endforeach()
+    # Create a list of dll's that can be copied where needed
+    file(GLOB MESA3D_FILE_LIST "${MESA3D_ARCH_PATH}/*.dll")
 endif()
