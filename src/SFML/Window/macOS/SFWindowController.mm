@@ -47,24 +47,6 @@
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
 ////////////////////////////////////////////////////////////
-/// SFBlackView is a simple view filled with black, nothing more
-///
-////////////////////////////////////////////////////////////
-@interface SFBlackView : NSView
-@end
-
-@implementation SFBlackView
-
-////////////////////////////////////////////////////////////
-- (void)drawRect:(NSRect)dirtyRect
-{
-    [[NSColor blackColor] setFill];
-    NSRectFill(dirtyRect);
-}
-
-@end
-
-////////////////////////////////////////////////////////////
 /// SFWindowController class: private interface
 ///
 ////////////////////////////////////////////////////////////
@@ -101,7 +83,6 @@
         m_window        = nil;
         m_oglView       = nil;
         m_requester     = nil;
-        m_fullscreen    = NO; // assuming this is the case... too hard to handle anyway.
         m_restoreResize = NO;
         m_highDpi       = NO;
 
@@ -154,150 +135,79 @@
         m_window        = nil;
         m_oglView       = nil;
         m_requester     = nil;
-        m_fullscreen    = (state == sf::State::Fullscreen) ? YES : NO;
         m_restoreResize = NO;
         m_highDpi       = NO;
 
-        if (m_fullscreen)
-            [self setupFullscreenViewWithMode:mode];
-        else
-            [self setupWindowWithMode:mode andStyle:style];
+        // Create our window size.
+        NSRect rect = NSMakeRect(0, 0, mode.size.x, mode.size.y);
+
+        // Convert the SFML window style to Cocoa window style.
+        unsigned int nsStyle = NSBorderlessWindowMask;
+        if (style & sf::Style::Titlebar)
+            nsStyle |= NSTitledWindowMask | NSMiniaturizableWindowMask;
+        if (style & sf::Style::Resize)
+            nsStyle |= NSResizableWindowMask;
+        if (style & sf::Style::Close)
+            nsStyle |= NSClosableWindowMask;
+
+        // Create the window.
+        m_window = [[SFWindow alloc]
+            initWithContentRect:rect
+                      styleMask:nsStyle
+                        backing:NSBackingStoreBuffered
+                          defer:NO]; // Don't defer it!
+        /*
+         "YES" produces some "invalid drawable".
+         See http://www.cocoabuilder.com/archive/cocoa/152482-nsviews-and-nsopenglcontext-invalid-drawable-error.html
+
+         [...]
+         As best as I can figure, this is happening because the NSWindow (and
+         hence my view) are not visible on screen yet, and the system doesn't like that.
+         [...]
+         */
+
+        if (m_window == nil)
+        {
+            sf::err() << "Could not create an instance of NSWindow "
+                      << "in -[SFWindowController setupWindowWithMode:andStyle:]." << std::endl;
+
+            return self;
+        }
+
+        // Go fullscreen if requested
+        if (state == sf::State::Fullscreen)
+        {
+            [m_window setBackgroundColor:NSColor.blackColor];
+            [m_window toggleFullScreen:nil];
+        }
+
+        // Create the view.
+        m_oglView = [[SFOpenGLView alloc] initWithFrame:[[m_window contentView] frame] fullscreen:NO highDpi:m_highDpi];
+
+        if (m_oglView == nil)
+        {
+            sf::err() << "Could not create an instance of NSOpenGLView "
+                      << "in -[SFWindowController setupWindowWithMode:andStyle:]." << std::endl;
+
+            return self;
+        }
+
+        // Set the view to the window as its content view.
+        [m_window setContentView:m_oglView];
+
+        // Register for event.
+        [m_window setDelegate:self];
+        [m_window setAcceptsMouseMovedEvents:YES];
+        [m_window setIgnoresMouseEvents:NO];
+
+        // And some other things...
+        [m_window center];
+        [m_window setAutodisplay:YES];
+        [m_window setReleasedWhenClosed:NO]; // We own the class, not AppKit
 
         [m_oglView finishInit];
     }
     return self;
-}
-
-
-////////////////////////////////////////////////////////
-- (void)setupFullscreenViewWithMode:(const sf::VideoMode&)mode
-{
-    // Create a screen-sized window on the main display
-    const sf::VideoMode desktop    = sf::VideoMode::getDesktopMode();
-    NSRect              windowRect = NSMakeRect(0, 0, desktop.size.x, desktop.size.y);
-    m_window                       = [[SFWindow alloc]
-        initWithContentRect:windowRect
-                  styleMask:NSBorderlessWindowMask
-                    backing:NSBackingStoreBuffered
-                      defer:NO];
-
-    if (m_window == nil)
-    {
-        sf::err() << "Could not create an instance of NSWindow "
-                  << "in -[SFWindowController setupFullscreenViewWithMode:]." << std::endl;
-        return;
-    }
-
-    // Set the window level to be above the menu bar
-    [m_window setLevel:NSMainMenuWindowLevel + 1];
-
-    // More window configuration...
-    [m_window setOpaque:YES];
-    [m_window setHidesOnDeactivate:YES];
-    [m_window setAutodisplay:YES];
-    [m_window setReleasedWhenClosed:NO]; // We own the class, not AppKit
-
-    // Register for event
-    [m_window setDelegate:self];
-    [m_window setAcceptsMouseMovedEvents:YES];
-    [m_window setIgnoresMouseEvents:NO];
-
-    // Create a master view containing our OpenGL view
-    NSView* masterView = [[[SFBlackView alloc] initWithFrame:windowRect] autorelease];
-
-    if (masterView == nil)
-    {
-        sf::err() << "Could not create an instance of SFBlackView "
-                  << "in -[SFWindowController setupFullscreenViewWithMode:]." << std::endl;
-        return;
-    }
-
-    // Create our OpenGL view size and the view
-    CGFloat width   = std::min(mode.size.x, desktop.size.x);
-    CGFloat height  = std::min(mode.size.y, desktop.size.y);
-    CGFloat x       = (desktop.size.x - width) / 2.0;
-    CGFloat y       = (desktop.size.y - height) / 2.0;
-    NSRect  oglRect = NSMakeRect(x, y, width, height);
-
-    m_oglView = [[SFOpenGLView alloc] initWithFrame:oglRect fullscreen:YES highDpi:m_highDpi];
-
-    if (m_oglView == nil)
-    {
-        sf::err() << "Could not create an instance of NSOpenGLView "
-                  << "in -[SFWindowController setupFullscreenViewWithMode:]." << std::endl;
-        return;
-    }
-
-    // Populate the window and views
-    [masterView addSubview:m_oglView];
-    [m_window setContentView:masterView];
-}
-
-
-////////////////////////////////////////////////////////
-- (void)setupWindowWithMode:(const sf::VideoMode&)mode andStyle:(std::uint32_t)style
-{
-    // We know that sf::State is not Fullscreen
-
-    // Create our window size.
-    NSRect rect = NSMakeRect(0, 0, mode.size.x, mode.size.y);
-
-    // Convert the SFML window style to Cocoa window style.
-    unsigned int nsStyle = NSBorderlessWindowMask;
-    if (style & sf::Style::Titlebar)
-        nsStyle |= NSTitledWindowMask | NSMiniaturizableWindowMask;
-    if (style & sf::Style::Resize)
-        nsStyle |= NSResizableWindowMask;
-    if (style & sf::Style::Close)
-        nsStyle |= NSClosableWindowMask;
-
-    // Create the window.
-    m_window = [[SFWindow alloc]
-        initWithContentRect:rect
-                  styleMask:nsStyle
-                    backing:NSBackingStoreBuffered
-                      defer:NO]; // Don't defer it!
-    /*
-     "YES" produces some "invalid drawable".
-     See http://www.cocoabuilder.com/archive/cocoa/152482-nsviews-and-nsopenglcontext-invalid-drawable-error.html
-
-     [...]
-     As best as I can figure, this is happening because the NSWindow (and
-     hence my view) are not visible on screen yet, and the system doesn't like that.
-     [...]
-     */
-
-    if (m_window == nil)
-    {
-        sf::err() << "Could not create an instance of NSWindow "
-                  << "in -[SFWindowController setupWindowWithMode:andStyle:]." << std::endl;
-
-        return;
-    }
-
-    // Create the view.
-    m_oglView = [[SFOpenGLView alloc] initWithFrame:[[m_window contentView] frame] fullscreen:NO highDpi:m_highDpi];
-
-    if (m_oglView == nil)
-    {
-        sf::err() << "Could not create an instance of NSOpenGLView "
-                  << "in -[SFWindowController setupWindowWithMode:andStyle:]." << std::endl;
-
-        return;
-    }
-
-    // Set the view to the window as its content view.
-    [m_window setContentView:m_oglView];
-
-    // Register for event.
-    [m_window setDelegate:self];
-    [m_window setAcceptsMouseMovedEvents:YES];
-    [m_window setIgnoresMouseEvents:NO];
-
-    // And some other things...
-    [m_window center];
-    [m_window setAutodisplay:YES];
-    [m_window setReleasedWhenClosed:NO]; // We own the class, not AppKit
 }
 
 
@@ -428,7 +338,7 @@
 ////////////////////////////////////////////////////////
 - (void)resizeTo:(sf::Vector2u)size
 {
-    if (m_fullscreen)
+    if ([m_window styleMask] & NSWindowStyleMaskFullScreen)
     {
         // Special case when fullscreen: only resize the opengl view
         // and make sure the requested size is not bigger than the window.
