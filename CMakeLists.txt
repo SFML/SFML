@@ -406,9 +406,8 @@ endif()
 # add an option for making OpenGL errors fatal
 sfml_set_option(SFML_FATAL_OPENGL_ERRORS OFF BOOL "ON to make SFML OpenGL errors fatal, OFF to simply warn about them")
 
-sfml_set_option(CLANG_FORMAT_EXECUTABLE clang-format STRING "Override clang-format executable, requires version 17")
 add_custom_target(format
-    COMMAND ${CMAKE_COMMAND} -DCLANG_FORMAT_EXECUTABLE=${CLANG_FORMAT_EXECUTABLE} -P ./cmake/Format.cmake
+    COMMAND ${CMAKE_COMMAND} -P ./cmake/Format.cmake
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR} VERBATIM)
 
 sfml_set_option(CLANG_TIDY_EXECUTABLE clang-tidy STRING "Override clang-tidy executable, requires minimum version 14")
