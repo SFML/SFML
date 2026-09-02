@@ -257,6 +257,13 @@
 
 
 ////////////////////////////////////////////////////////
+- (BOOL)isFullscreen
+{
+    return [m_oglView isFullscreen];
+}
+
+
+////////////////////////////////////////////////////////
 - (void)processEvent
 {
     // If we are not on the main thread we stop here and advice the user.
@@ -282,6 +289,19 @@
 {
     [m_oglView setOpenGLContext:context];
     [context setView:m_oglView];
+}
+
+
+////////////////////////////////////////////////////////
+- (sf::State)getState
+{
+    return [self isFullscreen] ? sf::State::Fullscreen : sf::State::Windowed;
+}
+
+
+////////////////////////////////////////////////////////
+- (void)setState:(sf::State)state
+{
 }
 
 
