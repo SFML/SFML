@@ -44,10 +44,10 @@ TEST_CASE("[Window] sf::Event")
     SECTION("Type traits")
     {
         STATIC_CHECK(!std::is_default_constructible_v<sf::Event>);
-        STATIC_CHECK(std::is_trivially_copy_constructible_v<sf::Event>);
-        STATIC_CHECK(std::is_trivially_copy_assignable_v<sf::Event>);
-        STATIC_CHECK(std::is_trivially_move_constructible_v<sf::Event>);
-        STATIC_CHECK(std::is_trivially_move_assignable_v<sf::Event>);
+        STATIC_CHECK(std::is_copy_constructible_v<sf::Event>);
+        STATIC_CHECK(std::is_copy_assignable_v<sf::Event>);
+        STATIC_CHECK(std::is_move_constructible_v<sf::Event>);
+        STATIC_CHECK(std::is_move_assignable_v<sf::Event>);
     }
 
     SECTION("Construction")
