@@ -8,14 +8,6 @@
 
 namespace
 {
-std::filesystem::path resourcesDir()
-{
-#ifdef SFML_SYSTEM_IOS
-    return "";
-#else
-    return "resources";
-#endif
-}
 std::string vec2ToString(const sf::Vector2i vec2)
 {
     return '(' + std::to_string(vec2.x) + ", " + std::to_string(vec2.y) + ')';
@@ -392,7 +384,7 @@ private:
     // Member data
     ////////////////////////////////////////////////////////////
     sf::RenderWindow m_window{sf::VideoMode({800u, 600u}), "SFML Event Handling", sf::Style::Titlebar | sf::Style::Close};
-    const sf::Font           m_font{resourcesDir() / "tuffy.ttf"};
+    const sf::Font           m_font{"resources/tuffy.ttf"};
     sf::Text                 m_logText{m_font, "", 20};
     sf::Text                 m_handlerText{m_font, "Current Handler: Classic", 24};
     sf::Text                 m_instructions{m_font, "Press Enter to change handler type", 24};
