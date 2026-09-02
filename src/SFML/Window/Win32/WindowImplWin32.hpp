@@ -114,6 +114,9 @@ private:
     void cleanup();
 
     ////////////////////////////////////////////////////////////
+    void releaseCaptureOutsideMouse();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Process a Win32 event
     ///
     /// \param message Message to process

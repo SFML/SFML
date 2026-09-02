@@ -546,6 +546,14 @@ void WindowImplWin32::cleanup()
     ReleaseCapture();
 }
 
+////////////////////////////////////////////////////////////
+void WindowImplWin32::releaseCaptureOutsideMouse()
+{
+    if (!m_mouseInside && GetCapture() == m_handle)
+    {
+        ReleaseCapture();
+    }
+}
 
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::setTracking(bool track)
@@ -970,6 +978,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Mouse left button up event
         case WM_LBUTTONUP:
         {
+            releaseCaptureOutsideMouse();
             Event::MouseButtonReleased event;
             event.button   = Mouse::Button::Left;
             event.position = {static_cast<std::int16_t>(LOWORD(lParam)), static_cast<std::int16_t>(HIWORD(lParam))};
@@ -990,6 +999,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Mouse right button up event
         case WM_RBUTTONUP:
         {
+            releaseCaptureOutsideMouse();
             Event::MouseButtonReleased event;
             event.button   = Mouse::Button::Right;
             event.position = {static_cast<std::int16_t>(LOWORD(lParam)), static_cast<std::int16_t>(HIWORD(lParam))};
@@ -1010,6 +1020,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Mouse wheel button up event
         case WM_MBUTTONUP:
         {
+            releaseCaptureOutsideMouse();
             Event::MouseButtonReleased event;
             event.button   = Mouse::Button::Middle;
             event.position = {static_cast<std::int16_t>(LOWORD(lParam)), static_cast<std::int16_t>(HIWORD(lParam))};
@@ -1030,6 +1041,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Mouse X button up event
         case WM_XBUTTONUP:
         {
+            releaseCaptureOutsideMouse();
             Event::MouseButtonReleased event;
             event.button   = HIWORD(wParam) == XBUTTON1 ? Mouse::Button::Extra1 : Mouse::Button::Extra2;
             event.position = {static_cast<std::int16_t>(LOWORD(lParam)), static_cast<std::int16_t>(HIWORD(lParam))};
