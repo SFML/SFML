@@ -49,7 +49,7 @@ jobs:
       if: runner.os == 'Linux'
       run: |
         sudo apt-get update
-        sudo apt-get install libharfbuzz-dev libfreetype-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev libmbedtls-dev libssh2-1-dev
+        sudo apt-get install libharfbuzz-dev libfreetype-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libflac-dev libvorbis-dev libopus-dev libopusfile-dev libgl1-mesa-dev libegl1-mesa-dev libdrm-dev libgbm-dev libmbedtls-dev libssh2-1-dev
 
     - name: Install macOS Dependencies
       if: runner.os == 'macOS'

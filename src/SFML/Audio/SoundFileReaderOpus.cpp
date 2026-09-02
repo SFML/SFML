@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////
 //
 // SFML - Simple and Fast Multimedia Library
-// Copyright (C) 2007-2026 Laurent Gomila (laurent@sfml-dev.org)
+// Copyright (C) 2007-2025 Laurent Gomila (laurent@sfml-dev.org)
 //
 // This software is provided 'as-is', without any express or implied warranty.
 // In no event will the authors be held liable for any damages arising from the use of this software.
@@ -25,7 +25,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Audio/SoundFileReaderOgg.hpp>
+#include <SFML/Audio/SoundFileReaderOpus.hpp>
 
 #include <SFML/System/Err.hpp>
 #include <SFML/System/InputStream.hpp>
@@ -39,15 +39,15 @@
 namespace
 {
 // A nested named namespace is used here to allow unity builds of SFML.
-namespace OggCallback
+namespace OpusCallback
 {
-std::size_t read(void* ptr, std::size_t size, std::size_t nmemb, void* data)
+int read(void* data, unsigned char* ptr, int bytes)
 {
     auto* stream = static_cast<sf::InputStream*>(data);
-    return stream->read(ptr, size * nmemb).value_or(-1);
+    return static_cast<int>(stream->read(ptr, static_cast<std::size_t>(bytes)).value_or(-1));
 }
 
-int seek(void* data, ogg_int64_t signedOffset, int whence)
+int seek(void* data, opus_int64 signedOffset, int whence)
 {
     auto* stream = static_cast<sf::InputStream*>(data);
     auto  offset = static_cast<std::size_t>(signedOffset);
@@ -62,29 +62,31 @@ int seek(void* data, ogg_int64_t signedOffset, int whence)
             offset = stream->getSize().value() - offset;
     }
     const std::optional position = stream->seek(offset);
-    return position ? static_cast<int>(*position) : -1;
+    return position ? 0 : -1;
 }
 
-long tell(void* data)
+opus_int64 tell(void* data)
 {
     auto*               stream   = static_cast<sf::InputStream*>(data);
     const std::optional position = stream->tell();
     return position ? static_cast<long>(*position) : -1;
 }
 
-ov_callbacks callbacks = {&read, &seek, nullptr, &tell};
-} // namespace OggCallback
+const OpusFileCallbacks callbacks = {&read, &seek, &tell, nullptr};
+} // namespace OpusCallback
 } // namespace
 
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
-bool SoundFileReaderOgg::check(InputStream& stream)
+bool SoundFileReaderOpus::check(InputStream& stream)
 {
-    OggVorbis_File file;
-    if (ov_test_callbacks(&stream, &file, nullptr, 0, OggCallback::callbacks) == 0)
+    int          error = 0;
+    OggOpusFile* file  = op_test_callbacks(&stream, &OpusCallback::callbacks, NULL, 0, &error);
+
+    if (error == 0)
     {
-        ov_clear(&file);
+        op_free(file);
         return true;
     }
 
@@ -93,50 +95,39 @@ bool SoundFileReaderOgg::check(InputStream& stream)
 
 
 ////////////////////////////////////////////////////////////
-SoundFileReaderOgg::~SoundFileReaderOgg()
+SoundFileReaderOpus::~SoundFileReaderOpus()
 {
     close();
 }
 
 
 ////////////////////////////////////////////////////////////
-std::optional<SoundFileReader::Info> SoundFileReaderOgg::open(InputStream& stream)
+std::optional<SoundFileReader::Info> SoundFileReaderOpus::open(InputStream& stream)
 {
-    // Open the Vorbis stream
-    const int status = ov_open_callbacks(&stream, &m_vorbis, nullptr, 0, OggCallback::callbacks);
-    if (status < 0)
+    // Open the Opus stream
+    int error = 0;
+    m_opus    = op_open_callbacks(&stream, &OpusCallback::callbacks, nullptr, 0, &error);
+    if (error != 0)
     {
-        err() << "Failed to open Vorbis file for reading" << std::endl;
+        err() << "Failed to open Opus file for reading" << std::endl;
         return std::nullopt;
     }
 
     // Retrieve the music attributes
-    vorbis_info* vorbisInfo = ov_info(&m_vorbis, -1);
+    const OpusHead* opusHead = op_head(m_opus, -1);
+    Info            info;
+    info.channelCount = static_cast<unsigned int>(opusHead->channel_count);
+    info.sampleCount  = static_cast<std::size_t>(op_pcm_total(m_opus, -1) * opusHead->channel_count);
 
-    // When attempting to retrieve the total PCM sample count using ov_pcm_total() below,
-    // make sure to set the read position back to the beginning of the file after calling ov_info().
-    // Depending on how big the header and embedded comment data is, not seeking back
-    // to the beginning of the file can lead to a wrong PCM sample count being returned.
-    // See:
-    // https://web.archive.org/web/20250924022223/https://stackoverflow.com/questions/8653670/vorbis-finding-decompressed-size-of-file/72482773#72482773
-    // https://github.com/xiph/vorbis/issues/60
-    // https://github.com/xiph/vorbis/pull/71
-    if (ov_raw_seek(&m_vorbis, 0) < 0)
-    {
-        err() << "Failed to seek to start of Vorbis file" << std::endl;
-        return std::nullopt;
-    }
-
-    Info info;
-    info.channelCount = static_cast<unsigned int>(vorbisInfo->channels);
-    info.sampleRate   = static_cast<unsigned int>(vorbisInfo->rate);
-    info.sampleCount  = static_cast<std::size_t>(ov_pcm_total(&m_vorbis, -1) * vorbisInfo->channels);
+    // All Opus audio is encoded at 48kHz
+    // https://www.opus-codec.org/docs/opusfile_api-0.12/structOpusHead.html#a73b80a913eca33d829f1667caee80d9e
+    info.sampleRate = 48000;
 
     // For Vorbis channel mapping refer to: https://xiph.org/vorbis/doc/Vorbis_I_spec.html#x1-810004.3.9
     switch (info.channelCount)
     {
         case 0:
-            err() << "No channels in Vorbis file" << std::endl;
+            err() << "No channels in Opus file" << std::endl;
             break;
         case 1:
             info.channelMap = {SoundChannel::Mono};
@@ -185,7 +176,7 @@ std::optional<SoundFileReader::Info> SoundFileReaderOgg::open(InputStream& strea
                                SoundChannel::LowFrequencyEffects};
             break;
         default:
-            err() << "Vorbis files with more than 8 channels not supported" << std::endl;
+            err() << "Opus files with more than 8 channels not supported" << std::endl;
             assert(false);
             break;
     }
@@ -198,25 +189,25 @@ std::optional<SoundFileReader::Info> SoundFileReaderOgg::open(InputStream& strea
 
 
 ////////////////////////////////////////////////////////////
-void SoundFileReaderOgg::seek(std::uint64_t sampleOffset)
+void SoundFileReaderOpus::seek(std::uint64_t sampleOffset)
 {
-    assert(m_vorbis.datasource && "Vorbis datasource is missing. Call SoundFileReaderOgg::open() to initialize it.");
+    assert(m_opus && "Opus stream is missing. Call SoundFileReaderOpus::open() to initialize it.");
 
-    ov_pcm_seek(&m_vorbis, static_cast<ogg_int64_t>(sampleOffset / m_channelCount));
+    op_pcm_seek(m_opus, static_cast<ogg_int64_t>(sampleOffset / m_channelCount));
 }
 
 
 ////////////////////////////////////////////////////////////
-std::uint64_t SoundFileReaderOgg::read(std::int16_t* samples, std::uint64_t maxCount)
+std::uint64_t SoundFileReaderOpus::read(std::int16_t* samples, std::uint64_t maxCount)
 {
-    assert(m_vorbis.datasource && "Vorbis datasource is missing. Call SoundFileReaderOgg::open() to initialize it.");
+    assert(m_opus && "Opus stream is missing. Call SoundFileReaderOpus::open() to initialize it.");
 
     // Try to read the requested number of samples, stop only on error or end of file
     std::uint64_t count = 0;
     while (count < maxCount)
     {
-        const int bytesToRead = static_cast<int>(maxCount - count) * static_cast<int>(sizeof(std::int16_t));
-        const long bytesRead = ov_read(&m_vorbis, reinterpret_cast<char*>(samples), bytesToRead, SFML_IS_BIG_ENDIAN, 2, 1, nullptr);
+        const int  bytesToRead = static_cast<int>(maxCount - count) * static_cast<int>(sizeof(std::int16_t));
+        const long bytesRead   = op_read(m_opus, static_cast<opus_int16*>(samples), bytesToRead, nullptr);
         if (bytesRead > 0)
         {
             const long samplesRead = bytesRead / static_cast<long>(sizeof(std::int16_t));
@@ -235,13 +226,12 @@ std::uint64_t SoundFileReaderOgg::read(std::int16_t* samples, std::uint64_t maxC
 
 
 ////////////////////////////////////////////////////////////
-void SoundFileReaderOgg::close()
+void SoundFileReaderOpus::close()
 {
-    if (m_vorbis.datasource)
+    if (m_opus)
     {
-        ov_clear(&m_vorbis);
-        m_vorbis.datasource = nullptr;
-        m_channelCount      = 0;
+        op_free(m_opus);
+        m_channelCount = 0;
     }
 }
 
