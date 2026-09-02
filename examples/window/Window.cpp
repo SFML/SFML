@@ -3,6 +3,9 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window.hpp>
 
+#include <array>
+#include <iostream>
+
 #include <cstdlib>
 
 #define GLAD_GL_IMPLEMENTATION
@@ -12,10 +15,6 @@
 #include <SFML/Main.hpp>
 #endif
 
-#include <array>
-#include <iostream>
-
-#include <cstdlib>
 
 ////////////////////////////////////////////////////////////
 /// Entry point of application
@@ -149,6 +148,24 @@ int main()
                  event->getIf<sf::Event::KeyPressed>()->code == sf::Keyboard::Key::Escape))
             {
                 window.close();
+            }
+
+            // Set with state with function keys
+            if (const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
+            {
+                switch (keyPressed->scancode)
+                {
+                    case sf::Keyboard::Scancode::F1:
+                        window.setState(sf::State::Fullscreen, sf::VideoMode::getFullscreenModes().front().size);
+                        assert(window.getState() == sf::State::Fullscreen);
+                        break;
+                    case sf::Keyboard::Scancode::F2:
+                        window.setState(sf::State::Windowed, {640, 480});
+                        assert(window.getState() == sf::State::Windowed);
+                        break;
+                    default:
+                        break;
+                }
             }
 
             // Resize event: adjust the viewport
