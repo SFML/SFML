@@ -29,6 +29,10 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
 
+#include <SFML/Audio/Forward.hpp>
+
+#include <SFML/System/Forward.hpp>
+
 #include <filesystem>
 #include <memory>
 #include <unordered_map>
@@ -38,10 +42,6 @@
 
 namespace sf
 {
-class InputStream;
-class SoundFileReader;
-class SoundFileWriter;
-
 ////////////////////////////////////////////////////////////
 /// \brief Manages and instantiates sound file readers and writers
 ///

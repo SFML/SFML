@@ -24,42 +24,30 @@
 
 #pragma once
 
-
 namespace sf
 {
-namespace Style
+class AudioResource;
+class InputSoundFile;
+class InputStream;
+class Music;
+class OutputSoundFile;
+class Sound;
+class SoundBuffer;
+class SoundBufferRecorder;
+class SoundFileFactory;
+class SoundFileReader;
+class SoundFileWriter;
+class SoundRecorder;
+class SoundSource;
+class SoundStream;
+class Time;
+enum class SoundChannel;
+namespace Listener
 {
-////////////////////////////////////////////////////////////
-/// \ingroup window
-/// \brief Enumeration of the window styles
-///
-/// Note: On Unix systems, not specifying Close if
-/// Titlebar and/or Resize are specified will prevent
-/// the window manager from closing the window including
-/// using user-defined hotkeys.
-///
-////////////////////////////////////////////////////////////
-enum Type : unsigned int
+struct Cone;
+}
+namespace PlaybackDevice
 {
-    None     = 0,      //!< No border / title bar (this flag and all others are mutually exclusive)
-    Titlebar = 1 << 0, //!< Title bar + fixed border
-    Resize   = 1 << 1, //!< Title bar + resizable border + maximize button
-    Close    = 1 << 2, //!< Title bar + close button (see note)
-
-    Default = Titlebar | Resize | Close //!< Default window style
-};
-
-} // namespace Style
-
-////////////////////////////////////////////////////////////
-/// \ingroup window
-/// \brief Enumeration of the window states
-///
-////////////////////////////////////////////////////////////
-enum class State
-{
-    Windowed,  //!< Floating window
-    Fullscreen //!< Fullscreen window
-};
-
+enum class Notification;
+}
 } // namespace sf

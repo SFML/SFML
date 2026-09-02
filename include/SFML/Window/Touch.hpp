@@ -29,18 +29,16 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Export.hpp>
 
+#include <SFML/Window/Forward.hpp>
+
 #include <SFML/System/Vector2.hpp>
 
-
-namespace sf
-{
-class WindowBase;
 
 ////////////////////////////////////////////////////////////
 /// \brief Give access to the real-time state of the touches
 ///
 ////////////////////////////////////////////////////////////
-namespace Touch
+namespace sf::Touch
 {
 ////////////////////////////////////////////////////////////
 /// \brief Check if a touch event is currently down
@@ -91,9 +89,7 @@ namespace Touch
     "Use position member of sf::Event::TouchBegan, sf::Event::TouchEnded and "
     "sf::Event::TouchMoved")]] [[nodiscard]] SFML_WINDOW_API Vector2i
     getPosition(unsigned int finger, const WindowBase& relativeTo);
-} // namespace Touch
-
-} // namespace sf
+} // namespace sf::Touch
 
 
 ////////////////////////////////////////////////////////////

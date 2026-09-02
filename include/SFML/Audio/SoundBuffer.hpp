@@ -29,8 +29,10 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
 
+#include <SFML/Audio/Forward.hpp>
 #include <SFML/Audio/SoundChannel.hpp>
 
+#include <SFML/System/Forward.hpp>
 #include <SFML/System/Time.hpp>
 
 #include <filesystem>
@@ -43,10 +45,6 @@
 
 namespace sf
 {
-class Sound;
-class InputSoundFile;
-class InputStream;
-
 ////////////////////////////////////////////////////////////
 /// \brief Storage for audio samples defining a sound
 ///

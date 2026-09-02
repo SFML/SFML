@@ -30,6 +30,7 @@
 #include <SFML/Graphics/Export.hpp>
 
 #include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Forward.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 #include <SFML/Graphics/Transformable.hpp>
@@ -40,8 +41,6 @@
 
 namespace sf
 {
-class Texture;
-
 ////////////////////////////////////////////////////////////
 /// \brief Drawable representation of a texture, with its
 ///        own transformations, color, etc.

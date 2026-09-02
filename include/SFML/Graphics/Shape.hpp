@@ -31,6 +31,7 @@
 
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Forward.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
@@ -44,9 +45,6 @@
 
 namespace sf
 {
-class Texture;
-class RenderTarget;
-
 ////////////////////////////////////////////////////////////
 /// \brief Base class for textured shapes with outline
 ///

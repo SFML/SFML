@@ -24,42 +24,42 @@
 
 #pragma once
 
-
 namespace sf
 {
-namespace Style
-{
-////////////////////////////////////////////////////////////
-/// \ingroup window
-/// \brief Enumeration of the window styles
-///
-/// Note: On Unix systems, not specifying Close if
-/// Titlebar and/or Resize are specified will prevent
-/// the window manager from closing the window including
-/// using user-defined hotkeys.
-///
-////////////////////////////////////////////////////////////
-enum Type : unsigned int
-{
-    None     = 0,      //!< No border / title bar (this flag and all others are mutually exclusive)
-    Titlebar = 1 << 0, //!< Title bar + fixed border
-    Resize   = 1 << 1, //!< Title bar + resizable border + maximize button
-    Close    = 1 << 2, //!< Title bar + close button (see note)
-
-    Default = Titlebar | Resize | Close //!< Default window style
-};
-
-} // namespace Style
-
-////////////////////////////////////////////////////////////
-/// \ingroup window
-/// \brief Enumeration of the window states
-///
-////////////////////////////////////////////////////////////
-enum class State
-{
-    Windowed,  //!< Floating window
-    Fullscreen //!< Fullscreen window
-};
-
+class Angle;
+class CircleShape;
+class Color;
+class ConvexShape;
+class Drawable;
+class Font;
+class Image;
+class InputStream;
+class RectangleShape;
+class RenderTarget;
+class RenderTexture;
+class RenderWindow;
+class Shader;
+class Shape;
+class Sprite;
+class String;
+class Text;
+class Texture;
+class Transform;
+class Transformable;
+class VertexArray;
+class VertexBuffer;
+class View;
+class Window;
+enum class CoordinateType;
+enum class PrimitiveType;
+enum class StencilComparison;
+enum class StencilUpdateOperation;
+struct BlendMode;
+struct Glyph;
+struct RenderStates;
+struct StencilMode;
+struct StencilValue;
+struct Vertex;
+template <typename T>
+class Rect;
 } // namespace sf

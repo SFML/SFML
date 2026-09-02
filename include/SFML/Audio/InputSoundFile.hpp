@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
 
+#include <SFML/Audio/Forward.hpp>
 #include <SFML/Audio/SoundFileReader.hpp>
 
 #include <filesystem>
@@ -41,9 +42,6 @@
 
 namespace sf
 {
-class Time;
-class InputStream;
-
 ////////////////////////////////////////////////////////////
 /// \brief Provide read access to sound files
 ///
