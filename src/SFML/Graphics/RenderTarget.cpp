@@ -101,6 +101,10 @@ std::uint32_t factorToGlConstant(sf::BlendMode::Factor blendFactor)
         case sf::BlendMode::Factor::OneMinusSrcAlpha: return GL_ONE_MINUS_SRC_ALPHA;
         case sf::BlendMode::Factor::DstAlpha:         return GL_DST_ALPHA;
         case sf::BlendMode::Factor::OneMinusDstAlpha: return GL_ONE_MINUS_DST_ALPHA;
+        case sf::BlendMode::Factor::ConstColor: return GL_CONSTANT_COLOR;
+        case sf::BlendMode::Factor::OneMinusConstColor: return GL_ONE_MINUS_CONSTANT_COLOR;
+        case sf::BlendMode::Factor::ConstAlpha: return GL_CONSTANT_ALPHA;
+        case sf::BlendMode::Factor::OneMinusConstAlpha: return GL_ONE_MINUS_CONSTANT_ALPHA;
     }
     // clang-format on
 
@@ -711,6 +715,24 @@ void RenderTarget::applyBlendMode(const BlendMode& mode)
     }
     else
     {
+        if (mode.colorSrcFactor == BlendMode::Factor::ConstColor ||
+            mode.colorSrcFactor == BlendMode::Factor::OneMinusConstColor ||
+            mode.colorSrcFactor == BlendMode::Factor::ConstAlpha ||
+            mode.colorSrcFactor == BlendMode::Factor::OneMinusConstAlpha ||
+            mode.colorDstFactor == BlendMode::Factor::ConstColor ||
+            mode.colorDstFactor == BlendMode::Factor::OneMinusConstColor ||
+            mode.colorDstFactor == BlendMode::Factor::ConstAlpha ||
+            mode.colorDstFactor == BlendMode::Factor::OneMinusConstAlpha ||
+            mode.alphaSrcFactor == BlendMode::Factor::ConstColor ||
+            mode.alphaSrcFactor == BlendMode::Factor::OneMinusConstColor ||
+            mode.alphaSrcFactor == BlendMode::Factor::ConstAlpha ||
+            mode.alphaSrcFactor == BlendMode::Factor::OneMinusConstAlpha ||
+            mode.alphaDstFactor == BlendMode::Factor::ConstColor ||
+            mode.alphaDstFactor == BlendMode::Factor::OneMinusConstColor ||
+            mode.alphaDstFactor == BlendMode::Factor::ConstAlpha ||
+            mode.alphaDstFactor == BlendMode::Factor::OneMinusConstAlpha) {
+            glCheck(glBlendColor(mode.constColor.r, mode.constColor.g, mode.constColor.b, mode.constColor.a));
+        }
         glCheck(glBlendFunc(factorToGlConstant(mode.colorSrcFactor), factorToGlConstant(mode.colorDstFactor)));
     }
 
