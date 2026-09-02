@@ -7,6 +7,7 @@ val SFML_STATIC by extra(project.properties["SFML_STATIC"] as? String ?: "OFF")
 
 plugins {
     id("com.android.application")
+    id("org.jetbrains.kotlin.android")
 }
 
 android {
@@ -39,6 +40,9 @@ android {
         cmake {
             path("src/main/jni/CMakeLists.txt")
         }
+    }
+    kotlinOptions {
+        jvmTarget = "1.8"
     }
 }
 

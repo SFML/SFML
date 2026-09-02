@@ -93,19 +93,48 @@ int main(int argc, char* argv[])
     image.setOrigin(sf::Vector2f(texture.getSize()) / 2.f);
 
     const sf::Font font("tuffy.ttf");
+    const sf::Font unifont("unifont-17.0.04.otf");
+
 
     sf::Text text(font, "Tap anywhere to move the logo.", 64);
     text.setFillColor(sf::Color::Black);
     text.setPosition({10, 10});
 
-    sf::View view = window.getDefaultView();
-
+    sf::View  view       = window.getDefaultView();
     sf::Color background = sf::Color::White;
 
     // We shouldn't try drawing to the screen while in background
     // so we'll have to track that. You can do minor background
     // work, but keep battery life in mind.
     bool active = true;
+
+    // Text input UI
+    sf::RectangleShape inputBox;
+    inputBox.setPosition({40.f, 120.f});
+    inputBox.setSize({screen.size.x - 80.f, 100.f});
+    inputBox.setFillColor(sf::Color(245, 245, 245));
+    inputBox.setOutlineThickness(4.f);
+    inputBox.setOutlineColor(sf::Color::Black);
+
+    sf::String inputString;
+
+    sf::Text inputText(unifont, "", 48);
+    inputText.setFillColor(sf::Color::Black);
+    inputText.setPosition({60.f, 135.f});
+
+    sf::Text placeholder(font, "Tap here to type...", 48);
+    placeholder.setFillColor(sf::Color(130, 130, 130));
+    placeholder.setPosition({60.f, 135.f});
+
+    bool inputFocused = false;
+
+    auto updateInputBox = [&]()
+    {
+        inputBox.setOutlineColor(inputFocused ? sf::Color::Blue : sf::Color::Black);
+        inputText.setString(inputString);
+    };
+
+    updateInputBox();
 
     while (window.isOpen())
     {
@@ -117,13 +146,14 @@ int main(int argc, char* argv[])
             {
                 window.close();
             }
-
             else if (const auto* resized = event->getIf<sf::Event::Resized>())
             {
                 const auto size = sf::Vector2f(resized->size);
                 view.setSize(size);
                 view.setCenter(size / 2.f);
                 window.setView(view);
+
+                inputBox.setSize({size.x - 80.f, 100.f});
             }
             else if (event->is<sf::Event::FocusLost>())
             {
@@ -147,11 +177,54 @@ int main(int argc, char* argv[])
             {
                 if (touchBegan->finger == 0)
                 {
-                    image.setPosition(sf::Vector2f(touchBegan->position));
+                    const sf::Vector2f touchPos(touchBegan->position);
+
+                    if (inputBox.getGlobalBounds().contains(touchPos))
+                    {
+                        inputFocused = true;
+                        sf::Keyboard::setVirtualKeyboardVisible(true);
+                    }
+                    else
+                    {
+                        inputFocused = false;
+                        sf::Keyboard::setVirtualKeyboardVisible(false);
+
+                        // Keep original tap-to-move logic
+                        image.setPosition(touchPos);
 #if defined(USE_JNI)
-                    vibrate(sf::milliseconds(10));
+                        vibrate(sf::milliseconds(10));
 #endif
+                    }
+
+                    updateInputBox();
                 }
+            }
+            else if (const auto* textEntered = event->getIf<sf::Event::TextEntered>())
+            {
+                if (!inputFocused)
+                    continue;
+
+                const char32_t unicode = textEntered->unicode;
+
+                // Backspace
+                if (unicode == 8)
+                {
+                    if (!inputString.isEmpty())
+                        inputString.erase(inputString.getSize() - 1, 1);
+                }
+                // Enter closes input
+                else if (unicode == 13 || unicode == '\n' || unicode == '\r')
+                {
+                    inputFocused = false;
+                    sf::Keyboard::setVirtualKeyboardVisible(false);
+                }
+                // Printable chars
+                else if (unicode >= 32)
+                {
+                    inputString += unicode;
+                }
+
+                updateInputBox();
             }
         }
 
@@ -160,6 +233,13 @@ int main(int argc, char* argv[])
             window.clear(background);
             window.draw(image);
             window.draw(text);
+            window.draw(inputBox);
+
+            if (inputString.isEmpty())
+                window.draw(placeholder);
+            else
+                window.draw(inputText);
+
             window.display();
         }
         else
