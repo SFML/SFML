@@ -543,8 +543,8 @@ Glyph Font::loadGlyph(std::uint32_t id, unsigned int characterSize, bool bold, f
     if (!setCurrentSize(characterSize))
         return glyph;
 
-    // Load the glyph corresponding to the code point
-    FT_Int32 flags = FT_LOAD_TARGET_NORMAL;
+    // Load the glyph corresponding to the code point, include colored glyphs like emojis (COLR, CBDT)
+    FT_Int32 flags = FT_LOAD_TARGET_NORMAL | FT_LOAD_COLOR;
     if (outlineThickness != 0)
         flags |= FT_LOAD_NO_BITMAP;
     if (FT_Load_Glyph(face, id, flags) != 0)
@@ -655,6 +655,37 @@ Glyph Font::loadGlyph(std::uint32_t id, unsigned int characterSize, bool bold, f
                     // The color channels remain white, just fill the alpha channel
                     const std::size_t index = x + y * size.x;
                     m_pixelBuffer[index * 4 + 3] = ((pixels[(x - padding) / 8]) & (1 << (7 - ((x - padding) % 8)))) ? 255 : 0;
+                }
+                pixels += bitmap.pitch;
+            }
+        }
+        else if (bitmap.pixel_mode == FT_PIXEL_MODE_BGRA)
+        {
+            // Convert 32-bit BGRA color values (premultiplied by alpha) to RGBA (non-premultiplied) for use with SFML's alpha blending
+            for (unsigned int y = padding; y < size.y - padding; ++y)
+            {
+                for (unsigned int x = padding; x < size.x - padding; ++x)
+                {
+                    const std::size_t pixelIndex = (x - padding) * 4;
+
+                    std::uint8_t       b     = pixels[pixelIndex + 0];
+                    std::uint8_t       g     = pixels[pixelIndex + 1];
+                    std::uint8_t       r     = pixels[pixelIndex + 2];
+                    const std::uint8_t alpha = pixels[pixelIndex + 3];
+
+                    if (alpha != 0 && alpha != 255)
+                    {
+                        r = static_cast<std::uint8_t>((static_cast<unsigned int>(r) * 255u + alpha / 2u) / alpha);
+                        g = static_cast<std::uint8_t>((static_cast<unsigned int>(g) * 255u + alpha / 2u) / alpha);
+                        b = static_cast<std::uint8_t>((static_cast<unsigned int>(b) * 255u + alpha / 2u) / alpha);
+                    }
+
+                    const std::size_t index = x + y * size.x;
+
+                    m_pixelBuffer[index * 4 + 0] = r;
+                    m_pixelBuffer[index * 4 + 1] = g;
+                    m_pixelBuffer[index * 4 + 2] = b;
+                    m_pixelBuffer[index * 4 + 3] = alpha;
                 }
                 pixels += bitmap.pitch;
             }

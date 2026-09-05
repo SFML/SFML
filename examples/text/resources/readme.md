@@ -1,6 +1,7 @@
 Noto fonts are provided under the Open Font License.
 
 List of full font files:
+- NotoColorEmoji-Regular.ttf
 - NotoNaskhArabic-Regular.ttf
 - NotoSerif-Regular.ttf
 - NotoSerifArmenian-Regular.ttf
@@ -20,11 +21,12 @@ List of full font files:
 In order to save space, large font files were subsetted to the data required to run the example using pyftsubset.
 
 ```
-pip install fonttools uharfbuzz
+pip install fonttools uharfbuzz lxml
 pyftsubset <font file> --text-file=../Text.cpp --verbose --harfbuzz-repacker --legacy-kern --passthrough-tables --layout-features='*'
 ```
 
 List of subsetted font files:
+- NotoColorEmoji-Regular.subset.ttf
 - NotoSerifJP-Regular.subset.ttf
 - NotoSerifKR-Regular.subset.ttf
 - NotoSerifTC-Regular.subset.ttf

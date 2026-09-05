@@ -635,7 +635,7 @@ struct DemoText
 ////////////////////////////////////////////////////////////
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode({windowWidth, 800u}), "SFML Text", sf::Style::Titlebar | sf::Style::Close);
+    sf::RenderWindow window(sf::VideoMode({windowWidth, 825u}), "SFML Text", sf::Style::Titlebar | sf::Style::Close);
     window.setVerticalSyncEnabled(true);
 
     const sf::Font font(resourcesDir() / "tuffy.ttf");
@@ -653,26 +653,27 @@ int main()
     demoTexts.reserve(64);
 
     // clang-format off
-    demoTexts.emplace_back("NotoSerif-Regular.ttf",           "Hello. How are you? I hope you're having a great day!");
-    demoTexts.emplace_back("NotoSerifArmenian-Regular.ttf",   "Բարև։ Ինչպե՞ս ես։ Հուսով եմ՝ լավ օր ես անցկացնում։");
-    demoTexts.emplace_back("NotoSerifGeorgian-Regular.ttf",   "გამარჯობა. როგორ ხარ? იმედია, კარგად გაატარე დღე!");
-    demoTexts.emplace_back("NotoNaskhArabic-Regular.ttf",     "مرحباً، كيف حالك؟ أتمنى أن يكون يومك سعيداً!");
-    demoTexts.emplace_back("NotoSerif-Regular.ttf",           "Hallo. Wie geht es dir? Ich hoffe, du hast einen schönen Tag!");
-    demoTexts.emplace_back("NotoSerifDevanagari-Regular.ttf", "नमस्ते। आप कैसे हैं? आशा है आपका दिन अच्छा गुजर रहा होगा!");
-    demoTexts.emplace_back("NotoSerifHebrew-Regular.ttf",     "שלום. מה שלומך? מקווה שיש לך יום נהדר!");
-    demoTexts.emplace_back("NotoSerifJP-Regular.subset.ttf",  "こんにちは。お元気ですか？素敵な一日をお過ごしください！");
-    demoTexts.emplace_back("NotoSerif-Regular.ttf",           "Γεια σας. Τι κάνετε; Ελπίζω να έχετε μια υπέροχη μέρα!");
-    demoTexts.emplace_back("NotoSerifKhmer-Regular.ttf",      "ជំរាបសួរ។ សុខសប្បាយជាទេ? សង្ឃឹមថាអ្នកមានថ្ងៃដ៏អស្ចារ្យ!");
-    demoTexts.emplace_back("NotoSerif-Regular.ttf",           "Hola. ¿Cómo estás? ¡Que tengas un buen día!");
-    demoTexts.emplace_back("NotoSerifKR-Regular.subset.ttf",  "안녕하세요. 잘 지내시죠? 좋은 하루 보내시길 바랍니다!");
-    demoTexts.emplace_back("NotoSerifMyanmar-Regular.ttf",    "မင်္ဂလာပါ။ နေကောင်းလား? ကောင်းသောနေ့ကို ပိုင်ဆိုင်နိုင်မည်ဟု မျှော်လင့်ပါသည်။");
-    demoTexts.emplace_back("NotoSerifTamil-Regular.ttf",      "வணக்கம். எப்படி இருக்கீங்க? இந்த நாள் உங்களுக்கு ரொம்ப நல்லா அமைய வாழ்த்துக்கள்!");
-    demoTexts.emplace_back("NotoSerif-Regular.ttf",           "Здравствуйте. Как поживаете? Надеюсь, у вас отличный день!");
-    demoTexts.emplace_back("NotoSerifTC-Regular.subset.ttf",  "你好。你好嗎？祝你今天過得愉快！");
-    demoTexts.emplace_back("NotoSerifThai-Regular.ttf",       "สวัสดี สบายดีไหม หวังว่าคุณคงมีวันดีๆ นะ!");
-    demoTexts.emplace_back("NotoSerifTibetan-Regular.ttf",    "བདེ་མོ། ཁྱོད་བདེ་མོ? ཁྱེད་རང་ལ་ཉིན་མོ་ཡག་པོ་ཞིག་ཡོང་བའི་རེ་བ་ཡོད།");
-    demoTexts.emplace_back("NotoSerif-Regular.ttf",           "Bonjour. Comment allez-vous ? J'espère que vous passez une bonne journée !");
-    demoTexts.emplace_back("NotoSerifEthiopic-Regular.ttf",   "ሀሎ። ስላም፧ ጥሩ ቀን እንዳለህ ተስፋ አድርግ!");
+    demoTexts.emplace_back("NotoSerif-Regular.ttf",             "Hello. How are you? I hope you're having a great day!");
+    demoTexts.emplace_back("NotoSerifArmenian-Regular.ttf",     "Բարև։ Ինչպե՞ս ես։ Հուսով եմ՝ լավ օր ես անցկացնում։");
+    demoTexts.emplace_back("NotoSerifGeorgian-Regular.ttf",     "გამარჯობა. როგორ ხარ? იმედია, კარგად გაატარე დღე!");
+    demoTexts.emplace_back("NotoNaskhArabic-Regular.ttf",       "مرحباً، كيف حالك؟ أتمنى أن يكون يومك سعيداً!");
+    demoTexts.emplace_back("NotoSerif-Regular.ttf",             "Hallo. Wie geht es dir? Ich hoffe, du hast einen schönen Tag!");
+    demoTexts.emplace_back("NotoSerifDevanagari-Regular.ttf",   "नमस्ते। आप कैसे हैं? आशा है आपका दिन अच्छा गुजर रहा होगा!");
+    demoTexts.emplace_back("NotoSerifHebrew-Regular.ttf",       "שלום. מה שלומך? מקווה שיש לך יום נהדר!");
+    demoTexts.emplace_back("NotoSerifJP-Regular.subset.ttf",    "こんにちは。お元気ですか？素敵な一日をお過ごしください！");
+    demoTexts.emplace_back("NotoSerif-Regular.ttf",             "Γεια σας. Τι κάνετε; Ελπίζω να έχετε μια υπέροχη μέρα!");
+    demoTexts.emplace_back("NotoSerifKhmer-Regular.ttf",        "ជំរាបសួរ។ សុខសប្បាយជាទេ? សង្ឃឹមថាអ្នកមានថ្ងៃដ៏អស្ចារ្យ!");
+    demoTexts.emplace_back("NotoSerif-Regular.ttf",             "Hola. ¿Cómo estás? ¡Que tengas un buen día!");
+    demoTexts.emplace_back("NotoSerifKR-Regular.subset.ttf",    "안녕하세요. 잘 지내시죠? 좋은 하루 보내시길 바랍니다!");
+    demoTexts.emplace_back("NotoSerifMyanmar-Regular.ttf",      "မင်္ဂလာပါ။ နေကောင်းလား? ကောင်းသောနေ့ကို ပိုင်ဆိုင်နိုင်မည်ဟု မျှော်လင့်ပါသည်။");
+    demoTexts.emplace_back("NotoSerifTamil-Regular.ttf",        "வணக்கம். எப்படி இருக்கீங்க? இந்த நாள் உங்களுக்கு ரொம்ப நல்லா அமைய வாழ்த்துக்கள்!");
+    demoTexts.emplace_back("NotoSerif-Regular.ttf",             "Здравствуйте. Как поживаете? Надеюсь, у вас отличный день!");
+    demoTexts.emplace_back("NotoSerifTC-Regular.subset.ttf",    "你好。你好嗎？祝你今天過得愉快！");
+    demoTexts.emplace_back("NotoSerifThai-Regular.ttf",         "สวัสดี สบายดีไหม หวังว่าคุณคงมีวันดีๆ นะ!");
+    demoTexts.emplace_back("NotoSerifTibetan-Regular.ttf",      "བདེ་མོ། ཁྱོད་བདེ་མོ? ཁྱེད་རང་ལ་ཉིན་མོ་ཡག་པོ་ཞིག་ཡོང་བའི་རེ་བ་ཡོད།");
+    demoTexts.emplace_back("NotoSerif-Regular.ttf",             "Bonjour. Comment allez-vous ? J'espère que vous passez une bonne journée !");
+    demoTexts.emplace_back("NotoSerifEthiopic-Regular.ttf",     "ሀሎ። ስላም፧ ጥሩ ቀን እንዳለህ ተስፋ አድርግ!");
+    demoTexts.emplace_back("NotoColorEmoji-Regular.subset.ttf", "🙂🙁♠️♣️♥️♦️🥂🍾🎉✅❌");
 
     auto& ligatureText            = demoTexts.emplace_back("NotoSerif-Regular.ttf",          "ligatures:\nflowers\nmuffins\nwaffles\nstuff");
     auto& normalText              = demoTexts.emplace_back("NotoSerif-Regular.ttf",          "Normal/Bold/Italic");
