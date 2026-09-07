@@ -227,6 +227,7 @@ elseif(SFML_OS_IOS)
         ${SRCROOT}/iOS/InputImpl.mm
         ${SRCROOT}/iOS/JoystickImpl.mm
         ${SRCROOT}/iOS/JoystickImpl.hpp
+        ${SRCROOT}/iOS/JoystickRegistryImpl.hpp
         ${SRCROOT}/iOS/SensorImpl.mm
         ${SRCROOT}/iOS/SensorImpl.hpp
         ${SRCROOT}/iOS/VideoModeImpl.mm
@@ -242,6 +243,7 @@ elseif(SFML_OS_IOS)
         ${SRCROOT}/iOS/SFMain.hpp
         ${SRCROOT}/iOS/SFMain.mm
     )
+    set_property(SOURCE ${SRCROOT}/iOS/JoystickImpl.mm APPEND PROPERTY COMPILE_OPTIONS -fobjc-arc)
     source_group("ios" FILES ${PLATFORM_SRC})
 elseif(SFML_OS_ANDROID)
     set(PLATFORM_SRC
@@ -336,7 +338,7 @@ elseif(SFML_OS_FREEBSD)
 elseif(SFML_OS_MACOS)
     target_link_libraries(sfml-window PRIVATE "-framework Foundation" "-framework AppKit" "-framework IOKit" "-framework Carbon")
 elseif(SFML_OS_IOS)
-    target_link_libraries(sfml-window PUBLIC "-framework Foundation" "-framework UIKit" "-framework CoreGraphics" "-framework QuartzCore" "-framework CoreMotion")
+    target_link_libraries(sfml-window PUBLIC "-framework Foundation" "-framework UIKit" "-framework CoreGraphics" "-framework QuartzCore" "-framework CoreMotion" "-framework GameController")
 elseif(SFML_OS_ANDROID)
     target_link_libraries(sfml-window PRIVATE android)
 endif()
