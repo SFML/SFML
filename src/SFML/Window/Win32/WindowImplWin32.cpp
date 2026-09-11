@@ -1518,6 +1518,58 @@ LRESULT CALLBACK WindowImplWin32::globalOnEvent(HWND handle, UINT message, WPARA
 
         if (window->m_callback)
             return CallWindowProcW(reinterpret_cast<WNDPROC>(window->m_callback), handle, message, wParam, lParam);
+
+        // Defer the handling of the title bar click until the mouse has actually moved
+        if ((message == WM_NCLBUTTONDOWN) && (wParam == HTCAPTION))
+        {
+            window->m_captionPressed       = true;
+            window->m_captionPressPosition = lParam;
+            return 0;
+        }
+
+        if (window->m_captionPressed &&
+            ((message == WM_MOUSEMOVE) || ((message == WM_NCMOUSEMOVE) && (lParam != window->m_captionPressPosition))))
+        {
+            window->m_captionPressed = false;
+
+            // Ignore the click if the button has been released somewhere else in the meantime
+            if (GetKeyState(VK_LBUTTON) < 0)
+            {
+                window->beginModalLoop();
+                DefWindowProcW(handle, WM_NCLBUTTONDOWN, HTCAPTION, window->m_captionPressPosition);
+                window->endModalLoop();
+            }
+        }
+
+        if ((message == WM_NCLBUTTONUP) || (message == WM_LBUTTONUP))
+            window->m_captionPressed = false;
+
+        // Clicking on the borders or the buttons of the window may also enter a modal loop
+        // before WM_ENTERSIZEMOVE is sent (e.g. while the mouse button is held without moving)
+        if (message == WM_NCLBUTTONDOWN)
+        {
+            window->beginModalLoop();
+            const LRESULT result = DefWindowProcW(handle, message, wParam, lParam);
+            window->endModalLoop();
+            return result;
+        }
+
+        // Defer opening the system menu when right-clicking on the title bar until after the
+        // button is released
+        if ((message == WM_NCRBUTTONDOWN) && ((wParam == HTCAPTION) || (wParam == HTSYSMENU)))
+        {
+            window->m_captionRightPressed = true;
+            return 0;
+        }
+
+        if ((message == WM_NCRBUTTONUP) || (message == WM_RBUTTONUP))
+        {
+            const bool pressed            = window->m_captionRightPressed;
+            window->m_captionRightPressed = false;
+
+            if (pressed && (message == WM_NCRBUTTONUP) && ((wParam == HTCAPTION) || (wParam == HTSYSMENU)))
+                return DefWindowProcW(handle, WM_CONTEXTMENU, reinterpret_cast<WPARAM>(handle), lParam);
+        }
     }
 
     // We don't forward the WM_CLOSE message to prevent the OS from automatically destroying the window
