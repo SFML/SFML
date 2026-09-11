@@ -222,6 +222,9 @@ private:
     bool     m_resizing{};             //!< Is the window being resized?
     bool     m_modalLoop{};            //!< Is the window in a modal loop?
     bool     m_paintYield{};           //!< Should the next WM_PAINT hand control back to the application?
+    bool     m_captionPressed{};       //!< Is a click on the title bar pending?
+    LPARAM   m_captionPressPosition{}; //!< Position of the pending click on the title bar
+    bool     m_captionRightPressed{};  //!< Is a right click on the title bar pending?
     char16_t m_surrogate{}; //!< First half of the surrogate pair, in case we're receiving a Unicode character in two events
     bool m_mouseInside{};   //!< Mouse is inside the window?
     bool m_fullscreen{};    //!< Is the window fullscreen?
