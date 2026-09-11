@@ -133,6 +133,88 @@ void initRawMouse()
     if (RegisterRawInputDevices(&rawMouse, 1, sizeof(rawMouse)) != TRUE)
         sf::err() << "Failed to initialize raw mouse input" << std::endl;
 }
+
+// While a window is being moved or resized, or while its system menu is open, Windows runs
+// its own modal message loop inside of DispatchMessage, which doesn't return until the user
+// is done with the interaction. In order to not block the application during that time,
+// messages are dispatched from a separate fiber, which can hand control back to the caller
+// of processEvents() from within such a modal loop and resume it on the next call.
+struct MessageFiber
+{
+    ~MessageFiber()
+    {
+        if (fiber)
+            DeleteFiber(fiber);
+
+        if (convertedThread)
+            ConvertFiberToThread();
+    }
+
+    void* fiber{};           // Fiber which dispatches the messages
+    void* mainFiber{};       // Fiber which runs the application's code
+    HWND  modalWindow{};     // Window whose modal loop is currently suspended
+    bool  onMessageFiber{};  // Is the message fiber the one currently running?
+    bool  convertedThread{}; // Was the thread converted to a fiber by us?
+    bool  failed{};          // Did the creation of the fiber fail?
+};
+
+thread_local MessageFiber messageFiber;
+
+// Unique identifier per window for the modal loop timer
+const UINT_PTR modalLoopTimerId = 0x53464D4C; // SFML in ASCII
+
+void dispatchMessages()
+{
+    MSG message;
+    while (PeekMessageW(&message, nullptr, 0, 0, PM_REMOVE))
+    {
+        TranslateMessage(&message);
+        DispatchMessageW(&message);
+    }
+}
+
+void CALLBACK messageFiberProc(void* /* parameter */)
+{
+    for (;;)
+    {
+        messageFiber.onMessageFiber = true;
+        dispatchMessages();
+        messageFiber.onMessageFiber = false;
+        SwitchToFiber(messageFiber.mainFiber);
+    }
+}
+
+// Get or create the message fiber of the current thread
+void* getOrCreateMessageFiber()
+{
+    if (!messageFiber.fiber && !messageFiber.failed)
+    {
+        // A thread has to be a fiber itself before it can switch to another one, so we convert it and
+        // remember the fiber we get. We don't use IsThreadAFiber or GetCurrentFiber, as they can't be
+        // used with every MinGW version. If the thread already is a fiber, i.e. the application manages
+        // fibers on its own, the conversion fails and we keep dispatching the messages inline.
+        messageFiber.mainFiber       = ConvertThreadToFiberEx(nullptr, FIBER_FLAG_FLOAT_SWITCH);
+        messageFiber.convertedThread = messageFiber.mainFiber != nullptr;
+        messageFiber.failed          = !messageFiber.convertedThread;
+
+        if (!messageFiber.failed)
+        {
+            messageFiber.fiber  = CreateFiberEx(0, 0, FIBER_FLAG_FLOAT_SWITCH, &messageFiberProc, nullptr);
+            messageFiber.failed = messageFiber.fiber == nullptr;
+        }
+
+        if (messageFiber.failed)
+            sf::err() << "Failed to create message fiber, the main loop will block while resizing or moving a window"
+                      << std::endl;
+    }
+
+    return messageFiber.fiber;
+}
+
+bool isOnMessageFiber()
+{
+    return messageFiber.onMessageFiber;
+}
 } // namespace
 
 namespace sf::priv
@@ -260,6 +342,17 @@ WindowImplWin32::~WindowImplWin32()
 {
     // TODO should we restore the cursor shape and visibility?
 
+    // If the window is in a suspended modal loop, end it before the window goes away
+    if (m_handle && messageFiber.modalWindow == m_handle && !isOnMessageFiber())
+    {
+        endModalLoop();
+        SendMessageW(m_handle, WM_CANCELMODE, 0, 0);
+        PostMessageW(m_handle, WM_NULL, 0, 0);
+
+        while (messageFiber.modalWindow == m_handle)
+            SwitchToFiber(messageFiber.fiber);
+    }
+
     // Destroy the custom icon, if any
     if (m_icon)
         DestroyIcon(m_icon);
@@ -305,14 +398,78 @@ WindowHandle WindowImplWin32::getNativeHandle() const
 void WindowImplWin32::processEvents()
 {
     // We process the window events only if we own it
-    if (!m_callback)
+    if (m_callback)
+        return;
+
+    // Dispatch the messages from the message fiber, unless we're already running on it
+    if (void* fiber = getOrCreateMessageFiber(); fiber && !isOnMessageFiber())
     {
-        MSG message;
-        while (PeekMessageW(&message, nullptr, 0, 0, PM_REMOVE))
-        {
-            TranslateMessage(&message);
-            DispatchMessageW(&message);
-        }
+        SwitchToFiber(fiber);
+    }
+    else
+    {
+        dispatchMessages();
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplWin32::beginModalLoop()
+{
+    // We don't dispatch the messages of windows we don't own
+    if (m_callback)
+        return;
+
+    m_modalLoop = true;
+
+    // Get control back as soon as the modal loop is idle, i.e. once it has processed
+    // all pending input, and periodically in case the modal loop doesn't paint
+    m_paintYield = true;
+    InvalidateRect(m_handle, nullptr, FALSE);
+    SetTimer(m_handle, modalLoopTimerId, USER_TIMER_MINIMUM, nullptr);
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplWin32::endModalLoop()
+{
+    m_modalLoop  = false;
+    m_paintYield = false;
+    KillTimer(m_handle, modalLoopTimerId);
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplWin32::leaveModalLoop()
+{
+    if (!m_modalLoop || !isOnMessageFiber())
+        return;
+
+    // Let the application know about size changes while resizing
+    if (m_resizing && (m_lastSize != getSize()))
+    {
+        // Update the last handled size
+        m_lastSize = getSize();
+
+        // Push a resize event
+        pushEvent(Event::Resized{m_lastSize});
+    }
+
+    // Hand control back to the application
+    m_paintYield                = false;
+    messageFiber.modalWindow    = m_handle;
+    messageFiber.onMessageFiber = false;
+    SwitchToFiber(messageFiber.mainFiber);
+    messageFiber.onMessageFiber = true;
+    messageFiber.modalWindow    = nullptr;
+
+    // Get control back as soon as the modal loop runs out of messages, instead of letting it wait for
+    // the next one. WM_PAINT is only generated once no other messages are pending, so every call to
+    // processEvents() either processes one step of the modal loop or returns once there's nothing to do.
+    if (m_modalLoop)
+    {
+        m_paintYield = true;
+        InvalidateRect(m_handle, nullptr, FALSE);
     }
 }
 
@@ -780,6 +937,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         {
             m_resizing = true;
             grabCursor(false);
+            beginModalLoop();
             break;
         }
 
@@ -787,6 +945,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         case WM_EXITSIZEMOVE:
         {
             m_resizing = false;
+            endModalLoop();
 
             // Ignore cases where the window has only been moved
             if (m_lastSize != getSize())
@@ -800,6 +959,39 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
 
             // Restore/update cursor grabbing
             grabCursor(m_cursorGrabbed);
+            break;
+        }
+
+        // Start of a menu modal loop, e.g. the system menu
+        case WM_ENTERMENULOOP:
+        {
+            beginModalLoop();
+            break;
+        }
+
+        // End of a menu modal loop
+        case WM_EXITMENULOOP:
+        {
+            endModalLoop();
+            break;
+        }
+
+        // The modal loop is idle
+        case WM_PAINT:
+        {
+            if (m_paintYield && m_modalLoop)
+            {
+                ValidateRect(m_handle, nullptr);
+                leaveModalLoop();
+            }
+            break;
+        }
+
+        // Fallback, in case the modal loop doesn't paint
+        case WM_TIMER:
+        {
+            if (wParam == modalLoopTimerId)
+                leaveModalLoop();
             break;
         }
 
@@ -1147,6 +1339,10 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // When a maximum size is specified and the window is snapped to the edge of the display the window size is subtly too big
         case WM_WINDOWPOSCHANGED:
         {
+            // The window was moved or resized by the move/size modal loop, render a frame for every step
+            if (m_resizing)
+                leaveModalLoop();
+
             WINDOWPOS& pos = *reinterpret_cast<PWINDOWPOS>(lParam);
             if (pos.flags & SWP_NOSIZE)
                 break;
