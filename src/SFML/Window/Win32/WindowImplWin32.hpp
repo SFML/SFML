@@ -145,6 +145,26 @@ private:
     void grabCursor(bool grabbed);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Start handing control back to the application during a modal loop
+    ///
+    ////////////////////////////////////////////////////////////
+    void beginModalLoop();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Stop handing control back to the application after a modal loop
+    ///
+    ////////////////////////////////////////////////////////////
+    void endModalLoop();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Hand control back to the application from within a modal loop
+    ///
+    /// The modal loop resumes on the next call to processEvents().
+    ///
+    ////////////////////////////////////////////////////////////
+    void leaveModalLoop();
+
+    ////////////////////////////////////////////////////////////
     /// \brief Convert content size to window size including window chrome
     ///
     /// \param size Size to convert
@@ -200,6 +220,11 @@ private:
     bool     m_keyRepeatEnabled{true}; //!< Automatic key-repeat state for keydown events
     Vector2u m_lastSize;               //!< The last handled size of the window
     bool     m_resizing{};             //!< Is the window being resized?
+    bool     m_modalLoop{};            //!< Is the window in a modal loop?
+    bool     m_paintYield{};           //!< Should the next WM_PAINT hand control back to the application?
+    bool     m_captionPressed{};       //!< Is a click on the title bar pending?
+    LPARAM   m_captionPressPosition{}; //!< Position of the pending click on the title bar
+    bool     m_captionRightPressed{};  //!< Is a right click on the title bar pending?
     char16_t m_surrogate{}; //!< First half of the surrogate pair, in case we're receiving a Unicode character in two events
     bool m_mouseInside{};   //!< Mouse is inside the window?
     bool m_fullscreen{};    //!< Is the window fullscreen?
