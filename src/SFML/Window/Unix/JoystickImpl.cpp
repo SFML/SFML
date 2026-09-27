@@ -29,6 +29,7 @@
 
 #include <SFML/System/Err.hpp>
 
+#include <algorithm>
 #include <fcntl.h>
 #include <libudev.h>
 #include <linux/joystick.h>
@@ -384,6 +385,30 @@ unsigned int getJoystickProductId(unsigned int index)
     return 0;
 }
 
+// Get the axis an evdev axis code is reported as, if any. Gamepads without a second stick on Rx/Ry
+// (e.g., the Android HID layout) put their triggers on the accelerator and brake.
+std::optional<sf::Joystick::Axis> toAxis(char absCode, bool hasRxRy)
+{
+    switch (absCode)
+    {
+            // clang-format off
+        case ABS_X:        return sf::Joystick::Axis::X;
+        case ABS_Y:        return sf::Joystick::Axis::Y;
+        case ABS_Z:
+        case ABS_THROTTLE: return sf::Joystick::Axis::Z;
+        case ABS_RZ:
+        case ABS_RUDDER:   return sf::Joystick::Axis::R;
+        case ABS_RX:       return sf::Joystick::Axis::U;
+        case ABS_RY:       return sf::Joystick::Axis::V;
+        case ABS_GAS:      return hasRxRy ? std::nullopt : std::optional(sf::Joystick::Axis::U);
+        case ABS_BRAKE:    return hasRxRy ? std::nullopt : std::optional(sf::Joystick::Axis::V);
+        case ABS_HAT0X:    return sf::Joystick::Axis::PovX;
+        case ABS_HAT0Y:    return sf::Joystick::Axis::PovY;
+        default:           return std::nullopt;
+            // clang-format on
+    }
+}
+
 // Get the joystick name
 std::string getJoystickName(unsigned int index)
 {
@@ -519,7 +544,17 @@ bool JoystickImpl::open(unsigned int index)
         if (m_file >= 0)
         {
             // Retrieve the axes mapping
-            ioctl(m_file, JSIOCGAXMAP, m_mapping.data());
+            std::array<char, ABS_CNT> mapping{};
+            ioctl(m_file, JSIOCGAXMAP, mapping.data());
+            char axesCount = 0;
+            ioctl(m_file, JSIOCGAXES, &axesCount);
+
+            const bool hasRxRy = std::any_of(mapping.begin(),
+                                             mapping.begin() + axesCount,
+                                             [](char absCode) { return absCode == ABS_RX || absCode == ABS_RY; });
+            m_axes             = {};
+            for (std::size_t i = 0; i < static_cast<std::size_t>(axesCount); ++i)
+                m_axes[i] = toAxis(mapping[i], hasRxRy);
 
             // Get info
             m_identification.name = getJoystickName(index);
@@ -567,27 +602,9 @@ JoystickCaps JoystickImpl::getCapabilities() const
         caps.buttonCount = Joystick::ButtonCount;
 
     // Get the supported axes
-    char axesCount = 0;
-    ioctl(m_file, JSIOCGAXES, &axesCount);
-    for (int i = 0; i < axesCount; ++i)
-    {
-        switch (m_mapping[static_cast<std::size_t>(i)])
-        {
-                // clang-format off
-            case ABS_X:        caps.axes[Joystick::Axis::X]    = true; break;
-            case ABS_Y:        caps.axes[Joystick::Axis::Y]    = true; break;
-            case ABS_Z:
-            case ABS_THROTTLE: caps.axes[Joystick::Axis::Z]    = true; break;
-            case ABS_RZ:
-            case ABS_RUDDER:   caps.axes[Joystick::Axis::R]    = true; break;
-            case ABS_RX:       caps.axes[Joystick::Axis::U]    = true; break;
-            case ABS_RY:       caps.axes[Joystick::Axis::V]    = true; break;
-            case ABS_HAT0X:    caps.axes[Joystick::Axis::PovX] = true; break;
-            case ABS_HAT0Y:    caps.axes[Joystick::Axis::PovY] = true; break;
-            default:                                                   break;
-                // clang-format on
-        }
-    }
+    for (const auto& axis : m_axes)
+        if (axis)
+            caps.axes[*axis] = true;
 
     return caps;
 }
@@ -621,40 +638,9 @@ JoystickState JoystickImpl::JoystickImpl::update()
             {
                 const float value = joyState.value * 100.f / 32767.f;
 
-                if (joyState.number < m_mapping.size())
-                {
-                    switch (m_mapping[joyState.number])
-                    {
-                        case ABS_X:
-                            m_state.axes[Joystick::Axis::X] = value;
-                            break;
-                        case ABS_Y:
-                            m_state.axes[Joystick::Axis::Y] = value;
-                            break;
-                        case ABS_Z:
-                        case ABS_THROTTLE:
-                            m_state.axes[Joystick::Axis::Z] = value;
-                            break;
-                        case ABS_RZ:
-                        case ABS_RUDDER:
-                            m_state.axes[Joystick::Axis::R] = value;
-                            break;
-                        case ABS_RX:
-                            m_state.axes[Joystick::Axis::U] = value;
-                            break;
-                        case ABS_RY:
-                            m_state.axes[Joystick::Axis::V] = value;
-                            break;
-                        case ABS_HAT0X:
-                            m_state.axes[Joystick::Axis::PovX] = value;
-                            break;
-                        case ABS_HAT0Y:
-                            m_state.axes[Joystick::Axis::PovY] = value;
-                            break;
-                        default:
-                            break;
-                    }
-                }
+                if (joyState.number < m_axes.size())
+                    if (const auto axis = m_axes[joyState.number])
+                        m_state.axes[*axis] = value;
                 break;
             }
 
