@@ -28,6 +28,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Keyboard.hpp>
+#include <SFML/Window/Mouse.hpp>
 #include <SFML/Window/WindowEnums.hpp>
 #include <SFML/Window/WindowHandle.hpp>
 #include <SFML/Window/WindowImpl.hpp>
@@ -35,8 +36,9 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Win32/WindowsHeader.hpp>
 
-#include <cstdint>
+#include <unordered_set>
 
+#include <cstdint>
 
 namespace sf
 {
@@ -204,9 +206,10 @@ private:
     Vector2u m_lastSize;               //!< The last handled size of the window
     bool     m_resizing{};             //!< Is the window being resized?
     char16_t m_surrogate{}; //!< First half of the surrogate pair, in case we're receiving a Unicode character in two events
-    bool m_mouseInside{};   //!< Mouse is inside the window?
-    bool m_fullscreen{};    //!< Is the window fullscreen?
-    bool m_cursorGrabbed{}; //!< Is the mouse cursor trapped?
+    bool m_mouseInside{};                                         //!< Mouse is inside the window?
+    bool m_fullscreen{};                                          //!< Is the window fullscreen?
+    bool m_cursorGrabbed{};                                       //!< Is the mouse cursor trapped?
+    std::unordered_set<sf::Mouse::Button> m_draggingMouseButtons; //!< List of mouse buttons being used in drag operation
 };
 
 } // namespace priv
