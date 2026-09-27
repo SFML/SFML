@@ -279,10 +279,10 @@ const char* getUdevAttribute(udev_device* udevDevice, const std::string& attribu
     return udev_device_get_property_value(udevDevice, attributeName.c_str());
 }
 
-// Get a system attribute from a USB device
-const char* getUsbAttribute(udev_device* udevDevice, const std::string& attributeName)
+// Get a system attribute from a parent device of a joystick, such as the USB device it is plugged in
+const char* getParentAttribute(udev_device* udevDevice, const char* subsystem, const char* devtype, const std::string& attributeName)
 {
-    udev_device* udevDeviceParent = udev_device_get_parent_with_subsystem_devtype(udevDevice, "usb", "usb_device");
+    udev_device* udevDeviceParent = udev_device_get_parent_with_subsystem_devtype(udevDevice, subsystem, devtype);
 
     if (!udevDeviceParent)
         return nullptr;
@@ -290,13 +290,13 @@ const char* getUsbAttribute(udev_device* udevDevice, const std::string& attribut
     return udev_device_get_sysattr_value(udevDeviceParent, attributeName.c_str());
 }
 
-// Get a USB attribute for a joystick as an unsigned int
-unsigned int getUsbAttributeUint(udev_device* udevDevice, const std::string& attributeName)
+// Get a parent device attribute for a joystick as an unsigned int
+unsigned int getParentAttributeUint(udev_device* udevDevice, const char* subsystem, const char* devtype, const std::string& attributeName)
 {
     if (!udevDevice)
         return 0;
 
-    if (const char* attribute = getUsbAttribute(udevDevice, attributeName))
+    if (const char* attribute = getParentAttribute(udevDevice, subsystem, devtype, attributeName))
         return static_cast<unsigned int>(std::strtoul(attribute, nullptr, 16));
 
     return 0;
@@ -337,7 +337,11 @@ unsigned int getJoystickVendorId(unsigned int index)
         return id;
 
     // Fall back to using USB attribute
-    if (const unsigned int id = getUsbAttributeUint(udevDevice.get(), "idVendor"))
+    if (const unsigned int id = getParentAttributeUint(udevDevice.get(), "usb", "usb_device", "idVendor"))
+        return id;
+
+    // Fall back to the input device's id, which the kernel provides whatever the bus (Bluetooth, virtual devices...)
+    if (const unsigned int id = getParentAttributeUint(udevDevice.get(), "input", nullptr, "id/vendor"))
         return id;
 
     sf::err() << "Failed to get vendor ID of joystick " << joystickList[index].deviceNode << std::endl;
@@ -368,7 +372,11 @@ unsigned int getJoystickProductId(unsigned int index)
         return id;
 
     // Fall back to using USB attribute
-    if (const unsigned int id = getUsbAttributeUint(udevDevice.get(), "idProduct"))
+    if (const unsigned int id = getParentAttributeUint(udevDevice.get(), "usb", "usb_device", "idProduct"))
+        return id;
+
+    // Fall back to the input device's id, which the kernel provides whatever the bus (Bluetooth, virtual devices...)
+    if (const unsigned int id = getParentAttributeUint(udevDevice.get(), "input", nullptr, "id/product"))
         return id;
 
     sf::err() << "Failed to get product ID of joystick " << joystickList[index].deviceNode << std::endl;
@@ -400,7 +408,7 @@ std::string getJoystickName(unsigned int index)
     if (udevContext)
         if (const auto udevDevice = UdevPtr<udev_device>(
                 udev_device_new_from_syspath(udevContext.get(), joystickList[index].systemPath.c_str())))
-            if (const char* product = getUsbAttribute(udevDevice.get(), "product"))
+            if (const char* product = getParentAttribute(udevDevice.get(), "usb", "usb_device", "product"))
                 return {product};
 
     sf::err() << "Unable to get name for joystick " << devnode << std::endl;
