@@ -26,6 +26,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/JoystickImpl.hpp>
+#include <SFML/Window/Mouse.hpp>
 #include <SFML/Window/Win32/WindowImplWin32.hpp>
 #include <SFML/Window/WindowEnums.hpp>
 
@@ -544,8 +545,19 @@ void WindowImplWin32::cleanup()
 
     // No longer capture the cursor
     ReleaseCapture();
+
+    // Reset dragging state
+    m_draggingMouseButtons.clear();
 }
 
+////////////////////////////////////////////////////////////
+void WindowImplWin32::releaseCaptureOutsideMouse()
+{
+    if (!m_mouseInside && GetCapture() == m_handle)
+    {
+        ReleaseCapture();
+    }
+}
 
 ////////////////////////////////////////////////////////////
 void WindowImplWin32::setTracking(bool track)
@@ -960,6 +972,8 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Mouse left button down event
         case WM_LBUTTONDOWN:
         {
+            if (m_mouseInside)
+                m_draggingMouseButtons.insert(sf::Mouse::Button::Left);
             Event::MouseButtonPressed event;
             event.button   = Mouse::Button::Left;
             event.position = {static_cast<std::int16_t>(LOWORD(lParam)), static_cast<std::int16_t>(HIWORD(lParam))};
@@ -970,6 +984,9 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Mouse left button up event
         case WM_LBUTTONUP:
         {
+            m_draggingMouseButtons.erase(sf::Mouse::Button::Left);
+            if (m_draggingMouseButtons.empty())
+                releaseCaptureOutsideMouse();
             Event::MouseButtonReleased event;
             event.button   = Mouse::Button::Left;
             event.position = {static_cast<std::int16_t>(LOWORD(lParam)), static_cast<std::int16_t>(HIWORD(lParam))};
@@ -980,6 +997,8 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Mouse right button down event
         case WM_RBUTTONDOWN:
         {
+            if (m_mouseInside)
+                m_draggingMouseButtons.insert(sf::Mouse::Button::Right);
             Event::MouseButtonPressed event;
             event.button   = Mouse::Button::Right;
             event.position = {static_cast<std::int16_t>(LOWORD(lParam)), static_cast<std::int16_t>(HIWORD(lParam))};
@@ -990,6 +1009,9 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Mouse right button up event
         case WM_RBUTTONUP:
         {
+            m_draggingMouseButtons.erase(sf::Mouse::Button::Right);
+            if (m_draggingMouseButtons.empty())
+                releaseCaptureOutsideMouse();
             Event::MouseButtonReleased event;
             event.button   = Mouse::Button::Right;
             event.position = {static_cast<std::int16_t>(LOWORD(lParam)), static_cast<std::int16_t>(HIWORD(lParam))};
@@ -1000,6 +1022,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Mouse wheel button down event
         case WM_MBUTTONDOWN:
         {
+            m_draggingMouseButtons.insert(sf::Mouse::Button::Middle);
             Event::MouseButtonPressed event;
             event.button   = Mouse::Button::Middle;
             event.position = {static_cast<std::int16_t>(LOWORD(lParam)), static_cast<std::int16_t>(HIWORD(lParam))};
@@ -1010,6 +1033,9 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Mouse wheel button up event
         case WM_MBUTTONUP:
         {
+            m_draggingMouseButtons.erase(sf::Mouse::Button::Middle);
+            if (m_draggingMouseButtons.empty())
+                releaseCaptureOutsideMouse();
             Event::MouseButtonReleased event;
             event.button   = Mouse::Button::Middle;
             event.position = {static_cast<std::int16_t>(LOWORD(lParam)), static_cast<std::int16_t>(HIWORD(lParam))};
@@ -1020,6 +1046,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Mouse X button down event
         case WM_XBUTTONDOWN:
         {
+            m_draggingMouseButtons.insert(sf::Mouse::Button::Extra1);
             Event::MouseButtonPressed event;
             event.button   = HIWORD(wParam) == XBUTTON1 ? Mouse::Button::Extra1 : Mouse::Button::Extra2;
             event.position = {static_cast<std::int16_t>(LOWORD(lParam)), static_cast<std::int16_t>(HIWORD(lParam))};
@@ -1030,6 +1057,9 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
         // Mouse X button up event
         case WM_XBUTTONUP:
         {
+            m_draggingMouseButtons.erase(sf::Mouse::Button::Extra1);
+            if (m_draggingMouseButtons.empty())
+                releaseCaptureOutsideMouse();
             Event::MouseButtonReleased event;
             event.button   = HIWORD(wParam) == XBUTTON1 ? Mouse::Button::Extra1 : Mouse::Button::Extra2;
             event.position = {static_cast<std::int16_t>(LOWORD(lParam)), static_cast<std::int16_t>(HIWORD(lParam))};
