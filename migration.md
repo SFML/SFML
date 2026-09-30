@@ -418,7 +418,7 @@ v3:
 ```cpp
 sf::FloatRect rect({10, 20}, {30, 40});
 sf::Vector2f position = rect.position;
-sf::Vectro2f size = rect.size;
+sf::Vector2f size = rect.size;
 ```
 
 The two overloads of `sf::Rect<T>::intersects` have been replaced with one unified function called `sf::Rect<T>::findIntersection` which returns a `std::optional<Rect<T>>`.
@@ -647,7 +647,7 @@ SFML 3 removes all of the deprecated APIs in SFML 2.
 | `sf::Keyboard::BackSlash`           | `sf::Keyboard::Key::Backslash`     |
 | `sf::Keyboard::BackSpace`           | `sf::Keyboard::Key::Backspace`     |
 | `sf::Keyboard::Dash`                | `sf::Keyboard::Key::Dash`          |
-| `sf::Keyboard::Quote`               | `sf::Keyboard::Key::Hyphen`        |
+| `sf::Keyboard::Quote`               | `sf::Keyboard::Key::Apostrophe`    |
 | `sf::Keyboard::Return`              | `sf::Keyboard::Key::Enter`         |
 | `sf::Keyboard::SemiColon`           | `sf::Keyboard::Key::Semicolon`     |
 | `sf::Keyboard::Tilde`               | `sf::Keyboard::Key::Grave`         |
@@ -689,7 +689,7 @@ v3:
 auto renderStates = sf::RenderStates(sf::BlendAlpha,
                                      sf::StencilMode(),
                                      transform,
-                                     sf::CoordinateTye::Pixels,
+                                     sf::CoordinateType::Pixels,
                                      texture,
                                      nullptr);
 ```
