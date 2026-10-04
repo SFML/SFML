@@ -78,6 +78,7 @@ TEST_CASE("[Audio] sf::SoundStream", runAudioDeviceTests())
         CHECK(soundStream.getMinGain() == 0);
         CHECK(soundStream.getMaxGain() == 1);
         CHECK(soundStream.getAttenuation() == 1);
+        CHECK(soundStream.getAttenuationModel() == sf::SoundSource::AttenuationModel::Inverse);
     }
 
     SECTION("Set/get playing offset")
@@ -223,5 +224,18 @@ TEST_CASE("[Audio] sf::SoundStream", runAudioDeviceTests())
         SoundStream soundStream;
         soundStream.setAttenuation(10);
         CHECK(soundStream.getAttenuation() == 10);
+    }
+
+    SECTION("Set/get attenuation model")
+    {
+        SoundStream soundStream;
+        soundStream.setAttenuationModel(sf::SoundSource::AttenuationModel::None);
+        CHECK(soundStream.getAttenuationModel() == sf::SoundSource::AttenuationModel::None);
+        soundStream.setAttenuationModel(sf::SoundSource::AttenuationModel::Linear);
+        CHECK(soundStream.getAttenuationModel() == sf::SoundSource::AttenuationModel::Linear);
+        soundStream.setAttenuationModel(sf::SoundSource::AttenuationModel::Exponential);
+        CHECK(soundStream.getAttenuationModel() == sf::SoundSource::AttenuationModel::Exponential);
+        soundStream.setAttenuationModel(sf::SoundSource::AttenuationModel::Inverse);
+        CHECK(soundStream.getAttenuationModel() == sf::SoundSource::AttenuationModel::Inverse);
     }
 }

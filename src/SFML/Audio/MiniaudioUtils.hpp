@@ -50,26 +50,27 @@ namespace priv::MiniaudioUtils
 {
 struct SavedSettings
 {
-    float          pitch{1.f};
-    float          pan{0.f};
-    float          volume{1.f};
-    ma_bool32      spatializationEnabled{MA_TRUE};
-    ma_vec3f       position{0.f, 0.f, 0.f};
-    ma_vec3f       direction{0.f, 0.f, -1.f};
-    float          directionalAttenuationFactor{1.f};
-    ma_vec3f       velocity{0.f, 0.f, 0.f};
-    float          dopplerFactor{1.f};
-    ma_positioning positioning{ma_positioning_absolute};
-    float          minDistance{1.f};
-    float          maxDistance{std::numeric_limits<float>::max()};
-    float          minGain{0.f};
-    float          maxGain{1.f};
-    float          rollOff{1.f};
-    ma_bool32      playing{MA_FALSE};
-    ma_bool32      looping{MA_FALSE};
-    float          innerAngle{degrees(360.f).asRadians()};
-    float          outerAngle{degrees(360.f).asRadians()};
-    float          outerGain{0.f};
+    float                pitch{1.f};
+    float                pan{0.f};
+    float                volume{1.f};
+    ma_bool32            spatializationEnabled{MA_TRUE};
+    ma_vec3f             position{0.f, 0.f, 0.f};
+    ma_vec3f             direction{0.f, 0.f, -1.f};
+    float                directionalAttenuationFactor{1.f};
+    ma_vec3f             velocity{0.f, 0.f, 0.f};
+    float                dopplerFactor{1.f};
+    ma_positioning       positioning{ma_positioning_absolute};
+    float                minDistance{1.f};
+    float                maxDistance{std::numeric_limits<float>::max()};
+    float                minGain{0.f};
+    float                maxGain{1.f};
+    float                rollOff{1.f};
+    ma_attenuation_model attenuationModel{ma_attenuation_model_inverse};
+    ma_bool32            playing{MA_FALSE};
+    ma_bool32            looping{MA_FALSE};
+    float                innerAngle{degrees(360.f).asRadians()};
+    float                outerAngle{degrees(360.f).asRadians()};
+    float                outerGain{0.f};
 };
 
 struct SoundBase

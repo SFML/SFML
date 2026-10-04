@@ -10,6 +10,7 @@
 #include <iostream>
 #include <limits>
 #include <memory>
+#include <string>
 #include <vector>
 
 #include <cmath>
@@ -110,10 +111,23 @@ private:
 class Surround : public Effect
 {
 public:
-    Surround() : Effect("Surround / Attenuation")
+    Surround() :
+        Effect("Surround / Attenuation"),
+        m_instruction(getFont(), "Press up and down arrows to change the attenuation model", 20),
+        m_currentModel(getFont(), "", 20)
     {
         m_listener.setPosition({(windowWidth - 20.f) / 2.f, (windowHeight - 20.f) / 2.f});
         m_listener.setFillColor(sf::Color::Red);
+
+        // Show the maximum distance as a ring around the listener
+        m_maxDistanceShape.setOrigin({maxDistance, maxDistance});
+        m_maxDistanceShape.setPosition(m_listener.getPosition() + sf::Vector2f(20.f, 20.f));
+        m_maxDistanceShape.setFillColor(sf::Color::Transparent);
+        m_maxDistanceShape.setOutlineColor(sf::Color(100, 100, 100));
+        m_maxDistanceShape.setOutlineThickness(2.f);
+
+        m_instruction.setPosition({20.f, 20.f});
+        m_currentModel.setPosition({20.f, 50.f});
 
         // Load the music file
         if (!m_music.openFromFile(resourcesDir() / "doodle_pop.ogg"))
@@ -125,8 +139,10 @@ public:
         // Set the music to loop
         m_music.setLooping(true);
 
-        // Set attenuation to a nice value
-        m_music.setAttenuation(0.04f);
+        // Beyond the maximum distance the sound isn't attenuated any further
+        m_music.setMaxDistance(maxDistance);
+
+        applyAttenuationModel();
     }
 
     void onUpdate(float /*time*/, float x, float y) override
@@ -141,8 +157,11 @@ public:
         statesCopy.transform = sf::Transform::Identity;
         statesCopy.transform.translate(m_position);
 
+        target.draw(m_maxDistanceShape, states);
         target.draw(m_listener, states);
         target.draw(m_soundShape, statesCopy);
+        target.draw(m_instruction, states);
+        target.draw(m_currentModel, states);
     }
 
     void onStart() override
@@ -158,11 +177,53 @@ public:
         m_music.stop();
     }
 
+    void onKey(sf::Keyboard::Key key) override
+    {
+        if (key == sf::Keyboard::Key::Down)
+            m_model = (m_model + 1) % m_models.size();
+        else if (key == sf::Keyboard::Key::Up)
+            m_model = (m_model + m_models.size() - 1) % m_models.size();
+        else
+            return;
+
+        applyAttenuationModel();
+    }
+
 private:
+    struct Model
+    {
+        sf::SoundSource::AttenuationModel model;
+        float                             factor;
+        std::string                       name;
+    };
+
+    void applyAttenuationModel()
+    {
+        const auto& [model, factor, name] = m_models[m_model];
+        m_music.setAttenuationModel(model);
+        m_music.setAttenuation(factor);
+        m_currentModel.setString("Attenuation model: " + name);
+    }
+
+    static constexpr float maxDistance = 300.f;
+
+    // The attenuation factor means something different for each model,
+    // so every model gets a factor that makes the effect easy to hear.
+    // A linear factor of 1 reaches silence exactly at the maximum distance.
+    const std::array<Model, 4> m_models{
+        {{sf::SoundSource::AttenuationModel::Inverse, 0.04f, "Inverse"},
+         {sf::SoundSource::AttenuationModel::Linear, 1.f, "Linear"},
+         {sf::SoundSource::AttenuationModel::Exponential, 0.5f, "Exponential"},
+         {sf::SoundSource::AttenuationModel::None, 0.f, "None"}}};
+
     sf::CircleShape m_listener{20.f};
     sf::CircleShape m_soundShape{20.f};
+    sf::CircleShape m_maxDistanceShape{maxDistance, 100};
+    sf::Text        m_instruction;
+    sf::Text        m_currentModel;
     sf::Vector2f    m_position;
     sf::Music       m_music;
+    std::size_t     m_model{};
 };
 
 

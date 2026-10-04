@@ -32,6 +32,47 @@
 #include <algorithm>
 
 
+namespace
+{
+////////////////////////////////////////////////////////////
+ma_attenuation_model toMiniaudioAttenuationModel(sf::SoundSource::AttenuationModel model)
+{
+    switch (model)
+    {
+        case sf::SoundSource::AttenuationModel::None:
+            return ma_attenuation_model_none;
+        case sf::SoundSource::AttenuationModel::Inverse:
+            return ma_attenuation_model_inverse;
+        case sf::SoundSource::AttenuationModel::Linear:
+            return ma_attenuation_model_linear;
+        case sf::SoundSource::AttenuationModel::Exponential:
+            return ma_attenuation_model_exponential;
+    }
+
+    return ma_attenuation_model_inverse;
+}
+
+
+////////////////////////////////////////////////////////////
+sf::SoundSource::AttenuationModel fromMiniaudioAttenuationModel(ma_attenuation_model model)
+{
+    switch (model)
+    {
+        case ma_attenuation_model_none:
+            return sf::SoundSource::AttenuationModel::None;
+        case ma_attenuation_model_inverse:
+            return sf::SoundSource::AttenuationModel::Inverse;
+        case ma_attenuation_model_linear:
+            return sf::SoundSource::AttenuationModel::Linear;
+        case ma_attenuation_model_exponential:
+            return sf::SoundSource::AttenuationModel::Exponential;
+    }
+
+    return sf::SoundSource::AttenuationModel::Inverse;
+}
+} // namespace
+
+
 namespace sf
 {
 // NOLINTBEGIN(readability-make-member-function-const)
@@ -163,6 +204,14 @@ void SoundSource::setAttenuation(float attenuation)
 {
     if (auto* sound = static_cast<ma_sound*>(getSound()))
         ma_sound_set_rolloff(sound, attenuation);
+}
+
+
+////////////////////////////////////////////////////////////
+void SoundSource::setAttenuationModel(AttenuationModel model)
+{
+    if (auto* sound = static_cast<ma_sound*>(getSound()))
+        ma_sound_set_attenuation_model(sound, toMiniaudioAttenuationModel(model));
 }
 
 
@@ -351,6 +400,16 @@ float SoundSource::getAttenuation() const
 
 
 ////////////////////////////////////////////////////////////
+SoundSource::AttenuationModel SoundSource::getAttenuationModel() const
+{
+    if (const auto* sound = static_cast<const ma_sound*>(getSound()))
+        return fromMiniaudioAttenuationModel(ma_sound_get_attenuation_model(sound));
+
+    return AttenuationModel::None;
+}
+
+
+////////////////////////////////////////////////////////////
 SoundSource& SoundSource::operator=(const SoundSource& right)
 {
     // Assign the sound attributes
@@ -369,6 +428,7 @@ SoundSource& SoundSource::operator=(const SoundSource& right)
     setMinGain(right.getMinGain());
     setMaxGain(right.getMaxGain());
     setAttenuation(right.getAttenuation());
+    setAttenuationModel(right.getAttenuationModel());
 
     return *this;
 }

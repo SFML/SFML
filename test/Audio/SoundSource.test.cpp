@@ -69,6 +69,7 @@ TEST_CASE("[Audio] sf::SoundSource", runAudioDeviceTests())
         CHECK(soundSource.getMinGain() == 0);
         CHECK(soundSource.getMaxGain() == 0);
         CHECK(soundSource.getAttenuation() == 0);
+        CHECK(soundSource.getAttenuationModel() == sf::SoundSource::AttenuationModel::None);
         CHECK(soundSource.getStatus() == sf::SoundSource::Status::Stopped);
     }
 
@@ -97,6 +98,7 @@ TEST_CASE("[Audio] sf::SoundSource", runAudioDeviceTests())
             CHECK(soundSourceCopy.getMinGain() == 0);
             CHECK(soundSourceCopy.getMaxGain() == 0);
             CHECK(soundSourceCopy.getAttenuation() == 0);
+            CHECK(soundSourceCopy.getAttenuationModel() == sf::SoundSource::AttenuationModel::None);
             CHECK(soundSourceCopy.getStatus() == sf::SoundSource::Status::Stopped);
         }
 
@@ -122,6 +124,7 @@ TEST_CASE("[Audio] sf::SoundSource", runAudioDeviceTests())
             CHECK(soundSourceCopy.getMinGain() == 0);
             CHECK(soundSourceCopy.getMaxGain() == 0);
             CHECK(soundSourceCopy.getAttenuation() == 0);
+            CHECK(soundSourceCopy.getAttenuationModel() == sf::SoundSource::AttenuationModel::None);
             CHECK(soundSourceCopy.getStatus() == sf::SoundSource::Status::Stopped);
         }
     }
@@ -238,5 +241,12 @@ TEST_CASE("[Audio] sf::SoundSource", runAudioDeviceTests())
         SoundSource soundSource;
         soundSource.setAttenuation(10);
         CHECK(soundSource.getAttenuation() == 0);
+    }
+
+    SECTION("Set/get attenuation model")
+    {
+        SoundSource soundSource;
+        soundSource.setAttenuationModel(sf::SoundSource::AttenuationModel::Linear);
+        CHECK(soundSource.getAttenuationModel() == sf::SoundSource::AttenuationModel::None);
     }
 }
