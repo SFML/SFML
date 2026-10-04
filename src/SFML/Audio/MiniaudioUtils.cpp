@@ -66,6 +66,7 @@ sf::priv::MiniaudioUtils::SavedSettings saveSettings(const ma_sound& sound)
                       ma_sound_get_min_gain(&sound),
                       ma_sound_get_max_gain(&sound),
                       ma_sound_get_rolloff(&sound),
+                      ma_sound_get_attenuation_model(&sound),
                       ma_sound_is_playing(&sound),
                       ma_sound_is_looping(&sound),
                       innerAngle,
@@ -92,6 +93,7 @@ void applySettings(ma_sound& sound, const sf::priv::MiniaudioUtils::SavedSetting
     ma_sound_set_min_gain(&sound, savedSettings.minGain);
     ma_sound_set_max_gain(&sound, savedSettings.maxGain);
     ma_sound_set_rolloff(&sound, savedSettings.rollOff);
+    ma_sound_set_attenuation_model(&sound, savedSettings.attenuationModel);
     ma_sound_set_looping(&sound, savedSettings.looping);
 
     ma_sound_set_cone(&sound, savedSettings.innerAngle, savedSettings.outerAngle, savedSettings.outerGain);

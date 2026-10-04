@@ -59,6 +59,26 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
+    /// \brief Enumeration of the distance attenuation models
+    ///
+    /// The attenuation model defines how the gain of a sound
+    /// changes with the distance between the sound and the
+    /// listener. All models keep the gain at its maximum while
+    /// the sound is closer than the minimum distance, and stop
+    /// attenuating any further once the sound is beyond the
+    /// maximum distance. In between, the attenuation factor
+    /// controls how quickly the gain drops.
+    ///
+    ////////////////////////////////////////////////////////////
+    enum class AttenuationModel
+    {
+        None,       //!< No distance attenuation and no spatialization
+        Inverse,    //!< Inverse distance attenuation, never reaches silence
+        Linear,     //!< Linear attenuation, reaches silence at the maximum distance with an attenuation factor of 1
+        Exponential //!< Exponential attenuation
+    };
+
+    ////////////////////////////////////////////////////////////
     /// \brief Structure defining the properties of a directional cone
     ///
     /// Sounds will play at gain 1 when the listener
@@ -428,6 +448,24 @@ public:
     void setAttenuation(float attenuation);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Set the distance attenuation model of the sound
+    ///
+    /// The attenuation model defines the curve along which
+    /// the sound fades out between the minimum and the maximum
+    /// distance. Note that with the default `Inverse` model,
+    /// the sound never becomes fully inaudible. Use the `Linear`
+    /// model if the sound should fade out completely at the
+    /// maximum distance.
+    /// The default attenuation model is `AttenuationModel::Inverse`.
+    ///
+    /// \param model New attenuation model of the sound
+    ///
+    /// \see `getAttenuationModel`, `setAttenuation`, `setMinDistance`, `setMaxDistance`
+    ///
+    ////////////////////////////////////////////////////////////
+    void setAttenuationModel(AttenuationModel model);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Set the effect processor to be applied to the sound
     ///
     /// The effect processor is a callable that will be called
@@ -598,6 +636,16 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     [[nodiscard]] float getAttenuation() const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the distance attenuation model of the sound
+    ///
+    /// \return Attenuation model of the sound
+    ///
+    /// \see `setAttenuationModel`, `getAttenuation`
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] AttenuationModel getAttenuationModel() const;
 
     ////////////////////////////////////////////////////////////
     /// \brief Overload of assignment operator
