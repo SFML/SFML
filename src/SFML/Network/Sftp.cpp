@@ -385,6 +385,25 @@ struct Sftp::Impl : LibSsh2Initializer
         }
     }
 
+    [[nodiscard]] std::optional<Sftp::Result> checkConnected() const
+    {
+        if (!ssh2Session)
+            return Sftp::Result(Sftp::Result::Value::Disconnected, "Not connected to a server");
+
+        return std::nullopt;
+    }
+
+    [[nodiscard]] std::optional<Sftp::Result> checkLoggedIn() const
+    {
+        if (const auto error = checkConnected())
+            return error;
+
+        if (!sftpSession)
+            return Sftp::Result(Sftp::Result::Value::BadUse, "Not logged in");
+
+        return std::nullopt;
+    }
+
     Sftp::Result initializeSftp(const TimeoutWithPredicate& timeout)
     {
         const auto result = waitForOperationComplete(
@@ -773,6 +792,9 @@ std::optional<Sftp::SessionInfo> Sftp::getSessionInfo() const
 ////////////////////////////////////////////////////////////
 Sftp::Result Sftp::login(std::string_view name, std::string_view password, const TimeoutWithPredicate& timeout)
 {
+    if (const auto error = m_impl->checkConnected())
+        return *error;
+
     // Perform login
     {
         const auto result = m_impl->waitForOperationComplete(
@@ -808,6 +830,9 @@ Sftp::Result Sftp::login(std::string_view            name,
                          const char*                 privateKeyPassphrase,
                          const TimeoutWithPredicate& timeout)
 {
+    if (const auto error = m_impl->checkConnected())
+        return *error;
+
     // Perform login
     {
         const auto result = m_impl->waitForOperationComplete(
@@ -858,6 +883,9 @@ Sftp::Result Sftp::login(std::string_view            name,
 ////////////////////////////////////////////////////////////
 Sftp::PathResult Sftp::resolvePath(const std::filesystem::path& path, const TimeoutWithPredicate& timeout)
 {
+    if (const auto error = m_impl->checkLoggedIn())
+        return {*error, {}};
+
     // Check if we already cached the result for the home path
     if ((path == ".") && !m_impl->cachedHomePath.empty())
         return {Result(Result::Value::Success), m_impl->cachedHomePath};
@@ -903,6 +931,9 @@ Sftp::PathResult Sftp::getWorkingDirectory(const TimeoutWithPredicate& timeout)
 ////////////////////////////////////////////////////////////
 Sftp::AttributesResult Sftp::getAttributes(const std::filesystem::path& path, bool followLinks, const TimeoutWithPredicate& timeout)
 {
+    if (const auto error = m_impl->checkLoggedIn())
+        return {*error, {}};
+
     LIBSSH2_SFTP_ATTRIBUTES attributes{};
 
     const auto pathString = pathToUtf8(path);
@@ -930,6 +961,9 @@ Sftp::AttributesResult Sftp::getAttributes(const std::filesystem::path& path, bo
 ////////////////////////////////////////////////////////////
 Sftp::ListingResult Sftp::getDirectoryListing(const std::filesystem::path& path, const TimeoutWithPredicate& timeout)
 {
+    if (const auto error = m_impl->checkLoggedIn())
+        return {*error, {}};
+
     LIBSSH2_SFTP_HANDLE* handle{};
 
     {
@@ -1006,6 +1040,9 @@ Sftp::Result Sftp::createDirectory(const std::filesystem::path& path,
                                    std::filesystem::perms       permissions,
                                    const TimeoutWithPredicate&  timeout)
 {
+    if (const auto error = m_impl->checkLoggedIn())
+        return *error;
+
     const auto pathString = pathToUtf8(path);
     const auto result     = m_impl->waitForOperationComplete(
         [&]
@@ -1030,6 +1067,9 @@ Sftp::Result Sftp::createDirectory(const std::filesystem::path& path,
 ////////////////////////////////////////////////////////////
 Sftp::Result Sftp::deleteDirectory(const std::filesystem::path& path, const TimeoutWithPredicate& timeout)
 {
+    if (const auto error = m_impl->checkLoggedIn())
+        return *error;
+
     const auto pathString = pathToUtf8(path);
     const auto result     = m_impl->waitForOperationComplete(
         [&]
@@ -1056,6 +1096,9 @@ Sftp::Result Sftp::rename(const std::filesystem::path& oldPath,
                           bool                         overwrite,
                           const TimeoutWithPredicate&  timeout)
 {
+    if (const auto error = m_impl->checkLoggedIn())
+        return *error;
+
     const auto oldPathString = pathToUtf8(oldPath);
     const auto newPathString = pathToUtf8(newPath);
 
@@ -1114,6 +1157,9 @@ Sftp::Result Sftp::rename(const std::filesystem::path& oldPath,
 ////////////////////////////////////////////////////////////
 Sftp::Result Sftp::deleteFile(const std::filesystem::path& path, const TimeoutWithPredicate& timeout)
 {
+    if (const auto error = m_impl->checkLoggedIn())
+        return *error;
+
     const auto pathString = pathToUtf8(path);
     const auto result     = m_impl->waitForOperationComplete(
         [&]
@@ -1140,6 +1186,9 @@ Sftp::Result Sftp::download(const std::filesystem::path&                        
                             std::uint64_t                                                  offset,
                             const TimeoutWithPredicate&                                    timeout)
 {
+    if (const auto error = m_impl->checkLoggedIn())
+        return *error;
+
     if (!callback)
         return Result(Result::Value::Error);
 
@@ -1257,6 +1306,9 @@ Sftp::Result Sftp::upload(const std::filesystem::path&                          
                           std::uint64_t                                             offset,
                           const TimeoutWithPredicate&                               timeout)
 {
+    if (const auto error = m_impl->checkLoggedIn())
+        return *error;
+
     if (!callback)
         return Result(Result::Value::Error);
 

@@ -167,6 +167,26 @@ TEST_CASE("[Network] sf::Sftp")
         CHECK_FALSE(sftp.getSessionInfo().has_value());
     }
 
+    SECTION("Operations without connection")
+    {
+        static constexpr auto disconnected = sf::Sftp::Result::Value::Disconnected;
+
+        sf::Sftp sftp;
+        CHECK(sftp.login("user", "password").getValue() == disconnected);
+        CHECK(sftp.login("user", "public key", "private key", "passphrase").getValue() == disconnected);
+        CHECK(sftp.resolvePath("foo").getValue() == disconnected);
+        CHECK(sftp.getWorkingDirectory().getValue() == disconnected);
+        CHECK(sftp.getAttributes("foo").getValue() == disconnected);
+        CHECK(sftp.getDirectoryListing("foo").getValue() == disconnected);
+        CHECK(sftp.createDirectory("foo").getValue() == disconnected);
+        CHECK(sftp.deleteDirectory("foo").getValue() == disconnected);
+        CHECK(sftp.rename("foo", "bar").getValue() == disconnected);
+        CHECK(sftp.deleteFile("foo").getValue() == disconnected);
+        CHECK(sftp.download("foo", [](const void*, std::size_t) { return true; }).getValue() == disconnected);
+        CHECK(sftp.upload("foo", [](void*, std::size_t&) { return false; }).getValue() == disconnected);
+        CHECK(sftp.disconnect().getValue() == sf::Sftp::Result::Value::Success);
+    }
+
     SECTION("Connect to non-existant server and timeout")
     {
         sf::Sftp   sftp;
