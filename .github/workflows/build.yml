@@ -144,6 +144,9 @@ jobs:
         brew trust coverallsapp/coveralls
         brew update
         brew install gcovr ccache
+        # The runner image has bin/openssl pointing to openssl@1.1, which "brew unlink" doesn't remove
+        # and which blocks linking openssl@3 when the Coveralls action installs it
+        if readlink "$(brew --prefix)/bin/openssl" | grep -q "openssl@1.1"; then rm "$(brew --prefix)/bin/openssl"; fi
 
     - name: Install macOS System Deps
       if: contains(matrix.config.name, 'System Deps')
