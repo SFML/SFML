@@ -95,6 +95,7 @@ else()
         set(CRYPTO_BACKEND "mbedTLS" CACHE STRING "")
         set(LIBSSH2_NO_DEPRECATED ON)
         set(LIBSSH2_BUILD_DOCS OFF)
+        set(CMAKE_DEBUG_POSTFIX d)
 
         FetchContent_Declare(libssh2
             URL https://github.com/libssh2/libssh2/archive/704299e997bf518375dc9222670c57b800ac59e6.tar.gz
