@@ -24,42 +24,15 @@
 
 #pragma once
 
-
-namespace sf
-{
-namespace Style
-{
 ////////////////////////////////////////////////////////////
-/// \ingroup window
-/// \brief Enumeration of the window styles
-///
-/// Note: On Unix systems, not specifying Close if
-/// Titlebar and/or Resize are specified will prevent
-/// the window manager from closing the window including
-/// using user-defined hotkeys.
-///
+// Headers
 ////////////////////////////////////////////////////////////
-enum Type : unsigned int
-{
-    None     = 0,      //!< No border / title bar (this flag and all others are mutually exclusive)
-    Titlebar = 1 << 0, //!< Title bar + fixed border
-    Resize   = 1 << 1, //!< Title bar + resizable border + maximize button
-    Close    = 1 << 2, //!< Title bar + close button (see note)
+#include <SFML/Graphics/Forward.hpp>
 
-    Default = Titlebar | Resize | Close //!< Default window style
-};
+#include <SFML/Audio/Forward.hpp>
 
-} // namespace Style
+#include <SFML/Network/Forward.hpp>
 
-////////////////////////////////////////////////////////////
-/// \ingroup window
-/// \brief Enumeration of the window states
-///
-////////////////////////////////////////////////////////////
-enum class State
-{
-    Windowed,  //!< Floating window
-    Fullscreen //!< Fullscreen window
-};
+#include <SFML/Window/Forward.hpp>
 
-} // namespace sf
+#include <SFML/System/Forward.hpp>

@@ -32,6 +32,7 @@
 #include <SFML/Graphics/BlendMode.hpp>
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/CoordinateType.hpp>
+#include <SFML/Graphics/Forward.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
@@ -49,12 +50,6 @@
 
 namespace sf
 {
-class Drawable;
-class Shader;
-class Texture;
-class Transform;
-class VertexBuffer;
-
 ////////////////////////////////////////////////////////////
 /// \brief Base class for all render targets (window, texture, ...)
 ///

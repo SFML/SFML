@@ -29,7 +29,10 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Audio/Export.hpp>
 
+#include <SFML/Audio/Forward.hpp>
 #include <SFML/Audio/SoundSource.hpp>
+
+#include <SFML/System/Forward.hpp>
 
 #include <memory>
 
@@ -37,9 +40,6 @@
 
 namespace sf
 {
-class Time;
-class SoundBuffer;
-
 ////////////////////////////////////////////////////////////
 /// \brief Regular sound that can be played in the audio environment
 ///

@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
 
+#include <SFML/Graphics/Forward.hpp>
 #include <SFML/Graphics/RenderTarget.hpp>
 
 #include <SFML/Window/ContextSettings.hpp>
@@ -37,6 +38,7 @@
 #include <SFML/Window/WindowEnums.hpp>
 #include <SFML/Window/WindowHandle.hpp>
 
+#include <SFML/System/Forward.hpp>
 #include <SFML/System/Vector2.hpp>
 
 #include <cstdint>
@@ -44,9 +46,6 @@
 
 namespace sf
 {
-class Image;
-class String;
-
 ////////////////////////////////////////////////////////////
 /// \brief Window that can serve as a target for 2D drawing
 ///

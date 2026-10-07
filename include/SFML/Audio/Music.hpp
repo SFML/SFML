@@ -31,6 +31,8 @@
 
 #include <SFML/Audio/SoundStream.hpp>
 
+#include <SFML/System/Forward.hpp>
+
 #include <filesystem>
 #include <memory>
 #include <optional>
@@ -41,9 +43,6 @@
 
 namespace sf
 {
-class Time;
-class InputStream;
-class InputSoundFile;
 
 ////////////////////////////////////////////////////////////
 /// \brief Streamed music played from an audio file

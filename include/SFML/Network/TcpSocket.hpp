@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Export.hpp>
 
+#include <SFML/Network/Forward.hpp>
 #include <SFML/Network/Socket.hpp>
 
 #include <SFML/System/String.hpp>
@@ -46,10 +47,6 @@
 
 namespace sf
 {
-class TcpListener;
-class IpAddress;
-class Packet;
-
 ////////////////////////////////////////////////////////////
 /// \brief Specialized socket using the TCP protocol
 ///

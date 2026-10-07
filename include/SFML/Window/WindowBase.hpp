@@ -29,10 +29,12 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Export.hpp>
 
+#include <SFML/Window/Forward.hpp>
 #include <SFML/Window/Vulkan.hpp>
 #include <SFML/Window/WindowEnums.hpp>
 #include <SFML/Window/WindowHandle.hpp>
 
+#include <SFML/System/Forward.hpp>
 #include <SFML/System/Time.hpp>
 #include <SFML/System/Vector2.hpp>
 
@@ -44,16 +46,10 @@
 
 namespace sf
 {
-class Cursor;
-class String;
-class VideoMode;
-
 namespace priv
 {
 class WindowImpl;
 }
-
-class Event;
 
 ////////////////////////////////////////////////////////////
 /// \brief Window that serves as a base for other windows

@@ -29,6 +29,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Export.hpp>
 
+#include <SFML/Network/Forward.hpp>
+
 #include <SFML/System/TimeoutWithPredicate.hpp>
 
 #include <array>
@@ -45,8 +47,6 @@
 
 namespace sf
 {
-class IpAddress;
-
 ////////////////////////////////////////////////////////////
 /// \brief An SSH File Transfer Protocol (SFTP) client
 ///

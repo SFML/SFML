@@ -29,14 +29,13 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Export.hpp>
 
+#include <SFML/Network/Forward.hpp>
 #include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/Socket.hpp>
 
 
 namespace sf
 {
-class TcpSocket;
-
 ////////////////////////////////////////////////////////////
 /// \brief Socket that listens to new TCP connections
 ///
