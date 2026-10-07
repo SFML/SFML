@@ -7,7 +7,12 @@
 
 #include <GraphicsUtil.hpp>
 #include <WindowUtil.hpp>
+#include <algorithm>
+#include <array>
+#include <limits>
 #include <type_traits>
+
+#include <cmath>
 
 // Allow testing deprecated functions
 #ifdef _MSC_VER
@@ -218,15 +223,165 @@ TEST_CASE("[Graphics] sf::Text", runDisplayTests())
             CHECK_THAT(text.getLocalBounds(), equalsApprox(sf::FloatRect({1, 5}, {32, 13}), 1.f));
             CHECK_THAT(text.getGlobalBounds(), equalsApprox((sf::FloatRect({67, 182}, {32, 13})), 1.f));
         }
+    }
 
-        SECTION("Change alignment")
+    SECTION("Aligned bounds follow the rendered glyphs")
+    {
+        sf::Text text(font, "Test", 30);
+        text.setLineAlignment(sf::Text::LineAlignment::Left);
+        text.setPosition({100, 200});
+        text.setScale({1.5f, 0.75f});
+        text.setRotation(sf::degrees(25));
+
+        SECTION("Regular text")
         {
-            text.setLineAlignment(sf::Text::LineAlignment::Center);
-            CHECK_THAT(text.getLocalBounds(), equalsApprox(sf::FloatRect({-15, 5}, {32, 13}), 1.f));
-            CHECK_THAT(text.getGlobalBounds(), equalsApprox(sf::FloatRect({85, 205}, {32, 13}), 1.f));
-            text.setLineAlignment(sf::Text::LineAlignment::Right);
-            CHECK_THAT(text.getLocalBounds(), equalsApprox(sf::FloatRect({-31, 5}, {32, 13}), 1.f));
-            CHECK_THAT(text.getGlobalBounds(), equalsApprox(sf::FloatRect({69, 205}, {32, 13}), 1.f));
+        }
+
+        SECTION("Letter spacing")
+        {
+            text.setLetterSpacing(2);
+        }
+
+        SECTION("Outline")
+        {
+            text.setOutlineThickness(2.5f);
+        }
+
+        SECTION("Italic text")
+        {
+            text.setStyle(sf::Text::Italic);
+        }
+
+        SECTION("Trailing whitespace")
+        {
+            text.setString("Test \t");
+        }
+
+        const auto leftBounds = text.getLocalBounds();
+        const auto leftGlyphs = text.getShapedGlyphs();
+        REQUIRE_FALSE(leftGlyphs.empty());
+
+        for (const auto alignment : {sf::Text::LineAlignment::Center, sf::Text::LineAlignment::Right})
+        {
+            CAPTURE(static_cast<int>(alignment));
+            text.setLineAlignment(alignment);
+
+            const auto& glyphs = text.getShapedGlyphs();
+            REQUIRE(glyphs.size() == leftGlyphs.size());
+            const auto displacement = glyphs.front().position - leftGlyphs.front().position;
+
+            // A single line moves rigidly, so its bounds must follow the same displacement.
+            const sf::FloatRect expectedBounds(leftBounds.position + displacement, leftBounds.size);
+            CHECK_THAT(text.getLocalBounds(), equalsApprox(expectedBounds, 0.0001f));
+            CHECK_THAT(text.getGlobalBounds(), equalsApprox(text.getTransform().transformRect(expectedBounds), 0.0001f));
+
+            for (std::size_t i = 0; i < glyphs.size(); ++i)
+                CHECK_THAT(glyphs[i].position, equalsApprox(leftGlyphs[i].position + displacement, 0.0001f));
+        }
+    }
+
+    SECTION("Aligned multiline bounds enclose each line")
+    {
+        std::array<sf::String, 2> strings{"j", "Test"};
+        unsigned int              style = sf::Text::Regular;
+        float                     outlineThickness{};
+        float                     letterSpacing = 1;
+
+        SECTION("Different line widths and bearings")
+        {
+        }
+
+        SECTION("Reverse line order")
+        {
+            std::swap(strings[0], strings[1]);
+        }
+
+        SECTION("Italic text")
+        {
+            style = sf::Text::Italic;
+        }
+
+        SECTION("Outline and letter spacing")
+        {
+            outlineThickness = 2.5f;
+            letterSpacing    = 2;
+        }
+
+        SECTION("Whitespace")
+        {
+            strings = {"\tj ", "Test "};
+        }
+
+        sf::Text text(font, strings[0] + "\n" + strings[1], 30);
+        text.setStyle(style);
+        text.setOutlineThickness(outlineThickness);
+        text.setLetterSpacing(letterSpacing);
+        text.setLineAlignment(sf::Text::LineAlignment::Left);
+        const auto leftBounds = text.getLocalBounds();
+
+        for (const auto alignment :
+             {sf::Text::LineAlignment::Left, sf::Text::LineAlignment::Center, sf::Text::LineAlignment::Right})
+        {
+            CAPTURE(static_cast<int>(alignment));
+            text.setLineAlignment(alignment);
+            const auto& glyphs = text.getShapedGlyphs();
+            auto        minX   = std::numeric_limits<float>::max();
+            auto        maxX   = std::numeric_limits<float>::lowest();
+            std::size_t firstCluster{};
+
+            for (const auto& string : strings)
+            {
+                // Obtain each line's bounds independently, then locate that line in the shaped text.
+                sf::Text line(font, string, 30);
+                line.setStyle(style);
+                line.setOutlineThickness(outlineThickness);
+                line.setLetterSpacing(letterSpacing);
+                line.setLineAlignment(sf::Text::LineAlignment::Left);
+                const auto  lineBounds = line.getLocalBounds();
+                const auto& lineGlyphs = line.getShapedGlyphs();
+                REQUIRE_FALSE(lineGlyphs.empty());
+                const auto firstGlyph = std::find_if(glyphs.begin(),
+                                                     glyphs.end(),
+                                                     [&](const sf::Text::ShapedGlyph& glyph)
+                                                     { return glyph.cluster == firstCluster; });
+                REQUIRE(firstGlyph != glyphs.end());
+                const float displacement = firstGlyph->position.x - lineGlyphs.front().position.x;
+                minX                     = std::min(minX, lineBounds.position.x + displacement);
+                maxX                     = std::max(maxX, lineBounds.position.x + lineBounds.size.x + displacement);
+                firstCluster += string.getSize() + 1;
+            }
+
+            const sf::FloatRect expectedBounds({minX, leftBounds.position.y}, {maxX - minX, leftBounds.size.y});
+            CHECK_THAT(text.getLocalBounds(), equalsApprox(expectedBounds, 0.0001f));
+        }
+    }
+
+    SECTION("Aligned empty strings and empty lines")
+    {
+        for (const auto* string : {"", "\n", "\n\n", "\nTest", "Test\n", "\nTest\n"})
+        {
+            CAPTURE(string);
+            sf::Text text(font, string, 30);
+            text.setLineAlignment(sf::Text::LineAlignment::Left);
+            const auto leftBounds = text.getLocalBounds();
+
+            for (const auto alignment : {sf::Text::LineAlignment::Center, sf::Text::LineAlignment::Right})
+            {
+                CAPTURE(static_cast<int>(alignment));
+                text.setLineAlignment(alignment);
+                const auto bounds = text.getLocalBounds();
+                CHECK(std::isfinite(bounds.position.x));
+                CHECK(std::isfinite(bounds.position.y));
+                CHECK(std::isfinite(bounds.size.x));
+                CHECK(std::isfinite(bounds.size.y));
+                CHECK(bounds.size.x >= 0);
+                CHECK(bounds.size.y >= 0);
+                CHECK(bounds.position.y == leftBounds.position.y);
+                CHECK(bounds.size.y == leftBounds.size.y);
+
+                if (text.getString().isEmpty())
+                    CHECK(bounds == sf::FloatRect());
+            }
         }
     }
 }
