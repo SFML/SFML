@@ -68,7 +68,7 @@ if(SFML_OS_IOS)
 endif()
 
 # find external libraries
-if(SFML_USE_SYSTEM_DEPS)
+if(SFML_USE_SYSTEM_FLAC_VORBIS)
     find_package(Vorbis REQUIRED)
     find_package(FLAC REQUIRED)
 else()
