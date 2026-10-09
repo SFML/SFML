@@ -29,48 +29,63 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Joystick.hpp>
 
+#import <GameController/GameController.h>
+#include <array>
+#include <mutex>
+
 #include <cstdint>
 
 
 namespace sf::priv
 {
-struct JoystickCaps;
-struct JoystickState;
-
 ////////////////////////////////////////////////////////////
-class JoystickImpl
+class JoystickRegistryImpl
 {
 public:
     ////////////////////////////////////////////////////////////
-    static void initialize();
+    void initialize();
 
     ////////////////////////////////////////////////////////////
-    static void cleanup();
+    void cleanup();
 
     ////////////////////////////////////////////////////////////
-    static bool isConnected(unsigned int index);
+    void refresh();
 
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool open(unsigned int index);
+    [[nodiscard]] bool isConnected(unsigned int index);
 
     ////////////////////////////////////////////////////////////
-    void close();
+    [[nodiscard]] bool open(unsigned int index, std::uint64_t& generation);
 
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] JoystickCaps getCapabilities() const;
-
-    ////////////////////////////////////////////////////////////
-    [[nodiscard]] Joystick::Identification getIdentification() const;
-
-    ////////////////////////////////////////////////////////////
-    [[nodiscard]] JoystickState update() const;
+    [[nodiscard]] GCController* getController(unsigned int index, std::uint64_t generation);
 
 private:
     ////////////////////////////////////////////////////////////
+    struct Slot
+    {
+        GCController* controller{};
+        std::uint64_t generation{};
+    };
+
+    ////////////////////////////////////////////////////////////
+    void connect(GCController* controller);
+
+    ////////////////////////////////////////////////////////////
+    void disconnect(GCController* controller);
+
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] bool assignController(GCController* controller);
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int  m_index{Joystick::Count}; ///< Controller slot
-    std::uint64_t m_generation{};           ///< Connection associated with this instance
+    std::mutex                        m_mutex;
+    std::array<Slot, Joystick::Count> m_slots{};
+    id                                m_connectObserver{};
+    id                                m_disconnectObserver{};
+    std::uint64_t                     m_revision{};
+    bool                              m_initialized{};
 };
 
 } // namespace sf::priv
