@@ -76,7 +76,6 @@ class WindowImplCocoa;
     BOOL                       m_mouseIsIn;     ///< Mouse positional state
     NSCursor*                  m_cursor;        ///< Active cursor
     NSTrackingArea*            m_trackingArea;  ///< Mouse tracking area
-    BOOL                       m_fullscreen;    ///< Indicate whether the window is fullscreen or not
     CGFloat                    m_scaleFactor;   ///< Display scale factor (e.g. 1x for classic display, 2x for retina)
     BOOL                       m_cursorGrabbed; ///< Is the mouse cursor trapped?
     CGFloat                    m_deltaXBuffer;  ///< See note about cursor grabbing above
@@ -93,18 +92,26 @@ class WindowImplCocoa;
 ////////////////////////////////////////////////////////////
 /// \brief Create the SFML OpenGL view
 ///
-/// NB: -initWithFrame: is also implemented to default isFullscreen to NO
+/// NB: -initWithFrame: is also implemented to default isHighDpi to NO
 /// in case SFOpenGLView is created with the standard message.
 ///
 /// To finish the initialization -finishInit should be called too.
 ///
 /// \param frameRect dimension of the view
-/// \param isFullscreen fullscreen flag
+/// \param isHighDpi high-DPI flag
 ///
 /// \return an initialized view
 ///
 ////////////////////////////////////////////////////////////
-- (id)initWithFrame:(NSRect)frameRect fullscreen:(BOOL)isFullscreen highDpi:(BOOL)isHighDpi;
+- (id)initWithFrame:(NSRect)frameRect highDpi:(BOOL)isHighDpi;
+
+////////////////////////////////////////////////////////////
+/// \brief Check whether the view's window is in a fullscreen space
+///
+/// \return YES if the window is fullscreen, NO otherwise
+///
+////////////////////////////////////////////////////////////
+- (BOOL)isFullscreen;
 
 ////////////////////////////////////////////////////////////
 /// \brief Finish the creation of the SFML OpenGL view

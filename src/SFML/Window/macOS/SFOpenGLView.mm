@@ -67,6 +67,12 @@
 - (void)windowDidResignKey:(NSNotification*)notification;
 
 ////////////////////////////////////////////////////////////
+/// \brief Callback for starting to leave a fullscreen space
+///
+////////////////////////////////////////////////////////////
+- (void)windowWillExitFullScreen:(NSNotification*)notification;
+
+////////////////////////////////////////////////////////////
 /// \brief Handle going in fullscreen mode
 ///
 ////////////////////////////////////////////////////////////
@@ -88,17 +94,11 @@
 ////////////////////////////////////////////////////////
 - (id)initWithFrame:(NSRect)frameRect
 {
-    return [self initWithFrame:frameRect fullscreen:NO highDpi:NO];
+    return [self initWithFrame:frameRect highDpi:NO];
 }
 
 ////////////////////////////////////////////////////////
-- (id)initWithFrame:(NSRect)frameRect fullscreen:(BOOL)isFullscreen
-{
-    return [self initWithFrame:frameRect fullscreen:isFullscreen highDpi:NO];
-}
-
-////////////////////////////////////////////////////////
-- (id)initWithFrame:(NSRect)frameRect fullscreen:(BOOL)isFullscreen highDpi:(BOOL)isHighDpi
+- (id)initWithFrame:(NSRect)frameRect highDpi:(BOOL)isHighDpi
 {
     if ((self = [super initWithFrame:frameRect]))
     {
@@ -112,7 +112,6 @@
         m_trackingArea  = [[NSTrackingArea alloc] initWithRect:[self bounds] options:opts owner:self userInfo:nil];
         [self addTrackingArea:m_trackingArea];
 
-        m_fullscreen    = isFullscreen;
         m_scaleFactor   = 1.0; // Default value; it will be updated in finishInit
         m_cursorGrabbed = NO;
         m_deltaXBuffer  = 0;
@@ -169,6 +168,11 @@
         addObserver:self
            selector:@selector(windowDidResignKey:)
                name:NSWindowWillCloseNotification
+             object:[self window]];
+    [[NSNotificationCenter defaultCenter]
+        addObserver:self
+           selector:@selector(windowWillExitFullScreen:)
+               name:NSWindowWillExitFullScreenNotification
              object:[self window]];
 
     // Register for changed screen and changed screen's profile events
@@ -291,7 +295,7 @@
     if (m_requester)
         m_requester->windowFocusGained();
 
-    if (m_fullscreen)
+    if ([self isFullscreen])
         [self enterFullscreen];
 }
 
@@ -306,8 +310,20 @@
     if (m_requester)
         m_requester->windowFocusLost();
 
-    if (m_fullscreen)
+    if ([self isFullscreen])
         [self exitFullscreen];
+}
+
+
+////////////////////////////////////////////////////////
+- (void)windowWillExitFullScreen:(NSNotification*)notification
+{
+    (void)notification;
+
+    // Undo any fullscreen letterboxing so the view resizes with the window
+    NSWindow* window = [self window];
+    NSRect    frame  = [window contentRectForFrameRect:[window frame]];
+    [self setFrame:NSMakeRect(0, 0, NSWidth(frame), NSHeight(frame))];
 }
 
 
@@ -339,6 +355,13 @@
 
     // Update status
     m_mouseIsIn = NO;
+}
+
+
+////////////////////////////////////////////////////////
+- (BOOL)isFullscreen
+{
+    return ([[self window] styleMask] & NSWindowStyleMaskFullScreen) ? YES : NO;
 }
 
 

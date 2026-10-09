@@ -53,6 +53,14 @@
 @interface SFWindowController ()
 
 ////////////////////////////////////////////////////////////
+/// \brief Create the OpenGL view and set it as the window's content view
+///
+/// \return YES on success, NO otherwise
+///
+////////////////////////////////////////////////////////////
+- (BOOL)setupContentView;
+
+////////////////////////////////////////////////////////////
 /// \brief Retrieves the screen height
 ///
 /// \return screen height
@@ -95,18 +103,8 @@
             return self;
         }
 
-        // Create the view.
-        m_oglView = [[SFOpenGLView alloc] initWithFrame:[[m_window contentView] frame] fullscreen:NO highDpi:NO];
-
-        if (m_oglView == nil)
-        {
-            sf::err() << "Could not create an instance of NSOpenGLView "
-                      << "in -[SFWindowController initWithWindow:]." << std::endl;
+        if (![self setupContentView])
             return self;
-        }
-
-        // Set the view to the window as its content view.
-        [m_window setContentView:m_oglView];
 
         [m_oglView finishInit];
     }
@@ -174,26 +172,18 @@
             return self;
         }
 
+        // Only resizable windows can enter a fullscreen space by default
+        [m_window setCollectionBehavior:[m_window collectionBehavior] | NSWindowCollectionBehaviorFullScreenPrimary];
+
+        // Black letterboxing when the view is resized smaller than the window while fullscreen
+        [m_window setBackgroundColor:NSColor.blackColor];
+
         // Go fullscreen if requested
         if (state == sf::State::Fullscreen)
-        {
-            [m_window setBackgroundColor:NSColor.blackColor];
             [m_window toggleFullScreen:nil];
-        }
 
-        // Create the view.
-        m_oglView = [[SFOpenGLView alloc] initWithFrame:[[m_window contentView] frame] fullscreen:NO highDpi:m_highDpi];
-
-        if (m_oglView == nil)
-        {
-            sf::err() << "Could not create an instance of NSOpenGLView "
-                      << "in -[SFWindowController setupWindowWithMode:andStyle:]." << std::endl;
-
+        if (![self setupContentView])
             return self;
-        }
-
-        // Set the view to the window as its content view.
-        [m_window setContentView:m_oglView];
 
         // Register for event.
         [m_window setDelegate:self];
@@ -208,6 +198,23 @@
         [m_oglView finishInit];
     }
     return self;
+}
+
+
+////////////////////////////////////////////////////////
+- (BOOL)setupContentView
+{
+    m_oglView = [[SFOpenGLView alloc] initWithFrame:[[m_window contentView] frame] highDpi:m_highDpi];
+
+    if (m_oglView == nil)
+    {
+        sf::err() << "Could not create an instance of NSOpenGLView "
+                  << "in -[SFWindowController setupContentView]." << std::endl;
+        return NO;
+    }
+
+    [m_window setContentView:m_oglView];
+    return YES;
 }
 
 
@@ -340,15 +347,14 @@
 {
     if ([m_window styleMask] & NSWindowStyleMaskFullScreen)
     {
-        // Special case when fullscreen: only resize the opengl view
-        // and make sure the requested size is not bigger than the window.
-        const sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
+        // Special case when fullscreen: only resize the opengl view, centred
+        // and no bigger than the window.
+        const NSSize bounds = [m_window contentRectForFrameRect:[m_window frame]].size;
 
-        size.x = std::min(size.x, desktop.size.x);
-        size.y = std::min(size.y, desktop.size.y);
+        const CGFloat width  = std::min(static_cast<CGFloat>(size.x), bounds.width);
+        const CGFloat height = std::min(static_cast<CGFloat>(size.y), bounds.height);
 
-        const auto origin  = sf::Vector2<CGFloat>(desktop.size - size) / CGFloat{2};
-        NSRect     oglRect = NSMakeRect(origin.x, origin.y, size.x, size.y);
+        NSRect oglRect = NSMakeRect((bounds.width - width) / 2, (bounds.height - height) / 2, width, height);
 
         [m_oglView setFrame:oglRect];
         [m_oglView setNeedsDisplay:YES];
