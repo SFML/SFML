@@ -267,6 +267,22 @@ elseif(SFML_OS_ANDROID)
     source_group("android" FILES ${PLATFORM_SRC})
 endif()
 
+# system libraries for the pkg-config file, which sfml_add_library generates
+if(SFML_OS_LINUX OR SFML_OS_FREEBSD OR SFML_OS_OPENBSD OR SFML_OS_NETBSD)
+    if(SFML_USE_DRM)
+        set(SFML_PKGCONFIG_REQUIRES_PRIVATE "libdrm, gbm")
+    else()
+        set(SFML_PKGCONFIG_REQUIRES_PRIVATE "x11, xrandr, xcursor, xi")
+    endif()
+
+    if(SFML_OS_LINUX)
+        string(APPEND SFML_PKGCONFIG_REQUIRES_PRIVATE ", libudev")
+        set(SFML_PKGCONFIG_LIBS_PRIVATE "-ldl")
+    elseif(SFML_OS_FREEBSD)
+        set(SFML_PKGCONFIG_LIBS_PRIVATE "-lusbhid")
+    endif()
+endif()
+
 # define the sfml-window target
 sfml_add_library(Window
                  SOURCES ${SRC} ${PLATFORM_SRC}

@@ -8,5 +8,7 @@ Description: The Simple and Fast Multimedia Library, network module.
 URL: http://www.sfml-dev.org
 Version: @PROJECT_VERSION@
 Requires: sfml-system
-Libs: -L${libdir} -lsfml-network
+Requires.private: mbedtls, mbedx509, mbedcrypto, libssh2
+Libs: -L${libdir} -lsfml-network@SFML_PKGCONFIG_POSTFIX@
+Libs.private: @SFML_PKGCONFIG_LIBS_PRIVATE@
 Cflags: -I${includedir}

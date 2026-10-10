@@ -7,5 +7,5 @@ Name: SFML-system
 Description: The Simple and Fast Multimedia Library, system module.
 URL: http://www.sfml-dev.org
 Version: @PROJECT_VERSION@
-Libs: -L${libdir} -lsfml-system
+Libs: -L${libdir} -lsfml-system@SFML_PKGCONFIG_POSTFIX@
 Cflags: -I${includedir}

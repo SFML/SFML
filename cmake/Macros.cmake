@@ -242,6 +242,15 @@ macro(sfml_add_library module)
 
     # install pkgconfig
     if(SFML_INSTALL_PKGCONFIG_FILES AND NOT ${target} STREQUAL "sfml-main")
+        # pkg-config files only describe one configuration, so use the postfix of the one being built
+        set(SFML_PKGCONFIG_POSTFIX "")
+        if(NOT BUILD_SHARED_LIBS OR THIS_STATIC)
+            set(SFML_PKGCONFIG_POSTFIX "-s")
+        endif()
+        if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+            string(APPEND SFML_PKGCONFIG_POSTFIX "-d")
+        endif()
+
         configure_file(
             "${PROJECT_SOURCE_DIR}/tools/pkg-config/${target}.pc.in"
             "${CMAKE_CURRENT_BINARY_DIR}/tools/pkg-config/${target}.pc"
