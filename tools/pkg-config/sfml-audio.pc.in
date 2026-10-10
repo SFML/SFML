@@ -9,5 +9,5 @@ URL: http://www.sfml-dev.org
 Version: @PROJECT_VERSION@
 Requires: sfml-system
 Requires.private: vorbisenc, vorbisfile, vorbis, ogg, flac
-Libs: -L${libdir} -lsfml-audio
+Libs: -L${libdir} -lsfml-audio@SFML_PKGCONFIG_POSTFIX@
 Cflags: -I${includedir}

@@ -9,7 +9,7 @@ URL: http://www.sfml-dev.org
 Version: @PROJECT_VERSION@
 Requires: sfml-window
 Requires.private: sfml-system, freetype2, harfbuzz
-Libs: -L${libdir} -lsfml-graphics
+Libs: -L${libdir} -lsfml-graphics@SFML_PKGCONFIG_POSTFIX@
 # gl may not be in pkg-config
 Libs.private: @OPENGL_gl_LIBRARY@ @OPENGL_glu_LIBRARY@
 Cflags: -I${includedir}
