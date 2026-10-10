@@ -8,7 +8,7 @@ Description: The Simple and Fast Multimedia Library, graphics module.
 URL: http://www.sfml-dev.org
 Version: @PROJECT_VERSION@
 Requires: sfml-window
-Requires.private: sfml-system, freetype2
+Requires.private: sfml-system, freetype2, harfbuzz
 Libs: -L${libdir} -lsfml-graphics
 # gl may not be in pkg-config
 Libs.private: @OPENGL_gl_LIBRARY@ @OPENGL_glu_LIBRARY@
