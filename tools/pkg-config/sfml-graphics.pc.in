@@ -11,5 +11,5 @@ Requires: sfml-window
 Requires.private: sfml-system, freetype2, harfbuzz
 Libs: -L${libdir} -lsfml-graphics@SFML_PKGCONFIG_POSTFIX@
 # gl may not be in pkg-config
-Libs.private: @OPENGL_gl_LIBRARY@ @OPENGL_glu_LIBRARY@
+Libs.private: @OPENGL_gl_LIBRARY@
 Cflags: -I${includedir}
