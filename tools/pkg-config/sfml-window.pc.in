@@ -10,5 +10,5 @@ Version: @PROJECT_VERSION@
 Requires: sfml-system
 Libs: -L${libdir} -lsfml-window@SFML_PKGCONFIG_POSTFIX@
 # gl may not be in pkg-config
-Libs.private: @OPENGL_gl_LIBRARY@ @OPENGL_glu_LIBRARY@
+Libs.private: @OPENGL_gl_LIBRARY@
 Cflags: -I${includedir}
