@@ -10,4 +10,5 @@ Version: @PROJECT_VERSION@
 Requires: sfml-system
 Requires.private: mbedtls, mbedx509, mbedcrypto, libssh2
 Libs: -L${libdir} -lsfml-network@SFML_PKGCONFIG_POSTFIX@
+Libs.private: @SFML_PKGCONFIG_LIBS_PRIVATE@
 Cflags: -I${includedir}

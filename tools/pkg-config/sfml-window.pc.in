@@ -8,7 +8,8 @@ Description: The Simple and Fast Multimedia Library, window module.
 URL: http://www.sfml-dev.org
 Version: @PROJECT_VERSION@
 Requires: sfml-system
+Requires.private: @SFML_PKGCONFIG_REQUIRES_PRIVATE@
 Libs: -L${libdir} -lsfml-window@SFML_PKGCONFIG_POSTFIX@
 # gl may not be in pkg-config
-Libs.private: @OPENGL_gl_LIBRARY@
+Libs.private: @OPENGL_gl_LIBRARY@ @SFML_PKGCONFIG_LIBS_PRIVATE@
 Cflags: -I${includedir}
