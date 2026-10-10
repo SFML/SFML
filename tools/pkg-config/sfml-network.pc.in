@@ -9,5 +9,5 @@ URL: http://www.sfml-dev.org
 Version: @PROJECT_VERSION@
 Requires: sfml-system
 Requires.private: mbedtls, mbedx509, mbedcrypto, libssh2
-Libs: -L${libdir} -lsfml-network
+Libs: -L${libdir} -lsfml-network@SFML_PKGCONFIG_POSTFIX@
 Cflags: -I${includedir}
