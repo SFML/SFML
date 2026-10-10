@@ -77,7 +77,7 @@ public:
     /// \param copy instance to copy
     ///
     ////////////////////////////////////////////////////////////
-    Texture(const Texture& copy);
+    explicit Texture(const Texture& copy);
 
     ////////////////////////////////////////////////////////////
     /// \brief Copy assignment operator
