@@ -43,6 +43,11 @@ endif()
 
 source_group("" FILES ${SRC})
 
+# system libraries for the pkg-config file, which sfml_add_library generates
+if(SFML_OS_LINUX)
+    set(SFML_PKGCONFIG_LIBS_PRIVATE "-lresolv")
+endif()
+
 # define the sfml-network target
 sfml_add_library(Network
                  SOURCES ${SRC}
