@@ -80,7 +80,7 @@ private:
 
     ////////////////////////////////////////////////////////////
     /// \brief Private "plug-in" callback
-    /// \note Only 'context' parameter is used.
+    /// \note The device is filtered or removed from the HID device set.
     /// \see IOHIDDeviceCallback
     ///
     ////////////////////////////////////////////////////////////
@@ -88,7 +88,7 @@ private:
 
     ////////////////////////////////////////////////////////////
     /// \brief Private "plug-out" callback
-    /// \note Only 'context' parameter is used.
+    /// \note The device is filtered or removed from the HID device set.
     /// \see IOHIDDeviceCallback
     ///
     ////////////////////////////////////////////////////////////
@@ -97,8 +97,8 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    IOHIDManagerRef m_manager{};       ///< HID Manager
-    unsigned int    m_joystickCount{}; ///< Number of joysticks currently connected
+    IOHIDManagerRef m_manager{};   ///< HID Manager
+    CFMutableSetRef m_joysticks{}; ///< Devices not handled by GameController
 };
 
 
