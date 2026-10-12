@@ -56,7 +56,7 @@ elseif(SFML_OS_LINUX OR SFML_OS_IOS OR SFML_OS_MACOS)
     target_link_libraries(sfml-network PRIVATE resolv)
 endif()
 
-if(SFML_USE_SYSTEM_DEPS)
+if(SFML_USE_SYSTEM_LIBSSH2_MBEDTLS)
     find_package(MbedTLS REQUIRED)
     find_package(Libssh2 REQUIRED)
 else()
