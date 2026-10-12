@@ -851,6 +851,13 @@ private:
 /// used by a `sf::Text` (i.e. never write a function that
 /// uses a local `sf::Font` instance for creating a text).
 ///
+/// Before rendering, the string is split into runs that share
+/// the same script (Latin, Cyrillic, Arabic, ...) and text
+/// direction. Each run is then shaped on its own. Common
+/// characters such as spaces, digits and punctuation take the
+/// script of the surrounding text, and a closing bracket takes
+/// the script of its matching opening bracket.
+///
 /// See also the note on coordinates and undistorted rendering in `sf::Transformable`.
 ///
 /// Usage example:
