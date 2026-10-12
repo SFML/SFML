@@ -127,6 +127,10 @@ void WindowImplAndroid::processEvents()
         m_windowBeingDestroyed = false;
     }
 
+    for (const auto codepoint : states.textEvents)
+        pushEvent(Event::TextEntered{codepoint});
+    states.textEvents.clear();
+
     states.updated = true;
 }
 
