@@ -38,6 +38,7 @@
 #include <SFML/System/InputStream.hpp>
 #include <SFML/System/MemoryInputStream.hpp>
 #include <SFML/System/Sleep.hpp>
+#include <SFML/System/StandardPaths.hpp>
 #include <SFML/System/String.hpp>
 #include <SFML/System/Time.hpp>
 #include <SFML/System/TimeoutWithPredicate.hpp>
