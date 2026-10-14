@@ -21,18 +21,21 @@ int main()
     // Check that the device can capture audio
     if (!sf::SoundRecorder::isAvailable())
     {
-        sf::err() << "Sorry, audio capture is not supported by your system" << std::endl;
+        std::cerr << "Sorry, audio capture is not supported by your system" << std::endl;
         return EXIT_SUCCESS;
     }
 
     const auto devices = sf::SoundRecorder::getAvailableDevices();
     if (devices.empty())
     {
-        sf::err() << "No sound recording devices available" << std::endl;
+        std::cerr << "No sound recording devices available" << std::endl;
         return EXIT_SUCCESS;
     }
 
-    sf::RenderWindow window(sf::VideoMode({800, 600}), "Sound capture example");
+    sf::RenderWindow window(sf::VideoMode({800, 600}),
+                            "Sound capture example",
+                            sf::State::Windowed,
+                            sf::ContextSettings{0 /* depthBits */, 0 /* stencilBits */, 8 /* antiAliasingLevel */});
     const sf::Font   font("resources/tuffy.ttf");
 
     // List the available capture devices and display text for each
@@ -53,6 +56,8 @@ int main()
     deviceIndicator.setOutlineColor(sf::Color::White);
     deviceIndicator.setOutlineThickness(3);
 
+    constexpr sf::Color disabledColor(80, 80, 80);
+
     // A red circle "record" button
     sf::CircleShape recordButton(100);
     recordButton.setFillColor(sf::Color::Red);
@@ -62,7 +67,7 @@ int main()
 
     // A green triangle "play" button
     sf::CircleShape playButton(100, 3);
-    playButton.setFillColor(sf::Color::Transparent);
+    playButton.setFillColor(disabledColor);
     playButton.setPosition({static_cast<float>(window.getSize().x) - 100.f, buttonYOffset});
     playButton.setRotation(sf::degrees(90));
     playButton.setOutlineThickness(5);
@@ -78,10 +83,9 @@ int main()
 
     auto setCurrentDevice = [&](auto index)
     {
-        assert(index < devices.size());
         if (!recorder.setDevice(devices[index]))
         {
-            sf::err() << "Unable to set device to " << devices[index];
+            std::cerr << "Unable to set device to " << devices[index] << std::endl;
         }
         const auto bounds = deviceTexts[index].getGlobalBounds();
         deviceIndicator.setSize(bounds.size);
@@ -92,23 +96,22 @@ int main()
     bool recording      = false;
     auto startRecording = [&]
     {
-        assert(!recording);
         if (!recorder.start())
         {
-            sf::err() << "Failed to start recording" << std::endl;
+            std::cerr << "Failed to start recording" << std::endl;
+            statusText.setString("Failed to start recording");
         }
         else
         {
             recording = true;
-            playButton.setFillColor(sf::Color::Transparent);
+            playButton.setFillColor(disabledColor);
             recordButton.setOutlineColor(sf::Color::White);
+            statusText.setString("Recording...");
         }
-        statusText.setString("Recording...");
     };
 
     auto stopRecording = [&]
     {
-        assert(recording);
         recorder.stop();
         playButton.setFillColor(sf::Color::Green);
         recordButton.setOutlineColor(sf::Color::Transparent);
@@ -122,7 +125,7 @@ int main()
     auto startPlayback = [&]
     {
         sound.play();
-        recordButton.setFillColor(sf::Color::Transparent);
+        recordButton.setFillColor(disabledColor);
         playButton.setOutlineColor(sf::Color::White);
         playing = true;
     };
@@ -139,21 +142,29 @@ int main()
     {
         while (const auto event = window.pollEvent())
         {
-            if (const auto* clickEvent = event->getIf<sf::Event::MouseButtonPressed>();
+            if (event->is<sf::Event::Closed>())
+            {
+                window.close();
+                break;
+            }
+
+            if (const auto* clickEvent = event->getIf<sf::Event::MouseButtonReleased>();
                 clickEvent && clickEvent->button == sf::Mouse::Button::Left)
             {
+                const auto clickPosition = window.mapPixelToCoords(clickEvent->position);
+
                 // Check if a device is selected
                 for (auto i = 0u; i < devices.size(); ++i)
                 {
-                    if (deviceTexts[i].getGlobalBounds().contains(sf::Vector2f{clickEvent->position}))
+                    if (deviceTexts[i].getGlobalBounds().contains(clickPosition))
                     {
                         setCurrentDevice(i);
                     }
                 }
 
                 // Check for recording button press
-                if ((sf::Vector2f{clickEvent->position} - recordButton.getGlobalBounds().getCenter()).length() <
-                    recordButton.getRadius())
+                if (!playing &&
+                    (clickPosition - recordButton.getGlobalBounds().getCenter()).length() < recordButton.getRadius())
                 {
                     if (!recording)
                     {
@@ -166,7 +177,8 @@ int main()
                 }
 
                 // Check for play button press
-                if (playButton.getGlobalBounds().contains(sf::Vector2f{clickEvent->position}))
+                if (!recording && recorder.getBuffer().getSampleCount() > 0 &&
+                    playButton.getGlobalBounds().contains(clickPosition))
                 {
                     if (!playing)
                     {
