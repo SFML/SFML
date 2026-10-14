@@ -22,7 +22,11 @@ endif()
 
 # determine whether to create a debug or release build
 sfml_set_option(CMAKE_BUILD_TYPE Release STRING "Choose the type of build (Debug or Release)")
-sfml_set_option(CMAKE_OSX_DEPLOYMENT_TARGET "13.0" STRING "The minimal iOS version that will be able to run the built binaries. Cannot be lower than 13.0")
+# provide a default deployment target unless the user or a parent project already chose one
+# this is a normal variable so that it doesn't leak into the cache of projects consuming SFML
+if(NOT CMAKE_OSX_DEPLOYMENT_TARGET AND NOT DEFINED ENV{MACOSX_DEPLOYMENT_TARGET})
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "13.0")
+endif()
 
 # project name
 project(SFML VERSION 3.2.0)
@@ -31,6 +35,10 @@ set(VERSION_IS_RELEASE OFF)
 
 # include the configuration file
 include(cmake/Config.cmake)
+
+if(SFML_OS_IOS AND CMAKE_OSX_DEPLOYMENT_TARGET VERSION_LESS "13.0")
+    message(FATAL_ERROR "CMAKE_OSX_DEPLOYMENT_TARGET is ${CMAKE_OSX_DEPLOYMENT_TARGET}, but SFML requires at least iOS 13.0")
+endif()
 
 # we use the paths from the cmake GNUInstallDirs module as defaults
 # you can override these if you like
