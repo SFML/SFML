@@ -3,6 +3,7 @@ set(WINDOW_SRC
     Context.test.cpp
     ContextSettings.test.cpp
     Event.test.cpp
+    Gamepad.test.cpp
     GlResource.test.cpp
     Joystick.test.cpp
     Mouse.test.cpp

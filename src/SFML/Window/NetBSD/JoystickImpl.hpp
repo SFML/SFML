@@ -62,6 +62,9 @@ public:
     [[nodiscard]] Joystick::Identification getIdentification() const;
 
     ////////////////////////////////////////////////////////////
+    [[nodiscard]] std::optional<JoystickLayout> getGamepadLayout() const;
+
+    ////////////////////////////////////////////////////////////
     [[nodiscard]] JoystickState update();
 
 private:

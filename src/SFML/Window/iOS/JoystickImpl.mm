@@ -84,6 +84,14 @@ Joystick::Identification JoystickImpl::getIdentification() const
 
 
 ////////////////////////////////////////////////////////////
+std::optional<JoystickLayout> JoystickImpl::getGamepadLayout() const
+{
+    // Gamepad mappings aren't supported on this platform yet
+    return std::nullopt;
+}
+
+
+////////////////////////////////////////////////////////////
 JoystickState JoystickImpl::update()
 {
     // Not implemented

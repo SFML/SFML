@@ -385,6 +385,18 @@ unsigned int getJoystickProductId(unsigned int index)
     return 0;
 }
 
+// Get an attribute of the joystick's input device, such as "id/bustype" or "id/version"
+unsigned int getJoystickInputAttribute(unsigned int index, const std::string& attributeName)
+{
+    if (!udevContext)
+        return 0;
+
+    const auto udevDevice = UdevPtr<udev_device>(
+        udev_device_new_from_syspath(udevContext.get(), joystickList[index].systemPath.c_str()));
+
+    return getParentAttributeUint(udevDevice.get(), "input", nullptr, attributeName);
+}
+
 // Get the axis an evdev axis code is reported as, if any. Gamepads without a second stick on Rx/Ry
 // (e.g., the Android HID layout) put their triggers on the accelerator and brake.
 std::optional<sf::Joystick::Axis> toAxis(char absCode, bool hasRxRy)
@@ -565,6 +577,25 @@ bool JoystickImpl::open(unsigned int index)
                 m_identification.productId = getJoystickProductId(index);
             }
 
+            // SDL reads the same axes through evdev, in the same order as joydev, but reports the hats separately
+            m_layout                 = JoystickLayout();
+            m_layout.bus             = static_cast<std::uint16_t>(getJoystickInputAttribute(index, "id/bustype"));
+            m_layout.version         = static_cast<std::uint16_t>(getJoystickInputAttribute(index, "id/version"));
+            m_layout.hatUpIsNegative = true;
+
+            for (std::size_t i = 0; i < static_cast<std::size_t>(axesCount); ++i)
+            {
+                if (mapping[i] >= ABS_HAT0X && mapping[i] <= ABS_HAT3Y)
+                {
+                    m_layout.hasHat = m_layout.hasHat || mapping[i] == ABS_HAT0X || mapping[i] == ABS_HAT0Y;
+                    continue;
+                }
+
+                // Two axes reported as the same SFML axis (e.g. Z and throttle) can't be told apart
+                const bool isShared = m_axes[i] && std::count(m_axes.begin(), m_axes.begin() + axesCount, m_axes[i]) > 1;
+                m_layout.axes.push_back(isShared ? std::nullopt : m_axes[i]);
+            }
+
             // Reset the joystick state
             m_state = JoystickState();
 
@@ -614,6 +645,13 @@ JoystickCaps JoystickImpl::getCapabilities() const
 Joystick::Identification JoystickImpl::getIdentification() const
 {
     return m_identification;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<JoystickLayout> JoystickImpl::getGamepadLayout() const
+{
+    return m_layout;
 }
 
 

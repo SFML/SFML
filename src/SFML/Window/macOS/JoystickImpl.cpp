@@ -35,6 +35,7 @@
 
 #include <algorithm>
 #include <ostream>
+#include <string>
 
 
 namespace
@@ -79,6 +80,32 @@ unsigned int getDeviceUint(IOHIDDeviceRef ref, CFStringRef prop, unsigned int in
     sf::err() << "Unable to read uint value for property '" << stringFromCFString(prop) << "' for joystick at index "
               << index << std::endl;
     return 0;
+}
+
+
+// Get HID device property key as an unsigned int, 0 if the device doesn't provide it
+unsigned int getDeviceUintOrZero(IOHIDDeviceRef ref, CFStringRef prop)
+{
+    CFTypeRef typeRef = IOHIDDeviceGetProperty(ref, prop);
+    if (typeRef && (CFGetTypeID(typeRef) == CFNumberGetTypeID()))
+    {
+        SInt32 value = 0;
+        CFNumberGetValue(static_cast<CFNumberRef>(typeRef), kCFNumberSInt32Type, &value);
+        return static_cast<unsigned int>(value);
+    }
+
+    return 0;
+}
+
+
+// Check if a HID device is connected through Bluetooth (or Bluetooth Low Energy)
+bool isBluetoothDevice(IOHIDDeviceRef ref)
+{
+    CFTypeRef typeRef = IOHIDDeviceGetProperty(ref, CFSTR(kIOHIDTransportKey));
+    if (typeRef && (CFGetTypeID(typeRef) == CFStringGetTypeID()))
+        return stringFromCFString(static_cast<CFStringRef>(typeRef)).rfind("Bluetooth", 0) == 0;
+
+    return false;
 }
 } // namespace
 
@@ -326,6 +353,19 @@ bool JoystickImpl::open(unsigned int index)
     if (m_hat != nullptr)
         CFRetain(m_hat);
 
+    // SDL orders the axes by their HID usage (X, Y, Z, Rx, Ry, Rz, ...) and the buttons the same as SFML
+    m_layout         = JoystickLayout();
+    m_layout.bus     = isBluetoothDevice(self) ? std::uint16_t{0x05} : std::uint16_t{0x03};
+    m_layout.version = static_cast<std::uint16_t>(getDeviceUintOrZero(self, CFSTR(kIOHIDVersionNumberKey)));
+    m_layout.hasHat  = m_hat != nullptr;
+
+    for (const auto axis :
+         {Joystick::Axis::X, Joystick::Axis::Y, Joystick::Axis::Z, Joystick::Axis::U, Joystick::Axis::V, Joystick::Axis::R})
+    {
+        if (m_axis.find(axis) != m_axis.end())
+            m_layout.axes.emplace_back(axis);
+    }
+
     // Note: we didn't retain element in the switch because we might have multiple
     // Axis X (for example) and we want to keep only the last one. To prevent
     // leaking we retain objects 'only' now.
@@ -387,6 +427,13 @@ Joystick::Identification JoystickImpl::getIdentification() const
 {
     const AutoreleasePool pool;
     return m_identification;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<JoystickLayout> JoystickImpl::getGamepadLayout() const
+{
+    return m_layout;
 }
 
 

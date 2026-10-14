@@ -36,11 +36,13 @@
 #include <algorithm>
 #include <array>
 #include <iomanip>
+#include <optional>
 #include <ostream>
 #include <regstr.h>
 #include <sstream>
 #include <string>
 #include <tchar.h>
+#include <utility>
 #include <vector>
 
 #include <cmath>
@@ -329,6 +331,38 @@ JoystickCaps JoystickImpl::getCapabilities() const
 Joystick::Identification JoystickImpl::getIdentification() const
 {
     return m_identification;
+}
+
+
+////////////////////////////////////////////////////////////
+std::optional<JoystickLayout> JoystickImpl::getGamepadLayout() const
+{
+    // The joyGetPosEx() fallback orders its axes differently than SDL's DirectInput backend
+    if (!directInput || !m_device)
+        return std::nullopt;
+
+    // SDL reports DirectInput devices as USB devices without version
+    JoystickLayout layout;
+    layout.bus = 0x03;
+
+    // SDL orders the axes by their offset in DIJOYSTATE (X, Y, Z, Rx, Ry, Rz, sliders), the
+    // offsets SFML stores for its axes tell where each of them ends up in that order
+    std::vector<std::pair<int, Joystick::Axis>> axes;
+    for (const auto axis :
+         {Joystick::Axis::X, Joystick::Axis::Y, Joystick::Axis::Z, Joystick::Axis::R, Joystick::Axis::U, Joystick::Axis::V})
+    {
+        if (m_axes[axis] != -1)
+            axes.emplace_back(m_axes[axis], axis);
+    }
+
+    std::sort(axes.begin(), axes.end());
+
+    for (const auto& [offset, axis] : axes)
+        layout.axes.emplace_back(axis);
+
+    layout.hasHat = m_axes[Joystick::Axis::PovX] != -1;
+
+    return layout;
 }
 
 

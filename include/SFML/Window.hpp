@@ -33,6 +33,7 @@
 #include <SFML/Window/ContextSettings.hpp>
 #include <SFML/Window/Cursor.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Window/Gamepad.hpp>
 #include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>

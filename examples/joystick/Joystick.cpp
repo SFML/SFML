@@ -3,7 +3,11 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics.hpp>
 
+#include <array>
+#include <filesystem>
 #include <string>
+#include <utility>
+#include <vector>
 
 using namespace std::literals;
 
@@ -17,7 +21,7 @@ class AxisDisplay : public sf::Drawable, public sf::Transformable
 {
 public:
     AxisDisplay() = delete;
-    AxisDisplay(const sf::Font& font, sf::Joystick::Axis axis) : m_label(font), m_axis(axis)
+    AxisDisplay(const sf::Font& font, const std::string& label) : m_label(font)
     {
         m_bounds.setFillColor(sf::Color::Transparent);
         m_bounds.setOutlineColor(sf::Color::White);
@@ -29,7 +33,7 @@ public:
 
         m_label.setCharacterSize(static_cast<unsigned int>(m_bounds.getSize().x));
         m_label.setPosition({0, m_bounds.getSize().y / 2});
-        m_label.setString(axisLabels[static_cast<unsigned int>(axis)]);
+        m_label.setString(label);
         m_label.setOrigin({m_label.getLocalBounds().size / 2.f});
     }
 
@@ -37,11 +41,6 @@ public:
     {
         // We adjust the range from [-100,100] to [0, height]
         m_indicator.setScale({1, (100 + value) * m_bounds.getLocalBounds().size.y / 200});
-    }
-
-    sf::Joystick::Axis getAxis() const
-    {
-        return m_axis;
     }
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override
@@ -56,23 +55,14 @@ private:
     sf::Text           m_label;
     sf::RectangleShape m_bounds{{20.f, 50.f}};
     sf::RectangleShape m_indicator{{20.f, 1.f}};
-    sf::Joystick::Axis m_axis;
 };
 
 // Display for an _actual_ joystick (i.e. two combined axes)
 class JoystickDisplay : public sf::Drawable, public sf::Transformable
 {
-
 public:
     JoystickDisplay() = delete;
-    JoystickDisplay(const sf::Font&    font,
-                    sf::Joystick::Axis xAxis,
-                    sf::Joystick::Axis yAxis,
-                    std::optional<int> button = std::nullopt) :
-        m_xAxis(xAxis),
-        m_yAxis(yAxis),
-        m_button(button),
-        m_label(font)
+    JoystickDisplay(const sf::Font& font, const std::string& label) : m_label(font)
     {
         m_bounds.setOrigin(m_bounds.getLocalBounds().size / 2.f); // Center origin for simplicity
         m_bounds.setFillColor(sf::Color::Transparent);
@@ -82,8 +72,7 @@ public:
         m_indicator.setFillColor(sf::Color::Red);
         m_indicator.setOrigin(m_indicator.getLocalBounds().size / 2.f);
 
-        m_label.setString(
-            axisLabels[static_cast<unsigned int>(xAxis)] + "/"s + axisLabels[static_cast<unsigned int>(yAxis)]);
+        m_label.setString(label);
         m_label.setCharacterSize(20);
         m_label.setOrigin(m_label.getLocalBounds().size / 2.f + m_label.getLocalBounds().position);
     }
@@ -100,24 +89,9 @@ public:
         updatePos();
     }
 
-    sf::Joystick::Axis getXAxis() const
-    {
-        return m_xAxis;
-    }
-
-    sf::Joystick::Axis getYAxis() const
-    {
-        return m_yAxis;
-    }
-
     void pressed(bool pressed)
     {
         m_bounds.setFillColor(pressed ? sf::Color::Red : sf::Color::Transparent);
-    }
-
-    std::optional<unsigned int> getButton() const
-    {
-        return m_button;
     }
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override
@@ -134,14 +108,12 @@ private:
         auto radius = m_bounds.getRadius();
         m_indicator.setPosition({m_xValue * radius / 100, m_yValue * radius / 100});
     }
-    sf::Joystick::Axis          m_xAxis;
-    sf::Joystick::Axis          m_yAxis;
-    std::optional<unsigned int> m_button;
-    sf::CircleShape             m_bounds{50.f};
-    sf::CircleShape             m_indicator{5.f};
-    sf::Text                    m_label;
-    float                       m_xValue{};
-    float                       m_yValue{};
+
+    sf::CircleShape m_bounds{50.f};
+    sf::CircleShape m_indicator{5.f};
+    sf::Text        m_label;
+    float           m_xValue{};
+    float           m_yValue{};
 };
 
 // Display a button state
@@ -149,9 +121,9 @@ class ButtonDisplay : public sf::Drawable, public sf::Transformable
 {
 public:
     ButtonDisplay() = delete;
-    ButtonDisplay(const sf::Font& font, unsigned int button) : m_label(font), m_button(button)
+    ButtonDisplay(const sf::Font& font, const std::string& label) : m_label(font)
     {
-        m_label.setString(std::to_string(button));
+        m_label.setString(label);
         m_label.setCharacterSize(static_cast<unsigned int>(m_indicator.getLocalBounds().size.y));
         m_label.setOrigin(m_label.getLocalBounds().size / 2.f + m_label.getLocalBounds().position);
 
@@ -166,11 +138,6 @@ public:
         m_indicator.setFillColor(pressed ? sf::Color::Red : sf::Color::Transparent);
     }
 
-    unsigned int getButton() const
-    {
-        return m_button;
-    }
-
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
         states.transform *= getTransform();
@@ -180,170 +147,171 @@ public:
 
 private:
     sf::Text        m_label;
-    unsigned int    m_button;
     sf::CircleShape m_indicator{10.f};
 };
 
 constexpr sf::Vector2f displaySize{800, 400};
 
-// Display a basic gamepad layout
+// Display the gamepad layout, using the joystick's gamepad mapping
 class GamepadDisplay : public sf::Drawable, public sf::Transformable
 {
 public:
-    GamepadDisplay(const sf::Font& font, unsigned int id) : m_label(font), m_id(id)
+    GamepadDisplay(const sf::Font& font, unsigned int id) :
+        m_leftStick(font, "L"),
+        m_rightStick(font, "R"),
+        m_leftTrigger(font, "LT"),
+        m_rightTrigger(font, "RT"),
+        m_label(font),
+        m_id(id)
     {
-        m_label.setString(std::to_string(id) + ": " + sf::Joystick::getIdentification(id).name);
+        if (sf::Gamepad::isConnected(id))
+            m_label.setString(std::to_string(id) + ": " + sf::Gamepad::getName(id));
+        else
+            m_label.setString(
+                std::to_string(id) + ": " + sf::Joystick::getIdentification(id).name + " (no gamepad mapping)");
         m_label.setCharacterSize(20);
 
         // Create the rough layout of a typical gamepad
-        m_joysticks.emplace_back(font, sf::Joystick::Axis::X, sf::Joystick::Axis::Y, 10); // Left stick
-        m_joysticks.back().setPosition({displaySize.x / 2.f - 100, displaySize.y - 50});
-        m_joysticks.emplace_back(font, sf::Joystick::Axis::Z, sf::Joystick::Axis::R, 11); // Right stick
-        m_joysticks.back().setPosition({displaySize.x / 2.f + 100, displaySize.y - 50});
+        m_leftStick.setPosition({displaySize.x / 2.f - 100, displaySize.y - 50});
+        m_rightStick.setPosition({displaySize.x / 2.f + 100, displaySize.y - 50});
 
+        m_leftTrigger.setPosition({displaySize.x / 2.f - 100, displaySize.y / 5.f});
+        m_rightTrigger.setPosition({displaySize.x / 2.f + 100, displaySize.y / 5.f});
 
-        constexpr sf::Vector2f mainButtonPos{displaySize.x / 2.f + 250, displaySize.y / 2.f - 50};
-        constexpr auto         offset = 20.f;
-        m_buttons.emplace_back(font, 3); // North button
-        m_buttons.back().setPosition(mainButtonPos + sf::Vector2f{0, -offset});
-        m_buttons.emplace_back(font, 1); // South button
-        m_buttons.back().setPosition(mainButtonPos + sf::Vector2f{0, offset});
-        m_buttons.emplace_back(font, 2); // East button
-        m_buttons.back().setPosition(mainButtonPos + sf::Vector2f{offset, 0});
-        m_buttons.emplace_back(font, 0); // West button
-        m_buttons.back().setPosition(mainButtonPos + sf::Vector2f{-offset, 0});
+        constexpr auto offset = 20.f;
 
-        m_triggers.emplace_back(font, sf::Joystick::Axis::V); // Right trigger
-        m_triggers.back().setPosition({displaySize.x / 2.f + 100, displaySize.y / 5.f});
-        m_triggers.emplace_back(font, sf::Joystick::Axis::U); // Left trigger
-        m_triggers.back().setPosition({displaySize.x / 2.f - 100, displaySize.y / 5.f});
+        constexpr sf::Vector2f faceButtonsPos{displaySize.x / 2.f + 250, displaySize.y / 2.f - 50};
+        addButton(font, sf::Gamepad::Button::North, "N", faceButtonsPos + sf::Vector2f{0, -offset});
+        addButton(font, sf::Gamepad::Button::South, "S", faceButtonsPos + sf::Vector2f{0, offset});
+        addButton(font, sf::Gamepad::Button::East, "E", faceButtonsPos + sf::Vector2f{offset, 0});
+        addButton(font, sf::Gamepad::Button::West, "W", faceButtonsPos + sf::Vector2f{-offset, 0});
 
-        m_buttons.emplace_back(font, 7); // Right trigger
-        m_buttons.back().setPosition(m_triggers[0].getPosition() + sf::Vector2f{0, -30});
-        m_buttons.emplace_back(font, 6); // Left trigger
-        m_buttons.back().setPosition(m_triggers[1].getPosition() + sf::Vector2f{0, -30});
+        constexpr sf::Vector2f dPadPos{displaySize.x / 2.f - 250, displaySize.y / 2.f - 50};
+        addButton(font, sf::Gamepad::Button::DPadUp, "U", dPadPos + sf::Vector2f{0, -offset});
+        addButton(font, sf::Gamepad::Button::DPadDown, "D", dPadPos + sf::Vector2f{0, offset});
+        addButton(font, sf::Gamepad::Button::DPadRight, "R", dPadPos + sf::Vector2f{offset, 0});
+        addButton(font, sf::Gamepad::Button::DPadLeft, "L", dPadPos + sf::Vector2f{-offset, 0});
 
-        m_buttons.emplace_back(font, 5); // Left shoulder
-        m_buttons.back().setPosition({displaySize.x / 2.f + 100, displaySize.y / 5.f + 80.f});
-        m_buttons.emplace_back(font, 4); // Right shoulder
-        m_buttons.back().setPosition({displaySize.x / 2.f - 100, displaySize.y / 5.f + 80.f});
+        addButton(font, sf::Gamepad::Button::LeftShoulder, "L", {displaySize.x / 2.f - 100, displaySize.y / 5.f + 80.f});
+        addButton(font, sf::Gamepad::Button::RightShoulder, "R", {displaySize.x / 2.f + 100, displaySize.y / 5.f + 80.f});
 
-        m_joysticks.emplace_back(font, sf::Joystick::Axis::PovX, sf::Joystick::Axis::PovY); // dpad
-        m_joysticks.back().setPosition({displaySize.x / 2.f - 250, displaySize.y / 2.f - 50});
+        addButton(font, sf::Gamepad::Button::Back, "-", {displaySize.x / 2 - 20.f, displaySize.y / 2.f});
+        addButton(font, sf::Gamepad::Button::Start, "+", {displaySize.x / 2 + 20.f, displaySize.y / 2.f});
+        addButton(font, sf::Gamepad::Button::Guide, "G", {displaySize.x / 2.f, displaySize.y / 2.f + 30});
+        addButton(font, sf::Gamepad::Button::Misc1, "M", {displaySize.x / 2.f, displaySize.y / 2.f - 30});
 
-        m_buttons.emplace_back(font, 8); // Back button
-        m_buttons.back().setPosition({displaySize.x / 2 - 20.f, displaySize.y / 2.f});
-        m_buttons.emplace_back(font, 9); // Start button
-        m_buttons.back().setPosition({displaySize.x / 2 + 20.f, displaySize.y / 2.f});
+        // Show the current state right away, events only report changes
+        for (auto i = 0u; i < sf::Gamepad::ButtonCount; ++i)
+        {
+            const auto button = static_cast<sf::Gamepad::Button>(i);
+            setButton(button, sf::Gamepad::isButtonPressed(id, button));
+        }
 
-        m_buttons.emplace_back(font, 12); // Guide button
-        m_buttons.back().setPosition({displaySize.x / 2.f, displaySize.y / 2.f + 30});
+        for (auto i = 0u; i < sf::Gamepad::AxisCount; ++i)
+        {
+            const auto axis = static_cast<sf::Gamepad::Axis>(i);
+            setAxis(axis, sf::Gamepad::getAxisPosition(id, axis));
+        }
     }
 
-    void handleEvent(std::optional<sf::Event> event)
+    void handleEvent(const sf::Event& event)
     {
-        if (const auto* joystickButtonPressed = event->getIf<sf::Event::JoystickButtonPressed>())
+        if (const auto* gamepadButtonPressed = event.getIf<sf::Event::GamepadButtonPressed>())
         {
-            if (joystickButtonPressed->joystickId == m_id)
-            {
-                for (auto& button : m_buttons)
-                {
-                    if (button.getButton() == joystickButtonPressed->button)
-                    {
-                        button.pressed(true);
-                        return;
-                    }
-                }
-
-                for (auto& joystick : m_joysticks)
-                {
-                    if (joystick.getButton() == joystickButtonPressed->button)
-                    {
-                        joystick.pressed(true);
-                        return;
-                    }
-                }
-            }
+            if (gamepadButtonPressed->joystickId == m_id)
+                setButton(gamepadButtonPressed->button, true);
         }
-        else if (const auto* joystickButtonReleased = event->getIf<sf::Event::JoystickButtonReleased>())
+        else if (const auto* gamepadButtonReleased = event.getIf<sf::Event::GamepadButtonReleased>())
         {
-            if (joystickButtonReleased->joystickId == m_id)
-            {
-                for (auto& button : m_buttons)
-                {
-                    if (button.getButton() == joystickButtonReleased->button)
-                    {
-                        button.pressed(false);
-                        return;
-                    }
-                }
-
-                for (auto& joystick : m_joysticks)
-                {
-                    if (joystick.getButton() == joystickButtonReleased->button)
-                    {
-                        joystick.pressed(false);
-                        return;
-                    }
-                }
-            }
+            if (gamepadButtonReleased->joystickId == m_id)
+                setButton(gamepadButtonReleased->button, false);
         }
-        else if (const auto* joystickMoved = event->getIf<sf::Event::JoystickMoved>())
+        else if (const auto* gamepadMoved = event.getIf<sf::Event::GamepadMoved>())
         {
-            if (joystickMoved->joystickId == m_id)
-            {
-                for (auto& joystick : m_joysticks)
-                {
-                    if (joystick.getXAxis() == joystickMoved->axis)
-                    {
-                        joystick.setX(joystickMoved->position);
-                        return;
-                    }
-                    if (joystick.getYAxis() == joystickMoved->axis)
-                    {
-                        joystick.setY(joystickMoved->position);
-                        return;
-                    }
-                }
-
-                for (auto& trigger : m_triggers)
-                {
-                    if (trigger.getAxis() == joystickMoved->axis)
-                    {
-                        trigger.setValue(joystickMoved->position);
-                        return;
-                    }
-                }
-            }
+            if (gamepadMoved->joystickId == m_id)
+                setAxis(gamepadMoved->axis, gamepadMoved->position);
         }
     }
 
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
         states.transform *= getTransform();
-        for (const auto& joystick : m_joysticks)
+        target.draw(m_leftStick, states);
+        target.draw(m_rightStick, states);
+        target.draw(m_leftTrigger, states);
+        target.draw(m_rightTrigger, states);
+        for (const auto& [button, display] : m_buttons)
         {
-            target.draw(joystick, states);
-        }
-        for (const auto& trigger : m_triggers)
-        {
-            target.draw(trigger, states);
-        }
-        for (const auto& button : m_buttons)
-        {
-            target.draw(button, states);
+            target.draw(display, states);
         }
         target.draw(m_label, states);
     }
 
 private:
-    std::vector<JoystickDisplay> m_joysticks;
-    std::vector<AxisDisplay>     m_triggers;
-    std::vector<ButtonDisplay>   m_buttons;
-    sf::Text                     m_label;
-    unsigned int                 m_id;
+    void addButton(const sf::Font& font, sf::Gamepad::Button button, const std::string& label, sf::Vector2f position)
+    {
+        ButtonDisplay display(font, label);
+        display.setPosition(position);
+        m_buttons.emplace_back(button, display);
+    }
+
+    void setButton(sf::Gamepad::Button button, bool pressed)
+    {
+        if (button == sf::Gamepad::Button::LeftStick)
+        {
+            m_leftStick.pressed(pressed);
+            return;
+        }
+
+        if (button == sf::Gamepad::Button::RightStick)
+        {
+            m_rightStick.pressed(pressed);
+            return;
+        }
+
+        for (auto& [displayedButton, display] : m_buttons)
+        {
+            if (displayedButton == button)
+                display.pressed(pressed);
+        }
+    }
+
+    void setAxis(sf::Gamepad::Axis axis, float position)
+    {
+        switch (axis)
+        {
+            case sf::Gamepad::Axis::LeftX:
+                m_leftStick.setX(position);
+                break;
+            case sf::Gamepad::Axis::LeftY:
+                m_leftStick.setY(position);
+                break;
+            case sf::Gamepad::Axis::RightX:
+                m_rightStick.setX(position);
+                break;
+            case sf::Gamepad::Axis::RightY:
+                m_rightStick.setY(position);
+                break;
+            // Triggers range from 0 to 100, the display from -100 to 100
+            case sf::Gamepad::Axis::LeftTrigger:
+                m_leftTrigger.setValue(position * 2 - 100);
+                break;
+            case sf::Gamepad::Axis::RightTrigger:
+                m_rightTrigger.setValue(position * 2 - 100);
+                break;
+        }
+    }
+
+    JoystickDisplay                                            m_leftStick;
+    JoystickDisplay                                            m_rightStick;
+    AxisDisplay                                                m_leftTrigger;
+    AxisDisplay                                                m_rightTrigger;
+    std::vector<std::pair<sf::Gamepad::Button, ButtonDisplay>> m_buttons;
+    sf::Text                                                   m_label;
+    unsigned int                                               m_id;
 };
 
+// Display the raw joystick state
 class GenericDisplay : public sf::Drawable, public sf::Transformable
 {
 public:
@@ -356,8 +324,9 @@ public:
         constexpr auto axisSpacing = displaySize.x / (sf::Joystick::AxisCount + 1);
         for (auto i = 0u; i < sf::Joystick::AxisCount; ++i)
         {
-            AxisDisplay display{font, static_cast<sf::Joystick::Axis>(i)};
+            AxisDisplay display{font, axisLabels[i]};
             display.setPosition({axisSpacing + static_cast<float>(i) * axisSpacing, displaySize.y * 0.25f});
+            display.setValue(sf::Joystick::getAxisPosition(id, static_cast<sf::Joystick::Axis>(i)));
             m_axisDisplays.emplace_back(display);
         }
 
@@ -365,12 +334,14 @@ public:
         constexpr auto buttonSpacing = displaySize.x / (sf::Joystick::ButtonCount / 2.f + 1);
         for (auto i = 0u; i < sf::Joystick::ButtonCount; ++i)
         {
-            ButtonDisplay display{font, i};
+            ButtonDisplay display{font, std::to_string(i)};
             display.setPosition({buttonSpacing + static_cast<float>(i % sf::Joystick::ButtonCount) / 2.f * buttonSpacing,
                                  displaySize.y * 0.75f + static_cast<float>(i % 2 * 50)});
+            display.pressed(sf::Joystick::isButtonPressed(id, i));
             m_buttonDisplays.emplace_back(display);
         }
     }
+
     void draw(sf::RenderTarget& target, sf::RenderStates states) const override
     {
         states.transform *= getTransform();
@@ -386,49 +357,22 @@ public:
         }
     }
 
-    void handleEvent(std::optional<sf::Event> event)
+    void handleEvent(const sf::Event& event)
     {
-        if (const auto* joystickButtonPressed = event->getIf<sf::Event::JoystickButtonPressed>())
+        if (const auto* joystickButtonPressed = event.getIf<sf::Event::JoystickButtonPressed>())
         {
             if (joystickButtonPressed->joystickId == m_id)
-            {
-                for (auto& button : m_buttonDisplays)
-                {
-                    if (button.getButton() == joystickButtonPressed->button)
-                    {
-                        button.pressed(true);
-                        return;
-                    }
-                }
-            }
+                m_buttonDisplays[joystickButtonPressed->button].pressed(true);
         }
-        else if (const auto* joystickButtonReleased = event->getIf<sf::Event::JoystickButtonReleased>())
+        else if (const auto* joystickButtonReleased = event.getIf<sf::Event::JoystickButtonReleased>())
         {
             if (joystickButtonReleased->joystickId == m_id)
-            {
-                for (auto& button : m_buttonDisplays)
-                {
-                    if (button.getButton() == joystickButtonReleased->button)
-                    {
-                        button.pressed(false);
-                        return;
-                    }
-                }
-            }
+                m_buttonDisplays[joystickButtonReleased->button].pressed(false);
         }
-        else if (const auto* joystickMoved = event->getIf<sf::Event::JoystickMoved>())
+        else if (const auto* joystickMoved = event.getIf<sf::Event::JoystickMoved>())
         {
             if (joystickMoved->joystickId == m_id)
-            {
-                for (auto& trigger : m_axisDisplays)
-                {
-                    if (trigger.getAxis() == joystickMoved->axis)
-                    {
-                        trigger.setValue(joystickMoved->position);
-                        return;
-                    }
-                }
-            }
+                m_axisDisplays[static_cast<std::size_t>(joystickMoved->axis)].setValue(joystickMoved->position);
         }
     }
 
@@ -449,6 +393,12 @@ private:
 ////////////////////////////////////////////////////////////
 int main()
 {
+    // SFML comes with a copy of the SDL gamepad database, but a newer one can be downloaded next to the example
+    // (https://github.com/mdqinc/SDL_GameControllerDB/blob/master/gamecontrollerdb.txt)
+    const std::filesystem::path mappingsPath = "gamecontrollerdb.txt";
+    if (std::filesystem::exists(mappingsPath))
+        sf::Gamepad::addMappingsFromFile(mappingsPath);
+
     // Create the window of the application
     constexpr sf::Vector2f windowSize{displaySize.x, displaySize.y + 200}; // + 200 for stuff at the top
     sf::RenderWindow       window(sf::VideoMode(sf::Vector2u(windowSize)), "Joystick");
@@ -458,7 +408,7 @@ int main()
     const sf::Font font("resources/tuffy.ttf");
 
     // Display for currently selected joystick - a row of numbers along the top
-    // Red if disconnected, green if connected, white box for current selection
+    // Red if disconnected, yellow if connected, green if usable as a gamepad, white box for current selection
     auto                  joystickIndex = 0u;
     std::vector<sf::Text> indexIndicators;
     constexpr auto        spacer = displaySize.x / (sf::Joystick::Count + 1); // +1 to account for padding at the end
@@ -479,9 +429,13 @@ int main()
     {
         for (auto i = 0u; i < indexIndicators.size(); ++i)
         {
-            if (sf::Joystick::isConnected(i))
+            if (sf::Gamepad::isConnected(i))
             {
                 indexIndicators[i].setFillColor(sf::Color::Green);
+            }
+            else if (sf::Joystick::isConnected(i))
+            {
+                indexIndicators[i].setFillColor(sf::Color::Yellow);
             }
             else
             {
@@ -534,7 +488,8 @@ int main()
             {
                 window.setView(sf::View(sf::FloatRect({}, sf::Vector2f(resized->size))));
             }
-            else if (event->is<sf::Event::JoystickConnected>() || event->is<sf::Event::JoystickDisconnected>())
+            else if (event->is<sf::Event::JoystickConnected>() || event->is<sf::Event::JoystickDisconnected>() ||
+                     event->is<sf::Event::GamepadConnected>() || event->is<sf::Event::GamepadDisconnected>())
             {
                 updateDisplay();
                 updateIndicators();
@@ -553,11 +508,10 @@ int main()
                     showingGamepad = !showingGamepad;
                 }
             }
-            else if (event->is<sf::Event::JoystickButtonPressed>() || event->is<sf::Event::JoystickButtonReleased>() ||
-                     event->is<sf::Event::JoystickMoved>())
+            else
             {
-                gamepadDisplay.handleEvent(event);
-                genericDisplay.handleEvent(event);
+                gamepadDisplay.handleEvent(*event);
+                genericDisplay.handleEvent(*event);
             }
         }
 

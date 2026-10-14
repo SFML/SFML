@@ -294,6 +294,14 @@ Joystick::Identification JoystickImpl::getIdentification() const
 
 
 ////////////////////////////////////////////////////////////
+std::optional<JoystickLayout> JoystickImpl::getGamepadLayout() const
+{
+    // Gamepad mappings aren't supported on this platform yet
+    return std::nullopt;
+}
+
+
+////////////////////////////////////////////////////////////
 JoystickState JoystickImpl::JoystickImpl::update()
 {
     while (read(m_file, m_buffer.data(), static_cast<std::size_t>(m_length)) == m_length)

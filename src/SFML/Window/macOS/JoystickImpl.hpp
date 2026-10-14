@@ -63,6 +63,9 @@ public:
     [[nodiscard]] Joystick::Identification getIdentification() const;
 
     ////////////////////////////////////////////////////////////
+    [[nodiscard]] std::optional<JoystickLayout> getGamepadLayout() const;
+
+    ////////////////////////////////////////////////////////////
     [[nodiscard]] JoystickState update();
 
 private:
@@ -78,6 +81,7 @@ private:
     ButtonsVector            m_buttons;        ///< Buttons of the joystick
     unsigned int             m_index{};        ///< SFML index
     Joystick::Identification m_identification; ///< Joystick identification
+    JoystickLayout           m_layout;         ///< How the joystick's elements line up with SDL's
 
     // NOLINTNEXTLINE(readability-identifier-naming)
     static inline std::array<Location, Joystick::Count> m_locationIDs{}; ///< Global Joystick register

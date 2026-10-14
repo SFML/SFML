@@ -19,6 +19,10 @@ set(SRC
     ${INCROOT}/ContextSettings.hpp
     ${INCROOT}/Event.hpp
     ${INCROOT}/Event.inl
+    ${INCROOT}/Gamepad.hpp
+    ${SRCROOT}/Gamepad.cpp
+    ${SRCROOT}/GamepadMapping.cpp
+    ${SRCROOT}/GamepadMapping.hpp
     ${SRCROOT}/InputImpl.hpp
     ${INCROOT}/Joystick.hpp
     ${SRCROOT}/Joystick.cpp
@@ -315,6 +319,39 @@ endif()
 
 # Vulkan headers
 target_include_directories(sfml-window SYSTEM PRIVATE "${PROJECT_SOURCE_DIR}/extlibs/headers/vulkan")
+
+# SDL gamepad database, reduced to the mappings of the target platform
+if(SFML_EMBED_GAMEPAD_DB)
+    if(SFML_OS_WINDOWS)
+        set(GAMEPAD_DB_PLATFORM "Windows")
+    elseif(SFML_OS_MACOS)
+        set(GAMEPAD_DB_PLATFORM "Mac OS X")
+    else()
+        set(GAMEPAD_DB_PLATFORM "Linux")
+    endif()
+
+    set(GAMEPAD_DB_SOURCE "${PROJECT_SOURCE_DIR}/extlibs/gamecontrollerdb/gamecontrollerdb.txt")
+    set(GAMEPAD_DB_INCLUDE_PATH "${PROJECT_BINARY_DIR}/extlibs/gamecontrollerdb")
+    set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${GAMEPAD_DB_SOURCE}")
+
+    file(STRINGS "${GAMEPAD_DB_SOURCE}" GAMEPAD_DB_LINES REGEX ",platform:${GAMEPAD_DB_PLATFORM},")
+    list(LENGTH GAMEPAD_DB_LINES GAMEPAD_DB_COUNT)
+    set(GAMEPAD_DB_CONTENT "// Generated from extlibs/gamecontrollerdb/gamecontrollerdb.txt, do not edit\n\n")
+    string(APPEND GAMEPAD_DB_CONTENT "#pragma once\n\n#include <array>\n#include <string_view>\n\n\n")
+    string(APPEND GAMEPAD_DB_CONTENT "namespace sf::priv\n{\n")
+    string(APPEND GAMEPAD_DB_CONTENT "constexpr std::array<std::string_view, ${GAMEPAD_DB_COUNT}> builtinGamepadMappings = {\n")
+    foreach(LINE IN LISTS GAMEPAD_DB_LINES)
+        string(APPEND GAMEPAD_DB_CONTENT "    R\"sfml(${LINE})sfml\",\n")
+    endforeach()
+    string(APPEND GAMEPAD_DB_CONTENT "};\n} // namespace sf::priv\n")
+
+    # Only touch the header when its content changes, to avoid needless rebuilds
+    file(WRITE "${GAMEPAD_DB_INCLUDE_PATH}/BuiltinGamepadMappings.hpp.tmp" "${GAMEPAD_DB_CONTENT}")
+    configure_file("${GAMEPAD_DB_INCLUDE_PATH}/BuiltinGamepadMappings.hpp.tmp" "${GAMEPAD_DB_INCLUDE_PATH}/BuiltinGamepadMappings.hpp" COPYONLY)
+
+    target_include_directories(sfml-window SYSTEM PRIVATE "${GAMEPAD_DB_INCLUDE_PATH}")
+    target_compile_definitions(sfml-window PRIVATE SFML_EMBED_GAMEPAD_DB)
+endif()
 
 # CMake 3.11 and later prefer to choose GLVND, but we choose legacy OpenGL for backward compatibility
 # (unless the OpenGL_GL_PREFERENCE was explicitly set)

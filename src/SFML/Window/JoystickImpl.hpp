@@ -33,6 +33,11 @@
 
 #include <SFML/System/EnumArray.hpp>
 
+#include <optional>
+#include <vector>
+
+#include <cstdint>
+
 
 namespace sf::priv
 {
@@ -56,6 +61,26 @@ struct JoystickState
     bool                                                  connected{}; //!< Is the joystick currently connected?
     EnumArray<Joystick::Axis, float, Joystick::AxisCount> axes{};      //!< Position of each axis, in range [-100, 100]
     std::array<bool, Joystick::ButtonCount>               buttons{};   //!< Status of each button (true = pressed)
+};
+
+
+////////////////////////////////////////////////////////////
+/// \brief Structure describing how a joystick's elements line up
+///        with the ones SDL enumerates for the same device
+///
+/// The SDL gamepad database refers to buttons, axes and hats
+/// by the index SDL assigns them on each platform. Buttons
+/// are numbered the same as SFML's on every backend that
+/// provides a layout, axes and hats are not.
+///
+////////////////////////////////////////////////////////////
+struct JoystickLayout
+{
+    std::uint16_t bus{};                             //!< Bus type as SDL reports it (0x03 USB, 0x05 Bluetooth, ...)
+    std::uint16_t version{};                         //!< Product version as SDL reports it
+    std::vector<std::optional<Joystick::Axis>> axes; //!< SFML axis for each SDL axis index, empty if SFML doesn't read it
+    bool hasHat{};                                   //!< Is SDL's first hat available as PovX and PovY?
+    bool hatUpIsNegative{};                          //!< Is up on the hat reported as a negative PovY?
 };
 
 } // namespace sf::priv

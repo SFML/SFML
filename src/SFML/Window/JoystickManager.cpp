@@ -27,7 +27,12 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/JoystickManager.hpp>
 
+#ifdef SFML_EMBED_GAMEPAD_DB
+#include <BuiltinGamepadMappings.hpp>
+#endif
+
 #include <cassert>
+#include <cstdlib>
 
 
 namespace sf::priv
@@ -65,6 +70,44 @@ const Joystick::Identification& JoystickManager::getIdentification(unsigned int 
 
 
 ////////////////////////////////////////////////////////////
+const GamepadState& JoystickManager::getGamepadState(unsigned int joystick) const
+{
+    assert(joystick < Joystick::Count && "Joystick index must be less than Joystick::Count");
+    return m_joysticks[joystick].gamepadState;
+}
+
+
+////////////////////////////////////////////////////////////
+const GamepadBindings& JoystickManager::getGamepadBindings(unsigned int joystick) const
+{
+    assert(joystick < Joystick::Count && "Joystick index must be less than Joystick::Count");
+    return m_joysticks[joystick].gamepadBindings;
+}
+
+
+////////////////////////////////////////////////////////////
+const GamepadMapping* JoystickManager::getGamepadMapping(unsigned int joystick) const
+{
+    assert(joystick < Joystick::Count && "Joystick index must be less than Joystick::Count");
+    const std::optional<GamepadMapping>& mapping = m_joysticks[joystick].gamepadMapping;
+    return mapping ? &*mapping : nullptr;
+}
+
+
+////////////////////////////////////////////////////////////
+std::size_t JoystickManager::addGamepadMappings(std::string_view mappings)
+{
+    const std::size_t count = m_gamepadMappings.add(mappings);
+
+    // Joysticks that are already open pick up the new mappings right away
+    for (Item& item : m_joysticks)
+        updateGamepadMapping(item);
+
+    return count;
+}
+
+
+////////////////////////////////////////////////////////////
 void JoystickManager::update()
 {
     for (unsigned int i = 0; i < Joystick::Count; ++i)
@@ -74,7 +117,8 @@ void JoystickManager::update()
         if (item.state.connected)
         {
             // Get the current state of the joystick
-            item.state = item.joystick.update();
+            item.state        = item.joystick.update();
+            item.gamepadState = item.gamepadMapping ? item.gamepadBindings.evaluate(item.state) : GamepadState();
 
             // Check if it's still connected
             if (!item.state.connected)
@@ -83,6 +127,8 @@ void JoystickManager::update()
                 item.capabilities   = JoystickCaps();
                 item.state          = JoystickState();
                 item.identification = Joystick::Identification();
+                item.layout.reset();
+                updateGamepadMapping(item);
             }
         }
         else
@@ -95,6 +141,8 @@ void JoystickManager::update()
                     item.capabilities   = item.joystick.getCapabilities();
                     item.state          = item.joystick.update();
                     item.identification = item.joystick.getIdentification();
+                    item.layout         = item.joystick.getGamepadLayout();
+                    updateGamepadMapping(item);
                 }
             }
         }
@@ -103,9 +151,39 @@ void JoystickManager::update()
 
 
 ////////////////////////////////////////////////////////////
+void JoystickManager::updateGamepadMapping(Item& item) const
+{
+    item.gamepadMapping.reset();
+    item.gamepadBindings = GamepadBindings();
+    item.gamepadState    = GamepadState();
+
+    // Without a layout, there's no way to tell which of the joystick's elements a mapping refers to
+    if (!item.state.connected || !item.layout)
+        return;
+
+    if (const GamepadMapping* mapping = m_gamepadMappings.find(item.identification, *item.layout))
+    {
+        item.gamepadMapping  = *mapping;
+        item.gamepadBindings = mapping->resolve(item.capabilities, *item.layout);
+        item.gamepadState    = item.gamepadBindings.evaluate(item.state);
+    }
+}
+
+
+////////////////////////////////////////////////////////////
 JoystickManager::JoystickManager()
 {
     JoystickImpl::initialize();
+
+#ifdef SFML_EMBED_GAMEPAD_DB
+    for (const std::string_view mapping : builtinGamepadMappings)
+        m_gamepadMappings.add(mapping);
+#endif
+
+    // Like SDL, take additional mappings from the environment, which is how Steam
+    // passes on the controller configuration of the user
+    if (const char* mappings = std::getenv("SDL_GAMECONTROLLERCONFIG"))
+        m_gamepadMappings.add(mappings);
 }
 
 

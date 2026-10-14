@@ -108,7 +108,10 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 struct WindowImpl::JoystickStatesImpl
 {
-    std::array<JoystickState, Joystick::Count> states{}; //!< Previous state of the joysticks
+    std::array<JoystickState, Joystick::Count> states{};        //!< Previous state of the joysticks
+    std::array<GamepadState, Joystick::Count>  gamepadStates{}; //!< Previous gamepad state of the joysticks
+    std::array<EnumArray<Gamepad::Axis, float, Gamepad::AxisCount>, Joystick::Count>
+        previousGamepadAxes{}; //!< Position of each gamepad axis last time a move event triggered
 };
 
 
@@ -172,8 +175,10 @@ WindowImpl::WindowImpl() : m_joystickStatesImpl(std::make_unique<JoystickStatesI
     JoystickManager::getInstance().update();
     for (unsigned int i = 0; i < Joystick::Count; ++i)
     {
-        m_joystickStatesImpl->states[i] = JoystickManager::getInstance().getState(i);
+        m_joystickStatesImpl->states[i]        = JoystickManager::getInstance().getState(i);
+        m_joystickStatesImpl->gamepadStates[i] = JoystickManager::getInstance().getGamepadState(i);
         m_previousAxes[i].fill(0.f);
+        m_joystickStatesImpl->previousGamepadAxes[i] = m_joystickStatesImpl->gamepadStates[i].axes;
     }
 
     // Get the initial sensor states
@@ -343,6 +348,60 @@ void WindowImpl::processJoystickEvents()
                         pushEvent(Event::JoystickButtonReleased{i, j});
                 }
             }
+        }
+
+        processGamepadEvents(i);
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImpl::processGamepadEvents(unsigned int joystick)
+{
+    // Copy the previous gamepad state of the joystick and get the new one
+    const GamepadState previousState              = m_joystickStatesImpl->gamepadStates[joystick];
+    m_joystickStatesImpl->gamepadStates[joystick] = JoystickManager::getInstance().getGamepadState(joystick);
+    const GamepadState& state                     = m_joystickStatesImpl->gamepadStates[joystick];
+
+    auto& previousAxes = m_joystickStatesImpl->previousGamepadAxes[joystick];
+
+    // A joystick becomes a gamepad when it's connected with a known mapping, or when its mapping gets added later
+    if (previousState.connected != state.connected)
+    {
+        if (state.connected)
+            pushEvent(Event::GamepadConnected{joystick});
+        else
+            pushEvent(Event::GamepadDisconnected{joystick});
+
+        // Report the axes that don't rest at 0 right away
+        previousAxes.fill(0.f);
+    }
+
+    if (!state.connected)
+        return;
+
+    // Axes
+    for (unsigned int i = 0; i < Gamepad::AxisCount; ++i)
+    {
+        const auto  axis    = static_cast<Gamepad::Axis>(i);
+        const float currPos = state.axes[axis];
+        if (std::abs(currPos - previousAxes[axis]) >= m_joystickThreshold)
+        {
+            pushEvent(Event::GamepadMoved{joystick, axis, currPos});
+            previousAxes[axis] = currPos;
+        }
+    }
+
+    // Buttons
+    for (unsigned int i = 0; i < Gamepad::ButtonCount; ++i)
+    {
+        const auto button = static_cast<Gamepad::Button>(i);
+        if (previousState.buttons[button] != state.buttons[button])
+        {
+            if (state.buttons[button])
+                pushEvent(Event::GamepadButtonPressed{joystick, button});
+            else
+                pushEvent(Event::GamepadButtonReleased{joystick, button});
         }
     }
 }

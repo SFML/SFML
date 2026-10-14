@@ -192,6 +192,40 @@ TEST_CASE("[Window] sf::Event")
         const auto& joystickDisconnected = *event.getIf<sf::Event::JoystickDisconnected>();
         CHECK(joystickDisconnected.joystickId == 43);
 
+        event = sf::Event::GamepadButtonPressed{5, sf::Gamepad::Button::South};
+        CHECK(event.is<sf::Event::GamepadButtonPressed>());
+        CHECK(event.getIf<sf::Event::GamepadButtonPressed>());
+        const auto& gamepadButtonPressed = *event.getIf<sf::Event::GamepadButtonPressed>();
+        CHECK(gamepadButtonPressed.joystickId == 5);
+        CHECK(gamepadButtonPressed.button == sf::Gamepad::Button::South);
+
+        event = sf::Event::GamepadButtonReleased{6, sf::Gamepad::Button::Start};
+        CHECK(event.is<sf::Event::GamepadButtonReleased>());
+        CHECK(event.getIf<sf::Event::GamepadButtonReleased>());
+        const auto& gamepadButtonReleased = *event.getIf<sf::Event::GamepadButtonReleased>();
+        CHECK(gamepadButtonReleased.joystickId == 6);
+        CHECK(gamepadButtonReleased.button == sf::Gamepad::Button::Start);
+
+        event = sf::Event::GamepadMoved{7, sf::Gamepad::Axis::RightTrigger, 4.56f};
+        CHECK(event.is<sf::Event::GamepadMoved>());
+        CHECK(event.getIf<sf::Event::GamepadMoved>());
+        const auto& gamepadMoved = *event.getIf<sf::Event::GamepadMoved>();
+        CHECK(gamepadMoved.joystickId == 7);
+        CHECK(gamepadMoved.axis == sf::Gamepad::Axis::RightTrigger);
+        CHECK(gamepadMoved.position == 4.56f);
+
+        event = sf::Event::GamepadConnected{44};
+        CHECK(event.is<sf::Event::GamepadConnected>());
+        CHECK(event.getIf<sf::Event::GamepadConnected>());
+        const auto& gamepadConnected = *event.getIf<sf::Event::GamepadConnected>();
+        CHECK(gamepadConnected.joystickId == 44);
+
+        event = sf::Event::GamepadDisconnected{45};
+        CHECK(event.is<sf::Event::GamepadDisconnected>());
+        CHECK(event.getIf<sf::Event::GamepadDisconnected>());
+        const auto& gamepadDisconnected = *event.getIf<sf::Event::GamepadDisconnected>();
+        CHECK(gamepadDisconnected.joystickId == 45);
+
         event = sf::Event::TouchBegan{99, {98, 97}};
         CHECK(event.is<sf::Event::TouchBegan>());
         CHECK(event.getIf<sf::Event::TouchBegan>());
@@ -290,6 +324,25 @@ TEST_CASE("[Window] sf::Event")
 
         const sf::Event::JoystickDisconnected joystickDisconnected;
         CHECK(joystickDisconnected.joystickId == 0);
+
+        const sf::Event::GamepadButtonPressed gamepadButtonPressed;
+        CHECK(gamepadButtonPressed.joystickId == 0);
+        CHECK(gamepadButtonPressed.button == sf::Gamepad::Button{});
+
+        const sf::Event::GamepadButtonReleased gamepadButtonReleased;
+        CHECK(gamepadButtonReleased.joystickId == 0);
+        CHECK(gamepadButtonReleased.button == sf::Gamepad::Button{});
+
+        const sf::Event::GamepadMoved gamepadMoved;
+        CHECK(gamepadMoved.joystickId == 0);
+        CHECK(gamepadMoved.axis == sf::Gamepad::Axis{});
+        CHECK(gamepadMoved.position == 0);
+
+        const sf::Event::GamepadConnected gamepadConnected;
+        CHECK(gamepadConnected.joystickId == 0);
+
+        const sf::Event::GamepadDisconnected gamepadDisconnected;
+        CHECK(gamepadDisconnected.joystickId == 0);
 
         const sf::Event::TouchBegan touchBegan;
         CHECK(touchBegan.finger == 0);

@@ -53,6 +53,11 @@ if(SFML_BUILD_WINDOW)
     endif()
 endif()
 
+# add an option for embedding the SDL gamepad database (only on platforms where gamepad mappings are supported)
+if(SFML_OS_WINDOWS OR SFML_OS_LINUX OR SFML_OS_MACOS)
+    sfml_set_option(SFML_EMBED_GAMEPAD_DB ON BOOL "ON to embed the SDL gamepad database for the target platform, OFF to only use the mappings provided at runtime")
+endif()
+
 # macOS specific options
 if(SFML_OS_MACOS OR SFML_OS_IOS)
     # add an option to build frameworks instead of dylibs (release only)

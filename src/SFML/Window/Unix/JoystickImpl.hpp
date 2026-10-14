@@ -62,6 +62,9 @@ public:
     [[nodiscard]] Joystick::Identification getIdentification() const;
 
     ////////////////////////////////////////////////////////////
+    [[nodiscard]] std::optional<JoystickLayout> getGamepadLayout() const;
+
+    ////////////////////////////////////////////////////////////
     [[nodiscard]] JoystickState update();
 
 private:
@@ -72,6 +75,7 @@ private:
     std::array<std::optional<Joystick::Axis>, ABS_CNT> m_axes{}; ///< Axis each joystick axis index is reported as, if any
     JoystickState            m_state;                            ///< Current state of the joystick
     Joystick::Identification m_identification;                   ///< Identification of the joystick
+    JoystickLayout           m_layout;                           ///< How the joystick's elements line up with SDL's
 };
 
 } // namespace sf::priv

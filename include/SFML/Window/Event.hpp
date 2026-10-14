@@ -27,6 +27,7 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/Gamepad.hpp>
 #include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
@@ -266,6 +267,58 @@ public:
     };
 
     ////////////////////////////////////////////////////////////
+    /// \brief Gamepad button pressed event subtype
+    ///
+    ////////////////////////////////////////////////////////////
+    struct GamepadButtonPressed
+    {
+        unsigned int    joystickId{}; //!< Index of the joystick (in range [0 .. Joystick::Count - 1])
+        Gamepad::Button button{};     //!< Button that has been pressed
+    };
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Gamepad button released event subtype
+    ///
+    ////////////////////////////////////////////////////////////
+    struct GamepadButtonReleased
+    {
+        unsigned int    joystickId{}; //!< Index of the joystick (in range [0 .. Joystick::Count - 1])
+        Gamepad::Button button{};     //!< Button that has been released
+    };
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Gamepad axis move event subtype
+    ///
+    ////////////////////////////////////////////////////////////
+    struct GamepadMoved
+    {
+        unsigned int  joystickId{}; //!< Index of the joystick (in range [0 .. Joystick::Count - 1])
+        Gamepad::Axis axis{};       //!< Axis that moved
+        float position{}; //!< New position on the axis (in range [-100 .. 100] for sticks, [0 .. 100] for triggers)
+    };
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Gamepad connected event subtype
+    ///
+    /// Sent when a joystick becomes usable as a gamepad, either
+    /// because it was connected or because a mapping for it was added.
+    ///
+    ////////////////////////////////////////////////////////////
+    struct GamepadConnected
+    {
+        unsigned int joystickId{}; //!< Index of the joystick (in range [0 .. Joystick::Count - 1])
+    };
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Gamepad disconnected event subtype
+    ///
+    ////////////////////////////////////////////////////////////
+    struct GamepadDisconnected
+    {
+        unsigned int joystickId{}; //!< Index of the joystick (in range [0 .. Joystick::Count - 1])
+    };
+
+    ////////////////////////////////////////////////////////////
     /// \brief Touch began event subtype
     ///
     ////////////////////////////////////////////////////////////
@@ -397,7 +450,12 @@ private:
                  TouchBegan,
                  TouchMoved,
                  TouchEnded,
-                 SensorChanged>
+                 SensorChanged,
+                 GamepadButtonPressed,
+                 GamepadButtonReleased,
+                 GamepadMoved,
+                 GamepadConnected,
+                 GamepadDisconnected>
         m_data; //!< Event data
 
     ////////////////////////////////////////////////////////////

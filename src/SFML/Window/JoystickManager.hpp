@@ -27,10 +27,15 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/GamepadMapping.hpp>
 #include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/JoystickImpl.hpp>
 
 #include <array>
+#include <optional>
+#include <string_view>
+
+#include <cstddef>
 
 
 namespace sf::priv
@@ -93,6 +98,46 @@ public:
     [[nodiscard]] const Joystick::Identification& getIdentification(unsigned int joystick) const;
 
     ////////////////////////////////////////////////////////////
+    /// \brief Get the current gamepad state of an open joystick
+    ///
+    /// \param joystick Index of the joystick
+    ///
+    /// \return Current gamepad state, not connected if the joystick has no gamepad mapping
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] const GamepadState& getGamepadState(unsigned int joystick) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the gamepad bindings of an open joystick
+    ///
+    /// \param joystick Index of the joystick
+    ///
+    /// \return Gamepad bindings, empty if the joystick has no gamepad mapping
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] const GamepadBindings& getGamepadBindings(unsigned int joystick) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Get the gamepad mapping of an open joystick
+    ///
+    /// \param joystick Index of the joystick
+    ///
+    /// \return Gamepad mapping, `nullptr` if the joystick has none
+    ///
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] const GamepadMapping* getGamepadMapping(unsigned int joystick) const;
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Add gamepad mappings and apply them to the open joysticks
+    ///
+    /// \param mappings Mappings in the format of the SDL gamepad database
+    ///
+    /// \return Number of mappings added or replaced
+    ///
+    ////////////////////////////////////////////////////////////
+    std::size_t addGamepadMappings(std::string_view mappings);
+
+    ////////////////////////////////////////////////////////////
     /// \brief Update the state of all the joysticks
     ///
     ////////////////////////////////////////////////////////////
@@ -117,16 +162,29 @@ private:
     ////////////////////////////////////////////////////////////
     struct Item
     {
-        JoystickImpl             joystick;       //!< Joystick implementation
-        JoystickState            state;          //!< The current joystick state
-        JoystickCaps             capabilities;   //!< The joystick capabilities
-        Joystick::Identification identification; //!< The joystick identification
+        JoystickImpl                  joystick;        //!< Joystick implementation
+        JoystickState                 state;           //!< The current joystick state
+        JoystickCaps                  capabilities;    //!< The joystick capabilities
+        Joystick::Identification      identification;  //!< The joystick identification
+        std::optional<JoystickLayout> layout;          //!< How the joystick's elements line up with SDL's, if known
+        std::optional<GamepadMapping> gamepadMapping;  //!< The gamepad mapping, if any
+        GamepadBindings               gamepadBindings; //!< The gamepad mapping resolved for this joystick
+        GamepadState                  gamepadState;    //!< The current gamepad state
     };
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Look up the gamepad mapping of a joystick and compute its gamepad state
+    ///
+    /// \param item Joystick to update
+    ///
+    ////////////////////////////////////////////////////////////
+    void updateGamepadMapping(Item& item) const;
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::array<Item, Joystick::Count> m_joysticks; //!< Joysticks information and state
+    std::array<Item, Joystick::Count> m_joysticks;       //!< Joysticks information and state
+    GamepadMappingDatabase            m_gamepadMappings; //!< Known gamepad mappings
 };
 
 } // namespace sf::priv
