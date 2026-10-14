@@ -31,7 +31,6 @@
 
 #import <GameController/GameController.h>
 #include <array>
-#include <mutex>
 
 #include <cstdint>
 
@@ -49,9 +48,6 @@ public:
     void cleanup();
 
     ////////////////////////////////////////////////////////////
-    void refresh();
-
-    ////////////////////////////////////////////////////////////
     [[nodiscard]] bool isConnected(unsigned int index);
 
     ////////////////////////////////////////////////////////////
@@ -60,32 +56,31 @@ public:
     ////////////////////////////////////////////////////////////
     [[nodiscard]] GCController* getController(unsigned int index, std::uint64_t generation);
 
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] bool isInputReady(unsigned int index) const;
+
 private:
     ////////////////////////////////////////////////////////////
     struct Slot
     {
-        GCController* controller{};
-        std::uint64_t generation{};
+        GCController*  controller{};
+        std::uint64_t  generation{};
+        NSTimeInterval inputTimestampAtActivation{};
     };
 
     ////////////////////////////////////////////////////////////
-    void connect(GCController* controller);
+    void refresh();
 
     ////////////////////////////////////////////////////////////
-    void disconnect(GCController* controller);
-
-    ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool assignController(GCController* controller);
+    void assignController(GCController* controller);
 
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::mutex                        m_mutex;
     std::array<Slot, Joystick::Count> m_slots{};
     id                                m_connectObserver{};
     id                                m_disconnectObserver{};
-    std::uint64_t                     m_revision{};
-    bool                              m_initialized{};
+    id                                m_activationObserver{};
 };
 
 } // namespace sf::priv
