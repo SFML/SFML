@@ -43,6 +43,8 @@ function(sfml_set_common_ios_properties target)
 
     get_target_property(target_type ${target} TYPE)
     if(target_type STREQUAL "EXECUTABLE")
+        # Build universal apps, otherwise they run in iPhone compatibility mode on iPad
+        sfml_set_xcode_property(${target} TARGETED_DEVICE_FAMILY "1,2")
         set_target_properties(${target} PROPERTIES
             MACOSX_BUNDLE ON # Bare executables are not usable on iOS, only bundle applications
             MACOSX_BUNDLE_GUI_IDENTIFIER "org.sfml-dev.${target}" # If missing, trying to launch an example in simulator will make Xcode < 9.3 crash
