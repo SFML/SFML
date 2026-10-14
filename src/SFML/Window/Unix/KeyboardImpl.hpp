@@ -28,6 +28,7 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Keyboard.hpp>
+#include <SFML/Window/WindowEnums.hpp> // Prevent conflict with macro None from Xlib
 
 #include <X11/Xlib.h> // XKeyEvent
 

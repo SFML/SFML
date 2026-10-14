@@ -32,7 +32,6 @@
 #include <SFML/System/Utils.hpp>
 
 #include <fstream>
-#include <iterator>
 #include <ostream>
 
 
@@ -110,7 +109,14 @@ std::size_t addMappingsFromFile(const std::filesystem::path& filename)
         return 0;
     }
 
-    const std::string mappings(std::istreambuf_iterator<char>(file), {});
+    file.seekg(0, std::ios_base::end);
+    const std::ifstream::pos_type size = file.tellg();
+    if (size <= 0)
+        return 0;
+
+    std::string mappings(static_cast<std::size_t>(size), '\0');
+    file.seekg(0, std::ios_base::beg);
+    file.read(mappings.data(), static_cast<std::streamsize>(size));
     return addMappings(mappings);
 }
 

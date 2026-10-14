@@ -27,7 +27,8 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Keyboard.hpp> // sf::Keyboard::Key
+#include <SFML/Window/Keyboard.hpp>    // sf::Keyboard::Key
+#include <SFML/Window/WindowEnums.hpp> // Prevent conflict with macro None from Xlib
 
 #include <X11/X.h> // KeySym
 
