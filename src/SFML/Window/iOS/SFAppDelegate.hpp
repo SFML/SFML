@@ -37,10 +37,11 @@
 ////////////////////////////////////////////////////////////
 /// \brief Our custom application delegate
 ///
-/// This class handles global application events.
+/// This class handles global application events, and the
+/// life cycle of the application's window scene.
 ///
 ////////////////////////////////////////////////////////////
-@interface SFAppDelegate : NSObject <UIApplicationDelegate>
+@interface SFAppDelegate : NSObject <UIApplicationDelegate, UIWindowSceneDelegate>
 
 ////////////////////////////////////////////////////////////
 /// \brief Return the instance of the application delegate
@@ -84,16 +85,11 @@
 - (void)notifyCharacter:(char32_t)character;
 
 ////////////////////////////////////////////////////////////
-/// \brief Initializes the factor which is required to convert from points to pixels and back
-///
-////////////////////////////////////////////////////////////
-- (void)initBackingScale;
-
-////////////////////////////////////////////////////////////
 // Member data
 ////////////////////////////////////////////////////////////
 @property(nonatomic) sf::priv::WindowImplUIKit* sfWindow;      ///< Main window of the application
 @property(readonly, nonatomic) CMMotionManager* motionManager; ///< Instance of the motion manager
 @property(nonatomic) CGFloat                    backingScaleFactor;
+@property(readonly, nonatomic) UIWindowScene*   windowScene; ///< Window scene the application is displayed in
 
 @end

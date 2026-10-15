@@ -33,6 +33,7 @@
 
 
 SFML_DECLARE_OBJC_CLASS(UIWindow);
+SFML_DECLARE_OBJC_CLASS(UIWindowScene);
 SFML_DECLARE_OBJC_CLASS(SFView);
 SFML_DECLARE_OBJC_CLASS(SFViewController);
 
@@ -110,6 +111,14 @@ public:
 
     ////////////////////////////////////////////////////////////
     void setVirtualKeyboardVisible(bool visible);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Move the window onto another window scene
+    ///
+    /// \param scene The window scene to display the window in, or `nil` to detach it
+    ///
+    ////////////////////////////////////////////////////////////
+    void setWindowScene(UIWindowScene* scene);
 
 protected:
     ////////////////////////////////////////////////////////////

@@ -46,4 +46,9 @@
 - (void)viewWillTransitionToSize:(CGSize)size
        withTransitionCoordinator:(nonnull id<UIViewControllerTransitionCoordinator>)coordinator;
 
+////////////////////////////////////////////////////////////
+// Member data
+////////////////////////////////////////////////////////////
+@property(nonatomic) BOOL statusBarHidden; ///< Whether the status bar is hidden while the view is displayed
+
 @end

@@ -45,8 +45,9 @@ std::vector<VideoMode> VideoModeImpl::getFullscreenModes()
 ////////////////////////////////////////////////////////////
 VideoMode VideoModeImpl::getDesktopMode()
 {
-    const CGRect bounds       = [[UIScreen mainScreen] bounds];
-    const double backingScale = [SFAppDelegate getInstance].backingScaleFactor;
+    SFAppDelegate* const delegate     = [SFAppDelegate getInstance];
+    const CGRect         bounds       = delegate.windowScene.screen.bounds;
+    const double         backingScale = delegate.backingScaleFactor;
     return VideoMode({static_cast<unsigned int>(bounds.size.width * backingScale),
                       static_cast<unsigned int>(bounds.size.height * backingScale)});
 }
