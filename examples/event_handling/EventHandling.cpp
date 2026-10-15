@@ -16,7 +16,8 @@ std::filesystem::path resourcesDir()
     return "resources";
 #endif
 }
-std::string vec2ToString(const sf::Vector2i vec2)
+template <typename T>
+std::string vec2ToString(const sf::Vector2<T> vec2)
 {
     return '(' + std::to_string(vec2.x) + ", " + std::to_string(vec2.y) + ')';
 }
@@ -100,6 +101,21 @@ public:
             return "Touch Moved: " + vec2ToString(touchMoved.position);
         }
 
+        std::optional<std::string> operator()(const sf::Event::Resized& resized)
+        {
+            return "Resized: " + vec2ToString(resized.size);
+        }
+
+        std::optional<std::string> operator()(const sf::Event::FocusLost&)
+        {
+            return "Focus Lost";
+        }
+
+        std::optional<std::string> operator()(const sf::Event::FocusGained&)
+        {
+            return "Focus Gained";
+        }
+
         // When defining a visitor, make sure all event types can be handled by it.
         // If you don't intend on exhaustively specifying an operator() for each
         // event type, you can provide a templated operator() that will be selected
@@ -174,6 +190,18 @@ public:
                     {
                         m_log.emplace_back("Touch Moved: " + vec2ToString(touchMoved->position));
                     }
+                    else if (const auto* resized = event->getIf<sf::Event::Resized>())
+                    {
+                        m_log.emplace_back("Resized: " + vec2ToString(resized->size));
+                    }
+                    else if (event->is<sf::Event::FocusLost>())
+                    {
+                        m_log.emplace_back("Focus Lost");
+                    }
+                    else if (event->is<sf::Event::FocusGained>())
+                    {
+                        m_log.emplace_back("Focus Gained");
+                    }
                     else
                     {
                         // All unhandled events will end up here
@@ -223,7 +251,11 @@ public:
                                       [&](const sf::Event::TouchEnded& touchEnded)
                                       { m_log.emplace_back("Touch Ended: " + vec2ToString(touchEnded.position)); },
                                       [&](const sf::Event::TouchMoved& touchMoved)
-                                      { m_log.emplace_back("Touch Moved: " + vec2ToString(touchMoved.position)); });
+                                      { m_log.emplace_back("Touch Moved: " + vec2ToString(touchMoved.position)); },
+                                      [&](const sf::Event::Resized& resized)
+                                      { m_log.emplace_back("Resized: " + vec2ToString(resized.size)); },
+                                      [&](const sf::Event::FocusLost&) { m_log.emplace_back("Focus Lost"); },
+                                      [&](const sf::Event::FocusGained&) { m_log.emplace_back("Focus Gained"); });
 
                 // To handle unhandled events, just add the following lambda to the set of handlers
                 // [&](const auto&) { m_log.emplace_back("Other Event"); }
@@ -278,6 +310,18 @@ public:
                         else if constexpr (std::is_same_v<T, sf::Event::TouchMoved>)
                         {
                             m_log.emplace_back("Touch Moved: " + vec2ToString(event.position));
+                        }
+                        else if constexpr (std::is_same_v<T, sf::Event::Resized>)
+                        {
+                            m_log.emplace_back("Resized: " + vec2ToString(event.size));
+                        }
+                        else if constexpr (std::is_same_v<T, sf::Event::FocusLost>)
+                        {
+                            m_log.emplace_back("Focus Lost");
+                        }
+                        else if constexpr (std::is_same_v<T, sf::Event::FocusGained>)
+                        {
+                            m_log.emplace_back("Focus Gained");
                         }
                         else
                         {
@@ -369,6 +413,21 @@ public:
     void handle(const sf::Event::TouchMoved& touchMoved)
     {
         m_log.emplace_back("Touch Moved: " + vec2ToString(touchMoved.position));
+    }
+
+    void handle(const sf::Event::Resized& resized)
+    {
+        m_log.emplace_back("Resized: " + vec2ToString(resized.size));
+    }
+
+    void handle(const sf::Event::FocusLost&)
+    {
+        m_log.emplace_back("Focus Lost");
+    }
+
+    void handle(const sf::Event::FocusGained&)
+    {
+        m_log.emplace_back("Focus Gained");
     }
 
     template <typename T>
