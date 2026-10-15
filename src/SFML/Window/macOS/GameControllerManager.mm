@@ -29,10 +29,12 @@
 #include <SFML/Window/JoystickImpl.hpp>
 #include <SFML/Window/macOS/AutoreleasePoolWrapper.hpp>
 #include <SFML/Window/macOS/GameControllerManager.hpp>
+#include <SFML/Window/macOS/HIDJoystickManager.hpp>
 
 #import <GameController/GameController.h>
 #include <algorithm>
 #include <array>
+#include <vector>
 
 #include <cstring>
 
@@ -45,71 +47,41 @@ Buttons getButtons(GCExtendedGamepad* gamepad)
 {
     if (@available(macOS 11.0, *))
     {
-        // Preserve the HID button indices used by Xbox and PlayStation controllers.
+        // Use the same indices for all extended gamepads.
+        Buttons buttons{gamepad.buttonA,
+                        gamepad.buttonB,
+                        gamepad.buttonX,
+                        gamepad.buttonY,
+                        gamepad.leftShoulder,
+                        gamepad.rightShoulder,
+                        gamepad.leftTrigger,
+                        gamepad.rightTrigger,
+                        gamepad.buttonOptions,
+                        gamepad.buttonMenu,
+                        gamepad.leftThumbstickButton,
+                        gamepad.rightThumbstickButton,
+                        gamepad.buttonHome};
+
         if ([gamepad isKindOfClass:[GCXboxGamepad class]])
         {
             auto* const xbox = static_cast<GCXboxGamepad*>(gamepad);
-            Buttons     buttons{};
-            buttons[0]  = gamepad.buttonA;
-            buttons[1]  = gamepad.buttonB;
-            buttons[3]  = gamepad.buttonX;
-            buttons[4]  = gamepad.buttonY;
-            buttons[6]  = gamepad.leftShoulder;
-            buttons[7]  = gamepad.rightShoulder;
-            buttons[10] = gamepad.buttonOptions;
-            buttons[11] = gamepad.buttonMenu;
-            buttons[12] = gamepad.buttonHome;
-            buttons[13] = gamepad.leftThumbstickButton;
-            buttons[14] = gamepad.rightThumbstickButton;
             if (@available(macOS 12.0, *))
-                buttons[15] = xbox.buttonShare;
-            buttons[16] = xbox.paddleButton1;
-            buttons[17] = xbox.paddleButton2;
-            buttons[18] = xbox.paddleButton3;
-            buttons[19] = xbox.paddleButton4;
-            return buttons;
+                buttons[14] = xbox.buttonShare;
+            buttons[15] = xbox.paddleButton1;
+            buttons[16] = xbox.paddleButton2;
+            buttons[17] = xbox.paddleButton3;
+            buttons[18] = xbox.paddleButton4;
         }
 
-        GCControllerButtonInput* touchpad = nil;
         if ([gamepad isKindOfClass:[GCDualShockGamepad class]])
-            touchpad = static_cast<GCDualShockGamepad*>(gamepad).touchpadButton;
+            buttons[13] = static_cast<GCDualShockGamepad*>(gamepad).touchpadButton;
         if (@available(macOS 11.3, *))
         {
             if ([gamepad isKindOfClass:[GCDualSenseGamepad class]])
-                touchpad = static_cast<GCDualSenseGamepad*>(gamepad).touchpadButton;
-        }
-        if (touchpad)
-        {
-            return {gamepad.buttonX,
-                    gamepad.buttonA,
-                    gamepad.buttonB,
-                    gamepad.buttonY,
-                    gamepad.leftShoulder,
-                    gamepad.rightShoulder,
-                    gamepad.leftTrigger,
-                    gamepad.rightTrigger,
-                    gamepad.buttonOptions,
-                    gamepad.buttonMenu,
-                    gamepad.leftThumbstickButton,
-                    gamepad.rightThumbstickButton,
-                    gamepad.buttonHome,
-                    touchpad};
+                buttons[13] = static_cast<GCDualSenseGamepad*>(gamepad).touchpadButton;
         }
 
-        // Other extended profiles use a dense, profile-independent ordering.
-        return {gamepad.buttonA,
-                gamepad.buttonB,
-                gamepad.buttonX,
-                gamepad.buttonY,
-                gamepad.leftShoulder,
-                gamepad.rightShoulder,
-                gamepad.leftTrigger,
-                gamepad.rightTrigger,
-                gamepad.buttonOptions,
-                gamepad.buttonMenu,
-                gamepad.leftThumbstickButton,
-                gamepad.rightThumbstickButton,
-                gamepad.buttonHome};
+        return buttons;
     }
 
     return {};
@@ -128,6 +100,24 @@ Buttons getButtons(GCController* controller)
     }
 
     return {};
+}
+
+////////////////////////////////////////////////////////////
+bool matchesHIDDevice(GCController* controller, IOHIDDeviceRef device)
+{
+    CFTypeRef name = IOHIDDeviceGetProperty(device, CFSTR(kIOHIDProductKey));
+    return controller.vendorName.length && name && CFGetTypeID(name) == CFStringGetTypeID() &&
+           [controller.vendorName isEqualToString:static_cast<NSString*>(const_cast<void*>(name))];
+}
+
+////////////////////////////////////////////////////////////
+unsigned int getDeviceIdentifier(IOHIDDeviceRef device, CFStringRef key)
+{
+    CFTypeRef property = IOHIDDeviceGetProperty(device, key);
+    SInt32    value    = 0;
+    if (property && CFGetTypeID(property) == CFNumberGetTypeID())
+        CFNumberGetValue(static_cast<CFNumberRef>(property), kCFNumberSInt32Type, &value);
+    return static_cast<unsigned int>(value);
 }
 
 ////////////////////////////////////////////////////////////
@@ -184,6 +174,23 @@ bool GameControllerManager::supportsHIDDevice(IOHIDDeviceRef device)
 
 
 ////////////////////////////////////////////////////////////
+bool GameControllerManager::hasUnsupportedProfile(IOHIDDeviceRef device)
+{
+    const AutoreleasePool pool;
+    if (@available(macOS 11.0, *))
+    {
+        for (GCController* controller in [GCController controllers]) // NOLINT(cppcoreguidelines-init-variables)
+        {
+            if (matchesHIDDevice(controller, device) && !controller.extendedGamepad && !controller.microGamepad)
+                return true;
+        }
+    }
+    // Discovery is asynchronous; an unknown profile is not yet an unsupported one.
+    return false;
+}
+
+
+////////////////////////////////////////////////////////////
 bool GameControllerManager::isConnected(unsigned int slot)
 {
     const AutoreleasePool pool;
@@ -206,6 +213,21 @@ bool GameControllerManager::isConnected(unsigned int slot)
 
             if (std::find(m_controllers.begin(), m_controllers.end(), controller) == m_controllers.end())
             {
+                // Avoid duplicating devices retained by the HID profile fallback.
+                CFSetRef               devices = HIDJoystickManager::getInstance().copyJoysticks();
+                std::vector<CFTypeRef> candidates(static_cast<std::size_t>(CFSetGetCount(devices)));
+                CFSetGetValues(devices, candidates.data());
+                const bool usedInHID = std::any_of(candidates.begin(),
+                                                   candidates.end(),
+                                                   [controller](CFTypeRef candidate) {
+                                                       return matchesHIDDevice(controller,
+                                                                               static_cast<IOHIDDeviceRef>(
+                                                                                   const_cast<void*>(candidate)));
+                                                   });
+                CFRelease(devices);
+                if (usedInHID)
+                    continue;
+
                 m_controllers[slot] = [controller retain];
                 return true;
             }
@@ -227,7 +249,9 @@ bool GameControllerManager::open(unsigned int slot)
 void GameControllerManager::close(unsigned int slot)
 {
     [static_cast<GCController*>(m_controllers[slot]) release];
-    m_controllers[slot] = nullptr;
+    m_controllers[slot]         = nullptr;
+    m_states[slot]              = {};
+    m_lastEventTimestamps[slot] = 0;
 }
 
 
@@ -277,8 +301,30 @@ Joystick::Identification GameControllerManager::getIdentification(unsigned int s
             name = name.length ? [NSString stringWithFormat:@"%@ (%@)", name, category] : category;
         if (const char* utf8Name = [name UTF8String])
             identification.name = String::fromUtf8(utf8Name, utf8Name + std::strlen(utf8Name));
-        // GameController does not expose USB vendor/product IDs. Do not pair devices
-        // with unrelated HID entries by name or enumeration order to invent them.
+
+        // GameController does not expose USB IDs. Fall back to HID only if all name matches agree.
+        CFSetRef               devices = HIDJoystickManager::getInstance().copyDevices();
+        std::vector<CFTypeRef> candidates(static_cast<std::size_t>(CFSetGetCount(devices)));
+        CFSetGetValues(devices, candidates.data());
+        bool matched = false;
+        for (CFTypeRef candidate : candidates)
+        {
+            auto* device = static_cast<IOHIDDeviceRef>(const_cast<void*>(candidate));
+            if (!matchesHIDDevice(controller, device))
+                continue;
+
+            const unsigned int vendorId  = getDeviceIdentifier(device, CFSTR(kIOHIDVendorIDKey));
+            const unsigned int productId = getDeviceIdentifier(device, CFSTR(kIOHIDProductIDKey));
+            if (matched && (identification.vendorId != vendorId || identification.productId != productId))
+            {
+                identification.vendorId = identification.productId = 0;
+                break;
+            }
+            identification.vendorId  = vendorId;
+            identification.productId = productId;
+            matched                  = true;
+        }
+        CFRelease(devices);
     }
     return identification;
 }
@@ -294,9 +340,16 @@ JoystickState GameControllerManager::update(unsigned int slot)
         if (!m_controllers[slot] || !isConnected(slot))
             return state;
 
-        state.connected                = true;
-        GCController* const controller = [static_cast<GCController*>(m_controllers[slot]) capture];
-        const Buttons       buttons    = getButtons(controller);
+        auto* const             controller = static_cast<GCController*>(m_controllers[slot]);
+        GCPhysicalInputProfile* profile    = controller.extendedGamepad;
+        if (!profile)
+            profile = controller.microGamepad;
+        const double timestamp = profile.lastEventTimestamp;
+        if (m_states[slot].connected && m_lastEventTimestamps[slot] == timestamp)
+            return m_states[slot];
+
+        state.connected       = true;
+        const Buttons buttons = getButtons(controller);
         for (unsigned int index = 0; index < buttons.size(); ++index)
             state.buttons[index] = buttons[index].pressed;
 
@@ -317,6 +370,8 @@ JoystickState GameControllerManager::update(unsigned int slot)
         }
         state.axes[Joystick::Axis::PovX] = dpad.xAxis.value * 100.f;
         state.axes[Joystick::Axis::PovY] = dpad.yAxis.value * 100.f;
+        m_states[slot]                   = state;
+        m_lastEventTimestamps[slot]      = timestamp;
     }
     return state;
 }

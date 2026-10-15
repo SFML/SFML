@@ -89,6 +89,7 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 void JoystickImpl::initialize()
 {
+    HIDJoystickManager::getInstance().getJoystickCount();
     // Construct before JoystickManager, so it outlives all open joysticks.
     GameControllerManager::getInstance();
 }
@@ -108,11 +109,7 @@ bool JoystickImpl::isConnected(unsigned int index)
     bool                  state = false; // Is the index-th joystick connected?
 
     // First, let's check if the device was previously detected:
-    if (m_locationIDs[index] != 0)
-    {
-        state = true;
-    }
-    else if (GameControllerManager::getInstance().isConnected(index))
+    if (m_locationIDs[index] != 0 || GameControllerManager::getInstance().isConnected(index))
     {
         state = true;
     }

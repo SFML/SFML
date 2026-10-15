@@ -31,6 +31,7 @@
 #include <SFML/Window/macOS/HIDJoystickManager.hpp>
 
 #include <array>
+#include <vector>
 
 ////////////////////////////////////////////////////////////
 // Private data
@@ -56,16 +57,37 @@ HIDJoystickManager& HIDJoystickManager::getInstance()
 ////////////////////////////////////////////////////////////
 unsigned int HIDJoystickManager::getJoystickCount()
 {
-    update();
-    return static_cast<unsigned int>(CFSetGetCount(m_joysticks));
+    CFSetRef   devices = copyJoysticks();
+    const auto count   = static_cast<unsigned int>(CFSetGetCount(devices));
+    CFRelease(devices);
+    return count;
 }
 
 
 ////////////////////////////////////////////////////////////
 CFSetRef HIDJoystickManager::copyJoysticks()
 {
+    CFSetRef               devices   = copyDevices();
+    CFMutableSetRef        joysticks = CFSetCreateMutableCopy(kCFAllocatorDefault, 0, m_joysticks);
+    std::vector<CFTypeRef> candidates(static_cast<std::size_t>(CFSetGetCount(devices)));
+    CFSetGetValues(devices, candidates.data());
+    for (CFTypeRef candidate : candidates)
+    {
+        auto* device = static_cast<IOHIDDeviceRef>(const_cast<void*>(candidate));
+        if (!CFSetContainsValue(m_joysticks, device) && GameControllerManager::hasUnsupportedProfile(device))
+            CFSetAddValue(joysticks, device);
+    }
+    CFRelease(devices);
+    return joysticks;
+}
+
+
+////////////////////////////////////////////////////////////
+CFSetRef HIDJoystickManager::copyDevices()
+{
     update();
-    return CFSetCreateCopy(kCFAllocatorDefault, m_joysticks);
+    CFSetRef devices = IOHIDManagerCopyDevices(m_manager);
+    return devices ? devices : CFSetCreate(kCFAllocatorDefault, nullptr, 0, &kCFTypeSetCallBacks);
 }
 
 

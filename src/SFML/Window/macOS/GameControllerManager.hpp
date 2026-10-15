@@ -28,16 +28,13 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
-#include <SFML/Window/Joystick.hpp>
+#include <SFML/Window/JoystickImpl.hpp>
 
 #include <IOKit/hid/IOHIDDevice.h>
 #include <array>
 
 namespace sf::priv
 {
-struct JoystickCaps;
-struct JoystickState;
-
 ////////////////////////////////////////////////////////////
 /// \brief Poll controllers handled by Apple's GameController framework
 ///
@@ -58,6 +55,12 @@ public:
     ///
     ////////////////////////////////////////////////////////////
     static bool supportsHIDDevice(IOHIDDeviceRef device);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Check whether the matching controller has an unsupported profile
+    ///
+    ////////////////////////////////////////////////////////////
+    static bool hasUnsupportedProfile(IOHIDDeviceRef device);
 
     ////////////////////////////////////////////////////////////
     /// \brief Check an assigned slot or reserve an unassigned controller
@@ -90,8 +93,10 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    std::array<void*, Joystick::Count> m_controllers{}; ///< Retained GCController objects in stable SFML slots
-    bool m_monitoredBackgroundEvents{};                 ///< Original application-wide background monitoring setting
+    std::array<void*, Joystick::Count>         m_controllers{}; ///< Retained GCController objects in stable SFML slots
+    std::array<JoystickState, Joystick::Count> m_states{};      ///< Last polled input states
+    std::array<double, Joystick::Count>        m_lastEventTimestamps{}; ///< Timestamps of the last polled input
+    bool m_monitoredBackgroundEvents{}; ///< Original application-wide background monitoring setting
 };
 
 } // namespace sf::priv
