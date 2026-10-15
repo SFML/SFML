@@ -41,6 +41,9 @@ namespace
 // Save the global instance of the delegate
 SFAppDelegate* delegateInstance = nullptr;
 
+// Whether the user main has already been scheduled
+bool userMainStarted = false;
+
 // Current touches positions
 std::vector<sf::Vector2i> touchPositions;
 } // namespace
@@ -50,6 +53,9 @@ std::vector<sf::Vector2i> touchPositions;
 
 // NOLINTNEXTLINE(readability-identifier-naming)
 @property (nonatomic) CMMotionManager* motionManager;
+
+// NOLINTNEXTLINE(readability-identifier-naming)
+@property (nonatomic) UIWindowScene* windowScene;
 
 @end
 
@@ -88,67 +94,107 @@ std::vector<sf::Vector2i> touchPositions;
     // Save the delegate instance
     delegateInstance = self;
 
-    [self initBackingScale];
-
     // Instantiate the motion manager
     self.motionManager = [[CMMotionManager alloc] init];
 
     // Change the working directory to the resources directory
     [[NSFileManager defaultManager] changeCurrentDirectoryPath:[[NSBundle mainBundle] resourcePath]];
 
-    // Schedule an indirect call to the user main, so that this call (and the whole
-    // init sequence) can end, and the default splashscreen can be destroyed
-    [self performSelector:@selector(runUserMain) withObject:nil afterDelay:0.0];
-
     return true;
 }
 
-- (void)initBackingScale
-{
-    id data = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"NSHighResolutionCapable"];
-    if (data && [data boolValue])
-        backingScaleFactor = [[UIScreen mainScreen] scale];
-    else
-        backingScaleFactor = 1;
-}
 
 ////////////////////////////////////////////////////////////
-- (void)applicationWillResignActive:(UIApplication*)application
+- (UISceneConfiguration*)application:(UIApplication*)application
+    configurationForConnectingSceneSession:(UISceneSession*)connectingSceneSession
+                                   options:(UISceneConnectionOptions*)options
+{
+    // Implementing this method is what tells UIKit that we support the scene life cycle
+    UISceneConfiguration* configuration = [[UISceneConfiguration alloc]
+        initWithName:@"SFML Configuration"
+         sessionRole:connectingSceneSession.role];
+    configuration.delegateClass         = [SFAppDelegate class];
+    return configuration;
+}
+
+
+////////////////////////////////////////////////////////////
+- (void)scene:(UIScene*)scene
+    willConnectToSession:(UISceneSession*)session
+                 options:(UISceneConnectionOptions*)connectionOptions
+{
+    // Only handle the main application scene; other scenes (external displays, AirPlay)
+    // are left empty so that the system keeps mirroring the device screen
+    if (![scene isKindOfClass:[UIWindowScene class]] || ![session.role isEqualToString:UIWindowSceneSessionRoleApplication])
+        return;
+
+    // UIKit may call this on another instance than the application delegate
+    scene.delegate = self;
+
+    SFAppDelegate* const instance    = [SFAppDelegate getInstance];
+    auto* const          windowScene = static_cast<UIWindowScene*>(scene);
+    instance.windowScene             = windowScene;
+
+    id data = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"NSHighResolutionCapable"];
+    if (data && [data boolValue])
+        instance.backingScaleFactor = windowScene.screen.scale;
+    else
+        instance.backingScaleFactor = 1;
+
+    if (!userMainStarted)
+    {
+        // Schedule an indirect call to the user main, so that this call (and the whole
+        // init sequence) can end, and the default splashscreen can be destroyed
+        userMainStarted = true;
+        [instance performSelector:@selector(runUserMain) withObject:nil afterDelay:0.0];
+    }
+    else if (instance.sfWindow)
+    {
+        // The scene was recreated by the system, move the existing window onto it
+        instance.sfWindow->setWindowScene(windowScene);
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+- (void)sceneDidDisconnect:(UIScene*)scene
+{
+    SFAppDelegate* const instance = [SFAppDelegate getInstance];
+    if (scene != instance.windowScene)
+        return;
+
+    // UIKit may disconnect the scene to reclaim memory, detach the window until it reconnects
+    instance.windowScene = nil;
+    if (instance.sfWindow)
+        instance.sfWindow->setWindowScene(nil);
+}
+
+
+////////////////////////////////////////////////////////////
+- (void)sceneWillResignActive:(UIScene*)scene
 {
     // Called when:
     // - the application is sent to background
     // - the application is interrupted by a call or message
 
     // Generate a FocusLost event
-    if (self.sfWindow)
-        sfWindow->forwardEvent(sf::Event::FocusLost{});
+    SFAppDelegate* const instance = [SFAppDelegate getInstance];
+    if (scene == instance.windowScene && instance.sfWindow)
+        instance.sfWindow->forwardEvent(sf::Event::FocusLost{});
 }
 
 
 ////////////////////////////////////////////////////////////
-- (void)applicationDidEnterBackground:(UIApplication*)application
-{
-    // Called when the application is sent to background (home button pressed)
-}
-
-
-////////////////////////////////////////////////////////////
-- (void)applicationDidBecomeActive:(UIApplication*)application
+- (void)sceneDidBecomeActive:(UIScene*)scene
 {
     // Called when:
     // - the application is sent to foreground
     // - the application was interrupted by a call or message
 
     // Generate a FocusGained event
-    if (self.sfWindow)
-        sfWindow->forwardEvent(sf::Event::FocusGained{});
-}
-
-
-////////////////////////////////////////////////////////////
-- (void)applicationWillEnterForeground:(UIApplication*)application
-{
-    // Called when the application is sent to foreground (app icon pressed)
+    SFAppDelegate* const instance = [SFAppDelegate getInstance];
+    if (scene == instance.windowScene && instance.sfWindow)
+        instance.sfWindow->forwardEvent(sf::Event::FocusGained{});
 }
 
 

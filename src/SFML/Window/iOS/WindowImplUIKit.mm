@@ -35,8 +35,6 @@
 
 #include <UIKit/UIKit.h>
 
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-
 namespace sf::priv
 {
 ////////////////////////////////////////////////////////////
@@ -53,18 +51,16 @@ WindowImplUIKit::WindowImplUIKit(VideoMode mode,
                                  State         state,
                                  const ContextSettings& /* settings */)
 {
-    m_backingScale = static_cast<float>([SFAppDelegate getInstance].backingScaleFactor);
+    SFAppDelegate* const delegate = [SFAppDelegate getInstance];
+    m_backingScale                = static_cast<float>(delegate.backingScaleFactor);
 
-    // Apply the fullscreen flag
-    [UIApplication sharedApplication].statusBarHidden = !(style & Style::Titlebar) || (state == State::Fullscreen);
-
-    // Create the window the size of the screen
-    const CGRect frame = [UIScreen mainScreen].bounds;
-    m_window           = [[UIWindow alloc] initWithFrame:frame];
+    // Create the window the size of the scene
+    m_window           = [[UIWindow alloc] initWithWindowScene:delegate.windowScene];
+    const CGRect frame = m_window.bounds;
     m_hasFocus         = true;
 
     // Assign it to the application delegate
-    [SFAppDelegate getInstance].sfWindow = this;
+    delegate.sfWindow = this;
 
     const CGRect viewRect = frame;
 
@@ -73,9 +69,10 @@ WindowImplUIKit::WindowImplUIKit(VideoMode mode,
     [m_view resignFirstResponder];
 
     // Create the view controller
-    m_viewController            = [SFViewController alloc];
-    m_viewController.view       = m_view;
-    m_window.rootViewController = m_viewController;
+    m_viewController                 = [[SFViewController alloc] init];
+    m_viewController.view            = m_view;
+    m_viewController.statusBarHidden = !(style & Style::Titlebar) || (state == State::Fullscreen);
+    m_window.rootViewController      = m_viewController;
 
     // Make it the current window
     [m_window makeKeyAndVisible];
@@ -246,6 +243,15 @@ void WindowImplUIKit::setVirtualKeyboardVisible(bool visible)
         [m_view becomeFirstResponder];
     else
         [m_view resignFirstResponder];
+}
+
+
+////////////////////////////////////////////////////////////
+void WindowImplUIKit::setWindowScene(UIWindowScene* scene)
+{
+    m_window.windowScene = scene;
+    if (scene)
+        [m_window makeKeyAndVisible];
 }
 
 } // namespace sf::priv
