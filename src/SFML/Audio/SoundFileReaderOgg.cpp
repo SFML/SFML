@@ -38,6 +38,9 @@
 
 namespace
 {
+// A nested named namespace is used here to allow unity builds of SFML.
+namespace OggCallback
+{
 std::size_t read(void* ptr, std::size_t size, std::size_t nmemb, void* data)
 {
     auto* stream = static_cast<sf::InputStream*>(data);
@@ -70,6 +73,7 @@ long tell(void* data)
 }
 
 ov_callbacks callbacks = {&read, &seek, nullptr, &tell};
+} // namespace OggCallback
 } // namespace
 
 namespace sf::priv
@@ -78,7 +82,7 @@ namespace sf::priv
 bool SoundFileReaderOgg::check(InputStream& stream)
 {
     OggVorbis_File file;
-    if (ov_test_callbacks(&stream, &file, nullptr, 0, callbacks) == 0)
+    if (ov_test_callbacks(&stream, &file, nullptr, 0, OggCallback::callbacks) == 0)
     {
         ov_clear(&file);
         return true;
@@ -99,7 +103,7 @@ SoundFileReaderOgg::~SoundFileReaderOgg()
 std::optional<SoundFileReader::Info> SoundFileReaderOgg::open(InputStream& stream)
 {
     // Open the Vorbis stream
-    const int status = ov_open_callbacks(&stream, &m_vorbis, nullptr, 0, callbacks);
+    const int status = ov_open_callbacks(&stream, &m_vorbis, nullptr, 0, OggCallback::callbacks);
     if (status < 0)
     {
         err() << "Failed to open Vorbis file for reading" << std::endl;
