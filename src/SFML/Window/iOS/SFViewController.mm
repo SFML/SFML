@@ -32,6 +32,9 @@
 
 @implementation SFViewController
 
+@synthesize statusBarHidden;
+
+
 ////////////////////////////////////////////////////////////
 - (void)viewWillTransitionToSize:(CGSize)size
        withTransitionCoordinator:(nonnull id<UIViewControllerTransitionCoordinator>)coordinator
@@ -42,6 +45,21 @@
             sf::Event::Resized{{static_cast<unsigned int>(size.width), static_cast<unsigned int>(size.height)}});
     }
     [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+}
+
+
+////////////////////////////////////////////////////////////
+- (void)setStatusBarHidden:(BOOL)hidden
+{
+    statusBarHidden = hidden;
+    [self setNeedsStatusBarAppearanceUpdate];
+}
+
+
+////////////////////////////////////////////////////////////
+- (BOOL)prefersStatusBarHidden
+{
+    return self.statusBarHidden;
 }
 
 @end
