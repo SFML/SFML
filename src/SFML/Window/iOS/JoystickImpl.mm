@@ -26,19 +26,72 @@
 // Headers
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/JoystickImpl.hpp>
-#include <SFML/Window/iOS/JoystickRegistryImpl.hpp>
 
+#import <GameController/GameController.h>
 #import <UIKit/UIKit.h>
+#include <array>
 
 #include <cstring>
 
 
+namespace sf::priv
+{
 namespace
 {
 ////////////////////////////////////////////////////////////
-sf::priv::JoystickRegistryImpl& getRegistry()
+class JoystickRegistryImpl
 {
-    static sf::priv::JoystickRegistryImpl registry;
+public:
+    ////////////////////////////////////////////////////////////
+    void initialize();
+
+    ////////////////////////////////////////////////////////////
+    void cleanup();
+
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] bool isConnected(unsigned int index);
+
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] bool open(unsigned int index);
+
+    ////////////////////////////////////////////////////////////
+    void close(unsigned int index);
+
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] GCController* getController(unsigned int index);
+
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] bool isInputReady(unsigned int index) const;
+
+private:
+    ////////////////////////////////////////////////////////////
+    struct Slot
+    {
+        GCController*  controller{};
+        bool           opened{};
+        NSTimeInterval inputTimestampAtActivation{};
+    };
+
+    ////////////////////////////////////////////////////////////
+    void assignController(GCController* controller);
+
+    ////////////////////////////////////////////////////////////
+    void unassignController(GCController* controller);
+
+    ////////////////////////////////////////////////////////////
+    // Member data
+    ////////////////////////////////////////////////////////////
+    std::array<Slot, Joystick::Count> m_slots{};
+    id                                m_connectObserver{};
+    id                                m_disconnectObserver{};
+    id                                m_activationObserver{};
+};
+
+
+////////////////////////////////////////////////////////////
+JoystickRegistryImpl& getRegistry()
+{
+    static JoystickRegistryImpl registry;
     return registry;
 }
 
@@ -57,11 +110,8 @@ GCControllerButtonInput* getShareButton(GCExtendedGamepad* gamepad)
 
     return nil;
 }
-} // namespace
 
 
-namespace sf::priv
-{
 ////////////////////////////////////////////////////////////
 void JoystickRegistryImpl::initialize()
 {
@@ -217,6 +267,7 @@ void JoystickRegistryImpl::unassignController(GCController* controller)
         }
     }
 }
+} // namespace
 
 
 ////////////////////////////////////////////////////////////
@@ -334,14 +385,18 @@ JoystickState JoystickImpl::update() const
         JoystickState state;
         state.connected = true;
 
+        // Keep triggers released while input is unavailable.
+        state.axes[Joystick::Axis::U] = -100.f;
+        state.axes[Joystick::Axis::V] = -100.f;
+
         if (registry.isInputReady(m_index))
         {
             state.axes[Joystick::Axis::X]    = gamepad.leftThumbstick.xAxis.value * 100.f;
             state.axes[Joystick::Axis::Y]    = gamepad.leftThumbstick.yAxis.value * -100.f;
             state.axes[Joystick::Axis::Z]    = gamepad.rightThumbstick.xAxis.value * 100.f;
             state.axes[Joystick::Axis::R]    = gamepad.rightThumbstick.yAxis.value * -100.f;
-            state.axes[Joystick::Axis::U]    = gamepad.leftTrigger.value * 100.f;
-            state.axes[Joystick::Axis::V]    = gamepad.rightTrigger.value * 100.f;
+            state.axes[Joystick::Axis::U]    = gamepad.leftTrigger.value * 200.f - 100.f;
+            state.axes[Joystick::Axis::V]    = gamepad.rightTrigger.value * 200.f - 100.f;
             state.axes[Joystick::Axis::PovX] = gamepad.dpad.xAxis.value * 100.f;
             state.axes[Joystick::Axis::PovY] = gamepad.dpad.yAxis.value * 100.f;
 
