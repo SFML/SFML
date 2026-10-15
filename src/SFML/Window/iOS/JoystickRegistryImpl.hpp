@@ -32,8 +32,6 @@
 #import <GameController/GameController.h>
 #include <array>
 
-#include <cstdint>
-
 
 namespace sf::priv
 {
@@ -51,10 +49,13 @@ public:
     [[nodiscard]] bool isConnected(unsigned int index);
 
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] bool open(unsigned int index, std::uint64_t& generation);
+    [[nodiscard]] bool open(unsigned int index);
 
     ////////////////////////////////////////////////////////////
-    [[nodiscard]] GCController* getController(unsigned int index, std::uint64_t generation);
+    void close(unsigned int index);
+
+    ////////////////////////////////////////////////////////////
+    [[nodiscard]] GCController* getController(unsigned int index);
 
     ////////////////////////////////////////////////////////////
     [[nodiscard]] bool isInputReady(unsigned int index) const;
@@ -64,15 +65,15 @@ private:
     struct Slot
     {
         GCController*  controller{};
-        std::uint64_t  generation{};
+        bool           opened{};
         NSTimeInterval inputTimestampAtActivation{};
     };
 
     ////////////////////////////////////////////////////////////
-    void refresh();
+    void assignController(GCController* controller);
 
     ////////////////////////////////////////////////////////////
-    void assignController(GCController* controller);
+    void unassignController(GCController* controller);
 
     ////////////////////////////////////////////////////////////
     // Member data

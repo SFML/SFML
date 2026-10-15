@@ -29,8 +29,6 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Joystick.hpp>
 
-#include <cstdint>
-
 
 namespace sf::priv
 {
@@ -69,8 +67,7 @@ private:
     ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
-    unsigned int  m_index{Joystick::Count}; ///< Controller slot
-    std::uint64_t m_generation{};           ///< Connection associated with this instance
+    unsigned int m_index{Joystick::Count}; ///< Controller slot
 };
 
 } // namespace sf::priv

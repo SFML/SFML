@@ -30,7 +30,6 @@
 
 #import <UIKit/UIKit.h>
 
-#include <cassert>
 #include <cstring>
 
 
@@ -39,8 +38,6 @@ namespace
 ////////////////////////////////////////////////////////////
 sf::priv::JoystickRegistryImpl& getRegistry()
 {
-    assert([NSThread isMainThread] && "Joysticks must be accessed on the main thread on iOS");
-
     static sf::priv::JoystickRegistryImpl registry;
     return registry;
 }
@@ -73,15 +70,15 @@ void JoystickRegistryImpl::initialize()
         addObserverForName:GCControllerDidConnectNotification
                     object:nil
                      queue:nil
-                usingBlock:^(NSNotification*) {
-                    refresh();
+                usingBlock:^(NSNotification* notification) {
+                    assignController(notification.object);
                 }];
     m_disconnectObserver               = [center
         addObserverForName:GCControllerDidDisconnectNotification
                     object:nil
                      queue:nil
-                usingBlock:^(NSNotification*) {
-                    refresh();
+                usingBlock:^(NSNotification* notification) {
+                    unassignController(notification.object);
                 }];
 
     if (@available(iOS 14.0, *))
@@ -91,16 +88,14 @@ void JoystickRegistryImpl::initialize()
                         object:nil
                          queue:nil
                     usingBlock:^(NSNotification*) {
-                        assert([NSThread isMainThread] &&
-                               "Application notifications must run on the main thread on iOS");
-
                         // Input released in the background may remain cached until the next controller report.
                         for (Slot& slot : m_slots)
                             slot.inputTimestampAtActivation = slot.controller.extendedGamepad.lastEventTimestamp;
                     }];
     }
 
-    refresh();
+    for (GCController* controller in [GCController controllers]) // NOLINT(cppcoreguidelines-init-variables)
+        assignController(controller);
 }
 
 
@@ -120,33 +115,7 @@ void JoystickRegistryImpl::cleanup()
     m_activationObserver = nil;
 
     for (Slot& slot : m_slots)
-    {
-        slot.controller = nil;
-        ++slot.generation;
-    }
-}
-
-
-////////////////////////////////////////////////////////////
-void JoystickRegistryImpl::refresh()
-{
-    assert([NSThread isMainThread] && "Joystick connection notifications must run on the main thread on iOS");
-
-    NSArray<GCController*>* const controllers = [GCController controllers];
-    for (Slot& slot : m_slots)
-    {
-        if (slot.controller && [controllers indexOfObjectIdenticalTo:slot.controller] == NSNotFound)
-        {
-            slot.controller = nil;
-            ++slot.generation;
-        }
-    }
-
-    for (GCController* controller in controllers) // NOLINT(cppcoreguidelines-init-variables)
-    {
-        if (controller.extendedGamepad)
-            assignController(controller);
-    }
+        slot = {};
 }
 
 
@@ -158,20 +127,28 @@ bool JoystickRegistryImpl::isConnected(unsigned int index)
 
 
 ////////////////////////////////////////////////////////////
-bool JoystickRegistryImpl::open(unsigned int index, std::uint64_t& generation)
+bool JoystickRegistryImpl::open(unsigned int index)
 {
-    if (index >= m_slots.size() || !m_slots[index].controller)
+    if (!isConnected(index))
         return false;
 
-    generation = m_slots[index].generation;
+    m_slots[index].opened = true;
     return true;
 }
 
 
 ////////////////////////////////////////////////////////////
-GCController* JoystickRegistryImpl::getController(unsigned int index, std::uint64_t generation)
+void JoystickRegistryImpl::close(unsigned int index)
 {
-    if (index >= m_slots.size() || m_slots[index].generation != generation)
+    if (index < m_slots.size())
+        m_slots[index].opened = false;
+}
+
+
+////////////////////////////////////////////////////////////
+GCController* JoystickRegistryImpl::getController(unsigned int index)
+{
+    if (index >= m_slots.size() || !m_slots[index].opened)
         return nil;
 
     return m_slots[index].controller;
@@ -197,6 +174,9 @@ bool JoystickRegistryImpl::isInputReady(unsigned int index) const
 ////////////////////////////////////////////////////////////
 void JoystickRegistryImpl::assignController(GCController* controller)
 {
+    if (!controller.extendedGamepad)
+        return;
+
     for (const Slot& slot : m_slots)
     {
         if (slot.controller == controller)
@@ -207,9 +187,24 @@ void JoystickRegistryImpl::assignController(GCController* controller)
     {
         if (!slot.controller)
         {
-            slot.controller = controller;
-            ++slot.generation;
+            slot.controller                 = controller;
+            slot.opened                     = false;
             slot.inputTimestampAtActivation = 0;
+            return;
+        }
+    }
+}
+
+
+////////////////////////////////////////////////////////////
+void JoystickRegistryImpl::unassignController(GCController* controller)
+{
+    for (Slot& slot : m_slots)
+    {
+        if (slot.controller == controller)
+        {
+            // Reopening the slot refreshes cached capabilities and identification after a reconnect.
+            slot = {};
             return;
         }
     }
@@ -248,7 +243,7 @@ bool JoystickImpl::open(unsigned int index)
 {
     close();
 
-    if (!getRegistry().open(index, m_generation))
+    if (!getRegistry().open(index))
         return false;
 
     m_index = index;
@@ -259,10 +254,8 @@ bool JoystickImpl::open(unsigned int index)
 ////////////////////////////////////////////////////////////
 void JoystickImpl::close()
 {
-    assert([NSThread isMainThread] && "Joysticks must be accessed on the main thread on iOS");
-
-    m_index      = Joystick::Count;
-    m_generation = 0;
+    getRegistry().close(m_index);
+    m_index = Joystick::Count;
 }
 
 
@@ -271,7 +264,7 @@ JoystickCaps JoystickImpl::getCapabilities() const
 {
     @autoreleasepool
     {
-        GCController* const      controller = getRegistry().getController(m_index, m_generation);
+        GCController* const      controller = getRegistry().getController(m_index);
         GCExtendedGamepad* const gamepad    = controller.extendedGamepad;
         if (!gamepad)
             return {};
@@ -301,7 +294,7 @@ Joystick::Identification JoystickImpl::getIdentification() const
 {
     @autoreleasepool
     {
-        GCController* const controller = getRegistry().getController(m_index, m_generation);
+        GCController* const controller = getRegistry().getController(m_index);
         if (!controller)
             return {};
 
@@ -325,7 +318,7 @@ JoystickState JoystickImpl::update() const
     @autoreleasepool
     {
         JoystickRegistryImpl&    registry   = getRegistry();
-        GCController* const      controller = registry.getController(m_index, m_generation);
+        GCController* const      controller = registry.getController(m_index);
         GCExtendedGamepad* const gamepad    = controller.extendedGamepad;
         if (!gamepad)
             return {};
