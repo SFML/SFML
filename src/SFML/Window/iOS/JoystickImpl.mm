@@ -190,6 +190,14 @@ void JoystickRegistryImpl::assignController(GCController* controller)
             slot.controller                 = controller;
             slot.opened                     = false;
             slot.inputTimestampAtActivation = 0;
+
+            if (@available(iOS 14.0, *))
+            {
+                // NOLINTNEXTLINE(cppcoreguidelines-init-variables)
+                for (GCControllerButtonInput* button in controller.extendedGamepad.buttons.allValues)
+                    button.preferredSystemGestureState = GCSystemGestureStateDisabled;
+            }
+
             return;
         }
     }
