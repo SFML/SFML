@@ -57,6 +57,9 @@ endif()
 if(SFML_OS_MACOS OR SFML_OS_IOS)
     # add an option to build frameworks instead of dylibs (release only)
     sfml_set_option(SFML_BUILD_FRAMEWORKS OFF BOOL "ON to build SFML as frameworks libraries (release only), OFF to build according to BUILD_SHARED_LIBS")
+
+    # add an option to prefix internal Objective-C class names to avoid symbol conflicts
+    sfml_set_option(SFML_OBJC_CLASS_PREFIX "" STRING "Prefix prepended to every internal Objective-C class name (e.g. \"MyApp\"). Leave empty for no renaming.")
 endif()
 
 # Android options
