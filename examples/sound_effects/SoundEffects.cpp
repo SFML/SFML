@@ -24,14 +24,6 @@ constexpr auto windowHeight = 600u;
 constexpr auto pi           = 3.14159265359f;
 constexpr auto sqrt2        = 2.0f * 0.707106781186547524401f;
 
-std::filesystem::path resourcesDir()
-{
-#ifdef SFML_SYSTEM_IOS
-    return "";
-#else
-    return "resources";
-#endif
-}
 } // namespace
 
 
@@ -130,9 +122,10 @@ public:
         m_currentModel.setPosition({20.f, 50.f});
 
         // Load the music file
-        if (!m_music.openFromFile(resourcesDir() / "doodle_pop.ogg"))
+        const std::filesystem::path musicPath("resources/doodle_pop.ogg");
+        if (!m_music.openFromFile(musicPath))
         {
-            std::cerr << "Failed to load " << (resourcesDir() / "doodle_pop.ogg").string() << std::endl;
+            std::cerr << "Failed to load " << musicPath << std::endl;
             std::abort();
         }
 
@@ -239,9 +232,10 @@ public:
         m_volumeText(getFont(), "Volume: " + std::to_string(m_volume))
     {
         // Load the music file
-        if (!m_music.openFromFile(resourcesDir() / "doodle_pop.ogg"))
+        const std::filesystem::path musicPath("resources/doodle_pop.ogg");
+        if (!m_music.openFromFile(musicPath))
         {
-            std::cerr << "Failed to load " << (resourcesDir() / "doodle_pop.ogg").string() << std::endl;
+            std::cerr << "Failed to load " << musicPath << std::endl;
             std::abort();
         }
 
@@ -345,9 +339,10 @@ public:
         makeCone(m_soundConeInner, innerConeAngle);
 
         // Load the music file
-        if (!m_music.openFromFile(resourcesDir() / "doodle_pop.ogg"))
+        const std::filesystem::path musicPath("resources/doodle_pop.ogg");
+        if (!m_music.openFromFile(musicPath))
         {
-            std::cerr << "Failed to load " << (resourcesDir() / "doodle_pop.ogg").string() << std::endl;
+            std::cerr << "Failed to load " << musicPath << std::endl;
             std::abort();
         }
 
@@ -739,9 +734,10 @@ protected:
         m_instructions.setPosition({windowWidth / 2.f - 250.f, windowHeight * 3.f / 4.f});
 
         // Load the music file
-        if (!m_music.openFromFile(resourcesDir() / "doodle_pop.ogg"))
+        const std::filesystem::path musicPath("resources/doodle_pop.ogg");
+        if (!m_music.openFromFile(musicPath))
         {
-            std::cerr << "Failed to load " << (resourcesDir() / "doodle_pop.ogg").string() << std::endl;
+            std::cerr << "Failed to load " << musicPath << std::endl;
             std::abort();
         }
 
@@ -1142,7 +1138,7 @@ int main()
     window.setVerticalSyncEnabled(true);
 
     // Open the application font and pass it to the Effect class
-    const sf::Font font(resourcesDir() / "tuffy.ttf");
+    const sf::Font font("resources/tuffy.ttf");
     Effect::setFont(font);
 
     // Create the effects
@@ -1171,7 +1167,7 @@ int main()
     effects[current]->start();
 
     // Create the messages background
-    const sf::Texture textBackgroundTexture(resourcesDir() / "text-background.png");
+    const sf::Texture textBackgroundTexture("resources/text-background.png");
     sf::Sprite        textBackground(textBackgroundTexture);
     textBackground.setPosition({0.f, 520.f});
     textBackground.setColor(sf::Color(255, 255, 255, 200));

@@ -16,17 +16,6 @@
 #include <SFML/Main.hpp>
 #endif
 
-namespace
-{
-std::filesystem::path resourcesDir()
-{
-#ifdef SFML_SYSTEM_IOS
-    return "";
-#else
-    return "resources";
-#endif
-}
-} // namespace
 
 ////////////////////////////////////////////////////////////
 /// Entry point of application
@@ -52,11 +41,11 @@ int main()
     window.setVerticalSyncEnabled(true);
 
     // Load the sounds used in the game
-    const sf::SoundBuffer ballSoundBuffer(resourcesDir() / "ball.wav");
+    const sf::SoundBuffer ballSoundBuffer("resources/ball.wav");
     sf::Sound             ballSound(ballSoundBuffer);
 
     // Create the SFML logo texture:
-    const sf::Texture sfmlLogoTexture(resourcesDir() / "sfml_logo.png");
+    const sf::Texture sfmlLogoTexture("resources/sfml_logo.png");
     sf::Sprite        sfmlLogo(sfmlLogoTexture);
     sfmlLogo.setPosition({170.f, 50.f});
 
@@ -85,7 +74,7 @@ int main()
     ball.setOrigin({ballRadius / 2.f, ballRadius / 2.f});
 
     // Open the text font
-    const sf::Font font(resourcesDir() / "tuffy.ttf");
+    const sf::Font font("resources/tuffy.ttf");
 
     // Initialize the pause message
     sf::Text pauseMessage(font);
