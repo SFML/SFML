@@ -822,6 +822,8 @@ void Text::ensureGeometryUpdate() const
     std::vector<std::uint32_t> currentLineTabIndices;
     hb_script_t                currentScript{};
     hb_direction_t             currentDirection{};
+    auto                       currentLineMinX = static_cast<float>(m_characterSize);
+    auto                       currentLineMaxX = 0.0f;
 
     const auto outputLine = [&]
     {
@@ -1028,6 +1030,10 @@ void Text::ensureGeometryUpdate() const
         minY = std::min(minY, lineMinY);
         maxY = std::max(maxY, lineMaxY);
 
+        // A physical line can contain several segments with different scripts or directions.
+        currentLineMinX = std::min(currentLineMinX, lineMinX);
+        currentLineMaxX = std::max(currentLineMaxX, lineMaxX);
+
         currentLine.clear();
         currentLineIndices.clear();
         currentLineTabIndices.clear();
@@ -1121,6 +1127,8 @@ void Text::ensureGeometryUpdate() const
         std::size_t    firstCodepointOffset = std::numeric_limits<std::size_t>::max();
         hb_direction_t direction{};
         float          lineWidth{};
+        float          minX{};
+        float          maxX{};
     };
 
     std::vector<LineRecord> lines;
@@ -1132,6 +1140,8 @@ void Text::ensureGeometryUpdate() const
         lineRecord.glyphsStart          = m_glyphs.size();
         lineRecord.verticesStart        = m_vertices.getVertexCount();
         lineRecord.outlineVerticesStart = m_outlineVertices.getVertexCount();
+        currentLineMinX                 = static_cast<float>(m_characterSize);
+        currentLineMaxX                 = 0.0f;
     };
 
     const auto endLineRecord = [&]
@@ -1142,6 +1152,8 @@ void Text::ensureGeometryUpdate() const
         lineRecord.verticesCount        = m_vertices.getVertexCount() - lineRecord.verticesStart;
         lineRecord.outlineVerticesCount = m_outlineVertices.getVertexCount() - lineRecord.outlineVerticesStart;
         lineRecord.lineWidth            = x;
+        lineRecord.minX                 = currentLineMinX;
+        lineRecord.maxX                 = currentLineMaxX;
     };
 
     if (!segments.empty())
@@ -1213,6 +1225,7 @@ void Text::ensureGeometryUpdate() const
                 // be returned instead of this glyph
                 glyph.cluster = index;
 
+                currentLineMinX = std::min(currentLineMinX, x);
                 endLineRecord();
                 beginLineRecord();
 
@@ -1262,20 +1275,6 @@ void Text::ensureGeometryUpdate() const
               m_glyphs.end(),
               [](const ShapedGlyph& left, const ShapedGlyph& right) { return left.cluster < right.cluster; });
 
-    // If we're using outline, update the current bounds
-    if (m_outlineThickness != 0)
-    {
-        const float outline = std::abs(std::ceil(m_outlineThickness));
-        minX -= outline;
-        maxX += outline;
-        minY -= outline;
-        maxY += outline;
-    }
-
-    // Update the bounding rectangle
-    m_bounds.position = Vector2f(minX, minY);
-    m_bounds.size     = Vector2f(maxX, maxY) - Vector2f(minX, minY);
-
     // Use line record data to post-process lines e.g. re-alignment etc.
     if (!lines.empty())
     {
@@ -1285,6 +1284,9 @@ void Text::ensureGeometryUpdate() const
                                                [](const LineRecord& left, const LineRecord& right)
                                                { return left.lineWidth < right.lineWidth; })
                                   ->lineWidth;
+
+        auto alignedMinX = std::numeric_limits<float>::max();
+        auto alignedMaxX = std::numeric_limits<float>::lowest();
 
         for (auto& line : lines)
         {
@@ -1302,7 +1304,15 @@ void Text::ensureGeometryUpdate() const
             {
                 shift = maxWidth - line.lineWidth;
             }
-            else
+            // Move each line's bounds by the same distance as its glyphs.
+            // The line advance can differ from its visible width, and each line has its own shift.
+            if (line.minX <= line.maxX)
+            {
+                alignedMinX = std::min(alignedMinX, line.minX + shift);
+                alignedMaxX = std::max(alignedMaxX, line.maxX + shift);
+            }
+
+            if (shift == 0.0f)
             {
                 // Skip modifying the data if there is nothing to shift
                 continue;
@@ -1321,16 +1331,26 @@ void Text::ensureGeometryUpdate() const
                 m_outlineVertices[i].position.x += shift;
         }
 
-        // Update bounds if necessary
-        if (m_lineAlignment == LineAlignment::Center)
+        if (alignedMinX <= alignedMaxX)
         {
-            m_bounds.position.x -= m_bounds.size.x / 2.0f;
-        }
-        else if (m_lineAlignment == LineAlignment::Right)
-        {
-            m_bounds.position.x -= m_bounds.size.x;
+            minX = alignedMinX;
+            maxX = alignedMaxX;
         }
     }
+
+    // If we're using outline, update the current bounds after aligning the lines.
+    if (m_outlineThickness != 0)
+    {
+        const float outline = std::abs(std::ceil(m_outlineThickness));
+        minX -= outline;
+        maxX += outline;
+        minY -= outline;
+        maxY += outline;
+    }
+
+    // Update the bounding rectangle
+    m_bounds.position = Vector2f(minX, minY);
+    m_bounds.size     = Vector2f(maxX, maxY) - Vector2f(minX, minY);
 }
 
 } // namespace sf
