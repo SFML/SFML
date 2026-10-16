@@ -32,6 +32,7 @@
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Rect.hpp>
 
+#include <SFML/System/Forward.hpp>
 #include <SFML/System/Vector2.hpp>
 
 #include <filesystem>
@@ -45,8 +46,6 @@
 
 namespace sf
 {
-class InputStream;
-
 ////////////////////////////////////////////////////////////
 /// \brief Class for loading, manipulating and saving images
 ///

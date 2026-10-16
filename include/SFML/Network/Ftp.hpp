@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Export.hpp>
 
+#include <SFML/Network/Forward.hpp>
 #include <SFML/Network/TcpSocket.hpp>
 
 #include <SFML/System/Time.hpp>
@@ -40,8 +41,6 @@
 
 namespace sf
 {
-class IpAddress;
-
 ////////////////////////////////////////////////////////////
 /// \brief A FTP client
 ///

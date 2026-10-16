@@ -31,6 +31,7 @@
 
 #include <SFML/Graphics/Rect.hpp>
 
+#include <SFML/System/Forward.hpp>
 #include <SFML/System/Vector2.hpp>
 
 #include <array>
@@ -38,8 +39,6 @@
 
 namespace sf
 {
-class Angle;
-
 ////////////////////////////////////////////////////////////
 /// \brief 3x3 transform matrix
 ///

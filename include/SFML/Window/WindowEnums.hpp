@@ -39,7 +39,7 @@ namespace Style
 /// using user-defined hotkeys.
 ///
 ////////////////////////////////////////////////////////////
-enum
+enum Type : unsigned int
 {
     None     = 0,      //!< No border / title bar (this flag and all others are mutually exclusive)
     Titlebar = 1 << 0, //!< Title bar + fixed border

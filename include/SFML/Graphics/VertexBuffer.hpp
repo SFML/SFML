@@ -30,6 +30,7 @@
 #include <SFML/Graphics/Export.hpp>
 
 #include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Forward.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
 
@@ -40,9 +41,6 @@
 
 namespace sf
 {
-class RenderTarget;
-struct Vertex;
-
 ////////////////////////////////////////////////////////////
 /// \brief Vertex buffer storage for one or more 2D primitives
 ///

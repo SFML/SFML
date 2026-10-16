@@ -37,6 +37,7 @@
 #include <SFML/System/SuspendAwareClock.hpp>
 #endif
 
+#include <SFML/System/Forward.hpp>
 
 namespace sf
 {
@@ -79,8 +80,6 @@ static_assert(std::ratio_less_equal_v<ClockImpl::period, std::micro>,
               "Clock resolution is too low. Expecting at least a microsecond precision");
 
 } // namespace priv
-
-class Time;
 
 ////////////////////////////////////////////////////////////
 /// \brief Utility class that measures the elapsed time

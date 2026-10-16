@@ -29,9 +29,12 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
 
+#include <SFML/Graphics/Forward.hpp>
 #include <SFML/Graphics/Glsl.hpp>
 
 #include <SFML/Window/GlResource.hpp>
+
+#include <SFML/System/Forward.hpp>
 
 #include <filesystem>
 #include <string>
@@ -43,9 +46,6 @@
 
 namespace sf
 {
-class InputStream;
-class Texture;
-
 ////////////////////////////////////////////////////////////
 /// \brief Shader class (vertex, geometry and fragment)
 ///

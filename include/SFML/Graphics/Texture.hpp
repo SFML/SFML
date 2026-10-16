@@ -30,10 +30,13 @@
 #include <SFML/Graphics/Export.hpp>
 
 #include <SFML/Graphics/CoordinateType.hpp>
+#include <SFML/Graphics/Forward.hpp>
 #include <SFML/Graphics/Rect.hpp>
 
+#include <SFML/Window/Forward.hpp>
 #include <SFML/Window/GlResource.hpp>
 
+#include <SFML/System/Forward.hpp>
 #include <SFML/System/Vector2.hpp>
 
 #include <filesystem>
@@ -44,10 +47,6 @@
 
 namespace sf
 {
-class InputStream;
-class Window;
-class Image;
-
 ////////////////////////////////////////////////////////////
 /// \brief Image living on the graphics card that can be used for drawing
 ///

@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Export.hpp>
 
+#include <SFML/Window/Forward.hpp>
 #include <SFML/Window/GlResource.hpp>
 
 #include <SFML/System/Vector2.hpp>
@@ -45,8 +46,6 @@ namespace priv
 {
 class GlContext;
 }
-
-struct ContextSettings;
 
 using GlFunctionPointer = void (*)();
 
