@@ -28,12 +28,14 @@
 #include <SFML/Window/InputImpl.hpp>
 #include <SFML/Window/Unix/Display.hpp>
 #include <SFML/Window/Unix/KeyboardImpl.hpp>
+#include <SFML/Window/Unix/Utils.hpp>
 #include <SFML/Window/WindowBase.hpp>
 #include <SFML/Window/WindowHandle.hpp>
 
 #include <SFML/System/String.hpp>
 
 #include <X11/Xlib.h>
+#include <X11/extensions/Xfixes.h>
 #include <X11/keysym.h>
 
 
@@ -181,8 +183,22 @@ void setMousePosition(Vector2i position, const WindowBase& relativeTo)
 
     if (const WindowHandle handle = relativeTo.getNativeHandle())
     {
+        // Determine if cursor image will need restored after warp
+        // Don't restore if already "hidden" (1x1 with alpha of 0)
+        const auto cursorImage = X11Ptr<XFixesCursorImage>(XFixesGetCursorImage(display.get()));
+        assert(cursorImage);
+        const bool isHiddenCursor = cursorImage->width == 1 && cursorImage->height == 1 &&
+                                    (cursorImage->pixels[0] >> 24) == 0;
+        const bool restoreCursor = std::getenv("WAYLAND_DISPLAY") && !isHiddenCursor;
+
+        if (restoreCursor)
+            const_cast<WindowBase&>(relativeTo).setMouseCursorVisible(false);
+
         XWarpPointer(display.get(), None, handle, 0, 0, 0, 0, position.x, position.y);
         XFlush(display.get());
+
+        if (restoreCursor)
+            const_cast<WindowBase&>(relativeTo).setMouseCursorVisible(true);
     }
 }
 
