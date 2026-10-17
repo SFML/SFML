@@ -28,6 +28,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/JoystickImpl.hpp>
 #include <SFML/Window/macOS/AutoreleasePoolWrapper.hpp>
+#include <SFML/Window/macOS/GameControllerManager.hpp>
 #include <SFML/Window/macOS/HIDInputManager.hpp>
 #include <SFML/Window/macOS/HIDJoystickManager.hpp>
 
@@ -88,7 +89,9 @@ namespace sf::priv
 ////////////////////////////////////////////////////////////
 void JoystickImpl::initialize()
 {
-    // Nothing to do
+    HIDJoystickManager::getInstance().getJoystickCount();
+    // Construct before JoystickManager, so it outlives all open joysticks.
+    GameControllerManager::getInstance();
 }
 
 
@@ -106,7 +109,7 @@ bool JoystickImpl::isConnected(unsigned int index)
     bool                  state = false; // Is the index-th joystick connected?
 
     // First, let's check if the device was previously detected:
-    if (m_locationIDs[index] != 0)
+    if (m_locationIDs[index] != 0 || GameControllerManager::getInstance().isConnected(index))
     {
         state = true;
     }
@@ -179,9 +182,18 @@ bool JoystickImpl::isConnected(unsigned int index)
 bool JoystickImpl::open(unsigned int index)
 {
     const AutoreleasePool pool;
+    m_gameController         = false;
     m_index                  = index;
     m_hat                    = nullptr;
     const Location deviceLoc = m_locationIDs[index]; // The device we need to load
+
+    if (deviceLoc == 0)
+    {
+        m_gameController = GameControllerManager::getInstance().open(index);
+        if (m_gameController)
+            m_identification = GameControllerManager::getInstance().getIdentification(index);
+        return m_gameController;
+    }
 
     // Get all devices
     CFSetRef devices = HIDJoystickManager::getInstance().copyJoysticks();
@@ -260,12 +272,13 @@ bool JoystickImpl::open(unsigned int index)
                         // >   allows two switches to be reported simultaneously.
                         //
                         // We assume this model here as well. Hence, with 4 switches and intermediate
-                        // positions we have 8 values (0-7) plus the "null" state (8).
+                        // positions we have 8 consecutive values. Values outside the logical
+                        // range represent the neutral position, e.g. 8 for [0,7] or 0 for [1,8].
                         {
                             const CFIndex min = IOHIDElementGetLogicalMin(element);
                             const CFIndex max = IOHIDElementGetLogicalMax(element);
 
-                            if (min != 0 || max != 7)
+                            if (max - min != 7)
                             {
                                 err() << std::hex << "Joystick (vendor/product id: 0x" << m_identification.vendorId
                                       << "/0x" << m_identification.productId << std::dec
@@ -342,6 +355,13 @@ void JoystickImpl::close()
 {
     const AutoreleasePool pool;
 
+    if (m_gameController)
+    {
+        GameControllerManager::getInstance().close(m_index);
+        m_gameController = false;
+        return;
+    }
+
     for (IOHIDElementRef iohidElementRef : m_buttons)
         CFRelease(iohidElementRef);
 
@@ -365,6 +385,9 @@ void JoystickImpl::close()
 ////////////////////////////////////////////////////////////
 JoystickCaps JoystickImpl::getCapabilities() const
 {
+    if (m_gameController)
+        return GameControllerManager::getInstance().getCapabilities(m_index);
+
     const AutoreleasePool pool;
     JoystickCaps          caps;
 
@@ -393,6 +416,9 @@ Joystick::Identification JoystickImpl::getIdentification() const
 ////////////////////////////////////////////////////////////
 JoystickState JoystickImpl::update()
 {
+    if (m_gameController)
+        return GameControllerManager::getInstance().update(m_index);
+
     const AutoreleasePool          pool;
     static constexpr JoystickState disconnectedState; // return this if joystick was disconnected
     JoystickState                  state;             // otherwise return that
@@ -508,7 +534,11 @@ JoystickState JoystickImpl::update()
         if (!value)
             return disconnectedState;
 
-        const CFIndex raw = IOHIDValueGetIntegerValue(value);
+        const CFIndex valueInteger = IOHIDValueGetIntegerValue(value);
+        const CFIndex minimum      = IOHIDElementGetLogicalMin(m_hat);
+        if (valueInteger < minimum || valueInteger > IOHIDElementGetLogicalMax(m_hat))
+            return state;
+        const CFIndex raw = valueInteger - minimum;
 
         // Load PovX
         switch (raw)

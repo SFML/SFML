@@ -26,10 +26,12 @@
 ////////////////////////////////////////////////////////////
 // Headers
 ////////////////////////////////////////////////////////////
+#include <SFML/Window/macOS/GameControllerManager.hpp>
 #include <SFML/Window/macOS/HIDInputManager.hpp>
 #include <SFML/Window/macOS/HIDJoystickManager.hpp>
 
 #include <array>
+#include <vector>
 
 ////////////////////////////////////////////////////////////
 // Private data
@@ -55,23 +57,45 @@ HIDJoystickManager& HIDJoystickManager::getInstance()
 ////////////////////////////////////////////////////////////
 unsigned int HIDJoystickManager::getJoystickCount()
 {
-    update();
-    return m_joystickCount;
+    CFSetRef   devices = copyJoysticks();
+    const auto count   = static_cast<unsigned int>(CFSetGetCount(devices));
+    CFRelease(devices);
+    return count;
 }
 
 
 ////////////////////////////////////////////////////////////
 CFSetRef HIDJoystickManager::copyJoysticks()
 {
+    CFSetRef               devices   = copyDevices();
+    CFMutableSetRef        joysticks = CFSetCreateMutableCopy(kCFAllocatorDefault, 0, m_joysticks);
+    std::vector<CFTypeRef> candidates(static_cast<std::size_t>(CFSetGetCount(devices)));
+    CFSetGetValues(devices, candidates.data());
+    for (CFTypeRef candidate : candidates)
+    {
+        auto* device = static_cast<IOHIDDeviceRef>(const_cast<void*>(candidate));
+        if (!CFSetContainsValue(m_joysticks, device) && GameControllerManager::hasUnsupportedProfile(device))
+            CFSetAddValue(joysticks, device);
+    }
+    CFRelease(devices);
+    return joysticks;
+}
+
+
+////////////////////////////////////////////////////////////
+CFSetRef HIDJoystickManager::copyDevices()
+{
+    update();
     CFSetRef devices = IOHIDManagerCopyDevices(m_manager);
-    return devices;
+    return devices ? devices : CFSetCreate(kCFAllocatorDefault, nullptr, 0, &kCFTypeSetCallBacks);
 }
 
 
 ////////////////////////////////////////////////////////////
 HIDJoystickManager::HIDJoystickManager()
 {
-    m_manager = IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone);
+    m_joysticks = CFSetCreateMutable(kCFAllocatorDefault, 0, &kCFTypeSetCallBacks);
+    m_manager   = IOHIDManagerCreate(kCFAllocatorDefault, kIOHIDOptionsTypeNone);
 
     CFDictionaryRef mask0 = HIDInputManager::copyDevicesMask(kHIDPage_GenericDesktop, kHIDUsage_GD_Joystick);
 
@@ -104,6 +128,7 @@ HIDJoystickManager::~HIDJoystickManager()
     IOHIDManagerRegisterDeviceRemovalCallback(m_manager, nullptr, nullptr);
 
     IOHIDManagerClose(m_manager, kIOHIDOptionsTypeNone);
+    CFRelease(m_joysticks);
 }
 
 
@@ -120,18 +145,20 @@ void HIDJoystickManager::update()
 
 
 ////////////////////////////////////////////////////////////
-void HIDJoystickManager::pluggedIn(void* context, IOReturn, void*, IOHIDDeviceRef)
+void HIDJoystickManager::pluggedIn(void* context, IOReturn, void*, IOHIDDeviceRef device)
 {
     auto* manager = static_cast<HIDJoystickManager*>(context);
-    ++manager->m_joystickCount;
+    // Query once per connection: supportsHIDDevice is expensive.
+    if (!GameControllerManager::supportsHIDDevice(device))
+        CFSetAddValue(manager->m_joysticks, device);
 }
 
 
 ////////////////////////////////////////////////////////////
-void HIDJoystickManager::pluggedOut(void* context, IOReturn, void*, IOHIDDeviceRef)
+void HIDJoystickManager::pluggedOut(void* context, IOReturn, void*, IOHIDDeviceRef device)
 {
     auto* manager = static_cast<HIDJoystickManager*>(context);
-    --manager->m_joystickCount;
+    CFSetRemoveValue(manager->m_joysticks, device);
 }
 
 
