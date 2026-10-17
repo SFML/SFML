@@ -37,6 +37,17 @@ if(SFML_BUILD_AUDIO)
     add_subdirectory(Audio)
 endif()
 
+if(SFML_BUILD_MODULES)
+    # Check CMake version requirement for C++20 modules
+    if(CMAKE_VERSION VERSION_LESS 3.28)
+        message(FATAL_ERROR "Building SFML modules requires CMake 3.28 or newer. Your version: ${CMAKE_VERSION}")
+    endif()
+    
+    # Add modules directory
+    add_subdirectory(Modules)
+endif()
+
+
 # on some platforms (e.g. Raspberry Pi 3 armhf), GCC requires linking libatomic to use <atomic> features
 # that aren't supported by native CPU instructions (64-bit atomic operations on 32-bit architecture)
 if(SFML_COMPILER_GCC)
