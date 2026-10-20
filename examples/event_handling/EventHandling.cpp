@@ -21,6 +21,11 @@ std::string vec2ToString(const sf::Vector2<T> vec2)
 {
     return '(' + std::to_string(vec2.x) + ", " + std::to_string(vec2.y) + ')';
 }
+template <typename T>
+std::string touchToString(const T& touch)
+{
+    return "finger " + std::to_string(touch.finger) + ", " + vec2ToString(touch.position);
+}
 } // namespace
 
 
@@ -88,17 +93,17 @@ public:
 
         std::optional<std::string> operator()(const sf::Event::TouchBegan& touchBegan)
         {
-            return "Touch Began: " + vec2ToString(touchBegan.position);
+            return "Touch Began: " + touchToString(touchBegan);
         }
 
         std::optional<std::string> operator()(const sf::Event::TouchEnded& touchEnded)
         {
-            return "Touch Ended: " + vec2ToString(touchEnded.position);
+            return "Touch Ended: " + touchToString(touchEnded);
         }
 
         std::optional<std::string> operator()(const sf::Event::TouchMoved& touchMoved)
         {
-            return "Touch Moved: " + vec2ToString(touchMoved.position);
+            return "Touch Moved: " + touchToString(touchMoved);
         }
 
         std::optional<std::string> operator()(const sf::Event::Resized& resized)
@@ -180,15 +185,15 @@ public:
                     }
                     else if (const auto* touchBegan = event->getIf<sf::Event::TouchBegan>())
                     {
-                        m_log.emplace_back("Touch Began: " + vec2ToString(touchBegan->position));
+                        m_log.emplace_back("Touch Began: " + touchToString(*touchBegan));
                     }
                     else if (const auto* touchEnded = event->getIf<sf::Event::TouchEnded>())
                     {
-                        m_log.emplace_back("Touch Ended: " + vec2ToString(touchEnded->position));
+                        m_log.emplace_back("Touch Ended: " + touchToString(*touchEnded));
                     }
                     else if (const auto* touchMoved = event->getIf<sf::Event::TouchMoved>())
                     {
-                        m_log.emplace_back("Touch Moved: " + vec2ToString(touchMoved->position));
+                        m_log.emplace_back("Touch Moved: " + touchToString(*touchMoved));
                     }
                     else if (const auto* resized = event->getIf<sf::Event::Resized>())
                     {
@@ -247,11 +252,11 @@ public:
                                       { m_log.emplace_back("Mouse Moved: " + vec2ToString(mouseMoved.position)); },
                                       [&](const sf::Event::MouseButtonPressed&) { m_log.emplace_back("Mouse Pressed"); },
                                       [&](const sf::Event::TouchBegan& touchBegan)
-                                      { m_log.emplace_back("Touch Began: " + vec2ToString(touchBegan.position)); },
+                                      { m_log.emplace_back("Touch Began: " + touchToString(touchBegan)); },
                                       [&](const sf::Event::TouchEnded& touchEnded)
-                                      { m_log.emplace_back("Touch Ended: " + vec2ToString(touchEnded.position)); },
+                                      { m_log.emplace_back("Touch Ended: " + touchToString(touchEnded)); },
                                       [&](const sf::Event::TouchMoved& touchMoved)
-                                      { m_log.emplace_back("Touch Moved: " + vec2ToString(touchMoved.position)); },
+                                      { m_log.emplace_back("Touch Moved: " + touchToString(touchMoved)); },
                                       [&](const sf::Event::Resized& resized)
                                       { m_log.emplace_back("Resized: " + vec2ToString(resized.size)); },
                                       [&](const sf::Event::FocusLost&) { m_log.emplace_back("Focus Lost"); },
@@ -301,15 +306,15 @@ public:
                         }
                         else if constexpr (std::is_same_v<T, sf::Event::TouchBegan>)
                         {
-                            m_log.emplace_back("Touch Began: " + vec2ToString(event.position));
+                            m_log.emplace_back("Touch Began: " + touchToString(event));
                         }
                         else if constexpr (std::is_same_v<T, sf::Event::TouchEnded>)
                         {
-                            m_log.emplace_back("Touch Ended: " + vec2ToString(event.position));
+                            m_log.emplace_back("Touch Ended: " + touchToString(event));
                         }
                         else if constexpr (std::is_same_v<T, sf::Event::TouchMoved>)
                         {
-                            m_log.emplace_back("Touch Moved: " + vec2ToString(event.position));
+                            m_log.emplace_back("Touch Moved: " + touchToString(event));
                         }
                         else if constexpr (std::is_same_v<T, sf::Event::Resized>)
                         {
@@ -402,17 +407,17 @@ public:
 
     void handle(const sf::Event::TouchBegan& touchBegan)
     {
-        m_log.emplace_back("Touch Began: " + vec2ToString(touchBegan.position));
+        m_log.emplace_back("Touch Began: " + touchToString(touchBegan));
     }
 
     void handle(const sf::Event::TouchEnded& touchEnded)
     {
-        m_log.emplace_back("Touch Ended: " + vec2ToString(touchEnded.position));
+        m_log.emplace_back("Touch Ended: " + touchToString(touchEnded));
     }
 
     void handle(const sf::Event::TouchMoved& touchMoved)
     {
-        m_log.emplace_back("Touch Moved: " + vec2ToString(touchMoved.position));
+        m_log.emplace_back("Touch Moved: " + touchToString(touchMoved));
     }
 
     void handle(const sf::Event::Resized& resized)
