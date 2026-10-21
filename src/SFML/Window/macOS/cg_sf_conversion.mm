@@ -29,31 +29,8 @@
 #import <SFML/Window/macOS/Scaling.h>
 #include <SFML/Window/macOS/cg_sf_conversion.hpp>
 
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-
 namespace sf::priv
 {
-
-////////////////////////////////////////////////////////////
-unsigned int modeBitsPerPixel(CGDisplayModeRef mode)
-{
-    unsigned int bpp = 0; // no match
-
-    // Compare encoding.
-    CFStringRef pixEnc = CGDisplayModeCopyPixelEncoding(mode);
-    if (CFStringCompare(pixEnc, CFSTR(IO32BitDirectPixels), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
-        bpp = 32;
-    else if (CFStringCompare(pixEnc, CFSTR(IO16BitDirectPixels), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
-        bpp = 16;
-    else if (CFStringCompare(pixEnc, CFSTR(IO8BitIndexedPixels), kCFCompareCaseInsensitive) == kCFCompareEqualTo)
-        bpp = 8;
-
-    // Clean up memory.
-    CFRelease(pixEnc);
-
-    return bpp;
-}
-
 
 ////////////////////////////////////////////////////////////
 VideoMode convertCGModeToSFMode(CGDisplayModeRef cgmode)
@@ -71,7 +48,10 @@ VideoMode convertCGModeToSFMode(CGDisplayModeRef cgmode)
     // https://developer.apple.com/library/mac/documentation/GraphicsAnimation/Conceptual/HighResolutionOSX/APIs/APIs.html#//apple_ref/doc/uid/TP40012302-CH5-SW27
     auto size = Vector2u(Vector2(CGDisplayModeGetPixelWidth(cgmode), CGDisplayModeGetPixelHeight(cgmode)));
     scaleInXY(size, nil);
-    return VideoMode(size, modeBitsPerPixel(cgmode));
+
+    // CGDisplayModeCopyPixelEncoding is deprecated without replacement,
+    // and modern macOS only exposes 32-bit display modes, so assume 32 bpp
+    return VideoMode(size, 32);
 }
 
 } // namespace sf::priv
