@@ -85,6 +85,17 @@ TEST_CASE("[Audio] sf::InputSoundFile")
                 CHECK(inputSoundFile.getTimeOffset() == sf::Time::Zero);
                 CHECK(inputSoundFile.getSampleOffset() == 0);
             }
+
+            SECTION("qoa")
+            {
+                const sf::InputSoundFile inputSoundFile("coin.qoa");
+                CHECK(inputSoundFile.getSampleCount() == 25'344);
+                CHECK(inputSoundFile.getChannelCount() == 1);
+                CHECK(inputSoundFile.getSampleRate() == 48'000);
+                CHECK(inputSoundFile.getDuration() == sf::microseconds(528'000));
+                CHECK(inputSoundFile.getTimeOffset() == sf::Time::Zero);
+                CHECK(inputSoundFile.getSampleOffset() == 0);
+            }
         }
 
         SECTION("Memory")
@@ -145,6 +156,18 @@ TEST_CASE("[Audio] sf::InputSoundFile")
                 CHECK(inputSoundFile.getChannelCount() == 1);
                 CHECK(inputSoundFile.getSampleRate() == 22'050);
                 CHECK(inputSoundFile.getDuration() == sf::microseconds(5'122'040));
+                CHECK(inputSoundFile.getTimeOffset() == sf::Time::Zero);
+                CHECK(inputSoundFile.getSampleOffset() == 0);
+            }
+
+            SECTION("qoa")
+            {
+                sf::FileInputStream      stream("coin.qoa");
+                const sf::InputSoundFile inputSoundFile(stream);
+                CHECK(inputSoundFile.getSampleCount() == 25'344);
+                CHECK(inputSoundFile.getChannelCount() == 1);
+                CHECK(inputSoundFile.getSampleRate() == 48'000);
+                CHECK(inputSoundFile.getDuration() == sf::microseconds(528'000));
                 CHECK(inputSoundFile.getTimeOffset() == sf::Time::Zero);
                 CHECK(inputSoundFile.getSampleOffset() == 0);
             }
@@ -216,6 +239,20 @@ TEST_CASE("[Audio] sf::InputSoundFile")
                 CHECK(inputSoundFile.getChannelCount() == 1);
                 CHECK(inputSoundFile.getSampleRate() == 22'050);
                 CHECK(inputSoundFile.getDuration() == sf::microseconds(5'122'040));
+                CHECK(inputSoundFile.getTimeOffset() == sf::Time::Zero);
+                CHECK(inputSoundFile.getSampleOffset() == 0);
+            }
+
+            SECTION("qoa")
+            {
+                const std::filesystem::path filename = U"coin" + filenameSuffix + U".qoa";
+                INFO("Filename: " << reinterpret_cast<const char*>(filename.u8string().c_str()));
+
+                REQUIRE(inputSoundFile.openFromFile(filename));
+                CHECK(inputSoundFile.getSampleCount() == 25'344);
+                CHECK(inputSoundFile.getChannelCount() == 1);
+                CHECK(inputSoundFile.getSampleRate() == 48'000);
+                CHECK(inputSoundFile.getDuration() == sf::microseconds(528'000));
                 CHECK(inputSoundFile.getTimeOffset() == sf::Time::Zero);
                 CHECK(inputSoundFile.getSampleOffset() == 0);
             }
@@ -294,6 +331,18 @@ TEST_CASE("[Audio] sf::InputSoundFile")
                 CHECK(inputSoundFile.getTimeOffset() == sf::Time::Zero);
                 CHECK(inputSoundFile.getSampleOffset() == 0);
             }
+
+            SECTION("qoa")
+            {
+                REQUIRE(stream.open("coin.qoa"));
+                REQUIRE(inputSoundFile.openFromStream(stream));
+                CHECK(inputSoundFile.getSampleCount() == 25'344);
+                CHECK(inputSoundFile.getChannelCount() == 1);
+                CHECK(inputSoundFile.getSampleRate() == 48'000);
+                CHECK(inputSoundFile.getDuration() == sf::microseconds(528'000));
+                CHECK(inputSoundFile.getTimeOffset() == sf::Time::Zero);
+                CHECK(inputSoundFile.getSampleOffset() == 0);
+            }
         }
     }
 
@@ -328,6 +377,14 @@ TEST_CASE("[Audio] sf::InputSoundFile")
             sf::InputSoundFile inputSoundFile("killdeer.wav");
             inputSoundFile.seek(1'000);
             CHECK(inputSoundFile.getTimeOffset() == sf::microseconds(45'351));
+            CHECK(inputSoundFile.getSampleOffset() == 1'000);
+        }
+
+        SECTION("qoa")
+        {
+            sf::InputSoundFile inputSoundFile("coin.qoa");
+            inputSoundFile.seek(1'000);
+            CHECK(inputSoundFile.getTimeOffset() == sf::microseconds(20'833));
             CHECK(inputSoundFile.getSampleOffset() == 1'000);
         }
     }
@@ -392,6 +449,15 @@ TEST_CASE("[Audio] sf::InputSoundFile")
             SECTION("wav")
             {
                 // Cannot be tested since reading from a .wav file triggers UB
+            }
+
+            SECTION("qoa")
+            {
+                inputSoundFile = sf::InputSoundFile("coin.qoa");
+                CHECK(inputSoundFile.read(samples.data(), samples.size()) == 4);
+                CHECK(samples == std::array<std::int16_t, 4>{1, 1, 1, 1});
+                CHECK(inputSoundFile.read(samples.data(), samples.size()) == 4);
+                CHECK(samples == std::array<std::int16_t, 4>{1, 1, 1, 1});
             }
         }
     }

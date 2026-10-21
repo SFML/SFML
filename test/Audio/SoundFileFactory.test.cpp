@@ -104,6 +104,7 @@ TEST_CASE("[Audio] sf::SoundFileFactory")
             CHECK(sf::SoundFileFactory::createReaderFromFilename("ding.mp3"));
             CHECK(sf::SoundFileFactory::createReaderFromFilename("doodle_pop.ogg"));
             CHECK(sf::SoundFileFactory::createReaderFromFilename("killdeer.wav"));
+            CHECK(sf::SoundFileFactory::createReaderFromFilename("coin.qoa"));
         }
     }
 
@@ -131,6 +132,11 @@ TEST_CASE("[Audio] sf::SoundFileFactory")
             REQUIRE(stream.open("killdeer.wav"));
         }
 
+        SECTION("qoa")
+        {
+            REQUIRE(stream.open("coin.qoa"));
+        }
+
         CHECK(sf::SoundFileFactory::createReaderFromStream(stream));
     }
 
@@ -147,6 +153,7 @@ TEST_CASE("[Audio] sf::SoundFileFactory")
             CHECK(!sf::SoundFileFactory::createWriterFromFilename("file.mp3")); // Mp3 writing not yet implemented
             CHECK(sf::SoundFileFactory::createWriterFromFilename("file.ogg"));
             CHECK(sf::SoundFileFactory::createWriterFromFilename("file.wav"));
+            CHECK(sf::SoundFileFactory::createWriterFromFilename("coin.qoa"));
         }
     }
 }
