@@ -29,12 +29,10 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics/Export.hpp>
 
+#include <SFML/Graphics/Forward.hpp>
 
 namespace sf
 {
-class RenderTarget;
-struct RenderStates;
-
 ////////////////////////////////////////////////////////////
 /// \brief Abstract base class for objects that can be drawn
 ///        to a render target

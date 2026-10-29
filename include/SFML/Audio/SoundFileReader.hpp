@@ -31,6 +31,8 @@
 
 #include <SFML/Audio/SoundChannel.hpp>
 
+#include <SFML/System/Forward.hpp>
+
 #include <optional>
 #include <vector>
 
@@ -39,8 +41,6 @@
 
 namespace sf
 {
-class InputStream;
-
 ////////////////////////////////////////////////////////////
 /// \brief Abstract base class for sound file decoding
 ///

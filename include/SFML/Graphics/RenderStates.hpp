@@ -31,15 +31,13 @@
 
 #include <SFML/Graphics/BlendMode.hpp>
 #include <SFML/Graphics/CoordinateType.hpp>
+#include <SFML/Graphics/Forward.hpp>
 #include <SFML/Graphics/StencilMode.hpp>
 #include <SFML/Graphics/Transform.hpp>
 
 
 namespace sf
 {
-class Shader;
-class Texture;
-
 ////////////////////////////////////////////////////////////
 /// \brief Define the states used for drawing to a `RenderTarget`
 ///

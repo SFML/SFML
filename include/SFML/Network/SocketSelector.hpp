@@ -29,6 +29,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Export.hpp>
 
+#include <SFML/Network/Forward.hpp>
+
 #include <SFML/System/Time.hpp>
 
 #include <functional>
@@ -39,8 +41,6 @@
 
 namespace sf
 {
-class Socket;
-
 ////////////////////////////////////////////////////////////
 /// \brief Multiplexer that allows to read from multiple sockets
 ///
