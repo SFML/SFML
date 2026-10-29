@@ -24,12 +24,12 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 endif()
 
 # When installing, save whether SFML was built using system dependencies.
-set(SFML_BUILT_USING_SYSTEM_DEPS @SFML_USE_SYSTEM_DEPS@)
+set(SFML_BUILT_USING_SYSTEM_FLAC_VORBIS @SFML_USE_SYSTEM_FLAC_VORBIS@)
 
 # start with an empty list
 set(FIND_SFML_DEPENDENCIES_NOTFOUND)
 
-if(SFML_BUILT_USING_SYSTEM_DEPS)
+if(SFML_BUILT_USING_SYSTEM_FLAC_VORBIS)
     find_dependency(Vorbis)
     find_dependency(FLAC)
 else()
