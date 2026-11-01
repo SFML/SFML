@@ -276,11 +276,16 @@ protected:
     ////////////////////////////////////////////////////////////
     /// \brief Change the current playing position in the stream source to the beginning of the loop
     ///
-    /// This function can be overridden by derived classes to
-    /// allow implementation of custom loop points. Otherwise,
-    /// it just calls `onSeek(Time::Zero)` and returns 0.
+    /// This function is called when a looping stream reaches its end.
+    /// It can be overridden by derived classes to allow implementation
+    /// of custom loop points. Otherwise, it just calls `onSeek(Time::Zero)`
+    /// and returns 0.
     ///
-    /// \return The seek position after looping (or `std::nullopt` if there's no loop)
+    /// Returning `std::nullopt` doesn't stop the stream, instead the
+    /// stream seeks back to the beginning through `onSeek`. To stop
+    /// a looping stream, disable looping with `setLooping(false)`.
+    ///
+    /// \return The seek position after looping, or `std::nullopt` if there's no loop position
     ///
     ////////////////////////////////////////////////////////////
     virtual std::optional<std::uint64_t> onLoop();
