@@ -52,7 +52,8 @@
 # - For each specified module XXX (System, Window, Graphics, Network, Audio, Main):
 #   - SFML::XXX
 # The SFML targets are the same for both Debug and Release build configurations and will automatically provide
-# correct settings based on your currently active build configuration. The SFML targets name also do not change
+# correct settings based on your currently active build configuration. RelWithDebInfo and MinSizeRel (multi-config
+# generators such as Visual Studio) map to the Release import libraries. The SFML targets name also do not change
 # when using dynamic or static SFML libraries.
 #
 # When linking against a SFML target, you do not need to specify indirect dependencies. For example, linking
@@ -178,6 +179,17 @@ foreach(component ${FIND_SFML_COMPONENTS_SORTED})
 endforeach()
 
 if(SFML_FOUND)
+    # Multi-config generators (e.g. Visual Studio) also build RelWithDebInfo and MinSizeRel. SFML's exported
+    # targets only provide Debug and Release locations; without an explicit map, CMake can pick the wrong one and
+    # consumers see CRT / ABI mismatches at runtime. See https://github.com/SFML/SFML/issues/3424
+    foreach(component ${FIND_SFML_COMPONENTS_SORTED})
+        if(TARGET SFML::${component})
+            set_target_properties(SFML::${component} PROPERTIES
+                MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
+                MAP_IMPORTED_CONFIG_MINSIZEREL Release)
+        endif()
+    endforeach()
+
     set(SFML_VERSION_IS_RELEASE @VERSION_IS_RELEASE@)
 else()
     if(SFML_FIND_REQUIRED)
