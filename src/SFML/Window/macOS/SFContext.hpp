@@ -35,11 +35,16 @@
 ////////////////////////////////////////////////////////////
 #ifdef __OBJC__
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+
 @class NSOpenGLContext;
 using NSOpenGLContextRef = NSOpenGLContext*;
 
 @class NSOpenGLView;
 using NSOpenGLViewRef = NSOpenGLView*;
+
+#pragma GCC diagnostic pop
 
 @class NSWindow;
 using NSWindowRef = NSWindow*;
