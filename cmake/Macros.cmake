@@ -409,15 +409,21 @@ endmacro()
 
 # add a new target which is a SFML test
 # example: sfml_add_test(sfml-test
-#                           ftp.cpp ...
-#                           SFML::Network)
-function(sfml_add_test target SOURCES DEPENDS)
+#                        SOURCES ftp.cpp ...
+#                        DEPENDS SFML::Network)
+function(sfml_add_test target)
+
+    # parse the arguments
+    cmake_parse_arguments(THIS "" "" "SOURCES;DEPENDS" ${ARGN})
+    if (NOT "${THIS_UNPARSED_ARGUMENTS}" STREQUAL "")
+        message(FATAL_ERROR "Extra unparsed arguments when calling sfml_add_test: ${THIS_UNPARSED_ARGUMENTS}")
+    endif()
 
     # set a source group for the source files
-    source_group("" FILES ${SOURCES})
+    source_group("" FILES ${THIS_SOURCES})
 
     # create the target
-    add_executable(${target} ${SOURCES} ${PROJECT_SOURCE_DIR}/test/main.cpp)
+    add_executable(${target} ${THIS_SOURCES})
 
     # enable precompiled headers
     if (SFML_ENABLE_PCH)
@@ -441,7 +447,7 @@ function(sfml_add_test target SOURCES DEPENDS)
     )
 
     # link the target to its SFML dependencies
-    target_link_libraries(${target} PRIVATE ${DEPENDS} sfml-test-main)
+    target_link_libraries(${target} PRIVATE ${THIS_DEPENDS} sfml-test-main)
 
     set_target_warnings(${target})
     set_public_symbols_hidden(${target})
@@ -449,7 +455,7 @@ function(sfml_add_test target SOURCES DEPENDS)
     # If coverage is enabled for MSVC and we are linking statically, use /WHOLEARCHIVE
     # to make sure the linker doesn't discard unused code sections before coverage can be measured
     if(SFML_ENABLE_COVERAGE AND SFML_COMPILER_MSVC AND NOT BUILD_SHARED_LIBS)
-        foreach(DEPENDENCY ${DEPENDS})
+        foreach(DEPENDENCY ${THIS_DEPENDS})
             target_link_options(${target} PRIVATE $<$<CONFIG:DEBUG>:/WHOLEARCHIVE:$<TARGET_LINKER_FILE:${DEPENDENCY}>>)
         endforeach()
     endif()

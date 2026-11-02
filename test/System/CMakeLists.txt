@@ -15,7 +15,7 @@ set(SYSTEM_SRC
     Vector3.test.cpp
     Version.test.cpp
 )
-sfml_add_test(test-sfml-system "${SYSTEM_SRC}" "")
+sfml_add_test(test-sfml-system SOURCES ${SYSTEM_SRC})
 target_compile_definitions(test-sfml-system PRIVATE
     EXPECTED_SFML_VERSION_MAJOR=${SFML_VERSION_MAJOR}
     EXPECTED_SFML_VERSION_MINOR=${SFML_VERSION_MINOR}

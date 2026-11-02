@@ -14,7 +14,7 @@ set(AUDIO_SRC
     SoundSource.test.cpp
     SoundStream.test.cpp
 )
-sfml_add_test(test-sfml-audio "${AUDIO_SRC}" SFML::Audio)
+sfml_add_test(test-sfml-audio SOURCES ${AUDIO_SRC} DEPENDS SFML::Audio)
 
 if(SFML_OS_IOS)
     set(AUDIO_RESOURCE

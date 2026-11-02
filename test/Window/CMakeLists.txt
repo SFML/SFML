@@ -21,4 +21,4 @@ if(NOT SFML_OS_IOS)
         WindowBase.test.cpp
     )
 endif()
-sfml_add_test(test-sfml-window "${WINDOW_SRC}" SFML::Window)
+sfml_add_test(test-sfml-window SOURCES ${WINDOW_SRC} DEPENDS SFML::Window)
