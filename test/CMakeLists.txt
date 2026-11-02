@@ -37,11 +37,23 @@ sfml_set_stdlib(Catch2)
 sfml_set_stdlib(Catch2WithMain)
 sfml_set_stdlib(sfml-test-main)
 
-add_subdirectory(Audio)
-add_subdirectory(Graphics)
-add_subdirectory(Network)
 add_subdirectory(System)
-add_subdirectory(Window)
+
+if(SFML_BUILD_WINDOW)
+    add_subdirectory(Window)
+endif()
+
+if(SFML_BUILD_GRAPHICS)
+    add_subdirectory(Graphics)
+endif()
+
+if(SFML_BUILD_AUDIO)
+    add_subdirectory(Audio)
+endif()
+
+if(SFML_BUILD_NETWORK)
+    add_subdirectory(Network)
+endif()
 
 if(SFML_OS_ANDROID)
     # We can only write to the tmp directory on the Android virtual device
@@ -170,7 +182,11 @@ else()
 endif()
 
 # Convenience for building and running tests in a single command
-add_custom_target(runtests DEPENDS test-sfml-system test-sfml-window test-sfml-graphics test-sfml-network test-sfml-audio)
+add_custom_target(runtests DEPENDS test-sfml-system
+    $<TARGET_NAME_IF_EXISTS:test-sfml-window>
+    $<TARGET_NAME_IF_EXISTS:test-sfml-graphics>
+    $<TARGET_NAME_IF_EXISTS:test-sfml-network>
+    $<TARGET_NAME_IF_EXISTS:test-sfml-audio>)
 add_custom_command(TARGET runtests
                    COMMENT "Run tests"
                    POST_BUILD
