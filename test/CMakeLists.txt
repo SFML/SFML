@@ -37,65 +37,6 @@ sfml_set_stdlib(Catch2)
 sfml_set_stdlib(Catch2WithMain)
 sfml_set_stdlib(sfml-test-main)
 
-sfml_add_test_utils(sfml-system-test-utils
-    SOURCES TestUtilities/SystemUtil.hpp
-            TestUtilities/SystemUtil.cpp
-    DEPENDS SFML::System Catch2::Catch2)
-
-sfml_add_test_utils(sfml-window-test-utils
-    SOURCES TestUtilities/WindowUtil.hpp
-            TestUtilities/WindowUtil.cpp
-    DEPENDS SFML::Window sfml-system-test-utils)
-
-sfml_add_test_utils(sfml-graphics-test-utils
-    SOURCES TestUtilities/GraphicsUtil.hpp
-            TestUtilities/GraphicsUtil.cpp
-    DEPENDS SFML::Graphics sfml-window-test-utils)
-
-sfml_add_test_utils(sfml-audio-test-utils
-    SOURCES TestUtilities/AudioUtil.hpp
-            TestUtilities/AudioUtil.cpp
-    DEPENDS SFML::Audio sfml-system-test-utils)
-
-sfml_add_test_utils(sfml-network-test-utils
-    SOURCES TestUtilities/NetworkUtil.hpp
-            TestUtilities/NetworkUtil.cpp
-    DEPENDS SFML::Network sfml-system-test-utils)
-
-sfml_set_option(SFML_RUN_DISPLAY_TESTS ON BOOL "ON to run tests that require a display, OFF to ignore them")
-if(SFML_RUN_DISPLAY_TESTS)
-    target_compile_definitions(sfml-window-test-utils PUBLIC SFML_RUN_DISPLAY_TESTS)
-endif()
-
-sfml_set_option(SFML_RUN_AUDIO_DEVICE_TESTS ON BOOL "ON to run tests that require an audio device, OFF to ignore them")
-if(SFML_RUN_AUDIO_DEVICE_TESTS)
-    target_compile_definitions(sfml-audio-test-utils PRIVATE SFML_RUN_AUDIO_DEVICE_TESTS)
-endif()
-
-if(NOT SFML_OS_IOS)
-    target_compile_definitions(sfml-network-test-utils PRIVATE SFML_RUN_LOOPBACK_TESTS)
-endif()
-
-sfml_set_option(SFML_RUN_IPV4_LINK_TESTS ON BOOL "ON to run tests that require an IPv4 link to be available, OFF to ignore them")
-if(SFML_RUN_IPV4_LINK_TESTS)
-    target_compile_definitions(sfml-network-test-utils PRIVATE SFML_RUN_IPV4_LINK_TESTS)
-endif()
-
-sfml_set_option(SFML_RUN_IPV4_INTERNET_TESTS OFF BOOL "ON to run tests that require an IPv4 route to the internet to be available, OFF to ignore them")
-if(SFML_RUN_IPV4_INTERNET_TESTS)
-    target_compile_definitions(sfml-network-test-utils PRIVATE SFML_RUN_IPV4_INTERNET_TESTS)
-endif()
-
-sfml_set_option(SFML_RUN_IPV6_LINK_TESTS OFF BOOL "ON to run tests that require an IPv6 link to be available, OFF to ignore them")
-if(SFML_RUN_IPV6_LINK_TESTS)
-    target_compile_definitions(sfml-network-test-utils PRIVATE SFML_RUN_IPV6_LINK_TESTS)
-endif()
-
-sfml_set_option(SFML_RUN_IPV6_INTERNET_TESTS OFF BOOL "ON to run tests that require an IPv6 route to the internet to be available, OFF to ignore them")
-if(SFML_RUN_IPV6_INTERNET_TESTS)
-    target_compile_definitions(sfml-network-test-utils PRIVATE SFML_RUN_IPV6_INTERNET_TESTS)
-endif()
-
 add_subdirectory(Audio)
 add_subdirectory(Graphics)
 add_subdirectory(Network)

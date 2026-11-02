@@ -1,3 +1,8 @@
+sfml_add_test_utils(sfml-system-test-utils
+    SOURCES ../TestUtilities/SystemUtil.hpp
+            ../TestUtilities/SystemUtil.cpp
+    DEPENDS SFML::System Catch2::Catch2)
+
 set(SYSTEM_SRC
     Angle.test.cpp
     Clock.test.cpp

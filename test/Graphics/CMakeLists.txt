@@ -1,3 +1,7 @@
+sfml_add_test_utils(sfml-graphics-test-utils
+    SOURCES ../TestUtilities/GraphicsUtil.hpp
+            ../TestUtilities/GraphicsUtil.cpp
+    DEPENDS SFML::Graphics sfml-window-test-utils)
 
 set(GRAPHICS_SRC
     BlendMode.test.cpp
