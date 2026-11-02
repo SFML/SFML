@@ -498,6 +498,55 @@ function(sfml_add_test target)
     catch_discover_tests(${target} WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 endfunction()
 
+# add a new target which is a SFML test utils library
+# example: sfml_add_test_utils(test-utils
+#                              SOURCES utils.cpp ...
+#                              DEPENDS SFML::System)
+function(sfml_add_test_utils target)
+
+    # parse the arguments
+    cmake_parse_arguments(THIS "" "" "SOURCES;DEPENDS" ${ARGN})
+    if (NOT "${THIS_UNPARSED_ARGUMENTS}" STREQUAL "")
+        message(FATAL_ERROR "Extra unparsed arguments when calling sfml_add_test_utils: ${THIS_UNPARSED_ARGUMENTS}")
+    endif()
+
+    # set a source group for the source files
+    source_group("" FILES ${THIS_SOURCES})
+
+    # create the target
+    add_library(${target} STATIC ${THIS_SOURCES})
+
+    set_target_warnings(${target})
+    set_public_symbols_hidden(${target})
+
+    # enable precompiled headers
+    if (SFML_ENABLE_PCH)
+        message(VERBOSE "enabling PCH for SFML test utils '${target}'")
+        target_precompile_headers(${target} REUSE_FROM sfml-system)
+    endif()
+
+    # set the target's folder (for IDEs that support it, e.g. Visual Studio)
+    set_target_properties(${target} PROPERTIES FOLDER "Tests/Utilities")
+
+    # set the target flags to use the appropriate C++ standard library
+    sfml_set_stdlib(${target})
+
+    # add <project>/test/TestUtilities as public include directory
+    target_include_directories(${target} PUBLIC ${PROJECT_SOURCE_DIR}/test/TestUtilities)
+
+    # link the target to its dependencies
+    target_link_libraries(${target} PUBLIC ${THIS_DEPENDS})
+
+    # Enable support for UTF-8 characters in source code
+    if(SFML_COMPILER_MSVC)
+        target_compile_options(${target} PRIVATE /utf-8)
+    elseif(SFML_COMPILER_GCC)
+        target_compile_options(${target} PRIVATE -fexec-charset=UTF-8 -finput-charset=UTF-8)
+    elseif(SFML_COMPILER_CLANG)
+        # clang only supports UTF-8
+    endif()
+endfunction()
+
 # Generate a SFMLConfig.cmake file (and associated files) from the targets registered
 # in SFML_ADD_LIBRARY_MODULES_PROPERTY (EXPORT parameter of install(TARGETS))
 function(sfml_export_targets)

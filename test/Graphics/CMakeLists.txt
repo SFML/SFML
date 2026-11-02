@@ -35,10 +35,7 @@ if(SFML_OS_WINDOWS)
         WindowHandleWin32.test.cpp
     )
 endif()
-sfml_add_test(test-sfml-graphics SOURCES ${GRAPHICS_SRC} DEPENDS SFML::Graphics)
-if(SFML_RUN_DISPLAY_TESTS)
-    target_compile_definitions(test-sfml-graphics PRIVATE SFML_RUN_DISPLAY_TESTS)
-endif()
+sfml_add_test(test-sfml-graphics SOURCES ${GRAPHICS_SRC} DEPENDS SFML::Graphics sfml-graphics-test-utils)
 
 if (XCODE AND SFML_OS_IOS)
     set(GRAPHICS_RESOURCES
