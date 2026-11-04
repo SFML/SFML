@@ -73,11 +73,12 @@ private:
     using AxisMap       = std::unordered_map<Joystick::Axis, IOHIDElementRef>;
     using ButtonsVector = std::vector<IOHIDElementRef>;
 
-    AxisMap                  m_axis;           ///< Axes (but not POV/Hat) of the joystick
-    IOHIDElementRef          m_hat{};          ///< POV/Hat axis of the joystick
-    ButtonsVector            m_buttons;        ///< Buttons of the joystick
-    unsigned int             m_index{};        ///< SFML index
-    Joystick::Identification m_identification; ///< Joystick identification
+    bool                     m_gameController{}; ///< Device is managed by GameController
+    AxisMap                  m_axis;             ///< Axes (but not POV/Hat) of the joystick
+    IOHIDElementRef          m_hat{};            ///< POV/Hat axis of the joystick
+    ButtonsVector            m_buttons;          ///< Buttons of the joystick
+    unsigned int             m_index{};          ///< SFML index
+    Joystick::Identification m_identification;   ///< Joystick identification
 
     // NOLINTNEXTLINE(readability-identifier-naming)
     static inline std::array<Location, Joystick::Count> m_locationIDs{}; ///< Global Joystick register
