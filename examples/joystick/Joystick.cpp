@@ -3,12 +3,23 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Graphics.hpp>
 
+#include <SFML/Main.hpp>
+#include <filesystem>
 #include <string>
 
 using namespace std::literals;
 
 namespace
 {
+std::filesystem::path resourcesDir()
+{
+#ifdef SFML_SYSTEM_IOS
+    return "";
+#else
+    return "resources";
+#endif
+}
+
 // Axes labels in as C strings
 constexpr std::array axisLabels = {"X", "Y", "Z", "R", "U", "V", "PovX", "PovY"};
 
@@ -455,7 +466,7 @@ int main()
     window.setVerticalSyncEnabled(true);
 
     // Open the text font
-    const sf::Font font("resources/tuffy.ttf");
+    const sf::Font font(resourcesDir() / "tuffy.ttf");
 
     // Display for currently selected joystick - a row of numbers along the top
     // Red if disconnected, green if connected, white box for current selection
@@ -587,4 +598,6 @@ int main()
         // Display things on screen
         window.display();
     }
+
+    return 0;
 }
