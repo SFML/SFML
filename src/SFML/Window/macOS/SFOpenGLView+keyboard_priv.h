@@ -28,7 +28,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Mouse.hpp>
 #import <SFML/Window/macOS/SFOpenGLView.h>
-
+#import "SFMLObjcPrefix.h"
 #import <AppKit/AppKit.h>
 
 
