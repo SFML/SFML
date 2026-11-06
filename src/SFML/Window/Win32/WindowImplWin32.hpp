@@ -35,6 +35,9 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/System/Win32/WindowsHeader.hpp>
 
+#include <optional>
+#include <vector>
+
 #include <cstdint>
 
 
@@ -209,6 +212,16 @@ private:
     static Keyboard::Scancode toScancode(WPARAM wParam, LPARAM lParam);
 
     ////////////////////////////////////////////////////////////
+    /// \brief Touch that is currently down
+    ///
+    ////////////////////////////////////////////////////////////
+    struct Touch
+    {
+        DWORD    id{};     //!< Win32 identifier of the touch
+        Vector2i position; //!< Last reported position of the touch
+    };
+
+    ////////////////////////////////////////////////////////////
     // Member data
     ////////////////////////////////////////////////////////////
     HWND     m_handle{};            //!< Win32 handle of the window
@@ -226,9 +239,10 @@ private:
     LPARAM   m_captionPressPosition{}; //!< Position of the pending click on the title bar
     bool     m_captionRightPressed{};  //!< Is a right click on the title bar pending?
     char16_t m_surrogate{}; //!< First half of the surrogate pair, in case we're receiving a Unicode character in two events
-    bool m_mouseInside{};   //!< Mouse is inside the window?
-    bool m_fullscreen{};    //!< Is the window fullscreen?
-    bool m_cursorGrabbed{}; //!< Is the mouse cursor trapped?
+    bool                              m_mouseInside{};   //!< Mouse is inside the window?
+    bool                              m_fullscreen{};    //!< Is the window fullscreen?
+    bool                              m_cursorGrabbed{}; //!< Is the mouse cursor trapped?
+    std::vector<std::optional<Touch>> m_touches;         //!< Touches currently down, indexed by finger
 };
 
 } // namespace priv
