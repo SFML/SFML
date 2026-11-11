@@ -16,6 +16,9 @@ set(SRC
     ${INCROOT}/NativeActivity.hpp
     ${SRCROOT}/Sleep.cpp
     ${INCROOT}/Sleep.hpp
+    ${SRCROOT}/StandardPaths.cpp
+    ${INCROOT}/StandardPaths.hpp
+    ${SRCROOT}/StandardPathsImpl.hpp
     ${SRCROOT}/String.cpp
     ${INCROOT}/String.hpp
     ${INCROOT}/String.inl
@@ -46,12 +49,30 @@ if(SFML_OS_WINDOWS)
     set(PLATFORM_SRC
         ${SRCROOT}/Win32/SleepImpl.cpp
         ${SRCROOT}/Win32/SleepImpl.hpp
+        ${SRCROOT}/Win32/StandardPathsImpl.cpp
     )
     source_group("windows" FILES ${PLATFORM_SRC})
+elseif(SFML_OS_MACOS)
+    enable_language(OBJCXX)
+    set(PLATFORM_SRC
+        ${SRCROOT}/Unix/SleepImpl.cpp
+        ${SRCROOT}/Unix/SleepImpl.hpp
+        ${SRCROOT}/macOS/StandardPathsImpl.mm
+    )
+    source_group("mac" FILES ${PLATFORM_SRC})
+elseif(SFML_OS_IOS)
+    enable_language(OBJCXX)
+    set(PLATFORM_SRC
+        ${SRCROOT}/Unix/SleepImpl.cpp
+        ${SRCROOT}/Unix/SleepImpl.hpp
+        ${SRCROOT}/iOS/StandardPathsImpl.mm
+    )
+    source_group("ios" FILES ${PLATFORM_SRC})
 else()
     set(PLATFORM_SRC
         ${SRCROOT}/Unix/SleepImpl.cpp
         ${SRCROOT}/Unix/SleepImpl.hpp
+        ${SRCROOT}/Unix/StandardPathsImpl.cpp
     )
 
     if(SFML_OS_ANDROID)
@@ -61,7 +82,12 @@ else()
             ${SRCROOT}/Android/NativeActivity.cpp
             ${SRCROOT}/Android/ResourceStream.cpp
             ${SRCROOT}/Android/ResourceStream.cpp
+            ${SRCROOT}/Android/StandardPathsImpl.cpp
             ${SRCROOT}/Android/SuspendAwareClock.cpp
+        )
+        # Drop the Unix StandardPaths impl on Android in favour of the Android one
+        list(REMOVE_ITEM PLATFORM_SRC
+            ${SRCROOT}/Unix/StandardPathsImpl.cpp
         )
     endif()
 
@@ -94,7 +120,17 @@ target_link_libraries(sfml-system PRIVATE Threads::Threads)
 if(SFML_OS_LINUX)
     target_link_libraries(sfml-system PRIVATE rt)
 elseif(SFML_OS_WINDOWS)
-    target_link_libraries(sfml-system PRIVATE winmm)
+    target_link_libraries(sfml-system PRIVATE winmm shell32 ole32)
+elseif(SFML_OS_MACOS)
+    target_link_libraries(sfml-system PRIVATE "-framework Foundation")
+elseif(SFML_OS_IOS)
+    target_link_libraries(sfml-system PUBLIC "-framework Foundation")
 elseif(SFML_OS_ANDROID)
     target_link_libraries(sfml-system PRIVATE android log)
+endif()
+
+# When static linking on macOS, we need this flag for Objective-C to work
+# https://developer.apple.com/library/archive/qa/qa1490/_index.html
+if((NOT BUILD_SHARED_LIBS) AND SFML_OS_MACOS)
+    target_link_libraries(sfml-system PRIVATE -ObjC)
 endif()
