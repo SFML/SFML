@@ -40,33 +40,7 @@ namespace sf
 ////////////////////////////////////////////////////////////
 class SFML_WINDOW_API GlResource
 {
-protected:
-    ////////////////////////////////////////////////////////////
-    /// \brief Default constructor
-    ///
-    ////////////////////////////////////////////////////////////
-    GlResource();
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Register an OpenGL object to be destroyed when its containing context is destroyed
-    ///
-    /// This is used for internal purposes in order to properly
-    /// clean up OpenGL resources that cannot be shared between
-    /// contexts.
-    ///
-    /// \param object Object to be destroyed when its containing context is destroyed
-    ///
-    ////////////////////////////////////////////////////////////
-    static void registerUnsharedGlObject(std::shared_ptr<void> object);
-
-    ////////////////////////////////////////////////////////////
-    /// \brief Unregister an OpenGL object from its containing context
-    ///
-    /// \param object Object to be unregistered
-    ///
-    ////////////////////////////////////////////////////////////
-    static void unregisterUnsharedGlObject(std::shared_ptr<void> object);
-
+public:
     ////////////////////////////////////////////////////////////
     /// \brief RAII helper class to temporarily lock an available context for use
     ///
@@ -98,6 +72,33 @@ protected:
         ////////////////////////////////////////////////////////////
         TransientContextLock& operator=(const TransientContextLock&) = delete;
     };
+
+protected:
+    ////////////////////////////////////////////////////////////
+    /// \brief Default constructor
+    ///
+    ////////////////////////////////////////////////////////////
+    GlResource();
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Register an OpenGL object to be destroyed when its containing context is destroyed
+    ///
+    /// This is used for internal purposes in order to properly
+    /// clean up OpenGL resources that cannot be shared between
+    /// contexts.
+    ///
+    /// \param object Object to be destroyed when its containing context is destroyed
+    ///
+    ////////////////////////////////////////////////////////////
+    static void registerUnsharedGlObject(std::shared_ptr<void> object);
+
+    ////////////////////////////////////////////////////////////
+    /// \brief Unregister an OpenGL object from its containing context
+    ///
+    /// \param object Object to be unregistered
+    ///
+    ////////////////////////////////////////////////////////////
+    static void unregisterUnsharedGlObject(std::shared_ptr<void> object);
 
 private:
     ////////////////////////////////////////////////////////////
