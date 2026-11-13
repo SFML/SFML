@@ -7,10 +7,10 @@
 
     <application android:label="@string/app_name"
                  android:icon="@drawable/sfml_logo"
-                 android:hasCode="false"
+                 android:hasCode="true"
                  android:allowBackup="true">
 
-    <activity android:name="android.app.NativeActivity"
+    <activity android:name="org.sfmldev.android.SFMLActivity"
               android:label="@string/app_name"
               android:icon="@drawable/sfml_logo"
               android:configChanges="keyboardHidden|orientation|screenSize"

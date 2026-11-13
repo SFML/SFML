@@ -76,6 +76,7 @@ struct ActivityStates
     int (*processEvent)(int fd, int events, void* data){};
 
     std::unordered_map<int, Vector2i>                  touchEvents;
+    std::vector<char32_t>                              textEvents;
     Vector2i                                           mousePosition;
     EnumArray<Mouse::Button, bool, Mouse::ButtonCount> isButtonPressed{};
 
