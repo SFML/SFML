@@ -49,7 +49,7 @@ SFML is an open-source project, and it needs your help to go on growing and impr
 
 -   Laurent Gomila (laurent@sfml-dev.org)
 -   Marco Antognini (hiura@sfml-dev.org)
--   binary1248 (binary1248@hotmail.com)
+-   binary1248 (binary1248@pm.me)
 -   Lukas Dürrenberger (eXpl0it3r@sfml-dev.org)
 -   Jonathan De Wachter (dewachter.jonathan@gmail.com)
 -   Jan Haller (bromeon@sfml-dev.org)
