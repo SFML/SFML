@@ -27,9 +27,13 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Window/Android/ClipboardImpl.hpp>
 
+#include <SFML/System/Android/Activity.hpp>
 #include <SFML/System/Err.hpp>
 #include <SFML/System/String.hpp>
 
+#include <jni.h>
+
+#include <mutex>
 #include <ostream>
 
 
@@ -44,9 +48,71 @@ String ClipboardImpl::getString()
 
 
 ////////////////////////////////////////////////////////////
-void ClipboardImpl::setString(const String& /* text */)
+void ClipboardImpl::setString(const String& text)
 {
-    err() << "Clipboard API not implemented for Android.\n";
+    ActivityStates&       states = getActivity();
+    const std::lock_guard lock(states.mutex);
+
+    JavaVM* javaVM = states.activity->vm;
+    JNIEnv* env    = states.activity->env;
+
+    JavaVMAttachArgs attachArgs;
+    attachArgs.version = JNI_VERSION_1_6;
+    attachArgs.name    = "NativeThread";
+    attachArgs.group   = nullptr;
+
+    const jint envStatus = javaVM->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6);
+    if (envStatus == JNI_EVERSION)
+    {
+        err() << "Failed to access JNI, couldn't set the clipboard contents" << std::endl;
+        return;
+    }
+
+    const bool detach = (envStatus == JNI_EDETACHED);
+    if (detach && javaVM->AttachCurrentThread(&env, &attachArgs) == JNI_ERR)
+    {
+        err() << "Failed to initialize JNI, couldn't set the clipboard contents" << std::endl;
+        return;
+    }
+
+    const auto utf16 = text.toUtf16();
+    jstring    label = env->NewStringUTF("SFML Clipboard");
+    jstring    data  = env->NewString(reinterpret_cast<const jchar*>(utf16.data()), static_cast<jsize>(utf16.size()));
+
+    jclass    contextClass           = env->FindClass("android/content/Context");
+    jfieldID  clipboardServiceField  = env->GetStaticFieldID(contextClass, "CLIPBOARD_SERVICE", "Ljava/lang/String;");
+    jobject   clipboardService       = env->GetStaticObjectField(contextClass, clipboardServiceField);
+    jobject   nativeActivity         = states.activity->clazz;
+    jclass    nativeActivityClass    = env->GetObjectClass(nativeActivity);
+    jmethodID getSystemServiceMethod = env->GetMethodID(nativeActivityClass,
+                                                        "getSystemService",
+                                                        "(Ljava/lang/String;)Ljava/lang/Object;");
+    jobject   clipboardManager       = env->CallObjectMethod(nativeActivity, getSystemServiceMethod, clipboardService);
+
+    jclass    clipDataClass         = env->FindClass("android/content/ClipData");
+    jmethodID newPlainTextMethod    = env->GetStaticMethodID(clipDataClass,
+                                                          "newPlainText",
+                                                          "(Ljava/lang/CharSequence;Ljava/lang/CharSequence;)Landroid/"
+                                                             "content/ClipData;");
+    jobject   clipData              = env->CallStaticObjectMethod(clipDataClass, newPlainTextMethod, label, data);
+    jclass    clipboardManagerClass = env->FindClass("android/content/ClipboardManager");
+    jmethodID setPrimaryClipMethod  = env->GetMethodID(clipboardManagerClass,
+                                                      "setPrimaryClip",
+                                                      "(Landroid/content/ClipData;)V");
+    env->CallVoidMethod(clipboardManager, setPrimaryClipMethod, clipData);
+
+    env->DeleteLocalRef(clipboardManagerClass);
+    env->DeleteLocalRef(clipData);
+    env->DeleteLocalRef(clipDataClass);
+    env->DeleteLocalRef(clipboardManager);
+    env->DeleteLocalRef(nativeActivityClass);
+    env->DeleteLocalRef(clipboardService);
+    env->DeleteLocalRef(contextClass);
+    env->DeleteLocalRef(data);
+    env->DeleteLocalRef(label);
+
+    if (detach)
+        javaVM->DetachCurrentThread();
 }
 
 } // namespace sf::priv
