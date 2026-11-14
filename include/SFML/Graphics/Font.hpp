@@ -33,6 +33,7 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
+#include <SFML/System/Forward.hpp>
 #include <SFML/System/Vector2.hpp>
 
 #include <filesystem>
@@ -48,8 +49,6 @@
 
 namespace sf
 {
-class InputStream;
-
 ////////////////////////////////////////////////////////////
 /// \brief Class for loading and manipulating character fonts
 ///

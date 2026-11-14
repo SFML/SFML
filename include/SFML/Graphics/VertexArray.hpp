@@ -30,6 +30,7 @@
 #include <SFML/Graphics/Export.hpp>
 
 #include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Forward.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RenderStates.hpp>
@@ -42,8 +43,6 @@
 
 namespace sf
 {
-class RenderTarget;
-
 ////////////////////////////////////////////////////////////
 /// \brief Set of one or more 2D primitives
 ///

@@ -28,17 +28,13 @@
 #include <SFML/Graphics/Export.hpp>
 
 #include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/Forward.hpp>
 #include <SFML/Graphics/Glsl.hpp> // NOLINT(misc-header-include-cycle)
 
 #include <array>
 
 #include <cstddef>
 
-
-namespace sf
-{
-class Transform;
-} // namespace sf
 
 namespace sf::priv
 {

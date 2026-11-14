@@ -31,6 +31,7 @@
 
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Forward.hpp>
 #include <SFML/Graphics/Glyph.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/Rect.hpp>
@@ -50,9 +51,6 @@
 
 namespace sf
 {
-class Font;
-class RenderTarget;
-
 ////////////////////////////////////////////////////////////
 /// \brief Graphical text that can be drawn to a render target
 ///

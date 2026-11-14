@@ -29,6 +29,7 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Export.hpp>
 
+#include <SFML/Network/Forward.hpp>
 #include <SFML/Network/IpAddress.hpp>
 #include <SFML/Network/Socket.hpp>
 
@@ -40,8 +41,6 @@
 
 namespace sf
 {
-class Packet;
-
 ////////////////////////////////////////////////////////////
 /// \brief Specialized socket using the UDP protocol
 ///

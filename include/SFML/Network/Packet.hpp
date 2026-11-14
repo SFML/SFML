@@ -29,6 +29,8 @@
 ////////////////////////////////////////////////////////////
 #include <SFML/Network/Export.hpp>
 
+#include <SFML/System/Forward.hpp>
+
 #include <string>
 #include <vector>
 
@@ -38,8 +40,6 @@
 
 namespace sf
 {
-class String;
-
 ////////////////////////////////////////////////////////////
 /// \brief Utility class to build blocks of data to transfer
 ///        over the network
