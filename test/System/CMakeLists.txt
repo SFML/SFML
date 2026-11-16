@@ -1,3 +1,8 @@
+sfml_add_test_utils(sfml-system-test-utils
+    SOURCES ../TestUtilities/SystemUtil.hpp
+            ../TestUtilities/SystemUtil.cpp
+    DEPENDS SFML::System Catch2::Catch2)
+
 set(SYSTEM_SRC
     Angle.test.cpp
     Clock.test.cpp
@@ -15,7 +20,7 @@ set(SYSTEM_SRC
     Vector3.test.cpp
     Version.test.cpp
 )
-sfml_add_test(test-sfml-system "${SYSTEM_SRC}" "")
+sfml_add_test(test-sfml-system SOURCES ${SYSTEM_SRC} DEPENDS SFML::System sfml-system-test-utils)
 target_compile_definitions(test-sfml-system PRIVATE
     EXPECTED_SFML_VERSION_MAJOR=${SFML_VERSION_MAJOR}
     EXPECTED_SFML_VERSION_MINOR=${SFML_VERSION_MINOR}

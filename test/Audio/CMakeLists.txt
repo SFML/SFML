@@ -1,3 +1,13 @@
+sfml_add_test_utils(sfml-audio-test-utils
+    SOURCES ../TestUtilities/AudioUtil.hpp
+            ../TestUtilities/AudioUtil.cpp
+    DEPENDS SFML::Audio sfml-system-test-utils)
+
+sfml_set_option(SFML_RUN_AUDIO_DEVICE_TESTS ON BOOL "ON to run tests that require an audio device, OFF to ignore them")
+if(SFML_RUN_AUDIO_DEVICE_TESTS)
+    target_compile_definitions(sfml-audio-test-utils PRIVATE SFML_RUN_AUDIO_DEVICE_TESTS)
+endif()
+
 set(AUDIO_SRC
     AudioResource.test.cpp
     InputSoundFile.test.cpp
@@ -14,7 +24,7 @@ set(AUDIO_SRC
     SoundSource.test.cpp
     SoundStream.test.cpp
 )
-sfml_add_test(test-sfml-audio "${AUDIO_SRC}" SFML::Audio)
+sfml_add_test(test-sfml-audio SOURCES ${AUDIO_SRC} DEPENDS SFML::Audio sfml-audio-test-utils)
 
 if(SFML_OS_IOS)
     set(AUDIO_RESOURCE

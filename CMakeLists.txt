@@ -403,12 +403,8 @@ sfml_set_option(SFML_BUILD_TEST_SUITE OFF BOOL "ON to build the SFML test suite,
 sfml_set_option(SFML_ENABLE_COVERAGE OFF BOOL "ON to enable coverage reporting, OFF to ignore it")
 
 if(SFML_BUILD_TEST_SUITE)
-    if(SFML_BUILD_WINDOW AND SFML_BUILD_GRAPHICS AND SFML_BUILD_NETWORK AND SFML_BUILD_AUDIO)
-        enable_testing()
-        add_subdirectory(test)
-    else()
-        message(WARNING "Cannot build unit testing unless all modules are enabled")
-    endif()
+    enable_testing()
+    add_subdirectory(test)
 endif()
 
 # add an option for making OpenGL errors fatal
