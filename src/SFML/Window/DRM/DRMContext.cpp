@@ -60,6 +60,7 @@ struct DrmFb
 };
 
 bool            initialized = false;
+bool            eglLoaded   = false;
 sf::priv::Drm   drmNode;
 drmEventContext drmEventCtx{};
 pollfd          pollFD{};
@@ -316,6 +317,24 @@ int findDrmDevice(drmModeResPtr& resources)
     return fileDescriptor;
 }
 
+drmModeConnectorPtr drmGetConnectorPtr(drmModeResPtr resources, int64_t wantedConnectorId)
+{
+    drmModeConnectorPtr connector = nullptr;
+    for (int i = 0; i < resources->count_connectors; ++i)
+    {
+        connector = drmModeGetConnector(drmNode.fileDescriptor, resources->connectors[i]);
+        if ((connector->connection == DRM_MODE_CONNECTED) &&
+            ((wantedConnectorId == -1) || (connector->connector_id == wantedConnectorId)))
+        {
+            // It's connected, let's use this!
+            break;
+        }
+        drmModeFreeConnector(connector);
+        connector = nullptr;
+    }
+    return connector;
+}
+
 int initDrm()
 {
     if (initialized)
@@ -350,17 +369,21 @@ int initDrm()
     }
 
     // Find a connected connector:
-    drmModeConnectorPtr connector = nullptr;
-    for (int i = 0; i < resources->count_connectors; ++i)
+
+    // Use environment variable "SFML_DRM_CONNECTOR_ID" (or -1 if not set)
+    // Use to request specific connector
+    int64_t     wantedConnectorId = -1;
+    const char* connectorString   = std::getenv("SFML_DRM_CONNECTOR_ID");
+
+    if (connectorString && *connectorString)
+        wantedConnectorId = std::atoi(connectorString);
+
+    drmModeConnectorPtr connector = drmGetConnectorPtr(resources, wantedConnectorId);
+    if ((!connector) && (wantedConnectorId != -1))
     {
-        connector = drmModeGetConnector(drmNode.fileDescriptor, resources->connectors[i]);
-        if (connector->connection == DRM_MODE_CONNECTED)
-        {
-            // It's connected, let's use this!
-            break;
-        }
-        drmModeFreeConnector(connector);
-        connector = nullptr;
+        sf::err() << "Requested connector not found! Switching to general search!" << std::endl;
+        wantedConnectorId = -1;
+        connector         = drmGetConnectorPtr(resources, wantedConnectorId);
     }
 
     if (!connector)
@@ -442,7 +465,7 @@ void setDrmMode(sf::Vector2u size = {})
     unsigned int refreshRate   = 0;
     const char*  refreshString = std::getenv("SFML_DRM_REFRESH");
 
-    if (refreshString)
+    if (refreshString && *refreshString)
         refreshRate = static_cast<unsigned int>(std::atoi(refreshString));
 
     bool matched = false;
@@ -482,9 +505,14 @@ EGLDisplay getInitializedDisplay()
 {
     if (display == EGL_NO_DISPLAY)
     {
-        gladLoaderLoadEGL(EGL_NO_DISPLAY);
+        if (!gladLoaderLoadEGL(EGL_NO_DISPLAY))
+        {
+            sf::err() << "Failed to load EGL entry points" << std::endl;
+            return EGL_NO_DISPLAY;
+        }
 
-        display = eglCheck(eglGetDisplay(reinterpret_cast<EGLNativeDisplayType>(gbmDevice)));
+        eglLoaded = true;
+        display   = eglCheck(eglGetDisplay(reinterpret_cast<EGLNativeDisplayType>(gbmDevice)));
 
         EGLint major = 0;
         EGLint minor = 0;
@@ -523,6 +551,8 @@ DRMContext::DRMContext(DRMContext* shared)
 
     // Get the initialized EGL display
     m_display = getInitializedDisplay();
+    if (!eglLoaded)
+        return;
 
     // Get the best EGL config matching the default video settings
     m_config = getBestConfig(m_display, ContextSettings{});
@@ -549,6 +579,8 @@ DRMContext::DRMContext(DRMContext* shared, const ContextSettings& settings, cons
 
     // Get the initialized EGL display
     m_display = getInitializedDisplay();
+    if (!eglLoaded)
+        return;
 
     // Get the best EGL config matching the requested video settings
     m_config = getBestConfig(m_display, settings);
@@ -572,6 +604,8 @@ DRMContext::DRMContext(DRMContext* shared, const ContextSettings& settings, Vect
 
     // Get the initialized EGL display
     m_display = getInitializedDisplay();
+    if (!eglLoaded)
+        return;
 
     // Get the best EGL config matching the requested video settings
     m_config = getBestConfig(m_display, settings);
@@ -822,6 +856,8 @@ void DRMContext::updateSettings()
 ////////////////////////////////////////////////////////////
 GlFunctionPointer DRMContext::getFunction(const char* name)
 {
+    if (!eglLoaded)
+        return nullptr;
     return reinterpret_cast<GlFunctionPointer>(eglGetProcAddress(name));
 }
 
