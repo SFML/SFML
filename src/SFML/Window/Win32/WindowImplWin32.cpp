@@ -36,6 +36,7 @@
 // dbt.h is lowercase here, as a cross-compile on linux with mingw-w64
 // expects lowercase, and a native compile on windows, whether via msvc
 // or mingw-w64 addresses files in a case insensitive manner.
+#include <algorithm>
 #include <array>
 #include <dbt.h>
 #include <ostream>
@@ -66,6 +67,11 @@ const wchar_t*             className        = L"SFML_Window";
 sf::priv::WindowImplWin32* fullscreenWindow = nullptr;
 
 constexpr GUID guidDevinterfaceHid = {0x4d1e55b2, 0xf16f, 0x11cf, {0x88, 0xcb, 0x00, 0x11, 0x11, 0x00, 0x00, 0x30}};
+
+// Window property to disable the press and hold gesture, which emulates right clicks with touch input
+// (defined here because MinGW's tpcshrd.h doesn't provide MICROSOFT_TABLETPENSERVICE_PROPERTY)
+const wchar_t*  tabletServiceProperty     = L"MicrosoftTabletPenServiceProperty";
+constexpr DWORD tabletDisablePressAndHold = 0x00000001;
 
 void setProcessDpiAware()
 {
@@ -132,6 +138,17 @@ void initRawMouse()
 
     if (RegisterRawInputDevices(&rawMouse, 1, sizeof(rawMouse)) != TRUE)
         sf::err() << "Failed to initialize raw mouse input" << std::endl;
+}
+
+// Check whether the mouse message being processed was synthesized by the system from touch input
+// Reference: https://learn.microsoft.com/en-us/windows/win32/tablet/system-events-and-mouse-messages
+bool isMouseMessageFromTouch()
+{
+    // The signature of synthesized messages, with the bit that distinguishes touch from pen input set
+    constexpr DWORD touchSignature = 0xFF515780;
+    constexpr DWORD signatureMask  = 0xFFFFFF80;
+
+    return (static_cast<DWORD>(GetMessageExtraInfo()) & signatureMask) == touchSignature;
 }
 
 // While a window is being moved or resized, or while its system menu is open, Windows runs
@@ -322,6 +339,14 @@ WindowImplWin32::WindowImplWin32(VideoMode     mode,
         }
 
         ++handleCount;
+
+        // Receive WM_TOUCH messages, without coalescing them or delaying them for palm rejection
+        RegisterTouchWindow(m_handle, TWF_FINETOUCH | TWF_WANTPALM);
+
+        // Disable press and hold, its right click is ignored anyway and its visual feedback gets in the way
+        SetPropW(m_handle,
+                 tabletServiceProperty,
+                 reinterpret_cast<HANDLE>(static_cast<ULONG_PTR>(tabletDisablePressAndHold)));
     }
 
     // By default, the OS limits the size of the window the the desktop size,
@@ -701,6 +726,10 @@ void WindowImplWin32::cleanup()
 
     // No longer capture the cursor
     ReleaseCapture();
+
+    // Window properties have to be removed before the window is destroyed
+    if (!m_callback)
+        RemovePropW(m_handle, tabletServiceProperty);
 }
 
 
@@ -883,6 +912,11 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
 {
     // Don't process any message until window is created
     if (m_handle == nullptr)
+        return;
+
+    // Ignore the mouse messages synthesized from touch input, if we receive the touch input itself
+    if ((message >= WM_MOUSEFIRST) && (message <= WM_MOUSELAST) && isMouseMessageFromTouch() &&
+        IsTouchWindow(m_handle, nullptr))
         return;
 
     switch (message)
@@ -1299,6 +1333,62 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
 
             // Generate a MouseMove event
             pushEvent(Event::MouseMoved{{x, y}});
+            break;
+        }
+
+        // Touch event
+        case WM_TOUCH:
+        {
+            // The touch input handle is closed by DefWindowProc, or by the original callback of external windows
+            std::vector<TOUCHINPUT> inputs(LOWORD(wParam));
+            if (!GetTouchInputInfo(reinterpret_cast<HTOUCHINPUT>(lParam),
+                                   static_cast<UINT>(inputs.size()),
+                                   inputs.data(),
+                                   sizeof(TOUCHINPUT)))
+                break;
+
+            for (const TOUCHINPUT& input : inputs)
+            {
+                // Touch positions are in hundredths of a pixel in screen coordinates, convert them to window coordinates
+                POINT point = {TOUCH_COORD_TO_PIXEL(input.x), TOUCH_COORD_TO_PIXEL(input.y)};
+                ScreenToClient(m_handle, &point);
+                const Vector2i position(point.x, point.y);
+
+                if (input.dwFlags & TOUCHEVENTF_DOWN)
+                {
+                    // Associate the new touch with the lowest free finger index
+                    auto touch = std::find(m_touches.begin(), m_touches.end(), std::nullopt);
+                    if (touch == m_touches.end())
+                        touch = m_touches.emplace(touch);
+
+                    *touch = Touch{input.dwID, position};
+                    pushEvent(Event::TouchBegan{static_cast<unsigned int>(touch - m_touches.begin()), position});
+                    continue;
+                }
+
+                const auto touch = std::find_if(m_touches.begin(),
+                                                m_touches.end(),
+                                                [&input](const std::optional<Touch>& candidate)
+                                                { return candidate && (candidate->id == input.dwID); });
+
+                if (touch == m_touches.end())
+                    continue;
+
+                const auto finger = static_cast<unsigned int>(touch - m_touches.begin());
+
+                if (input.dwFlags & TOUCHEVENTF_UP)
+                {
+                    touch->reset();
+                    pushEvent(Event::TouchEnded{finger, position});
+                }
+                else if ((input.dwFlags & TOUCHEVENTF_MOVE) && ((*touch)->position != position))
+                {
+                    // Every touch is reported whenever one of them changes, ignore the ones that haven't moved
+                    (*touch)->position = position;
+                    pushEvent(Event::TouchMoved{finger, position});
+                }
+            }
+
             break;
         }
 
