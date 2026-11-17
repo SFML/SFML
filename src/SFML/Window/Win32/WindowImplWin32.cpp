@@ -268,6 +268,8 @@ WindowImplWin32::WindowImplWin32(VideoMode     mode,
     auto [width, height] = Vector2i(mode.size);
     ReleaseDC(nullptr, screenDC);
 
+    m_lastPosition = {left, top};
+
     // Choose the window style according to the Style parameter
     DWORD win32Style = WS_VISIBLE;
     if (style == Style::None)
@@ -932,7 +934,24 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             break;
         }
 
-        // Start resizing
+        case WM_MOVE:
+        {
+            // Push a move event
+            if (!m_resizing && m_lastPosition != getPosition())
+            {
+                // Update the last handled position
+                m_lastPosition = getPosition();
+
+                // Push a move event
+                pushEvent(Event::WindowMoved{m_lastPosition});
+
+                // Restore/update cursor grabbing
+                grabCursor(m_cursorGrabbed);
+            }
+            break;
+        }
+
+        // Start resizing / moving
         case WM_ENTERSIZEMOVE:
         {
             m_resizing = true;
@@ -941,7 +960,7 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
             break;
         }
 
-        // Stop resizing
+        // Stop resizing / moving
         case WM_EXITSIZEMOVE:
         {
             m_resizing = false;
@@ -955,6 +974,14 @@ void WindowImplWin32::processEvent(UINT message, WPARAM wParam, LPARAM lParam)
 
                 // Push a resize event
                 pushEvent(Event::Resized{m_lastSize});
+            }
+            if (m_lastPosition != getPosition())
+            {
+                // Update the last handled position
+                m_lastPosition = getPosition();
+
+                // Push a move event
+                pushEvent(Event::WindowMoved{m_lastPosition});
             }
 
             // Restore/update cursor grabbing
