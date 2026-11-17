@@ -34,7 +34,25 @@
 namespace
 {
 unsigned int deviceMotionEnabledCount = 0;
+bool         magnetometerEnabled      = false;
+
+////////////////////////////////////////////////////////////
+void restartDeviceMotion()
+{
+    CMMotionManager* const manager = [SFAppDelegate getInstance].motionManager;
+
+    [manager stopDeviceMotionUpdates];
+
+    if (deviceMotionEnabledCount == 0)
+        return;
+
+    // The calibrated magnetic field is only provided when the reference frame uses the magnetometer
+    if (magnetometerEnabled)
+        [manager startDeviceMotionUpdatesUsingReferenceFrame:CMAttitudeReferenceFrameXArbitraryCorrectedZVertical];
+    else
+        [manager startDeviceMotionUpdates];
 }
+} // namespace
 
 
 namespace sf::priv
@@ -65,7 +83,9 @@ bool SensorImpl::isAvailable(Sensor::Type sensor)
             return [SFAppDelegate getInstance].motionManager.gyroAvailable;
 
         case Sensor::Type::Magnetometer:
-            return [SFAppDelegate getInstance].motionManager.magnetometerAvailable;
+            return [SFAppDelegate getInstance].motionManager.deviceMotionAvailable &&
+                   ([CMMotionManager availableAttitudeReferenceFrames] &
+                    CMAttitudeReferenceFrameXArbitraryCorrectedZVertical) != 0;
 
         case Sensor::Type::Gravity:
         case Sensor::Type::UserAcceleration:
@@ -100,9 +120,6 @@ bool SensorImpl::open(Sensor::Type sensor)
             break;
 
         case Sensor::Type::Magnetometer:
-            [SFAppDelegate getInstance].motionManager.magnetometerUpdateInterval = updateInterval;
-            break;
-
         case Sensor::Type::Gravity:
         case Sensor::Type::UserAcceleration:
         case Sensor::Type::Orientation:
@@ -143,10 +160,16 @@ Vector3f SensorImpl::update()
                 Vector3(manager.gyroData.rotationRate.x, manager.gyroData.rotationRate.y, manager.gyroData.rotationRate.z));
 
         case Sensor::Type::Magnetometer:
-            // Magnetic field is given in microteslas
-            return Vector3f(Vector3(manager.magnetometerData.magneticField.x,
-                                    manager.magnetometerData.magneticField.y,
-                                    manager.magnetometerData.magneticField.z));
+            // Calibrated magnetic field is given in microteslas
+            return Vector3f(Vector3(manager.deviceMotion.magneticField.field.x,
+                                    manager.deviceMotion.magneticField.field.y,
+                                    manager.deviceMotion.magneticField.field.z));
+
+        case Sensor::Type::Gravity:
+            // Gravity is given in G, convert to m/s^2
+            return Vector3f(
+                9.81 *
+                Vector3(manager.deviceMotion.gravity.x, manager.deviceMotion.gravity.y, manager.deviceMotion.gravity.z));
 
         case Sensor::Type::UserAcceleration:
             // User acceleration is given in G, convert to m/s^2
@@ -190,30 +213,27 @@ void SensorImpl::setEnabled(bool enabled)
             break;
 
         case Sensor::Type::Magnetometer:
-            if (enabled)
-                [[SFAppDelegate getInstance].motionManager startMagnetometerUpdates];
-            else
-                [[SFAppDelegate getInstance].motionManager stopMagnetometerUpdates];
-            break;
-
         case Sensor::Type::Gravity:
         case Sensor::Type::UserAcceleration:
         case Sensor::Type::Orientation:
-            // these 3 sensors all share the same implementation, so we must disable
-            // it only if the three sensors are disabled
+        {
+            // these sensors all share device motion, which is restarted to change
+            // its reference frame when the magnetometer is toggled
+            const bool wasRunning           = deviceMotionEnabledCount > 0;
+            const bool wasUsingMagnetometer = magnetometerEnabled;
+
             if (enabled)
-            {
-                if (deviceMotionEnabledCount == 0)
-                    [[SFAppDelegate getInstance].motionManager startDeviceMotionUpdates];
                 ++deviceMotionEnabledCount;
-            }
             else
-            {
                 --deviceMotionEnabledCount;
-                if (deviceMotionEnabledCount == 0)
-                    [[SFAppDelegate getInstance].motionManager stopDeviceMotionUpdates];
-            }
+
+            if (m_sensor == Sensor::Type::Magnetometer)
+                magnetometerEnabled = enabled;
+
+            if (wasRunning != (deviceMotionEnabledCount > 0) || wasUsingMagnetometer != magnetometerEnabled)
+                restartDeviceMotion();
             break;
+        }
 
         default:
             break;
