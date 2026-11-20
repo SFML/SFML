@@ -9,6 +9,8 @@
 #include <WindowUtil.hpp>
 #include <type_traits>
 
+#include <cmath>
+
 // Allow testing deprecated functions
 #ifdef _MSC_VER
 #pragma warning(disable : 4996)
@@ -201,15 +203,15 @@ TEST_CASE("[Graphics] sf::Text", runDisplayTests())
         SECTION("Add underline")
         {
             text.setStyle(sf::Text::Underlined);
-            CHECK_THAT(text.getLocalBounds(), equalsApprox(sf::FloatRect({1, 5}, {32, 13}), 1.f));
-            CHECK_THAT(text.getGlobalBounds(), equalsApprox(sf::FloatRect({101, 205}, {32, 13}), 1.f));
+            CHECK_THAT(text.getLocalBounds(), equalsApprox(sf::FloatRect({0, 5}, {35, 14}), 1.f));
+            CHECK_THAT(text.getGlobalBounds(), equalsApprox(sf::FloatRect({100, 205}, {35, 14}), 1.f));
         }
 
         SECTION("Add strikethrough")
         {
             text.setStyle(sf::Text::StrikeThrough);
-            CHECK_THAT(text.getLocalBounds(), equalsApprox(sf::FloatRect({1, 5}, {32, 13}), 1.f));
-            CHECK_THAT(text.getGlobalBounds(), equalsApprox(sf::FloatRect({101, 205}, {32, 13}), 1.f));
+            CHECK_THAT(text.getLocalBounds(), equalsApprox(sf::FloatRect({0, 5}, {35, 13}), 1.f));
+            CHECK_THAT(text.getGlobalBounds(), equalsApprox(sf::FloatRect({100, 205}, {35, 13}), 1.f));
         }
 
         SECTION("Change rotation")
@@ -228,5 +230,28 @@ TEST_CASE("[Graphics] sf::Text", runDisplayTests())
             CHECK_THAT(text.getLocalBounds(), equalsApprox(sf::FloatRect({-31, 5}, {32, 13}), 1.f));
             CHECK_THAT(text.getGlobalBounds(), equalsApprox(sf::FloatRect({69, 205}, {32, 13}), 1.f));
         }
+    }
+
+    SECTION("Get bounds for right-aligned multiline underlined text with an outline")
+    {
+        constexpr unsigned int characterSize = 72;
+        constexpr float        outline       = 1.5f;
+        sf::Text               text(font, "Test", characterSize);
+
+        const float thickness = font.getUnderlineThickness(characterSize);
+        const float offset    = font.getUnderlinePosition(characterSize);
+        const float bottom    = std::floor(static_cast<float>(characterSize) + offset - thickness / 2.f + 0.5f) +
+                             std::floor(thickness + 0.5f);
+        const float advance = text.findCharacterPos(4).x;
+
+        text.setString("Test\nI");
+        text.setStyle(sf::Text::Underlined);
+        text.setLineAlignment(sf::Text::LineAlignment::Right);
+        text.setOutlineThickness(outline);
+
+        const auto bounds = text.getLocalBounds();
+        CHECK(bounds.position.x <= -advance - outline);
+        CHECK(bounds.position.x + bounds.size.x >= outline);
+        CHECK(bounds.position.y + bounds.size.y >= bottom + font.getLineSpacing(characterSize) + outline);
     }
 }
