@@ -36,6 +36,7 @@
 #include <iterator>
 #include <limits>
 #include <mutex>
+#include <optional>
 #include <utility>
 
 #include <cassert>
@@ -47,6 +48,14 @@
 
 namespace
 {
+void extendBounds(sf::FloatRect& bounds, sf::Vector2f point)
+{
+    const sf::Vector2f bottomRight = bounds.position + bounds.size;
+    const sf::Vector2f min{std::min(bounds.position.x, point.x), std::min(bounds.position.y, point.y)};
+    const sf::Vector2f max{std::max(bottomRight.x, point.x), std::max(bottomRight.y, point.y)};
+    bounds = {min, max - min};
+}
+
 // Add a horizontal underline or strikethrough line to the vertex array
 void addLineHorizontal(sf::VertexArray& vertices,
                        float            lineLeft,
@@ -822,6 +831,7 @@ void Text::ensureGeometryUpdate() const
     std::vector<std::uint32_t> currentLineTabIndices;
     hb_script_t                currentScript{};
     hb_direction_t             currentDirection{};
+    std::optional<FloatRect>   decorationBounds;
 
     const auto outputLine = [&]
     {
@@ -1032,6 +1042,9 @@ void Text::ensureGeometryUpdate() const
         currentLineIndices.clear();
         currentLineTabIndices.clear();
 
+        const auto decorationStart        = m_vertices.getVertexCount();
+        const auto outlineDecorationStart = m_outlineVertices.getVertexCount();
+
         // If we're using the underlined style and there's a new line, draw a line
         if (isUnderlined)
         {
@@ -1102,6 +1115,21 @@ void Text::ensureGeometryUpdate() const
                                     m_outlineThickness);
             }
         }
+
+        // Use the generated positions, including the outline, to bound the decorations.
+        const auto boundDecorations = [&](const VertexArray& vertices, std::size_t first)
+        {
+            if (first == vertices.getVertexCount())
+                return;
+
+            if (!decorationBounds)
+                decorationBounds = FloatRect(vertices[first].position, {});
+
+            for (auto i = first; i < vertices.getVertexCount(); ++i)
+                extendBounds(*decorationBounds, vertices[i].position);
+        };
+        boundDecorations(m_vertices, decorationStart);
+        boundDecorations(m_outlineVertices, outlineDecorationStart);
     };
 
     // Split the input string into multiple segments with uniform
@@ -1121,6 +1149,7 @@ void Text::ensureGeometryUpdate() const
         std::size_t    firstCodepointOffset = std::numeric_limits<std::size_t>::max();
         hb_direction_t direction{};
         float          lineWidth{};
+        std::optional<FloatRect> decorationBounds;
     };
 
     std::vector<LineRecord> lines;
@@ -1142,6 +1171,7 @@ void Text::ensureGeometryUpdate() const
         lineRecord.verticesCount        = m_vertices.getVertexCount() - lineRecord.verticesStart;
         lineRecord.outlineVerticesCount = m_outlineVertices.getVertexCount() - lineRecord.outlineVerticesStart;
         lineRecord.lineWidth            = x;
+        lineRecord.decorationBounds     = std::exchange(decorationBounds, std::nullopt);
     };
 
     if (!segments.empty())
@@ -1319,6 +1349,9 @@ void Text::ensureGeometryUpdate() const
             // Shift vertices
             for (auto i = line.outlineVerticesStart; i < line.outlineVerticesStart + line.outlineVerticesCount; ++i)
                 m_outlineVertices[i].position.x += shift;
+
+            if (line.decorationBounds)
+                line.decorationBounds->position.x += shift;
         }
 
         // Update bounds if necessary
@@ -1329,6 +1362,15 @@ void Text::ensureGeometryUpdate() const
         else if (m_lineAlignment == LineAlignment::Right)
         {
             m_bounds.position.x -= m_bounds.size.x;
+        }
+
+        for (const auto& line : lines)
+        {
+            if (!line.decorationBounds)
+                continue;
+
+            extendBounds(m_bounds, line.decorationBounds->position);
+            extendBounds(m_bounds, line.decorationBounds->position + line.decorationBounds->size);
         }
     }
 }
